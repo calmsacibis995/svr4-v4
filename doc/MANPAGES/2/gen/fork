@@ -1,0 +1,165 @@
+'\"macro stdmacro
+.if n .pH g2.fork @(#)fork	40.19.1.1 of 1/3/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} fork 2 "" "\&"
+.if \nX=1 .ds x} fork 2 ""
+.if \nX=2 .ds x} fork 2 "" "\&"
+.if \nX=3 .ds x} fork "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4fork\f1 \- create a new process
+.SH SYNOPSIS
+\f4#include <sys/types.h>\f1
+.br
+\f4#include <unistd.h>\f1
+.PP
+\f4pid_t fork(void);\f1
+.SH DESCRIPTION
+\f4fork\fP
+causes creation of a new process.
+The new process (child process) is an
+exact copy of the calling process (parent process).
+This means the child process inherits the following attributes from the parent
+process:
+.PP
+.PD 0
+.RS
+.PP
+real user \s-1ID\s+1, real group \s-1ID\s+1, effective user \s-1ID\s+1, effective group \s-1ID\s+1
+.PP
+environment
+.PP
+close-on-exec flag [see
+\f4exec\fP(2)]
+.PP
+signal handling settings (i.e.,
+\f4SIG_DFL\f1, \f4SIG_IGN\f1, \f4SIG_HOLD\f1,
+function address)
+.PP
+supplementary group IDs
+.PP
+set-user-\s-1ID\s+1 mode bit
+.PP
+set-group-\s-1ID\s+1 mode bit
+.PP
+profiling on/off status
+.PP
+nice value [see 
+\f4nice\fP(2)]
+.PP
+scheduler class [see
+\f4priocntl\fP(2)]
+.PP
+all attached shared memory segments [see
+\f4shmop\fP(2)]
+.PP
+process group
+.SM ID
+.PP
+session
+.SM ID
+[see \f4exit\fP(2)]
+.PP
+current working directory
+.PP
+root directory
+.PP
+file mode creation mask [see
+\f4umask\fP(2)]
+.PP
+resource limits [see 
+\f4getrlimit\fP(2)]
+.PP
+controlling terminal
+.RE
+.PD
+.PP
+Scheduling priority and any per-process scheduling parameters that are specific
+to a given scheduling class may or may not be inherited according to the
+policy of that particular class [see \f4priocntl\fP(2)].
+.PP
+The child process differs from the parent process in the following ways:
+.IP
+The child process has a unique process
+.SM ID\*S
+which does not match any active process group
+.SM ID\*S.
+.IP
+The child process has a different parent process
+.SM ID
+(i.e., the
+process
+.SM ID
+of the parent process).
+.IP
+The child process has its own copy of the parent's file descriptors and
+directory streams.
+Each of the child's file descriptors shares a common file pointer with the
+corresponding file descriptor of the parent.
+.IP
+All \f4semadj\fP values are cleared [see
+\f4semop\fP(2)].
+.IP
+Process locks, text locks and data locks are not inherited by the child [see
+\f4plock\fP(2)].
+.IP
+The child process's \f4tms\fP structure is cleared:
+\f4tms_utime\fP, \f4stime\fP, \f4cutime\fP,
+and
+\f4cstime\fP
+are set to 0 [see \f4times\fP(2)].
+.IP
+The time left until an alarm clock signal is reset to 0.
+.IP
+The set of signals pending for the child process is initialized to the empty
+set.
+.PP
+Record locks set by the parent process are not inherited by the child process
+[see \f4fcntl\fP(2)].
+.PP
+\f4fork\fP
+will fail and no child process will be created if one or more of the
+following are true:
+.TP 15
+\f4EAGAIN\fP
+The system-imposed limit on the total number of processes under execution
+by a single user would be exceeded.
+.TP
+\f4EAGAIN\fP
+Total amount of system memory
+available when reading via raw I/O
+is temporarily insufficient.
+.TP
+\f4ENOMEM\fP
+There is not enough swap space.
+.SH "SEE ALSO"
+\f4alarm\fP(2),
+\f4exec\fP(2),
+\f4fcntl\fP(2),
+\f4getrlimit\fP(2),
+\f4nice\fP(2),
+\f4plock\fP(2),
+\f4priocntl\fP(2),
+\f4ptrace\fP(2),
+\f4semop\fP(2),
+\f4shmop\fP(2),
+\f4signal\fP(2),
+\f4times\fP(2),
+\f4umask\fP(2),
+\f4wait\fP(2),
+\f4system\fP(3S).
+.SH DIAGNOSTICS
+Upon successful completion,
+\f4fork\fP
+returns a value of \f40\fP to the child process and returns the process
+.SM ID
+of the
+child process to the parent process.
+Otherwise, a value of \f4(pid_t)\-1\fP is
+returned to the parent process, no child process is created, and
+\f4errno\fP
+is set to indicate the error.
+.\"	@(#)fork.2	6.2 of 9/6/83
+.Ee

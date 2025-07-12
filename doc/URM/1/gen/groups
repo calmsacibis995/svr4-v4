@@ -1,0 +1,32 @@
+'\"macro stdmacro
+.if n .pH groups.1 @(#)groups	40.8 of 4/12/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} groups 1 "" "\&"
+.if \nX=1 .ds x} groups 1 ""
+.if \nX=2 .ds x} groups 1 "" "\&"
+.if \nX=3 .ds x} groups "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4groups\f1 \- print group membership of user
+.SH SYNOPSIS
+\f4groups\fP
+[
+.I user
+]
+.SH DESCRIPTION
+The command
+\f4groups\fP
+prints on standard output
+the groups to which you or the optionally specified user belong.
+Each user belongs to a group specified in 
+\f4/etc/passwd\fP
+and possibly to other groups as specified in 
+\f4/etc/group\fP.
+.SH "SEE ALSO"
+\f4setgroups\fP(2), \f4group\fP(4), \f4passwd\fP(4)
+.SH FILES
+\f4/etc/passwd\fP
+.br
+\f4/etc/group\fP

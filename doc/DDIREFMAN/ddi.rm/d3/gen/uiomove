@@ -1,0 +1,74 @@
+'\"macro stdmacro
+.if n .pH gen.uiomove @(#)uiomove	40.2 of 1/7/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.nr X
+.if \nX=0 .ds x} uiomove D3DK "" "DDI/DKI" "\&"
+.if \nX=1 .ds x} uiomove D3DK "" "DDI/DKI"
+.if \nX=2 .ds x} uiomove D3DK "" "\&"
+.if \nX=3 .ds x} uiomove "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4uiomove\f1 \- copy data using \f4uio\f1(D4DK) structure 
+.IX "\f4uiomove\fP(D3DK)"
+.SH SYNOPSIS
+.nf
+.na
+\f4#include <sys/types.h>
+#include <sys/uio.h>
+.sp 0.5
+int uiomove(\f4caddr_t\f1 \f2addr, \f4long\f1 \f2nbytes, \f4uio_rw_t\f1 \f2rwflag, \f4uio_t *\f1 \f2uiop\f4);\f1
+.ad
+.fi
+.SH ARGUMENTS
+.RS 0n 10
+.IP "\f2addr\f1" 10n
+Source/destination kernel address of the copy.
+.IP "\f2nbytes\f1" 10n
+Number of bytes to copy.
+.IP "\f2rwflag\f1" 10n
+Flag indicating read or write operation.  Possible values are \f4UIO_READ\f1
+and \f4UIO_WRITE\f1.
+.IP "\f2uiop\f1" 10n
+Pointer to the \f4uio\f1 structure for the copy.
+.RE
+.SH DESCRIPTION
+The \f4uiomove\f1 function copies \f2nbytes\f1 of data between the kernel
+address \f2addr\f1 and the space defined by the \f4uio\f1 structure pointed
+to by \f2uiop\f1.
+If \f2rwflag\f1 is \f4UIO_READ\f1, the data is copied from \f2addr\f1 to
+the space described by the \f4uio\f1 structure.
+If \f2rwflag\f1 is \f4UIO_WRITE\f1, the data is copied from
+the space described by the \f4uio\f1 structure to \f2addr\f1.
+.P
+The \f4uio_segflg\f1 member of the \f4uio\f1 structure specifies the
+type of space described by the \f4uio\f1 structure.
+If \f4uio_segflg\f1 is set to \f4UIO_SYSSPACE\f1 the \f4uio\f1 structure
+describes a portion of the kernel address space.
+If \f4uio_segflg\f1 is set to \f4UIO_USERSPACE\f1 the \f4uio\f1 structure
+describes a portion of the user address space.
+.P
+If the copy is successful, \f4uiomove\f1 updates the appropriate members
+of the \f4uio\f1 and \f4iovec\f1(D4DK) structures to reflect the copy
+(\f4uio_offset\f1 and \f4iov_base\f1 are increased by \f2nbytes\f1 and
+\f4uio_resid\f1 and \f4iov_len\f1 are decrease by \f2nbytes\f1).
+.P
+\f3CAUTION:\f1If \f2addr\f1 specifies an address in user space or if
+the value of \f4uio_segflg\f1 is not consistent with the type of address
+space described by the \f4uio\f1 structure, the system can panic.
+.SH RETURN VALUE
+\f4uiomove\f1 returns 0 on success or an error number on failure.
+.SH LEVEL
+Base only if \f4uio_segflg\f1 is set to \f4UIO_USERSPACE\f1.
+Base or interrupt if \f4uio_segflg\f1 is set to \f4UIO_SYSSPACE\f1.
+.SH NOTES
+May sleep if \f4uio_segflg\f1 is set to \f4UIO_USERSPACE\f1.
+.SH SEE ALSO
+.na
+\f4bcopy\f1(D3DK),
+\f4copyin\f1(D3DK),
+\f4copyout\f1(D3DK),
+\f4ureadc\f1(D3DK),
+\f4uwritec\f1(D3DK),
+\f4iovec\f1(D4DK),
+\f4uio\f1(D4DK)
+.ad

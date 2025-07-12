@@ -1,0 +1,390 @@
+'\"!  tbl | mmdoc
+'\"macro stdmacro
+.if n .pH g3e.elf @(#)elf	40.18 of 4/5/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.\"#ident	"@(#)ci5-doc:req/libelf/elf.man	1.3"
+.nr X
+.if \nX=0 .ds x} elf 3E "ELF Library" "\&"
+.if \nX=1 .ds x} elf 3E "ELF Library"
+.if \nX=2 .ds x} elf 3E "" "\&"
+.if \nX=3 .ds x} elf "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4elf\f1 \- object file access library
+.SH SYNOPSIS
+\f4cc\f1
+[\f2flag\fP \|.\|.\|.] \f2file\fP \|.\|.\|.
+\f4\-lelf\f1
+[\f2library\fP \|.\|.\|.]
+.sp .25
+.nf
+\f4#include <libelf.h>\f1
+.fi
+.SH DESCRIPTION
+Functions in the
+.SM ELF
+access library let a program
+manipulate
+.SM ELF
+(Executable and Linking Format) object files, archive files, and
+archive members.
+The header file provides type and function declarations
+for all library services.
+.P
+Programs communicate with many of the higher-level routines using an
+.IR "ELF descriptor" .
+That is, when the program starts working with a file,
+\f4elf_begin\fP
+creates an
+.SM ELF 
+descriptor through which the program
+manipulates the structures and information in the file.
+These
+.SM ELF
+descriptors can be used both to read and
+to write files.
+After the program establishes an
+.SM ELF
+descriptor for a file, it may
+then obtain
+.I section descriptors
+to manipulate the sections of the file [see
+\f4elf_getscn\fP(3E)].
+Sections hold the bulk of an object file's real information,
+such as text, data, the symbol table, and so on.
+A section descriptor ``belongs'' to a particular
+.SM ELF
+descriptor, just as a section belongs to a file.
+Finally,
+.I data descriptors
+are available through section descriptors, allowing
+the program to manipulate the information associated with a section.
+A data descriptor ``belongs'' to a section descriptor.
+.P
+Descriptors provide private handles to a file and its pieces.
+In other words, a data descriptor is associated with one section
+descriptor, which is associated with one
+.SM ELF
+descriptor,
+which is associated with one file.
+Although descriptors are private, they give access to data
+that may be shared.
+Consider programs that combine input files, using incoming data
+to create or update another file.
+Such a program might get data descriptors for an input
+and an output section.
+It then could update the output descriptor to reuse the
+input descriptor's data.
+That is, the descriptors are distinct, but they could
+share the associated data bytes.
+This sharing avoids the space overhead for duplicate buffers
+and the performance overhead for copying data unnecessarily.
+.SH "FILE CLASSES"
+.SM ELF
+provides a framework in which to define a family of
+object files, supporting multiple processors and architectures.
+An important distinction among object files is the
+.IR class ,
+or capacity, of the file.
+The 32-bit class supports architectures in which
+a 32-bit object can represent addresses, file sizes, etc.,
+as in the following.
+.TS
+center;
+c c
+lf4 | l.
+Name	Purpose
+_
+Elf32_Addr	Unsigned address
+Elf32_Half	Unsigned medium integer
+Elf32_Off	Unsigned file offset
+Elf32_Sword	Signed large integer
+Elf32_Word	Unsigned large integer
+unsigned char	Unsigned small integer
+_
+.TE
+.P
+Other classes will be defined as necessary, to support
+larger (or smaller) machines.
+Some library services deal only with data objects for
+a specific class, while others are class-independent.
+To make this distinction clear, library function names
+reflect their status, as described below.
+.SH "DATA REPRESENTATIONS"
+Conceptually, two parallel sets of objects
+support cross compilation environments.
+One set corresponds to file contents, while
+the other set corresponds to the native memory image of
+the program manipulating the file.
+Type definitions supplied by the header files
+work on the native machine, which may have different
+data encodings (size, byte order, etc.) than the
+target machine.
+Although native memory objects should be
+at least as big as the file objects (to avoid information loss),
+they may be bigger if that is more natural for the host machine.
+.P
+Translation facilities exist to convert between
+file and memory representations.
+Some library routines convert data automatically,
+while others leave conversion as the program's responsibility.
+Either way, programs that create object files must write
+file-typed objects to those files; programs that read
+object files must take a similar view.
+See
+\f4elf_xlate\fP(3E)
+and
+\f4elf_fsize\fP(3E)
+for more information.
+.P
+Programs may translate data explicitly, taking full control
+over the object file layout and semantics.
+If the program prefers not to have and exercise
+complete control, the library provides a
+higher-level interface that hides many object file details.
+\f4elf_begin\fP
+and related functions let a program deal with the
+native memory types, converting between memory objects and their
+file equivalents automatically when reading or writing
+an object file.
+.SH "ELF VERSIONS"
+Object file versions allow
+.SM ELF
+to adapt to new requirements.
+Three\(emindependent\(emversions can be important to a program.
+First, an application program knows about a particular version
+by virtue of being compiled with certain header files.
+Second, the access library similarly is compiled with header
+files that control what versions it understands.
+Third, an
+.SM ELF
+object file holds a value identifying its version,
+determined by the
+.SM ELF
+version known by the file's creator.
+Ideally, all three versions would be the same,
+but they may differ.
+.IP "" .5i
+If a program's version is newer than the access library,
+the program might use information unknown to the library.
+Translation routines might not work properly, leading to
+undefined behavior.
+This condition merits installing a new library.
+.IP "" .5i
+The library's version might be newer than
+the program's and the file's.
+The library understands old versions,
+thus avoiding compatibility problems in this case.
+.IP "" .5i
+Finally, a file's version might be newer than either the program
+or the library understands.
+The program might or might not be able to process the
+file properly, depending on whether the file has
+extra information and whether that information can be
+safely ignored.
+Again, the safe alternative is to install a new
+library that understands the file's version.
+.P
+To accommodate these differences, a program must use
+\f4elf_version\fP
+to pass its version to the library,
+thus establishing the
+.I "working version"
+for the process.
+Using this, the library accepts data from and
+presents data to the program in the proper representations.
+When the library reads object files, it uses each file's
+version to interpret the data.
+When writing files or converting memory types to the
+file equivalents, the library uses the program's working version
+for the file data.
+.SH "SYSTEM SERVICES"
+As mentioned above,
+\f4elf_begin\fP
+and related routines provide a higher-level interface
+to
+.SM ELF
+files, performing input and output on behalf of
+the application program.
+These routines assume a program can
+hold entire files in memory, without explicitly using temporary files.
+When reading a file, the library routines
+bring the data into memory and perform subsequent
+operations on the memory copy.
+Programs that wish to read or write large
+object files with this model must execute on a machine with a large
+process virtual address space.
+If the underlying operating system limits the number of
+open files, a program can use
+\f4elf_cntl\fP
+to retrieve all necessary data from the file, allowing
+the program to close the file descriptor and reuse it.
+.P
+Although the
+\f4elf_begin\fP
+interfaces are convenient and efficient for many programs,
+they might be inappropriate for some.
+In those cases, an application may invoke the
+\f4elf_xlate\fP
+data translation routines directly.
+These routines perform no input or output, leaving that
+as the application's responsibility.
+By assuming a larger share of the job,
+an application controls its input and output model.
+.SH "LIBRARY NAMES"
+Names associated with the library take several forms.
+.TP 16
+\f4elf_\f2name\f1
+These class-independent names perform some service,
+.IR name ,
+for the program.
+.TP
+\f4elf32_\f2name\f1
+Service names with an embedded class,
+\f432\f1
+here, indicate they work only for the designated
+class of files.
+.TP
+\f4Elf_\f2Type\f1
+Data types can be class-independent as well,
+distinguished by
+.IR Type .
+.TP
+\f4Elf32_\f2Type\f1
+Class-dependent data types have an embedded class name,
+\f432\f1
+here.
+.TP
+\f4ELF_C_\f2CMD\f1
+Several functions take commands that control their actions.
+These values are members of the
+\f4Elf_Cmd\f1
+enumeration; they range from zero through
+\f4ELF_C_NUM\-1\f1.
+.TP
+\f4ELF_F_\f2FLAG\f1
+Several functions take flags
+that control library status and/or actions.
+Flags are bits that may be combined.
+.TP
+\f4ELF32_FSZ_\f2TYPE\f1
+These constants give the file sizes in bytes of the
+basic
+.SM ELF
+types for the 32-bit class of files.
+See
+\f4elf_fsize\fP
+for more information.
+.TP
+\f4ELF_K_\f2KIND\f1
+The function
+\f4elf_kind\fP
+identifies the
+.I KIND
+of file associated with an
+.SM ELF
+descriptor.
+These values are members of the
+\f4Elf_Kind\f1
+enumeration; they range from zero through
+\f4ELF_K_NUM\-1\f1.
+.TP
+\f4ELF_T_\f2TYPE\f1
+When a service function, such as
+\f4elf_xlate\fP,
+deals with multiple types, names of this form
+specify the desired
+.IR TYPE .
+Thus, for example,
+\f4ELF_T_EHDR\f1
+is directly related to
+\f4Elf32_Ehdr\f1.
+These values are members of the
+\f4Elf_Type\f1
+enumeration; they range from zero through
+\f4ELF_T_NUM\-1\f1.
+.SH "SEE ALSO"
+.na
+\f4cof2elf\fP(1),
+\f4elf_begin\fP(3E),
+\f4elf_cntl\fP(3E),
+\f4elf_end\fP(3E),
+\f4elf_error\fP(3E),
+\f4elf_fill\fP(3E),
+\f4elf_flag\fP(3E),
+\f4elf_fsize\fP(3E),
+\f4elf_getarhdr\fP(3E),
+\f4elf_getarsym\fP(3E),
+\f4elf_getbase\fP(3E),
+\f4elf_getdata\fP(3E),
+\f4elf_getehdr\fP(3E),
+\f4elf_getident\fP(3E),
+\f4elf_getphdr\fP(3E),
+\f4elf_getscn\fP(3E),
+\f4elf_getshdr\fP(3E),
+\f4elf_hash\fP(3E),
+\f4elf_kind\fP(3E),
+\f4elf_next\fP(3E),
+\f4elf_rand\fP(3E),
+\f4elf_rawfile\fP(3E),
+\f4elf_strptr\fP(3E),
+\f4elf_update\fP(3E),
+\f4elf_version\fP(3E),
+\f4elf_xlate\fP(3E),
+\f4a.out\fP(4),
+\f4ar\fP(4)
+.br
+The ``Object Files'' in the chapter
+\f2Programmer's Guide: ANSI C and Programming Support Tools\fP.
+.ad
+.SH NOTES
+Information in the
+.SM ELF
+header files is separated into
+common parts and processor-specific parts.
+A program can make a processor's information available
+by including the appropriate header file:
+\f4<sys/elf_\f2NAME\f4.h>\f1
+where
+.I NAME
+matches the processor name as used in the
+.SM ELF
+file header.
+.P
+.TS
+center;
+c c
+lf4 | l.
+Symbol	Processor
+_
+M32	AT&T WE 32100
+SPARC	SPARC
+386	Intel 80386
+486	Intel 80486
+860	Intel 80860
+68K	Motorola 68000
+88K	Motorola 88000
+.sp .3v
+_
+.TE
+.P
+Other processors will be added to the table as necessary.
+To illustrate, a program could use the following code
+to ``see'' the processor-specific information for the WE\ 32100.
+.P
+.RS .5i
+.DT
+.nf
+.ft 4
+.ta 8u*\w' 'u +8u*\w' 'u +8u*\w' 'u +8u*\w' 'u +8u*\w' 'u +8u*\w' 'u
+.ne 2
+#include <libelf.h>
+#include <sys/elf_M32.h>
+.fi
+.RE
+.P
+Without the \f4<sys/elf_M32.h>\fP
+definition, only the common
+.SM ELF
+information would be visible.

@@ -1,0 +1,375 @@
+'\"macro stdmacro
+.if n .pH g1.prt @(#)prt	40.8 of 4/18/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} prt 1 "BSD Compatibility Package" "\&"
+.if \nX=1 .ds x} prt 1 "BSD Compatibility Package"
+.if \nX=2 .ds x} prt 1 "" "\&"
+.if \nX=3 .ds x} prt "" "" "\&"
+.TH \*(x}
+.\" Copyright (c) 1988 Sun Microsystems, Inc. - All Rights Reserved.
+.\"
+.if n .ds )Q '
+.if t .ds )Q \\(aa
+.SH NAME
+\f4prt\f1 \- display the delta and commentary history of an SCCS file
+.SH SYNOPSIS
+\f4/usr/ucb/prt\f1
+\f1[\f4\-abdefistu\f1]
+\f1[\f4\-y\f1\^[\^\c
+.SM
+.I SID
+\f1]\^] [\f4\-c\f1\^[\^\c
+.I cutoff\c
+\f1]\^] [\f4\-r\f1\^[\^\c
+.I rev-cutoff\^\c
+] ]
+.IR "filename " .\ .\ .
+.SH DESCRIPTION
+Note: the
+\f4prt\f1
+command is an older version of
+\f4prs\f1(1)
+that in most circumstances is more convenient to use,
+but is less flexible than
+\f4prs\f1.
+.P
+\f4prt\f1
+prints part or all of an
+.SM SCCS
+file in a useful format.
+If a directory is named,
+\f4prt\f1
+behaves as though each file in the directory were
+specified as a named file,
+except that non-\s-1SCCS\s0 files
+(last component of the pathname does not begin with
+\f4s.\f1)
+and unreadable files
+are silently ignored.
+If a name of
+\f1`\f4\-\f1'
+is given, the standard input is read;
+each line of the standard input is taken to be the name of an
+.SM SCCS
+file to be processed.
+Again, non-\s-1SCCS\s0 files and unreadable files are silently ignored.
+.P
+The following options are available with
+\f4prt :\f1
+.TP
+\f4\-a\f1
+Print those types of deltas normally not printed by the
+\f4d\f1
+keyletter.  These are types
+\f4R\f1
+(removed).
+This keyletter is effective only if the
+\f4d\f1
+keyletter is also specified (or assumed).
+.TP
+\f4\-b\f1
+Print the body of the
+.SM SCCS
+file.
+.TP
+\f4\-d\f1
+This keyletter normally prints
+delta table entries of the
+\f4D\f1
+type.
+.TP
+\f4\-e\f1
+This keyletter implies the
+\f4d\f1,
+\f4i\f1,
+\f4u\f1,
+\f4f\f1,
+and
+\f4t\f1
+keyletters and is provided for convenience.
+.TP
+\f4\-f\f1
+Print the flags of the named file.
+.TP
+\f4\-i\f1
+Print the serial numbers of those deltas included,
+excluded, and ignored.
+This keyletter is effective only if the
+\f4d\f1
+keyletter is also specified (or assumed).
+.RS
+.P
+The following format is used to print those
+portions of the
+.SM SCCS
+file as specified by the above keyletters.
+The printing of each delta table entry
+is preceded by a
+.SM NEWLINE\s0.
+.P
+.PD 0v
+.\"	tags for the list of delta table components:
+.\"	cobble up a bullet.
+.if n .ds bu "\o'o+'
+.if t .ds bu \(bu
+.nr Tw \w'\*(bu'u+(2n)u
+.TP \n(Twu
+\*(bu
+Type of delta
+\f1(\f4D\f1
+or
+\f4R\fP).
+.TP \n(Twu
+\*(bu
+.SM SPACE\s0.
+.TP \n(Twu
+\*(bu
+.SM SCCS
+identification string
+(\s-1SID\s0).
+.TP \n(Twu
+\*(bu
+.SM TAB\s0.
+.TP \n(Twu
+\*(bu
+Date and time of creation
+(in the form
+\s-1YY/MM/DD HH:MM:SS\s0).
+.TP \n(Twu
+\*(bu
+.SM SPACE\s0.
+.TP \n(Twu
+\*(bu
+Creator.
+.TP \n(Twu
+\*(bu
+.SM TAB\s0.
+.TP \n(Twu
+\*(bu
+Serial number.
+.TP \n(Twu
+\*(bu
+.SM SPACE\s0.
+.TP \n(Twu
+\*(bu
+Predecessor delta's serial number.
+.TP \n(Twu
+\*(bu
+.SM TAB\s0.
+.TP \n(Twu
+\*(bu
+Statistics
+(in the form inserted/\%deleted/\%unchanged).
+.TP \n(Twu
+\*(bu
+.SM NEWLINE\s0.
+.TP \n(Twu
+\*(bu
+``Included:\c
+.SM TAB\s0'',
+followed by
+\s-1SID\s0's
+of deltas included, followed by
+.SM NEWLINE
+(only if there were any such deltas and if
+\f4i\f1
+keyletter was supplied).
+.TP \n(Twu
+\*(bu
+``Excluded:\c
+.SM TAB\s0'',
+followed by
+\s-1SID\s0's
+of deltas excluded, followed by
+.SM NEWLINE
+(see note above).
+.TP \n(Twu
+\*(bu
+``Ignored:\c
+.SM TAB\s0'',
+followed by
+\s-1SID\s0's
+of deltas ignored, followed by
+.SM NEWLINE
+(see note above).
+.TP \n(Twu
+\*(bu
+``\s-1MR\s0s:\c
+.SM TAB\s0'',
+followed by
+.SM MR
+numbers related to the delta, followed by
+.SM NEWLINE
+(only if any
+.SM MR
+numbers were supplied).
+.TP \n(Twu
+\*(bu
+Lines of comments (delta commentary), followed by newline
+(if any were supplied).
+.PD
+.RE
+.TP
+\f4\-s\f1
+Print only the first line of the delta table entries;
+that is, only up to the statistics.
+This keyletter is effective only if the
+\f4d\f1
+keyletter is also specified (or assumed).
+.TP
+\f4\-t\f1
+Print the descriptive text
+contained in the file.
+.TP
+\f4\-u\f1
+Print the login-names and/or numerical group
+.SM ID\s0s
+of those users allowed to make deltas.
+.TP
+\f4\-y\fP[\f2\s-1SID\s0\f1]
+Print the delta table entries to stop
+when the delta just printed has the specified
+\s-1SID\s0.
+If no delta in the table has the specified
+\s-1SID\s0,
+the entire table is printed.  If no
+.SM SID
+is specified, the first delta in the delta table is printed.
+This keyletter will print the entire
+delta table entry for each delta 
+as a single line (the
+.SM NEWLINE
+in the normal multi-line format of the
+\f4d\f1
+keyletter are replaced by
+.SM SPACE
+characters)
+preceded by the name of the
+.SM SCCS
+file being processed, followed by a
+\f4:\f1,
+followed by a
+.SM TAB\s0.
+This keyletter
+is effective only if the
+\f4d\f1
+keyletter is also specified (or assumed).
+.TP
+\f4\-c\fP[\f2cutoff\^\f1]
+Stop printing the delta table entries
+if the delta about to be printed is older than the
+specified cutoff date-time (see
+\f4get\f1(1)
+for the format of date-time).
+If no date-time is supplied, the
+epoch 0000
+\s-1GMT\s0
+Jan. 1, 1970 is used.
+As with the
+\f4y\f1
+keyletter, this keyletter will cause the entire delta table
+entry to be printed as a single line and
+to be preceded by the name of the
+.SM SCCS
+file being processed,
+followed by a
+\f4:\f1,
+followed by a tab.
+This keyletter is effective only if the
+\f4d\f1
+keyletter is also specified (or assumed).
+.TP
+\f4\-r\fP[\f2rev-cutoff\^\f1]
+Begin printing the delta table entries
+when the delta about to be printed
+is older than or equal to the
+specified cutoff date-time (see
+\f4get\f1(1)
+for the format of date-time).
+If no date-time is supplied, the
+epoch 0000
+\s-1GMT\s0
+Jan. 1, 1970 is used.
+(In this case, nothing will be printed).
+As with the
+\f4y\f1
+keyletter, this keyletter will cause the entire delta table
+entry to be printed as a single line and
+to be preceded by the name of the
+.SM SCCS
+file being processed,
+followed by a
+\f4:\f1,
+followed by a tab.
+This keyletter is effective only if the
+\f4d\f1
+keyletter is also specified (or assumed).
+.P
+If any keyletter but
+\f4y\f1,
+\f4c\f1,
+or
+\f4r\f1
+is supplied, the name of the file being
+processed (preceded by one
+.SM NEWLINE
+and followed by two
+.SM NEWLINE
+characters) is printed before its contents.
+.P
+If none of the
+\f4u\f1,
+\f4f\f1,
+\f4t\f1,
+or
+\f4b\f1
+keyletters is supplied, the
+\f4d\f1
+keyletter is assumed.
+.P
+Note: the
+\f4s\f1
+and
+\f4i\f1
+keyletters, and the
+\f4c\f1
+and
+\f4r\f1
+keyletters are mutually exclusive;
+therefore, they may not be specified together on the same
+\f4prt\f1
+command.
+.P
+The form of the delta table
+as produced by the
+\f4y\f1,
+\f4c\f1,
+and
+\f4r\f1
+keyletters makes it easy to sort multiple delta tables in
+chronological order.
+.P
+When both the
+\f4y\f1
+and
+\f4c\f1
+or the
+\f4y\f1
+and
+\f4r\f1
+keyletters are supplied,
+\f4prt\f1
+will stop printing when the first of the two conditions is met.
+.SH "SEE ALSO"
+\f4admin\fP(1),
+\f4get\fP(1),
+\f4delta\fP(1),
+\f4prs\fP(1),
+\f4what\fP(1),
+\f4sccs\fP(1)
+.sp .2
+\f4sccsfile\fP(5)
+in the \f2System Administrator's Reference Manual\f1
+.Ee

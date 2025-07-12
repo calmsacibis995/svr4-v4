@@ -1,0 +1,58 @@
+'\"macro stdmacro
+.if n .pH g1.strings @(#)strings	40.8 of 4/12/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.\" Copyright (c) 1988 Sun Microsystems, Inc. - All Rights Reserved.
+.\"
+.nr X
+.if \nX=0 .ds x} strings 1 "Directory and File Management Utilities" "\&"
+.if \nX=1 .ds x} strings 1 "Directory and File Management Utilities"
+.if \nX=2 .ds x} strings 1 "" "\&"
+.if \nX=3 .ds x} strings "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4strings\f1 \- find printable strings in an object file or binary
+.SH SYNOPSIS
+\f4strings\f1 [ \f4\-a\f1 ] [ \f4\-o\f1 ] [ \f4\-n \f2number\f1 |\|\f4\-\f2number\f1 ] \f2filename\f1 .\ .\ .
+.SH DESCRIPTION
+The
+\f4strings\f1
+command looks for
+.SM ASCII
+strings in a binary file.
+A string is any sequence of 4 or more
+printing characters ending with a
+newline
+or a
+null
+character.
+.P
+\f4strings\f1
+is useful for identifying random object files and many other things.
+.P
+The following options are available:
+.TP 12
+\f4\-a\f1
+Look everywhere in the file for strings.
+If this flag is omitted,
+\f4strings\f1
+only looks in the initialized data space of object files.
+.TP
+\f4\-o\f1
+Precede each string by its
+offset in the file.
+.TP
+\f4\-n \f2number\f1
+Use
+.I number
+as the minimum string length rather than 4.
+.SH "SEE ALSO"
+\f4od\fP(1)
+.SH NOTES
+The algorithm for identifying strings is extremely primitive.
+.P
+For backwards compatibility, \f4\-\f2number\f1 
+can be used in place of \f4\-n \f2number\f1.
+Similarly, the \f4\-a\f1 and a \f4\-\f1 option are interchangeable.
+The \f4\-\f1 and the \f4\-\f2number\f1 variations
+are obsolescent.

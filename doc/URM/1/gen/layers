@@ -1,0 +1,239 @@
+'\"macro stdmacro
+.if n .pH g1.layers @(#)layers	40.13 of 5/21/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} layers 1 "Layers Windowing Utilities" "\&"
+.if \nX=1 .ds x} layers 1 "Layers Windowing Utilities"
+.if \nX=2 .ds x} layers 1 "" "\&"
+.if \nX=3 .ds x} layers "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4layers\f1 \- layer multiplexor for windowing terminals
+.SH SYNOPSIS
+\f4layers\f1
+[\f4\-s\f1]
+[\f4\-t\f1]
+[\f4\-D\f1
+[\f4\-m\f1 \f2max-pkt\f1]
+[\f4\-d\f1]
+[\f4\-p\f1]
+[\f4\-h\f1 \f2modlist\f1]
+[\f4\-f\f1 \f2file\f1]
+[\f2layersys-prgm\f1]
+.SH DESCRIPTION
+\f4layers\fP
+manages asynchronous windows [see \f4layers\fP(5)] on a windowing terminal.
+Upon invocation, \f4layers\fP finds an unused 
+\f4xt\fP(7)
+channel group and associates it with the terminal line on its
+standard output.
+It then waits for commands from the terminal.
+.PP
+Command-line options:
+.TP 8
+\f4\-s\f1
+Report protocol statistics on standard error
+at the end of the session after you exit from \f4layers\fP.
+The statistics may be printed
+during a session by invoking the program
+\f4xts\fP(1M).
+.TP
+\f4\-t\f1
+Turn on \f4xt\fP(7) driver packet tracing, and produces a trace dump
+on standard error at the end of the session after you exit from \f4layers\fP.
+The trace dump may be printed
+during a session by invoking the program
+\f4xtt\fP(1M).
+.TP
+\f4\-D\f1
+Send debugging messages to standard error.
+.TP
+\f4\-m\f1 \f2max-pkt\f1
+Set maximum size for the data part of regular \f4xt\fP packets sent from the host 
+to the terminal.
+Valid values are 32 to 252.
+This option also implies that regular rather than network \f4xt\f1 protocol
+should be used.
+See \f4xtproto\fP(5).
+.TP
+\f4\-d\f1
+If a firmware patch has been downloaded,
+print out the sizes of the text, data,
+and bss portions of the firmware patch
+on standard error.
+.TP
+\f4\-p\f1
+If a firmware patch has been downloaded,
+print the down-loading protocol statistics and a trace
+on standard error.
+.TP
+\f4\-h\f1 \f2modlist\f1
+Push a list of \s-1STREAMS\s0 modules separated by a comma on a layer.
+.TP
+\f4\-f\f2 file\f1
+Start \f4layers\fP with an initial configuration
+specified by \f2file\f1.
+Each line of the file represents a layer to be
+created, and has the following format:
+.IP "" 10
+\f2origin_x origin_y corner_x corner_y command_list\fP
+.IP "" 8
+The coordinates specify the size and position of the layer
+on the screen in the terminal's coordinate
+system.
+If all four are \f40\f1, the user must define
+the layer interactively.
+\f2command_list\f1,
+a list of one or more commands,
+must be provided.
+It is executed in the new layer using the user's shell
+(by executing: \f4$SHELL -i -c "\f2command_list\f4"\f1).
+This means that the last command should invoke a shell, such as \f4/usr/bin/sh\f1.
+(If the last command is not a shell,
+then, when the last command has completed,
+the layer will not be functional.)
+.TP
+.I layersys-prgm
+A file containing a firmware patch that the
+\f4layers\fP
+command downloads to the terminal before layers are created and
+.I "command_list"
+is executed.
+.PP
+Each layer is in most ways functionally identical to a separate terminal.
+Characters typed on the keyboard are sent to the standard input of
+the \s-1UNIX\s0 system process attached to the current
+layer (called the host process), and characters written on the
+standard output by the host process appear in that layer.
+When a layer is created, a separate shell is established and bound
+to the layer.
+If the environment variable \f4SHELL\f1 is set, the user
+gets that shell: otherwise, \f4/usr/bin/sh\fP is used.
+In order to enable communications with other users via
+\f4write\fP(1),
+\f4layers\fP
+invokes the command
+\f4relogin\fP(1M)
+when the first layer is created.
+\f4relogin\fP(1M)
+will reassign that layer as the user's logged-in terminal.
+An alternative layer can be designated by using
+\f4relogin\fP(1M)
+directly.
+\f4layers\fP
+will restore the original assignment on termination.
+.PP
+Layers are created, deleted, reshaped,
+and otherwise manipulated in a terminal-dependent manner.
+For instance, the \s-1AT&T\s0  630 \s-1MTG\s0 terminal provides
+a mouse-activated pop-up menu of layer operations.
+The method of ending a \f4layers\fP session is also
+defined by the terminal.
+.P
+If a user wishes to take advantage of a terminal-specific
+application software package, the
+environment variable
+\f4DMD\f1
+should be set to the path name of the directory where the package
+was installed.
+Otherwise \f4DMD\f1 should not be set.
+.SH EXAMPLES
+A typical startup command is:
+.P
+.RS
+.ft 4
+layers -f startup
+.ft 1
+.RE
+.P
+where
+\f4startup\f1
+contains
+.P
+.RS
+\f48 8 700 200 date ; pwd ; exec $SHELL
+.br
+8 300 780 850 exec $SHELL\fP
+.RE
+.P
+The command
+.P
+.RS
+\f4layers -h FILTER,LDTERM\fP
+.RE
+.P
+pushes the \s-1STREAMS\s0 modules \f4FILTER\fP and \f4LDTERM\fP
+on each layer that is opened.
+.SH FILES
+\f4/dev/xt/??[0-7]
+.br
+/usr/lib/layersys/lsys.8;7;3
+.br
+$DMD/lib/layersys/lsys.8;?;?\fP
+.SH SEE ALSO
+\f4ismpx\f1(1), \f4jterm\fP(1), \f4jwin\fP(1), \f4sh\fP(1), \f4write\fP(1)
+.br
+\f4relogin\fP(1M), \f4wtinit\fP(1M), \f4xts\fP(1M), \f4xtt\fP(1M),
+\f4jagent\fP(5), \f4layers\fP(5),  \f4xtproto\fP(5),
+and \f4xt\fP(7)
+.br
+\f4libwindows\fP(3X) in the \f2Programmer's Reference Manual\f1
+.SH NOTES
+The \f4xt\fP(7) driver supports an alternate
+data transmission scheme known as \s-1ENCODING MODE\s0.
+This mode makes \f4layers\fP operation possible even
+over data links which intercept control characters or
+do not transmit 8-bit characters.
+\s-1ENCODING MODE\s0 is selected either by
+setting a setup option on your windowing terminal
+or by setting the environment variable
+\f4DMDLOAD\f1 to the value \f4hex\f1 before
+running \f4layers\fP:
+.P
+.RS
+\f4DMDLOAD=hex; export DMDLOAD\f1
+.RE
+.P
+If, after executing \f4layers -f\f2 file\f1, the terminal does not respond in
+one or more of the layers, often the last command in the \f2command_list\f1
+for that layer did not invoke a shell.
+.PP
+To access this version of \f4layers\fP,
+make sure \f4/usr/bin\f1
+appears before any other directory,
+such as \f4$DMD/bin\f1,
+you have in your path that contains a layers
+program.
+[For information about defining the shell
+environmental variable
+\f4PATH\f1
+in your \f4.profile\f1, see \f4profile\fP(4).]
+Otherwise, if there is a terminal-dependent
+version of \f4layers\fP, you may get it instead of the correct one.
+.PP
+\f4layers\fP sends all debugging and error messages to standard error.
+Therefore, when invoking \f4layers\f1 with the \f4\-D, \-d\fP, or \f4\-p\fP
+option, it is necessary to redirect standard error to a file.
+For example,
+.P
+.RS
+\f4layers -D 2>layers.msgs\fP
+.RE
+.PP
+If \f4layers\fP encounters an error condition and standard error is not redirected,
+the last error encountered will be printed when the \f4layers\fP commands exits.
+.PP
+When using \f4layers\f1 the mimimum acceptable baud rate is 1200.
+Behavior of \f4layers\fP is unpredictable when using baud rate below 1200.
+.PP
+When using V7\/\s-1BSD\s0\/Xenix applications (for example, the \f4jim\fP editor) \f4layers\fP should
+be invoked as
+.P
+.RS
+\f4layers -h ldterm,ttcompat\fP
+.RE
+.P
+This pushes the \f4ttcompat\fP module on each window and converts the \s-1BSD\s0
+interface into the \f4termio\fP(7) interface.
+.Ee

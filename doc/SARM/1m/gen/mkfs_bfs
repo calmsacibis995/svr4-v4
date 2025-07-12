@@ -1,0 +1,45 @@
+.if n .pH g1a.mkfs_bfs @(#)mkfs_bfs	40.7.1.1
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} mkfs 1M "bfs" "\&"
+.if \nX=1 .ds x} mkfs 1M "bfs"
+.if \nX=2 .ds x} mkfs 1M "" "\&"
+.if \nX=3 .ds x} mkfs "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4mkfs\f1 (bfs) \- construct a boot file system
+.SH SYNOPSIS
+\f4mkfs\f1
+[\-F bfs]
+.I special
+.I blocks
+[
+.I inodes
+]
+.SH DESCRIPTION
+\f4mkfs\f1
+is used to create a boot file system,
+which is a contiguous flat file system,
+to hold the bootable programs and
+data files necessary for the boot procedure.
+.P
+The argument
+.I special
+is the device special file that refers to the partition on which the
+file system is to be created.
+The \f2blocks\fP argument is used to specify
+the size of the file system.
+The block size is automatically 512 bytes.
+.P
+The
+.I inodes
+argument specifies the
+number of files that the file system will hold.
+.SH NOTES
+This file system is intended to hold the bootable files
+and data files for the boot procedure.
+Use as a general purpose file system is not recommended.
+.SH "SEE ALSO"
+See the \f2System Administrator's Guide\f1
+for more information about the boot file system.

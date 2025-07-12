@@ -1,0 +1,84 @@
+#	Copyright (c) 1990  Intel Corporation
+#	All Rights Rreserved
+#
+#	INTEL CORPORATION PROPRIETARY INFORMATION
+#
+#	This software is supplied to AT & T under the terms of a license 
+#	agreement with Intel Corporation and may not be copied nor 
+#	disclosed except in accordance with the terms of that agreement.
+#
+
+#ident	"@(#)pkg.gdbg:postinstall	1.2"
+
+FAILURE=1	# fatal error
+
+MOD=gdebugger
+CONFDIR=/etc/conf
+CONFBIN=${CONFDIR}/bin
+
+TMP=/tmp/${MOD}.err
+
+rm -f $TMP > /dev/null 2>&1
+
+ERROR1=" Errors have been written to the file $TMP."
+
+exitstat=0
+
+# install the driver
+
+cd /tmp/${MOD}
+
+${CONFBIN}/idinstall -a ${MOD} 2> ${TMP}
+if
+	[ "$?" != "0" ]
+then
+	${CONFBIN}/idinstall -u ${MOD} 2> ${TMP}
+	if
+		[ "$?" != "0" ]
+	then
+		message "The installation of the ${NAME} cannot be completed \
+due to an error in the driver installation. \
+The file ${TMP} contains the errors."
+		exitstat=${FAILURE}
+	fi
+fi
+
+if [ ${exitstat} = 0 ]
+then
+	# Edit the kdb-util space.c file to include gdebugger in init table
+	grep -s dbg_init ${CONFBIN}/pack.d/kdb-util/space.c >/dev/null ||
+	ed ${CONFBIN}/pack.d/kdb-util/space.c >/dev/null 2>&1 <<-%
+		/kdb_inittbl/i
+		extern void dbg_init();
+		.
+		+a
+		dbg_init,
+		.
+		s/^/	/
+		w
+		q
+	%
+
+	# Rebuild the kernel
+	${CONFBIN}/idbuild 2>> $TMP
+	if
+		[ "$?" -ne "0" ]
+	then
+		message "The installation cannot be completed due to an error in the \
+kernel reconfiguration. $ERROR1	 Please try the installation again.  If the \
+error occurs again, contact your Service Representative"
+		exitstat=${FAILURE}
+	else
+		exitstat=10
+	fi
+fi
+
+#
+# Now clean up
+#
+rm -f $TMP >/dev/null 2>&1
+removef $PKGINST /tmp/${MOD}/* >/dev/null 2>&1
+removef $PKGINST /tmp/${MOD} >/dev/null 2>&1
+removef -f $PKGINST >/dev/null 2>&1
+
+exit ${exitstat}

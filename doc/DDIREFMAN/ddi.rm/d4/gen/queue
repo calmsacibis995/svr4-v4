@@ -1,0 +1,130 @@
+'\"!  tbl | mmdoc
+'\"macro stdmacro
+.if n .pH gen.queue @(#)queue	40.4 of 6/24/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.nr X
+.if \nX=0 .ds x} queue D4DK "STREAMS" "DDI/DKI" "\&"
+.if \nX=1 .ds x} queue D4DK "STREAMS" "DDI/DKI"
+.if \nX=2 .ds x} queue D4DK "" "\&"
+.if \nX=3 .ds x} queue "" "" "\&"
+.TH \*(x}
+.IX "\f4queue\fP(D4DK)"
+.SH NAME
+\f4queue\fP \- STREAMS queue structure
+.SH SYNOPSIS
+.nf
+\f4#include <sys/types.h>
+#include <sys/stream.h>\fP
+.ad
+.fi
+.SH DESCRIPTION
+A instance of a STREAMS driver or module consists of two
+\f4queue\fP structures, one for upstream (read-side) processing
+and one for downstream (write-side) processing.
+This structure is the major building block of a stream.
+It contains pointers to the processing procedures, pointers to the
+next queue in the stream, flow control parameters, and
+a list of messages to be processed.
+.SH STRUCTURE MEMBERS
+.TS
+lf4p8 2 lf4p8 2 lf4p8.
+struct qinit	*q_qinfo;	/* module or driver entry points */
+struct msgb	*q_first;	/* first message in queue */
+struct msgb	*q_last;	/* last message in queue */
+struct queue	*q_next;	/* next queue in stream */
+void	*q_ptr;	/* pointer to private data structure */
+ulong_t	q_count;	/* approximate size of message queue */
+ulong_t	q_flag;	/* status of queue */
+long	q_minpsz;	/* smallest packet accepted by QUEUE */
+long	q_maxpsz;	/* largest packet accepted by QUEUE */
+ulong_t	q_hiwat;	/* high water mark */
+ulong_t	q_lowat;	/* low water mark */
+.TE
+.P
+The \f4q_qinfo\fP field contains a pointer to the \f4qinit\fP(D4DK)
+structure specifying the processing routines and default values for
+the queue.
+This field should not be changed by drivers or modules.
+.P
+The \f4q_first\fP field points to the first message on the queue, or
+is \f4NULL\fP if the queue is empty.
+This field should not be changed
+by drivers or modules.
+.P
+The \f4q_last\fP field points to the last message on the queue, or
+is \f4NULL\fP if the queue is empty.
+This field should not be changed
+by drivers or modules.
+.P
+The \f4q_next\fP field points to the next queue in the stream.
+This
+field should not be changed by drivers or modules.
+.P
+The \f4q_ptr\fP field is a private field for use by drivers and modules.
+It provides a way to associate the driver's per-minor data structure with
+the queue.
+.P
+The \f4q_count\fP field contains the number of bytes in messages on the
+queue in priority band 0.
+This includes normal messages and high priority
+messages.
+.P
+The \f4q_flag\fP field contains a bitmask of flags that indicate
+different queue characteristics.
+No flags may be set or cleared
+by drivers or modules.
+However, the following flags may be tested:
+.IP \f4QREADR\fP 14n
+The queue is the read queue.
+Absence of this flag implies
+a write queue.
+.P
+The \f4q_minpsz\fP field is the minimum packet size for
+the queue.
+This is an advisory limit specifying
+the smallest message that can be accepted by the queue.
+It is initially set to the value specified by the \f4mi_minpsz\fP
+field in the \f4module_info\fP(D4DK) structure.
+This field
+can be changed by drivers or modules.
+.P
+The \f4q_maxpsz\fP field is the maximum packet size for
+the queue.
+This is an advisory limit specifying
+the largest message that can be accepted by the queue.
+It is initially set to the value specified by the \f4mi_maxpsz\fP
+field in the \f4module_info\fP structure.
+This field
+can be changed by drivers or modules.
+.P
+The \f4q_hiwat\fP field is the high water mark for the
+queue.
+This specifies the number of bytes of
+data contained in messages on the queue such that the queue is
+considered full, and hence flow-controlled.
+It is initially set to the value specified by the \f4mi_hiwat\fP
+field in the \f4module_info\fP structure.
+This field
+can be changed by drivers or modules.
+.P
+The \f4q_lowat\fP field is the low water mark for the
+queue.
+This specifies the number of bytes of
+data contained in messages on the queue such that the queue is
+no longer flow-controlled.
+It is initially set to the value specified by the \f4mi_lowat\fP
+field in the \f4module_info\fP structure.
+This field
+can be changed by drivers or modules.
+.SH NOTES
+The \f4queue\fP structure is defined as type \f4queue_t\fP.
+.SH SEE ALSO
+.na
+\f4getq\fP(D3DK),
+\f4putq\fP(D3DK),
+\f4strqget\fP(D3DK),
+\f4strqset\fP(D3DK),
+\f4module_info\fP(D4DK),
+\f4msgb\fP(D4DK),
+\f4qinit\fP(D4DK)
+.ad

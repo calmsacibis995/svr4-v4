@@ -1,0 +1,361 @@
+'\"macro stdmacro
+.if n .pH g1.edit @(#)edit	40.5.1.1 of 1/3/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} edit 1 "Editing Utilities" "\&"
+.if \nX=1 .ds x} edit 1 "Editing Utilities"
+.if \nX=2 .ds x} edit 1 "" "\&"
+.if \nX=3 .ds x} edit "" "" "\&"
+.TH \*(x}
+.\" --- 6/30/81 (4/8/79)
+.UC
+.SH NAME
+\f4edit\f1 \- text editor (variant of ex for casual users)
+.SH SYNOPSIS
+\f4edit\f1
+\f1[\f4\-r\f1]
+\f1[\f4\-x\f1]
+\f1[\f4\-C\f1]
+.IR name .\|.\|.
+.SH DESCRIPTION
+\f4edit\fP
+is a variant of the text editor
+\f4ex\fP
+recommended for new or casual users who wish to use a command-oriented editor.
+It operates precisely as
+\f4ex\fP
+with the following options automatically set:
+.RS
+.TP 14
+novice
+\f4ON
+.TP
+report
+\f4ON
+.TP
+showmode
+\f4ON
+.TP
+magic
+\f4OFF
+.RE
+.PP
+These options can be turned on or off via
+the
+\f4set\f1
+command in
+\f4ex\fP(1).
+.TP
+\f4\-r\f1
+Recover file after an editor or system crash.
+.TP
+\f4\-x\f1
+Encryption option; when used the file will be encrypted
+as it is being written and will require an
+encryption key to be read.
+\f4edit\fP
+makes an educated guess to determine if a file is
+encrypted or not.
+See
+\f4crypt\fP(1).
+Also, see the
+.SM NOTES
+section at the end of this manual page.
+.TP
+\f4\-C\f1
+Encryption option; the same as
+\f4\-x\f1
+except that
+\f4edit\fP
+assumes files are encrypted.
+.PP
+The following brief introduction should help you get started with
+\f4edit\fP.
+If you are using a \s-2CRT\s0 terminal you may want
+to learn about the display editor
+\f4vi\fP.
+.PP
+To edit the contents of an existing file you begin with the command
+\f4edit \f2name\f1 to the shell.
+\f4edit\fP
+makes a copy of the file that you can then edit, and tells you how
+many lines and characters are in the file.
+To create a new file,
+you also begin with the command \f4edit\f1 with a filename:
+\f4edit \f2name\f1; the editor will tell you it is a
+\f4[New File]\f1.
+.P
+The \f4edit\fP command prompt is the colon (\f4:\f1),
+which you should see after starting the editor.
+If you are editing an existing file,
+then you will have some lines in
+\f4edit\fP's
+buffer (its name for the copy of the file you are editing).
+When you start editing,
+\f4edit\fP
+makes the last line of the file the current line.
+Most commands to
+\f4edit\fP
+use the current line if you do not tell them which line to use.
+Thus if you say
+\f4print\f1
+(which can be abbreviated \f4p\f1)
+and type carriage return (as you should after all
+\f4edit\fP
+commands), the current line will be printed.
+If you
+\f4delete\f1
+(\f4d\f1) the current line,
+\f4edit\fP
+will print the new current line,
+which is usually the next line in the file.
+If you
+\f4delete\f1
+the last line, then the new last line becomes the current one.
+.PP
+If you start with an empty file or wish to add some new lines, then the
+\f4append\f1
+(\f4a\f1)
+command can be used.
+After you execute this command (typing a carriage return after the
+word \f4append\f1),
+\f4edit\fP
+will read lines from your terminal until you type a line consisting
+of just a dot (\f4.\f1); it places these lines after the current line.
+The last line you type then becomes the current line.
+The
+\f4insert\f1
+(\f4i\f1)
+command
+is like \f4append\f1,
+but places the lines you type before, rather than after, the current line.
+.PP
+\f4edit\fP
+numbers the lines in the buffer, with the first line having number 1.
+If you execute the command \f41\f1, then
+\f4edit\fP
+will type the first line of the buffer.
+If you then execute the command
+\f4d\f1,
+\f4edit\fP
+will delete the first line, line 2 will become line 1, and
+\f4edit\fP
+will print the current line (the new line 1) so you can see where you are.
+In general, the current line will always be the last line affected by a command.
+.PP
+You can make a change to some text within the current line by using the
+\f4substitute\f1
+(\f4s\f1)
+command:
+\f4s\f1/\f2old\f1\|/\f2new\f1/ where
+.I old
+is the string of characters you want to replace and
+.I new
+is the string of characters you want to replace \f2old\f1 with.
+.PP
+The \f4file\f1 (\f4f\f1) command
+will tell you how many lines there are in the buffer you are editing
+and will say \f4[Modified]\f1 if you have changed the buffer.
+After modifying a file, you can save the contents of the file by executing a
+\f4write\f1
+(\f4w\f1)
+command.
+You can leave the editor by issuing a
+\f4quit\f1
+(\f4q\f1)
+command.
+If you run
+\f4edit\fP
+on a file, but do not change it, it is not necessary
+(but does no harm)
+to
+\f4write\f1
+the file back.
+If you try to
+\f4quit\f1
+from
+\f4edit\fP
+after modifying the buffer without writing it out, you will receive the message
+\f4No write since last change (:quit! overrides)\f1, and
+\f4edit\fP
+will wait for another command.
+If you do not want to write the buffer out,
+issue the
+\f4quit\f1
+command followed by an exclamation point (\f4q!\f1).
+The buffer is then irretrievably discarded and you return to the shell.
+.PP
+By using the
+\f4d\f1
+and
+\f4a\f1
+commands
+and giving line numbers to see lines in the file, you can make any
+changes you want.
+You should learn at least a few more things, however, if you will use
+\f4edit\fP
+more than a few times.
+.PP
+The
+\f4change\f1
+(\f4c\f1)
+command changes the current line to a sequence of lines you supply
+(as in
+\f4append\f1,
+you type lines up to a line consisting of only a dot (\f4.\f1).
+You can tell
+\f4change\f1
+to change more than one line by giving the line numbers of the
+lines you want to change, i.e., \f43,5c\f1.
+You can print lines this way too:
+\f41,23p\f1 prints the first 23 lines of the file.
+.PP
+The
+\f4undo\f1
+(\f4u\f1)
+command reverses the effect of the last command you executed that changed
+the buffer.
+Thus if you execute a
+\f4substitute\f1
+command that does not do what you want, type \f4u\f1
+and the old contents of the line will be restored.
+You can also
+\f4undo\f1
+an
+\f4undo\f1
+command.
+\f4edit\fP
+will give you a warning message when a command affects more than
+one line of the buffer.
+Note that commands such as
+\f4write\f1
+and
+\f4quit\f1
+cannot be undone.
+.PP
+To look at the next line in the buffer, type carriage return.
+To look at a number of lines, type
+\f4^D\f1
+(while holding down the control key, press
+\f4d\f1)
+rather than carriage return.
+This will show you a half-screen of lines on a CRT or 12 lines on a hardcopy
+terminal.
+You can look at nearby text by executing the \f4z\f1 command.
+The current line will appear in the middle of the text displayed,
+and the last line displayed will become the current line;
+you can get back
+to the line where you were before you executed the \f4z\f1 command by typing
+\f4\'\'\f1.
+The
+\f4z\f1
+command has other options:
+\f4z\-\f1
+prints
+a screen of text (or 24 lines) ending where you are;
+\f4z+\f1
+prints the next screenful.
+If you want less than a screenful of lines,
+type
+\f4z.11\f1
+to display five lines before
+and  five lines after the current line.
+(Typing
+\f4z.\f2n\f1,
+when
+.I n
+is an odd number,
+displays a total of
+.I n
+lines, centered about the current line;
+when
+.I n
+is an even number,
+it displays \f2n\f1\-1 lines,
+so that the lines displayed are centered around the current line.)
+You can give counts after other commands; for\p
+.br
+.ne.5i
+example,
+you can delete 5 lines starting with the current line with the command
+\f4d5\|.\f1
+.PP
+To find things in the file, you can use line numbers if you happen to know
+them; since the line numbers change when you insert and delete lines
+this is somewhat unreliable.
+You can search backwards and forwards in the file for strings by giving
+commands of the form
+/\f2text\f1/
+to search forward for
+.I text
+or
+?\f2text\f1?
+to search backward for
+.I text .
+If a search reaches the end of the file without finding \f2text\f1, it
+wraps around and continues to search back to the line where you are.
+A useful feature here is a search of the form
+/^\f2text\f1/
+which searches for
+.I text
+at the beginning of a line.
+Similarly
+/\f2text\f1$/
+searches for
+.I text
+at the end of a line.
+You can leave off the trailing \f4/\f1 or \f4?\f1 in these commands.
+.PP
+The current line has the symbolic name dot (\f4.\f1); this is most
+useful in a range of lines as in \f4.,$p\f1 which prints the
+current line plus the rest of
+the lines in the file.
+To move to the last line in the file, you can refer to it by its symbolic
+name $.
+Thus the command \f4$d\f1 deletes the last line in the
+file, no matter what the current line is.
+Arithmetic with line references is also possible.
+Thus the line \f4$\-5\f1 is the fifth before the last and
+\f4\&.+20\f1 is 20 lines after the current line.
+.PP
+You can find out the current line by typing \f4.=\f1\|.
+This is useful if you wish to move or copy a section of text within a file or
+between files.
+Find the first and last line numbers
+you wish to copy or move.
+To move lines 10 through 20, type
+\f410,20d a\f1
+to delete these lines from the file and place them in a buffer named
+\f4a\f1.
+\f4edit\fP
+has 26 such buffers named
+\f4a\f1
+through
+\f4z\f1.
+To put the contents of buffer
+\f4a\f1
+after the current line, type
+\f4put a\f1.
+If you want to move or copy these lines to another file, execute an
+\f4edit\f1
+(\f4e\f1)
+command after copying the lines; following
+the \f4e\f1 command with the name of the other
+file you wish to edit, i.e.,
+\f4edit chapter2\f1.
+To copy lines without deleting them, use \f4yank\f1 (\f4y\f1)
+in place of \f4d\f1.
+If the text you wish to move or copy is all within one file,
+it is not necessary to use named buffers.
+For example, to move lines 10 through 20 to the end
+of the file, type
+\f410,20m $\f1.
+.SH SEE ALSO
+\f4ed\fP(1), \f4ex\fP(1), \f4vi\fP(1).
+.SH NOTES
+The encryption options are provided
+with the Security Administration Utilities package,
+which is available only in the United States.
+.\"	@(#)edit_x.1	6.2 of 9/2/83
+.Ee

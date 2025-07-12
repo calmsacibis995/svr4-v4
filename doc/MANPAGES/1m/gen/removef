@@ -1,0 +1,46 @@
+'\"macro stdmacro
+.if n .pH g1a.removef @(#)removef	40.13 of 5/21/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} removef 1M "Essential Utilities" "\&"
+.if \nX=1 .ds x} removef 1M "Essential Utilities"
+.if \nX=2 .ds x} removef 1M "Essential Utilities" "\&"
+.if \nX=3 .ds x} removef "Essential Utilities" "\&"
+.TH \*(x}
+.SH NAME
+\f4removef\f1 \- remove a file from software database
+.SH SYNOPSIS
+\f4removef pkginst path1 [path2 ...]\f1
+.P
+\f4removef \-f pkginst\f1
+.SH DESCRIPTION
+\f4removef\fP informs the system that
+the user, or software,
+intends to remove a pathname.
+Output from \f4removef\fP is the list of input pathnames
+that may be safely removed
+(no other packages have a dependency on them).
+.PP
+After all files have been processed, \f4removef\fP
+should be invoked with the \f4\-f\f1 option to indicate that the removal
+phase is complete.
+.SH EXAMPLE
+The following shows the use of \f4removef\fP in an optional
+pre-install script:
+.sp
+.nf
+\f4echo "The following files are no longer part of this package
+	and are being removed."
+removef $PKGINST /dev/xt[0-9][0-9][0-9] |
+while read pathname
+do
+	echo "$pathname"
+	rm \-f $pathname
+done
+removef \-f $PKGINST || exit 2  \f1
+.fi
+.SH SEE ALSO
+\f4installf\fP(1M), \f4pkgadd\fP(1M), \f4pkgask\fP(1M), \f4pkgchk\fP(1),
+\f4pkginfo\fP(1), \f4pkgmk\fP(1),
+\f4pkgproto\fP(1), \f4pkgtrans\fP(1), \f4pkgparam\fP(3X)

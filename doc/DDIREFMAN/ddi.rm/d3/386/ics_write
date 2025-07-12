@@ -1,0 +1,45 @@
+'\"macro stdmacro
+.if n .pH 386.ics_write @(#)ics_write	40.5 of 7/1/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.nr X
+.if \nX=0 .ds x} ics_write D3D "Multibus II" "DDI" "\&"
+.if \nX=1 .ds x} ics_write D3D "Multibus II" "DDI" "\&"
+.if \nX=2 .ds x} ics_write D3D "" "\&"
+.if \nX=3 .ds x} ics_write "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4ics_write\f1 \- writes a value into the specified register of the board in
+the specified slot.
+.SH SYNOPSIS
+.nf
+\f4#include <sys/ics.h>
+int ics_write (\f2slot\fP, \f2register\fP, \f2value\fP)
+unsigned short slot;
+unsigned short register;
+unsigned char value;\f1
+.fi
+.SH ARGUMENTS
+.PD 0
+.TP 11
+\f2slot\f1
+The slot id of the board.
+.TP 11
+\f2register\f1
+The register number of the board's interconnect space record.
+.TP 11
+\f2value\f1
+The value to be written into the specified register
+.SH DESCRIPTION
+\f4ics_write\f1 writes \f2value\f1 into register number register of the
+board in slot number slot.
+If no board is in the designated slot, the
+results are undefined.
+.SH RETURN VALUE
+If the write is successful, 0 is returned.
+If the register number specified
+does not exist in the interconnect space of the board, \f4EINVAL\f1 is returned.
+.SH LEVEL
+Base or Interrupt
+.SH SEE ALSO
+\f4ics_read\f1(D3D),
+\f4ics_rwdr\f1(D3D)

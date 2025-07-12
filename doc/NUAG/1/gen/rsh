@@ -1,0 +1,288 @@
+'\"macro stdmacro
+.if n .pH g1.rsh @(#)rsh	40.11 of 5/21/91
+.\" Copyright 1989 AT&T
+.nr X
+.if \nX=0 .ds x} rsh 1 "Internet Utilities" "\&"
+.if \nX=1 .ds x} rsh 1 "Internet Utilities"
+.if \nX=2 .ds x} rsh 1 "" "\&"
+.if \nX=3 .ds x} RSH "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4rsh\f1 \- remote shell
+.SH SYNOPSIS
+\f4rsh\f1
+[
+\f4\-n\f1
+] [
+\f4\-l\f1
+.I username
+]
+.I hostname
+.I command
+.P
+\f4rsh\f1
+.I hostname
+[
+\f4\-n\f1
+] [
+\f4\-l\f1
+.I username
+]
+.I command
+.P
+.I hostname
+[
+\f4\-n\f1
+] [
+\f4\-l\f1
+.I username
+]
+.I command
+.SH DESCRIPTION
+\f4rsh\f1
+connects to the specified
+.I hostname
+and executes the specified
+.IR command .
+\f4rsh\f1
+copies its standard input to the remote command, the standard
+output of the remote command to its standard output, and the
+standard error of the remote command to its standard error.
+Interrupt, quit and terminate signals are propagated to the remote
+command;
+\f4rsh\f1
+normally terminates when the remote command does.
+.P
+If you omit
+.IR command ,
+instead of executing a single command,
+\f4rsh\f1
+logs you in on the remote host using
+\f4rlogin\f1(1).
+.BP
+Shell metacharacters which are not quoted are interpreted
+on the local machine, while quoted metacharacters are interpreted on
+the remote machine.
+See
+.SM EXAMPLES\s0.
+.P
+Hostnames are given in the 
+.I hosts
+database, which may be contained in the 
+\f4/etc/hosts\f1
+file,
+the Internet domain name database,
+or both.
+Each host has one official name (the first
+name in the database entry)
+and optionally one or more nicknames.
+Official hostnames or nicknames may be given as
+.IR hostname .
+.P
+If the name of the file from which 
+\f4rsh\f1
+is executed is anything other than 
+\f4rsh\f1,
+\f4rsh\f1
+takes this name as its
+.I hostname
+argument.
+This allows you to create a symbolic link to
+\f4rsh\f1 in the name
+of a host which, when executed, will invoke a remote
+shell on that host.
+By creating a directory and populating it with symbolic links 
+in the names
+of commonly used hosts, then including the directory
+in your shell's search path,
+you can run
+\f4rsh\f1
+by typing 
+.I hostname 
+to your shell.
+.P
+Each remote machine may have a file named
+\f4/etc/hosts.equiv\f1
+containing a list of trusted hostnames
+with which it shares usernames.
+Users with the same username on both the local and
+remote machine may 
+\f4rsh\f1
+from the machines listed in the remote machine's
+\f4/etc/hosts\f1
+file.
+Individual users may set up a similar private
+equivalence list with the file \f4.rhosts\f1
+in their home directories.
+Each line in this file contains two names: a
+.I hostname
+and a
+.I username
+separated by a space.
+The entry permits the user named
+.I username
+who is logged into
+.I hostname
+to use
+\f4rsh\f1
+to access the remote machine as the remote user.
+If the name of the local host is not found in the
+\f4/etc/hosts.equiv\f1 file on the remote machine,
+and the local username and hostname are not
+found in the remote user's \f4.rhosts\f1
+file, then the access is denied.
+The hostnames listed in the
+\f4/etc/hosts.equiv\f1 and \f4.rhosts\f1
+files must be the official hostnames listed in the 
+\f4hosts\f1 database;
+nicknames may not be used in either of these files.
+.P
+\f4rsh\f1
+will not prompt for a password if access is denied on the remote machine
+unless the
+.I command
+argument is omitted.
+.SH OPTIONS
+.TP
+\f4\-l \f2username\f1
+Use
+.I username
+as the remote username instead of your local username.
+In the absence
+of this option, the remote username is the same as your local username.
+.TP
+\f4\-n\f1
+Redirect the input of
+\f4rsh\f1
+to
+\f4/dev/null\f1.
+You sometimes need this option to avoid
+unfortunate interactions between
+\f4rsh\f1
+and the shell which invokes it.
+For example, if you are running
+\f4rsh\f1
+and invoke a
+\f4rsh\f1
+in the background without redirecting its input
+away from the terminal, it will block even if no reads
+are posted by the remote command.
+The
+\f4\-n\f1
+option will prevent this.
+.P
+The type of remote shell
+(\f4sh\f1,
+the restricted shell\(em\f4/usr/lib/rsh\f1,
+or other) is determined by the user's
+entry in the file
+\f4/etc/passwd\f1
+on the remote system.
+.SH EXAMPLES
+The command:
+.IP
+\f4rsh lizard cat lizard.file >> example.file\f1
+.P
+appends the remote file 
+\f4lizard.file\f1
+from the machine called
+``lizard''
+to the file called
+\f4example.file\f1
+on the local machine,
+while the command:
+.IP
+\f4rsh lizard cat lizard.file ">>" lizard.file2\f1
+.P
+appends the file
+\f4lizard.file\f1
+on the machine called
+``lizard''
+to the file
+\f4lizard.file2\f1
+which also resides on the machine called
+``lizard.''
+.SH FILES
+.PD 0
+.TP 20
+\f4/etc/hosts\f1
+.TP
+\f4/etc/passwd\f1
+.PD
+.SH SEE ALSO
+\f4rlogin\f1(1),
+\f4vi\f1(1),
+\f4named\f1(1M),
+\f4hosts\f1(4),
+\f4hosts.equiv\f1(4)
+.SH NOTES
+.P
+When a system is listed in \f4hosts.equiv\f1, its
+security must be as good as local security.
+One insecure 
+system listed in \f4hosts.equiv\f1 can compromise the 
+security of the entire system.
+.P
+You cannot run an interactive command [such as
+\f4vi\f1(1)];
+use
+\f4rlogin\f1
+if you want to do so.
+.P
+Stop signals stop the local
+\f4rsh\f1
+process only; this is arguably
+wrong, but currently hard to fix for reasons too complicated to
+explain here.
+.P
+The current local environment is not passed to the remote shell.
+.P
+Sometimes the
+\f4\-n\f1
+option is needed for reasons that are less than obvious.
+For example, the command:
+.IP
+\f4rsh somehost dd if=/dev/nrmt0 bs=20b | tar xvpBf \-\f1
+.P
+will put your shell into a strange state.
+Evidently, what happens is
+that the
+\f4tar\f1
+terminates before the
+\f4rsh\f1.
+The
+\f4rsh\f1
+then tries to write into the ``broken pipe'' and,
+instead of terminating neatly,
+proceeds to compete with your shell for its standard input.
+Invoking
+\f4rsh\f1
+with the
+\f4\-n\f1
+option avoids such incidents.
+.P
+This bug occurs only when
+\f4rsh\f1
+is at the beginning of a pipeline and
+is not reading standard input.
+Do not use the
+\f4\-n\f1
+if
+\f4rsh\f1
+actually needs to read standard input.
+For example,
+.IP
+\f4tar cf \- . | rsh sundial dd of=/dev/rmt0 obs=20b\f1
+.P
+does not produce the bug.
+If you were to use the
+\f4\-n\f1
+in a case like this,
+\f4rsh\f1
+would incorrectly read from
+\f4/dev/null\f1
+instead of from the pipe.
+.P
+Prior to Release 4, the \f4rsh\fP command invoked the restricted shell.
+This restricted shell command is \f4/usr/lib/rsh\fP and can be executed
+by using the full pathname.

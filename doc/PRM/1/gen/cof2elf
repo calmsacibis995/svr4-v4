@@ -1,0 +1,102 @@
+'\"macro stdmacro
+.if n .pH g1.cof2elf @(#)cof2elf	40.10 of 5/22/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} cof2elf 1 "C Development Set" "\&"
+.if \nX=1 .ds x} cof2elf 1 "C Development Set"
+.if \nX=2 .ds x} cof2elf 1 "" "\&"
+.if \nX=3 .ds x} cof2elf "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4cof2elf\f1 \- COFF to ELF object file translation
+.SH SYNOPSIS
+\f4cof2elf [\-iqV] [\-Q{yn}] [\-s \f2directory\f4] \f2files\f1
+.SH DESCRIPTION
+\f4cof2elf\f1
+converts one or more COFF object
+\f2files\f1
+to ELF.
+This translation occurs in place, meaning the original
+file contents are modified.
+If an input file is an archive, each
+member will be translated as necessary,
+and the archive will be rebuilt with its members in the original order.
+\f4cof2elf\f1
+does not change input files that are not COFF.
+.P
+Options have the following meanings.
+.TP 12
+\f4\-i\f1
+Normally, the files are modified only when full translation occurs.
+Unrecognized data, such as unknown relocation types, are treated
+as errors and prevent translation.
+Giving the
+\f4\-i\f1
+flag ignores these partial translation conditions and modifies
+the file anyway.
+.TP
+\f4\-q\f1
+Normally,
+\f4cof2elf\f1
+prints a message for each file it examines, telling
+whether the file was translated, ignored, etc.
+The
+\f4\-q\f1
+flag (for quiet) suppresses these messages.
+.TP
+\f4\-Q\f2arg\f1
+If
+\f2arg\f1
+is
+\f4y\f1,
+identification information about
+\f4cof2elf\f1
+will be added to the output files.
+This can be useful for software administration.
+Giving
+\f4n\f1
+for
+\f2arg\f1
+explicitly asks for no such information, which is
+the default behavior.
+.TP
+\f4\-s\f2directory\fP
+As mentioned above,
+\f4cof2elf\f1
+modifies the input files.
+This option saves a copy of the original files in the specified
+\f2directory\fP,
+which must exist.
+\f4cof2elf\f1
+does not save files it does not modify.
+.TP
+\f4\-V\f1
+This flag tells
+\f4cof2elf\f1
+to print a version message on standard error.
+.SH "SEE ALSO"
+\f4ld\fP(1),
+\f4elf\fP(3E),
+\f4a.out\fP(4),
+\f4ar\fP(4)
+.SH NOTES
+Some debugging information is discarded.
+Although this does not affect the behavior of a running program,
+it may affect the information available for symbolic debugging.
+.P
+\f4cof2elf\f1
+translates only COFF relocatable files.
+It does not translate executable or static shared library files
+for two main reasons.
+First, the operating system supports executable files and
+static shared libraries, making translation unnecessary.
+Second, those files have specific address and alignment constraints
+determined by the file format.
+Matching the constraints with a different object file format
+is problematic.
+.P
+When possible, programmers should recompile their source
+code to build new object files.
+\f4cof2elf\f1
+is provided for those times when source code is unavailable.

@@ -1,0 +1,422 @@
+.if n .pH 386.overlay @(#)overlay	40.1.1.1
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.BK "Installation Guide" "System V Release 4"
+.CH "Overlay Installation" "3"
+.H 1 "Introduction"
+An overlay installation reinstalls the System V Release 4 (SVR4) Version 4
+operating system on 
+a system that already has SVR4 Version 4 installed. An overlay installation saves 
+user files and the root password, but does not retain most system and network 
+configuration information. The hard disk does not have to be repartitioned in 
+an overlay installation; the existing partitioning is used.
+.IX "partitioning, hard disk"
+.IX "hard disk, partitioning"
+.P
+If your SVR4 Version 4 system is unusable, you can try to do an overlay installation.
+If the filesystem is too corrupted, or if the system is unusable for other
+reasons, you must perform a new installation.
+.AB N
+Before beginning the overlay installation, be sure to remove all
+software packages, as described in the "Removing Packages" section of Chapter 1.
+.AC
+.H 1 "Installation Procedure (Overlay Installation)"
+Follow the installation described in this chapter from beginning to end.
+The procedure is essentially the same, whether you are installing from
+floppy or cartridge tape.
+.H 2 "Prepare Target System"
+Here are a few steps you should take before
+doing an overlay installation.
+.AL 
+.LI 
+If the target system contains any user files that you want to save,
+back them up. 
+Though user files should not be
+overwritten during an overlay installation procedure, it is
+still a good precaution to take.
+.LI
+Back up any desired of your configuration
+files. For example, the networking
+configuration, password, and spool files may contain
+information that is worth saving. 
+.LI
+Remove all add-on packages.
+See the appropriate section in Chapter 1 for instructions.
+.LE
+.H 2 "Boot from Floppy Diskette"
+To boot the system from diskette, do the following: 
+.AL
+.LI 4
+Make sure that power to any externally-powered devices attached to the 
+system (such as a monitor) is on.
+.LI
+Make sure that power to the computer is off. If you already have a UNIX 
+system running, shut the UNIX system down (using the \f4shutdown\fP(1M) 
+command) before turning off power to the computer. 
+.LI
+Select boot diskette 1 and insert into the appropriate disk drive.
+Because there are different boot diskettes for different types of hardware,
+your boot diskette 1 will have one of the following labels on it:
+.IX "boot diskettes"
+.IX "diskettes, boot"
+.BL
+.LI
+ST506/ESDI Boot Disk 1 of \f2X\f1 
+.LI
+Adaptec SCSI Boot Disk 1 of \f2X\f1
+.LI
+Western Digital SCSI Boot Disk 1 of \f2X\f1
+.LE
+(\f2X\f1 represents the total number of diskettes in the Base System.)
+.LI
+Turn on power to the computer. 
+After a few minutes, the system says:
+.SS CO
+Booting the system...
+.SE
+Then, the system performs a memory check and allocates memory to the 
+RAM Disk(s.). The system needs at least 4 MB of memory to support the 
+RAM Disk, which is used during installation.
+.IX "memory, check"
+.IX "memory, RAM support"
+The system boots from the diskette after the memory check.
+.LI
+If the system does not reboot, check the following Troubleshooting
+tips.
+.AB N
+The overlay procedure can be aborted at any time by pressing the
+.HK DEL
+key at any prompt.
+If you abort the overlay procedure, you must restart it from the beginning.
+.AC
+.B "Troubleshooting"
+.P
+.IX "troubleshooting, boot problems"
+.BL
+.LI
+If the system doesn't boot from the diskette, make sure the diskette 
+is in disk drive 0 and reboot the system.
+.IX "rebooting the system"
+.P
+.LI
+If you used the wrong boot diskette for your controller, a warning 
+message, \f4"Incorrect UNIX System "Base System Package" Floppy
+Disk 1"\fP displays. If you get such a warning, remove the 
+boot diskette, insert the correct one, then press the
+.HK RESET
+button. 
+If the system still won't boot, the disk drive may be jumpered incorrectly.
+Look at the hardware reference manual that came with 
+your system to find out how to rejumper the controller. If you need 
+help, contact your service representative.
+.LI
+If you have a non-SCSI cartridge tape controller and drive and you 
+see an error message that says, \f4"Cartridge controller was not found 
+at address 00000300H. Tape driver is disabled"\fP, it means that the 
+tape drive is cabled incorrectly, or the controller is jumpered incorrectly.
+.IX "error messages"
+.IX "tape drive, cable"
+.LI
+If the system warns you that more memory is needed, add memory 
+before installing the SVR4 software.
+.LI
+To fix the hardware problems, press 
+.HK Del
+to abort the installation,
+then shut down the system by typing \f4uadmin 2 0\fP. Unplug all 
+power cords. Reset the jumpers on the controller, if necessary. Make 
+sure the cable to the tape drive is connected correctly. Plug the 
+power cords back in, then reboot the system. 
+.IX "rebooting the system"
+.IX "aborting installation"
+.IX "installation, aborting"
+.LE
+.AB W
+Adding memory, reconfiguring the cartridge controller, or 
+checking the tape drive cable involves removing the cover on 
+the computer. When the cover is open, you are exposed to 
+dangerous voltages. To reduce the chance of severe shock, 
+unplug the power cords of the computer and all peripherals 
+before opening the cover. Only qualified service technicians 
+or system integrators should perform these tasks.
+.AC
+.LI
+When prompted to insert the UNIX System "Base System Package" 
+Floppy Disk 2, remove the first boot diskette, insert the Base System diskette, and press
+.HK EK .
+The second diskette contains the basic utilities 
+needed to put UNIX on the hard disk.
+.IX "diskette, base system"
+.P
+The system responds:
+.SS CO
+Checking system configuration...
+.SE
+The screen may be blank for several minutes as the hard disk is searched to 
+see if there are recognizable disk partitions and filesystems on it.
+.AB N
+If another operating system, such as MS-DOS, is already on part of 
+the disk, installing the UNIX Operating System as instructed won't 
+destroy that operating system, as long as the UNIX Operating System is
+installed on an unused partition.
+.AC
+If the system is recognized as a UNIX System V, Release 4 system,
+after a few minutes, the following displays:
+.SS CO
+Do you wish to overlay your existing UNIX system (y or n)?
+.SE
+.AB N
+If the above message does not display, it means the system could not 
+be identified as a SVR4 system. You must do a new installation 
+instead of an overlay. Abort the installation by answering \f4n\fP
+and go to Chapter 2.
+.AC
+If you answer \f4y\f1 to the question, the system does a sanity check.
+.sp
+.B "Troubleshooting"
+.IX "troubleshooting, overlay problems"
+.BL
+.LI
+If the system warns you that an overlay installation can't be done 
+and prompts you to strike
+.HK EK
+to continue with a new installation
+or press
+.HK Del
+to cancel the installation, it means the filesystems
+are corrupted, the root or other filesystems can't be mounted, or 
+a UNIX operating system is not on the hard disk. Respond as desired.
+If you press
+.IX "installation, aborting"
+.HK Del ,
+you can then reboot from the hard disk 
+and use the filesystem maintenance tools such as \f4fsck\fP(1M) to try to 
+fix the problem. Then, when ready, try the installation again.
+.IX "fsck"
+.IX "rebooting the system"
+.LI
+The system may warn you that packages are still installed and
+must be removed.
+If so, see the description of how to remove
+all packages in Chapter 1.
+.LE
+.LI
+If everything is all right, the following message displays:
+
+.SS CO
+WARNING:
+	A system backup is suggested
+	prior to doing a system overlay.
+
+	To proceed with installation strike ENTER,
+	otherwise, strike DEL to cancel the installation.
+
+.SE
+.LI
+If:
+.DL
+.LI
+you did not already back up the files you want to keep, press 
+.HK Del ,
+shut down the system, reboot the system from the hard 
+disk, then back up your files as described in the
+.BT "System Administrator's Guide" .
+Then restart the installation process.
+.IX "rebooting the system"
+.LI
+you are prepared to overlay the system, press
+.HK EK .
+.LE
+.LE
+.P
+Next, you must choose which package sets and packages you want to install.
+.H 2 "Selecting Packages"
+The software packages are grouped in sets, according to function; BASIC,
+NETWORK, EXTENDED, DEVELOPMENT and HARDWARE. You can install an 
+entire set, or selectively install packages from each set.
+The sets and their corresponding packages are (in the order they are installed, 
+if selected):
+.IX "packages, BASIC"
+.IX "packages, NETWORK"
+.IX "packages, EXTENDED"
+.IX "packages, DEVELOPMENT"
+.IX "packages, HARDWARE"
+.BL
+.LI
+BASIC = ed terminf termcap windowing mouse fmli oam lp acp nsu
+.IX "ed package"
+.IX "terminfo package"
+.IX "termcap package"
+.IX "windowing package"
+.IX "mouse package"
+.IX "fmli package"
+.IX "oam package"
+.IX "lp package"
+.IX "acp package"
+.IX "nsu package"
+.LI
+NETWORK = dfs rpc inet nfs rfs
+.IX "inet package"
+.IX "dfs package"
+.IX "rpc package"
+.IX "nfs package"
+.IX "rfs package"
+.LI
+DEVELOPMENT = scde
+.IX "scde package"
+.LI
+EXTENDED = compat face
+.IX "compat package"
+.IX "face package"
+.LI
+HARDWARE = wd imx586 ie6 qt
+.IX "ie6 package"
+.IX "qt package"
+.IX "wd package"
+.IX "imx586 package"
+.LE
+.AB N
+If you have a SCSI system, the \f4qt\fP tape driver package is not listed 
+in the HARDWARE set.
+.AC
+Before selecting the packages you want to install, make note of the following:
+.BL
+.LI
+The base operating system and all the packages that make up the UNIX Operating System
+use about 100 MB of memory. The DOS partition (if desired), and the optional
+user slices (home, home2, tmp, etc.) must be sized accordingly. If your 
+hard disk is only 80 MB, you cannot install all the packages. Table A-1 in 
+Appendix A shows the minimum required disk space needed to install the 
+various packages.
+.IX "optional slices"
+.IX "DOS, partition"
+.IX "partition, DOS"
+.IX "memory, 100 MB"
+.IX "hard disk, 80 MB"
+.LI
+If your hard disk is smaller than 320 MB and you want to install all the 
+packages, you may not be able to create all the optional slices you desire. 
+Read Appendix B,
+.CT "Selecting Optional Slices" ,
+and plan your disk layout before beginning.
+.IX "hard disk, planning layout"
+.IX "hard disk, 320 MB"
+.IX "optional slices, selecting"
+.LI
+When selecting the Hardware Set packages, install only one Ethernet
+driver package - the one for which you have corresponding hardware.
+.IX "Ethernet, driver packages"
+.LE
+.H 3 "The Package Selection Questions"
+The first question asked about the package selection is as follows:
+.SS CO
+The BASIC Package Set contains the following packages:
+	(ed) Editing Package
+	(terminf) Remote Terminal Package
+	(termcap) AT&T Termcap Compatibility Package
+	(windowing) AT&T Windowing Utilities
+	(mouse)  Mouse Driver Package
+	(fmli)  AT&T Form and Menu Language Interpreter
+	(oam)  Operations, Administration, and Maintenance
+	(lp)  LP Print Service
+	(acp) Application Compatibility Package
+	(nsu) Network Support Utilities
+Do you wish to install any of these packages (default n): \s0
+.SE
+.AL 1
+.LI 12
+Answer as desired. If you press
+.HK EK
+to accept the default, you are 
+asked if you want to install the next package set (the NETWORK set). If 
+you answer \f4y\fP to the previous question, the system asks:
+.SS CO
+Install all packages? (default y):
+.SE
+You can install all the packages, or selectively install them.
+.LI
+To install all the packages in the set, press 
+.HK EK .
+.IX "packages, installing"
+You are then asked about the next package set. Respond as desired.
+.LI
+To selectively install the packages, type \f4n\fP .
+.IX "packages, selecting"
+.sp
+The system asks you one-by-one if you want to install the packages
+in the set. Respond as desired.
+.LI
+After you answer the questions about one package set, the system asks about 
+the next package set. Repeat the required steps.
+.P
+When you have finished selecting packages, a summary of the packages you 
+selected displays. For example:
+.SS CO
+Current Package Selections:
+BASIC:
+
+	Editing Package
+	Terminal Information Utilities
+	Termcap Compatibility Package
+	AT&T Windowing Utilities
+	Mouse Driver Package
+	Form and Menu Language Interpreter
+	Operations, Administration, and Maintenance
+	LP Print Service
+	Application Compatibility Package
+	Network Support Utilities
+    
+NETWORK:
+	DFS Utilities
+	Remote Procedure Call Utilities
+	Internet Utilities
+	Network File System Utilities
+	RFS Utilities
+
+DEVELOPMENT:
+	Standard C Development Environment
+EXTENDED:
+	BSD Compatibility Package
+	Framed Access Command Environment
+HARDWARE:
+	WD8003 Ethernet Driver
+	Intel Ethernet Driver
+	IE6 (3C503) Ethernet Driver
+	Cartridge Tape Utilities
+
+
+Are these Correct (default n):
+.SE
+.LI
+To change the selection, press
+.HK EK .
+The first question about the package sets redisplays and you are cycled through the entire selection process 
+again.
+.LI
+To accept the summary, type \f4y\fP.
+.SP
+The system will then produce the following messages:
+.SS CO
+A UNIX System will now be installed on your hard disk
+....................
+Please standby.
+
+
+When you are prompted to reboot your system,
+
+remove the floppy disk from the diskette drive,
+
+and strike CTRL-ALT-DEL.
+Please wait for the prompt.
+
+Reboot the system now.
+.SE
+.LI
+When prompted to reboot the system, remove the diskette from the drive
+and press
+.HK Ctrl-Alt-Del .
+The system reboots.
+.LE
+The rest of the overlay installation is the same as the procedure for
+a new installation.
+Go to Chapter 2, "Install Base System" section and complete the
+steps from there to the end of the chapter.

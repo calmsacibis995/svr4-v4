@@ -1,0 +1,66 @@
+'\"macro stdmacro
+.if n .pH g1.rwho @(#)rwho	40.9 of 5/21/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} rwho 1 "Internet Utilities" "\&"
+.if \nX=1 .ds x} rwho 1 "Internet Utilities"
+.if \nX=2 .ds x} rwho 1 "" "\&"
+.if \nX=3 .ds x} rwho "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4rwho\f1 \- who's logged in on local machines
+.SH SYNOPSIS
+\f4rwho\f1
+[
+\f4\-a\f1
+]
+.SH DESCRIPTION
+.LP
+The
+\f4rwho\f1
+command produces output similar to
+\f4who\f1(1),
+but for all machines on your network.
+If no report has been
+received from a machine for 5 minutes,
+\f4rwho\f1
+assumes the machine is down, and does not report users last known
+to be logged into that machine.
+.LP
+If a user has not typed to the system for a minute or more,
+\f4rwho\f1
+reports this idle time.
+If a user has not typed to the system for
+an hour or more, the user is omitted from the output of
+\f4rwho\f1
+unless the
+\f4\-a\f1
+flag is given.
+.LP
+The 
+\f4\-a\f1
+option reports all users whether or not they have typed
+to the system in the past hour.
+.SH FILES
+.PD 
+.TP 35
+\f4/var/spool/rwho/whod.*\f1
+information about other machines
+.SH SEE ALSO
+\f4finger\f1(1),
+\f4ruptime\f1(1),
+\f4who\f1(1),
+\f4rwhod\f1(1M)
+.SH NOTES
+.LP
+Does not work through gateways.
+.LP
+This is unwieldy when the number of machines
+on the local net is large.
+.LP
+The
+\f4rwho\f1
+service daemon,
+\f4rwhod\f1(1M),
+must be enabled for this command to return useful results.

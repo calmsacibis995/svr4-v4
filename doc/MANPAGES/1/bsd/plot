@@ -1,0 +1,158 @@
+'\"macro stdmacro
+.if n .pH g1.plot @(#)plot	40.13 of 5/23/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+'\" macro stdmacro
+.\" Copyright (c) 1988 Sun Microsystems, Inc. - All Rights Reserved.
+.\"
+.nr X
+.if \nX=0 .ds x} plot 1G "BSD Compatibility Package " "\&"
+.if \nX=1 .ds x} plot 1G "BSD Compatibility Package "
+.if \nX=2 .ds x} plot 1G "" "\&"
+.if \nX=3 .ds x} plot "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4plot\f1, \f4aedplot\f1, \f4atoplot\f1, \f4bgplot\f1, \f4crtplot\f1, \f4dumbplot\f1, \f4gigiplot\f1, \f4hpplot\f1, \f4implot\f1, \f4plottoa\f1, \f4t300\f1, \f4t300s\f1, \f4t4013\f1, \f4t450\f1, \f4tek\f1 \- graphics filters for various plotters
+.SH SYNOPSIS
+\f4/usr/ucb/plot\f1 [ \f4\-T\f2terminal\f1 ]
+.SH DESCRIPTION
+\f4plot\f1
+reads plotting instructions
+[see \f4plot\f1(4)]
+from the standard input and produces plotting instructions suitable
+for a particular
+.I terminal
+on the standard output.
+.P
+If no
+.I terminal
+is specified, the environment variable
+\f4TERM\fP
+is used.
+The default \%\f2terminal\f1 is \f4tek\f1.
+.SH ENVIRONMENT
+Except for
+\f4ver\f1,
+the following terminal-types can be used with
+\f1`\f4lpr \-g\f1'
+(see \f4lpr\f1)
+to produce plotted output:
+.RS
+.HP 12n
+\f42648\f1 |
+\f42648a\f1 |
+\f4h8\f1 |
+\f4hp2648\f1 |
+\f4hp2648a\f1
+.br
+Hewlett Packard\(rg 2648 graphics terminal.
+.TP
+\f4300\f1
+.SM DASI
+300 or
+.SM GSI
+terminal (Diablo\(rg mechanism).
+.TP
+\f4300s\f1 | \f4300S\f1
+.SM DASI
+300s terminal (Diablo mechanism).
+.TP
+\f4450\f1
+.SM DASI
+Hyterm 450 terminal (Diablo mechanism).
+.TP
+\f44013\f1
+Tektronix\(rg 4013 storage scope.
+.TP
+\f44014\f1 | \f4tek\f1
+Tektronix 4014 and 4015 storage scope
+with Enhanced Graphics Module.
+(Use 4013 for Tektronix 4014 or 4015 without the Enhanced
+Graphics Module).
+.TP
+\f4aed\f1
+.SM AED
+512 color graphics terminal.
+.HP
+\f4bgplot\f1 |
+\f4bitgraph\f1
+.br
+.SM BBN
+bitgraph graphics terminal.
+.TP
+\f4crt\f1
+Any crt terminal capable of running
+\f4vi\f1(1).
+.HP
+\f4dumb\f1 |
+\f4un\f1 |
+\f4unknown\f1
+.br
+Dumb terminals without cursor addressing or line printers.
+.TP
+\f4gigi\f1 | \f4vt125\f1
+.SM DEC\(rg
+vt125 terminal.
+.HP
+\f4h7\f1 |
+\f4hp7\f1 |
+\f4hp7221\f1
+.br
+Hewlett Packard 7221 graphics terminal.
+.TP
+\f4implot\f1
+Imagen plotter.
+.TP
+\f4var\f1
+Benson Varian printer-plotter
+.TP
+\f4ver\f1
+Versatec\(rg D1200A printer-plotter.
+The output is scan-converted and
+suitable input to
+\f1`\f4lpr \-v\f1'.
+.RE
+.SH FILES
+.PD 0
+.TP 20
+.TP
+\f4/usr/ucb/aedplot\f1
+.TP
+\f4/usr/ucb/atoplot\f1
+.TP
+\f4/usr/ucb/bgplot\f1
+.TP
+\f4/usr/ucb/crtplot\f1
+.TP
+\f4/usr/ucb/dumbplot\f1
+.TP
+\f4/usr/ucb/gigiplot\f1
+.TP
+\f4/usr/ucb/hpplot\f1
+.TP
+\f4/usr/ucb/implot\f1
+.TP
+\f4/usr/ucb/plot\f1
+.TP
+\f4/usr/ucb/plottoa\f1
+.TP
+\f4/usr/ucb/t300\f1
+.TP
+\f4/usr/ucb/t300s\f1
+.TP
+\f4/usr/ucb/t4013\f1
+.TP
+\f4/usr/ucb/t450\f1
+.TP
+\f4/usr/ucb/tek\f1
+.TP
+\f4/usr/ucb/vplot\f1
+.TP
+\f4/var/ucb/vplot\f2nnnnnn\f1
+.PD
+.SH "SEE ALSO"
+\f4lpr\f1(1)
+.PP
+\f4vi\fP(1) in the \f2User's Reference Manual\f1
+.br
+\f4plot\fP(3X), \f4plot\fP(4) in the \f2Programmer's Reference Manual\f1

@@ -1,0 +1,13 @@
+.if n .pH 386.COLFILE @(#)COLFILE	40.45.1.3
+.# This book ("Source Code Product Build Instructions")
+.# contains the following files,
+.# listed in the order in which they are printed.
+.# Next to each file name is its SCCS delta number.
+.FT
+release/scpbi/386/titlepage	40.9
+release/scpbi/386/copyright	40.11
+release/scpbi/386/MasterToc	40.18.1.2
+release/scpbi/386/Cchap1	40.24.1.1
+release/scpbi/386/chap1	40.39.1.3
+release/scpbi/386/Capp.doc	40.13
+release/scpbi/386/app.doc	40.15

@@ -1,0 +1,75 @@
+'\"!  tbl | mmdoc
+'\"macro stdmacro
+.if n .pH g3e.elf_fsize @(#)elf_fsize	40.14 of 5/1/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.\"#ident	"@(#)ci5-doc:req/libelf/fsize.man	1.3"
+.nr X
+.if \nX=0 .ds x} elf_fsize 3E "ELF Library" "\&"
+.if \nX=1 .ds x} elf_fsize 3E "ELF Library"
+.if \nX=2 .ds x} elf_fsize 3E "" "\&"
+.if \nX=3 .ds x} elf_fsize "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4elf_fsize\f1: \f4elf32_fsize\f1 \- return the size of an object file type
+.SH SYNOPSIS
+\f4cc\f1
+[\f2flag\fP \|.\|.\|.] \f2file\fP \|.\|.\|.
+\f4\-lelf\f1
+[\f2library\fP \|.\|.\|.]
+.PP
+.nf
+\f4#include <libelf.h>
+.sp 0.5
+size_t elf32_fsize(Elf_Type type, size_t count, unsigned ver);
+.fi
+.SH DESCRIPTION
+\f4elf32_fsize\fP
+gives the size in bytes of the 32-bit file representation
+of
+.I count
+data objects with the given
+.IR type .
+The library uses version
+.I ver
+to calculate the size [see
+\f4elf\fP(3E)
+and
+\f4elf_version\fP(3E)].
+.P
+Constant values are available for the sizes of fundamental types.
+.P
+.ne 15
+.TS
+center;
+cf4 c c
+lf4 | lf4 | lf4.
+Elf_Type	File Size	Memory Size
+.sp .3v
+_
+ELF_T_ADDR	ELF32_FSZ_ADDR	sizeof(Elf32_Addr)
+ELF_T_BYTE	1	sizeof(unsigned char)
+ELF_T_HALF	ELF32_FSZ_HALF	sizeof(Elf32_Half)
+ELT_T_OFF	ELF32_FSZ_OFF	sizeof(Elf32_Off)
+ELF_T_SWORD	ELF32_FSZ_SWORD	sizeof(Elf32_Sword)
+ELF_T_WORD	ELF32_FSZ_WORD	sizeof(Elf32_Word)
+.sp .3v
+_
+.TE
+.P
+\f4elf32_fsize\fP
+returns zero if the value of
+.I type
+or
+.I ver
+is unknown.
+See
+\f4elf_xlate\fP(3E)
+for a list of the
+.I type
+values.
+.SH "SEE ALSO"
+.na
+\f4elf\fP(3E),
+\f4elf_version\fP(3E),
+\f4elf_xlate\fP(3E)

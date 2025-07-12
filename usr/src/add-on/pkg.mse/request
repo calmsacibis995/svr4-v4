@@ -1,0 +1,405 @@
+#ident	"@(#)pkg.mse:request	1.4.2.2"
+
+#	Copyright (c) 1990  Intel Corporation
+#	All Rights Rreserved
+#
+#	INTEL CORPORATION PROPRIETARY INFORMATION
+#
+#	This software is supplied to AT & T under the terms of a license 
+#	agreement with Intel Corporation and may not be copied nor 
+#	disclosed except in accordance with the terms of that agreement.
+#
+
+#	request script for ums package installation
+
+trap 'exit 3' 15
+
+#
+# Prompt script to allow the user to select installation
+# mouse type
+#
+
+NAME="Mouse Driver Package"
+VFILE=/tmp/varfile
+CONFBIN=/etc/conf/bin
+POST_FILE=$1
+
+rm -rf $VFILE
+
+echo "\nThe $NAME provides drivers to support three different"
+echo "types of mice: Logitech bus mouse, Logitech serial mouse, and"
+echo "PS/2 compatible mouse."
+
+echo "\nYou can install one or more mouse drivers on your system.  If you only"
+echo "plan to use one mouse with your system, answer 'y' to the appropriate"
+echo "question below.  If you plan to switch mice at some point you may"
+echo "want to install more than one mouse driver (See mouseadmin(1) for"
+echo "information on how to reconfigure the mice in your system.)"
+echo "Below, answer 'y' for those mice you have or are planning to use and"
+echo "'n' for those you do not require support for."
+
+echo "\nIn order to use a PS/2 compatible mouse (e.g. AT&T 320 mouse), your"
+echo "hardware needs a PS/2 mouse port.  Check your hardware reference manual"
+echo "to be sure you have the necessary hardware support if you plan to use a"
+echo "PS/2 compatible mouse."
+
+PS2_MSE=`getyorn -d n -p "Will you be using a PS2 compatible mouse (e.g. \
+AT&T 320 mouse) ?\n"` || exit $?
+
+# find out if interrupt 12 
+# is available  for PS2 mouse 
+RETVCHK=0
+if [ "${PS2_MSE}" = "y" ]
+then
+	${CONFBIN}/idcheck -v 12 >/dev/null 2>&1
+	RETVCHK=$?
+	if [ "$RETVCHK" != 0  ]
+	then
+		PSMESG=" The PS2 mouse requires use of\
+ interrupt vector 12. Please remove existing software driver which\
+ makes use of interrupt 12, before attempting to install\
+ the PS2 mouse on your system."
+		message $PSMESG
+		exit 1 
+	fi
+fi
+
+${CONFBIN}/idcheck -p mse > /dev/null 2>&1
+RETTP=$?
+
+if [ $RETTP != 0 ]
+then 
+	for VECT in 3 4 5 9
+	do
+		CUR=`${CONFBIN}/idcheck -v $VECT -r`
+		if [ "$CUR" = "bmse" ]
+		then
+			if [ "$VECT" = 9 ]
+			then
+				VECT=2
+			fi
+			MSEINT=${VECT}
+			BMSEFLAG="ON"
+			break
+		fi
+	done
+fi
+
+BSE_MSE=`getyorn -d n \
+-p  "Will you be using a bus mouse?\n"` || exit $?
+if [ "${BSE_MSE}" != "y" ]
+then
+	if [ "$BMSEFLAG" = "ON" ]
+	then
+		WARN="WARNING: You have decided not to install a bus mouse \
+device and ${NAME} is currently installed with a bus \
+device. If installation is continued, the bus mouse will be disabled."
+		message -c ${WARN}
+		if [ $? != 0 ]
+		then
+			exit 1 
+		fi
+		message -d "Reinstalling ${NAME}..."
+		${CONFBIN}/idinstall -d bmse >/dev/null 2>&1
+		BMSEFLAG="OFF"
+	fi
+else
+	if [ "$BMSEFLAG" = "ON" ]
+	then
+		MESG="${NAME} is already installed \
+on IRQ ${MSEINT}. If the installation is continued, \
+${NAME} will replace the currently installed bus mouse \
+driver component."
+		message -c $MESG
+		if [ $? != 0 ]
+		then
+			exit 1 
+		fi
+
+		IANS=`getyorn -d n \
+		-p  "The current bus mouse is installed on IRQ ${MSEINT}. \
+Should the new installation use the same IRQ?\n"` || exit $?
+		if [ "$IANS" = "y" ]
+		then
+			echo "MSEINT=$MSEINT" >>$POST_FILE || exit 1
+		else
+			VECTMSG=""
+			for VECT in 3 4 5 9
+			do
+				${CONFBIN}/idcheck -v $VECT
+				RETVCHK=$?
+				if [ "$VECT" = 9 ]
+				then
+					VECT=2
+				fi
+				if [ "$RETVCHK" = 0 ]
+				then
+					VECTMSG="${VECT}\t"
+					echo $VECTMSG >> $VFILE
+					VECTLIST="${VECTLIST} ${VECT}"
+				fi
+			done
+				
+			if [ "$VECTLIST" = "" ]
+			then
+				message "The ${NAME} cannot be installed because interrupts \
+2, 3, 4, and 5 are in use"
+				exit 1
+			fi
+			DEFLT=2
+			cat $VFILE | grep $DEFLT > /dev/null
+			if [ $? != 0 ]
+			then 
+				DEFLT=`sed -n '1p' $VFILE`
+			fi
+			REQINTV=`ckitem -u -l "These interrupts may be available" \
+-p "Type the interrupt at which your mouse controller is jumpered.\n" -d $DEFLT -f $VFILE` || exit $? 
+
+			rm -rf $VFILE
+		fi
+	else
+		# see if the I/O address is available 
+		CURPKG=`${CONFBIN}/idcheck -a -l 23c -u 23f -r`
+		RETCUR=$?
+
+		if [ $RETCUR != 0 ]
+		then
+			if [ "$CURPKG" != "bmse" ]
+			then
+				if [ "$CURPKG" = "" ]
+				then
+					CURPKG="Unknown"
+				fi
+				ERROR="ERROR: The ${NAME} can not be installed \
+because the \"${CURPKG}\" driver uses an I/O \
+Address Range that conflicts with the \
+I/O Address Range needed for this package. \
+You must remove this driver before installing \
+${NAME}."
+				message ${ERROR}
+				exit 1 
+			fi
+		fi
+		VECTMSG=""
+		for VECT in 3 4 5 9
+		do
+			${CONFBIN}/idcheck -v $VECT
+			RETVCHK=$?
+			if [ "$VECT" = 9 ]
+			then
+				VECT=2
+			fi
+			if [ "$RETVCHK" = 0 ]
+			then
+				VECTMSG="${VECT}\t"
+				echo $VECTMSG >> $VFILE
+				VECTLIST="${VECTLIST} ${VECT}"
+			fi
+		done
+			
+		if [ "$VECTLIST" = "" ]
+		then
+			message "The ${NAME} cannot be installed because interrupts \
+2, 3, 4, and 5 are in use"
+			exit 1
+		fi
+		DEFLT=2
+		cat $VFILE | grep $DEFLT > /dev/null
+		if [ $? != 0 ]
+		then 
+			DEFLT=`sed -n '1p' $VFILE`
+		fi
+		REQINTV=`ckitem -u -l "These interrupts may be available" \
+-p "Type the interrupt at which your mouse controller is jumpered.\n" -d $DEFLT -f $VFILE` || exit $? 
+		rm -rf $VFILE
+		MSEINT=""
+		echo "MSEINT=$MSEINT" >>$POST_FILE || exit 1
+	fi
+fi
+
+echo "REQINTV=$REQINTV" >>$POST_FILE || exit 1
+
+SMS_MSE=`getyorn -d n \
+-p  "Will you be using a serial mouse?\n"` || exit $?
+
+ADMIN=`getyorn -d y \
+	-p  "Do you wish to set up the configuration file for the mice?\n" \
+-h "The appropriate mouse drivers will be installed as requested. If the response is yes, you will be asked for display terminals and devices which will be used with the mice you have requested.  If the response is no, you must execute mouseadmin after installation before using the mice."` || exit $?
+
+if [ "${ADMIN}" = "y" ]
+then
+	INTERACT=n
+	if [ -f /usr/lib/mousetab ]
+	then
+		REMTABLE=`getyorn -d y \
+		-p  "A mouse configuration table is already present - do you wish to delete?\n" -h "The mouse configuration table has already been set up. \
+Unless the new values are chosen carefully and do not conflict, \
+the mouse package installation will fail"` || exit $?
+		echo "REMTABLE=$REMTABLE" >>$POST_FILE || exit 1
+		if [ "${REMTABLE}" = "n" ]
+		then
+			INTERACT=`getyorn -d n \
+		-p  "Do you wish to run mouseadmin interactively?\n" -h "If no is chosen the display and port device will be set here otherwise you will be asked those questions during actual mouse installation."` || exit $?
+		else
+			INTERACT=n
+		fi
+	fi
+fi
+
+if [ "${ADMIN}" = "y" -a "${PS2_MSE}" = "y"  -a "${INTERACT}" = "n" ]
+then
+	DISP=`ckstr -l15 -d console -p "Enter the display terminal that will be using the PS2 mouse.\n"` || exit $?
+
+	while [ ! -c /dev/$DISP ]
+	do
+		REPLY=`ckitem -Q -l "The display you have chosen is not available" \
+-p "The following options are available. Choose one.\n" \
+-h "If you wish to stop the installation of this package choose option 3. \
+Option 2 allows installation of mouse drivers; mouseadmin must be run by the \
+user after installation before the mouse can be used." \
+"Choose Choose another device" "Drivers_only Mouseadmin executed after installation" "Quit Quit the installation of this package"` 
+		case ${REPLY} in
+			Choose) DISP=`ckstr -l15 -d console -p "Enter the display terminal that will be using the PS2 mouse.\n"` || exit $?;
+			 	;;
+			Drivers_only) ADMIN=n;
+				break ;;
+			Quit) exit 1;
+				break ;;
+		esac
+	done
+	echo "DISP=$DISP" >>$POST_FILE || exit 1
+fi
+
+if [ "${ADMIN}" = "y" -a "${BSE_MSE}" = "y" -a "${INTERACT}" = "n" ]
+then
+	BDISP=`ckstr -l15 -d console -p "Enter the display terminal that will be using the bus mouse.\n"` || exit $?
+
+	while [ ! -c /dev/$BDISP ]
+	do
+		REPLY=`ckitem -Q -l "The display you have chosen is not available" \
+-p "The following options are available. Choose one.\n" \
+-h "If you wish to stop the installation of this package choose option 3. \
+Option 2 allows installation of mouse drivers; mouseadmin must be run by the \
+user after installation before the mouse can be used." \
+"Choose Choose another device" "Drivers_only Mouseadmin executed after installation" "Quit Quit the installation of this package"` 
+		case ${REPLY} in
+			Choose) BDISP=`ckstr -l15 -d console -p "Enter the display terminal that will be using the bus mouse.\n"` || exit $?;
+			 	;;
+			Drivers_only) ADMIN=n;
+				break ;;
+			Quit) exit 1;
+				break ;;
+		esac
+	done
+	echo "BDISP=$BDISP" >>$POST_FILE || exit 1
+
+	if [ "${DISP}" = "${BDISP}" ]
+	then
+		message -c "You are attempting to install a bus mouse and \
+PS2 mouse using the same display terminal.  The \
+installation will fail.  You may choose to run \
+mouseadmin interactively, otherwise only the PS2 mouse \
+will be installed." 
+		INTERACT=`getyorn -d n \
+	-p  "Do you wish to run mouseadmin interactively?\n" \
+        -h "If no is chosen, the display for the PS2 mouse will remain \
+as requested, but the bus mouse will not be installed.  \
+If yes is chosen, both mice will be installed and you may select \
+the display terminals during actual mouse installation."` || exit $?
+		if [ "$INTERACT" = "n" ]
+		then
+			BSE_MSE=n
+		fi
+	fi
+fi
+
+if [ "${ADMIN}" = "y" -a "${SMS_MSE}" = "y" -a "${INTERACT}" = "n" ]
+then
+	SDISP=`ckstr -l15 -d console -p "Enter the display terminal that will be using the serial mouse.\n"` || exit $?
+
+	while [ ! -c /dev/$SDISP ]
+	do
+		REPLY=`ckitem -Q -l "The display you have chosen is not available" \
+-p "The following options are available. Choose one.\n" \
+-h "If you wish to stop the installation of this package choose option 3. \
+Option 2 allows installation of mouse drivers; mouseadmin must be run by the \
+user after installation before the mouse can be used." \
+"Choose Choose another device" "Drivers_only Mouseadmin executed after installation" "Quit Quit the installation of this package"` 
+		case ${REPLY} in
+			Choose) SDISP=`ckstr -l15 -d console -p "Enter the display terminal that will be using the serial mouse.\n"` || exit $?;
+			 	;;
+			Drivers_only) ADMIN=n;
+				break ;;
+			Quit) exit 1;
+				break ;;
+		esac
+	done
+	if [ "${ADMIN}" = "y" ]
+	then
+	
+		SDTERM=`ckstr -l15 -d tty00 -p "Enter the device that the serial mouse will be attached to.\n"` || exit $?
+
+		while [ ! -c /dev/$SDTERM ]
+		do
+			REPLY=`ckitem -Q -l "The device you have chosen is not present" \
+-p "The following options are available. Choose one.\n" \
+-h "If you wish to stop the installation of this package choose option 3. \
+Option 2 allows installation of mouse drivers; mouseadmin must be run by the \
+user after installation before the mouse can be used." \
+"Choose Choose another device" "Drivers_only Mouseadmin executed after installation" "Quit Quit the installation of this package"` 
+		case ${REPLY} in
+				Choose) SDTERM=`ckstr -l15 -d tty00 -p "Enter the device that the serial mouse will be attached to.\n"` || exit $?;
+			 		;;
+				Drivers_only) ADMIN=n;
+					break ;;
+				Quit) exit 1;
+					break ;;
+			esac
+		done
+		echo "SDISP=$SDISP" >>$POST_FILE || exit 1
+		echo "SDTERM=$SDTERM" >>$POST_FILE || exit 1
+
+		if [ "${SDISP}" = "${DISP}" -o "${SDISP}" = "${BDISP}" ]
+		then
+			message -c "You are attempting to install a serial mouse and \
+another mouse using the same display terminal.  The \
+installation will fail.  You may choose to run \
+mouseadmin interactively, otherwise only the first mouse \
+will be installed." 
+			INTERACT=`getyorn -d n \
+	-p  "Do you wish to run mouseadmin interactively\n" \
+        -h "If no is chosen, the display for the first mouse will remain \
+as requested, but the serial mouse will not be installed.  \
+If yes is chosen, all mice will be installed and you may select \
+the display terminals during actual mouse installation."` || exit $?
+			if [ "$INTERACT" = "n" ]
+			then
+				SMS_MSE=n
+			fi
+		fi
+	fi
+fi
+
+echo "BSE_MSE=$BSE_MSE" >>$POST_FILE || exit 1
+echo "INTERACT=$INTERACT" >>$POST_FILE || exit 1
+echo "ADMIN=$ADMIN" >>$POST_FILE || exit 1
+echo "PS2_MSE=$PS2_MSE" >>$POST_FILE || exit 1
+echo "SMS_MSE=$SMS_MSE" >>$POST_FILE || exit 1
+
+if [ "$REQINTV" = 2 ]
+then
+	REQINTV=9
+fi
+if [ -f ${CONFBIN}/S.idbuild ]
+then
+	if [ $PS2_MSE = "y" ]
+	then
+	echo "m320	Y	1	6	1	12	0	0	0	0" >> /etc/conf/cf.d/sdevice
+	fi
+	if [ $BSE_MSE = "y" ]
+	then
+	echo "bmse	Y	1	6	1	$REQINTV	23c	23f	0	0" >> /etc/conf/cf.d/sdevice
+	fi
+fi
+exit 0
+

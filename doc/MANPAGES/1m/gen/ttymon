@@ -1,0 +1,178 @@
+'\"macro stdmacro
+.if n .pH g1a.ttymon @(#)ttymon	40.5.1.3 of 1/3/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} ttymon 1M "" "\&"
+.if \nX=1 .ds x} ttymon 1M ""
+.if \nX=2 .ds x} ttymon 1M "" "\&"
+.if \nX=3 .ds x} ttymon "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4ttymon\f1 \- port monitor for terminal ports
+.SH SYNOPSIS
+\f4/usr/lib/saf/ttymon\f1
+.sp .5
+\f4/usr/lib/saf/ttymon\fP \f4\-g\fP [ \f4\-h\fP ] [ \f4\-d\fP \f2device\fP ]
+[\f4\-l\fP \f2ttylabel\fP ] [ \f4\-t\fP \f2timeout\fP ] \e
+.br
+\0\0\0[ \f4\-p\fP \f2prompt\fP ] [ \f4\-m\fP \f2modules\fP ]
+.\".sp .5
+.\"\f4/etc/getty\fP [ \f4\-h\fP ] [ \f4\-t\fP \f2timeout\fP ]
+.\"\f2line\fP [ \f2speed\fP [ \f2type\fP [ \f2linedisc\fP ] ] ]
+.\".sp .5
+.\"\f4/etc/getty\fP \f4\-c\fP \f2file\fP
+.SH DESCRIPTION
+\f4ttymon\fP is a STREAMS-based TTY port monitor.
+Its function is to monitor ports, to set terminal modes, baud rates, and
+line disciplines for the ports, and 
+to connect users or applications to services associated with the ports.
+Normally, \f4ttymon\fP is configured 
+to run under the
+Service Access Controller, \f4sac\fP, as part of the 
+Service Access Facility (SAF).
+It is configured using the \f4sacadm\fP command.
+Each instance of
+\f4ttymon\fP can monitor multiple ports.
+The ports monitored by an instance of \f4ttymon\fP are specified in the
+port monitor's administrative file.
+The administrative file is configured using the \f4pmadm\fP
+and \f4ttyadm\fP commands.
+When an instance of \f4ttymon\fP is invoked by the \f4sac\fP command,
+it starts to monitor its ports.
+For each port, \f4ttymon\fP first 
+initializes the line disciplines, if they are specified, and the speed and
+terminal settings.
+The values used for initialization are taken from the appropriate
+entry in the
+TTY settings file.
+This file is maintained by the \f4sttydefs\fP command.
+Default line disciplines on ports are usually set up by the \f4autopush\fP command
+of the Autopush Facility.
+.P
+\f4ttymon\fP then writes the prompt and waits for user input.
+If the user indicates that the speed is inappropriate by pressing the
+BREAK key, \f4ttymon\fP tries the next speed and writes the prompt
+again.
+When valid input
+is received, \f4ttymon\fP interprets the per-service configuration file 
+for the port, if one exists,
+creates a \f4utmp\fP entry if required,
+establishes the service environment, and then invokes the service 
+associated with the port.
+Valid input consists of a string of at least one
+non-newline character, terminated
+by a carriage return.
+After the service terminates,
+\f4ttymon\fP cleans up the \f4utmp\fP entry, if one exists,
+and returns the port to its initial state.
+.P
+If \f2autobaud\fP is enabled for a port, \f4ttymon\fP will try to
+determine the baud rate on the port automatically. 
+Users must enter a carriage return before \f4ttymon\fP can recognize
+the baud rate and print the prompt.
+Currently, the baud rates that can be determined by \f2autobaud\fP are
+\f4110\fP, \f41200\fP, \f42400\fP, \f44800\fP, and \f49600\fP.
+.P
+If a port is configured as a bidirectional port,
+\f4ttymon\fP will allow users to connect to a service, and, if the port is
+free, will allow \f4uucico\fP,
+\f4cu\fP or \f4ct\fP to use it for dialing out.
+If a port is bidirectional, \f4ttymon\fP will wait to read a character
+before it prints a prompt.
+.sp .5
+If the \f2connect-on-carrier\fP flag is set for a port,
+\f4ttymon\fP will immediately invoke the port's associated service
+when a connection request is received.
+The prompt message will not be sent.
+.sp .5
+If a port is disabled, \f4ttymon\fP will not start any service on that port.
+If a disabled message is specified, \f4ttymon\fP will send out the disabled
+message when a connection request is received.
+If \f4ttymon\fP is disabled, all ports under that instance of
+\f4ttymon\fP will also
+be disabled.
+.SH "SERVICE INVOCATION"
+The service \f4ttymon\fP invokes for a port is specified in the
+\f4ttymon\fP administrative file. 
+\f4ttymon\fP will scan the character string giving the service to
+be invoked for this port, looking for a \f4%d\fP or a \f4%%\fP
+two-character sequence.
+If \f4%d\fP is found, \f4ttymon\fP will modify the service command to be executed
+by replacing those two characters by the full path name of
+this port (the device name).
+If \f4%%\fP is found, they will be replaced
+by a single \f4%\fP.
+.sp .5
+When the service is invoked, file descriptor \f40\fP, \f41\fP,
+and \f42\fP are opened to the port
+device for reading and writing. The service is invoked with the
+user ID, group ID and current home directory set to that of the user name
+under which the service was registered with \f4ttymon\fP.
+Two environment variables, HOME and TTYPROMPT, are added to the service's environment by \f4ttymon\fP.
+HOME is set to the HOME directory of the user name under which the service is
+invoked.
+TTYPROMPT is set to the prompt string configured for the service on the port.
+This is provided so that a service invoked by \f4ttymon\fP has a means of
+determining if a prompt was actually issued by \f4ttymon\fP and, if so, what that
+prompt actually was.
+.sp .5
+See \f4ttyadm\fP(1M) for
+options that can be set for ports monitored by \f4ttymon\fP under 
+the Service Access Controller.
+.SH "INVOKING A STAND-ALONE \f4ttymon\fP PROCESS"
+A special invocation of \f4ttymon\fP is provided with the
+\f4\-g\fP option.
+This form of the command should only be called by 
+applications 
+that need to set the correct baud rate and terminal settings on a port and
+then connect to \f4login\fP service, but that cannot be
+pre-configured under the SAC.
+The following combinations of options can be used with \f4\-g\fP:
+.TP 15
+\f4-d\fP \f2device\fP
+\f2device\fP is the full path name of the port to which \f4ttymon\fP
+is to attach. 
+If this option is not specified, file descriptor \f40\fP must be set up by
+the invoking process to a TTY port.
+.TP
+\f4\-h\fP
+If the -h flag is not set, \f4ttymon\fP will force a
+hangup on the line by setting the speed to zero before setting the
+speed to the default or specified speed.
+.TP
+\f4-t\fP \f2timeout\fP 
+Specifies that \f4ttymon\fP should exit if no one types anything
+in \f2timeout\fP seconds after the prompt is sent.
+.TP
+\f4\-l\fP \f2ttylabel\fP
+\f2ttylabel\fP is a link to a speed and TTY definition in the 
+\f4ttydefs\fP file.
+This definition tells \f4ttymon\fP at what speed to run initially,
+what the initial TTY settings are, 
+and what speed to try next if the user indicates that the speed is
+inappropriate by pressing the BREAK key.
+The default speed is 9600 baud.
+.TP
+\f4-p\fP \f2prompt\fP
+Allows the user to specify a prompt string. The default prompt
+is "Login: ".
+.TP
+\f4-m\fP \f2modules\fP
+When initializing the port, \f4ttymon\fP
+will pop all modules on the port, and then push \f2modules\fP in the
+order specified. \f2modules\fP is a comma-separated list of pushable
+modules.
+Default modules on the ports are usually set up by the Autopush
+Facility.
+.SH "SEE ALSO"
+\f4pmadm\fP(1M),
+\f4sac\fP(1M),
+\f4sacadm\fP(1M),
+\f4ttyadm\fP(1M).
+.br
+\f2System Administrator's Guide\fP, ``The Port Monitor \f4ttymon\fP.''
+.SH NOTES
+If a port is monitored by more than one \f4ttymon\fP,
+it is possible for the \f4ttymon\fPs to send out prompt messages 
+in such a way that they compete for input.

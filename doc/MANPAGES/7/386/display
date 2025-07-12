@@ -1,0 +1,1083 @@
+'\"!  tbl | mmdoc
+'\"macro stdmacro
+.if n .pH g7.display @(#)display	40.17 of 7/9/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+'\"macro stdmacro
+.if n .pH g1.display @(#)display 1.0 of 12/11/87
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.nr X
+.if \nX=0 .ds x} display 7 "" "\&"
+.if \nX=1 .ds x} display 7 ""
+.if \nX=2 .ds x} display 7 "" "\&"
+.if \nX=3 .ds x} display "" "" "\&"
+.dsT \t
+.nr X
+.TH \*(x} "" "386 Computer Only"
+.SH NAME
+\f4display\f1 \- system console display
+.SH DESCRIPTION
+The system console (and user's terminal) is composed of two separate pieces:
+the keyboard [see
+\f4keyboard\f1 (7)]
+and the display.
+Because of their complexity, and because there are three
+possible display interfaces (monochrome, color graphics, and enhanced graphics
+adapters),
+they are discussed in separate manual entries.
+.PP
+The display normally consists of 25 lines of 80 columns each; 40-column
+lines are also supported by the color/graphics adapter, and 43
+lines of 80-columns each
+are supported by the enhanced graphics adapter.
+Writing characters to the console or one of its virtual screens
+(\f4/dev/console\f1 or \f4/dev/vt\f2xx\f1)
+has an effect which depends on the characters.
+All characters written to
+\f4/dev/console\f1
+are first processed by the terminal interface [see
+\f4termio\f1 (7)].
+For example, mapping new-line characters to carriage return plus new-line,
+and expanding tabs to spaces, will be done before the following processing:
+.TP 12n
+\f4x\f1
+Where \f4x\f1 is not one of the following, displays \f4x\f1.
+.TP 12n
+\f4BEL\f1
+Generates a
+bell
+(audible tone, no modulation).
+.TP 12n
+\f4CR\f1
+Places the cursor at column 1 of the current line.
+.TP 12n
+\f4LF, VT\f1
+Places the cursor at the same column of the next line (scrolls if the the
+current line is line 25).
+.TP 12n
+\f4FF\f1
+Clears the screen and places the cursor at line 1, column 1.
+.TP 12n
+\f4BS\f1
+If the cursor is not at column 1,
+it is moved to the left one position on the same line.
+If the cursor is at column 1 but not line 1, it is moved
+to column 79 of the previous line.
+Finally, if the cursor is at column 1, line 1, it is not moved.
+.PP
+The display can be controlled by means of ANSI X3.64
+.IR "escape sequences" ,
+which are specific sequences of characters,
+preceded by the ASCII character ESC.
+The escape sequences, which work on either the monochrome,
+color graphics, or enhanced graphics adapter, are the following:
+.TP 12n
+\f4ESC c\f1
+Clears the screen and places the cursor at line 1, column 1.
+.TP 12n
+\f4ESC Q\ \f2n\f1 '\f2string\f1'
+Defines the function key \f2n\f1 with \f2string\f1.
+The string
+delimiter ' may be any character not in \f2string\f1.
+Function keys are numbered 0 through 11 (F1 = 0, F2 = 1, etc.)
+.TP 12n
+\f4ESC[ \f2n\f1 \f4@\fP
+Insert character\(eminserts \f2n\f1 blanks at the current cursor
+position.
+.TP 12n
+\f4ESC[ \f2n\f1 \f4\(ga\fP
+Horizontal Position Absolute\(emmoves active position to column
+given by \f2n\f1.
+.TP 12n
+\f4ESC[ \f2n\f1 \f4A\fP
+Cursor up\(emmoves the cursor up \f2n\f1 lines (default:
+\f2n\f1\(eq1).
+.TP 12n
+\f4ESC[ \f2n\f1 \f4a\fP
+Horizontal Position Relative\(emmoves active position \f2n\f1 characters
+to the right (default:
+\f2n\f1\(eq1).
+.TP 12n
+\f4ESC[ \f2n\f1 \f4B\fP
+Cursor down\(emmoves the cursor down \f2n\f1 lines (default:
+\f2n\f1\(eq1).
+.TP 12n
+\f4ESC[ \f2n\f1 \f4C\fP
+Cursor right\(emmoves the cursor right \f2n\f1 columns (default:
+\f2n\f1\(eq1).
+.TP 12n
+\f4ESC[ \f2n\f1 \f4c\fP
+where n is 0 (underline cursor), 1(blockcursor), or 2(no
+cursor). 0 is the default value for n.
+.TP 12n
+\f4ESC[ \f2n\f1 \f4D\fP
+Cursor left\(emmoves the cursor left \f2n\f1 columns (default:
+\f2n\f1\(eq1).
+.TP 12n
+\f4ESC[ \f2n\f1 \f4d\fP
+Vertical Position Absolute\(emmoves active position to line given by \f2n\f1.
+.TP 12n
+\f4ESC[ \f2n\f1 \f4E\fP
+Cursor next line\(emmoves the cursor to column 1 of the next line, then down
+\f2n\f1\-1 lines (default:
+\f2n\f1\(eq1).
+.TP 12n
+\f4ESC[ \f2n\f1 \f4e\fP
+Vertical Position Relative\(emmoves the active position down \f2n\f1 lines (default:
+\f2n\f1\(eq1).
+.TP 12n
+\f4ESC[ \f2n\f1 \f4F\fP
+Cursor previous line\(emmoves the cursor to column 1 of the current line,
+then up \f2n\f1 lines (default:
+\f2n\f1\(eq1).
+.TP 12n
+\f4ESC[ \f2n\f1 \f4G\fP
+Cursor horizontal position\(emmoves the cursor to column \f2n\f1 of the
+current line (default:
+\f2n\f1\(eq1).
+.TP 12n
+\f4ESC[ \f2n\f1 ; \f2m\f1 \f4H\fP
+Position cursor\(emmoves the cursor to column \f2m\f1 of line \f2n\f1
+(default:
+\f2n\f1\(eq1, \f2m\f1\(eq1).
+.TP 12n
+\f4ESC[ \f2n\f1 ; \f2m\f1 \f4f\fP
+Position cursor\(emmoves the cursor to column \f2m\f1 of line \f2n\f1
+(default:
+\f2n\f1\(eq1, \f2m\f1\(eq1).
+.TP 12n
+\f4ESC[ \f2n\f1 \f4J\fP
+Erase window\(emerases from the current cursor position to the end of the
+window if \f2n\f1\(eq0, from the beginning of the window to the current
+cursor position if \f2n\f1\(eq1, and the entire window if \f2n\f1\(eq2
+(default:
+\f2n\f1\(eq0).
+.TP 12n
+\f4ESC[ \f2n\f1 \f4K\fP
+Erase line\(emerases from the current cursor position to the end of the line
+if \f2n\f1\(eq0, from the beginning of the line to the current cursor
+position if \f2n\f1\(eq1, and the entire line if \f2n\f1\(eq2 (default:
+\f2n\f1\(eq0).
+.TP 12n
+\f4ESC[ \f2n\f1 \f4L\fP
+Insert line\(eminserts \f2n\f1 lines at the current cursor
+position (default:
+\f2n\f1\(eq1).
+.TP 12n
+\f4ESC[ \f2n\f1 \f4M\fP
+Delete line\(emdeletes \f2n\f1 lines starting at the current cursor
+position (default:
+\f2n\f1\(eq1).
+.TP 12n
+\f4ESC[ \f2n\f1 \f4P\fP
+Delete character\(emdeletes \f2n\f1 characters from a line starting at
+the current cursor
+position (default:
+\f2n\f1\(eq1).
+.TP 12n
+\f4ESC[ \f2n\f1 \f4S\fP
+Scroll up\(emscrolls the characters in the current window up \f2n\f1 lines.
+The bottom \f2n\f1 lines are cleared to blanks (default:
+\f2n\f1\(eq1).
+.TP 12n
+\f4ESC[ \f2n\f1 \f4T\fP
+Scroll down\(emscrolls the characters in the current window down \f2n\f1
+lines.
+The top \f2n\f1 lines are cleared to blanks (default:
+\f2n\f1\(eq1).
+.TP 12n
+\f4ESC[ \f2n\f1 \f4X\fP
+Erase character\(emerases \f2n\f1 character positions starting at the
+current cursor position (default:
+\f2n\f1\(eq1).
+.TP 12n
+\f4ESC[ \f2n\f1 \f4Z\fP
+Cursor Backward Tabulation\(emmoves active position back \f2n\f1 tab stops.
+.TP 12n
+\f4ESC[ 2 h\fP
+Locks the keyboard and ignores keyboard input until unlocked.
+Characters are not saved.
+.TP 12n
+\f4ESC[ 2 i\fP
+Sends the screen to the host.
+The current screen display is sent to the application.
+.TP 12n
+\f4ESC[ 2 l\fP
+Unlocks the keyboard.
+Re-enables keyboard input.
+.TP 12n
+\f4ESC[ \f2Ps\f1 ; \f2Ps\f1; \*E \f4m\fP
+Character attributes\(emeach \f2Ps\f1 is one of the following characters;
+multiple characters are separated by semicolons.
+These parameters apply to
+successive characters being displayed, in an additive manner (e.g., both bold
+and underscoring can be selected).
+Only the parameters through 7 apply to
+the monochrome adapter; all parameters apply to the color/graphics adapter
+and the enhanced graphics adapter.
+(Default:
+\f2Ps\f1\(eq0).
+.TS
+center box tab(:) ;
+lI c s s
+l l s s.
+Ps:Meaning
+.sp .2v
+_
+.sp .2v
+0:all attributes off (normal display)
+:(white foreground with black background)
+1:bold intensity
+4:underscore on
+:(white foreground with red background on color)
+5:blink on
+6:T{
+VGA only: if blink (5) is on, turn blink off and background
+color to its light equivalent (i.e. brown to yellow).
+T}
+7:reverse video
+.T&
+l l l l .
+30:black:(gray):foreground
+31:red:(light red):foreground
+32:green:(light green):foreground
+33:brown:(yellow):foreground
+34:blue:(light blue):foreground
+35:magenta:(light magenta):foreground
+36:cyan:(light cyan):foreground
+37:white:(bright white):foreground
+40:black:(gray):background
+41:red:(light red):background
+42:green:(light green):background
+43:brown:(yellow):background
+44:blue:(light blue):background
+45:magenta:(light magenta):background
+46:cyan:(light cyan):background
+47:white:(bright white):background
+.TE
+.IP
+Note that for character attributes 30\-37, the color selected for foreground
+will depend on whether the
+.I bold intensity
+attribute (1) is currently on.
+If not, the first color listed will result;
+otherwise the second color listed will result.
+.IP
+Similarly, for character attributes 40\-47, the color selected for background
+will depend on whether the
+.I blink
+attribute (5) is currently on and bright background (6) has been turned on.
+If
+.I blink
+is not turned on or bright background has not been selected,
+the first listed color will result.
+Otherwise, the second color listed will result.
+.TP 12n
+\f4ESC[ 8 m\f1
+sets blank (non-display)
+.TP 12n
+\f4ESC[ 10 m\f1
+selects the primary font
+.TP 12n
+\f4ESC[ 11 m\f1
+selects the first alternate font; lets ASCII characters less than
+32 be displayed as ROM characters
+.TP 12n
+\f4ESC[ 12 m\f1
+selects a second alternate font; toggles high bit of extended ASCII
+code before displaying as ROM characters
+.TP 12n
+\f4ESC[ 38 m\f1
+enables underline option; white foreground with white
+underscore (see WARNINGS)
+.TP 12n
+\f4ESC[ 39 m\f1
+disables underline option; see WARNINGS
+.P
+The following non-ANSI X3.64 escape sequences are supplied:
+.TP 12n
+\f4ESC[=\fP \f2c\fP \f4A\fP
+Sets overscan color.
+.TP 12n
+\f4ESC[=\fP \f2p\fP ; \f2d\fP \f4B\fP
+Sets bell parameters (where \f2p\fP is the pitch in Hz and \f2d\fP is the
+duration in milliseconds)
+.TP 12n
+\f4ESC[=\fP \f2s\fP ; \f2e\fP \f4C\fP
+Sets cursor parameters (where \f2s\fP is the starting and \f2e\fP is the
+ending scanlines of the cursor).
+.TP 12n
+\f4ESC[=\fP \f2x\fP \f4D\fP
+Enables/disables intensity of background color (where \f2x\fP is 0 for
+enable and 1 for disable).
+.TP 12n
+\f4ESC[=\fP \f2x\fP \f4E\fP
+Sets/clears blink vs. bold background (where \f2x\fP is 0 for set and 1 for
+clear).
+.TP 12n
+\f4ESC[=\fP \f2c\fP \f4F\fP
+Sets normal foreground color.
+See \f4GIO_ATTR\f1 for the valid values for \f2c\fP.
+.TP 12n
+\f4ESC[=\fP \f2c\fP \f4G\fP
+Sets normal background color.
+See \f4GIO_ATTR\f1 for the valid values for \f2c\fP.
+.TP 12n
+\f4ESC[=\fP \f2n\fP \f4g\fP
+Displays graphic character \f2n\fP.
+.TP 12n
+\f4ESC[=\fP \f2c\fP \f4H\fP
+Sets reverse foreground color.
+See \f4GIO_ATTR\f1 for the valid values for \f2c\fP.
+.TP 12n
+\f4ESC[=\fP \f2c\fP \f4I\fP
+Sets reverse background color.
+See \f4GIO_ATTR\f1 for the valid values for \f2c\fP.
+.TP 12n
+\f4ESC[=\fP \f2c\fP \f4J\fP
+Sets graphic foreground color.
+See \f4GIO_ATTR\f1 for the valid values for \f2c\fP.
+.TP 12n
+\f4ESC[=\fP \f2c\fP \f4K\fP
+Sets graphic background color.
+See \f4GIO_ATTR\f1 for the valid values for \f2c\fP.
+.TP 12n
+\f4ESC[ \f2n\f1 \f4z\fP
+Makes virtual terminal number \f2n\fP active.
+.TP 12n
+\f4ESC 7\fP
+Saves cursor position.
+.TP 12n
+\f4ESC 8\fP
+Restores cursor position to saved value.
+.TP 12n
+\f4ESC[ 0 k\fP
+Disables the key-click feature (the default).
+.TP 12n
+\f4ESC[ 1 k\fP
+Enables the key-click feature.  A tone is produced for each key press.
+.SS "ioctl Calls"
+The following \f4ioctl\f1 calls may be used to change the display used for
+the video monitor.
+If the virtual terminal has not been put in process mode (see the VT_SETMODE ioctl),
+setting the display mode to a non-text mode will turn off VT switching.
+VT switches will be re-enabled after the display mode has been reset to a text mode.
+.PP
+Note:  All of the following ioctls are performed on either a
+file descriptor to the virtual terminals or to the special
+file \f4/dev/video\f1.  \f4ioctls\f1 to \f4/dev/video\f1 are
+indicated with an asterisk (*).  For the ioctls to
+\f4/dev/video\f1 to work, the controlling \f4tty\f1 for the
+process must be the virtual terminal on which the operation is
+to be performed.  If the \f4tty\f1 is not a virtual terminal,
+the return value will be -1 and \f4errno\f1 will be set to
+\f4EINVAL\f1.
+.TP 12n
+\f4SWAPMONO\f1 (\f2*\f1)
+This call selects the monochrome adapter as the output device for the
+system console.
+.TP 12n
+\f4SWAPCGA\f1 (\f2*\f1)
+This call selects the color/graphics adapter as the output device for the
+system console.
+.TP 12n
+\f4SWAPEGA\f1 (\f2*\f1)
+This call selects the enhanced graphics adapter as the output device for the
+system console.
+.TP 12n
+\f4SWAPVGA\f1 (\f2*\f1)
+This call selects the video graphics array as the output device for the
+system console.
+.PP
+The following \f4ioctl\f1 call may be used to obtain more information about
+the display adapter currently attached to the video monitor:
+.TP 12n
+\f4CONS_CURRENT\f1 (\f2*\f1)
+This call returns the display adapter type currently attached to the video
+monitor.
+The return value can be one of:
+\f4MONO\f1, \f4CGA\f1, or \f4EGA\f1.
+.PP
+The following \f4ioctl\f1 calls may be used to switch display modes on the various
+video adapters:
+.TP 12n
+\f4SW_B40x25\f1 (\f2*\f1)
+This call selects 40x25 (40 columns by 25 rows) black and white text display
+mode.
+It is valid only for CGA and EGA devices.
+.TP 12n
+\f4SW_C40x25\f1 (\f2*\f1)
+This call selects 40x25 (40 columns by 25 rows) color text display mode.
+It is valid only for CGA and EGA devices.
+.TP 12n
+\f4SW_B80x25\f1 (\f2*\f1)
+This call selects 80x25 (80 columns by 25 rows) black and white text
+display mode.
+It is valid only for CGA and EGA devices.
+.TP 12n
+\f4SW_C80x25\f1 (\f2*\f1)
+This call selects 80x25 (80 columns by 25 rows) color text display mode.
+It is valid only for CGA and EGA devices.
+.TP 12n
+\f4SW_BG320\f1 (\f2*\f1)
+This call selects 320x200 black and white graphics display mode.
+It is valid only for CGA and EGA devices.
+.TP 12n
+\f4SW_CG320\f1 (\f2*\f1)
+This call selects 320x200 color graphics display mode.
+It is valid only for CGA and EGA devices.
+.TP 12n
+\f4SW_BG640\f1 (\f2*\f1) 
+This call selects 640x200 black and white graphics display mode.
+It is valid only for CGA and EGA devices.
+.TP 12n
+\f4SW_CG320_D\f1 (\f2*\f1)
+This call selects EGA support for 320x200 graphics display mode (EGA mode D).
+It is valid only for EGA devices.
+.TP 12n
+\f4SW_CG640_E\f1 (\f2*\f1)
+This call selects EGA support for 640x200 graphics display mode (EGA mode E).
+It is valid only for EGA devices.
+.TP 12n
+\f4SW_EGAMONOAPA\f1 (\f2*\f1)
+This call selects EGA support for 640x350 graphics display mode (EGA mode F).
+It is valid only for EGA devices.
+.TP 12n
+\f4SW_ENH_MONOAPA2\f1 (\f2*\f1)
+This call selects EGA support for 640x350 graphics display mode with extended
+memory (EGA mode F*).
+It is valid only for EGA devices.
+.TP 12n
+\f4SW_CG640x350\f1 (\f2*\f1)
+This call selects EGA support for 640x350 graphics display mode (EGA mode 10).
+It is valid only for EGA devices.
+.TP 12n
+\f4SW_ENH_CG640\f1 (\f2*\f1)  
+This call selects EGA support for 640x350 graphics display mode with extended
+memory (EGA mode 10*).
+It is valid only for EGA devices.
+.TP 12n
+\f4SW_EGAMONO80x25\f1 (\f2*\f1)
+This call selects EGA monochrome text display mode (EGA mode 7), which
+emulates support
+provided by the monochrome adapter.
+It is valid only for EGA devices.
+.TP 12n
+\f4SW_ENHB40x25\f1 (\f2*\f1)
+This call selects enhanced 40x25 black and white text display mode.
+It is valid only for EGA devices.
+.TP 12n
+\f4SW_ENHC40x25\f1 (\f2*\f1)
+This call selects enhanced 40x25 color text display mode.
+It is valid only for EGA devices.
+.TP 12n
+\f4SW_ENHB80x25\f1 (\f2*\f1)
+This call selects enhanced 80x25 black and white display mode.
+It is valid only for EGA devices.
+.TP 12n
+\f4SW_ENHC80x25\f1 (\f2*\f1)
+This call selects enhanced 80x25 color text display mode.
+It is valid only for EGA devices.
+.TP 12n
+\f4SW_ENHB80x43\f1 (\f2*\f1)
+This call selects enhanced 80x43 black and white text display mode.
+It is valid only for EGA devices.
+.TP 12n
+\f4SW_ENHC80x43\f1 (\f2*\f1)
+This call selects enhanced 80x43 color text display mode.
+It is valid only for EGA devices.
+.TP 12n
+\f4SW_MCAMODE\f1 (\f2*\f1)
+This call reinitializes the monochrome adapter.
+It is valid only for monochrome adapters.
+.br
+.ne4
+.TP 12n
+\f4SW_ATT640\f1 (\f2*\f1)
+This call selects 640x400 16 colormode, when an AT&T
+Super-Vu video controller is attached.
+.PP
+Switching to an invalid display mode for a display device will result in an
+error.
+.PP
+The following \f4ioctls\f1 may be used to obtain information about the current
+display modes:
+.TP 12n
+\f4CONS_GET\f1 (\f2*\f1)
+This call returns the current display mode setting for whatever display adapter
+is being used.
+Possible return values include:
+.IP
+M_B40x25 (0), black and white 40 columns.
+CGA and EGA only.
+.IP
+M_C40x25 (1), color 40 columns.
+CGA and EGA only.
+.IP
+M_B80x25 (2), black and white 80 columns.
+CGA and EGA only.
+.IP
+M_C80x25 (3), color 80 columns.
+CGA and EGA only.
+.IP
+M_BG320 (4), black and white graphics 320 by 200.
+CGA and EGA only.
+.IP
+M_CG320 (5), color graphics 320 by 200.
+CGA and EGA only.
+.IP
+M_BG640 (6), black and white graphics 640 by 200 high-resolution.
+CGA and EGA only.
+.IP
+M_EGAMONO80x25 (7), EGA-mono 80 by 25.
+EGA only.
+.IP
+M_CG320_D (13), EGA mode D.
+.IP
+M_CG640_E (14), EGA mode E.
+.IP
+M_EFAMONOAPA (15), EGA mode F.
+.IP
+M_CG640x350 (16), EGA mode 10.
+.IP
+M_ENHMONOAPA2 (17), EGA mode F with extended memory.
+.IP
+M_ENH_CG640 (18), EGA mode 10*.
+.IP
+M_ENH_B40x25 (19), EGA enhanced black and white 40 columns.
+.IP
+M_ENH_C40x25 (20), EGA enhanced color 40 columns.
+.IP
+M_ENH_B80x25 (21), EGA enhanced black and white 80 columns.
+.IP
+M_ENH_C80x25 (22), EGA enhanced color 80 columns.
+.IP
+M_ENH_B80x43 (0x70), EGA black and white 80 by 43.
+.IP
+M_ENH_C80x43 (0x71), EGA color 80 by 43.
+.IP
+M_MCA_MODE (0xff), monochrome adapter mode.
+.TP 12n
+\f4MCA_GET\f1 (\f2*\f1)
+This call returns the current display mode setting of the monochrome adapter.
+See CONS_GET for a list of return values.
+If the monochrome adapter
+is not installed, the call will fail and \f2errno\f1 will
+be set to 22 (\f4EINVAL\f1).
+.TP 12n
+\f4CGA_GET\f1 (\f2*\f1)
+This call returns the current display mode setting of the color/graphics
+adapter.
+See \f4CONS_GET\f1 for a list of return values.
+If the color graphics
+adapter is not installed, the call will fail and \f4errno\f1 will be set
+to 22 (\f4EINVAL\f1).
+.TP 12n
+\f4EGA_GET\f1 (\f2*\f1)
+This call returns the current display mode setting of the enhanced
+graphics adapter.
+See \f4CONS_GET\f1 for a list of return values.
+If the enhanced graphics adapter is not installed,
+the call will fail and \f4errno\f1 will be set to 22 (\f4EINVAL\f1).
+.PP
+The following \f4ioctl\f1 calls may be used to map the video adapter's memory
+into the user's data space.
+.TP 12n
+\f4MAPCONS\f1 (\f2*\f1)
+This call maps the display memory of the adapter currently being used into the
+user's data space.
+.TP 12n
+\f4MAPMONO\f1 (\f2*\f1)
+This call maps the monochrome adapter's display memory into the user's data
+space.
+.TP 12n
+\f4MAPCGA\f1 (\f2*\f1)
+This call maps the color/graphics adapter's display memory
+into the user's data space.
+.TP 12n
+\f4MAPEGA\f1 (\f2*\f1)
+This call maps the enhanced graphics adapter's display memory into the
+user's data space.
+.TP 12n
+\f4MAPVGA\f1 (\f2*\f1)
+This call maps the video graphics array's display memory into the
+user's data space.
+.PP
+You can use \f4ioctl\f1 calls to input a byte from the graphics
+adapter port or to output a byte to the graphics adapter port.
+The argument to the \f4ioctl\f1 uses the \f2port_io_arg\f1 data structure:
+.nf
+.ta 4m 8m 12m 16m 20 m 24m 28m 32m 36m 40m 44m 48m 52m 60m
+.sp .4v
+\*T\f4struct port_io_arg {
+\*T\*T\*Tstruct port_io_struc_args[4];
+\*T};\f1
+.fi
+.DT
+.PP
+As shown in the previous example, the \f2port_io_arg\f1 structure points to
+an array of four \f2port_io_struc\f1 data structures.
+The \f2port_io_struc\f1 has the following format:
+.nf
+.ta 4m 8m 12m 16m 20 m 24m 28m 32m 36m 40m 44m 48m 52m 60m
+.sp .4v
+\*T\f4struc port_io_struc {
+\*T\*T\f4char   dir;\*T\*T/*direction flag (in vs. out)*/
+\*T\*Tunsigned short port;\*T/*port address*/
+\*T\*Tchar   data;\*T\*T/*byte of data*/
+\*T};\f1
+.fi
+.DT
+.PP
+You can specify one, two, three, or four of the \f2port_io_struc\f1 structures
+in the array for one \f4ioctl\f1 call.
+The value of \f2dir\f1 can be either IN_ON_PORT
+(to specify a byte being input from the graphics adapter port)
+or OUT_ON_PORT
+(to specify a byte being output to the graphics adapter port).
+\f2Port\f1 is an integer specifying the port address of the desired graphics
+adapter port.
+\f2Data\f1 is the byte of data being input or output as specified
+by the call.
+If you are not using any of the \f2port_io_struc\f1 structures,
+load the \f2port\f1 with 0,
+and leave the unused structures at the end of the array.
+Refer to your hardware manuals for port addresses and functions
+for the various adapters.
+.PP
+The following \f4ioctl\f1 calls may be used to input or output bytes on the
+graphics adapter port:
+.TP 12n
+\f4MCAIO\f1 (\f2*\fP)
+This call inputs or outputs a byte on the monochrome adapter port as specified.
+.TP 12n
+\f4CGAIO\f1 (\f2*\fP)
+This call inputs or outputs a byte on the color/graphics adapter port as
+specified.
+.TP 12n
+\f4EGAIO\f1 (\f2*\fP)
+This call inputs or outputs a byte on the enhanced graphics adapter port as
+specified.
+.TP 12n
+\f4VGAIO\f1 (\f2*\fP)
+This call inputs or outputs a byte on the video graphics array port as
+specified.
+.PP
+To input a byte on any of the graphics adapter ports, load \f2dir\f1 with
+IN_ON_PORT and load \f2port\f1 with the port address of
+the graphics adapter.
+The byte input from the graphics
+adapter port will be returned in \f2data\f1.
+.PP
+To output a byte, load \f2dir\f1 with OUT_ON_PORT, load \f2port\f1 with the
+port address of the graphics adapter, and load \f2data\f1 with the byte
+you want to output to the graphics adapter port.
+.PP
+The following \f4ioctls\f1 may be used with either the monochrome, color graphics,
+or enhanced graphics adapters:
+.TP 12n
+\f4GIO_FONT8x8\fP (\f2*\fP)
+This call gets the current 8x8 font in use.
+.TP 12n
+\f4GIO_FONT8x14\fP (\f2*\fP)
+This call gets the current 8x14 font in use.
+.TP 12n
+\f4GIO_FONT8x16\fP (\f2*\fP)
+This call gets the current 8x16 font in use.
+.TP 12n
+\f4KDDISPTYPE\f1 (\f2*\f1)
+This call returns display information to the user.
+The argument expected is the buffer address
+of a structure of type \f2kd_disparam\f1 into which display
+information is returned to the user.
+The \f2kd_disparam\f1 structure is defined as follows:
+.nf
+.ta 4m 8m 12m 16m 20 m 24m 28m 32m 36m 40m 44m 48m 52m 60m
+.sp .4v
+\f4struct kd_disparam {
+\*Tlong type;\*T/*display type*/
+\*Tchar *addr;\*T/*display memory address*/
+\*Tushort ioaddr[MKDIOADDR];\*T/*valid I/O addresses*/
+}
+\f1
+.fi
+.DT
+.br
+.ne 4
+.IP
+Possible values for the type field include:
+.IP
+KD_MONO (0x01), for the IBM monochrome display adapter.
+.IP
+KD_HERCULES (0x02), for the Hercules monochrome graphics adapter.
+.IP
+KD_CGA (0x03), for the IBM color graphics adapter.
+.IP
+KD_EGA (0x04), for the IBM enhanced graphics adapter.
+.TP 12n
+\f4KIOCSOUND\f1 (\f2*\fP)
+Start sound generation.
+Turn on sound.
+The "arg" is the frequency desired.
+A frequency of 0 turns off the sound.
+.TP 12n
+\f4KDGETLED\f1
+Get keyboard LED status.
+The argument is a pointer to a character.
+The character will be filled with a boolean combination of the following
+values:
+.nf
+.ta 3m 7m 11m 15m 19m 23m 27m 31m 35m 39m 43m 47m 51m 55m 59m
+.sp .4v
+\*TLED_SCR\*T0x01\*T( flag bit for scroll lock )
+\*TLED_CAP\*T0x04\*T( flag bit for caps lock )
+\*TLED_NUM\*T0x02\*T( flag bit for num lock )
+.fi
+.DT
+.TP 12n
+\f4KDSETLED\f1
+Set keyboard LED status.
+The argument is a character whose value
+is the boolean combination of the values listed under \f4KDGETLED\f1.
+.TP 12n
+\f4KDMKTONE\f1 (\f2*\fP)
+Generate a fixed length tone.
+The argument is a 32 bit value, with the
+lower 16 bits set to the frequency and the upper 16 bits set to the
+duration (in milliseconds).
+.TP 12n
+\f4KDGKBTYPE\f1
+Get keyboard type.
+The argument is a pointer to a character type.
+The character will be returned with one of the following values:
+.nf
+.ta 3m 7m 11m 15m 19m 23m 27m 31m 35m 39m 43m 47m 51m 55m 59m
+.sp .4v
+\*TKB_84\*T\*T0x01\*T( 84 key keyboard )
+\*TKB_101\*T\*T0x02\*T( 101 key keyboard )
+\*TKB_OTHER\*T0x03
+.fi
+.DT
+.TP 12n
+\f4KDADDIO\f1 (\f2*\f1)	
+Add I/O port address to list of valid video adaptor addresses.
+Argument is an unsigned short type which should contain
+a valid port address for the installed video adaptor.
+.TP 12n
+\f4KDDELIO\f1 (\f2*\f1)
+Delete I/O port address from list of valid video adaptor addresses.
+Argument is an unsigned short type which should contain
+a valid port address for the installed video adaptor.
+.TP 12n
+\f4KDENABIO\f1 (\f2*\f1)
+Enable in's and out's to video adaptor ports.
+No argument.
+.TP 12n
+\f4KDDISABIO\f1 (\f2*\f1)
+Disable in's and out's to video adaptor ports.
+No argument.
+.TP 12n
+\f4KDQUEMODE\f1 (\f2*\f1)
+Enable/Disable special queue mode.
+Queue mode is used by AT&T's
+X-Windows software to establish a shared queue for access to keyboard
+and mouse event information.
+The argument is a pointer to a structure "kd_quemode".
+If a NULL pointer is sent as an argument,
+the queue will be closed and the mode disabled.
+The structure "kd_quemode" is as follows:
+.sp .5
+.nf
+.ta 3m 7m 11m 15m 19m 23m 27m 31m 35m 39m 43m 47m 51m 55m 59m
+\f4struct kd_quemode {
+\*Tint\*Tqsize;\*T/* desired # of elements in queue */
+\*Tint\*Tsigno;\*T/* signal number to send when queue
+\*T\*T\*T             goes non-empty */
+\*Tchar\*T*qaddr;\*T/* user virtual address of queue (set by
+\*T\*T\*T             driver) */
+\*T};
+\f1
+.fi
+.DT
+.br
+.ne4
+.TP 12n
+\f4KDSBORDER\f1 (\f2*\f1)
+Set screen color border in EGA text mode.
+The argument is of type character.
+Each bit position corresponds to a color selection.
+From bit position\ 0 to bit position\ 6,
+the color selections are respectively;
+blue, green, red, secondary blue, secondary green, and secondary red.
+.\" ??? bits 0 to 6 are seven colors; six colors are noted. ???
+Setting the bit position to a logic one will select the desired color
+or colors.
+See WARNINGS below.
+.TP 12n
+\f4KDSETMODE\f1 (\f2*\f1)
+Set console in text or graphics mode.
+The argument is of type integer,
+which should contain one of the following values:
+.nf
+.ta 3m 7m 11m 15m 19m 23m 27m 31m 35m 39m 43m 47m 51m 55m 59m
+.sp .4v
+\*TKD_TEXT\*T0x00\*T( sets console to text mode )
+\*TKD_GRAPHICS\*T0x01\*T( sets console in graphics mode )
+.fi
+.sp .4v
+If the mode is set to KD_GRAPHICS and the Virtual Terminal is not in process
+mode (see the VT_SETMODE ioctl),
+no virtual terminal switches will be possible until the mode is reset to KD_TEXT,
+KD_TEXT0, or KD_TEXT1.
+.sp .4v
+Note, the user is responsible for programming the color/graphics adaptor
+registers for the appropriate graphical state.
+.TP 12n
+\f4KDGETMODE\f1 (\f2*\fP)
+Get current mode of console.
+Returns integer argument containing either
+\f4KD_TEXT\f1 or \f4KD_GRAPHICS\f1 as defined in the \f4KDSETMODE\f1 \f4ioctl\f1 description.
+.TP 12n
+\f4KDMAPDISP\f1 (\f2*\f1)
+Maps display memory into user process address space.
+Argument is a pointer to structure type "kd_memloc".
+Structure definition is as follows:
+.nf
+.ta 3m 7m 11m 15m 19m 23m 27m 31m 35m 39m 43m 47m 51m 55m 59m
+.sp .5
+\f4struct kd_memloc {
+\*Tchar\*T*vaddr;\*T\*T/* virtual address to map to */
+\*Tchar\*T*physaddr;\*T/* physical address to map from */
+\*Tlong\*Tlength;\*T\*T/* size in bytes to map */
+\*Tlong\*Tioflg;\*T\*T/* enable i/o addresses if set */
+\*T}
+\f1
+.fi
+.DT
+.br
+.ne 4
+.TP 12n
+\f4KDUNMAPDISP\f1 (\f2*\f1)
+Unmap display memory from user process address space.
+No argument required.
+.TP 12n
+\f4KDVDCTYPE\fP
+This call returns VDC controller/display information.
+.TP 12n
+\f4PIO_FONT8x8\fP (\f2*\fP)
+This call uses the user supplied 8x8 font.
+.TP 12n
+\f4PIO_FONT8x14\fP (\f2*\fP)
+This call uses the user supplied 8x14 font.
+.TP 12n
+\f4PIO_FONT8x16\fP (\f2*\fP)
+This call uses the user supplied 8x16 font.
+.TP 12n
+\f4VT_OPENQRY\f1
+Find an available virtual terminal.
+The argument is a pointer to a long.
+The long will be filled with the number of the first available "VT"
+that no other process has open or \-1 if none are available.
+.TP 12n
+\f4VT_GETMODE\f1 (\f2*\f1)
+Determine what mode the active virtual terminal is currently in,
+either \f4VT_AUTO\f1 or \f4VT_PROCESS.\f1
+The argument to the \f4ioctl\f1 is the address of the
+following type of structure:
+.nf
+.ta 3m 7m 11m 15m 19m 23m 26m 30m 34m 38m 42m 46m 50m 54m 58m
+.sp .4v
+\f4struct vt_mode {
+\*Tchar\*Tmode;\*T/* VT mode */
+\*Tchar\*Twaitv;\*T/* if set, hang on writes when not active */
+\*Tshort\*Trelsig;\*T/* signal to use for release request */
+\*Tshort\*Tacqsig;\*T/* signal to use for display acquired */
+\*Tshort\*Tfrsig;\*T/* not used set to 0 */
+\*T}
+.sp .5
+\*T#define\*TVT_AUTO\*T0x00\*T/* automatic VT switching */
+\*T#define\*TVT_PROCESS\*T0x01\*T/* process controls switching */\f1
+.fi
+.sp .5
+.DT
+The "vt_mode" structure will be filled in with the current
+value for each field.
+.TP 12n
+\f4VT_GETSTATE\f1 (\f2*\f1)
+The \f4VT_GETSTATE\f1 \f4ioctl\f1 returns global virtual terminal state
+information.  It returns the active virtual terminal in the
+v_active field, and the number of active virtual terminals and
+a bit mask of the global state in the vt_state field, where
+bit x is the state of vt x (1 indicates that the virtual
+terminal is open).
+.TP 12n
+\f4VT_SETMODE\f1 (\f2*\f1)
+Set the virtual terminal mode.
+The argument is a pointer to a "vt_mode"
+structure, as defined above.
+.TP 12n
+\f4VT_SENDSIG\f1 (\f2*\f1)
+The \f4VT_SENDSIG\f1 \f4ioctl\f1 specifies a signal (in vt_signal) to be
+sent to a bit mask of virtual terminals (in vt_state).
+.P
+The data structure used by the \f4VT_GETSTATE\f1 and \f4VT_SENDSIG\f1
+\f4ioctl\f1s is:
+.nf
+.ta 3m 7m 11m 15m 19m 23m 26m 30m 34m 38m 42m 46m 50m 54m 58m
+.sp .5
+\f4\*Tstruct vt_stat {
+	\*Tushort v_active;	/* active vt*/
+	\*Tushort v_signal;	/* signal to send (VT_SENDSIG) */
+	\*Tushort v_state;	/* vt bit mask (VT_SENDSIG and
+	\*T               	   VT_GETSTATE)*/
+	};
+.sp .4v
+.fi
+and is defined in \f4/usr/include/sys/vt.h\f1.
+.sp .5
+\f4VT_RELDISP\f1 (\f2*\f1)
+.in +.4i
+Used to tell the virtual terminal manager that the display has or has not\p
+been released by the process.
+A non-zero argument indicates that the\p
+.in -.4i
+.br
+.ne 2
+.in +.4i
+display has been released;
+a zero argument indicates refusal to release the display.
+.in -.4i
+.TP 12n
+\f4VT_ACTIVATE\f1 (\f2*\fP)
+Makes the virtual terminal number specified
+in the argument the active "VT".
+The "VT" manager will cause a switch to occur in the same manner
+as if a hotkey sequence had been typed at the keyboard.
+If the specified "VT" is not open or does not exist,
+the call will fail and errno will be set to \f4ENXIO\f1.
+.TP 12n
+\f4KIOCINFO\f1
+This call tells the user what the device is.
+.TP 12n
+\f4GIO_SCRNMAP\f1 (\f2*\f1)
+This call gets the screen mapping table from the kernel.
+.TP 12n
+\f4GIO_ATTR\f1
+This call returns the current screen attribute.
+The bits are interpreted as follows:
+.IP
+Bit 0 determines underlining for black and white monitors (1=underlining
+on).
+.IP
+Bits 0-2, for color monitors only, select the foreground color.
+The following
+list indicates what colors are selected by the given value:
+.sp .4v
+.in +.5i
+.nf
+The value 0 selects black.
+The value 1 selects red.
+The value 2 selects green.
+The value 3 selects brown.
+The value 4 selects blue.
+The value 5 selects magenta.
+The value 6 selects cyan.
+The value 7 selects white.
+.fi
+.in
+.IP
+Bit 3 is the intensity bit ( 1=blink on).
+.IP
+Bits 4-6, for color monitors only, select the background color.
+For a list
+of colors and their values, see the list under foreground colors.
+.IP
+Bit 7 is the blink bit (1=blink on).
+.TP 12n
+\f4GIO_COLOR\f1 (\f2*\f1)
+This call returns a non-zero value if the current display is a color display,
+otherwise, it returns a zero.
+.TP 12n
+\f4PIO_SCRNMAP\f1
+This call puts the screen mapping table in the kernel.
+.PP
+The screen mapping table maps extended ASCII (8-bit) characters to ROM
+characters.
+It is an array [256] of char (typedef \f2scrnmap_t\f1) and is
+indexed by extended ASCII values.
+The value of the elements of the array
+are the ROM character to display.
+.PP
+For example, the following will change the ASCII character `#' to be displayed
+as an English pound sign.
+.sp .5
+.ne 3i
+.RS
+.nf
+.ta 3m 7m 11m 15m 19m 23m 26m 30m 34m 38m 42m 46m 50m 54m 58m
+.ft 4
+#include <sys/console.h>
+change_pound() {
+scrnmap_t scrntab;
+	/*get screen mapping table of standard output*/
+if (ioctl(0,GIO_SCRNMAP, scrntab)==-1)
+	{
+	perror("screenmap read");
+	exit(-1);
+	}
+/*156 is the ROM value of English pound sign and 30
+   is the ASCII value of `#'.  */
+scrntab[30] = 156;
+if (ioctl(0, PIO_SCRNMAP, scrntab) == -1)
+	{
+	perror("screenmap write");
+	exit(-1);
+	}
+}\f1
+.fi
+.RE
+.DT
+.SH FILES
+\f4/dev/console\f1
+.br
+\f4/dev/vt00-\f2n\f1\f1
+.br
+\f4/dev/video\f1
+.br
+\f4/usr/include/sys/kd.h\f1
+.SH SEE ALSO
+\f4stty\f1(1),
+\f4console\f1(7),
+\f4keyboard\f1(7),
+\f4termio\f1(7)
+.br
+\f4\f4ioctl\f1(2)
+in the
+\f2Programmer's Reference Manual\fP.
+.SH NOTES
+Although it is possible to write character sequences which set arbitrary bits
+on the screen in any of the three graphics modes, this mode of operation is
+not currently supported.
+.PP
+Enable/disable of the underscore option using "ESC[38m" and
+"ESC[39m" are operative only when the AT&T Rite-Vu color/graphics
+video adaptor is installed, or else the underscore option is
+unsupported as the default for all other color/graphics adaptors.  Monochrome
+adaptors support underscore option as the default.  After "ESC[38m" has
+enabled underline and until "ESC[39m" has disabled underline all characters
+with blue attributes will appear as cyan.
+.PP
+It is currently not possible to access the 6845 start address registers.
+Thus, it is impossible to determine the beginning of the color monitor's
+screen memory.
+.PP
+The alternate/background color bit (bit 4) of the color select register does
+not appear to affect background colors in alphanumeric modes.
+.sp .5
+\f4KDSBORDER\f1 \f4ioctl\f1
+calls will not work with AT&T's Super-Vu enhanced
+color/graphics video adaptor.
+It will however, work with the IBM EGA
+card and other EGA compatible video adaptors.
+.sp .5
+The low-resolution graphics mode appears to be 80 across by 100 down.

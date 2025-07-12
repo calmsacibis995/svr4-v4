@@ -1,0 +1,26 @@
+'\"macro stdmacro
+.if n .pH g4.cron @(#)cron	40.5 of 1/3/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+'\"macro stdmacro
+.if n .pH g1a.cron @(#)cron	30.6 of 3/14/86
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.if \nX=0 .ds x} cron 4 "" "\&"
+.if \nX=1 .ds x} cron 4 ""
+.if \nX=2 .ds x} cron 4 "" "\&"
+.if \nX=3 .ds x} cron 4 "" "" "\&"
+.nr X
+.TH \*(x} "" "386 Computer Only"
+.SH NAME
+\f4cron\f1 
+.SH DESCRIPTION
+Options for \f4cron\f1 program can be set or changed with
+keywords in \f4/etc/default/cron\f1.  The following 
+keywords are recognized by \f4cron\f1.
+.TP
+\f4\s-1CRONLOG=YES\fP or \f4NO\s0\fP
+If CRONLOG is set to \f4YES\f1, All CRON jobs are logged in \f4/usr/lib/cron/log\f1.
+The default is NO.
+.SH FILES
+\f4/etc/default/cron\f1
+.Ee

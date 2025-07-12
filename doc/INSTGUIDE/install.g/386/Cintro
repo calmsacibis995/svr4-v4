@@ -1,0 +1,70 @@
+.if n .pH 386.Cintro @(#)Cintro	40.1.1.1
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.BK "Installation Guide" "System V Release 4" "" ""   
+.\ACRONYM	                  
+.CH "Before You Begin" "" "Table of Contents" "1"
+.\CHAPTER	1
+.tC 1 "Introduction" 1-1  
+.tC 1 "About This Guide" 1-2  
+.Index: optional packages, installing        	2
+.Index: optional slices, selecting        	2
+.Index: optional packages, installing        	2
+.tC 2 "Conventions" 1-2  
+.tC 2 "Notes, Cautions, Warnings, and Troubleshooting" 1-3  
+.tC 1 "System V Release 4 Packaging" 1-4  
+.tC 2 "Base System" 1-4  
+.Index: base system        	4
+.tC 3 "Boot Diskettes" 1-4  
+.Index: boot diskettes        	4
+.Index: diskettes, boot        	4
+.Index: diskette, base system        	4
+.Index: kernel        	4
+.Index: base operating system, installing        	4
+.Index: packages, optional        	4
+.tC 2 "Add-on Sets" 1-4  
+.Index: Add-On Sets       	4
+.Index: add-ons        	4
+.Index: BASIC Package Set      	4
+.Index: NETWORK Package Set      	4
+.Index: DEVELOPMENT Package Set      	5
+.Index: EXTENDED Package Set      	5
+.Index: HARDWARE Package Set      	5
+.tC 2 "Add-on Packages" 1-5  
+.tC 2 "The Distribution Media" 1-5  
+.Index: media (see distribution media)     	5
+.Index: distribution media, 5 1/4 inch floppy diskettes  	5
+.Index: distribution media, 3 1/2 inch floppy diskettes  	5
+.Index: distribution media, cartridge tape     	5
+.Index: floppy diskettes (see distribution media)    	5
+.Index: cartridge tape       	5
+.tC L "Figure 1-1:\0" "Installation Media" 1-6
+.tC 1 "Hardware Requirements" 1-7  
+.Index: requirements, memory        	7
+.Index: requirements, diskette drive size        	7
+.Index: requirements, display adapters        	7
+.Index: requirements, disk space        	7
+.Index: requirements, disk format        	7
+.Index: requirements, SCSI vs. non-SCSI        	7
+.Index: requirements, multiple hard disks        	7
+.Index: Ethernet, boards        	7
+.tC L "Table 1-1:\0" "SCSI Controller Interrupts and Memory Settings" 1-8
+.Index: controller interrupts, SCSI        	8
+.tC L "Table 1-2:\0" "Non-SCSI Controller Interrupts and Memory Settings" 1-9
+.Index: controller interrupts, non-SCSI        	9
+.tC 1 "Introduction to the Installation Process" 1-10  
+.Index: installation, overview of        	10
+.tC 2 "General Comments" 1-10  
+.Index: diskettes, boot        	10
+.tC 2 "Overview" 1-10  
+.tC 2 "Pre-Installation Tasks" 1-11  
+.tC 3 "Backing up Pre-Release 4 Files" 1-11  
+.Index: backup, Pre-Release 4 files        	11
+.Index: cpio command        	11
+.tC 3 "A Backup Example" 1-12  
+.Index: cpio command        	12
+.tC 3 "Backing Up Release 4 Files" 1-12  
+.Index: backup, Release 4 files        	12
+.tC 2 "Removing Packages" 1-12  
+.Index: RM.base.pkg command        	12
+.Index: packages, removing        	12
+.Index: shutdown        	13

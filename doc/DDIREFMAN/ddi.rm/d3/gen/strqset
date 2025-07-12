@@ -1,0 +1,64 @@
+'\"macro stdmacro
+.if n .pH gen.strqset @(#)strqset	40.2 of 1/7/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.nr X
+.if \nX=0 .ds x} strqset D3DK "STREAMS" "DDI/DKI" "\&"
+.if \nX=1 .ds x} strqset D3DK "STREAMS" "DDI/DKI"
+.if \nX=2 .ds x} strqset D3DK "" "\&"
+.if \nX=3 .ds x} strqset "" "" "\&"
+.TH \*(x}
+.IX "\f4strqset\fP(D3DK)"
+.SH NAME
+\f4strqset\f1 \- change information about a queue or band of the queue
+.SH SYNOPSIS
+.nf
+.na
+\f4#include <sys/types.h>
+#include <sys/stream.h>
+.sp 0.5
+int strqset(queue_t *\f2q, \f4qfields_t \f2what, \f4uchar_t \f2pri, \f4long \f2val\f4);\f1
+.ad
+.fi
+.SH ARGUMENTS
+.RS 0n 10
+.IP "\f2q\f1" 10n
+Pointer to the queue.
+.IP "\f2what\f1" 10n
+The field of the queue
+to change.
+Valid values are:
+.RS 10n
+.TP 10n
+\f4QHIWAT\fP
+High water mark of the specified priority band.
+.TP
+\f4QLOWAT\fP
+Low water mark of the specified priority band.
+.TP
+\f4QMAXPSZ\fP
+Maximum packet size of the specified priority band.
+.TP
+\f4QMINPSZ\fP
+Minimum packet size of the specified priority band.
+.RE
+.IP "\f2pri\f1" 10n
+Priority band of the queue to be changed.
+.IP "\f2val\f1" 10n
+New value for the field to be changed.
+.RE
+.SH DESCRIPTION
+\f4strqset\f1 gives drivers and modules a way to change information
+about a queue or a particular priority band of a queue without
+directly accessing STREAMS data structures.
+.SH RETURN VALUE
+On success, \f40\f1 is returned.
+An error number is returned on failure.
+.SH LEVEL
+Base or Interrupt.
+.SH NOTES
+Does not sleep.
+.SH SEE ALSO
+.na
+\f4strqget\f1(D3DK),
+\f4queue\fP(D4DK)
+.ad

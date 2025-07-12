@@ -1,0 +1,116 @@
+'\"macro stdmacro
+.if n .pH g3c.getpwent @(#)getpwent	40.18 of 5/22/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} getpwent 3C "C Development Set" "\&"
+.if \nX=1 .ds x} getpwent 3C "C Development Set"
+.if \nX=2 .ds x} getpwent 3C "" "\&"
+.if \nX=3 .ds x} getpwent "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4getpwent\f1, \f4getpwuid\f1, \f4getpwnam\f1, \f4setpwent\f1, \f4endpwent\f1, \f4fgetpwent\f1 \- manipulate password file entry
+.SH SYNOPSIS
+\f4#include <pwd.h>\f1
+.PP
+\f4struct passwd \(**getpwent (void);\f1
+.PP
+\f4struct passwd \(**getpwuid (uid_t uid);\f1
+.PP
+\f4struct passwd \(**getpwnam (const char \(**name);\f1
+.PP
+\f4void setpwent (void);\f1
+.PP
+\f4void endpwent (void);\f1
+.PP
+\f4struct passwd \(**fgetpwent (FILE \(**f);\f1
+.SH DESCRIPTION
+\f4getpwent\fP,
+\f4getpwuid\fP,
+and
+\f4getpwnam\fP
+each returns a pointer to an object with the
+following structure
+containing the broken-out
+fields of a line in the
+\f4/etc/passwd\f1
+file.
+Each line in the file
+contains a \f4passwd\fP structure, declared in the
+\f4pwd.h\fP
+header file:
+.RS
+.PP
+.nf
+\f4struct passwd {
+	char	\(**pw_name;
+	char	\(**pw_passwd;
+	uid_t	pw_uid;
+	gid_t	pw_gid;
+	char	\(**pw_age;
+	char	\(**pw_comment;
+	char	\(**pw_gecos;
+	char	\(**pw_dir;
+	char	\(**pw_shell;
+};\f1
+.fi
+.RE
+.PP
+\f4getpwent\fP
+when first called returns a pointer to the first \f4passwd\f1 structure in the file;
+thereafter, it returns a pointer to the next \f4passwd\f1 structure in the file;
+so successive calls can
+be used to search the entire file.
+\f4getpwuid\fP
+searches from the beginning of the file until a numerical user id matching
+.I uid\^
+is found and
+returns a pointer to the particular structure in which it was found.
+\f4getpwnam\fP
+searches from the beginning of the
+file until a login name matching
+.I name\^
+is found, and returns a pointer to the particular structure
+in which it was found.
+If an end-of-file or an error
+is encountered on reading, these functions return a
+null pointer.
+.PP
+A call to
+\f4setpwent\fP
+has the effect of rewinding
+the password file
+to allow
+repeated searches.
+\f4endpwent\fP
+may be called to
+close the password file
+when processing is complete.
+.PP
+\f4fgetpwent\fP
+returns a pointer to the next \f4passwd\f1 structure in the stream
+.IR f ,
+which matches the format of
+\f4/etc/passwd\f1.
+.SH FILES
+\f4/etc/passwd\fP
+.SH "SEE ALSO"
+\f4getlogin\fP(3C), \f4getgrent\fP(3C).
+.br
+\f4passwd\fP(4) in the \f2System Administrator's Reference Manual\f1.
+.SH DIAGNOSTICS
+\f4getpwent\f1,
+\f4getpwnid\f1,
+\f4getpwnam\f1,
+and
+\f4fgetpwent\f1
+return a null pointer
+on \f4EOF\f1 or error.
+.SH NOTES
+All information
+is contained in a static area,
+so it must be copied if it is
+to be saved.
+.br
+.\"	@(#)getpwent.3c	6.3 of 10/20/83
+.Ee

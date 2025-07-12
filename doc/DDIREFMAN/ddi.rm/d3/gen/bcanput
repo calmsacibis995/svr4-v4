@@ -1,0 +1,70 @@
+'\"macro stdmacro
+.if n .pH gen.bcanput @(#)bcanput	40.2 of 1/7/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.nr X
+.if \nX=0 .ds x} bcanput D3DK "STREAMS" "DDI/DKI" "\&"
+.if \nX=1 .ds x} bcanput D3DK "STREAMS" "DDI/DKI"
+.if \nX=2 .ds x} bcanput D3DK "" "\&"
+.if \nX=3 .ds x} bcanput "" "" "\&"
+.TH \*(x}
+.IX "\f4bcanput\fP(D3DK)"
+.IX "STREAMS message queues"
+.IX "message (STREAMS)"
+.SH NAME
+\f4bcanput\fP \- test for flow control in specified priority band
+.SH SYNOPSIS
+.nf
+.na
+\f4#include <sys/types.h>
+#include <sys/stream.h>
+.sp 0.5
+int bcanput(queue_t *\f2q, \fPuchar_t \f2pri\fP);\f1
+.ad
+.fi
+.SH ARGUMENTS
+.RS 0n
+.IP "\f2q\fP" 10n
+Pointer to the message queue.
+.IP "\f2pri\fP" 10n
+Message priority.
+.RE
+.SH DESCRIPTION
+Like the \f4canput\fP(D3DK) function,
+\f4bcanput\fP searches through the stream (starting at \f2q\fP)
+until it finds a queue containing
+a service routine, or until it reaches
+the end of the stream.
+If found, the queue containing the service routine
+is tested to see if a message of priority \f2pri\fP can be enqueued.
+If the band is full, \f4bcanput\fP marks the queue to automatically
+back-enable the caller's service routine when the amount of data
+in messages on the queue has reached its low water mark.
+.P
+If \f2pri\fP is 0, the \f4bcanput\fP call is equivalent to
+a call to \f4canput\fP.
+.P
+It is possible because of race conditions to test for room using \f4bcanput\fP
+and get an indication that there is room for a message, and then have
+the queue fill up before subsequently enqueuing the message, causing
+a violation of flow control.
+This is not a problem, since the violation of flow control in this case
+is bounded.
+.SH "RETURN VALUE"
+\f4bcanput\fP returns 1 if a message of priority \f2pri\fP can be sent in the stream,
+or 0 if the priority band is flow-controlled.
+If \f4bcanput\fP reaches the end of the stream without finding a queue
+with a service routine, then it returns 1.
+.SH LEVEL
+Base or Interrupt.
+.SH NOTES
+Does not sleep.
+.sp 0.5
+The driver is responsible for both testing a queue with
+\f4bcanput\fP and refraining from placing a message on the queue if
+\f4bcanput\fP fails.
+.SH SEE ALSO
+.na
+\f4canput\fP(D3DK),
+\f4putbq\fP(D3DK),
+\f4putnext\fP(D3DK)
+.ad

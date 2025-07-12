@@ -1,0 +1,67 @@
+'\"macro stdmacro
+.if n .pH 386.mps_AMPs_rsv @(#)mps_AMPs_rsv	40.5 of 7/1/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.nr X
+.if \nX=0 .ds x} mps_AMPsend_rsvp D3D "Multibus II" "DDI" "\&"
+.if \nX=1 .ds x} mps_AMPsend_rsvp D3D "Multibus II" "DDI" "\&"
+.if \nX=2 .ds x} mps_AMPsend_rsvp D3D "" "\&"
+.if \nX=3 .ds x} mps_AMPsend_rsvp "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4mps_AMPsend_rsvp\f1 \- queues request messages for transmission
+and sets up table entries for reception of reply messages
+.SH SYNOPSIS
+.nf
+\f4#include <sys/mps.h>
+long mps_AMPsend_rsvp(\f2chan\fP, \f2omsg\fP, \f2obuf\fP, \f2ibuf\fP)
+long chan;
+mps_msgbuf_t *omsg;
+struct dma_buf *obuf, *ibuf;\f1
+.fi
+.SH ARGUMENTS
+.PD 0
+.TP 11
+\f2chan\f1
+Channel number received from a previous \f4mps_open_ chan\f1.
+.TP 11
+\f2omsg\f1
+Points to a message buffer containing message to be sent.
+.TP 11
+\f2obuf\f1
+Specifies a data buffer for data to be sent.
+.TP 11
+\f2ibuf\f1
+Specifies a data buffer to receive replies.
+.SH DESCRIPTION
+\f4mps_AMPsend_rsvp\f1 queues up request messages for transmission and
+sets up table entries for reception of reply messages when they arrive.
+This routine is asynchronous in operation.
+.PP
+When \f2obuf\f1 is NULL, the request message is assumed to be an
+unsolicited message.
+In this case \f4mps_mk_unsol\f1 (with a non-zero
+\f2tid\f1 obtained by a call to \f4mps_get_tid\f1) should be used to build
+the message in \f2omsg\f1.
+When \f2obuf\f1 is not NULL, request message
+is assumed to be a solicited message and \f2obuf\f1 points to the data.
+In this case \f4mps_mk_unsol\f1 (with a non-zero \f2tid\f1 obtained by a
+call to \f4mps_get_tid\f1) should be used to build the message in \f2omsg\f1.
+.PP
+When \f2obuf\f1 is not NULL, the request message is assumed to be a solicited
+message and \f2obuf\f1 points to the solicited data.
+In this
+case, \f4mps_mk_sol\f1 (with a non-zero tid obtained by a call to
+\f4mps_get_tid\f1) should be used to build the message in \f2omsg\f1.
+If \f2ibuf\f1 is NULL, the reply message is expected to be an unsolicited
+message.
+.SH RETURN VALUE
+\f4mps_AMPsend_rsvp\f1 returns 0 (zero) if no error is detected;
+otherwise, \-1 is returned.
+.SH LEVEL
+Base or Interrupt
+.SH SEE ALSO
+.na
+\f4mps_open_chan\f1(D3D),
+\f4mps_mk_sol\f1(D3D),
+\f4mps_mk_unsol\f1(D3D),
+\f4mps_get_tid\f1(D3D)

@@ -1,0 +1,209 @@
+'\"macro stdmacro
+.if n .pH g3.sigfpe @(#)sigfpe	40.11 of 4/24/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.\" @(#)sigfpe.3 1.2 88/12/09 SMI;
+.\" Copyright (c) 1988 Sun Microsystems, Inc. - All Rights Reserved.
+.\"
+.nr X
+.if \nX=0 .ds x} sigfpe 3 "BSD Compatibility Package" "\&"
+.if \nX=1 .ds x} sigfpe 3 "BSD Compatibility Package"
+.if \nX=2 .ds x} sigfpe 3 "" "\&"
+.if \nX=3 .ds x} sigfpe "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4sigfpe\f1 \- signal handling for specific SIGFPE codes
+.SH SYNOPSIS
+\f4cc \f1[ \f2flag\f1\. \. \. ] \f2file\f1 \. \. \. \f4\-lucb\f1
+.P
+.nf
+\f4#include <signal.h>\f1
+.P
+\f4#include <floatingpoint.h>\f1
+.P
+\f4sigfpe_handler_type sigfpe(code, hdl)\f1
+\f4sigfpe_code_type code;\f1
+\f4sigfpe_handler_type hdl;\f1
+.fi
+.SH DESCRIPTION
+.P
+This function allows signal handling to be specified for particular
+\f4SIGFPE\fP
+codes.
+A call to
+\f4sigfpe\f1
+defines a new handler
+.I hdl
+for a particular
+\f4SIGFPE\fP
+.I code
+and returns the old handler as the value of the function
+\f4sigfpe.\f1
+Normally handlers are specified as pointers to functions;
+the special cases
+\f4SIGFPE_IGNORE\f1,
+\f4SIGFPE_ABORT\f1,
+and
+\f4SIGFPE_DEFAULT\fP
+allow ignoring, specifying core dump using
+\f4abort\f1(3),
+or default handling respectively.
+.P
+For these
+.SM IEEE\s0-related
+codes:
+.P
+.TS
+center ;
+lf4 l l .
+FPE_FLTINEX_TRAP	fp_inexact	floating inexact result
+FPE_FLTDIV_TRAP	fp_division	floating division by zero
+FPE_FLTUND_TRAP	fp_underflow	floating underflow
+FPE_FLTOVF_TRAP	fp_overflow	floating overflow
+FPE_FLTBSUN_TRAP	fp_invalid	branch or set on unordered
+FPE_FLTOPERR_TRAP	fp_invalid	floating operand error
+FPE_FLTNAN_TRAP	fp_invalid	floating Not-A-Number
+.TE
+.P
+default handling is defined to be to call the handler specified to
+\f4ieee_handler\f1(3M).
+.P
+For all other
+\f4SIGFPE\fP
+codes, default handling is to core dump using
+\f4abort\f1(3).
+.P
+The compilation option \-ffpa causes fpa recomputation to replace
+the default abort action
+for code
+\f4FPE_FPA_ERROR\f1.
+Note:
+\f4SIGFPE_DEFAULT\fP
+will restore abort rather than
+.SM FPA
+recomputation for this code.
+.P
+Three steps are required to intercept an
+.SM IEEE\s0-related
+\f4SIGFPE\fP
+code with
+\f4sigfpe\f1:
+.RS 
+.TP 1P
+1.
+Set up a handler with
+\f4sigfpe\f1.
+.TP
+2.
+Enable the relevant
+.SM IEEE
+trapping capability in the hardware, perhaps
+by using assembly-language instructions.
+.TP 
+3.
+Perform a floating-point operation that generates the intended
+.SM IEEE
+exception.
+.RE
+.P
+Unlike
+\f4ieee_handler\f1(3M),
+\f4sigfpe\f1
+never changes floating-point hardware mode bits affecting
+.SM IEEE
+trapping.
+No
+.SM IEEE\s0-related
+\f4SIGFPE\fP
+signals will be generated unless those hardware mode
+bits are enabled.
+.P
+\f4SIGFPE\fP
+signals can be handled using
+\f4sigvec\f1(2),
+\f4signal\f1(3),
+\f4sigfpe\f1(3),
+or
+\f4ieee_handler\f1(3M).
+In a particular program, to avoid confusion,
+use only one of these interfaces to handle
+\f4SIGFPE\fP
+signals.
+.br
+.ne 20
+.SH EXAMPLE
+.P
+A user-specified signal handler might look like this:
+.P
+.nf
+.ft 4
+.ta 8n +8n +8n +8n +8n +8n +8n
+void sample_handler( sig, code, scp, addr )
+	int sig ;		/* sig == SIGFPE always */
+	int code ;
+	struct sigcontext *scp ;
+	char *addr ;
+	{
+		/*
+		   Sample user-written sigfpe code handler.
+		   Prints a message and continues.
+		   struct sigcontext is defined in <signal.h>.
+		 */
+		printf(" ieee exception code %x occurred at pc %X \\n",
+			code,scp->sc_pc);
+	}
+.fi
+.ft
+.P
+and it might be set up like this:
+.P
+.ft 4
+.nf
+.ta 8n +8n +8n +8n +8n +8n +8n
+	extern void sample_handler;
+ 	main
+	{
+		sigfpe_handler_type hdl, old_handler1, old_handler2;
+	/*
+	 * save current overflow and invalid handlers; set the new
+	 * overflow handler to sample_handler and set the new
+	 * invalid handler to SIGFPE_ABORT (abort on invalid)
+	 */
+		hdl = (sigfpe_handler_type) sample_handler;
+		old_handler1 = sigfpe(FPE_FLTOVF_TRAP, hdl);
+		old_handler2 = sigfpe(FPE_FLTOPERR_TRAP, SIGFPE_ABORT);
+		\&.\|.\|.
+	/*
+	 * restore old overflow and invalid handlers
+	 */
+		sigfpe(FPE_FLTOVF_TRAP,   old_handler1);
+		sigfpe(FPE_FLTOPERR_TRAP, old_handler2);
+	}
+.ft 1
+.fi
+.SH FILES
+.PD 0
+.TP 20
+\f4/usr/include/floatingpoint.h\f1
+.TP
+\f4/usr/include/signal.h\f1
+.PD
+.ne 5
+.SH "SEE ALSO"
+\f4sigvec\fP(2),
+\f4floatingpoint\fP(3),
+\f4ieee_\f4handler\fP(3M),
+\f4signal\fP(3),
+.br
+\f4abort\fP(3C)
+in the \f2Programmer's Reference Manual\f1
+.SH "RETURN VALUE"
+.P
+\f4sigfpe\f1
+returns
+\f4BADSIG\fP
+if
+.I code
+is not zero or a defined
+\f4SIGFPE\fP
+code.

@@ -1,0 +1,204 @@
+'\"macro stdmacro
+.if n .pH 386.scsi_worm @(#)scsi_worm	40.3 of 6/24/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+'\"macro stdmacro
+.ds dr \f4sw01\fP
+.nr X
+.if \nX=0 .ds x} scsi_worm 7 "SCSI Drivers" "\&"
+.if \nX=1 .ds x} scsi_worm 7 "SCSI Drivers"
+.if \nX=2 .ds x} scsi_worm 7 "" "\&"
+.if \nX=3 .ds x} scsi_worm "" "" "\&"
+.TH \*(x}
+.PP
+.SH NAME
+scsi_worm \- \f4sw01\fP SCSI WORM Target Driver
+.PP
+.SH DESCRIPTION
+\*(dr is an SDI compliant WORM (Write Once Read Many) target driver that
+provides access to one or more WORM drives.  
+Each drive must be attached to a SCSI Bus that is controlled 
+by a SCSI Device Interface (SDI) compliant Host Adapter driver; see,
+for example, \f4scsi_adaptec\fP(7).
+.PP
+Access to the particular drive is accomplished via the \*(dr
+device nodes located in \f4/dev/[r]worm\fP.
+Each device node identifies a particular drive
+based on the SCSI ID assigned to that drive.  The binding between
+a device node and a WORM drive is as follows:
+.RS
+.TP 20
+\f4/dev/[r]worm/wm0\fP
+WORM drive with lowest SCSI ID
+.TP
+\f4/dev/[r]worm/wm1\fP
+WORM drive with next to lowest SCSI ID
+.TP
+and so on through \f4/dev/[r]worm/wm7\fP.
+.RE
+.PP
+A WORM drive uses removable media that is divided into consecutively
+numbered, fixed-size sectors that may be accessed in any order,
+similar to a hard disk.
+Most of the standard tools for reading and writing to and from a
+hard disk, such as such as \f4dd(1)\fP or \f4read(2)\fP, 
+work with a WORM drive.
+However, keep in mind that for WORM drives each sector
+can be written to only once.
+This characteristic causes problems if a WORM device is mounted
+[\f4mount(1M)\fP] without using the Read-Only flag.
+.SH ioctl Calls
+\*(dr supports several \f4ioctl\fP functions [see \f4ioctl\fP(2) in
+the \f2Programmer's Reference Manual\fP]  which are accessed via
+the \f4ioctl\fP system call.
+Many of the supported \f4ioctl\fPs provide
+a convenient method for sending one of the preselected SCSI commands
+directly to the drive.
+SCSI commands not explicitly supported by
+\*(dr can be sent to the drive via the pass-through facility
+provided by the SDI Host Adapter driver.
+Refer to \f4scsi(7)\fP for details.
+.PP
+The following \f4ioctl\fPs are defined and required by the SDI interface.
+.RS
+.TP 18
+\f4B_GETTYPE\fP
+Returns the type of peripheral bus (for example, \f4scsi\fP) used and
+the name of this driver (for example, \f4sw01\fP).
+.TP
+\f4B_GETDEV\fP
+Returns the major and minor number of the pass-through device for
+the WORM drive.
+See, for example, \f4scsi_adaptec\fP(7) for details.
+.TP
+\f4SDI_RESERVE\fP
+Sends a SCSI \f4Reserve\fP command to the drive.
+.TP
+\f4SDI_RELEASE\fP
+Sends a SCSI \f4Release\fP command to the drive.
+.RE
+.PP
+The following \f4ioctl\fPs cause the appropriate Group-0 SCSI command to
+be sent to the device.
+These commands are defined by the SCSI Bus
+specification and should also be described in the SCSI Interface
+section of the reference manual supplied with your WORM drive.
+.RS
+.TP 18
+\f4W_TESTUNIT\fP
+Sends a Test Unit Ready\fP command to the device.
+.TP
+\f4W_REZERO\fP
+Sends a Rezero Device\fP command to the device.
+.TP
+\f4W_SEEK\fP
+Sends a Seek\fP command to the device.
+.TP
+\f4W_INQUIR\fP
+Sends an Inquiry\fP command to the device and returns the
+resulting data back to the caller.
+.TP
+\f4W_STARTUNIT\fP
+Sends a Start Unit\fP command to the device.
+.TP
+\f4W_STOPUNIT\fP
+Sends a Stop Unit\fP command to the device.
+.TP
+\f4W_PREVMV\fP
+Sends a Prevent Media Removal\fP command to the device.
+.TP
+\f4W_ALLOMV\fP
+Sends an Allow Media Removal\fP command to the device.
+.RE
+.PP
+The following \f4ioctl\fPs cause the appropriate Group-1 SCSI command to
+be sent to the device.  The Group-1 SCSI commands are defined by the
+SCSI Bus specification and should be described in the SCSI Interface
+section of the reference manual supplied with your WORM drive.
+.RS
+.TP 18
+\f4W_READCAPA\fP
+Sends a Read Capacity\fP command to the device and returns the
+data sent by the drive.
+.TP 18
+\f4W_VERIFY\fP
+Sends a Verify\fP command to the device.
+.RE
+.PP
+The following \f4ioctl\fPs cause the appropriate Group-6 SCSI command to
+be sent to the drive.
+Group-6 SCSI commands are vendor specific and
+should be described in the SCSI Interface section of the reference
+manual supplied with your drive.
+Since the format of these SCSI commands is vendor specific,
+these \f4ioctl\fPs
+are supported only by products compatible with the Toshiba D070 .
+.RS
+.TP 18
+\f4W_STNCHECK\fP
+Sends a Stand-By Check\fP command to the device.
+.TP
+\f4W_LOADCART\fP
+Sends a Load Cartridge\fP command to the device.
+.TP
+\f4W_UNLOADCA\fP
+Sends an Unload Cartridge\fP command to the device.
+.TP
+\f4W_READCB\fP
+Sends a Read Control Block\fP command to the device.
+.RE
+.PP
+The following \f4ioctl\fPs cause the appropriate Group-7 SCSI command to
+be sent to the drive.
+Group-7 SCSI commands are vendor specific and
+should be described in the SCSI Interface section of the reference
+manual supplied with your drive.
+Since the format of these SCSI commands is vendor specific, these \f4ioctl\fPs
+are supported only by products compatible with the Toshiba D070.
+.RS
+.TP 18
+\f4W_CHECK\fP
+Sends a Check\fP command to the device.
+.TP
+\f4W_CCHECK\fP
+Sends a Contrary Check\fP command to the device.
+.RE
+.PP
+The following \f4ioctl\fPs are also supported the \*(dr driver.
+.RS
+.TP 18
+\f4B_GET_SUBDEVS\fP
+Returns the number of sub-devices supported by this driver (for example, 1).
+.TP
+\f4W_ERRMSGON\fP
+Enables the \*(dr related system error messages.
+.TP
+\f4W_ERRMSGOFF\fP
+Disables the \*(dr related system error messages.
+.RE
+.PP
+.SH FILES
+\f4/usr/include/sys/\*(dr.h\fP
+.br
+\f4/etc/conf/pack.d/\*(dr/space.c\fP
+.br
+\f4/dev/[r]worm/wm[0-7]\fP
+.br
+\f4/usr/include/sys/scsi.h\fP
+.br
+\f4/usr/include/sys/sdi.h\fP
+.br
+\f4/usr/include/sys/sdi_edt.h\fP
+.PP
+.SH "SEE ALSO"
+.na
+\f4scsi_adaptec\f1(7),
+\f4scsi_cdrom\fP(7),
+\f4scsi_disk\fP(7),
+\f4scsi_dpt\f1(7),
+\f4scsi_tape\fP(7),
+\f4scsi_wd7000\f1(7)
+.P
+\f4ioctl\fP(2) in the \f2Programme's Reference Manual\fP
+.P
+\f2Programmer's Guide: SCSI Driver Interface (SDI)\fP
+.ad

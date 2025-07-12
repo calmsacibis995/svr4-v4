@@ -1,0 +1,467 @@
+'\"macro stdmacro
+.if n .pH g1.lint @(#)lint	40.22 of 5/22/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} lint 1 "C Development Set" "\&"
+.if \nX=1 .ds x} lint 1 "C Development Set"
+.if \nX=2 .ds x} lint 1 "" "\&"
+.if \nX=3 .ds x} lint "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4lint\f1 \- a C program checker
+.SH SYNOPSIS
+\f4lint [\f2options\f4] \f2files\f1
+.SH DESCRIPTION
+\f4lint\fP
+detects features of C program files
+which are likely to be bugs,
+non-portable, or wasteful.
+It also checks type usage more strictly
+than the compiler.
+\f4lint\fP
+issues error and warning messages.
+Among the things it detects are
+unreachable statements,
+loops not entered at the top,
+automatic variables declared and not used,
+and logical expressions whose value is constant.
+\f4lint\fP checks for
+functions that return values in some places and not in others,
+functions called with varying numbers or types of arguments,
+and functions whose values are not used
+or whose values are used but none returned.
+.PP
+Arguments whose names end with
+\f4\&.c\f1
+are taken to be C source files.
+Arguments whose names end with
+\f4\&.ln\f1
+are taken to be the result of an earlier invocation of
+\f4lint\fP
+with either the
+\f4\-c\f1 or the \f4\-o\f1 option used.
+The
+\f4\&.ln\f1
+files are analogous to
+\f4\&.o\f1
+(object) files that are produced by the
+\f4cc\fP(1)
+command when given a
+\f4\&.c\f1
+file as input.
+Files with other suffixes are warned about and ignored.
+.PP
+\f4lint\fP
+takes all the
+\f4\&.c\f1,
+\f4\&.ln\f1,
+and
+\f4llib-l\f2x\f4.ln\f1
+(specified by
+\f4\-l\f2x\f1)\f1
+files and processes them in their command line order.
+By default,
+\f4lint\fP
+appends the standard C lint library
+\f1(\f4llib-lc.ln\f1)
+to the end of the list of files.
+When the
+\f4\-c\f1
+option is used, the
+\f4\&.ln\f1
+and the
+\f4llib-l\f2x\f4.ln\f1
+files are ignored.
+When the
+\f4\-c\f1
+option is not used,
+the second pass of
+\f4lint\fP
+checks the
+\f4\&.ln\f1
+and the
+\f4llib-l\f2x\f4.ln\f1
+list of files for mutual compatibility.
+.PP
+Any number of
+\f4lint\fP
+options may be used, in any order, intermixed with file-name arguments.
+The following options are used to suppress certain kinds of complaints:
+.TP
+\f4\-a\f1
+Suppress complaints about assignments of long values to variables that are not
+long.
+.TP
+\f4\-b\f1
+Suppress complaints about
+\f4break\f1
+statements that cannot be reached.
+.TP
+\f4\-h\f1
+Do not apply heuristic tests that attempt to intuit bugs, improve
+style, and reduce waste.
+.TP
+\f4\-m\f1
+Suppress complaints about external symbols that could be declared static.
+.TP
+\f4\-u\f1
+Suppress complaints about functions and external
+variables used and not defined, or defined and not used.
+(This option is suitable for running
+\f4lint\fP
+on a subset of files of a larger program).
+.TP
+\f4\-v\f1
+Suppress complaints about unused arguments in functions.
+.TP
+\f4\-x\f1
+Do not report variables referred to by external declarations but never used.
+.br
+.ne 2i
+.P
+The following arguments alter
+\f4lint\fP's
+behavior:
+.TP
+\f4\-I\f2\^dir\f1
+Search for included header files in the directory \f2dir\f1 before
+searching the current directory and/or the standard place.
+.TP
+\f4\-l\f2x\^\f1
+Include the lint library
+\f4llib-l\f2x\f4.ln\f2.\f1
+For example, you can include a lint version of the math library
+\f4llib-lm.ln\f1
+by inserting
+\f4\-lm\f1
+on the command line.
+This argument does not suppress the default use of
+\f4llib-lc.ln\f1.
+These lint libraries must be in the assumed directory.
+This option can be used to reference local lint libraries and is
+useful in the development of multi-file projects.
+.TP
+\f4\-L\f2\^dir\f1
+Search for lint libraries in \f2dir\f1 before searching the standard place.
+.TP
+\f4\-n\f1
+Do not check compatibility against the standard C lint 
+library.
+.TP
+\f4\-p\f1
+Attempt to check portability to other dialects of C.
+Along with stricter checking,
+this option causes all non-external names to be truncated
+to eight characters and all external names
+to be truncated to six characters and one case.
+.TP
+\f4\-s\f1
+Produce one-line diagnostics only.
+\f4lint\fP
+occasionally buffers messages
+to produce a compound report.
+.TP
+\f4\-k\f1
+Alter the behavior of /\(**\s-1LINTED\s+1 [\f2message\f1]\(**/ directives.
+Normally, 
+\f4lint\fP
+will suppress warning messages for the code following these directives.
+Instead of suppressing the messages,
+\f4lint\fP
+prints an additional message containing the comment inside
+the directive.
+.TP
+\f4\-y\f1
+Specify that the file being linted
+will be treated as if the \%/\(**\s-1LINTLIBRARY\s+1\(**/ directive had
+been used.
+A lint library is normally created by using
+the /\(**\s-1LINT\%LIBRARY\s+1\(**/ directive.
+.TP
+\f4\-F\f1
+Print pathnames of files.
+\f4lint\fP
+normally prints the filename without
+the path.
+.TP
+\f4\-c\f1
+Cause
+\f4lint\fP
+to produce a
+\f4\&.ln\f1
+file for every
+\f4\&.c\f1
+file on the command line.
+These
+\f4\&.ln\f1
+files are the product of
+\f4lint\fP's
+first pass only, and are not checked for inter-function compatibility.
+.TP
+\f4\-o\f2\^x\f1
+Cause
+\f4lint\fP
+to create a lint library with the name
+\f4llib-l\f2x\f4.ln\f1.\f1
+The
+\f4\-c\f1
+option nullifies any use of the
+\f4\-o\f1
+option.
+The lint library produced is the input that is given to
+\f4lint\fP's
+second pass.
+The
+\f4\-o\f1
+option simply causes this file to be saved in the named lint library.
+To produce a
+\f4llib-l\f2x\f4.ln\f1
+without extraneous messages, use of the
+\f4\-x\f1
+option is suggested.
+The
+\f4\-v\f1
+option is useful if the source file(s) for the lint library
+are just external interfaces.
+.sp .5
+Some of the above settings are also available through the
+use of "lint comments" (see below).
+.TP
+\f4\-V\f1
+Write to standard error the product name and release.
+.TP
+\f4\-W\f2\^file\f1
+Write a \f4.ln\f1 file to \f2file\f1, for use by \f4cflow\fP(1).
+.TP
+\f4\-R\f2\^file\f1
+Write a \f4.ln\f1 file to \f2file\f1, for use by \f4cxref\fP(1).
+.PP
+\f4lint\fP recognizes many \f4cc\fP(1) command line options,
+including \f4\-D\f1,
+\f4\-U\f1,
+\f4\-g\f1,
+\f4\-O\f1,
+\f4\-Xt\f1,
+\f4\-Xa\f1,
+and
+\f4\-Xc\f1,
+although
+\f4\-g\f1 and \f4\-O\f1
+are ignored.
+Unrecognized options are warned about and ignored.
+The predefined macro \f4lint\f1 is defined to allow certain questionable
+code to be altered or removed for
+\f4lint\fP.
+Thus, the symbol \f4lint\f1 should be thought of as a reserved word
+for all code that is planned to be checked by
+\f4lint\fP.
+.PP
+Certain conventional comments in the C source
+will change the behavior of
+\f4lint\fP:
+.RS
+.TP
+.RI /\(**\s-1ARGSUSED\s+1 n \(**/
+makes
+\f4lint\fP
+check only the first
+.I n\^
+arguments for usage; a missing
+.I n\^
+is taken to be 0 (this option acts like the 
+\f4\-v\f1
+option for the next function).
+.TP
+/\(**\s-1CONSTCOND\s0\(**/ or /\(**\s-1CONSTANTCOND\s0\(**/ or /\(**\s-1CONSTANTCONDITION\s0\(**/
+.br
+suppresses complaints about constant operands for the next expression.
+.TP
+/\(**\s-1EMPTY\s0\(**/
+suppresses complaints about a null statement consequent on an if statement.
+This directive should be placed after the test expression,
+and before the semicolon.
+This directive is supplied to support empty if statements
+when a valid else statement follows.
+It suppresses messages on an empty \f4else\f1 consequent.
+.TP
+/\(**\s-1FALLTHRU\s0\(**/ or /\(**\s-1FALLTHROUGH\s0\(**/
+.br
+suppresses complaints about fall through
+to a \f4case\f1 or \f4default\f1 labeled statement.
+This directive should be placed immediately
+preceding the label.
+.TP
+/\(**\s-1LINTLIBRARY\s0\(**/
+at the beginning of a file shuts off complaints about unused functions
+and function arguments in this file.
+This is equivalent to using the
+\f4\-v\f1 and \f4\-x\f1
+options.
+.TP
+/\(**\s-1LINTED\s0 [\f2message\fP]\\(**/ \f1
+.br
+suppresses any intra-file warning except those dealing with
+unused variables or functions.
+This directive should be placed on the line immediately
+preceding where the lint warning occurred.
+The
+\f4\-k\f1
+option alters the way in which
+\f4lint\fP
+handles this directive.
+Instead of suppressing messages,
+\f4lint\fP
+will print an additional
+message, if any, contained in the comment.
+This directive is useful in conjunction with the
+\f4\-s\f1
+option for post-lint filtering.
+.TP
+/\(**\s-1NOTREACHED\s0\(**/
+at appropriate points
+stops comments about unreachable code.
+[This comment is typically placed just after calls to functions like
+\f4exit\fP(2)].
+.TP
+.RI /\(**\s-1PRINTFLIKE\s+1 n \(**/
+makes
+\f4lint\fP
+check the first
+.I (n-1)\^
+arguments as usual.
+The
+.I nth\^
+argument is interpreted as a \f4printf\fP format string that is used
+to check the remaining arguments.
+.TP
+.RI /\(**\s-1PROTOLIB\s+1 n \(**/
+causes
+\f4lint\fP
+to treat function declaration prototypes as function definitions
+if
+.I n\^
+is non-zero.
+This directive can
+only be used in conjunction with the
+.br
+/\(** \s-1LINTLIBRARY\s+1 \(**/
+directive.
+If
+.I n\^
+is zero, function prototypes will be treated normally.
+.TP
+.RI /\(**\s-1SCANFLIKE\s+1 n \(**/
+makes \f4lint\fP check the first \f2(n-1)\f1 
+arguments as usual.
+The \f2nth\f1 argument is interpreted
+as a \f4scanf\fP format string that is used to check
+the remaining arguments.
+.TP
+.RI /\(**\s-1VARARGS\s+1 n \(**/
+suppresses
+the usual checking for variable numbers of arguments
+in the following function declaration.
+The data types of the first
+.I n\^
+arguments are checked;
+a missing
+.I n\^
+is taken to be 0.
+The use of the ellipsis terminator (.\ .\ .) in 
+the definition is suggested
+in new or updated code.
+.RE
+.PP
+\f4lint\fP
+produces its first output on a per-source-file basis.
+Complaints regarding included files are collected and printed
+after all source files have been processed,
+if \f4\-s\f1 is not specified.
+Finally, if the
+\f4\-c\f1
+option is not used,
+information gathered from all input files is collected and checked for
+consistency.
+At this point,
+if it is not clear whether a complaint stems from a given source file or from
+one of its included files,
+the source filename will be printed followed by a question mark.
+.PP
+The behavior of the
+\f4\-c\f1
+and the
+\f4\-o\f1
+options allows for incremental use of
+\f4lint\fP
+on a set of C source files.
+Generally, one invokes
+\f4lint\fP
+once for each source file with the
+\f4\-c\f1
+option.
+Each of these invocations produces a
+\f4\&.ln\f1
+file that corresponds to the
+\f4\&.c\f1
+file, and prints all messages that are about just that source file.
+After all the source files have been separately run through
+\f4lint\fP,
+it is invoked once more (without the
+\f4\-c\f1
+option), listing all the
+\f4\&.ln\f1
+files with the needed
+\f4\-l\f2x\f1
+options.
+This will print all the inter-file inconsistencies.
+This scheme works well with
+\f4make\fP;
+it allows
+\f4make\fP
+to be used to
+\f4lint\fP
+only the source files that have been modified since
+the last time the set of source files were
+\f4lint\fPed.
+.SH FILES
+.TP 24
+\f2LIBDIR\f1
+the directory where the lint libraries specified by the
+\f4\-l\f2x\f1
+option must exist
+.TP
+\f2LIBDIR\f4/lint[12]\f1
+first and second passes
+.TP
+\f2LIBDIR\f4/llib-lc.ln\f1
+declarations for C Library functions 
+(binary format; source is in
+\f2LIBDIR\f4/llib-lc)\f1
+.TP
+\f2LIBPATH\f4/llib-lm.ln\f1
+declarations for Math Library functions 
+(binary format; source is in
+\f2LIBDIR\f1/llib-lm)
+.TP
+\f2TMPDIR\f4/\(**lint\(**\f1
+temporaries
+.TP
+\f2TMPDIR\f1 
+usually \f4/var/tmp\f1 but can be redefined
+by setting the environment variable
+\f4TMPDIR\f1
+[see \f4tempnam\fP in \f4tmpnam\fP(3S)].
+.TP
+\f2LIBDIR\f1 
+usually \f4/ccs/lib\f1
+.TP
+\f2LIBPATH\f1 
+usually \f4/usr/ccs/lib:/usr/lib\f1
+.SH SEE ALSO
+\f4cc\fP(1), \f4make\fP(1)\f1
+.br 
+See the ``lint'' chapter in the
+\f2C Programmer's Guide: ANSI C and Programming Support Tools\f1.
+.\"	@(#)lint.1	6.2 of 9/2/83
+.Ee

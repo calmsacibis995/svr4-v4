@@ -1,0 +1,101 @@
+'\"macro stdmacro
+.if n .pH g1a.strace @(#)strace	40.8 of 5/2/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} strace 1M "Networking Support Utilities" "\&"
+.if \nX=1 .ds x} strace 1M "Networking Support Utilities"
+.if \nX=2 .ds x} strace 1M "" "\&"
+.if \nX=3 .ds x} strace "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4strace\f1 \- print \s-1STREAMS\s0 trace messages
+.SH SYNOPSIS
+\f4strace\f1 [ \f2mid sid level\f1 ] .\ .\ .
+.SH DESCRIPTION
+\f4strace\fP without arguments writes all \s-1STREAMS\s0 event trace messages
+from all drivers and modules to its standard output.
+These messages are obtained from the \s-1STREAMS\s0 log driver [\f4log\fP(7)].
+If arguments are provided they must be in triplets of the form \f2mid, sid, level\f1,
+where \f2mid\f1 is a \s-1STREAMS\s0 module 
+.SM ID
+number, \f2sid\f1 is a sub-\s-1ID\s+1 number, 
+and \f2level\f1 is a tracing priority level.
+Each triplet indicates that tracing messages are to be received from the given
+module/driver,
+sub-\s-1ID\s+1 (usually indicating minor device), and
+priority level equal to or less than the given level.
+The token \f4all\f1 may be used for any member to indicate no restriction for that attribute.
+.P
+The format of each trace message output is:
+.P
+<\f2seq\fP> <\f2time\fP> <\f2ticks\fP> <\f2level\fP> <\f2flags\fP> <\f2mid\fP> <\f2sid\fP> <\f2text\fP>
+.RS 5
+.TP 10
+<\f2seq\fP>
+trace sequence number
+.TP
+<\f2time\fP>
+time of message in \f2hh:mm:ss\fP
+.TP
+<\f2ticks\fP>
+time of message in machine ticks since boot
+.TP
+<\f2level\fP>
+tracing priority level
+.TP
+<\f2flags\fP>
+\f4E\f1 : message is also in the error log
+.br
+\f4F\f1 : indicates a fatal error
+.br
+\f4N\f1 : mail was sent to the system administrator
+.TP
+<\f2mid\fP>
+module 
+.SM ID
+number of source
+.TP
+<\f2sid\fP>
+sub-\s-1ID\s+1 number of source
+.TP
+<\f2text\fP>
+formatted text of the trace message
+.RE
+.P
+Once initiated, \f4strace\fP will continue to execute until terminated by the user.
+.SH EXAMPLES
+Output all trace messages from the module or driver whose module 
+.SM ID
+is 41:
+.IP
+\f4strace  41 all all\f1
+.P
+Output those trace messages from driver/module 
+.SM ID 
+41 with 
+sub-\s-1ID\s+1s 0, 1, or 2:
+.IP
+\f4strace  41 0 1  41 1 1  41 2 0\f1
+.P
+Messages from sub-\s-1ID\s+1s 0 and 1 must have 
+a tracing level less than or equal to 1.
+Those from sub-\s-1ID\s+1 2 must have a tracing level of 0.
+.SH SEE ALSO
+\f4log\fP(7)
+.br
+\f2Programmer's Guide: \s-1STREAMS\s0\f1
+.SH NOTES
+Due to performance considerations, only one \f4strace\fP process is permitted
+to open the \s-1STREAMS\s0 log driver at a time.
+The log driver has a list
+of the triplets specified in the command invocation, and compares
+each potential trace message against this list to decide if it should
+be formatted and sent up to the \f4strace\fP process.
+Hence, long lists
+of triplets will have a greater impact on overall \s-1STREAMS\s0 performance.
+Running \f4strace\fP will have the most impact on the timing of the modules and 
+drivers generating the trace messages that are sent to the \f4strace\fP process.
+If trace messages are generated faster than the \f4strace\fP process can handle them, then some of the messages will be lost.
+This last case can be determined by examining the sequence numbers on the trace messages output.
+.Ee

@@ -1,0 +1,93 @@
+'\"macro stdmacro
+.if n .pH g1a.edquota @(#)edquota	40.8.1.1 of 1/3/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} edquota 1M "UFS" "\&"
+.if \nX=1 .ds x} edquota 1M "UFS"
+.if \nX=2 .ds x} edquota 1M "" "\&"
+.if \nX=3 .ds x} edquota "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4edquota\f1 \- edit user quotas
+.SH SYNOPSIS
+\f4edquota\f1
+[
+\f4\-p\f1
+.I proto_user
+]
+.IR username .\|.\|.
+.br
+\f4edquota\f1
+\f4\-t\f1
+.SH DESCRIPTION
+.LP
+\f4edquota\f1
+is a quota editor. 
+One or more users may be specified on the command line.
+For each user a temporary file is created with an
+.SM ASCII
+representation of the current disk quotas for that user
+for each mounted ufs file system that has a \f4quotas\fP file,
+and an editor is then invoked on the file.
+A null entry is used if no \f4quotas\fP file exists for a file system.
+The quotas may then be modified, new quotas added, etc.
+Upon leaving the editor,
+\f4edquota\f1
+reads the temporary file and modifies the binary quota files to reflect
+the changes made.
+.LP
+The editor invoked is
+\f4vi\f1(1)
+unless the
+\f4EDITOR\fP
+environment variable specifies otherwise.
+.LP
+Only the super-user may edit quotas. 
+In order for quotas to be
+established on a file system, the root
+directory of the file system must
+contain a file, owned by root, called
+\f4quotas\f1.
+See
+\f4quotaon\f1(1M)
+for details.
+.P
+\f2proto_user\fP and \f4username\fP can be numeric,
+corresponding to the uid of a user.
+Unassigned uids may be specified; unassigned names may not.
+In this way, default quotas can be established for users
+who are later assigned a uid.
+.P
+The options are:
+.TP
+\f4\-p\f1
+Duplicate the quotas of the \f2proto_user\fP
+specified for each \f2username\fP specified.
+This is the normal mechanism used to initialize quotas
+for groups of users.
+.TP
+\f4\-t\f1
+Edit the soft time limits for each file system.
+If the time limits are zero, the default time limits in
+\f4/usr/include/sys/fs/ufs_quota.h\f1
+are used.
+Time units of sec(onds), min(utes), hour(s), day(s), week(s), and month(s)
+are understood.
+Time limits are printed in the greatest possible time unit such that
+the value is greater than or equal to one.
+.SH FILES
+.PD 0
+.TP 20
+\f4quotas\f1
+quota file at the file system root
+.TP
+\f4/etc/mnttab\f1
+table of mounted file systems
+.PD
+.SH SEE ALSO
+\f4quota\fP(1M),
+\f4quotacheck\fP(1M),
+\f4quotaon\fP(1M),
+\f4repquota\fP(1M),
+\f4vi\fP(1)

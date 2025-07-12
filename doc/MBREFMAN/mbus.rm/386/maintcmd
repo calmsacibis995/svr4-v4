@@ -1,0 +1,17 @@
+.if n .pH 386.maintcmd @(#)maintcmd	40.10 of 5/17/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.BK "Multibus Reference Manual"
+.CH "System Maintenance Commands" 6
+.H 1 "Maintenance Commands"
+This chapter lists UNIX System V/386 system maintenance commands.
+.BL
+.LI
+\f4dbon\f1
+.LI
+\f4icsrd\f1, \f4icswr\f1, \f4icsslot\f1, \f4icsgetrec\f1
+.LI
+\f4initbp\f1
+.LI
+\f4reset\f1
+.LE

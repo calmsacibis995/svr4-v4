@@ -1,0 +1,123 @@
+'\"macro stdmacro
+.if n .pH g1a.acctcon @(#)acctcon	40.11 of 4/15/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} acctcon 1M "Accounting Utilities" "\&"
+.if \nX=1 .ds x} acctcon 1M "Accounting Utilities"
+.if \nX=2 .ds x} acctcon 1M "" "\&"
+.if \nX=3 .ds x} acctcon "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4acctcon\f1, \f4acctcon1\f1, \f4acctcon2\f1 \- connect-time accounting
+.SH SYNOPSIS
+\f4/usr/lib/acct/acctcon\f1
+[\^\f2options\fP\^]
+.PP
+\f4/usr/lib/acct/acctcon1\f1
+[\^\f2options\fP\^]
+.PP
+\f4/usr/lib/acct/acctcon2\f1
+.SH DESCRIPTION
+\f4acctcon\f1 converts a sequence of login/logoff records to total
+accounting records (see the \f4tacct\f1 format in \f4acct(4)\f1).
+login/logoff records are read from standard input.
+The file
+\f4/var/adm/wtmp\f1 is usually the source of the login/logoff
+records, however, because it may contain corrupted
+records or system date changes, it should first be fixed using
+\f4wtmpfix\f1.  The fixed version of file \f4/var/adm/wtmp\f1 can then
+be redirected to \f4acctcon\f1.
+The \f4tacct\f1 records are written to
+standard output.
+Here are the options for \f4acctcon\f1:
+.PP
+.PD 0
+.TP "\w'\-t\ file\ \ \ 'u"
+.TP 3P
+\f4\-l\f2 file\f4\^\f1
+.I file\^
+is created to contain a summary of line usage showing
+line name, number of minutes used, percentage of total elapsed time used,
+number of sessions charged, number of logins,
+and number of logoffs.
+This file helps track line usage,
+identify bad lines, and find software and hardware oddities.
+Hangup, termination of
+\f4login\fP(1)
+and termination of the login shell each generate logoff records, so that
+the number of logoffs is often three to four times the number of sessions.
+See
+\f4init\fP(1M)
+and
+\f4utmp\fP(4).
+.TP
+\f4\-o\f2 file\f4\^\f1
+.I file\^
+is filled with an overall record for the accounting period,
+giving starting time,
+ending time,
+number of reboots,
+and number of date changes.
+.PD
+.PP
+\f4acctcon\f1 is a combination of the programs \f4acctcon1\f1 and
+\f4acctcon2\f1.  \f4acctcon1\f1 converts login/logoff records, taken from
+the fixed \f4/var/adm/wtmp\f1 file, to ASCII output.
+\f4acctcon2\f1 reads the ASCII records produced by \f4acctcon1\f1 and
+converts them to \f4tacct\f1 records.
+\f4acctcon1\f1 can be
+used with the \-l and \-o options, described above, as well as
+with the following options:
+.TP 3P
+\f4\-p\f1
+Print input only,
+showing line name,
+login name,
+and time (in both numeric and date/time formats).
+.TP
+\f4\-t\f1
+\f4acctcon1\fP
+maintains a list of lines on which users are logged in.
+When it reaches the end of its input,
+it emits a session record for each line that still appears to be active.
+It normally assumes that its input is a current file,
+so that it uses the current time as the ending time for
+each session still in progress.
+The
+\f4\-t\f1
+flag causes it to use, instead, the last time found in its input,
+thus assuring reasonable and repeatable numbers for non-current files.
+.PP
+.SH EXAMPLES
+The \f4acctcon\f1 command is typically used as follows:
+.sp .5
+.in +2
+\f4acctcon \-l lineuse \-o reboots < tmpwtmp > ctacct\f1
+.in -2
+.PP
+The \f4acctcon1\f1 and \f4acctcon2\f1 commands are typically
+used as follows:
+.sp .5
+.in +2
+\f4acctcon1 \-l lineuse \-o reboots < tmpwtmp | sort +1n +2 > ctmp
+.br
+\f4acctcon2 < ctmp > ctacct\f1
+.in -2
+.SH FILES
+\f4/var/adm/wtmp\f1
+.SH SEE ALSO
+\f4acct\fP(1M), \f4acctcms\fP(1M), \f4acctmerg\fP(1M),
+\f4acctprc\fP(1M), \f4acctsh\fP(1M), \f4fwtmp\fP(1M), \f4init\fP(1M),
+\f4runacct\fP(1M),
+\f4acct\fP(4), \f4utmp\fP(4)
+.br
+\f4acctcom\fP(1), \f4login\fP(1) in the \f2User's Reference Manual\f1
+.br
+\f4acct\fP(2)
+in the \f2Programmer's Reference Manual\f1
+.SH NOTES
+The line usage report is confused by date changes.
+Use \f4wtmpfix\fP (see \f4fwtmp\fP(1M)), with the \f4/var/adm/wtmp\f1
+file as an argument, to correct this situation.
+.\"	@(#)acctcon.1m	6.2 of 9/2/83

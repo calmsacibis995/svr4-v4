@@ -1,0 +1,85 @@
+'\"macro stdmacro
+.if n .pH g3e.elf_kind @(#)elf_kind	40.10 of 5/1/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.\"#ident	"@(#)ci5-doc:req/libelf/kind.man	1.3"
+.nr X
+.if \nX=0 .ds x} elf_kind 3E "ELF Library" "\&"
+.if \nX=1 .ds x} elf_kind 3E "ELF Library"
+.if \nX=2 .ds x} elf_kind 3E "" "\&"
+.if \nX=3 .ds x} elf_kind "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4elf_kind\f1 \- determine file type
+.SH SYNOPSIS
+\f4cc\f1
+[\f2flag\fP \|.\|.\|.] \f2file\fP \|.\|.\|.
+\f4\-lelf\f1
+[\f2library\fP \|.\|.\|.]
+.PP
+.nf
+.ft 4
+#include <libelf.h>
+.sp 0.5
+Elf_Kind elf_kind(Elf \(**elf);
+.ft 1
+.fi
+.SH DESCRIPTION
+This function returns a value identifying the kind of
+file associated with an
+.SM ELF
+descriptor
+.RI ( elf ).
+Currently defined values appear below.
+.TP 16
+\f4ELF_K_AR\f1
+The file is an archive [see
+\f4ar\fP(4)].
+An
+.SM ELF
+descriptor may also be associated with an archive
+.IR member ,
+not the archive itself, and then
+\f4elf_kind\fP
+identifies the member's type.
+.TP
+\f4ELF_K_COFF\f1
+The file is a
+.SM COFF
+object file.
+\f4elf_begin\fP(3E)
+describes the library's handling for
+.SM COFF
+files.
+.TP
+\f4ELF_K_ELF\f1
+The file is an
+.SM ELF
+file.
+The program may use
+\f4elf_getident\fP
+to determine the class.
+Other functions, such as
+\f4elf_getehdr\fP,
+are available to retrieve other file information.
+.TP
+\f4ELF_K_NONE\f1
+This indicates a kind of file unknown to the library.
+.P
+Other values are reserved, to be assigned as needed
+to new kinds of files.
+.I elf
+should be a value previously returned by
+\f4elf_begin\fP.
+A null pointer is allowed, to simplify error handling,
+and causes
+\f4elf_kind\fP
+to return
+\f4ELF_K_NONE\f1.
+.SH "SEE ALSO"
+.na
+\f4elf\fP(3E),
+\f4elf_begin\fP(3E),
+\f4elf_getehdr\fP(3E),
+\f4elf_getident\fP(3E),
+\f4ar\fP(4)

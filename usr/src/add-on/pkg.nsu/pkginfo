@@ -1,0 +1,15 @@
+#ident	"@(#)pkg.nsu:pkginfo	1.3.3.2"
+
+# NSU pkginfo
+
+PKG="nsu"
+NAME="Networking Support Utilities"
+ARCH="i386"
+RELEASE="4.0"
+VERSION="1"
+VENDOR="USL"
+CATEGORY="system"
+CLASSES=""
+BASEDIR=""
+MAXINST=1
+PREDEPEND="nsu"

@@ -1,0 +1,79 @@
+'\"macro stdmacro
+.if n .pH g1a.quot @(#)quot	40.9 of 4/2/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} quot 1M "UFS" "\&"
+.if \nX=1 .ds x} quot 1M "UFS"
+.if \nX=2 .ds x} quot 1M "" "\&"
+.if \nX=3 .ds x} quot "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4quot\f1 \- summarize file system ownership
+.SH SYNOPSIS
+\f4quot\f1
+[
+\f4\-acfhnv\f1
+] [
+.I filesystem
+]
+.SH DESCRIPTION
+.LP
+\f4quot\f1
+displays the number of blocks (1024 bytes) in the named
+.I filesystem
+currently owned by each user.
+There is a limit of 2048 blocks.
+Files larger than this will be counted as a 2048 block file,
+but the total blocks count will be correct.
+.P
+The options are:
+.TP
+\f4\-a\f1
+Generate a report for all mounted file systems.
+.TP
+\f4\-c\f1
+Display three columns giving a file size in blocks, the number of
+files of that size, and a cumulative total of blocks
+containing files of that size or a smaller size.
+Files exceeding 499 blocks are listed as 499 blocks.
+The last line always lists 499 blocks,
+even if there are no files of that size.
+.TP
+\f4\-f\f1
+Display count of number of files as well as space owned by each user.
+This option is incompatible with the \f4-c\fP and \f4-v\fP options.
+.TP
+\f4\-h\f1
+Estimate the number of blocks in the file \(em this
+does not account for files with holes in them.
+.TP
+\f4\-n\f1
+Attach names to the list of files read from standard input.
+\f4quot -n\fP cannot be used alone, because it expects data
+from standard input.
+For example, the pipeline
+.sp .2
+	\f4ncheck filesystem | sort +0n | quot \-n filesystem\f1
+.sp .2
+will produce a list of all files and their owners.
+This option is incompatible with all other options.
+.TP
+\f4\-v\f1
+In addition to the default output,
+display three columns containing the number of blocks
+not accessed in the last 30, 60, and 90 days.
+.SH NOTES
+This command may only be used by a privileged user.
+.SH FILES
+.PD 0
+.TP 20
+\f4/etc/mnttab\f1
+mounted file systems
+.TP
+\f4/etc/passwd\f1
+to get user names
+.PD
+.SH "SEE ALSO"
+\f4du\fP(1M)
+

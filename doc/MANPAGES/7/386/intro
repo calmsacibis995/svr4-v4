@@ -1,0 +1,55 @@
+'\"macro stdmacro
+.if n .pH g7.intro @(#)intro	40.5 of 1/3/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+'\"macro stdmacro
+.if n .pH g7.intro @(#)intro	40.1 of 5/10/89
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.nr X
+.if \nX=0 .ds x} intro 7 "" "\&"
+.if \nX=1 .ds x} intro 7 ""
+.if \nX=2 .ds x} intro 7 "" "\&"
+.if \nX=3 .ds x} intro "" "" "\&"
+.nr X
+.TH \*(x} "" "386 Computer Only"
+.SH NAME
+\f4intro\f1 \- introduction to special files
+.SH DESCRIPTION
+This section describes various special files that refer to specific
+hardware peripherals, and
+.SM UNIX
+system device drivers.
+\s-1STREAMS\s0 [see \f4intro\fP(2)] software drivers, modules and the
+\s-1STREAMS\s0-generic set of \f4ioctl\fP(2) system calls are also
+described.
+.P
+For hardware related files, the names of the entries are generally
+derived from names for the hardware, as opposed to the names of the
+special files themselves.
+Characteristics of both the hardware device and the corresponding
+.SM UNIX
+system device driver are discussed where applicable.
+.PP
+Disk device file names are in the following format:
+.sp
+\f4/dev/{r}dsk/{1.0}s#\f1  For integral disks
+.sp
+\f4/dev/{r}dsk/c#t#d#s#\f1 For SCSI disks
+.sp
+where
+\f4r\f1
+indicates a raw interface to the disk, the
+\f4c#\f1
+indicates the SCSI host adapter number,
+\f4t#\f1
+indicates the SCSI target \f2ID\f1 of the device,
+\f4d#\f1
+indicates the device attached to the controller and
+\f4s#\f1
+indicates the section number of the partitioned device.
+.SH SEE ALSO
+.I Disk/Tape Management
+in the
+\f2Getting Started Guide\f1.
+.\"	@(#)intro.7	6.3 of 9/6/83
+.Ee

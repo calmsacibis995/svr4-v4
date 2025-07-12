@@ -1,0 +1,75 @@
+'\"macro stdmacro
+.if n .pH g1.chown @(#)chown	40.5 of 4/19/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+'\"macro stdmacro
+.if n .pH g1.chown @(#)chown	40.14 of 9/20/89
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.nr X
+.if \nX=0 .ds x} chown 1 "Essential Utilities" "\&"
+.if \nX=1 .ds x} chown 1 "Essential Utilities"
+.if \nX=2 .ds x} chown 1 "" "\&"
+.if \nX=3 .ds x} chown "" "" "\&"
+.nr X
+.nr X
+.TH \*(x} "" "386 Computer Only"
+.SH NAME
+\f4chown\fP \- change file owner
+.SH SYNOPSIS
+\f4chown\fP [\f4\-R\fP] [\f4\-h\fP]\f2 owner file \f1...
+.SH DESCRIPTION
+\f4chown\fP
+changes the owner of the
+\f2file\f1s to \f2owner\f1.
+The \f2owner\f1 may be either a decimal user
+.SM ID
+or a login name found in \f4/etc/passwd\fP file.
+.PP
+If \f4chown\fP
+is invoked by other than the super-user, the set-user-ID
+bit of the file mode, 04000, is cleared.
+.PP
+Only the owner of a file (or the super-user) may change the owner of that file.
+.P
+Valid options to \f4chown\fP are:
+.TP
+\f4\-R\fP
+Recursive.
+\f4chown\f1
+descends through the directory, and any subdirectories,
+setting the ownership
+.SM ID
+as it proceeds.
+When symbolic links are encountered,
+they are traversed.
+.TP
+\f4\-h\fP
+If the file is a symbolic link, change the owner
+of the symbolic link.
+Without this option, the owner of the file referenced
+by the symbolic link is changed.
+.P
+The operating system has a configuration option
+{\f4_POSIX_CHOWN_RESTRICTED\fP}, to restrict ownership changes.
+When this option is in effect the owner of the file is
+prevented from changing the owner \f4ID\fP of the file.  Only the super-user can
+arbitrarily change owner \f4ID\fPs whether this option is in effect or not.
+.SH FILES
+\f4/etc/passwd\fP
+.SH "SEE ALSO"
+\f4chgrp\fP(1), \f4chmod\fP(1)
+.P
+\f4chown\fP(2) in the \f2Programmer's Reference Manual\f1
+.P
+\f4passwd\fP(4) in the \f2System Administrator's Reference Manual\f1.
+.SH NOTES
+\f4chgrp\f1 does not check group ID if it is in decimal form.
+.P
+In a Remote File Sharing environment,
+you may not have the permissions that the
+output of the \f4ls \-l\f1 command leads
+you to believe.
+For more information see the ``Mapping
+Remote Users'' section of the
+``RFS sysadm Interface'' chapter of the
+\f2Network User's and Administrator's Guide\f1.

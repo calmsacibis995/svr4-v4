@@ -1,0 +1,64 @@
+'\"macro stdmacro
+.if n .pH g4.netmasks @(#)netmasks	40.7 of 5/21/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.\" @(#)netmasks.4 1.2 89/07/14 SMI;
+'\" macro stdmacro
+.\" Copyright (c) 1988 Sun Microsystems, Inc. - All Rights Reserved.
+.\"
+.nr X
+.if \nX=0 .ds x} netmasks 4 "Internet Utilities" "\&"
+.if \nX=1 .ds x} netmasks 4 "Internet Utilities"
+.if \nX=2 .ds x} netmasks 4 "" "\&"
+.if \nX=3 .ds x} netmasks "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4netmasks\f1 \- network mask data base
+.SH DESCRIPTION
+.PP
+The
+\f4netmasks\f1
+file contains network masks used to implement
+.SM IP
+standard subnetting.
+For each network that is subnetted,
+a single line should exist
+in this file with the network number, any number of
+.SM SPACE
+or
+.SM TAB
+characters,
+and the network mask to use on that network.
+Network numbers and masks may be specified
+in the conventional
+.SM IP
+\f1`\f4.\f1'
+notation (like
+.SM IP
+host addresses, but with zeroes for the host
+part). 
+For example,
+.IP
+\f4128.32.0.0 255.255.255.0
+.PP
+can be used to specify that the Class B
+network 128.32.0.0 should have
+eight bits of subnet field and eight
+bits of host field, in addition to
+the standard sixteen bits in the network field.
+.SH FILES
+.PD 0
+.TP 20
+\f4/etc/netmasks\f1
+.PD
+.SH "SEE ALSO"
+\f4ifconfig\fP(1M)
+.PP
+Postel, Jon, and Mogul, Jeff,
+.IR "Internet Standard Subnetting Procedure" ,
+.SM RFC
+950,
+Network Information Center,
+.SM SRI
+International, Menlo Park, Calif.,
+August 1985

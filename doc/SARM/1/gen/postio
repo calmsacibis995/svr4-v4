@@ -1,0 +1,286 @@
+'\"macro stdmacro
+.if n .pH g1.postio @(#)postio	40.5 of 4/30/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} postio 1 "Line Printer Spooling Utilities" "\&"
+.if \nX=1 .ds x} postio 1 "Line Printer Spooling Utilities"
+.if \nX=2 .ds x} postio 1 "" "\&"
+.if \nX=3 .ds x} postio "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4postio\fP \- serial interface for PostScript printers
+.SH SYNOPSIS
+\f4postio \-l \f2line\f1 [\f2options\fP] [\f2files\fP]
+.SH DESCRIPTION
+\f4postio\fP sends
+.I files
+to the PostScript printer attached to
+.I line.
+If no
+.I files
+are specified the standard input is sent.
+The first group of
+.I options
+should be sufficient for most applications:
+.TP 1.0i
+\f4\-b \f2speed\fP
+Transmit data over
+.I line
+at baud rate \f2speed\fP.
+Recognized baud rates are 1200, 2400, 4800, 9600, and 19200.
+The default
+.I speed
+is 9600 baud.
+.TP 1.0i
+\f4\-l \f2line\f1
+Connect to the printer attached to
+\f2line\fP.
+In most cases there is no default 
+and \f4postio\fP must be able to read and write
+.IR line .
+If the
+.I line
+doesn't begin with a \f4/\fP it may be treated as a Datakit destination.
+.TP 1.0i
+\f4\-q\fP
+Prevents status queries while
+.I files
+are being sent to the printer.
+When status queries are disabled a dummy message is appended
+to the log file before each block is transmitted.
+.TP 1.0i
+\f4\-B \f2num\f1
+Set the internal buffer size for reading and writing
+.I files
+to
+.I num
+bytes.
+By default
+.I num
+is 2048 bytes.
+.TP 1.0i
+\f4\-D\fP
+Enable debug mode.
+Guarantees that everything read on
+.I line
+will be added to the log file (standard error by default).
+.TP 1.0i
+\f4\-L \f2file\f1
+Data received on
+.I line
+gets put in
+.I file.
+The default log
+.I file
+is standard error.
+Printer or status messages that don't show a change in state
+are not normally written to
+.I file
+but can be forced out using the \f4\-D\fP option.
+.TP 1.0i
+\f4\-P \f2string\fP
+Send
+.I string
+to the printer before any of the input files.
+The default
+.I string
+is simple PostScript code that disables timeouts.
+.TP 1.0i
+\f4\-R \f2num\f1
+Run
+.I postio
+as a single process if
+.I num
+is 1 or as separate read and write processes if
+.I num
+is 2.
+By default
+\f4postio\fP
+runs as a single process.
+.PP
+The next two
+.I options
+are provided for users who expect to run \f4postio\fP on their own.
+Neither is suitable for use in spooler interface
+programs:
+.TP 1.0i
+\f4-i\fP
+Run the program in interactive mode.
+Any
+.I files
+are sent first and followed by the standard input.
+Forces separate read and write processes
+and overrides many other options.
+To exit interactive mode use your interrupt or quit character.
+To get a friendly interactive connection with the printer
+type \&\f4executive\fP on a line by itself.
+.TP 1.0i
+\f4\-t\fP
+Data received on
+.I line
+and not recognized as printer or status information is written to
+the standard output.
+Forces separate read and write processes.
+Convenient if you have a PostScript program that
+will be returning useful data to the host.
+.PP
+The last option is not generally recommended and should only
+be used if all else fails to provide a reliable
+connection:
+.TP 1.0i
+\f4\-S\fP
+Slow the transmission of data to the printer.
+Severely limits throughput,
+runs as a single process,
+disables the
+\f4\-q\fP
+option,
+limits the internal buffer size to 1024 bytes,
+can use an excessive amount of \s-1CPU\s+1 time,
+and does nothing in interactive mode.
+.PP
+The best performance will usually be obtained by using
+a large internal buffer (the
+\f4\-B\fP
+option)
+and by running the program as separate read and write processes (the
+\f4\-R 2\fP
+option).
+Inability to fork the additional process causes
+\f4postio\fP
+to continue as a single read/write process.
+When one process is used,
+only data sent to the printer is flow controlled.
+.PP
+The
+.I options
+are not all mutually exclusive.
+The \f4\-i\fP option always wins, 
+selecting its own settings for whatever is
+needed to run interactive mode, independent of anything else
+found on the command line.
+Interactive mode runs as separate read and write processes
+and few of the other
+.I options
+accomplish anything in the presence of the \f4\-i\fP option.
+The \f4\-t\fP option 
+needs a reliable two way connection to the printer and
+therefore tries to force separate read and write processes.
+The
+\f4\-S\fP
+option relies on the status query mechanism, so
+\f4\-q\fP
+is disabled and the program runs as a single process.
+.PP
+In most cases \f4postio\fP
+starts by making a connection to
+.I line
+and then attempts to force the printer into the 
+\s-1IDLE\s+1
+state by sending an appropriate sequence of 
+\f4^T\fP (status query),
+\f4^C\fP (interrupt), and 
+\f4^D\fP (end of job) characters.
+When the printer goes \s-1IDLE\s+1,
+.I files
+are transmitted along with an occasional 
+\f4^T\fP (unless the \f4\-q\fP option was used).
+After all the
+.I files
+are sent the program waits until it's reasonably sure the
+job is complete.
+Printer generated error messages received at any time 
+except while establishing
+the initial connection (or when running interactive mode) cause
+\f4postio\fP
+to exit with a non-zero status.
+In addition to being added to the log file, printer error messages
+are also echoed to standard error.
+.SH EXAMPLES
+Run as a single process at 9600 baud and send 
+\f2file1\fP and \f2file2\fP
+to the printer attached to \f4/dev/tty01\fP:
+.PP
+.RS
+\f4postio -l /dev/tty01 \f2file1 file2\fP
+.RE
+.PP
+Same as above except two processes are used,
+the internal buffer is set to 4096 bytes,
+and data returned by the printer gets put in file \f2log\fP:
+.PP
+.RS
+\f4postio -R2 -B4096 -l/dev/tty01 -L\f2log file1 file2\f1
+.RE
+.PP
+Establish an interactive connection with 
+the printer at Datakit destination \f2my/printer\fP:
+.PP
+.RS
+\f4postio -i -l \f2my/printer\f1
+.RE
+.PP
+Send file program to the printer connected to 
+\f4/dev/tty22\fP,
+recover any data in file results, 
+and put log messages in file \f2log\fP:
+.PP
+.RS
+\f4postio -t -l /dev/tty22 -L \f2log program\fP >\f2results\f1
+.RE
+.PP
+.SH NOTES
+.PP
+The input
+.I files
+are handled as a single PostScript job.
+Sending several different jobs, each with their own internal
+end of job mark (\f4^D\fP) is not guaranteed to work properly.
+\f4postio\fP
+may quit before all the jobs have completed and could be restarted
+before the last one finishes.
+.PP
+All the capabilities described above may not be available on every
+machine or even across 
+the different versions of the \s-1UNIX\s+1 system that are
+currently supported by the program.
+For example, the code needed to connect to a Datakit destination 
+may work only on System V 
+and may require that the \s-1DKHOST\s+1 software package be
+available at compile time.
+.PP
+There may be no default
+.IR line ,
+so using the \f4\-l\fP option 
+is strongly recommended.
+If omitted,
+\f4postio\fP
+may attempt to connect to the printer using the standard output.
+If Datakit is involved, 
+the \f4\-b\fP option may be ineffective 
+and attempts by \f4postio\fP
+to impose flow control over data in both directions may not work.
+The \f4\-q\fP
+option can help if the printer is connected to \s-1RADIAN\s+1.
+The \f4\-S\fP option 
+is not generally recommended and should be used only if
+all other attempts to establish a reliable connection fail.
+.SH DIAGNOSTICS
+An exit status of 0 is returned if the files ran successfully.
+System errors (such as an inability to open the line) 
+set the low order bit in the exit status, 
+while PostScript errors set bit 1.
+An exit status of 2 usually means the printer
+detected a PostScript error in the input
+.I files.
+.SH SEE ALSO
+\f4download\fP(1),
+\f4dpost\fP(1),
+\f4postdaisy\fP(1),
+\f4postdmd\fP(1),
+\f4postmd\fP(1),
+\f4postprint\fP(1),
+.br
+\f4postreverse\fP(1),
+\f4posttek\fP(1)

@@ -1,0 +1,8 @@
+.if n .pH 386.Cindex @(#)Cindex	40.3.1.1
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.BK "Installation Guide" "" "" ""   
+.\ACRONYM	                  
+.CH "Index" "" "Table of Contents" "I"
+.\CHAPTER	I
+.tC 1 "Index" I-1  

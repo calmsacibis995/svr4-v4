@@ -1,0 +1,69 @@
+'\"macro stdmacro
+.if n .pH g3x.menu_attrib @(#)menu_attrib	40.5 of 4/11/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.\" ident	"@(#)svid_ti:ti_lib/menu_attrib	1.4"
+.nr X
+.if \nX=0 .ds x} menu_attributes 3X "" "\&"
+.if \nX=1 .ds x} menu_attributes 3X ""
+.if \nX=2 .ds x} menu_attributes 3X "" "\&"
+.if \nX=3 .ds x} menu_attributes "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4menu_attributes\f1: \f4 set_menu_fore\f1, \f4menu_fore\f1, \f4set_menu_back\f1, \f4menu_back\f1, \f4set_menu_grey\f1, \f4menu_grey\f1, \f4set_menu_pad\f1, \f4menu_pad\f1 \- control \f4menus\fP display attributes
+.SH SYNOPSIS
+.nf
+.ft 4
+#include <menu.h>
+.sp .5
+int set_menu_fore(MENU *menu, chtype attr);
+chtype menu_fore(MENU *menu);
+.sp 0.25
+int set_menu_back(MENU *menu, chtype attr);
+chtype menu_back(MENU *menu);
+.sp 0.25
+int set_menu_grey(MENU *menu, chtype attr);
+chtype menu_grey(MENU *menu);
+.sp 0.25
+int set_menu_pad(MENU *menu, int pad);
+int menu_pad(MENU *menu);
+.ft 1
+.fi
+.SH DESCRIPTION
+\f4set_menu_fore\fP sets the foreground attribute of \f2menu\f1 \(em the 
+display attribute for the current item (if selectable) on single-valued
+menus and for selected items on multi-valued menus.
+This display attribute is a \f4curses\fP library visual attribute.
+\f4menu_fore\fP returns the foreground attribute of \f2menu\f1.
+.PP
+\f4set_menu_back\fP sets the background attribute of \f4menu\f1 \(em
+the display attribute for unselected, yet selectable, items.
+This display attribute is a \f4curses\fP library visual attribute.
+.PP
+\f4set_menu_grey\fP sets the grey attribute of \f2menu\f1 \(em the
+display attribute for nonselectable items in multi-valued menus.
+This display attribute is a \f4curses\fP library visual attribute.
+\f4menu_grey\fP returns the grey attribute of \f2menu\f1.
+.PP
+The pad character is the character that fills the space between
+the name and description of an item.
+\f4set_menu_pad\fP sets the pad character for \f2menu\f1 to \f2pad\f1.
+\f4menu_pad\fP returns the pad character of \f2menu\f1.
+.SH RETURN VALUE
+These routines return one of the following:
+.P
+.ta 1.25i 1.4i
+.nf
+\f4E_OK\fP	\-	The routine returned successfully.
+\f4E_SYSTEM_ERROR\fP	\-	System error.
+\f4E_BAD_ARGUMENT\fP	\-	An incorrect argument was passed to the routine.
+.fi
+.SH NOTES
+.PP
+The header file \f4<menu.h>\f1 automatically includes the header files
+\f4<eti.h>\fP and \f4<curses.h>\fP.
+.SH SEE ALSO
+.na
+\f4curses\fP(3X),
+\f4menus\fP(3X)
+.ad

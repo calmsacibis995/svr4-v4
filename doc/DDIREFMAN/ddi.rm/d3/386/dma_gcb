@@ -1,0 +1,51 @@
+'\"macro stdmacro
+.if n .pH 386.dma_gcb @(#)dma_gcb	40.3 of 6/24/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.nr X
+.if \nX=0 .ds x} dma_get_cb D3X "" "DDI" "\&"
+.if \nX=1 .ds x} dma_get_cb D3X "" "DDI"
+.if \nX=2 .ds x} dma_get_cb D3X "" "\&"
+.if \nX=3 .ds x} dma_get_cb "" "" "\&"
+.TH \*(x}
+.IX "\f4dma_get_cb\fP(D3X)"
+.SH NAME
+\f4dma_get_cb\f1 \- allocate a DMA command block
+.SH SYNOPSIS
+.nf
+.na
+\f4#include <sys/types.h>
+#include <sys/dma.h>
+.sp 0.5
+\f4struct dma_cb *dma_get_cb(uchar_t \f2mode\f4);\f1
+.ad
+.fi
+.SH ARGUMENTS
+.RS 0n
+.IP "\f2mode\f1" 10n
+Specifies whether the caller is willing to sleep waiting for memory.
+If \f2mode\f1 is set to \f4DMA_SLEEP\f1, the caller will sleep
+if necessary until the memory for a \f4dma_cb\fP is available.
+If \f2mode\f1 is set to \f4DMA_NOSLEEP\f1, the caller will not sleep,
+but \f4dma_get_cb\f1 will return \f4NULL\f1 if memory for a \f4dma_cb\fP
+is not immediately available.
+.RE
+.SH DESCRIPTION
+\f4dma_get_cb\f1 allocates memory for a DMA command block structure
+[see \f4dma_cb\fP(D4X)], zeroes it out, and returns a pointer to
+the structure.
+.SH "RETURN VALUE"
+\f4dma_get_cb\f1 returns a pointer to the
+allocated DMA control block.
+If \f4DMA_NOSLEEP\f1 is specified and
+memory for a \f4dma_cb\fP is not immediately
+available, \f4dma_get_cb\f1 returns a \f4NULL\f1 pointer.
+.SH LEVEL
+Base only if \f2mode\f1 is set to \f4DMA_SLEEP\f1.
+Base or Interrupt if \f2mode\f1 is set to \f4DMA_NOSLEEP\f1.
+.SH NOTES
+Can sleep if \f2mode\f1 is set to \f4DMA_SLEEP\f1.
+.SH "SEE ALSO"
+.na
+\f4dma_free_cb\f1(D3X),
+\f4dma_cb\f1(D4X)
+.ad

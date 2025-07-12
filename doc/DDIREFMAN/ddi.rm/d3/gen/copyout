@@ -1,0 +1,95 @@
+'\"macro stdmacro
+.if n .pH gen.copyout @(#)copyout	40.3 of 1/9/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.nr X
+.if \nX=0 .ds x} copyout D3DK "" "DDI/DKI" "\&"
+.if \nX=1 .ds x} copyout D3DK "" "DDI/DKI"
+.if \nX=2 .ds x} copyout D3DK "" "\&"
+.if \nX=3 .ds x} copyout "" "" "\&"
+.TH \*(x}
+.IX "\f4copyout\fP(D3DK)"
+.SH NAME
+\f4copyout\f1 \- copy data from a driver buffer to a user buffer
+.SH SYNOPSIS
+.nf
+\f4#include <sys/types.h>
+.sp 0.25
+int copyout(caddr_t \f2driverbuf, \f4caddr_t \f2userbuf, \f4size_t\f2 count\f4);\f1
+.fi
+.SH ARGUMENTS
+.PD 0
+.RS 0n 13
+.IP "\f2driverbuf\f1" 10n
+Driver source address from which copy is made.
+.IP "\f2userbuf\f1" 10n
+User destination address to which copy is made.
+.IP "\f2count\f1" 10n
+Number of bytes to copy.
+.RE
+.PD
+.SH DESCRIPTION
+.IX "\f4read\fP(D2DK)"
+.IX "\f4write\fP(D2DK)"
+\f4copyout\f1 copies \f2count\f1 bytes of data from the kernel virtual
+address specified by \f2driverbuf\f1 to the user virtual address
+specified by \f2userbuf\f1.
+.P
+\f4copyout\fP chooses the best algorithm based on address alignment and number of bytes to copy.
+Although the source and destination addresses are not required to be word
+aligned, word aligned addresses may result in a more efficient copy.
+.SH RETURN VALUE
+If the copy is successful, 0 is returned.
+Otherwise, \-1 is returned to indicate that the specified user address
+range is not valid.
+.SH LEVEL
+Base Only.
+.SH NOTES
+May sleep.
+.sp 0.5
+Drivers usually convert a return value of \-1 into an \f4EFAULT\fP error.
+.SH SEE ALSO
+.na
+\f4bcopy\f1(D3DK),
+\f4copyin\f1(D3DK),
+\f4uiomove\f1(D3DK),
+\f4ureadc\fP(D3DK),
+\f4uwritec\fP(D3DK)
+.ad
+.SH EXAMPLE
+.IX "\f4copyout\fP(D3DK), example"
+.IX "\f4ioctl\fP(D2DK), example"
+.P
+A driver \f4ioctl\f1(D2DK) routine (line 5)
+can be used to get or set device attributes or registers.  If the specified
+command is \f4XX_GETREGS\f1 (line 9), the driver copies the current device
+register values to a user data area (line 11).  If the user address is invalid,
+an error code is returned.
+.ne 4
+.P
+.nf
+.ft 4
+.ps 7
+.vs 9
+ 1  struct  device {	/* device registers layout */
+	...
+ 2  	int status;	/* device status word */
+ 3  };
+.sp .5
+ 4  extern struct device xx_dev[];	/* physical device registers */
+    ...
+ 5  xxioctl(dev_t dev, int cmd, void *arg, int mode, cred_t *crp, int *rvp)
+ 6  {
+ 7	register struct device *dp;
+.sp .5
+ 8	switch (cmd) {
+ 9	case XX_GETREGS:	/* copy device registers to user program */
+10		dp = &xx_dev[getminor(dev)];
+11		if (copyout((caddr_t)dp, arg, sizeof(struct device))) 
+12			return (EFAULT);
+13		break;
+.vs
+.ps
+.ft 1
+.fi
+.P
+.FG "copyout \- copy data from a driver buffer to a user buffer"

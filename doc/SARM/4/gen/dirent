@@ -1,0 +1,78 @@
+'\"!  tbl | mmdoc
+'\"macro stdmacro
+.if n .pH g4.dirent @(#)dirent	40.6 of 1/3/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} dirent 4 "" "" "\&"
+.if \nX=1 .ds x} dirent 4 "" ""
+.if \nX=2 .ds x} dirent 4 "" "" "\&"
+.if \nX=3 .ds x} dirent 4 "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4dirent\f1 \- file system independent directory entry
+.SH SYNOPSIS
+\f4#include <dirent.h>\f1
+.SH DESCRIPTION
+Different file system types may have different
+directory entries.
+The
+\f4dirent\fP
+structure defines a file system independent
+directory entry, which contains information common to
+directory entries in different file system types.
+A set of these structures is returned
+by the
+\f4getdents\fP(2)
+system call.
+.PP
+The 
+\f4dirent\fP
+structure is defined below.
+.PP
+.RS
+.ft 4
+.nf
+struct  dirent {
+        ino_t            d_ino;
+        off_t            d_off;
+        unsigned short   d_reclen;
+        char             d_name[1];
+};
+.fi
+.ft 1
+.RE
+.PP
+The 
+\f4d_ino\fP
+is a number which is 
+unique for each file
+in the file system.
+The field
+\f4d_off\fP
+is the offset of that 
+directory entry in the
+actual file system directory.
+The field
+\f4d_name\fP
+is the beginning of the
+character array giving the name of the
+directory entry.
+This name is null terminated 
+and may have at most \f4MAXNAMLEN\fP
+characters.
+This results in file system independent
+directory entries being variable length
+entities.
+The value of 
+\f4d_reclen\fP
+is the record length
+of
+this entry.
+This length is defined to be the
+number of bytes between the
+current entry and the next one,
+so that the next structure will be suitably aligned.
+.SH SEE ALSO
+\f4getdents\fP(2)
+.Ee

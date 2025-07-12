@@ -1,0 +1,125 @@
+'\"macro stdmacro
+.if n .pH gen.sleep @(#)sleep	40.4 of 3/26/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.nr X
+.if \nX=0 .ds x} sleep D3K "" "DKI" "\&"
+.if \nX=1 .ds x} sleep D3K "" "DKI"
+.if \nX=2 .ds x} sleep D3K "" "\&"
+.if \nX=3 .ds x} sleep "" "" "\&"
+.TH \*(x}
+.IX "\f4sleep\fP(D3K)"
+.SH NAME
+\f4sleep\f1 \- suspend process execution pending occurrence of an event
+.SH SYNOPSIS
+.nf
+\f4#include <sys/types.h>
+#include <sys/param.h>
+.sp 0.25
+int sleep(caddr_t \f2event, \f4int \f2priority\f4);\f1
+.fi
+.SH ARGUMENTS
+.TP .5i
+\f2event\f1
+Kernel address signifying an event for which the caller wishes to wait.
+.sp 0.5
+The address has no significance except that the same address must be passed
+to \f4wakeup\f1(D3K) to resume the sleeping process.
+The address used should be the
+address of a kernel data structure associated with the driver,
+or one of the driver's own data structures.
+Use of arbitrary addresses not associated with a private data structure
+can result in conflict with other, unrelated \f4sleep\f1 and \f4wakeup\f1
+operations in the kernel.
+.TP
+\f2priority\f1
+A hint to the scheduling policy as to the relative priority the caller wishes
+to be assigned while running in the kernel after waking up.
+Valid values are \f40\f1 through \f439\f1 inclusive.
+In general, a lower value will result in more favorable scheduling although
+the exact semantic of the priority argument is specific to the scheduling
+class of the caller, and some scheduling classes may choose to ignore the
+argument for the purposes of assigning a scheduling priority.
+.sp 0.5
+In addition to the scheduling semantics,
+the value of the \f2priority\f1 argument determines whether the sleep
+may be interrupted by signals.
+If the value of \f2priority\f1 is less than or equal to the value of
+the constant \f4PZERO\f1 (defined in \f4sys/param.h\f1), the sleeping process
+will not be awakened by a signal.
+If the value of \f2priority\f1 is greater than \f4PZERO\f1 and the \f4PCATCH\f1
+bit flag is \f4OR\fPed into the \f2priority\f1 argument,
+the process will wake up prematurely (without a call to \f4wakeup\f1) upon
+receipt of a non-ignored, non-held signal and will normally return \f41\f1 to
+the calling code.
+If \f2priority\f1 is greater than \f4PZERO\f1 and \f4PCATCH\f1 is not set,
+the \f4sleep\f1 function will \f4longjmp\f1 out of the driver upon
+receipt of a signal and will never return to the caller.
+.SH DESCRIPTION
+\f4sleep\f1 suspends execution of a process to await certain events
+such as reaching a known system state in hardware or software.
+For instance,
+when a process wants to read a device and no data is available,
+the driver may
+need to call \f4sleep\f1 to wait for data to become available
+before returning.
+This causes the kernel to suspend execution of
+the process that called \f4sleep\f1 and schedule another process.
+The process that called \f4sleep\f1 can be resumed by a call to the
+\f4wakeup\f1
+function with the same \f2event\f1 specified as that used to call
+\f4sleep\f1.
+.P
+If a process were to sleep while it is manipulating global data
+inside a critical section of driver code, it would be possible for another
+process to execute base level driver code which manipulates the same data
+while the first process was sleeping, resulting in data corruption.
+A driver should not sleep inside such a critical section unless
+it takes explicit steps to prevent concurrent access to the data
+(for example, the driver could implement its own locking protocol to protect the data).
+.P
+The value for \f2priority\f1 should be selected based on whether
+or not a \f4wakeup\f1 is certain to occur as well as the importance
+of the driver and of any resources that the driver will hold after
+waking up.
+If the driver is holding or waiting for a critical kernel resource
+or is otherwise crucial to the performance of the system,
+and the corresponding call to \f4wakeup\f1 is guaranteed to happen,
+the driver should specify a \f2priority\f1 argument less than
+or equal to \f4PZERO\f1.
+If the driver is less performance critical or it is possible that the
+\f4wakeup\f1 may not occur, the driver should specify a \f2priority\f1
+argument greater than \f4PZERO\f1.
+.P
+If there is any driver state that needs to be cleaned up in the event
+of a signal, the driver should \f4OR\fP the \f4PCATCH\f1 flag in with
+the priority argument.
+Typical items that need cleaning up
+are locked data structures that should be unlocked
+or dynamically allocated resources that need to be freed.
+When \f4PCATCH\f1 is specified \f4sleep\f1 will normally return a
+\f41\f1 in the event of a signal,
+indicating that the calling routine should perform any necessary cleanup and then
+return.
+.SH RETURN VALUE
+\f4sleep\f1 returns \f40\f1 if the caller woke up because of a call
+to \f4wakeup\f1, or if the caller was stopped by a job control signal
+and subsequently continued.
+If the sleep is interrupted by a signal that does not cause the
+process to be stopped and the \f2priority\f1 argument includes
+the \f4PCATCH\f1 flag, the \f4sleep\f1 call returns a value of \f41\f1.
+If the sleep is interrupted by a signal and the \f4PCATCH\f1 flag is not set,
+the process will \f4longjmp\f1 out of the driver and the \f4sleep\f1 call
+will never return to the calling code.
+.SH LEVEL
+Base Only.
+.SH NOTES
+Function sleeps.
+.sp 0.5
+If \f4sleep\f1 is called from the driver
+\f4strategy\f1(D2DK) routine, the caller should \f4OR\fP the \f2priority\f1
+argument with \f4PCATCH\f1 or select a \f2priority\f1 of \f4PZERO\f1
+or less.
+.SH SEE ALSO
+.na
+\f4wakeup\f1(D3K)
+.ad

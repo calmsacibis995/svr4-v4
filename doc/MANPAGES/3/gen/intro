@@ -1,0 +1,210 @@
+'\"macro stdmacro
+.if n .pH g3.intro @(#)intro	40.16 of 1/3/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} intro 3 "" "\&"
+.if \nX=1 .ds x} intro 3 ""
+.if \nX=2 .ds x} intro 3 "" "\&"
+.if \nX=3 .ds x} intro "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4intro\f1 \- introduction to functions and libraries
+.SH DESCRIPTION
+This section describes functions found
+in various libraries, other than those functions
+that directly invoke
+.SM UNIX
+system primitives,
+which are described in Section\ 2 of this volume.
+Function declarations can be obtained
+from the
+\f4#include\f1
+files indicated on each page.
+Certain major collections are identified by a
+letter after the section number:
+.PP
+.TP 6n
+(3C)
+These functions, together with those of Section\ 2 and those
+marked (3S), constitute the standard C library, \f4libc\f1,
+which is automatically linked by the C compilation system.
+The standard C library is implemented as a
+shared object, \f4libc.so\f1, and an archive, \f4libc.a\f1.
+C programs are linked with the shared object
+version of the standard C library by default.
+Specify \f4\-dn\f1 on the \f4cc\f1 command
+line to link with the archive version.
+[See \f4cc\fP(1) for other overrides, and the 
+``C Compilation System'' chapter of the
+\f2Programmer's Guide: ANSI C and Programming Support
+Tools\f1 for a discussion.]
+.TP
+(3S)
+These functions constitute the
+``standard
+.SM I/O
+package''
+[see
+\f4stdio\fP(3S)].
+.TP
+(3E)
+These functions constitute the ELF access library, \f4libelf\f1.
+This library is not implemented as a shared object,
+and is not automatically linked by the C compilation system.
+Specify \f4\-lelf\f1 on the \f4cc\f1 command
+line to link with this library.
+.TP
+(3G)
+These functions constitute the general-purpose library, \f4libgen\f1.
+This library is not implemented as a shared object,
+and is not automatically linked by the C compilation system.
+Specify \f4\-lgen\f1 on the \f4cc\f1 command line
+to link with this library.
+.TP
+(3M)
+These functions constitute the math library,
+\f4libm\f1.
+[See \f4intro\f1(3M) and \f4math\f1(5).]
+This library is not implemented as a shared object,
+and is not automatically linked by the C compilation system.
+Specify \f4\-lm\f1 
+on the \f4cc\fP command line to link with this library.
+.TP
+(3X)
+Specialized libraries.
+The files in which these libraries are found
+are given on the appropriate pages.
+.PD
+.SH DEFINITIONS
+A
+character
+is any bit pattern able to fit into a byte on the machine.
+The
+null character
+is a character with value 0,
+conventionally
+represented in the C language as \f4\e0\f1.
+A character array
+is a sequence of characters.
+A null-terminated character array
+(a \f2string\f1)
+is a sequence of
+characters, the last of which is the
+null character.
+The
+null string
+is a character array containing only the terminating null character.
+A
+\f4NULL\f1
+pointer is the value that is obtained by casting
+\f40\f1
+into a pointer.
+C guarantees that this value will not match
+that of any legitimate pointer, so many functions that
+return pointers return
+\f4NULL\f1
+to indicate an error.
+The macro
+\f4NULL\f1
+is defined
+in
+\f4stdio.h\f1.
+Types of the form \f4size_t\f1 are defined in the appropriate header files.
+.SH FILES
+\f2\s-1INCDIR\s+1\f1		usually \f4/usr/include\f1
+.br
+\f2\s-1LIBDIR\s+1\f1			usually \f4/usr/ccs/lib\f1
+.br
+\f2\s-1LIBDIR\s+1\f4/libc.so
+.br
+\f2\s-1LIBDIR\s+1\f4/libc.a
+.br
+\f2\s-1LIBDIR\s+1\f4/libgen.a\f1
+.br
+\f2\s-1LIBDIR\s+1\f4/libm.a\f1
+.br
+\f2\s-1LIBDIR\s+1\f4/libsfm.sa\f1
+.br
+\f4/usr/lib/libc.so.1\f1
+.SH SEE ALSO
+\f4ar\fP(1),
+\f4cc\fP(1),
+\f4ld\fP(1),
+\f4lint\fP(1),
+\f4nm\fP(1),
+\f4intro\fP(2), \f4intro\fP(3M), \f4stdio\fP(3S), \f4math\fP(5).
+.br
+The ``C Compilation System'' chapter in the
+\f2Programmer's Guide: ANSI C and Programming Support Tools\f1.
+.SH DIAGNOSTICS
+For functions that return floating-point values,
+error handling varies
+according to compilation mode.
+Under the \f4\-Xt\f1 (default) option to \f4cc\f1,
+these functions return
+the conventional values
+\f4\&0\f1, \f4\(+-HUGE\f1, or \f4NaN\f1
+when the function is undefined for the
+given arguments or when the value is not representable.
+In the \f4\-Xa\f1 and \f4\-Xc\f1 compilation modes,
+\f4\(+-HUGE_VAL\f1 is returned instead of \f4\(+-HUGE\f1.
+(\f4HUGE_VAL\f1 and \f4HUGE\f1 are defined in \f4math.h\f1
+to be infinity and the largest-magnitude single-precision number,
+respectively.)
+.SH NOTES
+None of the functions, external variables,
+or macros should be redefined in the user's programs.
+Any other name may be redefined without affecting the
+behavior of other library functions, but such redefinition may conflict with
+a declaration in an included header file.
+.P
+The header files in
+\f2\s-1INCDIR\s+1\f1
+provide function prototypes
+(function declarations including the types of arguments)
+for most of the functions listed in this manual.
+Function prototypes allow the compiler to check for correct usage
+of these functions in the user's program.
+The \f4lint\fP program checker
+may also be used and will report discrepancies even if the
+header files are not included with \f4#include\f1 statements.
+Definitions for Sections 2, 3C, and 3S are
+checked automatically.
+Other definitions can be included by using the \\f4\-l\f1 option to \f4lint\f1.
+(For example, \f4\-lm\f1 includes definitions for 
+\f4libm\f1.)
+Use of \f4lint\fP is highly recommended.
+.PP
+Users should carefully note the difference between \s-1STREAMS\s+1
+and \f2stream\f1.
+\s-1STREAMS\s+1 is a set of kernel mechanisms that support the
+development of network services and data communication drivers.
+It is composed of utility routines, kernel facilities, and
+a set of data structures.
+A \f2stream\f1 is a file with its associated buffering.
+It is declared to be a pointer to a type \f4FILE\f1
+defined in \f4stdio.h\f1.
+.sp .5
+In detailed definitions of components, it is sometimes necessary to refer to
+symbolic names that are implementation-specific, but which are not necessarily
+expected to be accessible to an application program.
+Many of these symbolic names describe boundary conditions and system limits.
+.P
+In this section, for readability, these implementation-specific
+values are given symbolic names.
+These names always appear enclosed in curly brackets to distinguish them from
+symbolic names of other implementation-specific constants that are accessible
+to application programs by header files.
+These names are not necessarily accessible to an application program through
+a header file, although they may be defined in the documentation for a
+particular system.
+.P
+In general, a portable application program should not refer to these symbolic names
+in its code.
+For example, an application program would not be expected to test the length of
+an argument list given to a
+routine to determine if
+it was greater than \f(CW{ARG_MAX}\f1.
+.\"	@(#)intro.3	6.3 of 10/20/83
+.Ee

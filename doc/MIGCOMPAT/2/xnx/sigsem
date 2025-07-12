@@ -1,0 +1,42 @@
+'\"macro stdmacro
+.if n .pH g2.sigsem @(#)sigsem	40.10 of 6/18/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} sigsem 2 "Application Compatibility Package" "\&"
+.if \nX=1 .ds x} sigsem 2 "Application Compatibility Package"
+.if \nX=2 .ds x} sigsem 2 "" "\&"
+.if \nX=3 .ds x} sigsem "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4sigsem\f1 \- signal a process waiting on a semaphore
+.SH SYNOPSIS
+\f4cc \f1[\f2flag \f1. . .] \f2file\f1 . . . \f4-lx\f1
+.br
+\f4sigsem(int sem_num);
+.SH DESCRIPTION
+\f4sigsem\fP signals a process that is waiting on the semaphore \f2sem_num\f1
+that it may proceed and use the resource governed by the semaphore.
+\f4sigsem\fP is used in conjunction with \f4waitsem\fP to allow 
+synchronization of processes wishing to access a resource.
+One or
+more processes may \f4waitsem\fP on the given semaphore and will be
+put to sleep until the process which currently has access to the
+resource issues a \f4sigsem\fP call.
+If there are any waiting processes,
+\f4sigsem\fP causes the process which is next in line on the semaphore's
+queue to be rescheduled for execution.
+The semaphore's queue is 
+organized in First In, First Out (FIFO) order.
+.SH DIAGNOSTICS
+\f4sigsem\fP returns the value (int) \-1 if an error occurs.
+If \f2sem_num\f1 does not refer to a semaphore type file, \f4errno\f1
+is set to \f4ENOTNAM\f1.
+If \f2sem_num\f1 has not been previously opened 
+by \f4opensem\fP, \f4errno\f1 is set to \f4EBADF\fP.
+If the process 
+issuing a \f4sigsem\fP call is not the current ``owner'' of the
+semaphore (that is, if the process has not issued a \f4waitsem\fP call
+before the \f4sigsem\fP), \f4errno\f1 is set to \f4ENAVAIL\fP.
+.SH SEE ALSO
+\f4creatsem\fP(2), \f4opensem\fP(2), \f4waitsem\fP(2)

@@ -1,0 +1,64 @@
+From mckusick@chez.CS.Berkeley.EDU Fri Oct 22 17:40:20 1993
+To: bostic@vangogh.CS.Berkeley.EDU
+Subject: USL tapes
+Date: Fri, 22 Oct 1993 14:42:16 -0700
+From: Kirk McKusick <mckusick@chez.CS.Berkeley.EDU>
+
+The USL tapes arrived today. There are two 6250 tapes which I have
+extracted using tcopy into vangogh:/c/V.4.
+
+/c/V.4/tape1: 1 file, 5120 sized blocks, 5081 records, total length 26014720
+/c/V.4/tape2: 1 file, 5120 sized blocks, 2241 records, total length 11473920
+
+Based on the blocksize I would guess that they are cpio, though a quick
+try at using cpio yielded `cpio: This is not a cpio file.  Bad magic number.'
+However, I am not sure I was using all the right options.
+
+The label on tape1 reads:
+
+UNIX
+System Laboratories
+UNIX SYSTEM V/386 RELEASE 4 - V4
+Domestic Source Package - Source Code, Tape 1 of 1
+9-Track Tape 6250 bpi			[O4020401]
+Copyright 1991 UNIX System Laboratories
+Copyright 1990 AT&T
+THIS IS UNPUBLISHED PROPRIETARY SOURCE CODE OF UNIX SYSTEM LABORATORIES, INC.
+The copyright notice above does not evidence any actual or intended publication
+of such source code.
+UNIX is a registered trademark of UNIX System Laboratorioes, Inc. in the U.S.A.
+and other countries.
+
+The label on tape2 reads:
+
+UNIX
+System Laboratories
+UNIX SYSTEM V/386 RELEASE 4 - V4
+Machine Readable Documentation Package - Source Code, Tape 1 of 1
+9-Track Tape 6250 bpi			[O4020403]
+Copyright 1991 UNIX System Laboratories
+Copyright 1990 AT&T
+THIS IS UNPUBLISHED PROPRIETARY SOURCE CODE OF UNIX SYSTEM LABORATORIES, INC.
+The copyright notice above does not evidence any actual or intended publication
+of such source code.
+UNIX is a registered trademark of UNIX System Laboratorioes, Inc. in the U.S.A.
+and other countries.
+
+In addition there are 44 floppies. All but one claim to be binary
+code. For example: Non-SCSI Boot - Binary Code. The one floppy that
+does not claim to be binary code is listed as a `Source Code -
+Patch'. According to the accompanying documentation, it contains
+a fix for a bug that allowed executables to be modified.  The file
+manifest is:
+
+	/usr/src/uts/i386/os/machdep.c
+	/usr/src/uts/i386/os/trap.c
+	/usr/src/uts/i386/vm/ucopy.c
+	/usr/src/uts/i386/sys/user.h
+	/usr/src/uts/i386/sys/vmparam.h
+
+I doubt that we will need to extract it for the purposes of our
+investigation.
+
+	~Kirk
+

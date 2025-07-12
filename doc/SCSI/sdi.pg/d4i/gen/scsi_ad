@@ -1,0 +1,55 @@
+'\"macro stdmacro
+.if n .pH gen.scsi_ad @(#)scsi_ad	40.1 of 2/22/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.nr X
+.if \nX=0 .ds x} scsi_ad D4I SDI "\&"
+.if \nX=1 .ds x} scsi_ad D4I SDI
+.if \nX=2 .ds x} scsi_ad D4I "" "\&"
+.if \nX=3 .ds x} scsi_ad "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4scsi_ad\fP \- SCSI device address structure
+.SH SYNOPSIS
+\f4#include <sys/sdi.h>\fP
+.SH DESCRIPTION
+The SCSI device address structure is used by every \f4scb\f1(D4I) or \f4sfb\f1(D4I)
+structure with the appropriate SCSI device.  SDI interprets the external major
+and minor numbers, the logical unit number, and the extended logical unit
+number to send the \f4scb\f1 or \f4sfb\f1 to the correct device.
+.SH STRUCTURE MEMBERS
+.ft 4
+.nf
+long           sa_major;   /* Major number */
+long           sa_minor;   /* Minor number */
+unsigned char  sa_lun;     /* logical unit number */
+unsigned char  sa_exlun;   /* extended logical unit number */
+short          sa_fill;    /* Fill word */
+.fi
+.ft 1
+.P
+This structure consists of the device number, which is passed to
+the target driver by the kernel, and the logical unit number.
+The \f4sa_major\f1 and \f4sa_minor\f1 members (external major/minor numbers)
+are long integers to allow for 
+future expansion of the major and minor numbers.
+.SH NOTES
+Use of the \f4sa_exlun\f1 member is not supported for the 3B2 computer.
+The major number is decoded by SDI to determine the host adapter and target
+controller.  The minor number is typically used only by the target driver to
+determine the logical unit and any other device specific information (partition
+of a disk or density of a tape).  SDI determines the logical unit from
+\f4sa_lun\f1.  This member may take on the values 0 to 7, except when extended
+unit numbering is used.  In this case, the
+.SM EXLUN
+value is set in the
+\f4sa_lun\f1 member, and the \f4sa_exlun\f1 member is set the appropriate
+value.
+.P
+For example, if the target controller wanted to access extended
+logical unit 0x021a, then \f4sa_lun\f1 would equal 0x82, and \f4sa_exlun\f1
+would equal 0x1a.
+.SH SEE ALSO
+.na
+\f4scb\f1(D4I),
+\f4sfb\f1(D4I)
+.ad

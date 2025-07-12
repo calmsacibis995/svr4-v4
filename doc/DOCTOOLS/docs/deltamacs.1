@@ -1,0 +1,45 @@
+'\"macro stdmacro
+.if n .pH doctools.deltamacs.1 @(#)deltamacs.1	40.1 of 1/5/90
+.\" @(#) SCCS File: deltamacs.1; ID:1.4; DATED:1/5/90
+.\"
+.\"     Copyright (c) 1989 AT&T   
+.\"     All Rights Reserved       
+.\"
+.\"     THIS IS UNPUBLISHED PROPRIETARY SOURCE CODE OF AT&T   
+.\"     The copyright notice above does not evidence any     
+.\"     actual or intended publication of such source code.  
+.\"
+.\"     Manual Page for deltamacs
+.\"
+.\"     Written by: J.R. Okin
+.\"                 AT&T Bell Laboratories
+.\"                 Department XT91124000
+.\"                 attunix!jro   201-522-5015
+.\"                   
+.\"
+.\"
+.PM DN "FINAL COPY"
+.nr X
+.if \nX=0 .ds x} deltamacs 1 "" "Documenter's Tool Set" "\&"
+.if \nX=1 .ds x} deltamacs 1 "" "Documenter's Tool Set"
+.if \nX=2 .ds x} deltamacs 1 "" "\&"
+.if \nX=3 .ds x} deltamacs "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4deltamacs\f1 \- convert docmacs macros to DOCTOOLS macros
+.SH SYNOPSIS 
+\f4deltamacs \f2file\f1
+.SH DESCRIPTION
+The \f4deltamacs\fP command translates docmacs macros
+into their DOCTOOLS equivalence.
+For example,
+\f4deltamacs\f1 changes \f4\&.Ns\f1 (the note start macro in
+docmacs) into \f4\&.AB N\f1 (the admonition begin
+macro for a note in DOCTOOLS).
+.P
+Only macros are affected; no text is changed.
+.P
+The converted file created by \f4deltamacs\f1 is named \f4N\f2file\f1.
+.SH "SEE ALSO"
+\f4format\f1(1)
+.\" EOF

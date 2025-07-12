@@ -1,0 +1,53 @@
+'\"macro stdmacro
+.if n .pH g1a.killall @(#)killall	40.7 of 4/30/91
+.\" Copyright 1989 AT&T
+.nr X
+.if \nX=0 .ds x} killall 1M "Essential Utilities" "\&"
+.if \nX=1 .ds x} killall 1M "Essential Utilities"
+.if \nX=2 .ds x} killall 1M "" "\&"
+.if \nX=3 .ds x} killall "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4killall\f1 \- kill all active processes
+.SH SYNOPSIS
+\f4/usr/sbin/killall\f1
+[ \f2signal\fP ]
+.SH DESCRIPTION
+.PP
+\f4killall\fP
+is used by
+\f4/usr/sbin/shutdown\f1
+to kill all active processes not directly related to the
+shutdown procedure.
+.PP
+.PP
+\f4killall\fP
+terminates all processes with open files
+so that the mounted file systems will be unbusied and can be unmounted.
+.PP
+\f4killall\fP
+sends
+\f2signal\fP
+[see
+\f4kill\fP(1)]
+to all processes not belonging to the above group of exclusions.
+If no
+\f2signal\fP
+is specified, a default of 15
+(\f4SIGTERM\f1)
+is used.
+.SH FILES
+\f4/usr/sbin/shutdown\fP
+.SH SEE ALSO
+\f4fuser\fP(1M), \f4shutdown\fP(1M), \f4signal\fP(5)
+.P
+\f4kill\fP(1),
+\f4ps\fP(1) in the
+\f2User's Reference Manual\f1
+.P
+\f4signal\fP(2) in the
+\f2Programmer's Reference Manual\f1
+.SH NOTES
+The
+\f4killall\fP
+command can be run only by a privileged user.

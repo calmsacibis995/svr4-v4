@@ -1,0 +1,159 @@
+'\"!  tbl | mmdoc
+'\"macro stdmacro
+.if n .pH g3x.forms @(#)forms	40.5 of 4/10/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.\" ident	"@(#)svid_ti:ti_env/forms	1.9"
+.ds S ETI 
+.nr X
+.if \nX=0 .ds x} forms 3X "" "\&"
+.if \nX=1 .ds x} forms 3X ""
+.if \nX=2 .ds x} forms 3X "" "\&"
+.if \nX=3 .ds x} forms "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4forms\fP \- character based forms package
+.SH SYNOPSIS
+#include <form.h>
+.SH DESCRIPTION
+The \f4form\f1 library is built using the \f4curses\fP
+library, and any program using \f4forms\fP routines must
+call one of the \f4curses\fP initialization routines such as \f4initscr\f1.
+A program using these routines must be compiled with
+\f4\-lform\f1 and \f4\-lcurses\f1 on the \f4cc\f1 command line.
+.PP
+The \f4forms\fP package gives the applications programmer a terminal-independent
+method of creating and customizing forms for user-interaction.
+The \f4forms\fP package includes:
+field routines, which are used to create and customize fields,
+link fields and assign field types;
+fieldtype routines, which are used to create new field types
+for validating fields; and
+form routines, which are used to create and
+customize forms, assign pre/post processing functions, and
+display and interact with forms.
+.SS Current Default Values for Field Attributes
+The \f4forms\fP package establishes initial current default values for field
+attributes.
+During field initialization, each field attribute is assigned the
+current default value for that attribute.
+An application can change or retrieve a current default attribute value
+by calling the appropriate set or retrieve routine with a \f4NULL\fP
+field pointer.
+If an application changes a current default field attribute value,
+subsequent fields created using \f4new_field\fP will have the new
+default attribute value.
+(The attributes of previously created fields are not changed if a
+current default attribute value is changed.)
+.SS Routine Name Index
+The following table lists each \f4forms\fP routine and the name of the
+manual page on which it is described.
+.TS H
+l l
+lfCWw(2i) lw(2i).
+\f4forms\fP Routine Name	Manual Page Name
+.sp 0.5
+_
+.TH
+current_field	\f4form_page\f1(3X)
+data_ahead	\f4form_data\f1(3X)
+data_behind	\f4form_data\f1(3X)
+dup_field	\f4form_field_new\f1(3X)
+dynamic_field_info	\f4form_field_info\f1(3X)
+field_arg	\f4form_field_validation\f1(3X)
+field_back	\f4form_field_attributes\f1(3X)
+field_buffer	\f4form_field_buffer\f1(3X)
+field_count	\f4form_field\f1(3X)
+field_fore	\f4form_field_attributes\f1(3X)
+field_index	\f4form_page\f1(3X)
+field_info	\f4form_field_info\f1(3X)
+field_init	\f4form_hook\f1(3X)
+field_just	\f4form_field_just\f1(3X)
+field_opts	\f4form_field_opts\f1(3X)
+field_opts_off	\f4form_field_opts\f1(3X)
+field_opts_on	\f4form_field_opts\f1(3X)
+field_pad	\f4form_field_attributes\f1(3X)
+field_status	\f4form_field_buffer\f1(3X)
+field_term	\f4form_hook\f1(3X)
+field_type	\f4form_field_validation\f1(3X)
+field_userptr	\f4form_field_userptr\f1(3X)
+form_driver	\f4form_driver\f1(3X)
+form_fields	\f4form_field\f1(3X)
+form_init	\f4form_hook\f1(3X)
+form_opts	\f4form_opts\f1(3X)
+form_opts_off	\f4form_opts\f1(3X)
+form_opts_on	\f4form_opts\f1(3X)
+form_page	\f4form_page\f1(3X)
+form_sub	\f4form_win\f1(3X)
+form_term	\f4form_hook\f1(3X)
+form_userptr	\f4form_userptr\f1(3X)
+form_win	\f4form_win\f1(3X)
+free_field	\f4form_field_new\f1(3X)
+free_fieldtype	\f4form_fieldtype\f1(3X)
+free_form	\f4form_new\f1(3X)
+link_field	\f4form_field_new\f1(3X)
+link_fieldtype	\f4form_fieldtype\f1(3X)
+move_field	\f4form_field\f1(3X)
+new_field	\f4form_field_new\f1(3X)
+new_fieldtype	\f4form_fieldtype\f1(3X)
+new_form	\f4form_new\f1(3X)
+new_page	\f4form_new_page\f1(3X)
+pos_form_cursor	\f4form_cursor\f1(3X)
+post_form	\f4form_post\f1(3X)
+scale_form	\f4form_win\f1(3X)
+set_current_field	\f4form_page\f1(3X)
+set_field_back	\f4form_field_attributes\f1(3X)
+set_field_buffer	\f4form_field_buffer\f1(3X)
+set_field_fore	\f4form_field_attributes\f1(3X)
+set_field_init	\f4form_hook\f1(3X)
+set_field_just	\f4form_field_just\f1(3X)
+set_field_opts	\f4form_field_opts\f1(3X)
+set_field_pad	\f4form_field_attributes\f1(3X)
+set_field_status	\f4form_field_buffer\f1(3X)
+set_field_term	\f4form_hook\f1(3X)
+set_field_type	\f4form_field_validation\f1(3X)
+set_field_userptr	\f4form_field_userptr\f1(3X)
+set_fieldtype_arg	\f4form_fieldtype\f1(3X)
+set_fieldtype_choice	\f4form_fieldtype\f1(3X)
+set_form_fields	\f4form_field\f1(3X)
+set_form_init	\f4form_hook\f1(3X)
+set_form_opts	\f4form_opts\f1(3X)
+set_form_page	\f4form_page\f1(3X)
+set_form_sub	\f4form_win\f1(3X)
+set_form_term	\f4form_hook\f1(3X)
+set_form_userptr	\f4form_userptr\f1(3X)
+set_form_win	\f4form_win\f1(3X)
+set_max_field	\f4form_field_buffer\f1(3X)
+set_new_page	\f4form_new_page\f1(3X)
+unpost_form	\f4form_post\f1(3X)
+.TE
+.SH RETURN VALUE
+Routines that return a pointer always return \f4NULL\fP on error.
+Routines that return an integer return one of the following:
+.PP
+.TS
+lfCW c2 l.
+E_OK	\-	The function returned successfully.
+E_CONNECTED	\-	The field is already connected to a form.
+E_SYSTEM_ERROR	\-	System error.
+E_BAD_ARGUMENT	\-	An argument is incorrect.
+E_CURRENT	\-	The field is the current field.
+E_POSTED	\-	The form is posted.
+E_NOT_POSTED	\-	The form is not posted.
+E_INVALID_FIELD	\-	The field contents are invalid.
+E_NOT_CONNECTED	\-	The field is not connected to a form.
+E_NO_ROOM	\-	The form does not fit in the subwindow.
+E_BAD_STATE	\-	T{
+The routine was called from an initialization or termination function.
+T}
+E_REQUEST_DENIED	\-	The form driver request failed.
+E_UNKNOWN_COMMAND	\-	T{
+An unknown request was passed to the the form driver.
+T}
+.TE
+.SH NOTES
+The header file \f4<form.h>\fP automatically includes the header files
+\f4<eti.h>\fP and \f4<curses.h>\fP.
+.SH SEE ALSO
+\f4curses\fP(3X), and 3X pages whose names begin "\f4form_\f1" for detailed
+routine descriptions.

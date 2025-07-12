@@ -1,0 +1,376 @@
+'\"!  eqn | mmdoc
+'\"macro stdmacro
+.if n .pH g1.eqn @(#)eqn	40.11 of 4/18/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} eqn 1 "BSD Compatibility Package" "\&"
+.if \nX=1 .ds x} eqn 1 "BSD Compatibility Package"
+.if \nX=2 .ds x} eqn 1 "" "\&"
+.if \nX=3 .ds x} eqn "" "" "\&"
+.TH \*(x}
+.\" Copyright (c) 1988 Sun Microsystems, Inc. - All Rights Reserved.
+.\"
+.EQ
+delim $$
+.EN
+.SH NAME
+\f4eqn\f1, \f4neqn\f1, \f4checkeq\f1 \- typeset mathematics
+.SH SYNOPSIS
+\f4/usr/ucb/eqn\f1 [ \f4\-d\f2xy\f1 ] [ \f4\-f\f2n\f1 ] [ \f4\-p\f2n\f1 ] [ \f4\-s\f2n\f1 ] [ \f2filename\f1 ] .\ .\ .
+.P
+\f4/usr/ucb/neqn\f1 [ \f2filename\f1 ] .\ .\ .
+.P
+\f4/usr/ucb/checkeq\f1 [ \f2filename\f1 ] .\ .\ .
+.SH DESCRIPTION
+The \f4eqn\f1 and \f4neqn\f1
+commands are language processors to assist in
+describing equations.
+\f4eqn\f1
+is a preprocessor for
+\f4troff\f1(1)
+and is intended for devices that can print 
+\f4troff\f1's
+output.
+\f4neqn\f1
+is a preprocessor for
+\f4nroff\f1(1)
+and is intended for use with terminals.
+.P
+\f4checkeq\f1
+reports missing or unbalanced delimiters and
+\f4\&.EQ/.EN\f1
+pairs.
+.P
+If no
+.IR filename s
+are specified, 
+\f4eqn\f1
+and
+\f4neqn\f1
+read from the standard input.
+A line beginning with
+\f4\&.EQ\f1
+marks the start of an equation;
+the end of an equation is marked by a line beginning with
+\f4\&.EN\f1.
+Neither of these lines is altered, so they may be defined in macro packages
+to get centering, numbering, etc.
+It is also possible to set two characters
+as ``delimiters'';
+subsequent text between delimiters is also treated as
+\f4eqn\f1
+input.
+.P
+The following options are available for \f4eqn\f1 and \f4neqn\f1:
+.TP
+\f4\-d\f2xy\f1
+Set equation delimiters set to characters
+.I x
+and
+.I y
+with the command-line argument.  The more common way to do this is with
+\f4delim\f2xy\f1
+between
+\f4\&.EQ\f1
+and
+\f4\&.EN\f1.
+The left and right delimiters may be identical.
+Delimiters are turned off by
+\f4delim off\f1
+appearing in the text.  All text
+that is neither between delimiters nor between
+\f4\&.EQ\f1
+and
+\f4\&.EN\f1
+is passed through untouched.
+.TP
+\f4\-f\f2n\f1
+Change font to
+.I n
+globally in the document.
+The font can also be changed globally in the body of the document
+by using the
+\f4gfont\f1
+directive.
+.TP
+\f4\-p\f2n\f1
+Reduce subscripts and superscripts by
+.I n
+point sizes from the
+previous size.  In the absence of the
+\f4\-p\f1
+option, subscripts and
+superscripts are reduced by 3 point sizes from the previous size.
+.TP
+\f4\-s\f2n\f1
+Set equations in point size
+.I n
+globally in the document.
+The point size can also be changed globally in the body of the document
+by using the
+\f4gsize\f1
+directive.
+.TP
+\f4\-T\f2dev\fR
+Prepare output for device
+\f2dev\fR.
+If no
+\f4\-T\fR
+option is present,
+\f4eqn\fR
+looks at the environment variable
+\f4TYPESETTER\fR
+to see what the intended output device is.
+If no such variable is found in the environment,
+a system-dependent default device is assumed.
+Not available using
+\f4neqn\fR.
+.SH USAGE
+.SS "eqn Language"
+.P
+Tokens within
+\f4eqn\f1
+are separated by
+braces, double quotes, tildes, circumflexes,
+.SM SPACE\s0,
+.SM TAB\s0,
+or
+.SM NEWLINE\s0
+characters.  Braces \f4{\|}\fP are used for grouping;
+generally speaking, anywhere a single character like
+.I x
+could appear, a
+complicated construction enclosed in braces may be used instead. 
+Tilde (\f4~\fP) represents a full
+.SM SPACE
+in the output, circumflex (\f4^\fP) half as much.
+.P
+Subscripts and superscripts are produced with the keywords
+\f4sub\f1
+and
+\f4sup\f1.
+Thus
+\f1`\f4x sub i\f1'
+makes  $x sub i$ ,
+\f1`\f4a sub i sup 2\f1'
+produces
+$a sub i sup 2$,
+and
+\f1`\f4e sup {x sup 2 + y sup 2}\f1'
+gives
+$e sup {x sup 2 + y sup 2}$.
+.P
+Fractions are made with
+\f4over\f1:
+\f1`\f4a over b\f1'
+yields
+$a over b$.
+.P
+\f4sqrt\f1
+makes square roots:
+\f1`\f41 over down 10 sqrt {ax sup 2 +bx+c}\f1'
+results in
+.P
+.RS
+.ft 4
+$1 over down 10 sqrt {ax sup 2 +bx+c}$.
+.ft 1
+.RE
+.P
+Although \f4eqn\f1 tries to get most things
+at the right place on the paper,
+occasionally you will
+need to tune the output to make it just right.
+In the previous example, a local motion, \f2down 10\f1
+was used to get more space between the square root
+and the line above it.
+.P
+The keywords
+\f4from\f1
+and
+\f4to\f1
+introduce lower and upper
+limits on arbitrary things:
+$lim from {n-> inf} sum from 0 to n x sub i$
+is made with
+\f1`\f4lim from {n\-> inf } sum from 0 to n x sub i\f1'.
+.P
+Left and right brackets, braces, etc., of the right height are made with
+\f4left\f1
+and
+\f4right\f1:
+\&`\f4left [ x sup 2 + y sup 2 over alpha right ] ~=~1\f1'
+produces
+.sp
+.in +1.75i
+.EQ
+left [ x sup 2 + y sup 2 over alpha right ] ~=~1 .
+.EN
+.sp
+.in -1.75i
+The
+\f4right\f1
+clause is optional.  Legal characters after
+\f4left\f1
+and
+\f4right\f1
+are braces, brackets, bars,
+\f4c\f1
+and
+\f4f\f1
+for ceiling and floor,
+and \f4""\f1 for nothing at all (useful for a right-side-only bracket).
+.P
+Vertical piles of things are made with 
+\f4pile\f1,
+\f4lpile\f1,
+\f4cpile\f1,
+and
+\f4rpile\f1:
+\f1`\f4pile {a above b above c}\f1'
+produces
+$pile {a above b above c}$.
+There can be an arbitrary number of elements in a pile. 
+\f4lpile\f1
+left-justifies,
+\f4pile\f1
+and
+\f4cpile\f1
+center, with different vertical spacing, and
+\f4rpile\f1
+right justifies.
+.P
+Matrices are made with
+\f4matrix\f1:
+\f1`\f4matrix { lcol { x sub i above y sub 2 } ccol { 1 above 2 } }\f1'
+produces
+$matrix { lcol { x sub i above y sub 2 } ccol { 1 above 2 } }$.
+In addition, there is
+\f4rcol\f1
+for a right-justified column.
+.P
+Diacritical marks are made with
+\f4dot\f1,
+\f4dotdot\f1,
+\f4hat\f1,
+\f4tilde\f1,
+\f4bar\f1,
+\f4vec\f1,
+\f4dyad\f1,
+and
+\f4under\f1:
+\f1`\f4x dot = f(t) bar\f1'
+is
+$x dot = f(t) bar$,
+\f1`\f4y dotdot bar ~=~ n under\f1'
+is
+$y dotdot bar ~=~ n under$,
+and
+\f1`\f4x vec ~=~ y dyad\f1'
+is
+$x vec ~=~ y dyad$.
+.P
+Sizes and font can be changed with
+\f4size\f1
+.I n
+or
+\f4size\f1
+\f4\(+-\f2n,\f1
+\f4roman\f1,
+\f4italic\f1,
+\f4bold\f1,
+and
+\f4font\f1
+.IR n .
+Size and fonts can be changed globally in a document by
+\f4gsize\f1
+.I n
+and
+\f4gfont\f1
+.IR n ,
+or by the command-line arguments
+\f4\-s\f2n\f1
+and
+\f4\-f\f2n\f1.\f1
+.P
+Successive display arguments can be lined up.  Place
+\f4mark\f1
+before the desired lineup point in the first equation; place
+\f4lineup\f1
+at the place that is to line up vertically in subsequent equations.
+.P
+Shorthands may be defined or existing keywords redefined with
+\f4define\f2:\f1
+.IP
+\f4define\f2 thing \f4%\f2 replacement \f4%\f1
+.P
+defines a new token called
+.I thing
+which will be replaced by
+.I replacement
+whenever it appears thereafter.
+The
+\f4%\f1
+may be any character that does not occur in
+.IR replacement .
+.P
+Keywords like
+\f4sum\f1
+.EQ
+( sum ),
+.EN
+\f4int\f1
+.EQ
+( int ),
+.EN
+\f4inf\f1
+.EQ
+( inf ),
+.EN
+and shorthands like
+\f4>=\f1
+.EQ
+(>=),
+.EN
+\f4\->\f1
+.EQ
+(->),
+.EN
+and
+\f4!=\f1
+.EQ
+( != )
+.EN
+are recognized.
+Greek letters are spelled out in the desired case, as in
+\f4alpha\f1
+or
+\f4GAMMA\f1.
+Mathematical words like sin, cos,
+and log are made Roman automatically.
+\f4troff\f1(1)
+four-character escapes like \e(bu (\^\(bu\^) can be used anywhere.
+Strings enclosed in double quotes
+\f4"\fP.\|.\|.\f4"\fP
+are passed through untouched;
+this permits keywords to be entered as text, and can be used to communicate
+with
+\f4troff\f1
+when all else fails.
+.SH EXAMPLE
+.RS
+.sp .5
+\f4eqn \f2filename\f1 .\ .\ . | \f4troff\f1
+.P
+\f4neqn \f2filename\f1 .\ .\ . | \f4nroff\f1
+.RE
+.ft 1
+.SH "SEE ALSO"
+\f4tbl\fP(1),
+\f4troff\fP(1),
+\f4eqnchar\fP(7),
+\f4ms\fP(7)
+.SH NOTES
+To embolden digits, parens, etc., it is necessary to quote them,
+as in \f4bold "12.3"\f1.

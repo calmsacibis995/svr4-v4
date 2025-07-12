@@ -1,0 +1,102 @@
+'\"macro stdmacro
+.if n .pH g5.xtproto.5 @(#)xtproto	40.14 of 5/21/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} xtproto 5 "Layers Windowing Utilities" "\&"
+.if \nX=1 .ds x} xtproto 5 "Layers Windowing Utilities"
+.if \nX=2 .ds x} xtproto 5 "" "\&"
+.if \nX=3 .ds x} xtproto "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4xtproto\f1 \- multiplexed channels protocol used by \f4xt\f1 driver
+.SH DESCRIPTION
+This \f4xt\f1 protocol is used for communication between multiple
+UNIX System host
+processes and an AT&T windowing terminal
+operating under the \f4layers\f1 command; see \f4xt\fP(7).
+It is a multiplexed protocol that directs traffic between
+host processes and terminal windows, thereby allowing multiple virtual
+terminal sessions over a single connection.
+The protocol is implemented by the \f4xt\f1 host driver and corresponding firmware
+in a windowing terminal.
+.PP
+The \f4xt\f1 driver implements two distinct low level protocols.
+Which protocol is used depends on the media used for communication with 
+the terminal.
+The regular \f4xt\f1 protocol is used when communicating over unreliable media 
+such as \s-1RS\s0-232.
+The regular \f4xt\f1 protocol provides flow control and error correction, thereby
+guaranteeing error-free delivery of data.
+The network \f4xt\f1 protocol is used when communicating over reliable media such 
+as a local area network.
+In order to achieve maximum possible throughput,
+the network \f4xt\f1 protocol relies on the underlying network to provide
+flow control and error correction.
+.PP
+The \f4layers\f1 command queries the windowing terminal 
+whether to use regular
+or network \f4xt\f1 protocol through an \f4A_XTPROTO JAGENT ioctl\fP system call
+[see \f4layers\f1(5)].
+The \f4layers\f1 command then decides
+what protocol to use based on the return value of \f4A_XTPROTO\fP,
+baud rate, and the \f4-m\f1 option of \f4layers\f1.
+.PP
+The regular \f4xt\f1 protocol uses packets with a 2-byte header containing a
+3-bit sequence number, 3-bit channel number, control flag, and one
+byte for data size.
+The data part of packets sent from the host to
+the terminal may not be larger than 252 bytes.
+The maximum data part size can be less than 252 at lower baud rates, 
+or if the \f4-m\f1 option of \f4layers\f1
+was specified.
+Also, when communicating with some earlier windowing terminals, 
+maximum data part size is fixed at 32 bytes.
+The maximum data part size of packets sent from the terminal
+to the host is always fixed at 32 bytes.
+The trailer contains a \s-1CRC\s0-16 code in 2 bytes.
+Each channel is double-buffered.
+.PP
+Correctly received regular \f4xt\f1 packets in
+sequence are acknowledged with a
+control packet containing an \s-1ACK\s0; however, out of
+sequence packets generate a control packet containing
+a \s-1NAK\s0, which causes the retransmission in
+sequence of all unacknowledged packets.
+.PP
+Unacknowledged regular \f4xt\f1 packets are retransmitted after a timeout
+interval that is dependent on baud rate.
+Another timeout parameter specifies the interval after which
+incomplete receive packets are discarded.
+.PP
+Network \f4xt\f1 protocol uses a 3-byte header containing a 3-bit channel
+number, various control flags, and 2-bytes for data size.
+The data part of packets sent from the host to the terminal has no size limit.
+The data part of packets sent from the terminal to the host is
+restricted to 1025 bytes.
+.PP
+Since network \f4xt\f1 protocol relies on the underlying media to
+guarantee error-free delivery of data, no \s-1CRC\s0 codes or
+timeouts are needed.
+.PP
+Network \f4xt\f1 protocol provides a simple flow control mechanism to
+limit the amount of data sent to a window in the terminal before a
+\f4NETWORK XT ACK\fP
+acknowledgement is received by the host.
+The intent of this flow control is to limit the amount of data sent to a window 
+in the terminal not reading its input because, for example, the user 
+has pressed the scroll lock key.
+This is necessary to prevent data from backing up and
+blocking other data directed to other windows.
+To improve overall throughput,
+network \f4xt\f1 flow control can be disabled by processes in the terminal that
+always read their input quickly.
+.SH FILES
+\f4/usr/include/sys/xtproto.h\fP   channel multiplexing protocol definitions
+.SH SEE ALSO
+\f4jagent\fP(5), \f4layers\fP(5)
+.br
+\f4layers\fP(1) in the \f2User's Reference Manual\fP
+.br
+\f4xt\fP(7) in the \f2Programmer's Guide: STREAMS\f1
+.Ee

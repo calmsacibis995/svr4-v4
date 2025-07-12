@@ -1,0 +1,1911 @@
+'\"macro stdmacro
+.if n .pH g1.sh @(#)sh	40.11 of 4/23/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+'\"macro stdmacro
+.if n .pH g1.sh @(#)sh	40.36 of 9/28/89
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.nr X
+.if \nX=0 .ds x} sh 1 "Essential Utilities" "\&"
+.if \nX=1 .ds x} sh 1 "Essential Utilities"
+.if \nX=2 .ds x} sh 1 "" "\&"
+.if \nX=3 .ds x} sh "" "" "\&"
+.nr X
+.nr X
+.TH \*(x} "" "386 Computer Only"
+.if t .ds ' \h@.05m@\s+4\v@.333m@\'\v@-.333m@\s-4\h@.05m@
+.if n .ds ' '
+.if t .ds ` \h@.05m@\s+4\v@.333m@\`\v@-.333m@\s-4\h@.05m@
+.if n .ds ` `
+.ds OK [\|
+.ds CK \|]
+.\" Copyright (c) 1988 Sun Microsystems, Inc - All Rights Reserved.
+.SH NAME
+\f4sh\f1, \f4jsh\f1, \f4rsh\f1 \- command interpreters: standard shell, job control shell, restricted shell
+.SH SYNOPSIS
+\f4sh\f1
+[
+\f4\-acefhiknprstuvx\f1
+] [ \f2args\f1 ]
+.br
+\f4jsh\f1
+[
+\f4\-acefhiknprstuvx\f1
+] [ \f2args\f1 ]
+.br
+\f4/usr/lib/rsh\f1
+[
+\f4\-acefhiknprstuvx\f1
+] [ \f2args\f1 ]
+.SH DESCRIPTION
+\f4sh\fP
+is a command programming language
+that executes commands read from a terminal
+or a file.
+The command \f4jsh\fP is an interface to the shell which provides
+all of the functionality of \f4sh\fP and enables Job Control
+(see ``Job Control,'' below).
+\f4/usr/lib/rsh\fP
+is a restricted version of the standard command interpreter
+\f4sh\fP;
+It is used to restrict logins to execution environments whose
+capabilities are more controlled than those of the standard
+shell.
+See
+``Invocation,''
+below
+for the meaning of arguments to the shell.
+.SS Definitions
+A
+.I blank\^
+is a tab or a space.
+A
+.I name\^
+is a sequence of \s-1ASCII\s+1 letters, digits, or underscores,
+beginning with a letter or an underscore.
+A
+.I parameter\^
+is a name, a digit, or any of the following characters:
+\f4\(**\f1,
+\f4@\f1,
+\f4#\f1,
+\f4?\f1,
+\f4\-\f1,
+\f4$\f1,
+and
+\f4!\f1
+.SS Commands
+A
+.I simple-command\^
+is a sequence of non-blank
+\f2word\f1s separated by \f2blank\f1s.
+The first \f2word\f1 specifies the name of the command to
+be executed.
+Except as specified below,
+the remaining \f2word\f1s are passed as arguments
+to the invoked command.
+The command name is passed as argument 0
+[see
+\f4exec\fP(2)].
+The
+.I value\^
+of a \f2simple-command\f1 is its exit status
+if it terminates normally, or (octal) \f4200\fP+\f2status\^\fP if
+it terminates abnormally; see
+\f4signal\fP(5)
+for a list of
+status values.
+.PP
+A
+.I pipeline\^
+is a sequence of one or more
+\f2command\f1s separated by
+\f4\(bv\f1.
+The standard output of each \f2command\f1 but the last
+is connected by a
+\f4pipe\fP(2)
+to the standard input of the next \f2command\f1.
+Each \f2command\f1 is run as a separate process;
+the shell waits for the last \f2command\f1 to terminate.
+The exit status of a \f2pipeline\f1 is the exit status of the last command in the \f2pipeline\f1.
+.PP
+A
+.I list\^
+is a sequence of one or more
+\f2pipeline\f1s separated by
+\f4;\f1,
+\f4&\f1,
+\f4&&\f1,
+or
+\f4\(bv\|\(bv\f1,
+and optionally terminated by
+\f4;\f1 or \f4&\f1.
+Of these four symbols,
+\f4;\f1
+and
+\f4&\f1
+have equal precedence,
+which is lower than that of
+\f4&&\f1
+and
+\f4\(bv\|\(bv\f1.
+The symbols
+\f4&&\f1
+and
+\f4\(bv\|\(bv\f1
+also have equal precedence.
+A semicolon
+(\f4;\f1)
+causes sequential execution of the preceding \f2pipeline\f1
+(that is, the shell waits for the \f2pipeline\f1
+to finish before executing any commands following
+the semicolon); an ampersand
+(\f4&\f1)
+causes asynchronous execution of the preceding pipeline (that is, the shell does
+.I not\^
+wait for that pipeline to finish).
+The symbol
+\f4&&\f1
+\f1(\|\f4\(bv\|\(bv\f1\^)
+causes the
+.I list\^
+following it to be executed only if the preceding
+pipeline
+returns a zero (non-zero) exit status.
+An arbitrary number of newlines may appear in a
+.IR list ,
+instead of semicolons,
+to delimit commands.
+.PP
+A
+.I command\^
+is either a \f2simple-command\f1
+or one of the following.
+Unless otherwise stated,
+the value returned by a command is that of the
+last \f2simple-command\f1 executed in the command.
+.PP
+.PD .25
+.TP
+\f4for\fP \f2name\^\fP \*(OK \f4in\fP \f2word\^\fP . . . \*(CK \f4do\fP \f2list\^\fP \f4done\fP
+Each time a
+\f4for\f1
+command is executed,
+.I name\^
+is set to the next
+.I word\^
+taken from the
+\f4in\f1
+.I word\^
+list.
+If
+\f4in\f2 word\^\f1
+\&. . .
+is omitted, then the \f4for\f1
+command executes the \f4do\fP \f2list\^\fP once for each positional parameter
+that is set
+(see
+``Parameter Substitution,''
+below).
+Execution ends when there are no more words in the list.
+.TP
+\f4case\fP \f2word\^\fP \f4in\fP \*(OK \f2pattern\^\fP \*(OK \(bv \
+\f2pattern\^\fP \*(CK . . . \f4)\fP \f2list\^\fP \f4;;\fP \*(CK . . . \f4esac\fP
+A
+\f4case\f1
+command executes the
+.I list\^
+associated with the first
+.I pattern\^
+that matches
+.IR word .
+The form of the patterns is
+the same as that used for
+file-name generation (see 
+``Filename Generation'')
+except that a slash, a leading dot, or a dot immediately
+following a slash need not be matched explicitly.
+.TP
+\f4if\fP \f2list\^\fP \f4then\fP \f2list\^\fP \*(OK \
+\f4elif\fP \f2list\^\fP \f4then\fP \f2list\^\fP \*(CK . . . \
+\*(OK \f4else\fP \f2list\^\fP \*(CK \f4f\&i\fP
+The
+.I list\^
+following \f4if\fP is executed and,
+if it
+returns a zero exit status, the
+.I list\^
+following
+the first
+\f4then\f1
+is executed.
+Otherwise, the
+.I list\^
+following \f4elif\fP
+is executed and, if its value is zero,
+the
+.I list\^
+following
+the next
+\f4then\f1
+is executed.
+Failing that, the
+\f4else\f1
+.I list\^
+is executed.
+If no
+\f4else\f1
+.I list\^
+or
+\f4then\f1
+.I list\^
+is executed, then the
+\f4if\f1
+command returns a zero exit status.
+.TP
+\f4while\fP \f2list\^\fP \f4do\fP \f2list\^\fP \f4done\fP
+A
+\f4while\f1
+command repeatedly executes the
+\f4while\f1
+.I list\^
+and, if the exit status of the last command in the list is zero, executes
+the
+\f4do\f1
+.IR list ;
+otherwise the loop terminates.
+If no commands in the
+\f4do\f1
+.I list\^
+are executed, then the
+\f4while\f1
+command returns a zero exit status;
+\f4until\f1
+may be used in place of
+\f4while\f1
+to negate
+the loop termination test.
+.TP
+\f4(\fP\f2list\^\fP\f4)\fP
+.br
+Execute
+.I list\^
+in a sub-shell.
+.TP
+\f4{ \fP\f2list\^\fP\f4;}\fP
+.br
+.I list\^
+is executed in the current (that is, parent) shell.
+The \f4{\fP must be followed by a space.
+.TP
+\f2name\^\fP \f4() { \fP\f2list\^\fP\f4;}\fP
+Define a function
+that is referenced by
+.I name\^.
+The body of the function is
+the \f2list\f1 of commands between
+\f4{\f1 and \f4}\f1.
+The \f2list\fP may appear on the same line as the \f4{\f1.
+If it does, the \f4{\f1 and \f2list\fP
+must be separated by a space.
+The \f4}\f1 may not be on the same line as \f2list\fP;
+it must be on a newline.
+Execution of functions is described below
+(see ``Execution'').
+The \f4{\f1 and \f4}\f1 are unnecessary
+if the body of the function is a \f2command\fP 
+as defined above, under ``Commands.''
+.PD
+.PP
+The following words are recognized only as 
+the first word of a command and when not quoted:
+.if t .RS
+.PP
+\f4
+.if n if then else elif fi case esac for while until do done { }
+.if t if  then  else  elif  f\&i  case  esac  for  while  until  do  done  {  }
+\f1
+.if t .RE
+.SS Comments
+A word beginning with
+\f4#\f1
+causes that word and all the following characters up to a newline
+to be ignored.
+.SS Command Substitution
+The shell reads commands from the string between two back quotes 
+(\^\f4\*`\^\*`\fP\^)
+and the standard output from these commands may
+be used as all or part of a word.
+Trailing newlines from the 
+standard output are removed.
+.P
+No interpretation is done on the string before the string is
+read,
+except to remove backslashes (\f4\e\f1)
+used to escape other characters.
+Backslashes
+may be used to escape a back quote
+(\f4\*`\f1)
+or another backslash (\f4\e\f1) and are
+removed before the command string is read.
+Escaping back quotes allows nested command substitution.
+If the command substitution lies within a pair of double
+quotes
+(\f4"\f1 . . . \f4\*`\f1 . . . \f4\*`\f1 . . . \f4"\f1),
+a backslash used to escape a double quote
+(\f4\e"\f1)
+will be removed; otherwise, it will be left intact.
+.P
+If a backslash is used to escape a newline character
+(\f4\enewline\f1),
+both the backslash and the newline are removed
+(see the later section on ``Quoting'').
+In addition, backslashes used to escape dollar signs
+(\f4\e$\f1) are removed.
+Because no parameter substitution is done on the command string before
+it is read, inserting a backslash to escape a dollar
+sign has no effect.
+Backslashes that precede characters other than
+\f4\e\^\f1,
+\f4\*`\^\f1,
+\f4"\fP\^,
+newline,
+and
+\f4$\f1
+are left intact when the command string is read.
+.SS Parameter Substitution
+The character
+\f4$\f1
+is used to introduce substitutable 
+.IR parameters\^ .
+There are two types of parameters,
+positional and keyword.
+If
+.I parameter\^
+is a digit, it is a positional parameter.
+Positional parameters may be assigned values by
+\f4set\f1.
+Keyword parameters (also known as variables)
+may be assigned values by writing:
+.RS
+.PP
+\f2name\f4=\f2value\^\f1
+\*(OK
+\f2name\f4=\f2value\^\f1
+\*(CK .\|.\|.
+.RE
+.PP
+Pattern-matching is not performed on
+.IR value .
+There cannot be a function and a variable with the same
+.IR name\^  .
+.PP
+.PD .25
+.TP
+\f4${\fP\f2parameter\^\fP\f4}\fP
+The value, if any, of the parameter is substituted.
+The braces are required only when
+.I parameter\^
+is followed by a letter, digit, or underscore
+that is not to be interpreted as part of its name.
+If
+.I parameter\^
+is
+\f4\(**\f1
+or
+\f4@\f1,
+all the positional
+parameters, starting with
+\f4$1\f1,
+are substituted
+(separated by spaces).
+Parameter
+\f4$0\f1
+is set from argument zero when the shell
+is invoked.
+.TP
+\f4${\fP\f2parameter\^\fP\f4:\-\fP\f2word\^\fP\f4}\fP
+If
+.I parameter\^
+is set and is non-null, substitute its value;
+otherwise substitute
+.IR word .
+.TP
+\f4${\fP\f2parameter\^\fP\f4:=\fP\f2word\^\fP\f4}\fP
+If
+.I parameter\^
+is not set or is null
+set it to
+.IR word ;
+the value of the parameter is substituted.
+Positional parameters may not be assigned
+in this way.
+.TP
+\f4${\fP\f2parameter\^\fP\f4:?\fP\f2word\^\fP\f4}\fP
+If
+.I parameter\^
+is set and is non-null, substitute its value;
+otherwise, print
+.I word\^
+and exit from the shell.
+If
+.I word\^
+is omitted, the message
+``parameter null or not set''
+is printed.
+.TP
+\f4${\fP\f2parameter\^\fP\f4:+\fP\f2word\^\fP\f4}\fP
+If
+.I parameter\^
+is set and is non-null, substitute
+.IR word ;
+otherwise substitute nothing.
+.PD
+.PP
+In the above,
+.I word\^
+is not evaluated unless it is
+to be used as the substituted string,
+so that, in the following example,
+\f4pwd\f1
+is executed only if
+\f4d\f1
+is not set or is null:
+.RS
+.PP
+\f4echo \|${d:\-\^\*`\^pwd\^\*`\^}\f1
+.RE
+.PP
+If the colon
+\f1(\f4:\f1)
+is omitted from the above expressions, the
+shell only checks whether 
+.I parameter\^
+is set or not.
+.PP
+The following parameters are automatically set by the shell.
+.RS
+.PD .25
+.TP
+\f4\(**\f1
+Expands to the positional parameters, beginning with 1.
+.TP
+\f4@\f1
+Expands to the positional parameters, beginning with 1,
+except when expanded within double quotes,
+in which case each positional parameter
+expands as a separate field.
+.TP
+\f4#\f1
+The number of positional parameters in decimal.
+.TP
+\f4\-\f1
+Flags supplied to the shell on invocation or by
+the
+\f4set\f1
+command.
+.TP
+\f4?\f1
+The decimal value returned by the last synchronously executed command.
+.TP
+\f4$\f1
+The process number of this shell.
+\f4$\fP reports the process ID of the parent shell
+in all shell constructs, including pipelines,
+and in parenthesized sub-shells.
+.TP
+\f4!\f1
+The process number of the last background command invoked.
+.PD
+.RE
+.PP
+The following parameters are used by the shell.
+The parameters in this section are also referred to as environment variables.
+.RS
+.PD .25
+.TP
+\f4HOME\fP
+The default argument (home directory) for the
+\f4cd\fP
+command, set to the user's login directory
+by \f4login\fP(1) from the password file
+[see \f4passwd\fP(4)].
+.TP
+\f4PATH\fP
+The search path for commands (see
+``Execution,''
+below).
+The user may not change
+\f4PATH\f1
+if executing under
+\f4/usr/lib/rsh\fP.
+.TP
+\f4CDPATH\fP
+The search path for the
+\f4cd\fP
+command.
+.TP
+\f4MAIL\fP
+If this parameter is set to the name of a mail file
+.I and\^
+the 
+\f4MAILPATH\f1
+parameter is not set, the shell informs the user of the arrival of mail 
+in the specified file.
+.TP
+\f4MAILCHECK\fP
+This parameter specifies how often 
+(in seconds) the shell
+will check for the arrival of mail in the files specified by the
+\f4MAILPATH\f1
+or
+\f4MAIL\f1
+parameters.
+The default value is \f4600\fP seconds (10 minutes).
+If set to \f40\fP, the shell will check before each prompt.
+.TP
+\f4MAILPATH\fP
+A colon 
+\f1(\f4:\f1)
+separated list of filenames.
+If this parameter is set, the shell informs the user of the arrival of mail
+in any of the specified files.
+Each filename can be followed by 
+\f4%\f1
+and a message that will be printed when the 
+modification time changes.
+The default message is
+\f4you have mail\f1.
+.TP
+\f4PS1\f1
+Primary prompt string, by default
+\f1``\f4$\f1''.
+.TP
+\f4PS2\f1
+Secondary prompt string, by default
+\f1``\f4>\f1''.
+.TP
+\f4IFS\f1
+Internal field separators,
+normally space, tab, and newline
+(see ``Blank Interpretation''). 
+The user can modify \f4IFS\f1 to allow additional field
+separators, but space, tab and newline are always included in
+the list of field separators.
+.TP
+\f4LANG\fP
+If this parameter is set, the shell will use it to determine the current
+locale; see
+\f4environ\fP(5),
+\f4setlocale\fP(3C).
+.TP
+\f4SHACCT\fP
+If this parameter is set to the name of a file writable by the user, 
+the shell will write an accounting record in the file for each shell
+procedure executed.
+.TP
+\f4SHELL\fP
+When the shell is invoked, it scans the environment (see
+``Environment,''
+below) for this name.
+If it is found and \f4rsh\fP is the filename part of its value, the
+shell becomes a restricted shell.
+.PD
+.RE
+.PP
+The shell gives default values to
+\f4PATH\fP, \f4PS1\fP, \f4PS2\fP, \f4MAILCHECK\fP, and \f4IFS\fP.
+\f4HOME\f1
+and
+\f4MAIL\f1
+are set by
+\f4login\fP(1).
+.SS Blank Interpretation
+After parameter and command substitution,
+the results of substitution are scanned for internal field separator
+characters (those found in
+\f4IFS\f1)
+and split into distinct arguments where such characters are found.
+Explicit null arguments (\^\f4"\^"\fP or \f4\*'\^\*'\fP\^) are retained.
+Implicit null arguments
+(those resulting from
+.I parameters\^
+that have no values) are removed.
+The original whitespace characters
+(space, tab, and newline)
+are always considered internal field separators.
+.SS Input/Output
+A command's input and output
+may be redirected using a special notation interpreted by the shell.
+The following may appear anywhere in a \f2simple-command\f1
+or may precede or follow a
+.I command\^
+and are
+.I not\^
+passed on as arguments to the invoked command.
+Note that parameter and command substitution occurs before
+.I word\^
+or
+.I digit\^
+is used.
+.PP
+.PD .25
+.TP 14
+\f4<\f2word\f1
+Use file
+.I word\^
+as standard input (file descriptor 0).
+.TP
+\f4>\f2word\f1
+Use file
+.I word\^
+as standard output (file descriptor 1).
+If the file does not exist, it is created;
+otherwise, it is truncated to zero length.
+.TP
+\f4>>\f2word\f1
+Use file
+.I word\^
+as standard output.
+If the file exists, output is appended to it
+(by first seeking to the end-of-file);
+otherwise, the file is created.
+.TP
+\f4<<\fP\*(OK\f4\-\fP\*(CK\f2word\fP
+After parameter and command substitution is done on
+.IR word ,
+the shell input is read up to the first line that
+literally matches the resulting
+.IR word ,
+or to an end-of-file.
+If, however,
+\f4\-\f1
+is appended to
+\f4<<\f1:
+.RS 14
+.TP 4
+1)
+leading tabs are stripped from
+.I word\^
+before the shell input is read
+(but after parameter and command substitution is done on
+.IR word ),
+.TP
+2)
+leading tabs are stripped from
+the shell input as it is read and before each line is compared with
+.IR word ,
+and
+.TP
+3)
+shell input is read up to the first line that literally matches the resulting
+.IR word ,
+or to an end-of-file.
+.PP
+If any
+character of
+.I word\^
+is quoted
+(see ``Quoting,'' later),
+no additional processing is done to the shell input.
+If no characters of
+.I word\^
+are quoted:
+.TP 4
+1)
+parameter and command substitution occurs,
+.TP
+2)
+(escaped)
+\f4\enewline\f1s are removed, and
+.TP
+3)
+\f4\e\f1
+must be used to quote the characters
+\f4\e\^\f1,
+\f4$\^\f1,
+and
+\f4\*`\f1.
+.PP
+The resulting document becomes
+the standard input.
+.RE
+.TP 14
+\f4<&\f2digit\f1
+Use the file associated with file descriptor
+.I digit\^
+as standard input.
+Similarly for the standard output using 
+\f4>&\f2digit\fP\f1.
+.TP
+\f4<&\-\f1
+The standard input is closed.
+Similarly for the standard output using
+\f4>&\-\f1.
+.PD
+.PP
+If any of the above is preceded by a digit,
+the
+file descriptor which will be associated with the file
+is that specified
+by the digit
+(instead of the default 0 or 1).
+For example:
+.RS
+.PP
+\&. . . \f42>&1\f1
+.RE
+.PP
+associates file descriptor 2 with the file currently associated with 
+file descriptor 1.
+.br
+.ne 6
+.PP
+The order in which redirections are specified is significant.
+The shell evaluates redirections left-to-right.
+For example:
+.RS
+.PP
+\&. . . \f41>\f2xxx\^\fP 2>&1\f1
+.RE
+.PP
+first associates file descriptor 1 with file 
+.IR xxx\^ .
+It associates file descriptor 2 with the file associated with file
+descriptor 1 (that is,
+.IR xxx\^ ).
+If the order of redirections were reversed, file descriptor 2 would be associated 
+with the terminal (assuming file descriptor 1 had been) and file descriptor 
+1 would be associated with file 
+.IR xxx\^ .
+.PP
+Using the terminology introduced on the first page, under
+``Commands,''
+if a
+.I command
+is composed of several
+.IR "simple commands" ,
+redirection will be evaluated for the entire
+.I command
+before it is evaluated for each
+.IR "simple command" .
+That is, the shell evaluates redirection
+for the entire
+.IR list ,
+then each
+.I pipeline
+within the
+.IR list ,
+then each
+.I command
+within each
+.IR pipeline ,
+then each
+.I list
+within each
+.IR command .
+.PP
+If a command is followed by
+\f4&\f1
+the default standard input
+for the command
+is the empty file
+\f4/dev/null\f1.
+Otherwise, the environment for the execution of a command contains the
+file descriptors of the invoking shell as modified by
+input/output specifications.
+.PP
+Redirection of output is not allowed in the restricted shell.
+.SS Filename Generation
+Before a command is executed,
+each command
+.I word\^
+is scanned for
+the characters
+\f4\(**\f1,
+\f4?\f1,
+and
+\f4\*(OK\f1.
+If one of these characters appears
+the word is regarded as a
+.IR pattern .
+The word is replaced with alphabetically sorted filenames that match the pattern.
+If no filename is found that matches the pattern,
+the word is left unchanged.
+The character
+\f4\&.\f1
+at the start of a filename
+or immediately following a
+\f4/\f1,
+as well as the character
+\f4/\f1
+itself,
+must be matched explicitly.
+.PP
+.PD .25
+.RS
+.TP
+\f4\(**\f1
+Matches any string, including the null string.
+.TP
+\f4?\f1
+Matches any single character.
+.TP
+\f4[\f1 . . . \f4]\f1
+Matches any one of the enclosed characters.
+A pair of characters separated by
+\f4\-\f1
+matches any
+character lexically between the pair, inclusive.
+If the first character following the opening 
+\f4\*(OK\fP
+is a
+\f1\f4!\f1,
+any character not enclosed is matched.
+.PP
+Note that all quoted characters (see below) must
+be matched explicitly in a filename.
+.PD
+.RE
+.SS Quoting
+The following characters have a special meaning to the shell
+and cause termination of a word unless quoted:
+.RS
+.PP
+\f4;  &  (  )  \(bv  ^  <  >  newline  space  tab\fP
+.RE
+.PP
+A character may be
+.I quoted\^
+(that is, made to stand for itself)
+by preceding
+it with a
+backslash (\^\f4\e\fP\^) or inserting it between a pair of quote marks
+(\^\f4\*'\^\*'\fP\^ or \^\f4"\^"\fP\^).
+During processing,
+the shell may quote certain characters to prevent them from taking on
+a special meaning.
+Backslashes used to quote a single character are removed from the word before
+the command is executed.
+The pair
+\f4\enewline\f1
+is removed from a word before command and parameter substitution.
+.PP
+All characters enclosed between a pair of single quote marks
+(\^\f4\*'\^\*'\fP\^),
+except a single quote,
+are quoted by the shell.
+Backslash has no special meaning inside a pair of single quotes.
+A single quote may be quoted inside a pair of double quote marks
+(for example, \f4"\^\*'\^"\fP),
+but a single quote can not be quoted inside a pair of single quotes.
+.PP
+Inside a pair of double quote marks
+(\f4"\^"\fP),
+parameter and command substitution occurs and
+the shell quotes the results to avoid blank interpretation and filename
+generation.
+If
+\f4$\(**\f1
+is within a pair of double quotes,
+the positional parameters are substituted and quoted,
+separated by quoted spaces
+(\f4"$1 \|$2\fP . . . \f4"\fP);
+however,
+if
+\f4$@\f1
+is within a pair of double quotes,
+the positional parameters are substituted and quoted,
+separated by unquoted spaces
+\f1(\f4"$1"\|
+\f4"$2"\|
+\&. . . ).
+\f4\e\f1
+quotes the characters
+\f4\e\^\f1,
+\f4\*`\f1,
+\f4"\fP,
+and
+\f4$\f1.
+The pair 
+\f4\enewline\f1
+is removed before parameter and command substitution.
+If a backslash precedes characters other than
+\f4\e\^\f1,
+\f4\*`\f1,
+\f4"\fP,
+\f4$\f1,
+and
+newline, then the backslash itself is quoted by the shell.
+.SS Prompting
+When used interactively,
+the shell prompts with the value of
+\f4PS1\f1
+before reading a command.
+If at any time a newline is typed and further input is needed
+to complete a command, the secondary prompt
+(that is, the value of
+\f4PS2\f1)
+is issued.
+.SS Environment
+The
+.I environment\^
+[see
+\f4environ\fP(5)]
+is a list of name-value pairs that is passed to
+an executed program in the same way as a normal argument list.
+The shell interacts with the environment in several ways.
+On invocation, the shell scans the environment
+and creates a
+parameter
+for each name found,
+giving it the corresponding value.
+If the user modifies the value of any of these
+parameters
+or creates new parameters,
+none of these affects the environment
+unless the
+\f4export\f1
+command is used to bind the shell's
+parameter
+to the environment (see also 
+\f4set \-a\f1).
+A parameter may be removed from the environment
+with the 
+\f4unset\f1
+command.
+The environment seen by any executed command is thus composed
+of any unmodified name-value pairs originally inherited by the shell,
+minus any pairs removed by
+\f4unset\f1,
+plus any modifications or additions,
+all of which must be noted in
+\f4export\f1
+commands.
+.PP
+The environment for any
+.I simple-command\^
+may be augmented by prefixing it with one or more assignments to
+parameters.
+Thus:
+.RS
+.PP
+\f4TERM=450 \f2\|cmd\f1 				and
+.br
+\f4(export \|TERM; \|TERM=450; \|\f2cmd\f4)\f1
+.RE
+.PP
+are equivalent as far as the execution of
+.I cmd\^
+is concerned if
+.I cmd
+is not a Special Command.
+If
+.I cmd
+is a Special Command, then
+.RS
+.sp .5
+\f4TERM=450 \f2\|cmd\f1
+.sp .5
+.RE
+will modify the \f4TERM\fP variable in the current shell.
+.PP
+If the
+\f4\-k\f1
+flag is set,
+.I all\^
+keyword arguments are placed in the environment,
+even if they occur after the command name.
+The following
+first prints
+\f4a=b c\f1
+and
+\f4c\f1:
+.PP
+.RS
+.nf
+\f4echo \|a=b \|c
+set \|\-k
+echo \|a=b \|c\f1
+.fi
+.RE
+.SS Signals
+When a command is run 
+in the background (\f2cmd &\f1) under \f4sh\f1,
+it can receive INTERRUPT and QUIT signals
+but ignores them by default.
+[A background process 
+can override this default behavior
+via trap or signal.
+For details,
+see the description of \f4trap\f1, below,
+or \f4signal\f1(2).]
+When a command is run 
+in the background under \f4jsh\f1, however,
+it does not receive INTERRUPT or QUIT signals.
+Otherwise signals have 
+the values inherited by the shell from its parent,
+with the exception of three signals: 
+\f411\f1 (\f4SIGSEV\f1), \f414\f1 (\f4SIGALARM\f1),
+and \f418\f1 (\f4SIGCHILD\f1).
+.SS Execution
+.PP
+Each time a command is executed,
+the command substitution,
+parameter substitution,
+blank interpretation,
+input/output redirection, and filename generation
+listed above are carried out.
+If the command name matches the name of a defined function, the function is executed 
+in the shell process (note how this differs from the execution of shell procedures).
+If the command name does not match the name of a defined function,
+but matches one of the 
+.I "Special Commands\^"
+listed below, it is executed in the shell process.
+The positional parameters
+\f4$1\f1,
+\f4$2\f1,
+\& . . .
+are set to the arguments of the function.
+If the command name matches neither a
+.I "Special Command\^"
+nor the name of a defined function,
+a new process is created and an attempt is made to
+execute the command via
+\f4exec\fP(2).
+.PP
+The shell parameter
+\f4PATH\fP
+defines the search path for
+the directory containing the command.
+Alternative directory names are separated by
+a colon
+\f1(\f4:\f1).
+The default path is
+\f4/usr/bin\f1.
+The current directory is specified by a null path name,
+which can appear immediately after the equal sign,
+between two colon delimiters anywhere in the path list,
+or at the end of the path list.
+If the command name contains a \f4/\fP the search path
+is not used;
+such commands will not be executed by the restricted shell.
+Otherwise, each directory in the path is
+searched for an executable file.
+If the file has execute permission but is not an
+\f4a.out\f1 file,
+it is assumed to be a file containing shell commands
+(that is, a shell script).
+A sub-shell is spawned to read it.
+A parenthesized command is also executed in
+a sub-shell.
+.PP
+For shell script files, in order for the 
+``set user ID on execution''
+and/or the 
+``set group ID on execution''
+mode to be effective,
+the first line of the file must be
+.sp .5
+	\f4#! /sbin/sh\f1
+.sp .5
+.PP
+The location in the search path where a command was found is remembered by the
+shell
+(to help avoid unnecessary
+.I execs\^
+later).
+If the command was found in a relative directory, its location must be 
+re-determined whenever the current directory changes.
+The shell forgets all remembered locations whenever the
+\f4PATH\fP
+variable is changed or the
+\f4hash -r\f1
+command is executed (see below).
+.SS Special Commands
+Input/output redirection is now permitted for these commands.
+File descriptor 1 is the default output location.
+When Job Control is enabled, additional \f2Special Commands\f1 are added to the
+shell's environment (see ``Job Control'').
+.PP
+.PD .25
+.TP
+\f4:\f1
+No effect; the command does nothing.
+A zero exit code is returned.
+.br
+.TP
+\f4\&.\| \f2file\^\f1
+Read and execute commands from
+.I file\^
+and return.
+The search path
+specified by
+\f4PATH\fP
+is used to find the directory containing
+.IR file .
+.TP
+\f4break\fP \*(OK \f2n\^\fP \*(CK
+Exit from the enclosing \f4for\fP or
+\f4while\f1
+loop, if any.
+If
+.I n\^
+is specified, break
+.I n\^
+levels.
+.TP
+\f4continue\fP \*(OK \f2n\^\fP \*(CK
+Resume the next iteration of the enclosing
+\f4for\fP or
+\f4while\f1
+loop.
+If
+.I n\^
+is specified, resume at the
+.IR n -th
+enclosing loop.
+.TP
+\f4cd\fP \*(OK \f2arg\^\fP \*(CK
+Change the current directory to
+.IR arg .
+The shell
+parameter
+\f4HOME\fP
+is the default
+.IR arg .
+The shell parameter
+\f4CDPATH\fP
+defines the search path for
+the directory containing 
+.IR arg .
+Alternative directory names are separated by
+a colon
+\f1(\f4:\f1).
+The default path is
+\f4<null>\f1
+(specifying the current directory).
+Note that the current directory is specified by a null path name,
+which can appear immediately after the equal sign
+or between the colon delimiters anywhere else in the path list.
+If 
+.I arg
+begins with a \f4/\fP the search path
+is not used.
+Otherwise, each directory in the path is
+searched for
+.IR arg .
+The
+\f4cd\fP
+command may not be executed by
+\f4/usr/lib/rsh\fP.
+.br
+.ne 2.1v
+.TP
+\f4echo\fP \*(OK \f2arg\^\fP . . . \*(CK
+Echo arguments.
+See \f4echo\fP(1) 
+for usage and description.
+.TP
+\f4eval\fP \*(OK \f2arg\^\fP . . . \*(CK
+The arguments are read as input
+to the shell
+and the resulting command(s) executed.
+.TP
+\f4exec\fP \*(OK \f2arg\^\fP . . . \*(CK
+The command specified by
+the arguments is executed in place of this shell
+without creating a new process.
+Input/output arguments may appear and, if no other
+arguments are given, cause the shell
+input/output to be modified.
+.TP
+\f4exit\fP \*(OK \f2n\^\fP \*(CK
+Causes a shell to exit
+with the exit status specified by
+.IR n .
+If
+.I n\^
+is omitted the exit status is that of the last command executed
+(an end-of-file will also cause the shell to exit.)
+.TP
+\f4export\fP \*(OK \f2name\^\fP . . . \*(CK
+The given
+.IR name s
+are marked
+for automatic export to the
+.I environment\^
+of subsequently executed commands.
+If no arguments are given,
+variable names that have been marked for export during the current shell's execution
+are listed.
+(Variable names exported from a parent shell are listed only if they
+have been exported again during the current shell's execution.)
+Function names are 
+.I not
+exported.
+.TP
+\f4getopts\f1
+Use in shell scripts to
+support command syntax standards [see
+\f4intro\fP(1)];
+it parses positional parameters and checks for legal options.
+See
+\f4getopts\fP(1)
+for usage and description.
+.TP
+\f4hash\fP \*(OK \f4\-r\fP \*(CK \*(OK \f2name\^\fP . . . \*(CK
+For each 
+.IR name\^ ,
+the location in the search path of the command specified by 
+.I name\^
+is determined and remembered by the shell.
+The 
+\f4-r\f1
+option causes the shell to forget all remembered locations.
+If no arguments are given, information about remembered commands is
+presented.
+\f2Hits\fP is the number of times a command has been invoked by the shell process.
+\f2Cost\fP is a measure of the work required to locate a
+command in the search path.
+If a command is found in a "relative" directory in the search path,
+after changing to that directory,
+the stored location
+of that command is recalculated.
+Commands for which this will be done are indicated by an asterisk (\f4\(**\f1)
+adjacent to the \f2hits\f1 information.
+\f2Cost\f1 will be incremented when the recalculation is done.
+.TP
+\f4newgrp\fP [ \f2arg\f1 ]
+Equivalent to
+\f4exec newgrp\f2 arg.\f1
+See
+\f4newgrp\fP(1M)
+for usage and description.
+.TP
+\f4pwd\fP
+Print the current working directory.
+See
+\f4pwd\fP(1)
+for usage and description.
+.TP
+\f4read\fP \f2name\^\fP .\|.\|. 
+One line is read from the standard input and,
+using the internal field separator,
+\f4IFS\f1
+(normally space or tab),
+to delimit word boundaries,
+the first
+word is assigned to the first
+.IR name ,
+the second word
+to the second
+.IR name ,
+and so on,
+with leftover words assigned to the last
+.IR name .
+Lines can be continued using
+\f4\enewline\f1.
+Characters other than newline
+can be quoted by preceding them with a backslash.
+These backslashes are removed before words are assigned to
+.IR names ,
+and no interpretation is done on the character that follows the backslash.
+The return code is \f40\fP, unless an end-of-file is encountered.
+.TP
+\f4readonly\fP \*(OK \f2name\^\fP . . . \*(CK
+The given
+.IR name s
+are marked
+.I readonly\^
+and
+the values of the these
+.IR name s
+may not be changed
+by subsequent assignment.
+If no arguments are given, a list
+of all
+.I readonly\^
+names is printed.
+.TP
+\f4return\fP \*(OK \f2n\^\fP \*(CK
+Causes a function to exit with the return value specified by
+.IR n .
+If
+.I n 
+is omitted, the return status is that of the last command executed.
+.TP
+\f4set\fP \*(OK \f4\-\-aefhkntuvx\fP \*(OK \f2arg\^\fP . . . \*(CK \*(CK
+.RS
+.TP
+\f4\-a\f1
+Mark variables which are modified or created for export.
+.TP
+\f4\-e\f1
+Exit immediately if a command
+exits with a non-zero exit status.
+.TP
+\f4\-f\f1
+Disable filename generation
+.TP
+\f4\-h\f1
+Locate and remember function commands as functions are defined 
+(function commands are normally located when the function is executed).
+.TP
+\f4\-k\f1
+All keyword arguments are placed in the environment for a command,
+not just those that precede the command name.
+.TP
+\f4\-n\f1
+Read commands but do not execute them.
+.TP
+\f4\-t\f1
+Exit after reading and executing one command.
+.TP
+\f4\-u\f1
+Treat unset variables as an error when substituting.
+.TP
+\f4\-v\f1
+Print shell input lines as they are read.
+.TP
+\f4\-x\f1
+Print commands and their arguments as they are executed.
+.TP
+\f4\-\|\-\f1
+Do not change any of the flags; useful in setting
+\f4$1\f1
+to
+\f4\-\f1.
+.PP
+Using
+\f4\+\f1
+rather than
+\f4\-\f1
+causes these flags to be turned off.
+These flags can also be used upon invocation of the shell.
+The current set of flags may be found in
+\f4$\-\f1.
+The remaining arguments are positional
+parameters and are assigned, in order, to
+\f4$1\f1,
+\f4$2\f1,
+\&. . .
+If no arguments are given the values
+of all names are printed.
+.RE
+.TP
+\f4shift\fP \*(OK \f2n\^\fP \*(CK
+.br
+The positional parameters from
+\f4$\fP\f2n\fP\f4+1\fP
+\&. . .
+are renamed
+\f4$1\f1
+\&. . .
+If
+.I n\^
+is not given, it is assumed to be 1.
+.TP
+\f4test\fP
+.br
+Evaluate conditional expressions.
+See \f4test\fP(1)
+for usage and description.
+.TP
+\f4times\fP
+.br
+Print the accumulated user and system times for processes
+run from the shell.
+.TP
+\f4trap\fP \*(OK \f2arg\^\fP \*(CK \*(OK \f2n\^\fP \*(CK . . .
+The command
+.I arg\^
+is to be read and executed when the shell
+receives numeric or symbolic signal(s) (\f2n\f1).
+(Note that
+.I arg\^
+is scanned once when
+the trap is set and once when the trap
+is taken.)
+Trap commands are executed in order of signal number or corresponding symbolic
+names.
+Any attempt to set a trap on a signal that
+was ignored on entry to the current shell
+is ineffective.
+An error results when an attempt is made 
+to trap on any of the following three signals:
+(1) signal \f411\f1 (\f4SIGSEV\f1\(emsegmentation fault);
+(2) signal \f414\f1 (\f4SIGALRM\f1\(emalarm clock);
+and
+(3) signal \f418\f1 (\f4SIGCHILD\f1\(emchild status changed).
+If
+.I arg\^
+is absent all trap(s)
+.I n\^
+are reset
+to their original values.
+If
+.I arg\^
+is the null
+string this signal is ignored by the shell and by the commands
+it invokes.
+If
+.I n\^
+is 0 the command
+.I arg\^
+is executed
+on exit from the shell.
+The
+\f4trap\f1
+command
+with no arguments prints a list
+of commands associated with each signal number.
+.TP
+\f4type\fP \*(OK \f2name\^\fP . . . \*(CK
+For each
+.IR name ,
+indicate how it would be interpreted if used as a command name.
+.TP
+\f4ulimit\fP \*(OK \-\*(OK\f4HS\fP\*(CK\*(OK\f4a\fP \(bv \f4cdfnstv\fP\*(CK \*(CK 
+.TP
+\f4ulimit\fP \*(OK \-\*(OK\f4HS\fP\*(CK\*(OK\f4c\fP \(bv \f4d\fP \(bv \f4f\fP \(bv \f4n\fP \(bv \f4s\fP \(bv \f4t\fP \(bv \f4v\fP\*(CK \*(CK \f2limit\f1
+\f4ulimit\f1
+prints or sets hard or soft resource limits.
+These limits are described in
+\f4getrlimit\fP(2).
+.RS
+.PP
+If
+.I limit
+is not present,
+\f4ulimit\f1
+prints the specified limits.
+Any number of limits may be printed at one time.
+The 
+\f4\-a\f1
+option prints all limits.
+.PP
+If
+.I limit
+is present,
+\f4ulimit\f1
+sets the specified limit to
+.IR limit .
+The string
+\f4unlimited\f1
+requests the largest valid limit.
+Limits may be set for only one resource at a time.
+Any user may set a soft limit to any value below the hard limit.
+Any user may lower a hard limit.
+Only a super-user may raise a hard limit; see
+\f4su\fP(1).
+.PP
+The
+\f4\-H\f1
+option specifies a hard limit.
+The
+\f4\-S\f1
+option specifies a soft limit.
+If neither option is specified,
+\f4ulimit\f1 will set both limits and print the
+soft limit.
+.PP
+The following options specify the resource whose limits are to be printed or set.
+If no option is specified, the file size limit is printed or set.
+.RS
+.TP
+\f4\-c\f1
+maximum core file size (in 512-byte blocks)
+.TP
+\f4\-d\f1
+maximum size of data segment or heap (in kbytes)
+.TP
+\f4\-f\f1
+maximum file size (in 512-byte blocks)
+.TP
+\f4\-n\f1
+maximum file descriptor plus 1
+.TP
+\f4\-s\f1
+maximum size of stack segment (in kbytes)
+.TP
+\f4\-t\f1
+maximum CPU time (in seconds)
+.TP
+\f4\-v\f1
+maximum size of virtual memory (in kbytes)
+.RE
+.RE
+.TP
+\f4umask\fP \*(OK \f2nnn\^\fP \*(CK
+The user file-creation mask is set to
+.I nnn\^
+[see
+\f4umask\fP(1)].
+If
+.I nnn\^
+is omitted, the current value of the mask is printed.
+.TP
+\f4unset\fP \*(OK \f2name\^\fP . . . \*(CK
+For each 
+.IR name , 
+remove the corresponding variable or function value.
+The variables 
+\f4PATH\fP, \f4PS1\fP, \f4PS2\fP,
+\f4MAILCHECK\fP, and \f4IFS\fP
+cannot be unset.
+.TP
+\f4wait\fP \*(OK \f2n\^\fP \*(CK
+Wait for your background process whose process id is
+.I n\^
+and report its termination status.
+If
+.I n\^
+is omitted,
+all your shell's currently active background processes are waited for
+and the return code will be zero.
+.PD
+.PP
+.SS Invocation
+If the shell is invoked through
+\f4exec\fP(2)
+and the first character of argument zero
+is
+\f4\-\f1,
+commands are initially read from
+\f4/etc/profile\fP
+and from
+\f4$HOME/.profile\fP,
+if such files exist.
+Thereafter, commands are read as described below, which
+is also the case when the shell is invoked as
+\f4/usr/bin/sh\fP.
+The flags below are interpreted by the shell on invocation only.
+Note that unless the 
+\f4\-c\f1
+or
+\f4\-s\f1
+flag is specified, the first argument is assumed to be the
+name of a file containing commands, and the remaining
+arguments are passed as positional parameters
+to that command file:
+.PP
+.PD .25
+.TP 10
+\f4\-c\f2\| string\^\f1
+If the
+\f4\-c\f1
+flag is present
+commands are read from
+.IR string .
+.TP
+\f4\-i\f1
+If the
+\f4\-i\f1
+flag is present or
+if the shell input and output are attached to a terminal,
+this shell is
+.IR interactive .
+In this case \s-1TERMINATE\s+1 is ignored (so that \f4kill 0\fP
+does not kill an interactive shell) and \s-1INTERRUPT\s+1 is caught and ignored
+(so that
+\f4wait\f1
+is interruptible).
+In all cases, \s-1QUIT\s+1 is ignored by the shell.
+.TP
+\f4\-p\f1
+If the \f4\-p\f1 flag is present, the shell will not set the effective user
+and group IDs to the real user and group IDs.
+.TP
+\f4\-r\f1
+If the
+\f4\-r\f1
+flag is present the shell is a restricted shell.
+.TP
+\f4\-s\f1
+If the \f4\-s\f1 flag is present or if no arguments remain,
+commands are read from the standard input.
+Any remaining arguments specify the positional parameters.
+Shell output (except for 
+.IR "Special Commands\^" )
+is written to file descriptor 2.
+.PD
+.PP
+The remaining flags and arguments are described under the
+\f4set\f1
+command above.
+.SS Job Control (jsh)
+.sp
+When the shell is invoked as \f4jsh\fP,
+Job Control is enabled
+in addition to all of the functionality described previously for \f4sh\fP.
+Typically Job Control is enabled for the interactive shell only.
+Non-interactive shells typically do not benefit from the added functionality
+of Job Control.
+.P
+With Job Control enabled every command or pipeline the user enters at
+the terminal is called a \f2job\f1.
+All jobs exist in one of the
+following states: foreground, background or stopped.
+These terms are defined as follows:
+1) a job in the foreground has read and write access to the controlling terminal;
+2) a job in the background is denied read access and has 
+conditional write access to the
+controlling terminal [see \f4stty\fP(1)];
+3) a stopped job is a job that has been placed in a suspended state,
+usually as a result of a \f4SIGTSTP\fP signal
+[see
+\f4signal\fP(5)].
+Jobs in the foreground can be stopped 
+by INTERRUPT or QUIT signals from the keyboard; 
+background jobs cannot be stopped by these signals.
+.P
+Every job that the
+shell starts is assigned a positive integer, called a \f2job number\f1
+which is tracked by the shell and will be used as an identifier to
+indicate a specific job.
+Additionally the shell keeps track of the
+\f2current\f1 and \f2previous\f1 jobs.
+The \f2current job\f1 is the
+most recent job to be started or restarted.
+The \f2previous job\f1 is
+the first non-current job.
+.P
+The acceptable syntax for a Job Identifier is of the form:
+.sp
+.in +2
+\f4%\f1\f2jobid\f1
+.sp
+.in -2
+where, \f2jobid\f1 may be specified in any of the following formats:
+.RS
+.TP 10
+\f4%\f1 or \f4+\f1
+for the current job
+.TP
+\f4\(mi\f1
+for the previous job 
+.TP
+\f4?\f1\f2<string>\f1
+specify the job for which the command line uniquely contains \f2string\f1.
+.TP
+\f2n\f1
+for job number \f2n\f1, where \f2n\f1 is a job number 
+.TP
+\f2pref\f1
+where \f2pref\f1 is a
+unique prefix of the command name (for example, if the command
+\f4ls \(mil foo\f1 were running in the background, it
+could be referred to as \f4%ls\f1); \f4\f1\f2pref\f1 cannot contain blanks
+unless it is quoted.
+.RE
+.P
+When Job Control is enabled,
+the following commands are
+added to the user's environment to manipulate jobs:
+.TP 
+\&\f4bg\f1 [\f4%\fP\f2jobid . . . \f1]
+Resumes the execution of a stopped job in 
+the background.
+If \f4%\fP\f2jobid\f1 is omitted the current job is assumed.
+.TP
+\&\f4fg\f1 [\f4%\fP\f2jobid . . . \f1]
+Resumes the execution of a stopped
+job in the foreground, also
+moves an executing background job into the foreground.
+If \f4%\fP\f2jobid\f1 is omitted the current job is assumed.
+.TP
+\&\f4jobs\f1 [\f4\-p|\-l\f1] [\f4%\fP\f2jobid . . . \f1]
+.TP
+\&\f4jobs\f1 \f4\-x\f1 \f2command\f1 [\f2arguments\f1]
+Reports all jobs that are stopped or
+executing in the background.
+If \f4%\fP\f2jobid\f1 is omitted, all jobs that
+are stopped or running in the background will be reported.
+The following
+options will modify/enhance the output of \f4jobs\f1:
+.RS
+.TP
+\f4\-l\f1
+Report the process group ID and working directory of the jobs.
+.TP
+\f4\-p\f1
+Report only the process group ID of the jobs.
+.TP
+\f4\-x\f1
+Replace any \f2jobid\f1 found in \f2command\f1 or \f2arguments\f1 with
+the corresponding process group ID, and then execute \f2command\f1 passing
+it \f2arguments\f1.
+.RE
+.TP
+\&\f4kill\f1 [\-\f4signal\fP] \f4%\fP\f2jobid\f1
+Builtin version of \f4kill\f1 to provide the functionality of the
+\f4kill\f1 command for processes identified with a \f2jobid\f1.
+.TP
+\&\f4stop\f1 \f4%\fP\f2jobid . . .\f1
+Stops the execution of a background job(s).
+.TP
+\&\f4suspend\f1 
+Stops the execution of the current shell (but not if it is the login
+shell).
+.TP
+\&\f4wait\f1 [\f4%\fP\f2jobid . . . \f1]
+\f4wait\f1 builtin accepts a job identifier.
+If
+\f4%\fP\f2jobid\f1 is omitted \f4wait\fP behaves as described above
+under \f4Special Commands\fP.
+.SS Restricted Shell (/usr/lib/rsh) Only
+\f4/usr/lib/rsh\fP
+is used to set up login names and execution environments whose
+capabilities are more controlled than those of the standard shell.
+The actions of
+\f4/usr/lib/rsh\fP
+are identical to those of
+\f4sh\fP,
+except that the following are disallowed:
+.RS
+.PD 0
+.sp .5
+changing directory [see
+\f4cd\fP(1)],
+.br
+setting the value of
+\f2$PATH\*S,\f1
+.br
+specifying path or
+command names containing
+\f4/\f1,
+.br
+redirecting output
+\f1(\f4>\f1
+and
+\f4>>\f1).
+.PD
+.RE
+.PP
+The restrictions above are enforced
+after \f4.profile\fP is interpreted.
+.PP
+A restricted shell can be invoked in one of the following ways:
+(1)
+\f4rsh\fP
+is the filename part of the last entry in the
+\f4/etc/passwd\f1
+file
+[see
+\f4passwd\fP(4)];
+(2) the environment variable
+\f4SHELL\f1
+exists and
+\f4rsh\fP
+is the filename part of its value;
+(3)
+the shell is invoked and
+\f4rsh\fP
+is the filename part of argument 0;
+(4)
+the shell is invoked with the
+\f4\-r\f1
+option.
+.PP
+When a command to be executed is found to be a shell procedure,
+\f4/usr/lib/rsh\fP
+invokes
+\f4sh\fP
+to execute it.
+Thus, it is possible to provide to the end-user shell procedures 
+that have access to the full power of
+the standard shell,
+while imposing a limited menu of commands;
+this scheme assumes that the end-user does not have write and
+execute permissions in the same directory.
+.PP
+The net effect of these rules is that the writer of the
+\f4.profile\f1
+[see
+\f4profile\fP(4)]
+has complete control over user actions
+by performing guaranteed setup actions
+and leaving the user in an appropriate directory
+(probably
+.I not\^
+the login directory).
+.PP
+The system administrator often sets up a directory
+of commands
+(that is,
+\f4/usr/rbin\f1)
+that can be safely invoked by
+a restricted shell.
+Some systems also provide a restricted editor,
+\f4red\fP.
+.SH EXIT STATUS
+Errors detected by the shell, such as syntax errors,
+cause the shell
+to return a non-zero exit status.
+If the shell is being used non-interactively
+execution of the shell file is abandoned.
+Otherwise, the shell returns the exit status of
+the last command executed (see also the
+\f4exit\f1
+command above).
+.SS jsh Only
+If the shell is invoked as \f4jsh\fP and an attempt is made to exit
+the shell while there are stopped jobs, the shell issues one warning:
+.sp
+	\f4There are stopped jobs.\f1
+.sp
+This is the only message.
+If another exit attempt is made, and there are
+still stopped jobs they will be sent a \f4SIGHUP\f1 signal from the kernel
+and the shell is exited.
+.SH FILES
+\f4/etc/profile\fP
+.br
+\f2$HOME\f4/.profile\fP
+.br
+\f4/tmp/sh\(**\fP
+.br
+\f4/dev/null\fP
+.SH SEE ALSO
+\f4cd\fP(1), \f4csh\f1(1), \f4echo\fP(1), \f4getopts\fP(1), \f4intro\fP(1), \f4ksh\f1(1), \f4login\fP(1),
+\f4pwd\fP(1), \f4stty\fP(1), \f4test\fP(1), \f4umask\fP(1), \f4wait\fP(1)
+.br
+\f4dup\fP(2), \f4exec\fP(2), \f4fork\fP(2), \f4getrlimit\fP(2),
+\f4pipe\fP(2), \f4ulimit\fP(2), \f4setlocale\fP(3C)
+in the \f2Programmer's Reference Manual\f1
+.br
+\f4newgrp\fP(1M),
+\f4profile\fP(4),
+\f4environ\fP(5),
+\f4signal\fP(5)
+in the \f2System Administrator's Reference Manual\f1
+.br
+\f4rsh\fP(1)
+in the \f2Network User's and Administrator's Guide\f1
+.SH NOTES
+Words used for filenames in input/output redirection
+are not interpreted for filename generation
+(see
+``Filename Generation,''
+above).
+For example,
+\f4cat file1 >a\(**\f1
+will create a filenamed
+\f4a\(**\f1.
+.PP
+Because commands in pipelines are run as separate processes,
+variables set in a pipeline have no effect on the parent shell.
+.PP
+If you get the error message
+.sp
+	\f4cannot fork, too many processes\f1
+.sp
+try using the
+\f4wait\fP(1)
+command to clean up your background processes.
+If this doesn't help,
+the system process table is probably full or you have
+too many active foreground processes.
+(There is a limit to the number of process ids
+associated with your login,
+and to the number the system can keep track of.)
+.PP
+Only the last process in a pipeline can be waited for.
+.PP
+If a command is executed, and a command with the same name is 
+installed in a directory in the search path before the directory where the
+original command was found, the shell will continue to 
+\f4exec\fP
+the original command.
+Use the 
+\f4hash\f1
+command to correct this situation.
+.PP
+Prior to Release 4, the \f4rsh\fP command invoked the restricted shell.
+This restricted shell command is \f4/usr/lib/rsh\fP and it can be
+executed by using the full pathname.
+Beginning with Release 4, the \f4rsh\fP command is the remote shell.
+See \f4rsh\fP(1) in the
+\f2Network User's and Administrator's Guide\f1.
+.Ee

@@ -1,0 +1,169 @@
+.if n .pH g7.qt @(#)qt	40.12 of 6/3/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+'\"macro stdmacro
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} qt 7 "" "\&"
+.if \nX=1 .ds x} qt 7 ""
+.if \nX=2 .ds x} qt 7 "" "\&"
+.if \nX=3 .ds x} qt "" "" "\&"
+.nr X
+.TH \*(x} "" "386 Computer Only"
+.SH NAME
+\f4qt\f1 \- QIC cartridge magnetic tape streamer interface
+.SH SYNOPSIS
+\f4qt\f1
+.SH DESCRIPTION
+The format for tape files is described below:
+.PP
+.RS
+.PD 0
+.TP "\w'/dev/rmt/c0s0nr\ \ \ 'u"
+\f4/dev/rmt/c0s0n\f1
+no rewind on close, no retension on open
+.TP
+\f4/dev/rmt/c0s0\f1
+rewind on close, no retension on open
+.TP
+\f4/dev/rmt/c0s0nr\f1
+no rewind on close, retension on open
+.TP
+\f4/dev/rmt/c0s0r\f1
+rewind on close, retension on open
+.PD
+.RE
+.PP
+These files refer to the Wangtek PC-36 Controller
+and the QIC-24/QIC-02 basic cartridge tape streamer.
+Only raw character interface files are provided.
+When opened for reading or writing,
+the tape is assumed to be positioned as desired.
+If the file was retension-on-open,
+the tape is retensioned before any I/O is performed.
+When a \f4T_RWD\f1, \f4T_RETENSION\f1, \f4T_LOAD\f1, or \f4T_UNLOAD\f1 \f4ioctl\f1
+is requested after a \f4write\f1,
+a double end-of-file (double tape mark) is written
+before the \f4ioctl\f1 is executed.
+When a rewind-on-close file is closed,
+a double end-of-file (double tape mark) is written if
+the file was opened for writing and data was written.
+When a rewind-on-close file is closed, the tape is rewound.
+If the file is no-rewind-on-close and was opened for writing
+and data was written, only one EOF is written,
+and the tape is positioned after the EOF just written.
+If the file was no-rewind and the file was opened for read-only,
+the tape is positioned after the EOF following the data just read.
+The EOF is returned as a zero-length read.
+By judiciously choosing \f4qt\f1 files,
+it is possible to read and write multi-file tapes.
+.P
+A standard tape consists of several 512-byte records
+terminated by an EOF.
+To the extent possible,
+the system treats the tape like any other file.
+As in other raw devices, seeks are ignored.
+An EOF is returned as a zero-length read,
+with the tape positioned after the EOF,
+so that the next read will return the next record.
+.P
+Only one process is permitted to have any of the tape files
+open at a given time to the extent it is enforceable.
+Writing after reading is permitted,
+but reading after writing without an intervening rewind is not.
+If \f4O_NDELAY\f1 is clear,
+opening a retension-on-open file will block
+until the retension is complete.
+If \f4O_NDELAY\f1 is set, open will return without delay.
+Opening a file with \f4O_APPEND\f1 set is an error (\f4EINVAL\f1).
+.P
+The following \f4ioctl\f1's are supported:
+.PP
+.PD 0
+.RS
+.TP 15
+\f4T_RETENSION\f1
+retension the tape
+.TP
+\f4T_RWD\f1
+rewind the tape to BOT
+.TP
+\f4T_LOAD\f1
+rewind the tape to BOT
+.TP
+\f4T_UNLOAD\f1
+rewind the tape to BOT
+.TP
+\f4T_ERASE\f1
+erase the tape and leave it at BOT
+.TP
+\f4T_WRFILEM\f1
+write an EOF (tape mark)
+.TP
+\f4T_RST\f1
+reset the tape device
+.TP
+\f4T_SFF\f1
+skip forward \f2arg\f1 files
+.TP
+\f4T_SBF\f1
+skip forward \f2arg\f1 blocks
+.TP
+\f4T_RDSTAT\f1
+read the device status registers into the buffer pointed to by
+\f2arg\f1.
+.TP
+\f4T_SFREC\fP
+seek Forward a Record
+.TP
+\f4T_SBREC\fP
+seek Backward a Record
+.TP
+\f4T_TINIT\fP
+initialize Tape Interface
+.TP
+\f4T_RDBLKLEN\fP
+read Block Size
+.TP
+\f4T_WRBLKLEN\fP
+set Block Size
+.TP
+\f4T_PREVMV\fP
+prevent Media Removal
+.TP
+\f4T_ALLOMV\fP
+allow Media Removal
+.TP
+\f4T_SBB\fP
+space Blocks Backwards
+.TP
+\f4T_SFB\fP
+space Filemarks Backwards
+.TP
+\f4T_EOD\fP
+space to End Of Data
+.TP
+\f4T_SSFB\fP
+space Sequential Filemarks Backwards
+.TP
+\f4T_SSFF\fP
+space Sequential Filemarks Forward
+.TP
+\f4T_STS\fP
+set Tape Speed (1600/6250 bpi etc.)
+.TP
+\f4T_STD\fP
+set Tape Density (QIC-120/150 etc.)
+.RE
+.PD
+.PP
+.SH FILES
+.nf
+\f4/dev/rmt/c0s0n\f1
+\f4/dev/rmt/c0s0\f1
+\f4/dev/rmt/c0s0nr\f1
+\f4/dev/rmt/c0s0r\f1
+.fi
+.SH "SEE ALSO"
+\f4intro\f1(7),
+.P
+\f4tape\fP(1) in the \f2User's Reference Manual\fP

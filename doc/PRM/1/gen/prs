@@ -1,0 +1,341 @@
+'\"! tbl | mmdoc
+'\"macro stdmacro
+.if n .pH g1.prs @(#)prs	40.13 of 5/22/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+'\" t
+.nr X
+.if \nX=0 .ds x} prs 1 "Enhanced Programming Utilities" "\&"
+.if \nX=1 .ds x} prs 1 "Enhanced Programming Utilities"
+.if \nX=2 .ds x} prs 1 "" "\&"
+.if \nX=3 .ds x} prs "" "" "\&"
+.TH \*(x}
+.tr ~
+.SH NAME
+\f4prs\f1 \- print an \s-1SCCS\s+1 file
+.SH SYNOPSIS
+.na
+\f4prs\f1 [\f4\-d\f1[\f2dataspec\f1]] [\f4\-r\f1[\f2\s-1SID\s+1\f1]] [\f4\-e\f1]
+[\f4\-l\f1] [\f4\-c\f1[\f2date\-time\f1]] [\f4\-a\f1]
+\f2files\f1
+.SH DESCRIPTION
+\f4prs\fP 
+prints, on the standard output, parts or all of an \s-1SCCS\s+1 file
+[see \f4sccsfile\fP(4)] in a user-supplied format.
+If a directory is named, \f4prs\fP
+prints the files in that directory, except the 
+non-\s-1SCCS\s+1 files
+(last component of the path name does not begin with \f4s.\fP)
+and unreadable files.
+If a name of \f4\-\fP is given, the standard input is read;
+each line of the standard input is taken to be the name of an \s-1SCCS\s+1 file
+or directory to be processed.
+\f4prs\fP silently ignores non-\s-1SCCS\s+1 files and unreadable files.
+.PP
+Arguments to \f4prs\fP, which may appear in any order, consist of
+keyletter arguments and file names.
+.PP
+The keyletter arguments apply independently to each named file:
+.RS 5
+.TP 15
+\f4\-d\f1[\f2dataspec\f1]
+Specifies the output data specification.
+The
+\f2dataspec\f1
+is a string consisting of \s-1SCCS\s+1 file
+data keywords
+(see the
+.SM "DATA KEYWORDS"
+section)
+interspersed with optional user-supplied text.
+.TP
+\f4\-r\f1[\s-1\f2SID\f1\s+1]
+Specifies the
+.SM SCCS
+identification
+(\s-1SID\s+1)
+string of a delta for which information is desired.
+The default is the top delta.
+.TP
+\f4\-e\f1
+Requests
+information for all deltas created
+earlier
+than and including the delta designated via the
+\f4\-r\f1
+keyletter or the date given by the
+\f4\-c\f1
+option.
+.TP
+\f4\-l\f1
+Requests
+information for all deltas created
+later
+than and including the delta designated via the
+\f4\-r\f1
+keyletter or the date given by the
+\f4\-c\f1
+option.
+.TP
+\f4\-c\f1[\f2date\-time\f1]
+The cutoff date\-time in the form:
+.IP
+	\f2\s-1YY\f1[\fPMM\f1[\fPDD\f1[\fPHH\f1[\fPMM\f1[\fPSS\f1]]]]]\s+1
+.IP
+Units omitted from the date\-time default to their
+maximum possible values; for example, \f4\-c7502\f1
+is equivalent to \f4-c750228235959\f1.
+Any number of non-numeric characters may separate
+the fields of the cutoff
+date; for example,
+\f4"\-c77/2/2 9:22:25"\f1.
+.TP
+\f4\-a\f1
+Requests
+printing of information for both removed,
+that is, delta type = R,
+[see
+\f4rmdel\fP(1)]
+and existing,
+that is, delta type = D,
+deltas.
+If the
+\f4\-a\f1
+keyletter is not specified,
+information for existing deltas only is provided.
+.RE
+.SH "DATA KEYWORDS"
+Data keywords
+specify those parts of an \s-1SCCS\s+1 file that are to be retrieved and output.
+All parts of an \s-1SCCS\s+1 file [see
+\f4sccsfile\fP(4)]
+have an associated data keyword.
+There is no limit on the number of times a data keyword
+may appear in a
+\f2dataspec\f1.
+.PP
+The information printed by
+\f4prs\fP
+consists of:
+(1) the user-supplied text; and
+(2) appropriate values (extracted from the \s-1SCCS\s+1 file)
+substituted for the recognized data keywords
+in the order of appearance in the \f2dataspec\^\fP.
+The format of a data keyword value is either
+``Simple''
+(S), in which
+keyword substitution is direct, or
+``Multi-line''
+(M), in which keyword substitution is followed
+by a carriage return.
+.PP
+User-supplied text is any text other than
+recognized data keywords.
+A tab is specified
+by \f4\et\fP and carriage return/new-line is specified by \f4\en\fP.
+The default data keywords are:
+.P
+.RS
+"\f4:Dt:\\t\f4:DL\f4:\f4\\nMRs\f4:\fP\\n\f4:\fPMR\f4:\fPCOMMENTS\f4:\fP\\n\f4:\fPC\f4:\fP"
+.RE
+.P
+.TS
+center expand ;
+c1 lw(2.2i) c1 c1 c0
+cf4 l c cf2 c .
+.na
+Keyword	Data Item	File Section	Value	Format
+_
+:Dt:	Delta information	Delta Table	\f1See below*\fP	S
+:DL:	T{
+Delta line statistics
+T}	"	\f4:Li:/:Ld:/:Lu:\fP	S
+:Li:	T{
+Lines inserted by Delta
+T}	"	nnnnn	S
+:Ld:	T{
+Lines deleted by Delta
+T}	"	nnnnn	S
+:Lu:	T{
+Lines unchanged by Delta
+T}	"	nnnnn	S
+:DT:	Delta type	"	\f4D\fP\^~or~\f4R\fP\^	S
+:I:	T{
+SCCS ID string (SID)
+T}	"	\f4:R:.:L:.:B:.:S:\fP	S
+:R:	Release number	"	nnnn	S
+:L:	Level number	"	nnnn	S
+:B:	Branch number	"	nnnn	S
+:S:	Sequence number	"	nnnn	S
+:D:	T{
+Date Delta created
+T}	"	\f4:Dy:/:Dm:/:Dd:\fP	S
+:Dy:	T{
+Year Delta created
+T}	"	nn	S
+:Dm:	T{
+Month Delta created
+T}	"	nn	S
+:Dd:	T{
+Day Delta created
+T}	"	nn	S
+:T:	T{
+Time Delta created
+T}	"	\f4:Th:::Tm:::Ts:\fP	S
+:Th:	T{
+Hour Delta created
+T}	"	nn	S
+:Tm:	T{
+Minutes Delta created
+T}	"	nn	S
+:Ts:	T{
+Seconds Delta created
+T}	"	nn	S
+:P:	T{
+Programmer who created Delta
+T}	"	logname	S
+:DS:	T{
+Delta sequence number
+T}	"	nnnn	S
+:DP:	T{
+Predecessor Delta seq-no.
+T}	"	nnnn	S
+:DI:	T{
+Seq-no. of deltas incl., excl., ignored
+T}	"	\f4:Dn:/:Dx:/:Dg:\fP	S
+:Dn:	Deltas included (seq #)	"	\f4:DS:~:DS:\fP\|.\^.\^.	S
+:Dx:	Deltas excluded (seq #)	"	\f4:DS:~:DS:\fP\|.\^.\^.	S
+:Dg:	Deltas ignored (seq #)	"	\f4:DS:~:DS:\fP\|.\^.\^.	S
+:MR:	MR numbers for delta	"	text	M
+:C:	Comments for delta	"	text	M
+:UN:	User names	User Names	text	M
+:FL:	Flag list	Flags	text	M
+.TE
+.TS
+center expand ;
+c1 lw(2.2i) c1 c1 c0
+cf4 l c cf2 c .
+.na
+Keyword	Data Item	File Section	Value	Format
+_
+:Y:	Module type flag	"	text	S
+:MF:	T{
+MR validation flag
+T}	"	\f4yes\f1\^~or~\f4no\f1	S
+:MP:	T{
+MR validation pgm name
+T}	"	text	S
+:KF:	T{
+Keyword error/warning flag
+T}	"	\f4yes\f1\^~or~\f4no\f1	S
+:KV:	Keyword validation string	"	text	S
+:BF:	Branch flag	"	\f4yes\f1\^~or~\f4no\f1	S
+:J:	Joint edit flag	"	\f4yes\f1\^~or~\f4no\f1	S
+:LK:	Locked releases	"	\f4:R:\fP\|.\^.\^.	S
+:Q:	User-defined keyword	"	text	S
+:M:	Module name	"	text	S
+:FB:	Floor boundary	"	\f4:R:\fP	S
+:CB:	Ceiling boundary	"	\f4:R:\fP	S
+:Ds:	Default SID	"	\f4:I:\fP	S
+:ND:	Null delta flag	"	\f4yes\f1\^~or~\f4no\f1	S
+:FD:	T{
+File descriptive text
+T}	Comments	text	M
+:BD:	Body	Body	text	M
+:GB:	Gotten body	"	text	M
+:W:	T{
+A form of what\^(1) string
+T}	N/A	\f4:Z::M:\et:I:\fP	S
+:A:	T{
+A form of what\^(1) string
+T}	N/A	\f4:Z::Y:~:M:~:I::Z:\fP	S
+:Z:	T{
+what\^(1) string delimiter
+T}	N/A	\f4@\&(#)\fP	S
+:F:	SCCS file name	N/A	text	S
+:PN:	SCCS file path name	N/A	text	S
+.TE
+.P
+.ce 1
+* \f4:Dt:~=~:DT:~:I:~:D:~:T:~:P:~:DS:~:DP:\fP
+.SH EXAMPLES
+The command
+.P
+.RS
+.ft 4
+prs \-d"Users and/or user IDs for :F: are:\en:UN:" s.file
+.ft 1
+.RE
+.PP
+may produce on the standard output:
+.PP
+.RS
+.nf
+.ft 5
+Users and/or user IDs for s.file are:
+xyz
+131
+abc
+.ft 1
+.fi
+.RE
+.P
+The command
+.P
+.RS
+.ft 4
+prs \-d"Newest delta for pgm :M:: :I: Created :D: By :P:" \-r s.file
+.ft 1
+.RE
+.PP
+may produce on the standard output:
+.P
+.RS
+.ft 5
+Newest delta for pgm main.c: 3.7 Created 77/12/1 By cas
+.ft 1
+.RE
+.PP
+The default case:
+.P
+.RS
+.ft 4
+prs s.file
+.ft 1
+.RE
+.PP
+produces on the standard output:
+.PP
+.RS
+.nf
+.ft 5
+D 1.1 77/12/1 00:00:00 cas 1 000000/00000/00000
+MRs:
+bl78-12345
+bl79-54321
+COMMENTS:
+this is the comment line for s.file initial delta
+.ft 1
+.fi
+.RE
+.PP
+for each delta table entry of the ``D'' type.
+The only keyletter argument allowed to be used with the
+``special case''
+is the
+\f4\-a\f1
+keyletter.
+.SH FILES
+.TP 10
+\f4/var/tmp/pr?????\fP
+.SH "SEE ALSO"
+\f4admin\fP(1),
+\f4delta\fP(1),
+\f4get\fP(1),
+\f4help\fP(1),
+\f4sccsfile\fP(4)
+.SH DIAGNOSTICS
+Use
+\f4help\fP(1)
+for explanations.
+.tr ~~

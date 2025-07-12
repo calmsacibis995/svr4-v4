@@ -1,0 +1,50 @@
+'\"macro stdmacro
+.if n .pH g1a.quota @(#)quota	40.9 of 4/16/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} quota 1M "UFS" "\&"
+.if \nX=1 .ds x} quota 1M "UFS"
+.if \nX=2 .ds x} quota 1M "" "\&"
+.if \nX=3 .ds x} quota "" "" "\&"
+.TH \*(x}
+.UC 4
+.SH NAME
+\f4quota\f1 \- display a user's disk quota and usage
+.SH SYNOPSIS
+\f4quota\f1
+[
+\f4\-v\f1
+] [
+.I username
+]
+.SH DESCRIPTION
+\f4quota\f1
+displays users' disk usage and limits.
+Only a privileged user may use the optional
+.I username
+argument to view the limits of other users.
+.P
+\f4quota\f1
+without options displays only warnings
+about mounted file systems where usage is over quota.
+Remotely mounted file systems which
+do not have quotas turned on
+are ignored.
+.P
+\f2username\fP can be numeric, corresponding to the
+uid of a user.
+.P
+The
+\f4\-v\f1
+option displays user's quotas on all mounted
+file systems where quotas exist.
+.SH FILES
+.PD 0
+.TP 20
+\f4/etc/mnttab\f1
+list of currently mounted filesystems
+.PD
+.SH "SEE ALSO"
+\f4edquota\fP(1M),
+\f4quotaon\fP(1M)

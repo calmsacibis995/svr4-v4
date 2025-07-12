@@ -1,0 +1,73 @@
+'\"macro stdmacro
+.if n .pH g1a.dfshares_rfs @(#)dfshares_rfs	40.15 of 4/15/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} dfshares 1M "RFS" "\&"
+.if \nX=1 .ds x} dfshares 1M "RFS"
+.if \nX=2 .ds x} dfshares 1M "" "\&"
+.if \nX=3 .ds x} dfshares "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4dfshares\f1 \- list available RFS resources from remote systems
+.SH SYNOPSIS
+\f4dfshares\f1
+[\f4\-F rfs\fP]
+[\f4\-h\fP]
+[\f2server\fP .\ .\ .]
+.SH DESCRIPTION
+\f4dfshares\f1
+provides information about resources available to the host through
+Remote File Sharing.  The \f4\-F\fP flag may be omitted if \f4rfs\f1 is
+the first file system type listed in the file \f4/etc/dfs/fstypes\fP.
+.P
+The query may be restricted to the output of resources available
+from one or more servers.  If no \f2server\fP is specified,
+all resources in the host's domain are displayed.  A \f2server\fP
+may be given in the following form:
+.RS
+.IP \f2system\fP 1i
+Specifies a system in the host's domain.
+.IP \f2domain.\fP 1i
+Specifies all systems in \f2domain\fP.
+.IP \f2domain.system\fP 1i
+Specifies \f2system\fP in \f2domain\fP.
+.RE
+.P
+The output of \f4dfshares\fP consists of an optional header line
+(suppressed with the \f4\-h\fP flag) followed by a list of lines
+containing whitespace-separated fields.  For each resource, the
+fields are:
+.P
+.RS
+\f2resource server access transport description\fP
+.RE
+where
+.RS
+.IP \f2resource\fP 1i
+Specifies the resource name that must be given to the \f4mount\fP(1M)
+command.
+.IP \f2server\fP 1i
+Specifies the system that is making the resource available.
+.IP \f2access\fP 1i
+Specifies the access permissions granted to the client systems, either
+\f4ro\fP (for read-only) or \f4rw\fP (for read and write).
+.IP \f2transport\fP 1i
+Specifies the transport provider over which the \f2resource\fP is shared.
+.IP \f2description\fP 1i
+Describes the resource.
+.RE
+.P
+A field may be null.
+Each null field is indicated by a
+hyphen (\-) unless the remainder of the fields on the line
+are also null.
+In this case, it may be omitted.
+.SH ERRORS
+If your host machine cannot contact the domain name server, or the 
+argument specified is syntactically incorrect, an error message is
+sent to standard error.
+.SH "FILES"
+\f4/etc/dfs/fstypes\f1
+.SH "SEE ALSO"
+\f4share\fP(1M), \f4unshare\fP(1M), \f4mount\fP(1M)

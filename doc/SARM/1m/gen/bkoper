@@ -1,0 +1,111 @@
+'\"macro stdmacro
+.if n .pH g1a.bkoper @(#)bkoper	40.13.1.1 of 1/3/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} bkoper 1M "System Administration Utilities" "\&"
+.if \nX=1 .ds x} bkoper 1M "System Administration Utilities"
+.if \nX=2 .ds x} bkoper 1M "" "\&"
+.if \nX=3 .ds x} bkoper "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4bkoper\f1 \- interact with backup operations to service media insertion prompts
+.SH SYNOPSIS
+\f4bkoper \f1[\f4\-u \f2users\f1]
+.SH DESCRIPTION
+Backup operations may require an operator to
+insert media
+and to confirm proper volume labels.
+The \f4bkoper\f1 command
+provides a
+\f4mailx\f1-like
+interface for these operator interactions.
+It begins by printing a list of headers.
+Each header describes a backup operation requiring interaction,
+the device requiring attention including the media type and label of the
+volume to be inserted
+(see \s-1EXAMPLE\s0).
+The system displays prompts and the operator issues commands
+to resolve the backup operation.
+Typing a carriage return invokes the current header.
+If no headers have been serviced, the current
+header is the first header on the list.
+If a header has been selected and serviced, the current header is
+the next one following.
+.P
+\f4bkoper\fP
+may be executed only by a user with superuser privilege.
+By default, the operator may interact only with backup operations
+that were started by the same user
+.SM ID .
+.P
+If the
+\f4-u\f2 users\f1
+option is given,
+the operator interacts only with backup operations started by the specified
+.IR user (s).
+.SS Commands
+.TP 10
+\f4!\f2shell-command\f1
+Escapes to the shell.
+The remainder of the line after the ! is sent
+to the
+.SM UNIX
+system shell (\f4sh\f1)
+to be interpreted as a command.
+.TP 10
+\f4=\f1
+Prints the current backup operation number.
+.TP 10
+\f4?\f1
+Prints this summary of commands.
+.TP 10
+[\f4p|t\f1] [\f2n\f1]
+Both the \f4p\f1 and \f4t\f1 options operate in the same way.
+Either option will interact with the backup operation described by the
+\f2n\f1'th header.
+\f2n\f1 defaults to the current header number.
+.TP 10
+\f4h\f1
+Prints the list of backup operations.
+.TP 10
+\f4q\f1
+Quits from \f4bkoper\f1.
+.SH DIAGNOSTICS 
+The exit codes for \f4bkoper\fP are the following:
+.PP
+\f40\f1 = successful completion of the task
+.br
+\f41\f1 = one or more parameters to \f4bkoper\f1 are invalid.
+.br
+\f42\f1 = an error has occurred which caused \f4bkoper\f1 to fail to
+      complete \f2all\f1 portions of its task.
+.SH EXAMPLE
+A sample header is shown below.
+Items appearing in the header are listed in the
+following order:
+header number, job-\s-1ID\s0, tag, originating device, destination
+group, destination device, destination volume labels.
+[See \f4bkreg\f1(1M) for descriptions of items.]
+Not every header contains values for all these fields;
+if a destination group is not specified in
+\f4/etc/bkup/bkreg.tab\f1, then no value for
+``destination group'' appears in the header.
+.P
+.in .75i
+.nf
+\f41 back-111 usrsun /dev/dsk/c1d0s1  disk /dev/dsk/c2d1s9 usrsave\f1
+\f42 back-112 fs2daily /dev/dsk/c1d0s8 ctape /dev/ctape/c4d0s2 -\f1
+.fi
+.in 0
+.P
+Backup headers are numbered on the basis of
+arrival; the oldest header has the lowest number.
+If the destination device does not have a volume label,
+a dash is displayed in the header.
+.SH SEE ALSO
+\f4bkreg\fP(1M),
+\f4bkstatus\fP(1M),
+\f4getvol\fP(1M),
+\f4mailx\fP(1).
+

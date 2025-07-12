@@ -1,0 +1,121 @@
+'\"macro stdmacro
+.if n .pH gen.chpoll @(#)chpoll	40.2 of 1/7/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.nr X
+.if \nX=0 .ds x} chpoll D2DK "" "DDI/DKI" "\&"
+.if \nX=1 .ds x} chpoll D2DK "" "DDI/DKI"
+.if \nX=2 .ds x} chpoll D2DK "" "\&"
+.if \nX=3 .ds x} chpoll "" "" "\&"
+.TH \*(x}
+.IX "\f4chpoll\fP(D2DK)
+.SH NAME
+\f4chpoll\fP \- poll entry point for a non-STREAMS character driver
+.SH SYNOPSIS
+.nf
+.na
+\f4#include <sys/poll.h>
+.sp 0.5
+int \f2prefix\fPchpoll(dev_t \f2dev, \fPshort \f2events, \fPint \f2anyyet, \fPshort *\f2reventsp,
+	\fPstruct pollhead **\f2phpp\fP);\f1
+.ad
+.fi
+.SH ARGUMENTS
+.RS 0n
+.IP "\f2dev\fP" 10n
+The device number for the device to be polled.
+.IP "\f2events\fP" 10n
+Mask (bit-wise \f4OR\fP) indicating the events being polled.  Valid events are:
+.RS 12n
+.P
+.PD 0
+.TP 14n
+\f4POLLIN\fP
+Data are available to be read (either normal or out-of-band).
+.TP
+\f4POLLOUT\fP
+Data may be written without blocking.
+.TP
+\f4POLLPRI\fP
+High priority data are available to be read.
+.TP
+\f4POLLHUP\fP
+A device hangup.
+.TP
+\f4POLLERR\fP
+A device error.
+.TP
+\f4POLLRDNORM\fP
+Normal data are available to be read.
+.TP
+\f4POLLWRNORM\fP
+Normal data may be written without blocking (same as \f4POLLOUT\fP).
+.TP
+\f4POLLRDBAND\fP
+Out-of-band data are available to be read.
+.TP
+\f4POLLWRBAND\fP
+Out-of-band data may be written without blocking.
+.PD
+.RE
+.IP "\f2anyyet\fP" 10n
+A flag that indicates whether the driver should
+return a pointer to its \f4pollhead\fP structure to the caller.
+.IP "\f2reventsp\fP" 10n
+A pointer to a bitmask of the returned events satisfied.
+.IP "\f2phpp\fP" 10n
+A pointer to a pointer to a \f4pollhead\fP structure (defined
+in \f4sys/poll.h\fP.)
+.RE
+.SH DESCRIPTION
+The \f4chpoll\fP entry point indicates whether certain I/O events have occurred
+on a given device.  It must be provided by any non-STREAMS character device driver
+that wishes to support polling [see \f4poll\fP(2)].
+.P
+A driver that supports polling must provide a \f4pollhead\fP structure for each minor
+device supported by the driver.  The \f4pollhead\fP structure must be initialized
+to zeros prior to its first use.  The definition of the \f4pollhead\fP structure
+is not included in the DDI/DKI, and can change across releases.
+It should be treated as a "black box" by the driver;
+none of its fields may be referenced.  However, the size of this structure
+is guaranteed to remain the same across releases.
+.P
+The driver must implement the polling discipline itself.
+Each time the driver detects a pollable event, it should call
+\f4pollwakeup\fP(D3DK), passing to it the event that occurred and
+the address of the \f4pollhead\fP structure associated with the device.
+Note that \f4pollwakeup\fP should be called with only one event at a time.
+.P
+When the driver's \f4chpoll\fP entry point is called, the driver should check
+if any of the events requested in \f2events\fP have occurred.
+The driver should store the mask, consisting of the
+subset of \f4events\fP that are pending, in the \f4short\fP pointed to by \f2reventsp\fP.
+Note that this mask may be 0 if none of the events are pending.  In this case,
+the driver should check the \f2anyyet\fP flag and, if it is zero, store the address
+of the device's \f4pollhead\fP structure in the pointer pointed at by \f4phpp\fP.
+The canonical \f4chpoll\fP algorithm is:
+.sp
+.ft 4
+.nf
+	if (events_are_satisfied_now) {
+		*reventsp = events & mask_of_satisfied_events;
+	} else {
+		*reventsp = 0;
+		if (!anyyet)
+			*phpp = my_local_pollhead_pointer;
+	}
+	return (0);
+.fi
+.ft
+.SH NOTES
+This entry point is optional.
+.sp 0.5
+User context is available in the \f4chpoll\fP routine, but if the driver sleeps,
+it must do so such that signals do not cause the
+sleep to longjump [see \f4sleep\fP(D3K)].
+.SH "RETURN VALUE"
+The \f4chpoll\fP routine should return 0 for success, or the
+appropriate error number.
+.SH SEE ALSO
+\f4bzero\fP(D3DK), \f4pollwakeup\fP(D3DK)
+.sp 0.5
+\f4poll\fP(2)

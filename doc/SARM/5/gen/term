@@ -1,0 +1,338 @@
+'\"! tbl | mmdoc
+'\"macro stdmacro
+.if n .pH g5.term @(#)term	40.14 of 4/11/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} term 5 "" "\&"
+.if \nX=1 .ds x} term 5 ""
+.if \nX=2 .ds x} term 5 "" "\&"
+.if \nX=3 .ds x} term "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4term\f1 \- conventional names for terminals
+.SH DESCRIPTION
+Terminal names are maintained as part of the shell environment
+in the environment variable
+\f4TERM\f1
+[see
+\f4sh\fP(1),
+\f4profile\fP(4),
+and
+\f4environ\fP(5)].
+These names are used by certain commands [for example,
+\f4tabs\fP,
+\f4tput\fP,
+and
+\f4vi\fP]
+and certain functions [for example, see \f4curses\fP(3X)].
+.PP
+Files under \f4/usr/share/lib/terminfo\fP are used to name terminals and
+describe their capabilities.
+These files are in the format described in \f4terminfo\fP(4).
+Entries in
+\f4terminfo\fP
+source files
+consist of a number of comma-separated fields.
+To print a description of a terminal \f2term\fP,
+use the command \f4infocmp \-I \f2term\f1 [see
+\f4infocmp\fP(1M)].
+White space after each comma is ignored.
+The first line of each terminal description
+in the
+\f4terminfo\fP
+database gives the
+names by which 
+\%\f4terminfo\fP
+knows the terminal,
+separated by bar (\f4|\fP) characters.
+The first name given is the most common abbreviation for the terminal
+[this is the one to use to set the environment
+variable
+\f4TERMINFO\f1
+in
+\f4$HOME/.profile\fP;
+see \f4profile\fP(4)],
+the last name given should be a long name fully identifying the terminal,
+and all others are understood as synonyms for the terminal name.
+All names but the last should contain no blanks
+and must be unique in the first 14 characters;
+the last name may contain blanks for readability.
+.P
+Terminal names
+(except for the last, verbose entry)
+should be chosen using the following conventions.
+The particular piece of hardware making up the terminal should
+have a root name chosen, for example,
+for the AT&T 4425 terminal, \f4att4425\f1.
+This name should not contain hyphens, except that synonyms may
+be chosen that do not conflict with other names.
+Up to 8 characters, chosen from the set \f4a\fP through \f4z\fP and \f4\&0\fP through \f4\&9\fP,
+make up a basic terminal name.
+Names should generally be based on original vendors
+rather than local distributors.
+A terminal acquired from one vendor should not have more than
+one distinct basic name.
+Terminal sub-models, operational modes that the hardware can be in, or user
+preferences should be indicated by appending a hyphen and an indicator of
+the mode.
+Thus, an AT&T 4425 terminal in 132 column mode is \f4att4425\-w\f1.
+The following suffixes should be used where possible:
+.PP
+.TS
+center;
+l c l
+lf4 l lf4.
+Suffix	Meaning	Example
+_
+\-w	Wide mode (more than 80 columns)	att4425\-w
+\-am	With auto. margins (usually default)	vt100\-am
+\-nam	Without automatic margins	vt100\-nam
+\-\f2n\fP	Number of lines on the screen	aaa\-60
+\-na	No arrow keys (leave them in local)	c100\-na
+\-np	Number of pages of memory	c100\-4p
+\-rv	Reverse video	att4415\-rv
+.TE
+.P
+To avoid conflicts with the naming conventions used in
+describing the different modes of a terminal (for example,
+\f4\-w\f1), it is recommended that a terminal's
+root name not contain hyphens.
+Further, it is good practice to make all terminal
+names used in the \f4terminfo\fP(4) database unique.
+Terminal entries that are present only for
+inclusion in other entries via the
+\f4use=\f1 facilities should have a '\f4+\fP' in their name,
+as in 
+\f44415+nl\f1.
+.PP
+Here are some of the known terminal names:
+(For a complete list, enter the command
+\f4ls -C /usr/share/lib/terminfo/?\f1.)
+.PP
+.na
+.TS
+center;
+lf4w(1.5i) lw(2.5i).
+2621,hp2621	T{
+Hewlett-Packard 2621 series
+T}
+2631	T{
+Hewlett-Packard 2631 line printer
+T}
+2631\-c	T{
+Hewlett-Packard 2631 line printer, compressed mode
+T}
+2631\-e	T{
+Hewlett-Packard 2631 line printer, expanded mode
+T}
+2640,hp2640	T{
+Hewlett-Packard 2640 series
+T}
+2645,hp2645	T{
+Hewlett-Packard 2645 series
+T}
+3270	T{
+\s-1IBM\s+1 Model 3270
+T}
+33,tty33	T{
+AT&T Teletype Model 33 \s-1KSR\s+1
+T}
+35,tty35	T{
+AT&T Teletype Model 35 \s-1KSR\s+1
+T}
+37,tty37	T{
+AT&T Teletype Model 37 \s-1KSR\s+1
+T}
+4000a	T{
+Trendata 4000a
+T}
+4014,tek4014	T{
+\s-1TEKTRONIX\s+1 4014
+T}
+40,tty40	T{
+AT&T Teletype Dataspeed 40/2
+T}
+43,tty43	T{
+AT&T Teletype Model 43 \s-1KSR\s+1
+T}
+4410,5410	T{
+AT&T 4410/5410 in 80-column mode, version 2
+T}
+4410\-nfk,5410\-nfk	T{
+AT&T 4410/5410 without function keys, version 1
+T}
+4410\-nsl,5410\-nsl	T{
+AT&T 4410/5410 without pln defined
+T}
+4410\-w,5410\-w	T{
+AT&T 4410/5410 in 132-column mode
+T}
+4410v1,5410v1	T{
+AT&T 4410/5410 in 80-column mode, version 1
+T}
+4410v1\-w,5410v1\-w	T{
+AT&T 4410/5410 in 132-column mode, version 1
+T}
+4415,5420	T{
+AT&T 4415/5420 in 80-column mode
+T}
+4415\-nl,5420\-nl	T{
+AT&T 4415/5420 without changing labels
+T}
+4415\-rv,5420\-rv	T{
+AT&T 4415/5420 80 columns in reverse video
+T}
+4415\-rv\-nl,5420\-rv\-nl	T{
+AT&T 4415/5420 reverse video without changing labels
+T}
+4415\-w,5420\-w	T{
+AT&T 4415/5420 in 132-column mode
+T}
+4415\-w\-nl,5420\-w\-nl	T{
+AT&T 4415/5420 in 132-column mode without changing labels
+T}
+4415\-w\-rv,5420\-w\-rv	T{
+AT&T 4415/5420 132 columns in reverse video
+T}
+4418,5418	T{
+AT&T 5418 in 80-column mode
+T}
+4418\-w,5418\-w	T{
+AT&T 5418 in 132-column mode
+T}
+4420	T{
+AT&T Teletype Model 4420
+T}
+4424	T{
+AT&T Teletype Model 4424
+T}
+4424-2	T{
+AT&T Teletype Model 4424 in display function group ii
+T}
+4425,5425	T{
+AT&T 4425/5425
+T}
+4425\-fk,5425\-fk	T{
+AT&T 4425/5425 without function keys
+T}
+4425\-nl,5425\-nl	T{
+AT&T 4425/5425 without changing labels in 80-column mode
+T}
+4425\-w,5425\-w	T{
+AT&T 4425/5425 in 132-column mode
+T}
+4425\-w\-fk,5425\-w\-fk	T{
+AT&T 4425/5425 without function keys in 132-column mode
+T}
+4425\-nl\-w,5425\-nl\-w	T{
+AT&T 4425/5425 without changing labels in 132-column mode
+T}
+4426	T{
+AT&T Teletype Model 4426S
+T}
+450	T{
+\s-1DASI\s+1 450 (same as Diablo 1620)
+T}
+450\-12	T{
+\s-1DASI\s0 450 in 12-pitch mode
+T}
+500,att500	T{
+AT&T-IS 500 terminal
+T}
+510,510a	T{
+AT&T 510/510a in 80-column mode
+T}
+513bct,att513	T{
+AT&T 513 bct terminal
+T}
+5320	T{
+AT&T 5320 hardcopy terminal
+T}
+5420_2	T{
+AT&T 5420 model 2 in 80-column mode
+T}
+5420_2\-w	T{
+AT&T 5420 model 2 in 132-column mode
+T}
+5620,dmd	T{
+AT&T 5620 terminal 88 columns
+T}
+5620\-24,dmd\-24	T{
+AT&T Teletype Model DMD 5620 in a 24x80 layer
+T}
+5620\-34,dmd\-34	T{
+AT&T Teletype Model DMD 5620 in a 34x80 layer
+T}
+610,610bct	T{
+AT&T 610 bct terminal in 80-column mode
+T}
+610\-w,610bct\-w	T{
+AT&T 610 bct terminal in 132-column mode
+T}
+630,630MTG	T{
+AT&T 630 Multi-Tasking Graphics terminal
+T}
+7300,pc7300,unix_pc	T{
+AT&T UNIX PC Model 7300
+T}
+735,ti	T{
+Texas Instruments \s-1TI\s+1735 and \s-1TI\s+1725
+T}
+745	T{
+Texas Instruments \s-1TI\s+1745
+T}
+dumb	T{
+generic name for terminals that lack reverse line-feed and other special escape sequences
+T}
+hp	T{
+Hewlett-Packard (same as 2645)
+T}
+lp	T{
+generic name for a line printer
+T}
+pt505	T{
+AT&T Personal Terminal 505 (22 lines)
+T}
+pt505\-24	T{
+AT&T Personal Terminal 505 (24-line mode)
+T}
+sync	T{
+generic name for synchronous Teletype Model 4540-compatible terminals
+T}
+.TE
+.ad
+.PP
+Commands whose behavior depends on the type of terminal
+should accept arguments of the form
+\f4\-T\f2term\^\f1
+where
+\f2term\fP
+is one of the names given above;
+if no such argument is present,
+such commands should
+obtain the terminal type from
+the environment variable
+\f4TERM\f1,
+which, in turn, should contain
+\f2term\fP.
+.SH FILES
+\f4/usr/share/lib/terminfo/?/\(**\fP    compiled terminal description database
+.SH SEE ALSO
+\f4infocmp\fP(1M),
+\f4profile\fP(4), 
+\f4terminfo\fP(4), 
+\f4environ\fP(5) in the
+.IR "System Administrator's Reference Manual"
+.sp .2
+\f4sh\fP(1),
+\f4stty\fP(1),
+\f4tabs\fP(1),
+\f4tput\fP(1),
+\f4vi\fP(1) 
+in the
+.I "User\'s Reference Manual"
+.sp .2
+\f4curses\fP(3X)
+.\"	@(#)term.5	6.2 of 9/6/83
+.Ee

@@ -1,0 +1,47 @@
+'\"macro stdmacro
+.if n .pH g1a.pwck @(#)pwck	40.12 of 4/16/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} pwck 1M "System Administration Utilities" "\&"
+.if \nX=1 .ds x} pwck 1M "System Administration Utilities"
+.if \nX=2 .ds x} pwck 1M "" "\&"
+.if \nX=3 .ds x} pwck "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4pwck\f1, \f4grpck\f1 \- password/group file checkers
+.SH SYNOPSIS
+\f4/usr/sbin/pwck\f1
+[\f2file\f1]
+.br
+\f4/usr/sbin/grpck\f1
+[\f2file\f1]
+.SH DESCRIPTION
+\f4pwck\fP
+scans the password file and notes any inconsistencies.
+The checks include validation of the number of fields,
+login name, user \s-1ID\s+1, group \s-1ID\s+1,
+and whether the login directory
+and the program-to-use-as-shell exist.
+The default password file is
+\f4/etc/passwd\f1.
+.PP
+\f4grpck\fP
+verifies all entries in the group file. This verification
+includes a check of the number of fields, group name,
+group \s-1ID\s+1, whether any login names belong to more than NGROUPS_MAX groups
+and that all login names appear in the password file. The default group file is
+\f4/etc/group\f1.
+.SH FILES
+\f4/etc/group\f1
+.br
+\f4/etc/passwd\f1
+.SH SEE ALSO
+\f4group\fP(4),
+\f4passwd\fP(4)
+.SH DIAGNOSTICS
+Group entries in
+\f4/etc/group\f1
+with no login names are flagged.
+.\"	@(#)pwck.1m	6.2 of 9/2/83
+.Ee

@@ -1,0 +1,38 @@
+'\"macro stdmacro
+.if n .pH g1a.biod @(#)biod	40.8 of 1/3/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} biod 1M "NFS" "\&"
+.if \nX=1 .ds x} biod 1M "NFS"
+.if \nX=2 .ds x} biod 1M "" "\&"
+.if \nX=3 .ds x} biod "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4biod\f1 \- NFS daemon
+.SH SYNOPSIS
+\f4biod\f1
+[
+.I nservers
+]
+.SH DESCRIPTION
+.LP
+\f4biod\f1
+starts
+.I nservers
+asynchronous block
+.SM I/O
+daemons.
+This command is used on an
+.SM NFS
+client to buffer read-ahead
+and write-behind.  
+Four is the usual number for
+.IR nservers .
+.LP
+The \f4biod\f1 daemons are automatically invoked in run level 3.
+.PD
+.SH "SEE ALSO"
+\f4mountd\f1(1M),
+\f4nfsd\f1(1M),
+\f4sharetab\f1(4).

@@ -1,0 +1,119 @@
+.if n .pH 386.progtool @(#)progtool	40.8
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.BK "Technology File Mapping Guide"
+.CH "Programming Tools & Languages" 8
+.H 1 "Software Development Facilities"
+.H 2 "Software Development Libraries"
+Software Development Library routines provide for program diagnostics as well as for monitoring and profiling the execution of C language programs.
+The Software Development Library also has routines to access user-accounting and other system data-files with information about users and groups of users.
+.P
+.XS I N
+.DS
+\f4lib/libc/i386/ansi.def
+lib/libc/i386/csu/*
+lib/libc/i386/nonansi.def
+lib/libc/port/gen/assert.c
+lib/libc/port/gen/getopt.c
+lib/libc/port/gen/getsubopt.c
+lib/libc/port/gen/mon.c
+lib/libc/port/gen/opt_data.c
+lib/libc/tstansi.c
+lib/libdl/*
+lib/libl/*
+lib/liby/*\fP
+.DE
+.XF
+.XK
+.H 2 "Software Development Utilities"
+Software Development Utilities provide facilities for compiling and maintaining C language software.
+.P
+.XS I N
+.DS
+\f4cmd/cb/*
+cmd/cflow/*
+cmd/chroot/*
+cmd/cpset/*
+cmd/cscope/*
+cmd/ctrace/*
+cmd/cxref/*
+cmd/env/*
+cmd/gcore/*
+cmd/ldd/*
+cmd/make/*
+cmd/prof/*
+cmd/time/*
+cmd/truss/*
+cmd/xargs/*\fP
+.DE
+.XF
+.XK
+.H 2 "Source Code Control System (SCCS)"
+.XS I N
+.DS
+\f4cmd/sccs/hdr/*
+cmd/sccs/lib/cassi/*
+cmd/sccs/lib/comobj/*
+cmd/sccs/lib/lib.mk
+cmd/sccs/lib/mpwlib/*
+cmd/sccs/chk_fsync
+cmd/sccs/cmd/*
+cmd/sccs/help.d/*
+cmd/sccs/sccs.mk\fP
+.DE
+.XF
+.H 1 "C Programming Language Utilities (CPLU)"
+C is a general-purpose programming language used for system-level code and
+commercial and scientific applications.
+The C language bridges the realm of assembly-language programming and block-structured procedure-oriented languages by combining the advantages of low-level languages with the benefits and features of high-level languages.
+Programmers using C can deal easily with machine-level facilities at a low-level, while having the high-control and data structures found in other modern, structured programming languages.
+Using C as a low-level language, programmers can achieve maximum efficiency by exploiting specific machine characteristics; using C as a high-level language, programmers can hide the details of the underlying computer to promote software portability.
+.P
+C Compilation System software offers a complete software development environment composed of C Programming Language Utilities (CPLU), Advanced Programming Utilities (APU), and C Programmer's Productivity Tools (CPPT).
+CPLU contains the C Compiler and compiler-related tools; APU contains popular programming and debugging tools; and CPPT consists of two complementary tools:  a source code browser and an execution profiler.
+.P
+Issue 3.1 of C compilation System software added support for shared
+libraries (files containing object-code that several users on a system can share).
+The currently available C Issue 5 extends shared libraries to dynamic linking and introduces the Extensible Linking Format (ELF).  ELF
+is a more advanced object file format that replaces the older Common Object File format (COFF), although it continues to support the use of COFF files.
+.H 2 "Software Generation System (SGS)"
+The Software Generation System (SGS) provides the tools necessary to compile and link applications for the UNIX system.
+Also included is the C Language Compilation System.
+.P
+.XS I N
+.DS
+\f4cmd/sgs/*\fP
+.DE
+.XF
+.XK
+.H 2 "Symbolic Debugger (SDB)"
+.P
+.XS I N
+.DS
+\f4cmd/sdb/inc/common/*
+cmd/sdb/inc/i386/*
+cmd/sdb/libC/*
+cmd/sdb/libdbgen/*
+cmd/sdb/libexecon/*
+cmd/sdb/libexp/*
+cmd/sdb/libint/*
+cmd/sdb/libmachine/*
+cmd/sdb/libsymbol/*
+cmd/sdb/libutil/*
+cmd/sdb/sdb.d/*
+cmd/sdb/sdb.mk
+cmd/sdb/util/*\fP
+.DE
+.XF
+.H 2 "C++ Translator"
+The C++ programming language, invented at AT&T Bell Laboratories, incorporates the latest advancements in object-oriented programming technology.
+As an upwardly compatible enchancement to the standard C programming language, C++ brings the advantages of object-oriented programming to UNIX System V while maintaining the flexibility and efficiency of C.
+The most recent release of the C++ Translator, C++ Release 2.0, completes implementation of all features planned for what is quickly becoming a standard programming language for the UNIX operating system.
+.P
+SVR4 supplies the C++ Translator only for the purpose of building \f4sdb\fP\^, the symbolic debugger; none of the files below may be used in a sublicensed product.
+.P
+.XS I N
+.DS
+\f4cmd/sdb/cfront/*
+cmd/sdb/inc/CC/*\fP
+.DE
+.XF

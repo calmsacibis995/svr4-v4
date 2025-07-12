@@ -1,0 +1,56 @@
+'\"macro stdmacro
+.if n .pH g1.cd @(#)cd	40.4.1.1 of 1/3/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} cd 1 "Essential Utilities" "\&"
+.if \nX=1 .ds x} cd 1 "Essential Utilities"
+.if \nX=2 .ds x} cd 1 "" "\&"
+.if \nX=3 .ds x} cd "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4cd\f1 \- change working directory
+.SH SYNOPSIS
+\f4cd\f1
+[ \f2directory\f1 ]
+.SH DESCRIPTION
+If
+\f2directory\fP
+is not specified, the value of shell parameter
+\f4$HOME\fP
+is used as the new working directory.
+If
+\f2directory\fP
+specifies a complete path starting with
+\f4/\f1,
+\f4\&.\f1,
+or
+\f4\&.\|.\f1,
+\f2directory\fP
+becomes the new working directory.
+If neither case applies,
+\f4cd\fP
+tries to find the designated directory relative to one of the
+paths specified by the
+\f4$CDPATH\fP
+shell variable.
+\f4$CDPATH\fP
+has the same syntax as, and similar semantics to, the
+\f4$PATH\fP
+shell variable.
+\f4cd\fP
+must have execute (search) permission in
+\f2directory\fP.
+.PP
+Because a new process is created to execute each command,
+\f4cd\fP
+would be ineffective if it were written as a
+normal command;
+therefore, it is recognized by and is internal to
+the shell.
+.SH SEE ALSO
+\f4pwd\fP(1), \f4sh\fP(1).
+.br
+\f4chdir\fP(2) in the \f2Programmer's Reference Manual\f1.
+.\"	@(#)cd.1	6.2 of 9/2/83
+.Ee

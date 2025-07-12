@@ -1,0 +1,220 @@
+'\"macro stdmacro
+.if n .pH g3x.dlopen 'ident	"@(#)dlopen	40.7"'
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} dlopen 3X "C Programming Language Utilities" "\&"
+.if \nX=1 .ds x} dlopen 3X "C Programming Language Utilities"
+.if \nX=2 .ds x} dlopen 3X "" "\&"
+.if \nX=3 .ds x} dlopen "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4dlopen\f1 \- open a shared object
+.SH SYNOPSIS
+\f4cc\f1
+[\f2flag\fP \|.\|.\|.] \f2file\fP \|.\|.\|.
+\f4\-ldl\f1
+[\f2library\fP \|.\|.\|.]
+.PP
+\f4#include <dlfcn.h>\f1
+.PP
+\f4void *dlopen(char *pathname, int mode);\f1
+.SH DESCRIPTION
+\f4dlopen\^\f1
+is one of a family of routines that give the user direct access
+to the dynamic linking facilities.  (See ``C Compilation System'' in
+the
+\f2Programmer's Guide: ANSI C and Programming Support Tools\f1).
+These routines are available in a library 
+that is loaded if the option 
+\f4-ldl\^ \f1
+is used with 
+\f4cc\f1
+or
+\f4ld\f1.
+.PP
+\f4dlopen\^\f1
+makes a shared object available to a running process.
+\f4dlopen\^\f1
+returns to the process a 
+.I handle\^
+the process may use on subsequent calls to
+\f4dlsym\f1
+and
+\f4dlclose\f1.
+This value should not be interpreted in any way by the process.
+.I pathname\^
+is the path name of the object to
+be opened; it may be an absolute path or relative to the current 
+directory.  If the value of
+.I pathname\^
+is 0, 
+\f4dlopen\^\f1
+makes the symbols contained in the original
+\f4a.out\fP,
+and all of the objects that were loaded at program startup with the
+\f4a.out\fP,
+available through
+\f4dlsym\f1\^.
+.PP
+When a shared object is brought into the address space of a process,
+it may contain references to symbols whose addresses are not known
+until the object is loaded.  These references must be relocated
+before the symbols can be accessed.  The 
+.I mode\^
+parameter governs when these relocations take place and may
+have the following values:
+.TP 
+\f4RTLD_LAZY\f1
+Under this 
+.IR mode ,
+only references to data symbols are relocated when the object is loaded.
+References to functions are not relocated until a given function
+is invoked for the first time.  This 
+.I mode\^
+should result in better performance, since a process
+may not reference all of the functions in any given shared object.
+.TP
+\f4RTLD_NOW\f1
+Under this
+.IR mode ,
+all necessary relocations are performed when the object is first loaded.
+This may result in some wasted effort, if relocations are performed
+for functions that are never referenced, but is useful for
+applications that need to know as soon as an object is loaded
+that all symbols referenced during execution will be available.
+.SH SEE ALSO
+\f4cc\f1(1),
+\f4ld\f1(1),
+\f4sh\f1(1),
+\f4exec\f1(2),
+\f4dlclose\f1(3X),
+\f4dlerror\f1(3X),
+\f4dlsym\f1(3X).
+.br
+The ``C Compilation System'' chapter in the
+\f2Programmer's Guide: ANSI C and Programming Support Tools\f1.
+.SH DIAGNOSTICS
+If
+.I pathname\^
+cannot be found, cannot be opened for reading, is not a
+shared object, or if an error occurs during the process
+of loading
+.I pathname\^ 
+or relocating its symbolic references, 
+\f4dlopen\^\f1
+returns \f4NULL\f1.  More detailed diagnostic information is
+available through
+\f4dlerror\f1.
+.SH NOTES
+If other shared objects were link edited with
+.I pathname\^
+when
+.I pathname\^
+was built, those objects are automatically loaded by
+\f4dlopen\^\f1.
+The directory search path to be used to find both 
+.I pathname\^
+and the other
+.I needed\^
+objects may be specified by setting the environment variable
+\f4LD_LIBRARY_PATH\f1.
+This environment variable should contain a colon-separated
+list of directories, in the same format as the 
+\f4PATH\^\f1
+variable [see
+\f4sh\f1(1)].
+\f4LD_LIBRARY_PATH\^\f1
+is ignored if the process is running
+\f4setuid\fP
+or
+\f4setgid\fP
+[see
+\f4exec\f1(2)]
+or if the name specified is not a simple file name (that is,
+contains a 
+\f4/\^\f1
+character).  Objects whose names resolve to the same absolute
+or relative path name may be opened any number of times
+using 
+\f4dlopen\f1,
+however, the object referenced is loaded only once into the
+address space of the current process.
+The same object referenced by two different path names, however,
+may be loaded multiple times.  For example, given the
+object
+\f4/usr/home/me/mylibs/mylib.so\f1,
+and assuming the current working directory is
+\f4/usr/home/me/workdir\f1,
+.P
+.RS
+.ft 4
+.nf
+.ne 7
+\&. . .
+void *handle1;
+void *handle2;
+
+handle1 = dlopen("../mylibs/mylib.so", RTLD_LAZY);
+handle2 = dlopen("/usr/home/me/mylibs/mylib.so", RTLD_LAZY);
+\&. . .
+.fi
+.ft
+.RE
+.P
+results in
+\f4mylibs.so\^\f1
+being loaded twice for the current process.
+On the other hand, given the same object and current
+working directory, if
+\f4LD_LIBRARY_PATH=/usr/home/me/mylibs\f1,
+then
+.P
+.RS
+.ft 4
+.nf
+.ne 7
+\&. . .
+void *handle1;
+void *handle2;
+
+handle1 = dlopen("mylib.so", RTLD_LAZY);
+handle2 = dlopen("/usr/home/me/mylibs/mylib.so", RTLD_LAZY);
+\&. . .
+.fi
+.ft
+.RE
+.P
+results in
+\f4mylibs.so\f1
+being loaded only once.  
+.PP
+Objects loaded by a single invocation of 
+\f4dlopen\^\f1
+may import symbols from one another or from any object
+loaded automatically during program startup, but
+objects loaded by one
+\f4dlopen\^\f1
+invocation may not directly reference symbols from objects loaded
+by a different
+\f4dlopen\^\f1
+invocation.  Those symbols may, however, be referenced indirectly
+using 
+\f4dlsym\f1.
+.PP
+Users who wish to gain access to the symbol table of the
+\f4a.out\fP
+itself using \f4dlsym(0, \f2mode\f4)\f1
+should be aware that some symbols defined in the
+\f4a.out\fP
+may not be available to the dynamic linker.
+The symbol table
+created by
+\f4ld\f1
+for use by the dynamic linker might contain only a subset of the
+symbols defined in the 
+\f4a.out\fP:
+specifically those referenced by the shared objects with which
+the
+\f4a.out\fP
+is linked.

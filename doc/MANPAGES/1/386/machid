@@ -1,0 +1,61 @@
+'\"macro stdmacro
+.if n .pH g1.machid @(#)machid	40.5 of 1/3/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+'\"macro stdmacro
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} machid 1 "Essential/User Environment Utilities" "\&"
+.if \nX=1 .ds x} machid 1 "Essential/User Environment Utilities"
+.if \nX=2 .ds x} machid 1 "" "\&"
+.if \nX=3 .ds x} machid "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4machid\f2 \- get processor type truth value
+.SH SYNOPSIS
+\f4machid\f2 [option]\f1
+.SH DESCRIPTION
+The \f4machid\f1 command returns a value to indicate
+the computer processor, model, hard disk, and/or bus architecture.
+.P
+The following are \f4machid\f1 usages and the meaning
+of their return codes.
+.P
+.nf
+\f4machid\f1
+Exit Code		Machine Type
+    0		Generic AT386 machine
+    1		Compaq 386
+    2		AT&T 6386 or 6386E
+    4		AT&T 6386/SX
+    5		AT&T 6386/25
+    6		AT&T 6386E/33
+   10 		AT&T 6386E/33 Model S
+
+\f4machid -s\f1
+Exit Code		Meaning
+    0		Bootable Non-SCSI Hard Disk
+    1		Bootable SCSI Hard Disk
+    
+\f4machid -e\f1
+Exit Code		Meaning
+    0		AT&T 6386E/33 Model S configured correctly
+    3		Not configured correctly
+    
+\f4machid -p\f1
+Exit Code		Meaning
+    3		Machine has a 80386
+    4		Machine has a 80486
+
+\f4machid -a\f1
+Exit Code		Meaning
+    0		Machine uses an AT Bus Architecture
+    1		Machine uses an EISA Bus Architecture
+.fi
+.SH SEE ALSO
+\f4sh\fP(1), \f4test\fP(1), \f4true\fP(1), \f4uname\fP.
+.SH NOTES
+This command supersedes the old machid family (\f4pdp11\f1,
+\f4u3b2\f2, \f4u3b5\f1, \f4u3b15\f1, \f4vax\f1, \f4386\f1,
+\f4u370\f1) manual page which is obsolescent.
+.\"	@(#)machid.1	6.2 of 9/2/83
+.Ee

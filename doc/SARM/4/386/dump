@@ -1,0 +1,30 @@
+'\"macro stdmacro
+.if n .pH g4.dump @(#)dump	40.5 of 1/3/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+'\"macro stdmacro
+.if n .pH g1.dump @(#)dump	@(#)dump	30.5 of 3/24/86
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.if \nX=0 .ds x} dump 4 "" "\&"
+.if \nX=1 .ds x} dump 4 ""
+.if \nX=2 .ds x} dump 4 "" "\&"
+.if \nX=3 .ds x} dump 4 "" "" "\&"
+.nr X
+.TH \*(x} "" "386 Computer Only"
+.SH NAME
+\f4dump\f1 
+.SH DESCRIPTION
+The \f4/etc/default/dump\f1 file contains keywords that are recognized
+by the \f2timeout code\f1.  When the system boots, if there is a system dump
+in the swap device, the system will prompt you if you want to \f4save the
+dump\f1. After \f2n\f1 seconds, the system will assume \f4NO\f1 to the question.
+The keyword \f4TIME\f1 specifies the number of of seconds that the system should
+wait before timing out.
+.TP
+\f4\1TIME\fP=\f2n\fP\f0
+If \f2n\f1 is zero, the \f4save the dump\f1 question is never asked.  If
+the line is missing, the system will wait forever.  Otherwise, the system
+will wait \f2n\f1 seconds.
+.SH FILES
+\f4/etc/default/dump\f1
+.Ee

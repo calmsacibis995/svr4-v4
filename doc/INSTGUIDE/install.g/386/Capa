@@ -1,0 +1,48 @@
+.if n .pH 386.Capa @(#)Capa	40.1.1.1
+.BK "Installation Guide" "System V Release 4" "" ""   
+.\ACRONYM	                  
+.CH "UNIX System Package Descriptions" "" "Table of Contents" "A"
+.\CHAPTER	A
+.tC 1 "Introduction" A-1  
+.Index: disk space, required      	1
+.Index: packages, dependencies       	1
+.tC 1 "Package Descriptions" A-2  
+.tC 2 "BASIC Packages" A-2  
+.Index: ed package        	2
+.Index: terminf package        	2
+.Index: termcap package        	2
+.Index: windowing package        	2
+.Index: mouse package        	2
+.Index: fmli package        	2
+.Index: oam package        	2
+.Index: lp package        	2
+.Index: nsu package        	2
+.Index: acp package        	3
+.Index: application compatibility package      	3
+.Index: xcp package        	3
+.tC 2 "NETWORK Packages" A-3  
+.Index: dfs package        	3
+.Index: rpc package        	3
+.Index: inet package        	3
+.Index: nfs package        	3
+.Index: rfs package        	3
+.tC 2 "DEVELOPMENT Packages" A-3  
+.Index: scde package        	3
+.tC 2 "EXTENDED Packages" A-3  
+.Index: compat package        	3
+.tC 2 "HARDWARE Packages" A-4  
+.Index: wd package        	4
+.Index: imx586 package        	4
+.Index: ie6 package        	4
+.Index: qt package        	4
+.tC 2 "Extra Add-on Packages" A-4  
+.Index: kdb package        	4
+.Index: kdb-util package        	4
+.Index: security administration package        	4
+.Index: crypt        	4
+.Index: unlimited user license package     	4
+.tC 1 "Choosing Packages" A-5  
+.Index: disk space, required        	5
+.Index: packages, dependencies        	5
+.Index: packages, selecting        	5
+.tC L "Table A-1:\0" "UNIX Operating System Packages" A-6

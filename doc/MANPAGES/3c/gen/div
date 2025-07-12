@@ -1,0 +1,47 @@
+'\"macro stdmacro
+.if n .pH g3c.div @(#)div	40.11 of 5/22/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} div 3C "C Development Set" "\&"
+.if \nX=1 .ds x} div 3C "C Development Set"
+.if \nX=2 .ds x} div 3C "" "\&"
+.if \nX=3 .ds x} div "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4div\f1, \f4ldiv\f1 \- compute the quotient and remainder
+.SH SYNOPSIS
+\f4#include <stdlib.h>\f1
+.PP
+\f4div_t div (int numer, int denom);\f1
+.PP
+\f4ldiv_t ldiv (long int numer, long int denom);\f1
+.SH DESCRIPTION
+\f4div\fP computes the quotient and remainder of the division of
+the numerator \f2numer\f1 by the denominator \f2denom\f1.
+This function provides a well-defined semantics for the signed integral
+division and remainder operations, unlike the implementation-defined
+semantics of the built-in operations.  
+The sign of the resulting quotient is that of the algebraic quotient, and,
+if the division is inexact,
+the magnitude of the resulting quotient is the largest integer less than the
+magnitude of the algebraic quotient.
+If the result cannot be 
+represented, the behavior is undefined; otherwise, \f2quotient\f1 \(** \f2denom\f1
++ \f2remainder\f1 will equal \f2numer\f1.
+.PP
+\f4div\fP returns a structure of type \f4div_t\f1, comprising both the 
+quotient and remainder:
+.nf
+
+	\f4typedef struct div_t {
+		int	quot;	/*quotient*/
+		int	rem;	/*remainder*/
+	} div_t;\f1
+
+.fi
+\f4ldiv\fP is similar to \f4div\fP, except that the arguments and the members
+of the returned structure (which has type \f4ldiv_t\f1) all have type 
+\f4long int\f1.
+.\"	@(#)div.3c
+.Ee

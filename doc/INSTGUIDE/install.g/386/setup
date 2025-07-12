@@ -1,0 +1,593 @@
+.if n .pH 386.setup @(#)setup	40.1.1.1
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.BK "Installation Guide" "System V Release 4"
+.CH "Basic System Setup" "4"
+.H 1 "Introduction"
+This chapter tells you how to do some of the basic system configuration tasks, 
+including:
+.BL
+.LI
+Using the OA&M interface
+.LI
+Other Ways to use OA&M
+.LI
+Setting the system date and time
+.LI
+Adding Users to the System
+.LI
+Restoring files
+.LI
+Setting up a local area network (LAN)
+.LI
+Backing up the system
+.LI
+Removing packages
+.LI
+Shutting the system down
+.LE
+.P
+Most of the tasks are described are done via the Operations, Administration, 
+and Maintenance (OA&M) system administration interface (\f4sysadm\fP). Sometimes
+the command line equivalent procedure is described.
+.IX "sysadm"
+.IX "sysadm (see OA&M interface)"
+.IX "OA&M interface"
+.AB N
+If the OA&M package isn't already installed, install the package 
+using the \f4pkgadd\fP command, as described in Appendix D.
+.AC
+.AB C
+If you ever need to alter information in the \f4/etc/passwd\fP file, always
+do so via the OA&M interface. Never edit the file directly, 
+or you may get locked out of your system. If you do not have 
+OA&M installed, you can edit the \f4/etc/passwd\fP file, but you must 
+then execute the \f4pwconv\fP(1M) command.
+.IX "passwd file, editing"
+.IX "pwconv command"
+.AC
+.H 1 "Using the OA&M Interface"
+To invoke the OA&M interface, do the following:
+.IX "OA&M interface, invoking"
+.AL 1
+.LI
+Log in as root.
+.LI
+Type \f4sysadm\fP.
+.LI
+Enter the \f4sysadm\fP password if prompted for it.
+.LI
+Select the desired function(s) from the menus.
+.LE
+.IX "sysadm"
+.AB N
+If you aren't executing \f4sysadm\fP from the system console,
+or if your terminfo
+entry does not support function keys, the menus may be highlighted
+differently and you may have to access the function associated with
+a function key using other methods than described in this 
+section. See
+.ST "Other Ways to Use OA&M"
+for more information.
+.AC
+.P
+The primary \f4sysadm\fP menu looks like the following:
+.IX "sysadm, primary menu"
+.SS CO
+UNIX System v Operations, Administration and Maintenance
+
+applications            - Administration for Available Applications
+backup_service          - Backup Scheduling, setup and Control
+file_systems            - File System Creation, Checking and Mounting
+machine                 - Machine Configuration, Display and Shutdown
+network_services        - Network Services and Administration
+ports                   - Port Access Services and Monitors
+preSVR4                 - Peripherals Setup
+printers                - Printer Configuration and Services
+restore_service         - Restore from Backup Data
+schedule_task           - Schedule Automatic Task
+software                - Software Installation and Removal
+storage_devices         - Storage Device Operations and Definitions
+system_setup            - System Name, Date/Time, and Initial Password Setup
+users                   - User Login and Group Administration
+
+Move the cursor to the item you want and press ENTER to select it.
+.SE
+.P
+The basics of using the \f4sysadm\fP menus follows:
+.IX "sysadm, basics of using"
+.BL
+.LI
+If you need help using a menu (and you installed the OA&M on-line help 
+software), press
+.HK F1 .
+.LI
+To select a menu, use the
+.HK Tab
+key or the arrow keys (if you invoke \f4sysadm\fP 
+from an X window, and you have mouse support, you can use the mouse instead
+of the
+.HK Tab
+or the arrow keys) to highlight the desired menu, then press 
+.HK EK
+or
+.HK F3
+to select the menu.
+.LI
+To move around within a menu, use the
+.HK Tab
+key to move to the next changeable
+field, or use the arrow keys to move character-by-character within 
+the field. 
+.LI
+The bottom of the screen shows which function keys you can use with the 
+active menu. Only the most recently displayed menu is active.
+.LI
+To go up a menu level, press the
+.HK F6
+key.
+.LE
+.P
+To exit the OA&M interface, do the following:
+.IX "OA&M interface, exiting"
+.AL 1
+.LI
+Press
+.HK F7
+to display the command menu.
+.LI
+Press
+.HK e
+to select the exit function.
+.LI
+Press
+.HK EK .
+.sp
+The system prompt returns when the OA&M interface exits.
+.AB N
+The 
+.BT "System Administrator's Guide"
+gives more details
+about using the OA&M menus and some of the functions described here.
+.AC
+.LE
+.H 2 "Other Ways to use OA&M"
+.IX "OA&M interface, alternate displays"
+If your terminfo entry is set for other than the system console (for example,
+the terminfo entry does not support function keys) the OA&M interface may work 
+differently. You may notice the following differences:
+.BL
+.LI
+When a menu is displayed, the menu item that is currently selected is supposed
+to be highlighted. On some terminals, no items are highlighted or
+more than one item is highlighted.
+When this happens, look for the > symbol along the left side of the 
+menu to determine which item is selected.
+.LI
+The 
+.HK UA
+and
+.HK DA
+keys are generally used to move up or down a line at 
+a time in the menu. On some keyboards, the down arrow key 
+.HK DA
+invokes the HELP screen, the right arrow key
+.HK RA
+moves the cursor down a line, and the 
+up arrow
+.HK UA
+moves up a line.
+.LI
+If your terminal type does not support function keys, you can execute
+the function by pressing
+.HK Ctrl-f
+and the corresponding number. For 
+example, the HELP button usually corresponds to 
+.HK F1 .
+To display the HELP message if your keyboard does not have function keys, 
+press
+.HK Ctrl-f
+then press the
+.HK 1
+key.
+.LE
+.H 1 "Setting the System Date and Time"
+.IX "date, setting the"
+.IX "time, setting the"
+One of the first things you should do after installing the software is to set
+the system date and time.
+The date and time are pre-set at the factory and may have the wrong time
+zone set.
+Every time you create or access a file, the date and
+time the file was accessed is is attached to the file.
+System accounting is also done using the
+date and time.
+So, it is important that the date and time are correct.
+.AB N
+This should be done when only root is logged into the system.
+.AC
+To set the system date and time, do the following:
+.AL 1
+.LI
+Invoke the OA&M interface.
+.LI
+Select the \f4system_setup\fP menu.
+.LI
+Select the \f4datetime\fP menu.
+.LI
+Select the \f4set\fP menu.
+.LI
+Use the
+.HK Tab
+key to get to the desired field. You'll want to change the 
+date, time, and possibly the timezone fields.
+.LI
+Use the
+.HK RA
+or
+.HK LA
+keys to get to the correct character.
+.LI
+Enter the desired information by typing over any data in the field.
+.LI
+Press
+.HK F3
+to save the information.
+.LI
+Exit the OA&M interface, as described earlier.
+.LE
+.H 1 "Adding Users to the System"
+.IX "users, adding"
+.IX "adding users"
+To add users to the system, do the following:
+.AL 1
+.LI
+Invoke the OA&M interface.
+.LI
+Select the \f4users\fP menu.
+.LI
+Select the \f4add\fP menu.
+.LI
+Fill out the desired information. You'll need to supply the username, userid, 
+and other information.
+(See the
+.BT "System Administrator's Guide"
+for more information, if necessary.)
+.AB N
+Be sure to create an account for yourself. Don't do regular work from 
+the root account.
+.P
+When assigning the user ID, the system automatically displays the 
+next available number as the default. Enter another user ID if desired,
+or accept the default by leaving the field alone.
+.IX "user ID"
+.P
+When specifying a group ID, add a valid group from \f4/etc/groups\fP 
+or use the \f4add group\fP menu to add another group.
+.P
+.IX "group ID"
+If you specified that the user has sysadm permission, it means that 
+when the user logs in as sysadm, or types \f4su sysadm\fP, they are not 
+prompted for a password.
+.IX "sysadm, permission"
+.IX "permission, sysadm"
+.AC
+.LI
+Press
+.HK F3
+to save the input.
+.sp
+Another screen displays, asking you for the password.
+.LI
+Assign a password for the user.
+.LI
+Press
+.HK F3
+to save the input.
+.sp
+A summary of the input you just entered displays.
+.LI
+If you want to add another user, press
+.HK F3
+and repeat steps 4 through 7. 
+Otherwise, exit the OA&M interface using the previously described procedure.
+.LE
+.H 1 "Restoring Files"
+.IX "files, restoring archived"
+.IX "\f4cpio\f1 command"
+Once you have created user accounts and home directories, you can restore your 
+personal System V Release 3.2 archived files with the \f4cpio\fP(1) command.
+See the \f4cpio\fP(1) command in the
+.BT "User Reference Manual"
+for information. 
+.P
+The header format for the \f4cpio\f1 command is different in SVR4. To restore 
+SVR4 files to a 3.2 system, you must use the options \f4-Hodc\fP of the 
+\f4cpio\fP command, in addition to the options you would normally use.
+.IX "cpio command, -Hodc options"
+For example,
+you may type a command such as:
+.DS
+.ft 4
+cpio -iBcdumv -Hodc -I /dev/....
+.ft 1
+.DE
+If you want to restore system files, you must do some special procedures, as
+described next.
+.H 2 "Restoring Pre-Release 4 System Files"
+Many of the commands, system files, and directories from Release 3.2 UNIX 
+(and earlier versions) have been moved to new locations in SVR4. Many of 
+these files have been symbolically linked back to the old location.
+.IX "symbolic links"
+For example, the \f4/etc/hosts\fP file has been moved to \f4/etc/inet/hosts\fP,
+and has been symbolically linked to the old location.
+Many files have been completely
+restructured and should not be restored to the SVR4 system, using the \f4cp\f1 command.
+.P
+Since it is difficult to determine which files can be restored and which
+can't, we suggest that you restore the archived files to a temporary directory
+on the SVR4 system. Then, you can restore the desired files, as needed,
+once you are sure you will not damage your SVR4 system. 
+.P
+To restore the files you archived using the method described in Chapter 1, do 
+the following:
+.AL 1
+.LI
+On your SVR4 system, get in the \f4/usr\fP or \f4/var\fP directory.
+.LI
+Make a temporary directory in which to store the archived files, then change to 
+that directory. For example, type:
+.DS
+.ft 4
+mkdir save
+cd save
+.ft 1
+.DE
+.LI
+Copy the files from the backup medium (make sure the medium is in the proper drive) to the SVR4 system by typing 
+something like the following:
+.DS
+.ft 4
+cpio -iBcdumv -I /dev/rmt/c0s0
+.ft 1
+.DE
+The files are copied to the \f4save\fP directory. The \f4save\fP directory
+should contain
+entries such as \f4etc/hosts\fP and \f4etc/group\fP.
+.LI
+If you are sure that a file is compatible with the SVR4 system, you can copy the 
+file to its new location on the SVR4 system.
+.AB C
+Do not use the \f4mv\fP(1) or \f4cpio\fP(1) commands to relocate the files. If 
+you do, the symbolic links are destroyed.
+.P
+.IX "mv command"
+.IX "symbolic links"
+Copy files to their current (SVR4) location, not the old location.
+.AC
+For example, to relocate the \f4/save/etc/hosts\fP file to its proper place on 
+the SVR4 system, while in the save directory, type:
+.DS
+.ft 4
+cp etc/hosts /etc/inet/hosts
+.ft 1
+.DE
+Since the \f4cp\fP(1) command does not destroy the symbolic link, the 
+\f4/etc/hosts\fP file is actually copied to \f4/etc/inet/hosts\fP.
+.LE
+.H 1 "Setting Up a Local Area Network"
+.IX "Local Area Network, establishing"
+One of the first things to do when setting up a local area network is to
+create a file that lists the IP address and system name of remote systems
+you want to 
+communicate with. You can either restore the \f4/etc/hosts\fP file you saved
+from your pre-Release 4 UNIX system, as described in the previous section,
+or use the \f4sysadm\fP menus to create a new hosts file.
+.AB N
+If a machine in your LAN already has a complete \f4/etc/inet/hosts\fP file,
+put the machine's name and IP address in your \f4/etc/inet/hosts\fP file.
+Then, use networking commands to copy the \f4/etc/inet/hosts\fP file over from
+the other system. See the 
+.BT "Network User's and Administrator's Guide
+for more information.
+.AC
+.IX "IP address"
+.IX "remote systems"
+.IX "system, name"
+.P
+To set up a new local area network using the \f4sysadm\fP menus,
+do the following:
+.IX "sysadm, setting up LAN"
+.AL 1
+.LI
+Find out the hostname and IP address of the other systems you want to
+communicate with.
+.LI
+Invoke the OA&M interface.
+.LI
+Select the \f4network_services\fP menu.
+.LI
+Select the \f4name_to_address\fP menu.
+.LI
+Select the \f4inet\fP menu.
+.LI
+Select the \f4hosts\fP menu.
+.LI
+Enter the system name of the first system from the list of systems with 
+which you want to communicate.
+.IX "system, name"
+.LI
+Enter the IP address of the system.
+.LI
+Repeat Steps 7 and 8 until all the system names and addresses have
+been entered.
+.sp
+When done, press
+.HK F3
+to save the data.
+.LI
+Exit the OA&M interface.
+.LE
+.P
+If you have a lot of entries to make, you may want to use the
+following short cut:
+.AL 1
+.LI
+Log in as root.
+.LI
+Use the editor of your choice to edit the \f4/etc/inet/hosts\fP file.
+.LI
+For each host your system will communicate with, input a line that has the 
+IP address of the system, followed by the host name. For example:
+.SS CO
+218.210.16.25 jackson jackson.intel.com
+218.210.17.26 frodo frodo.intel.com
+.SE
+where \f4jackson\fP and \f4frodo\fP are host names, and \f4intel.com\fP is the domain 
+names used by the mail utility.
+.LI
+After specifying all the hosts and IP addresses, save the changes made to 
+the file and exit the editing session.
+.LE
+.H 1 "Backing Up the System "
+.IX "system, backup"
+.IX "backup, system files"
+Once you have installed all the SVR4 packages you want, you 
+may want to back up the system.
+.P
+To back up the system using the OA&M interface, do the following: 
+.AL 1
+.LI
+Invoke the OA&M interface.
+.LI
+Choose the \f4backup_services\fP menu.
+.LI
+Follow the system prompts to back up the system to removable media.
+.LE
+.H 1 "Removing Packages"
+.IX "packages, removing"
+You can remove packages when you need more disk space on the system, or when 
+you no longer need the package. There are two ways to remove packages, using 
+the \f4pkgrm\fP(1) command, or using the OA&M interface.
+To find out how to remove packages prior to doing an overlay installation,
+see Chapter 1.
+.IX "pkgrm command"
+.AB N
+System V Release 3.2 packages must be removed using the 
+\f4removepkg\fP(1) command.
+.P
+If you are removing a package that another package depends on, you 
+must remove the dependent package first, or the packages will not 
+be removed correctly. Look at Table A-1 in Appendix A to see
+package dependencies.
+.AC
+.H 2 "Removing Packages Using pkgrm"
+.IX "removing packages, pkgrm command"
+The \f4pkgrm\fP(1) command lets you remove selected packages, and gives you a chance 
+to change your mind.
+.P
+To remove packages using the \f4pkgrm\fP command, do the following:
+.AL 1
+.LI
+Log in as root.
+.LI
+Type \f4pkgrm\fP.
+.sp
+A list of packages on the system displays. The first column in the list is a 
+number that corresponds to a specific package. You may have to press 
+.HK EK
+to see the complete list. When the entire list has displayed, you 
+are told to select the packages you want to remove.
+.LI
+Enter the number or numbers that correspond to the package(s) you want to 
+remove, or type \f4all\fP to remove all the packages.
+If removing more than one 
+package, use a comma and a space between the package names.
+.sp
+The specified packages are removed.
+.LI
+After the packages are removed, you must reboot the system before the changes can take effect.
+.LE
+.H 2 "Removing Packages Using OA&M"
+To remove a package using the OA&M interface, do the following:
+.IX "removing packages, using OA&M"
+.AL 1
+.LI
+Invoke the OA&M interface.
+.LI
+Select the \f4software\fP menu.
+.LI
+Select the \f4remove\fP menu.
+.LI
+Specify the name of the package(s) to be removed, or type \f4all\fP to remove all 
+the packages. If removing more than one package, use a comma and a space 
+between the package names. If you press
+.HK F2 ,
+a list of the packages you 
+can remove displays. 
+.LI
+Press
+.HK F3
+to begin the package removal.
+.LI
+After the packages are removed, you must reboot the system before the 
+changes can take effect.
+.LE
+.H 1 "Shutting the System Down"
+.IX "shutdown"
+Unlike a MS-DOS system, you must never shut a UNIX system down or reboot it 
+by turning it off or pressing RESET.
+SHut the system down using one of the following ways.
+.H 2 "Using OA&M to Shut Down the System "
+To shut down the system using the OA&M interface, do the following:
+.AL 1
+.LI
+Invoke the OA&M interface.
+.LI
+Select the \f4machine\fP menu.
+.LI
+Select the \f4shutdown\fP menu.
+.sp
+The users currently logged in display.
+.LI
+Press
+.HK F3
+to continue.
+The next screen shows the default time users are given to log off the system 
+before the shutdown occurs.
+.LI
+If desired, change the amount of time.
+.LI
+Press
+.HK F3
+to begin the shutdown.
+.sp
+The shutdown begins and you automatically exit the OA&M interface.
+.LE
+.P
+Appendix C in the 
+.BT "System Administrator's Guide"
+describes how to use the menus.
+.H 2 "Using the shutdown Command to Shut Down the System"
+To shut down the system using the \f4shutdown\fP command, do the following:
+.AL 1
+.LI
+Log in as root.
+.LI
+Type:
+.DS
+.ft 4
+shutdown -y -g0
+.ft 1
+.DE
+or:
+.DS
+.ft 4
+shutdown -y -i6 -g0
+.ft 1
+.DE
+.LE
+.P
+.AB N
+The second command shown causes the system to automatically reboot when 
+the shutdown completes.
+.AC

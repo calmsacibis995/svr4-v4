@@ -1,0 +1,50 @@
+'\"macro stdmacro
+.if n .pH g3.sleep @(#)sleep	40.10 of 4/24/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.\" Copyright (c) 1980 Regents of the University of California.
+.\" Copyright (c) 1988 Sun Microsystems, Inc. - All Rights Reserved.
+.\"
+.\" All rights reserved.  The Berkeley software License Agreement
+.\" specifies the terms and conditions for redistribution.
+.\"
+.nr X
+.if \nX=0 .ds x} sleep 3 "BSD Compatibility Package" "\&"
+.if \nX=1 .ds x} sleep 3 "BSD Compatibility Package"
+.if \nX=2 .ds x} sleep 3 "" "\&"
+.if \nX=3 .ds x} sleep "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4sleep\f1 \- suspend execution for interval
+.SH SYNOPSIS
+\f4cc \f1[ \f2flag\f1\. \. \. ] \f2file\f1 \. \. \. \f4\-lucb\f1
+.P
+.nf
+\f4sleep(seconds)\f1
+\f4unsigned seconds;\f1
+.fi
+.SH DESCRIPTION
+\f4sleep\f1
+suspends the current process from execution for the
+number
+of seconds specified by the argument.
+The actual suspension time may be
+up to 1 second less than that requested, because scheduled wakeups occur
+at fixed 1-second intervals, and may be an arbitrary amount longer because of
+other activity in the system.
+.P
+\f4sleep\f1
+is implemented by setting an interval timer and pausing
+until it expires.
+The previous state of this timer is saved and restored.
+If the sleep time exceeds the time to the expiration of the
+previous value of the timer, the process sleeps
+only until the timer would have expired, and the
+signal which occurs with the expiration
+of the timer is sent one second later.
+.SH "SEE ALSO"
+\f4sigpause\fP(3),
+\f4usleep\fP(3)
+.P
+\f4getitimer\fP(2)
+in the \f2Programmer's Reference Manual\f1

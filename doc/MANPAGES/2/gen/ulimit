@@ -1,0 +1,72 @@
+'\"macro stdmacro
+.if n .pH g2.ulimit @(#)ulimit	40.15.1.1 of 1/3/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} ulimit 2 "" "\&"
+.if \nX=1 .ds x} ulimit 2 ""
+.if \nX=2 .ds x} ulimit 2 "" "\&"
+.if \nX=3 .ds x} ulimit "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4ulimit\f1 \- get and set user limits
+.SH SYNOPSIS
+\f4#include <ulimit.h>\f1
+.PP
+\f4long ulimit(int cmd, ... /* newlimit */ );\f1
+.SH DESCRIPTION
+This function provides for control over process limits.
+The
+.I cmd\^
+values
+available are:
+.TP 15
+\f4UL_GETFSIZE\f1
+Get the regular file size limit of the process.
+The limit is in units of 512-byte blocks
+and is inherited by child processes.
+Files of any size can be read.
+.TP 15
+\f4UL_SETFSIZE\f1
+Set the regular file size limit of the process to
+the value of
+.IR newlimit
+, taken as a \f4long\fP.
+Any process may decrease this limit,
+but only a process with an effective user
+.SM ID
+of super-user may increase the limit.
+.TP 15
+\f4UL_GMEMLIM\f1
+Get the maximum possible break value
+[see
+\f4brk\fP(2)].
+.TP 15
+\f4UL_GDESLIM\f1
+Get the current value of the maximum number of open files per process
+configured in the system.
+.PP
+The
+\f4getrlimit\fP
+system call provides a more general interface for controlling process limits.
+.PP
+\f4ulimit\fP fails if the following is true:
+.TP 15
+\f4EINVAL\fP
+The \f2cmd\fP argument is not valid.
+.TP 15
+\f4EPERM\fP
+A process with an effective user ID other than super user attempts
+to increase its file size limit.
+.SH SEE ALSO
+\f4brk\fP(2), \f4getrlimit\fP(2), \f4write\fP(2)
+.SH NOTES
+\f4ulimit\fP
+is effective in limiting 
+the growth of regular files.
+Pipes are currently limited to {\f4PIPE_MAX\f1}.
+.SH "DIAGNOSTICS"
+Upon successful completion, a non-negative value is returned.
+Otherwise, a value of \-1 is returned and
+\f4errno\fP
+is set to indicate the error.

@@ -1,0 +1,170 @@
+.\" @(#)getpriority 40.4 91/04/24 SMI; from UCB 4.3
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.\" Copyright (c) 1980 Regents of the University of California.
+.\" All rights reserved.  The Berkeley software License Agreement
+.\" specifies the terms and conditions for redistribution.
+.\"
+'\" macro stdmacro
+.\" Copyright (c) 1988 Sun Microsystems, Inc. - All Rights Reserved.
+.\"
+.nr X
+.if \nX=0 .ds x} getpriority 3 "BSD Compatibility Package" "\&"
+.if \nX=1 .ds x} getpriority 3 "BSD Compatibility Package"
+.if \nX=2 .ds x} getpriority 3 "" "\&"
+.if \nX=3 .ds x} getpriority 3 "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4getpriority\f1, \f4setpriority\f1 \- get/set program scheduling priority
+.SH SYNOPSIS
+\f4cc \f1[ \f2flag\f1\. \. \. ] \f2file\f1 \. \. \. \f4\-lucb\f1
+.P
+.nf
+.ft 4
+#include <sys/time.h>
+#include <sys/resource.h>
+.P
+.ft 4
+int getpriority(\f2which\fP, \f2who\fP)
+int \f2which\fP, \f2who\fP;
+.P
+.ft 4
+int setpriority(\f2which\fP, \f2who\fP, \f2prio\fP)
+int \f2which\fP, \f2who\fP, \f2prio\fP;
+.fi
+.ft 1
+.SH DESCRIPTION
+.P
+The scheduling
+priority of the process, process group, or user, as indicated by
+\f2which\f1
+and
+\f2who\f1
+is obtained with
+\f4getpriority\f1
+and set with
+\f4setpriority\f1
+The default priority is 0;
+lower priorities cause more favorable scheduling.
+.P
+\f2which\f1
+is one of
+.SM
+\f4PRIO_PROCESS\f1,
+.SM
+\f4PRIO_PGRP\f1,
+or
+.SM
+\f4PRIO_USER\f1,
+and
+\f2who\f1
+is interpreted relative to
+\f2which\f1
+(a process identifier for
+.SM
+\f4PRIO_PROCESS\f1,
+process group identifier for
+.SM
+\f4PRIO_PGRP\f1,
+and a user
+\s-1ID\s0
+for
+.SM
+\f4PRIO_USER\f1).
+A zero value of
+\f2who\f1
+denotes the current process, process group, or user.
+.P
+\f4getpriority\f1
+returns the highest priority (lowest numerical value)
+enjoyed by any of the specified processes.
+\f4setpriority\f1
+sets the priorities of all of the specified processes
+to the value specified by
+\f2prio\f1.
+If 
+\f2prio\f1
+is less than \-20, a value of \-20 is used;
+if it is greater than 20, a value of 20 is used.
+Only the privileged user may lower priorities.
+.SH "RETURN VALUE"
+.P
+Since
+\f4getpriority\f1
+can legitimately return the value \-1, it is necessary
+to clear the external variable
+\f4errno\f1
+prior to the
+call, then check it afterward to determine
+if a \-1 is an error or a legitimate value.
+The
+\f4setpriority\f1
+call returns 0 if there is no error, or
+\-1 if there is.
+.SH ERRORS
+\f4getpriority\f1
+and
+\f4setpriority\f1
+may return one of the following errors:
+.TP 10
+\s-1ESRCH\s0
+No process was located using the
+\f2which\f1
+and
+\f2who\f1
+values specified.
+.TP
+\s-1EINVAL\s0
+\f2which\f1
+was not one of
+.SM
+\f4PRIO_PROCESS\f1,
+.SM
+\f4PRIO_PGRP\f1,
+or
+.SM
+\f4PRIO_USER\f1.
+.P
+In addition to the errors indicated above,
+\f4setpriority\f1
+may fail with one of the following errors returned:
+.TP 10
+\s-1EPERM\s0
+A process was located, but one of the following is true:
+.RS
+.TP 3
+\(bu
+Neither its effective nor real user
+\s-1ID\s0
+matched the effective user
+\s-1ID\s0
+of the caller, and neither the effective
+nor the real user
+\s-1ID\s0
+of the process executing the
+\f4setpriority\f1
+was the privileged user.
+.TP
+\(bu
+The call to
+\f4getpriority\f1
+would have changed a process' priority to a
+value lower than its current value,
+and the effective user
+\s-1ID\s0
+of the process executing the call was
+not that of the privileged user.
+.RE
+.SH "SEE ALSO"
+\f4renice\fP(1M)
+.P
+\f4nice\fP(1)
+in the \f2User's Reference Manual\f1
+.br
+\f4fork\fP(2)
+in the \f2Programmer's Reference Manual\f1
+.SH NOTES
+It is not possible for the process executing
+\f4setpriority\f1
+to lower any other process down to its current priority,
+without requiring privileged user privileges.

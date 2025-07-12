@@ -1,0 +1,8 @@
+.if n .pH portguide.CEXEC @(#)Cexec	40.2
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.BK "Programmer's Guide: Porting the Kernel" "" "" ""   
+.\ACRONYM	                  
+.CH "Directory - EXEC" "" "Table of Contents" "8"
+.\CHAPTER	8
+.tC 2 "Directory - EXEC" 8-1  
+.Index: EXEC directory       	1

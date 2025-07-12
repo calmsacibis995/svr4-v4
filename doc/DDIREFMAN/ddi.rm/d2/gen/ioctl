@@ -1,0 +1,116 @@
+'\"macro stdmacro
+.if n .pH gen.ioctl @(#)ioctl	40.4 of 6/24/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.nr X
+.if \nX=0 .ds x} ioctl D2DK "" "DDI/DKI" "\&"
+.if \nX=1 .ds x} ioctl D2DK "" "DDI/DKI"
+.if \nX=2 .ds x} ioctl D2DK "" "\&"
+.if \nX=3 .ds x} ioctl "" "" "\&"
+.TH \*(x}
+.IX "\f4ioctl\fP(D2DK)"
+.SH "NAME"
+\f4ioctl\fP \- control a character device
+.SH "SYNOPSIS"
+.nf
+.na
+\f4#include <sys/types.h>
+#include <sys/cred.h>
+#include <sys/file.h>
+#include <sys/errno.h>
+.sp 0.5
+int \f2prefix\fPioctl(dev_t \f2dev\fP, int \f2cmd\fP, void *\f2arg\fP, int \f2mode\fP, cred_t *\f2crp\fP,
+	int *\f2rvalp\fP);\f1
+.ad
+.fi
+.SH "ARGUMENTS"
+.RS 0n
+.IP \f2dev\fP 10n
+Device number.
+.IP \f2cmd\fP 10n
+Command argument the driver \f4ioctl\fP routine interprets as the 
+operation to be performed.
+.IP \f2arg\fP 10n
+Passes parameters between the user and the driver.  
+The interpretation of the argument is
+dependent on the command and the driver.
+For example, the argument can be an integer, or it can be the address of a
+user structure containing driver or hardware settings. 
+.IP \f2mode\fP 10n
+Contains the file modes set when the device was opened.
+The driver can use this to determine
+if the device was opened for reading (\f4FREAD\fP), writing (\f4FWRITE\fP), etc.
+See \f4open\fP(D2DK) for a description of the values.
+.IP "\f2crp\fP" 10n
+Pointer to the user credential structure.
+.IP \f2rvalp\fP 10n
+Pointer to the return value for the calling process.
+The driver may elect to set the value if the \f4ioctl\fP(D2DK) succeeds.
+.RE
+.SH "DESCRIPTION"
+The \f4ioctl\fP(D2DK) routine provides non-STREAMS character drivers with
+an alternate entry point that can be used
+for almost any operation other than
+a simple transfer of data.
+Most often, \f4ioctl\fP is used
+to control device hardware parameters
+and establish the protocol used by the driver
+in processing data.
+I/O control commands are used to implement terminal settings,
+to format disk devices,
+to implement a trace driver for debugging,
+and to flush queues.
+.P
+If the third argument, \f2arg\fP, is a pointer to user space, the driver
+can use \f4copyin\fP(D3DK) and \f4copyout\fP(D3DK)
+to transfer data between kernel and user space.
+.P
+The \f4ioctl\fP routine is basically a \f4switch\fP statement,
+with each \f4case\fP definition corresponding to a different
+\f4ioctl\fP command identifying
+the action to be taken.
+.SH NOTES
+This entry point is optional.
+.sp 0.5
+The \f4ioctl\fP routine has user context and can sleep.
+.sp 0.5
+STREAMS drivers do not have \f4ioctl\fP routines.
+The stream head converts I/O control commands to \f4M_IOCTL\fP
+messages, which are handled by the driver's \f4put\fP(D2DK) or
+\f4srv\fP(D2DK) routine.
+.sp 0.5
+.br
+.ne 8
+An attempt should be made to keep
+the values for driver-specific I/O control commands
+distinct from others in the system.
+Each driver's I/O control commands are unique,
+but it is possible for
+user-level code to access a driver
+with an I/O control command that is intended for another driver,
+which can have serious results.
+.sp 0.5
+A common method to assign I/O control command values that
+are less apt to be duplicated is to compose the commands
+from some component unique to the driver (such as a module name or ID), and
+a counter, as in:
+.P
+.nf
+\f4	#define PREFIX		('h'<<16|'d'<<8)
+	#define COMMAND1		(PREFIX|1)
+	#define COMMAND2		(PREFIX|2)
+	#define COMMAND3		(PREFIX|3)\fP
+.fi
+.SH RETURN VALUE
+The \f4ioctl\fP routine should return 0 on success,
+or the appropriate error number on failure.
+The system call will usually return 0 on success or \-1 on failure.
+However, the driver can choose to have the system call return a
+different value on success by passing the value through the \f2rvalp\fP pointer.
+.SH SEE ALSO
+.na
+\f4open\fP(D2DK),
+\f4copyin\fP(D3DK),
+\f4copyout\fP(D3DK),
+\f4drv_priv\fP(D3DK),
+\f4errnos\fP(D5DK)
+.ad

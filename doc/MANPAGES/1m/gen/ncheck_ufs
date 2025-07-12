@@ -1,0 +1,68 @@
+'\"macro stdmacro
+.if n .pH g1a.ncheck_ufs @(#)ncheck_ufs	40.10 of 4/16/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} ncheck 1M "UFS" "\&"
+.if \nX=1 .ds x} ncheck 1M "UFS"
+.if \nX=2 .ds x} ncheck 1M "" "\&"
+.if \nX=3 .ds x} ncheck "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4ncheck\f1 (ufs) \- generate pathnames versus i-numbers for \f4ufs\fP file systems
+.SH SYNOPSIS
+\f4ncheck\f1
+[\f4\-F ufs\f1]
+[\f2generic_options\f1]
+[\f4-i\f2 i-list\fP]
+[\f4-a\fP]
+[\f4-s\fP]
+[\f4\-o m\f1]
+[\f2special\f1 .\ .\ .\|]
+.SH DESCRIPTION
+.I generic_options
+are options supported by the generic \f4ncheck\f1 command.
+.PP
+\f4ncheck\f1
+generates a pathname versus i-number list of files for
+the 
+\f4ufs\f1
+file system.
+Names of directory files are followed
+by
+\f1"\f4/. \f1".
+.P
+The options are:
+.TP 0.6i
+\f4\-F ufs\f1
+Specifies the \f4ufs\f1-FSType.
+.TP
+\f4\-i\f2 i-list\f1
+Limits the report to the files on the i-list that follows.
+The i-list must be separated by commas without spaces.
+.TP
+\f4\-a\f1
+Allows printing of the names "." and "..",
+which are ordinarily suppressed.
+.TP
+\f4\-s\f1
+Limits the report to special files and files with set-user-ID mode.
+This option may be used to detect violations of security policy.
+.TP
+\f4\-o\f1
+Specify
+\f4ufs\f1
+file system specific options.
+The available option is:
+.RS 0.6i
+.TP
+\f4m\f1
+Print mode information.
+.RE
+.SH DIAGNOSTICS
+.LP
+When the file system structure is improper,
+\f4??\f1 denotes the \(lqparent\(rq of
+a parentless file and a pathname beginning with .\ .\ . denotes a loop.
+.SH "SEE ALSO"
+generic \f4ncheck\fP(1M)

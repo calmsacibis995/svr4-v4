@@ -1,0 +1,91 @@
+'\"macro stdmacro
+.if n .pH g1m.pwck @(#)pwck	40.9 of 4/18/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} pwck 1M "BSD Compatibility Package" "\&"
+.if \nX=1 .ds x} pwck 1M "BSD Compatibility Package"
+.if \nX=2 .ds x} pwck 1M "" "\&"
+.if \nX=3 .ds x} pwck "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4pwck\f1 \- check password database entries
+.SH SYNOPSIS
+\f4/usr/ucb/pwck\f1
+[
+.I filename
+]
+.SH DESCRIPTION
+.P
+\f4pwck\f1
+checks a password file for errors.
+If specified,
+.I filename
+is checked, otherwise
+\f4/etc/passwd\f1
+is checked.
+.PP
+This command differs from
+\f4/usr/sbin/pwck\f1
+in its ability to correctly parse
+.SM YP
+entries in
+\f4/etc/passwd\f1.
+.SH DIAGNOSTICS
+.TP
+\f4Too many/few fields\f1
+An entry in the password file does not have the proper number of
+fields.
+.TP
+\f4No login name\f1
+The login name field of an entry is empty.
+.TP
+\f4Bad character(s) in login name\f1
+The login name in an entry contains characters other than lower-case letters
+and digits.
+.TP
+\f4First char in login name not lower case alpha\f1
+The login name in an entry does not begin with a lower-case letter.
+.TP
+\f4Login name too long\f1
+The login name in an entry has more than 8 characters.
+.TP
+\f4Invalid UID\f1
+The user \s-1ID\s+1 field in an entry is not numeric or is greater than
+65535.
+.TP
+\f4Invalid GID\f1
+The group \s-1ID\s+1 field in an entry is not numeric or is greater than
+65535.
+.TP
+\f4No login directory\f1
+The login directory field in an entry is empty.
+.TP
+\f4Login directory not found\f1
+The login directory field in an entry refers to a directory that does not
+exist.
+.TP
+\f4Optional shell file not found.\f1
+The login shell field in an entry refers to a program or shell script that
+does not exist.
+.TP
+\f4No netgroup name\f1
+The entry is a Yellow Pages entry referring to a netgroup, but no
+netgroup is present.
+.TP
+\f4Bad character(s) in netgroup name\f1
+The netgroup name in a Yellow Pages entry contains characters other than
+lower-case letters and digits.
+.TP
+\f4First char in netgroup name not lower case alpha\f1
+The netgroup name in a Yellow pages entry does not begin with a lower-case
+letter.
+.SH FILES
+.PD 0
+.TP 20
+\f4/etc/passwd\f1
+.PD
+.SH SEE ALSO
+\f4group\fP(4),
+\f4passwd\fP(4)
+in the \f2System Administrator's Reference Manual\f1

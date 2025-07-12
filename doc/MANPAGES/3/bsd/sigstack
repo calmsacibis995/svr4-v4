@@ -1,0 +1,123 @@
+'\"macro stdmacro
+.if n .pH g3.sigstack @(#)sigstack	40.10 of 4/24/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.\" Copyright (c) 1988 Sun Microsystems, Inc. - All Rights Reserved.
+.\"
+.\" Copyright (c) 1983 Regents of the University of California.
+.\" All rights reserved.  The Berkeley software License Agreement
+.\" specifies the terms and conditions for redistribution.
+.\"
+.nr X
+.if \nX=0 .ds x} sigstack 3 "BSD Compatibility Package" "\&"
+.if \nX=1 .ds x} sigstack 3 "BSD Compatibility Package"
+.if \nX=2 .ds x} sigstack 3 "" "\&"
+.if \nX=3 .ds x} sigstack "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4sigstack\f1 \- set and/or get signal stack context
+.SH SYNOPSIS
+.nf
+\f4cc \f1[ \f2flag\f1\. \. \. ] \f2file\f1 \. \. \. \f4\-lucb\f1
+.P
+.ft 4
+#include <signal.h>
+.P
+.ft 4
+int sigstack (ss, oss)
+struct sigstack \(**ss, \(**oss;
+.ft 1
+.fi
+.SH DESCRIPTION
+\f4sigstack\f1
+allows users to define an alternate stack, called the ``signal stack,''
+on which signals are to be processed.
+When a signal's action indicates
+its handler should execute on the signal stack (specified with a
+\f4sigvec\f1(2)
+call), the system checks to see
+if the process is currently executing on that stack.
+If the process is not currently executing on the signal stack,
+the system arranges a switch to the signal stack for the
+duration of the signal handler's execution.
+.P
+A signal stack is specified by a
+\f4sigstack\f1
+structure, which includes the following members:
+.P
+.RS
+.nf
+.ft 4
+.ta 1i 1.7i 2.5i
+char	*ss_sp;			/* signal stack pointer */
+int	ss_onstack;		/* current status */
+.ft 1
+.fi
+.DT
+.RE
+.P
+\f4ss_sp\f1
+is the initial value to be assigned to the stack pointer
+when the system switches the process to the signal stack.
+Note that, on machines where the
+stack grows downwards in memory, this is
+.I not
+the address of the beginning of the signal stack area.
+\f4ss_onstack\f1
+field is zero or non-zero depending on whether the process is
+currently executing on the signal stack or not.
+.P
+If
+.I ss
+is not a
+\f4NULL\fP
+pointer,
+\f4sigstack\f1
+sets the signal stack state to the value in the
+\f4sigstack\f1
+structure pointed to by
+.IR ss .
+Note: if
+\f4ss_onstack\f1
+is non-zero, the system will think that the process is
+executing on the signal stack.
+If
+.I ss
+is a
+\f4NULL\fP
+pointer, the signal stack state will be unchanged.
+If
+.I oss
+is not a
+\f4NULL\fP
+pointer, the current signal stack state is stored in the
+\f4sigstack\f1
+structure pointed to by
+.IR oss .
+.SH "RETURN VALUE"
+Upon successful completion, a value of 0 is returned.
+Otherwise, a value of \-1 is returned and
+\f4errno\f1
+is set to indicate the error.
+.SH ERRORS
+\f4sigstack\f1
+will fail and the signal stack context will remain unchanged
+if one of the following occurs.
+.TP 15
+\f4EFAULT\fP
+Either
+.I ss
+or
+.I oss
+points to memory that is not a valid part of the process
+address space.
+.SH "SEE ALSO"
+\f4sigvec\fP(3),
+\f4signal\fP(3)
+.P
+\f4sigaltstack\fP(2),
+in the \f2Programmer's Reference Manual\f1
+.SH NOTES
+Signal stacks are not ``grown'' automatically, as is
+done for the normal stack.
+If the stack overflows unpredictable results may occur.

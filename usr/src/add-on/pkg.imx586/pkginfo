@@ -1,0 +1,15 @@
+#ident	"@(#)pkg.pc586:pkginfo	1.2.1.5"
+
+# imxlan586 pkginfo
+
+PKG="imx586"
+NAME="Intel IMXLAN586 Ethernet Driver"
+ARCH="i386"
+RELEASE="4.0"
+VERSION="1"
+VENDOR="USL"
+CATEGORY="system,utilities"
+CLASSES="none build"
+BASEDIR=""
+MAXINST="1"
+PREDEPEND="imx586"

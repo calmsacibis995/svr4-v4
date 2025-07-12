@@ -1,0 +1,99 @@
+'\"macro stdmacro
+.if n .pH g1a.icsrd @(#)icsrd	40.7 of 5/17/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} icsrd 8iref "System Administration Utilities" "" "\&"
+.if \nX=1 .ds x} icsrd 8iref "System Administration Utilities" ""
+.if \nX=2 .ds x} icsrd 8iref "" "\&"
+.if \nX=3 .ds x} icsrd "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4icsrd, icswr, icsslot, icsgetrec\f1 \- utilities to access Multibus II interconnect space
+.SH SYNOPSIS
+\f4/sbin/icsrd\f1 [\-\f2h\f1 \| \-\f2s\f1 \| \-\f2d\f1]  \f2slot_ID\f1 \f2register  count\f1
+.br
+\f4/sbin/icswr\f1  \f2slot_ID\f1  \f2register\f1  \f2count\f1  \f2value\f1
+.br
+\f4/sbin/icsslot\f1
+.br
+\f4/sbin/icsgetrec\f1 [\-\f2h\f1] \f2slot_number record_type\f1
+.SH DESCRIPTION
+The \f4ics\f1 utilities provide a command level interface to Multibus II
+Interconnect Space.  These commands are not intended to provide a user
+interface; they are simply a base set of access functions upon which shell
+scripts may be easily written.
+.SS "Reading Interconnect Space Registers:"
+The command \f4icsrd\f1 is used to read Interconnect Registers.  The
+arguments to \f4icsrd\f1 are a slot number, a starting register number, and
+a count of registers to be read.  All arguments are assumed to be decimal
+(valid slot numbers are 0 through 21).  Output consists of one line for each
+register, displayed on stdout.  Each line consists of the following components:
+.nf
+
+     00:002 (002H) -  67 (43H) [C]
+
+.fi
+.PP
+The first two fields, separated by a colon, are the slot and register numbers.
+The third field is the register number, reprinted in hexadecimal notation.
+The fourth, fifth, and sixth fields are all representations of the value in
+the register.  In order, they are: decimal, hex, and ASCII.  The ASCII
+field is only printed if it is a printable ASCII character.
+.PP
+The options \-\f2h\f1, \-\f2s\f1 and \-\f2d\f1 override the default output
+shown above.  These options are mutually exclusive.  The \-\f2h\f1 option
+outputs hex values.  The \-\f2d\f1 option outputs decimal values.
+The \-\f2s\f1 option outputs the values as a string.  For example,
+.nf
+
+    icsrd \-\f2s\f1 1 2 10
+.fi
+.PP
+will print out the board-id of the board in slot 1 (such as the iSBC 186/410).
+.SS "Writing Interconnect Space Registers:"
+The command \f4icswr\f1 is used to write Interconnect Space Registers.
+The arguments to \f4icswr\f1 are a slot number, a starting register
+number, a count, and a value.  All arguments are assumed to be in decimal.
+There is no output.
+.SS "Finding out which slot is your own:"
+The command \f4icsslot\f1 returns the slot number of the processor it was
+executed on.  By using \f4icsslot\f1, the user can determine which processor
+they are using.  This command also provides shell scripts a way of finding
+out which slot they are being run on.
+.SS "Finding a specific record in the interconnect space of a board:"
+The command \f4icsgetrec\f1 returns the starting register number of the
+specified record type.  The arguments to \f4icsgetrec\f1 are a slot
+number and a record type.  If such a record is found, its
+starting register number is returned.  If the interconnect 
+register cannot be found in the specified slot, a \-2 is
+returned.  For all other errors, a \-1 is returned.  All 
+arguments are assumed to be decimal (valid slot numbers 
+are 0 through 21 and valid record types are 0 through 255).
+Output is in decimal format, unless the \-h option is used to 
+specify a hexadecimal value.
+.PP
+For example, if you wanted the starting register number 
+of the Firmware Communications Record (record type 15) 
+of a serial board in slot 6, you would use the following command:
+.DS
+
+\f4icsgetrec 6 15\f1
+
+.DE
+.SH FILES
+\f4/sbin/icswr\f1
+.br
+\f4/sbin/icsrd\f1
+.br
+\f4/sbin/icsslot\f1
+.br
+\f4/sbin/icsgetrec\f1
+.SH SEE ALSO
+\f4dbon\f1(8iref),
+\f4reset\f1(8iref).
+.SH NOTES
+The user interface of these commands is not easy to use.  These utilities
+are intended as building blocks for shell scripts to manage interconnect
+space registers. Also, care should be taken when using \f4icswr\f1; with
+it any board on the bus can be reset, resulting in loss of data.

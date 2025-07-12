@@ -1,0 +1,134 @@
+'\"macro stdmacro
+.if n .pH 386.tape @(#)tape	40.1 of 6/3/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.nr X
+.if \nX=0 .ds x} tape 1 "" "\&"
+.if \nX=1 .ds x} tape 1 ""
+.if \nX=2 .ds x} tape 1 "" "\&"
+.if \nX=3 .ds x} tape "" "" "\&"
+.TH \*(x}
+.SH NAME
+tape \- magnetic tape maintenance
+.SH SYNOPSIS
+\f4tape\fP
+[ \f4-csf8i\fP ]
+[ \f4-a\fP \f2arg\fP ]
+\f2command\fP [ \f2device\fP ]
+.SH DESCRIPTION
+\f4tape\fP
+sends commands to and receives status from the tape subsystem.
+\f4tape\fP
+can communicate with
+QIC-24/QIC-02 cartridge tape drives and SCSI tape drives.
+.P
+\f4tape\fP
+reads
+\f4/etc/default/tape\fP
+to find the default device name for sending commands and receiving status.
+For example, the following line in
+\f4/etc/default/tape\fP
+will cause
+\f4tape\fP
+to communicate with the QIC-24/QIC-02 cartridge tape device:
+.IP
+\f4device = /dev/rmt/c0s0\fP
+.P
+If a device name is specified on the command line,
+it overrides the default device.
+\f4tape\fP queries the device to determine its device type.
+If the device does not respond to the query,
+for example if the cartridge tape driver is from
+an earlier release,
+\f4tape\fP
+will print a warning message and assume the
+device is a QIC-24/QIC-02 cartridge tape.
+.SH OPTIONS
+You can explicitly specify the type of the device
+by using the device type flags, as follows:
+.sp
+.RS
+.nf
+\f4-c\fP	QIC-24/QIC-02 cartridge tape
+\f4-s\fP	SCSI tape
+.fi
+.RE
+.SH COMMANDS
+The following commands can be used with the
+various tape drivers supported under UNIX.
+The letters following each description
+indicate which drivers support each
+command:
+.sp
+.RS
+.nf
+A	All drivers
+C	QIC-24/QIC-02 cartridge tape driver
+S	SCSI tape driver
+.RE
+.fi
+.sp
+.TP 12
+\f4erase\fP
+Erase and retension the tape cartridge.
+(C,S)
+.TP 12
+\f4reset\fP
+Reset tape controller and tape drive. Clears error conditions and
+returns tape subsystem to power-up state.
+(C,S)
+.TP 12
+\f4reten\fP
+Retension tape cartridge.
+Should be used periodically to remedy slack tape problems.
+Tape slack can cause an unusually large number of tape errors.
+(A)
+.TP 12
+\f4rewind\fP
+Rewind to beginning of tape.
+(A)
+.TP 12
+\f4rfm\fP
+Wind tape forward to the next file mark.
+(C,S)
+.SH FILES
+Devices:
+.sp
+.nf
+.ft 4
+/dev/rmt/c0s0
+/dev/rmt/c0s0n
+/dev/rmt/c0s0r
+/dev/rmt/c0s0nr
+/dev/rmt/c0t3d0s0
+.sp
+/etc/default/tape
+.fi
+.ft 1
+.sp
+Include files:
+.sp
+.nf
+.ft 4
+/usr/include/sys/tape.h
+.ft 1
+.fi
+.SH "SEE ALSO"
+\f4cpio\fP(1),
+\f4dd\fP(1),
+\f4tar\fP(1)
+.P
+\f4backup\fP(1M),
+\f4qt\fP(7)
+\f4restore\fP(1M),
+\f4xrestore\fP(1M) in the \f2System Administrator's Reference Manual\fP
+.SH NOTES
+The \f4reset\fP
+command can be used while the tape is busy with other operations.
+All other commands wait until the currently executing
+command has been completed before proceeding.
+.P
+When you are using the non-rewinding tape device or the \f4tape\fP command
+\f4rfm\fP, the tape drive light remains on after the
+command has been completed, indicating that more operations may be
+performed on the tape.
+The \f4tape rewind\fP command may be used to clear this condition.

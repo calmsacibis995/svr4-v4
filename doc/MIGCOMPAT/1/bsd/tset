@@ -1,0 +1,491 @@
+'\"macro stdmacro
+.if n .pH g1.tset @(#)tset	40.15 of 4/18/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} tset 1 "BSD Compatibility Package" "\&"
+.if \nX=1 .ds x} tset 1 "BSD Compatibility Package"
+.if \nX=2 .ds x} tset 1 "" "\&"
+.if \nX=3 .ds x} tset "" "" "\&"
+.TH \*(x}
+.\" @(#)tset.1 1.3 88/12/12 SMI; from UCB 4.3
+.\" Copyright (c) 1988 Sun Microsystems, Inc. - All Rights Reserved.
+.\"
+.SH NAME
+\f4tset\f1, \f4reset\f1 \- establish or restore terminal characteristics
+.SH SYNOPSIS
+\f4tset\f1 [ \f4\-InQrs\f1 ] [ \f4\-e\f2c\f1 ] [ \f4\-k\f2c\f1 ] [ \f4\-m\f1
+[ \f2port\f1 \-ID [ \f2baudrate\f1 ] : \f2type\f1 ] .\ .\ . ] [ \f2type\f1 ]
+.P
+\f4reset\f1 [ \f4\-\f1 ] [ \f4\-e\f2c\f1 ] [ \f4\-I\f1 ] [ \f4\-k\f2c\f1 ] [ \f4\-n\f1 ] 
+[ \f4\-Q\f1 ] [ \f4\-r\f1 ] [ \f4\-s\f1 ]
+         [ \f4\-m\f1 [ \f2indent\f1 ] [ \f2test baudrate\f1 ]: \f2type\f1 ] .\ .\ .
+[ \f2type\f1 ]
+.SH DESCRIPTION
+\f4tset\f1
+sets up your terminal, typically when you first log in.
+It does terminal dependent processing such as setting
+erase and kill characters, setting or resetting delays,
+sending any sequences needed to properly initialized the terminal,
+and the like.
+\f4tset\f1
+first determines the
+.I type
+of terminal involved,
+and then does necessary initializations and mode settings.
+If a port is not wired permanently to a
+specific terminal (not hardwired)
+it is given an appropriate generic identifier such as
+\f4dialup\f1.
+.P
+\f4reset\f1
+clears the terminal settings by turning off 
+.SM CBREAK
+and 
+.SM RAW
+modes, output delays and parity checking, turns on
+.SM NEWLINE
+translation, echo and
+.SM TAB
+expansion, and restores undefined special characters
+to their default state.   It then sets the modes as usual, based on
+the terminal type (which will probably override some of the above).
+See
+\f4stty\f1(1)
+for more information.
+All arguments to
+\f4tset\f1
+may be used with
+\f4reset\f1.
+\f4reset\f1
+also uses 
+\f4rs=\f1
+and
+\f4rf=\f1
+to reset the initialization string and file.
+This is useful after a program dies and leaves the terminal in a funny
+state.
+Often in this situation,
+characters will not echo as you type them.
+You may have to type
+\f1`<\s-1LINEFEED\s0>\f4reset\f1<\s-1LINEFEED\s0>'
+since
+\&`<\s-1RETURN\s0>'
+may not work.
+.P
+When no arguments are specified,
+\f4tset\f1
+reads the terminal type from the
+\f4TERM\fP
+environment variable
+and re-initializes the terminal, and
+performs initialization of mode, environment and other options at login
+time to determine the terminal type and set up terminal modes.
+.P
+When used in a startup script
+\f1(\f4\&.profile\f1
+for
+\f4sh\f1(1)
+users or
+\f4\&.login\f1
+for
+\f4csh\f1(1)
+users) it is desirable to give information about the type of terminal
+you will usually use on ports that are not hardwired.
+Any of the alternate generic names given in
+\f4/etc/termcap\f1
+may be used for the identifier.
+Refer to the
+\f4\-m\f1
+option below for more information.
+If no mapping applies and a final
+.I type
+option, not preceded by a
+\f4\-m\f1,
+is given on the command line then that type is used.
+.P
+It is usually desirable to return the
+terminal type, as finally determined by
+\f4tset\f1,
+and information about the terminal's capabilities,
+to a shell's environment.
+This can be done using the
+\f4\-\f1,
+\f4\-s\f1,
+or
+\f4\-S\f1
+options.
+.P
+For the Bourne shell, put this command in your \f4.profile\f1
+file:
+.IP
+\f4eval \`tset \-s\f1
+\f2options\f1 .\ .\ .\f4\`\f1
+.P
+or using the C shell, put this command in your \f4.login\f1
+file:
+.IP
+\f4eval \`tset \-s\f1
+\f2options\f1 .\ .\ .\f4\`\f1
+.P
+With the C shell, it is also convenient to make an alias in your \f4.cshrc\f1
+file:
+.IP
+\f4alias tset \'eval \`tset \-s \e!*\`\'\f1
+.P
+This also allows the command:
+.IP
+\f4tset 2621\f1
+.P
+to be invoked at any time to set the terminal and environment.
+It is
+not
+possible to get this aliasing effect with a Bourne shell script,
+because shell scripts cannot set the environment of their parent.
+If a process could set its parent's environment,
+none of this nonsense would be necessary in the first place.
+.P
+Once the terminal type is known,
+\f4tset\f1
+sets the terminal driver mode.
+This normally involves sending an initialization sequence to the
+terminal, setting the single character erase (and optionally
+the line-kill (full line erase)) characters,
+and setting special character delays.
+.SM TAB
+and
+.SM NEWLINE
+expansion are turned off during transmission of
+the terminal initialization sequence.
+.P
+On terminals that can backspace but not overstrike (such as a
+\s-1CRT\s0),
+and when the erase character is
+\f1`\f4#\f1',
+the erase character is changed as if
+\f4-e\f1
+had been used.
+.P
+The following options are available with
+\f4tset\f1:
+.TP
+\f4\-\f1
+The name of the terminal finally decided
+upon is output on the standard output.
+This is intended to be captured by the shell and placed in the
+\f4TERM\fP
+environment variable.
+.TP
+\f4\-e\f2c\f1
+Set the erase character to be the named character
+.I c
+on all terminals.
+Default is the
+\s-1BACKSPACE\s0
+key on the keyboard, usually
+\f4^H\f1 (\s-1CTRL\s0-H).
+The character
+.I c
+can either be typed directly, or entered using
+the circumflex-character notation used here.
+.TP
+\f4\-i\f2c\f1
+Set the interrupt character to be the named character
+.I c
+on all terminals.
+Default is
+\f4^C\f1 (\s-1CTRL\s0-C).
+The character
+.I c
+can either be typed directly, or entered using
+the circumflex-character notation used here.
+.TP
+\f4\-I\f1
+Suppress transmitting terminal-initialization strings.
+.TP
+\f4\-k\f2c\f1
+Set the line kill character to be the named character
+.I c
+on all terminals.
+Default is
+\f4^U\f1 (\s-1CTRL\s0-U).
+The kill character is left alone if
+\f4\-k\f1
+is not specified.
+Control characters can be specified by prefixing the alphabetical
+character with a circumflex (as in \s-1CTRL\s0-U)
+instead of entering the
+actual control key itself.  This allows you to specify control keys
+that are currently assigned.
+.TP
+\f4\-n\f1
+.\"On systems with the Berkeley 4BSD tty driver,
+Specify that the new tty driver modes should be initialized for this
+terminal.  Probably useless since
+\f4stty new\f1
+is the default.
+.\"For a \s-2CRT\s0,
+.\"the CRTERASE and CRTKILL modes are set only if the baud rate is 1200 or greater.
+.TP
+\f4\-Q\f1
+Suppress printing the
+\f1`\f4Erase set to\f1'
+and
+\f1`\f4Kill set to\f1'
+messages.
+.TP
+\f4\-r\f1
+In addition to other actions, reports the terminal type.
+.TP
+\f4\-s\f1
+Output commands to set and export
+\f4TERM\fP.
+This can be used with
+.RS 
+.RS
+.nf
+.ft 4
+set noglob
+eval \`tset \-s \f1.\ .\ .\`\fP
+unset noglob
+.ft 1
+.fi
+.RE
+.RE
+.IP
+to bring the terminal information into the environment.
+Doing so makes programs such as
+\f4vi\f1(1)
+start up faster.
+If the
+\f4SHELL\fP
+environment variable ends with
+\f4csh\f1,
+C shell commands are output, otherwise Bourne
+shell commands are output.
+.br
+.ne 11
+.TP
+\f4\-m\f1 [\f2port\f1-ID[\f2baudrate\f1]\f4:\f2type\f1] .\ .\ .
+Specify (map) a terminal type when connected to a generic port
+(such as
+.I dialup
+or
+.IR plugboard )
+identified by
+.IR port-ID.
+The
+.I baudrate
+argument can be used to
+check the baudrate of the port and set the terminal type
+accordingly.  The target rate is prefixed
+by any combination of the following operators
+to specify the conditions under which the mapping is made:
+.RS
+.RS
+.PD 0
+.TP
+\f4>\f1
+Greater than
+.TP
+\f4@\f1
+Equals or ``at''
+.TP
+\f4<\f1
+Less than
+.TP
+\f4!\f1
+It is not the case that (negates the above operators)
+.TP
+\f4?\f1
+Prompt for the terminal type.  If no response is given, then
+.I type
+is selected by
+default.
+.PD
+.RE
+.RE
+.IP
+In the following example, the terminal type is set to
+\f4adm3a\f1
+if the port
+is a dialup with a speed of greater than 300 or to
+\f4dw2\f1
+if the port is
+a dialup at 300 baud or less.
+In the third case, the question mark preceding
+the terminal type indicates that the user is to verify the
+type desired.  A
+\f4NULL\fP
+response indicates that the
+named type is correct.
+Otherwise, the user's response is taken to be the type desired.
+.RS
+.IP
+\f4tset \-m 'dialup>300:adm3a' \-m 'dialup:dw2' \-m \e
+.ti +3
+\&'plugboard:?adm3a'\f
+.P
+To prevent interpretation as metacharacters, the entire argument to
+\f4\-m\f1
+should be enclosed in single quotes.   When using the
+C shell,
+exclamation points should be preceded by a backslash (\e).
+.RE
+.SH EXAMPLES
+These examples all use the 
+\f1`\f4\-\f1'
+option.  A typical use of
+\f4tset\f1
+in a \f4.profile\f1
+or \f4.login\f1
+will also use the
+\f4\-e\f1
+and
+\f4\-k\f1
+options, and often the
+\f4\-n\f1
+or
+\f4\-Q\f1
+options as well.
+These options have been omitted here to keep the examples short.
+.P
+To select a 2621, you might put the following sequence of commands in
+your \f4.login\f1
+file (or \f4.profile\f1
+for Bourne shell users).
+.RS 10
+.nf
+.ft 4
+set noglob
+eval \`tset \-s 2621\`
+unset noglob
+.ft 1
+.fi
+.RE
+.P
+If you have a switch which connects to various ports (making
+it impractical to identify which port you may be connected to),
+and use various terminals from time to time, you can select from
+among those terminals according to the
+.I speed
+or baud rate.
+In the example below,
+\f4tset\f1
+will prompt you for a terminal type if the baud rate
+is greater than 1200 (say, 9600 for a terminal connected by an
+RS-232 line), and use a Wyse\(rg 50 by default.  If the baud rate is
+less than or equal to 1200, it will select a 2621.
+Note the placement of the question mark, and the quotes
+to protect the
+\f4>\f1
+and
+\f4?\f1
+from interpretation by the shell.
+.br
+.ne 4
+.RS 10
+.nf
+.ft 4
+set noglob
+eval \`tset \-s \-m 'switch>1200:?wy' \-m 'switch<=1200:2621'\`
+unset noglob
+.ft 1
+.fi
+.RE
+.P
+The following entry is appropriate if
+you always dial up, always at the same baud rate,
+on many different kinds of terminals, and the terminal you use
+most often is an
+\f4adm3a\f1.
+.RS 10
+.nf
+.ft 4
+set noglob
+eval \`tset \-s \?adm3a\`
+unset noglob
+.ft 1
+.fi
+.RE
+If you want to make the selection based only on the baud rate,
+you might use the following:
+.RS 10
+.nf
+.ft 4
+set noglob
+eval \`tset \-s \-m '>1200:wy' 2621\`
+unset noglob
+.ft 1
+.fi
+.RE
+.P
+The following example quietly sets the erase character to
+.SM BACKSPACE,
+and kill to
+.SM CTRL-U\s0.
+If the port is switched, it selects a Concept\(tm 100 for speeds less than
+or equal to 1200, and asks for the terminal type otherwise
+(the default in this case is a Wyse 50).
+If the port is a
+direct dialup, it selects Concept 100 as the terminal type.
+If logging in over the
+.SM ARPANET\s0,
+the terminal type selected is a
+Datamedia\(rg 2500 terminal or emulator.  Note the backslash
+escaping the
+.SM NEWLINE
+at the end of the first line in the example.
+.RS 10
+.ft 4
+.nf
+set noglob
+eval \`tset \-e \-k^U \-Q \-s \-m 'switch<=1200:concept100' \-m \e
+	'switch:?wy' \-m dialup:concept100 \-m arpanet:dm2500\`
+unset noglob
+.fi
+.ft 1
+.RE
+.SH FILES
+.PD 0
+.TP 20
+\f4\&.login\f1
+.TP
+\f4\&.profile\f1
+.PD
+.SH SEE ALSO
+\f4csh\fP(1),
+\f4sh\fP(1),
+\f4vi\fP(1),
+\f4stty\fP(1)
+in the \f2User's Reference Manual\f1
+.P
+\f4ttytab\fP(5),
+\f4termcap\fP(5),
+\f4environ\fP(5)
+in the \f2System Administrator's Reference Manual\f1
+.SH NOTES
+The \f4tset\f1
+command is one of the first commands a user must master
+when getting started on a
+.SM UNIX
+system.
+Unfortunately, it is one of the most complex,
+largely because of the extra effort the user must go through
+to get the environment of the login shell set.
+Something needs to be done to make all this simpler, either the
+\f4login\f1
+program should do this stuff, or a default shell alias should be made,
+or a way to set the environment of the parent should exist.
+.P
+This program cannot intuit personal choices for erase, interrupt
+and line kill characters, so it leaves these set to the local system
+standards.
+.P
+It could well be argued that the shell should
+be responsible for ensuring that
+the terminal remains in a sane state;
+this would eliminate the need for the
+\f4reset\f1
+program.
+.Ee

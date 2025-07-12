@@ -1,0 +1,79 @@
+'\"macro stdmacro
+.if n .pH g1.mouseadmin @(#)mouseadmin	40.9 of 1/4/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.tr ~
+.nr X
+.if \nX=0 .ds x} mouseadmin 1 ""  "" "\&"
+.if \nX=1 .ds x} mouseadmin 1 ""  ""
+.if \nX=2 .ds x} mouseadmin 1 "" "\&"
+.if \nX=3 .ds x} mouseadmin "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4mouseadmin\f1 - mouse administration
+.SH SYNOPSIS
+\f4mouseadmin [ \f4-nbl\f1 ] [ \f4-d \f2terminal\f1 ] [ \f4-a \f2terminal mouse\f4]
+.SH DESCRIPTION
+.PP
+\f4mouseadmin\f1 allows any user with system
+administrator privileges to add or delete mouse
+devices.
+Users without "superuser" privileges will only be allowed
+to list the current mouse/display assignments.
+The \f4mouseadmin\f1 command issued without arguments
+will execute in menu mode, providing the user with
+a listing of current assignments and a selection menu of operations.
+.SH OPTIONS
+.PP
+The command line arguments are defined as follows:
+.PP
+.TP 8
+\f4 \-n\f1
+build mouse/display pair table without downloading to driver.
+(This option should only be used within install scripts.)
+.PP
+.TP 8
+\f4 \-b\f1
+do not validate for BUS mouse in system configuration.
+(This option should only be used within install scripts.)
+.PP
+.TP 8
+\f4 \-l\f1
+list mouse/display assignments.
+.PP
+.TP 8
+\f4 \-d\f1
+delete terminal assignment.
+.PP
+.TP 8
+\f4 \-a\f1
+assign mouse device (PS2, BUS, tty00, s0tty0, etc.) to terminal
+(console, s0vt00, etc.).
+.TP 8
+~
+When using the \f4-a\f1 option, the \f4mouseadmin\f1 command
+format is:
+.TP 10
+~
+\f4mouseadmin -a \f2terminal mouse_device\fP
+.TP 8
+~
+For example:
+.TP 10
+~
+\f4mouseadmin -a console PS2
+.br
+mouseadmin -a console BUS
+.br
+mouseadmin -a s0vt00 tty00
+.br
+mouseadmin -a s0vt00 tty01\f1
+.SH FILES
+.PP
+\f4/usr/bin/mouseadmin\f1
+.br
+\f4/usr/lib/mousemgr\f1
+.SH "SEE ALSO"
+\f4mouse\fP(7)
+.br
+\f2Mouse Driver Administrator's Guide\fP

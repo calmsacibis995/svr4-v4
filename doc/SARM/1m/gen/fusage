@@ -1,0 +1,33 @@
+'\"macro stdmacro
+.if n .pH g1a.fusage @(#)fusage	40.6 of 4/12/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} fusage 1M "RFS" "\&"
+.if \nX=1 .ds x} fusage 1M "RFS"
+.if \nX=2 .ds x} fusage 1M "" "\&"
+.if \nX=3 .ds x} fusage "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4fusage\f1 \- disk access profiler
+.SH SYNOPSIS
+\f4fusage\f1
+[[\f2mount_point\f1] | [\f2advertised_resource\f1] | [\f2block_special_device\f1] [\|.\ .\ .\|]]
+.SH DESCRIPTION
+When used with no options, \f4fusage\fP reports block
+I/O transfers, in kilobytes, to and from all locally mounted file systems
+and advertised Remote File Sharing resources on a per client basis.
+The count data are cumulative since the time of the mount.
+When used with an option, \f4fusage\fP reports on the
+named file system, advertised resource, or block special device.
+.P
+The report includes one section for each file system and advertised
+resource and has one entry for each machine that has the directory
+remotely mounted,
+ordered by decreasing usage.
+Sections are ordered by device name; advertised resources that are not
+complete file systems will immediately follow the sections for the file systems
+they are in.
+.SH "SEE ALSO"
+\f4adv\fP(1M), \f4mount\fP(1M), \f4df\fP(1M), \f4crash\fP(1M)
+.\"	@(#)fusage.1m	6.3 of 9/2/83

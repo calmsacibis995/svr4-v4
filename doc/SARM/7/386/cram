@@ -1,0 +1,37 @@
+.if n .pH g7.cram @(#)cram	40.3 of 1/3/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.if \nX=0 .ds x} cram 7 "" "\&"
+.if \nX=1 .ds x} cram 7 ""
+.if \nX=2 .ds x} cram 7 "" "\&"
+.if \nX=3 .ds x} cram "" "" "\&"
+.TH \*(x} "" "386 Computer Only"
+.SH NAME
+\f4cram\f1\- CMOS RAM interface
+.SH DESCRIPTION
+The cram driver provides an interface to the 64 bytes of battery backed-up
+RAM.  This memory contains information such as diagnostics and
+configuration information.
+.SS Ioctl Calls
+.TP
+CMOSREAD
+This call is used to read the contents of one of the CMOS RAM locations.  The
+argument to the ioctl is the address of a buffer of two unsigned characters,
+the first of which is the address to be read.  The ioctl will fill in the
+second byte with the data.  An address less than 0 or greater than 63 will
+result in an error, with
+.I errno
+set to ENXIO.
+.TP
+CMOSWRITE
+This call is used to write a value into one of the CMOS RAM locations.  The
+argument to the ioctl is the address of a buffer of two unsigned characters,
+the first of which is the address and the second of which is
+the value to write at that address.  An address less than 0 or greater than
+63 will result in an error, with
+.I errno
+set to ENXIO.  Note that only the super-user may open the CMOS RAM
+device for writing, and that the CMOSWRITE ioctl will fail for any other than
+the super-user.
+.SH FILES
+\f4/dev/cram\f1

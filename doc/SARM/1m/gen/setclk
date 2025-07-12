@@ -1,0 +1,39 @@
+.if n .pH g1a.setclk @(#)setclk	40.5.1.2 of 2/27/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} setclk 1M "Essential Utilities" "\&"
+.if \nX=1 .ds x} setclk 1M "Essential Utilities"
+.if \nX=2 .ds x} setclk 1M "" "\&"
+.if \nX=3 .ds x} setclk "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4setclk\f1 \- set system time from hardware clock
+.SH SYNOPSIS
+\f4/sbin/setclk\f1
+.SH DESCRIPTION
+\f4setclk\fP
+is used to set the internal system time from
+the hardware time-of-day clock.
+The command can be used only by the super-user.
+It is normally executed by an entry in the
+\f4/etc/inittab\f1
+file when the system is initialized at boot time.
+Note that 
+\f4setclk\fP
+checks the Nonvolatile Random Access Memory
+(\s-1NVRAM\s+1) only for the date.
+If the date is set,
+\f4setclk\fP
+runs silently.
+If the date is not set,
+\f4setclk\fP
+prompts the user to use
+\f4sysadm  datetime\f1
+[see
+\f4sysadm\fP(1)]
+for the proper setting of the hardware clock.
+.SH SEE ALSO
+\f4sysadm\fP(1) in the
+\f2User's Reference Manual\f1.
+.Ee

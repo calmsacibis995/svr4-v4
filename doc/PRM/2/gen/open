@@ -1,0 +1,388 @@
+'\"macro stdmacro
+.if n .pH g2.open @(#)open	40.32.1.2 of 5/21/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} open 2 "" "\&"
+.if \nX=1 .ds x} open 2 ""
+.if \nX=2 .ds x} open 2 "" "\&"
+.if \nX=3 .ds x} open "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4open\f1 \- open for reading or writing
+.SH SYNOPSIS
+\f4#include <sys/types.h>\f1
+.br
+\f4#include <sys/stat.h>\f1
+.br
+\f4#include <fcntl.h>\f1
+.PP
+\f4int open (const char \(**path, int oflag, ... /* mode_t mode */)\f1;
+.SH DESCRIPTION
+.I path\^
+points to a
+path name
+naming a file.
+\f4open\fP
+opens a file descriptor for the named file
+and sets the file status flags
+according to the value of
+.IR oflag .
+.I oflag\^
+values are constructed by \s-1OR\s0-ing Flags
+from the following list (only one of the first three flags below
+may be used):
+.PP
+.TP 14n
+\f4O_RDONLY\f1
+Open for reading only.
+.TP 14n
+\f4O_WRONLY\f1
+Open for writing only.
+.TP 14n
+\f4O_RDWR\f1
+Open for reading and writing.
+.TP 14n
+\f4O_NDELAY\f1 or \f4O_NONBLOCK\f1
+These flags may affect subsequent reads and writes
+[see
+\f4read\fP(2)
+and
+\f4write\fP(2)].
+If both
+\f4O_NDELAY\f1
+and
+\f4O_NONBLOCK\f1
+are set,
+\f4O_NONBLOCK\f1
+will take precedence.
+.IP "" 14n
+When opening a
+.SM FIFO
+with
+\f4O_RDONLY\fP
+or
+\f4O_WRONLY\fP
+set:
+.IP "" 18n
+If
+\f4O_NDELAY\f1
+or
+\f4O_NONBLOCK\f1
+is set:
+An \f4open\fP for reading-only will return without delay;
+an
+\f4open\fP
+for writing-only will return an error if no process
+currently has the file open for reading.
+.IP "" 18n
+If
+\f4O_NDELAY\f1
+and
+\f4O_NONBLOCK\f1
+are clear:
+An \f4open\fP for reading-only will block until a process
+opens the file for writing;
+an
+\f4open\fP
+for writing-only will block until a process
+opens the file for reading.
+.IP "" 14n
+When opening a block-special or character-special file:
+.IP "" 18n
+If
+\f4O_NDELAY\f1
+or
+\f4O_NONBLOCK\f1
+is set:
+The open will return without waiting for the device to be ready or
+available; subsequent behavior of the device is device specific.  
+.IP "" 18n
+If
+\f4O_NDELAY\f1
+and
+\f4O_NONBLOCK\f1
+are clear:
+The open will block until the device is ready or available.
+.TP 14n
+\f4O_APPEND\f1
+If set, the file pointer will be set to the end of the file
+prior to each write.
+.TP 14n
+\f4O_SYNC\f1
+When opening a regular file, this flag affects subsequent writes.
+If set, each
+\f4write\fP(2)
+will wait for both the file data and file status to be physically updated.
+.TP 14n
+\f4O_NOCTTY\f1
+If set and the file is a terminal, the terminal will not be allocated as
+the calling process's controlling terminal.
+.TP 14n
+\f4O_CREAT\f1
+If the file exists, this flag has no effect, except as noted under
+\f4O_EXCL\f1
+below.
+Otherwise, the file is created and the owner
+.SM ID
+of the file
+is set to the effective
+user
+.SM ID\*S
+of the process,
+the group
+.SM ID
+of the file
+is set to the effective group
+.SM ID\*S
+of the process, or if the
+\f4S_ISGID\f1
+bit is set in the directory in which
+the file is being created, the file's group ID is set to the group ID
+of its parent directory.  If the
+group ID of the new file does not match the effective group ID or one of
+the supplementary groups IDs, the
+\f4S_ISGID\f1
+bit is cleared.  
+The access permission bits of the file mode are set to the value of
+\f2mode\f1, modified as follows [see
+\f4creat\fP(2)]:
+.IP "" 18n
+All bits set in the file mode creation mask of the process are cleared
+[see
+\f4umask\fP(2)].
+.IP "" 18n
+The ``save text image after execution bit'' of the mode is cleared
+[see
+\f4chmod\fP(2)].
+.TP 14n
+\f4O_TRUNC \f1
+If the file exists, its length is truncated to 0 and the mode and owner 
+are unchanged.
+\f4O_TRUNC\f1
+has no effect on \s-1FIFO\s+1 special files or directories.
+.TP 14n
+\f4O_EXCL\f1
+If
+\f4O_EXCL\fP
+and
+\f4O_CREAT\fP
+are set,
+\f4open\fP
+will fail if the file exists.
+The check for the existence of the file and the creation of the file if it
+does not exist is atomic with respect to other processes executing \f4open\fP
+naming the same filename in the same directory with \f4O_EXCL\fP and
+\f4O_CREAT\fP set.
+.PP
+When opening a \s-1STREAMS\s0 file,
+.I oflag
+may be constructed from
+\f4O_NDELAY\f1
+or
+\f4O_NONBLOCK\f1
+\s-1OR\s+1-ed with either
+\f4O_RDONLY\f1,
+\f4O_WRONLY ,\f1
+or
+\f4O_RDWR\f1.
+Other flag values are not applicable to \s-1STREAMS\s0 devices and have no 
+effect on them.
+The values of \f4O_NDELAY\fP and \f4O_NONBLOCK\fP affect the operation of
+\s-1STREAMS\s+1 drivers and certain system calls
+[see \f4read\fP(2), \f4getmsg\fP(2), \f4putmsg\fP(2), and \f4write\fP(2)].
+For drivers, the implementation of \f4O_NDELAY\fP and \f4O_NONBLOCK\fP is
+device specific.
+Each \s-1STREAMS\s+1 device driver may treat these options differently.
+.PP
+When \f4open\fP is invoked to open a named stream, and the \f4connld\fP module
+[see \f4connld\fP(7)] has been pushed on the pipe, \f4open\fP blocks until
+the server process has issued an \f4I_RECVFD ioctl\fP [see \f4streamio\fP(7)]
+to receive the file descriptor.
+.PP
+If \f2path\fP is a symbolic link and \f4O_CREAT\fP and \f4O_EXCL\fP are set,
+the link is not followed.
+.PP
+The file pointer used to mark the current position within the file
+is set to the beginning of the file.
+.PP
+The new file descriptor is the lowest numbered file descriptor available
+and is set to remain open across
+\f4exec\fP
+system calls
+[see
+\f4fcntl\fP(2)].
+.PP
+Certain flag values can be set following \f4open\fP as described in \f4fcntl\fP(2).
+.PP
+If \f4O_CREAT\fP is set and the file did not previously exist,
+upon successful completion \f4open\fP marks for update the \f4st_atime\fP,
+\f4st_ctime\fP and \f4st_mtime\fP fields of the file and the \f4st_ctime\fP
+and \f4st_mtime\fP fields of the parent directory.
+.PP
+If \f4O_TRUNC\fP is set and the file did previously exist, upon successful
+completion \f4open\fP marks for update the \f4st_ctime\fP and \f4st_mtime\fP
+fields of the file.
+.PP
+The named file is opened unless one or more of the following are true:
+.TP 20
+\f4EACCES\fP
+The file does not exist and write permission is denied by the parent
+directory of the file to be created.
+.TP
+\f4EACCES\fP
+\f4O_TRUNC\f1
+is specified and write permission is denied
+.TP
+\f4EACCES\fP
+A component of the
+path prefix
+denies search permission.
+.TP
+\f4EACCES\fP
+.I oflag\^
+permission is denied for an existing file.
+.TP
+\f4EAGAIN\fP
+The file exists, mandatory file/record locking is set,
+and there are outstanding record locks on the file
+[see \f4chmod\fP(2)].
+.TP
+\f4EAGAIN\fP
+\f4O_NDELAY\fP or \f4O_NONBLOCK\fP is set,
+the named file is a STREAMS device
+and there is another process trying to open it at the same time.
+.TP
+\f4EEXIST\fP
+\f4O_CREAT\f1
+and
+\f4O_EXCL\f1
+are set,
+and the named file exists.
+.TP
+\f4EFAULT\fP
+.I path\^
+points outside the allocated address space of the process.
+.TP
+\f4EINTR\fP
+A signal was caught during the
+\f4open\fP
+system call.
+.TP
+\f4EIO\fP
+A hangup or error occurred during the open of the \s-1STREAMS\s0-based device.
+.TP
+\f4EISDIR\fP
+The named file is a directory and
+.I oflag\^
+is write or
+read/write.
+.TP
+\f4ELOOP\fP
+Too many symbolic links were encountered in translating \f2path\f1.
+.TP
+\f4EMFILE\fP
+The process has too many open files [see
+\f4getrlimit\fP(2)].
+.TP
+\f4EMULTIHOP\fP
+Components of \f2path\f1 require hopping to 
+multiple remote machines and the file system does not allow it.
+.TP 20
+\f4ENAMETOOLONG\fP
+The length of the \f2path\f1 argument exceeds {\f4PATH_MAX\fP}, or the
+length of a \f2path\f1 component exceeds {\f4NAME_MAX\fP} while
+{\f4_POSIX_NO_TRUNC\fP} is in effect.
+.TP
+\f4ENFILE\fP
+The system file table is full.
+.TP
+\f4ENOENT\fP
+\f4O_CREAT\f1
+is not set and the named file does not exist.
+.TP
+\f4ENOENT\fP
+\f4O_CREAT\f1
+is set and a component of the path prefix
+does not exist or is the null pathname.
+.TP
+\f4ENOLINK\fP
+\f2path\f1 points to a remote machine, and the link 
+to that machine is no longer active.
+.TP
+\f4ENOMEM\fP
+The system is unable to allocate a send descriptor.
+.TP
+\f4ENOSPC\fP
+\f4O_CREAT \f1
+and 
+\f4O_EXCL\f1
+are set, and the file system is out of inodes.
+.TP
+\f4ENOSPC\fP
+\f4O_CREAT\fP is set and the directory that would contain the file
+cannot be extended.
+.TP
+\f4ENOSR\fP
+Unable to allocate a stream.
+.TP
+\f4ENOTDIR\fP
+A component of the
+path prefix
+is not a directory.
+.TP
+\f4ENXIO\fP
+The named file is a character special or block special file,
+and the device associated with this special file does not exist.
+.TP
+\f4ENXIO\fP
+\f4O_NDELAY\f1
+or
+\f4O_NONBLOCK\f1
+is set, the named file is a \s-1FIFO\s+1,
+\f4O_WRONLY\f1
+is set, and no process has the file open for reading.
+.TP
+\f4ENXIO\fP
+A \s-1STREAMS\s0 module or driver open routine failed.
+.TP
+\f4EROFS\fP
+The named file resides on a read-only file system and either
+\f4O_WRONLY\f1,
+\f4O_RDWR\f1,
+\f4O_CREAT\f1,
+or
+\f4O_TRUNC\f1
+is set in
+.I oflag\^
+(if the file does not exist).
+.TP
+\f4ETXTBSY\fP
+The file is a pure procedure (shared text) file that is being executed and
+.I oflag\^
+is write or read/write.
+.SH "SEE ALSO"
+\f4intro\fP(2),
+\f4chmod\fP(2),
+\f4close\fP(2),
+\f4creat\fP(2),
+\f4dup\fP(2),
+\f4exec\fP(2),
+\f4fcntl\fP(2),
+\f4getrlimit\fP(2),
+\f4lseek\fP(2),
+\f4read\fP(2),
+\f4getmsg\fP(2),
+\f4putmsg\fP(2),
+\f4stat\fP(2),
+\f4umask\fP(2),
+\f4write\fP(2),
+\f4stat\fP(5).
+.SH "DIAGNOSTICS"
+Upon successful completion,
+the file descriptor
+is returned.
+Otherwise, a value of \-1 is returned and \f4errno\fP
+is set to indicate the error.
+.\"	@(#)open.2	6.2 of 9/6/83
+.Ee

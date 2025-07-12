@@ -1,0 +1,632 @@
+'\"macro stdmacro
+.if n .pH g1.sdb @(#)sdb	40.15.1.2 of 4/12/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} sdb 1 "Extended Software Generation System Utilities" "\&"
+.if \nX=1 .ds x} sdb 1 "Extended Software Generation System Utilities"
+.if \nX=2 .ds x} sdb 1 "" "\&"
+.if \nX=3 .ds x} sdb "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4sdb\f1 \- symbolic debugger
+.SH SYNOPSIS
+\f4sdb\f1
+[\f4\-e\f1] [\f4\-s\f2 signo\f1] [\f4\-V\f1] [\f4\-W\f1] [\f4\-w\f1] [\f2objfile\f1 [\f2corfile [\f2directory-list\f1]]]
+.SH DESCRIPTION
+\f4sdb\fP 
+is the symbolic debugger for C and assembly programs.
+\f4sdb\fP may be used to examine executable program
+files and core files.
+It may also be used to examine live processes in
+a controlled execution environment.
+.PP
+The \f2objfile\f1 argument is the name of an executable program file.
+To take full advantage of the symbolic capabilities of
+\f4sdb\fP, this file
+should be compiled with the
+\f4\-g\f1 
+(debug) option.
+If it has not been compiled with the
+\f4\-g\f1 
+option, the symbolic capabilities of
+\f4sdb\fP will be limited,
+but the file can still be examined and the program debugged.
+\f2objfile\f1 may also be a path name in the \f4/proc\f1
+directory, in which case the currently executing process
+denoted by that path name is controlled by \f4sdb\f1.
+.PP
+The \f2corfile\f1 argument is the name of a core image file.
+A core image file is produced
+by the abnormal termination of \f2objfile\f1 or by the use of \f4gcore\f1.
+A core image file contains a copy of the segments of a program.
+The default for \f2corfile\f1 is \f4core\f1.
+A core image file need not be present to use \f4sdb\f1.
+Using a hyphen (\f4\-\f1) instead of \f2corfile\f1 
+forces \f4sdb\fP to ignore an existing core image file.
+.PP
+The \f2directory-list\f1 argument is a colon-separated
+list of directories that is used by \f4sdb\f1 to locate
+source files used to build \f2objfile\f1.
+If no directory list is specified, \f4sdb\f1
+will look in the current directory.
+.PP
+The following options are recognized by \f4sdb\f1:
+.TP
+\f4\-e\f1
+Ignore symbolic information
+and treat nonsymbolic addresses as file offsets.
+.TP
+\f4\-s \f2signo\f1
+Where \f2signo\f1 is a decimal number that
+corresponds to a signal number [see \f4signal\f1(2)],
+do not stop live processes under control of \f4sdb\f1
+that receive the signal.
+This option may be used more than once on
+the \f4sdb\f1 command line.
+.TP
+\f4\-V\f1
+Print version information.
+If no \f2objfile\f1 argument is specified on the command line,
+\f4sdb\f1 will exit after printing the version information.
+.TP
+\f4\-W\f1
+Suppress warnings about \f2corfile\f1 being
+older than \f2objfile\f1 or about source
+files that are older than \f2objfile\f1.
+.TP
+\f4\-w\f1
+Allow user to write to \f2objfile\f1 or \f2corfile\f1.
+.PP
+\f4sdb\f1 recognizes a current line and a current file.
+When \f4sdb\f1 is examining an executable program file
+without a core file, the current line and current file
+are initially set to the line and file containing the
+first line of \f4main\f1.
+If \f2corfile\f1 exists, 
+then current line and current file are initially set
+to the line and file containing the source statement
+where the process terminated.
+The current line and current file
+change automatically
+as a live process executes.
+They may also be changed with the source file
+examination commands.
+.PP
+Names of variables are written as in C.
+Variables local to a procedure may be accessed using the form
+\f2procedure\f4:\f2variable\f1.\f1
+If no procedure name is given,
+the procedure containing the
+current line is used by default.
+.PP
+Structure members may be referred to as
+\f2variable\f4.\f2member\f1,
+pointers to structure members as
+\f2variable\f4\(mi>\f2member\f1,
+and array elements as
+\f2variable\f4[\f2number\f4]\f1.
+Pointers may also be dereferenced by using the form
+\f2pointer\f4[\f2number\f4]\f1.
+Combinations of these forms may also be used.
+The form \f2number\f4\(mi>\f2member\f1 may be used
+where \f2number\f1 is the address of a pointer, and
+\f2number\f4.\f2member\f1
+where \f2number\f1 is interpreted as the
+address of a structure instance.
+The template of the structure type
+used in this case will be the last structure type referenced.
+When \f4sdb\f1 displays the value of a structure,
+it does so by displaying the value of all elements
+of the structure.
+The address of a structure is displayed
+by displaying the address of the structure
+instance rather than the addresses of individual elements.
+.PP
+Elements of a multidimensional array may be referred to as
+\f2variable \f4[\f2number\f4][\f2number\f4]\f1..., or as \f2variable \f4[\f2number\f4,\f2number\f4,\f1...\f4]\f1.
+In place of \f2number\f1, the form \f2number\f4;\f2number\f1 may
+be used to indicate a range of values, \f4\(**\f1 may be used
+to indicate all legitimate values for that subscript,
+or subscripts may be omitted entirely if they are the
+last subscripts and the full range of values is desired.
+If no subscripts are specified, \f4sdb\f1 will
+display the value of all elements of the array.
+.PP    
+A particular instance of a variable on the stack is referred to as
+\f2procedure\f4:\f2variable\f4,\f2number\f1.
+The \f2number\f1 is the occurrence of the
+specified procedure on the stack, with the topmost occurrence being 1.
+The default procedure is the one containing
+the current line.
+.PP 
+Addresses may be used in \f4sdb\f1 commands as well.
+Addresses are specified by decimal, octal, or hexadecimal numbers.
+.PP
+Line numbers in the source program are specified by the form
+\f2filename\f4:\f2number\f1 or \f2procedure\f4:\f2number\f1.
+In either case, the \f2number\f1 is relative to the beginning 
+of the file and corresponds to the line number used by text
+editors or the output of \f4pr\f1.
+A number used by itself implies a line in the current file.
+.PP
+While a live process is running under \f4sdb\fP, all addresses 
+and identifiers refer to the live process.
+When \f4sdb\f1 is not examining a live process,
+the addresses and identifiers refer to \f2objfile\f1 or \f2corfile\f1.
+.SS Commands
+The commands for examining data in the program are:
+.TP 5
+\f4t\f1
+Prints a stack trace of the terminated or halted program.
+The function invoked most recently is at the top of the stack.
+For C programs, the stack ends with \f4_start\f1, which is the startup
+routine that invokes \f4main\f1.
+.TP 5
+\f4T\f1
+Prints the top line of the stack trace.
+.TP 5
+\f2variable/clm\f1
+Print the value of \f2variable\f1 according to length \f2l\f1 and
+format \f2m\f1.
+The numeric count \f2c\f1 indicates that
+a region of memory, beginning at the address implied
+by \f2variable\f1, is to be displayed.
+The length specifiers are:
+.RS 5 
+.TP 
+\f4b\f1
+one byte
+.TP  
+\f4h\f1
+two bytes (half word)
+.TP
+\f4l\f1
+four bytes (long word)
+.sp
+.TP
+Legal values for \f2m\f1 are:
+.TP  
+\f4c\f1
+character
+.TP  
+\f4d\f1
+signed decimal
+.TP  
+\f4u\f1
+unsigned decimal
+.TP  
+\f4o\f1
+octal
+.TP 
+\f4x\f1
+hexadecimal
+.TP  
+\f4f\f1
+32-bit single precision floating point
+.TP 
+\f4g\f1
+64-bit double precision floating point
+.TP  
+\f4s\f1
+Assumes that \f2variable\f1 is a string pointer and prints
+characters starting at the address pointed to by the variable.
+.TP
+\f4a\f1
+Prints characters starting at the variable's address.
+Do not use this with register variables.
+.TP
+\f4p\f1
+pointer to procedure
+.TP
+\f4i\f1
+Disassembles machine-language instruction with addresses printed
+numerically and symbolically.
+.TP
+\f4I\f1
+Disassembles machine-language instruction with addresses printed
+numerically only.
+.PP
+Length specifiers are effective with formats 
+\f4c\f1, \f4d\f1, \f4u\f1, \f4o\f1, \f4x\f1.
+The length specifier determines the output length of the
+value to be displayed.
+This value may be truncated.
+The count specifier \f2c\f1 displays
+that many units of memory, starting at the address of
+the \f2variable\f1.
+The number of bytes in the unit of memory is 
+determined by \f2l\f1 or by the size associated with the variable.
+If the specifiers \f2c\f1, \f2l\f1, and \f2m\f1 are omitted,
+\f4sdb\fP uses defaults.
+If a count specifier is used with the \f4s\f1 or \f4a\f1
+command, then that many characters are printed.
+Otherwise, successive characters are printed until
+either a null byte is reached or 128 characters are printed.
+The last variable may be redisplayed with the \f4./\f1 command.
+.PP
+For a limited form of pattern matching,
+use the \f4sh\fP metacharacters \(** and \f4?\f1 
+within procedure and variable names.
+(\f4sdb\fP does not accept these metacharacters 
+in file names, as the function name in a line number when setting a breakpoint,
+in the function call command, or as the argument to the \f4e\fP command.)
+If no procedure name is supplied, 
+\f4sdb\fP matches both local and global variables.
+If the procedure name is specified, 
+then \f4sdb\fP matches only local variables.
+To match global variables only,
+use \f4:\f2pattern\f1.
+To print all variables, use \f4\(**:\(**\f1.
+.RE 
+.TP
+.PD 0
+\f2linenumber\f4?\f2lm\f1
+.TP
+.PD
+\f2variable\f4:?\f2lm\f1
+Prints the value at the address from the executable or text
+space given by \f2linenumber\f1 or \f2variable\f1
+(procedure name), according to the format \f2lm\f1.
+The default format is \f4i\f1.
+.TP 5
+.PD 0
+\f2variable\f4=\f2lm\f1
+.TP 5
+\f2linenumber\f4=\f2lm\f1
+.TP 5
+\f2number\f4=\f2lm\f1
+.PD
+Prints the address of
+\f2variable\f1 or \f2linenumber\f1,
+or the value of \f2number\f1.
+\f2l\f1 specifies length and \f2m\f1 specifies the format.
+If no format is specified, then \f4sdb\fP uses 
+\f4lx\f1 (four-byte hex).
+\f2m\f1 allows you to convert
+between decimal, octal, and hexadecimal.
+.TP 5
+\f2variable\f4!\f2value\f1
+Sets \f2variable\f1 to the given \f2value\f1.
+The value may be a number, a character constant, or a variable.
+The value must be well-defined;
+structures are allowed only if assigning to another structure
+variable of the same type.
+Character constants are denoted
+\f4\'\f2character\f1.
+Numbers are viewed as integers unless a decimal point or exponent
+is used.
+In this case, they are treated as having the type \f4double\f1.
+Registers, except the floating point registers, are viewed as integers.
+Register names are identical to those used by
+the assembler (for example, \f4%\f2regname\f1 where \f2regname\f1
+is the name of a register).
+If the address of a variable is given,
+it is regarded as the address of a variable of type
+\f4int\f1.
+C conventions are used in any type conversions necessary
+to perform the indicated assignment.
+.TP 5
+\f4x\f1
+Prints the machine registers and
+the current machine-language instruction.
+.TP 5
+\f4X\f1
+Prints the current machine-language instruction.
+.PP
+The commands for examining source files are:
+.PP
+.PD 0
+.TP 5
+\f4e\f1
+.TP 5
+\f4e \f2procedure\^\f1
+.TP 5
+\f4e \f2filename\^\f1
+.TP 5
+\f4e \f2directory/\^\f1
+.PD
+\f4e\f1, without arguments, prints the name of the current file.
+The second form sets the current file to the file 
+containing the procedure.
+The third form sets the current file to
+\f2filename\f1.
+The current line is set to the first line in the named
+procedure or file.
+Source files are assumed to be in the 
+directories in the directory list.
+The fourth form adds \f2directory\f1 to the end
+of the directory list.
+.TP 5
+\f4/\f2regular expression\f4/\f1
+Searches forward from the current line for a line containing
+a string matching 
+\f2regular expression\f1\^,
+as in
+\f4ed\fP.
+The trailing
+\f4/\f1
+may be omitted, except when associated with a breakpoint.
+.TP 5
+\f4?\f2regular expression\f4?\f1
+Searches backward from the current line for a line containing
+a string matching
+\f2regular expression\f1\^,
+as in
+\f4ed\fP.
+The trailing
+\f4?\f1
+may be omitted, except when associated with a breakpoint.
+.TP 5
+\f4p\f1
+Prints the current line.
+.TP 5
+\f4z\f1
+Prints the current line and the following nine lines.
+Sets the current line to the last line printed.
+.TP 5
+\f4w\f1
+Prints the 10 lines (the window) around the current line.
+.TP 5
+.I number\^
+Specifies the current line.
+Prints the new current line.
+.TP 5
+\f2count\f4+\f1
+Advances the current line by
+.I count\^
+lines.
+Prints the new current line.
+.TP 5
+\f2count\f4\(mi\f1
+Resets the current line by
+\f2count\f1 lines back.
+Prints the new current line.
+.sp
+.TP
+The commands for controlling the execution of the source program are:
+.PP
+.TP 5
+\f2count\f4 r \f2args\f1
+.br
+.ns
+.TP 5
+\f2count\f4 R\f1
+Runs the program with the given arguments.
+The \f4r\fP command with no arguments reuses the previous arguments
+to the program.
+The \f4R\fP command
+runs the program with no arguments.
+An argument beginning with \f4<\f1 
+or \f4>\f1 redirects the
+standard input or output, respectively.
+Full \f4sh\f1 syntax is accepted.
+If \f2count\fP is given,
+it specifies the number of breakpoints to be ignored.
+.TP 5
+\f2linenumber\f1 \f4c\f1 \f2count\f1
+.br
+.ns
+.TP 5
+\f2linenumber\f1 \f4C\f1 \f2count\f1
+Continues execution.
+\f4sdb\fP stops when it encounters \f2count\f1 breakpoints.
+The signal that stopped the program is reactivated with
+the \f4C\f1 command and ignored with the \f4c\f1 command.
+If a line number is specified,
+then a temporary breakpoint is placed at the line
+and execution continues.
+The breakpoint is deleted when the command finishes.
+.TP 5
+\f2linenumber\f4 g\f2 count\f1
+Continues
+with execution resumed at the given line.
+If \f2count\fP is given,
+it specifies the number of breakpoints to be ignored.
+.TP 5
+\f4s \f2count\f1
+.br
+.ns
+.TP 5
+\f4S \f2count\f1
+\f4s\f1 single steps the program through \f2count\fP lines
+or if no \f2count\f1 is given,  then the program runs for one line.
+\f4s\f1 will step from one function into a called function.
+\f4S\f1 also steps a program, but it will not step into a
+called function.
+It steps over the function called.
+.TP 5
+\f4i \f2count\f1
+.br
+.ns
+.TP 5
+\f4I \f2count\f1
+Single steps by \f2count\f1 machine-language instructions.
+The signal that caused the
+program to stop is reactivated with the \f4I\fP command and ignored with the
+\f4i\fP command.
+.TP 5
+\f2variable\f4$m \^\f2count\f1
+.br
+.ns
+.TP 5
+\f2address\f4:m \^\f2count\f1
+Single steps (as with \f4s\f1)
+until the specified location is modified with a new value.
+If \f2count\f1 is omitted, it is, in effect, infinity.
+\f2Variable\f1
+must be accessible from the current procedure.
+This command can be very slow.
+.TP 5
+\f2level\f4 v \f1
+Toggles verbose mode.
+This is for use when single stepping with
+\f4S\f1, \f4s\f1, or \f4m\f1.
+If \f2level\f1 is omitted,
+then just the current
+source file and/or function name
+is printed when either changes.
+If \f2level\f1 is 1 or greater,
+each C source line is printed before it executes.
+If \f2level\f1 is 2 or greater, each assembler statement
+is also printed.
+A \f4v\f1 turns verbose mode off.
+.TP 5
+\f4k\f1
+Kills the program being debugged.
+.TP 5
+\f2procedure\f4(\fParg1,arg2,...\f4)\fP
+.br
+.ns
+.TP 5
+\f2procedure\f4(\fParg1,arg2,...\f4)/\f2m\f1
+Executes the named procedure with the given arguments.
+Arguments can be register names, integer, character, or string constants,
+or names of variables accessible from the current procedure.
+The second form causes the value returned by the procedure to be
+printed according to format \f2m\f1.
+If no format is given, it defaults to \f4d\f1.
+.TP 5
+\f2linenumber\f4 b\f1 \f2commands\f1
+Sets a breakpoint at the given line.
+If a procedure name without a line number is given (for example, \f2proc\f4:\f1),
+a breakpoint is placed at the first line in the procedure
+even if it was not compiled with the
+\f4\-g\f1 option.
+If no \f2linenumber\f1 is given,
+a breakpoint is placed at the current line.
+If no \f2commands\f1 are given, execution stops at the breakpoint
+and control is returned to \f4sdb\fP.
+Otherwise the \f2commands\f1
+are executed when the breakpoint is
+encountered.
+Multiple commands are specified by separating them with semicolons.
+Nested associated commands are not permitted; setting
+breakpoints within the associated environments is permitted.
+.TP 5
+\f4B\f1
+Prints a list of the currently active breakpoints.
+.TP 5
+\f2linenumber\f4 d\f1
+Deletes a breakpoint at the given line.
+If no \f2linenumber\fP is given, then the breakpoints are deleted interactively.
+Each breakpoint location is printed and a line is read from the standard input.
+If the line begins with a
+\f4y\f1
+or
+\f4d\f2,\f1
+then the breakpoint is deleted.
+.TP 5
+\f4D\f1
+Deletes all breakpoints.
+.TP 5
+\f4l\f1
+Prints the last executed line.
+.TP 5
+\f2linenumber\f4 a\f1
+Announces a line number.
+If \f2linenumber\f1 is of the form
+\f2proc\f4:\f2number\f1,\f1
+the command
+effectively does a
+\f2linenumber\f4:b l;c\f1.
+If \f2linenumber\f1 is of the form
+\f2proc\f4:\f1,\f1
+the command
+effectively does a
+\f2proc\f4:b T;c\f1.
+.br
+.ne5
+.PP
+Miscellaneous commands:
+.TP 5
+\f4#\f2rest-of-line\^\f1
+The \f2rest-of-line\f1 represents comments that are ignored by \f4sdb\f1.
+.TP 5
+\f4!\f2command\^\f1
+The \f2command\f1 is interpreted by
+\f4sh\fP.
+.TP 5
+\f4new-line\f1
+If the previous command printed a source line, then
+advance the current line by one line and
+print the new current line.
+If the previous command displayed a memory location, then
+display the next memory location.
+If the previous command disassembled an instruction,
+then disassemble the next instruction.
+.TP 5
+\f4end-of-file character\f1
+Scrolls the next 10 lines
+of instructions, source, or data
+depending on which was printed last.
+The end-of-file character is usually \f4control-d\f1.
+.TP 5
+\f4< \f2filename\f1
+Read commands from \f2filename\f1 
+until the end of file is reached, and then continue
+to accept commands from standard input.
+Commands are echoed, preceded by two asterisks, just before being executed.
+This command may not be nested;
+\f4<\f1 may not appear as a command in a file.
+.TP 5
+\f4M\f1
+Prints the address maps.
+.TP 5
+\f4"\f2 string\f1 "
+Prints the given string.
+The C escape sequences of the form
+\f4\\\f2character\f1,
+\f4\\\f2octaldigits\f1, or
+\f4\\x\f2hexdigits\f1
+are recognized, where
+\f2character\f1 is a nonnumeric character.
+The trailing quote may be omitted.
+.TP 5
+\f4q\f1
+Exits the debugger.
+.TP 5
+\f4V\f1
+Prints version stamping information.
+.PD
+.SH SEE ALSO
+\f4cc\fP(1), \f4signal\fP(2),
+\f4a.out\fP(4), \f4core\fP(4), \f4syms\fP(4)
+.br
+\f4ed\fP(1), \f4gcore\fP(1), \f4sh\fP(1) in the 
+\f2User's Reference Manual\f1
+.br
+The ``\f4sdb\f1'' chapter in the
+\f2Programmer's Guide: ANSI C and Programming Support Tools\f1
+.SH NOTES
+If \f2objfile\f1 is a dynamically linked executable,
+variables, function names, and so on that are
+defined in shared objects may not be referenced
+until the shared object in which the variable, and so on,
+is defined is attached to the process.
+For shared objects attached at startup
+(for example,
+\f4libc.so.1\f1,
+the default C library),
+this implies that such variables
+may not be accessed until \f4main\f1 is called.
+.PP
+The \f2objfile\f1 argument is accessed
+directly for debugging information while
+the process is created via the
+\f4PATH\f1 variable.
+'\"	@(#)sdb.1	1.4
+.Ee
+.ig
+.SH NOTES
+The \f4t\f1 and \f4T\f1 commands may give faulty output
+under certain conditions due to limitations of the 386
+architecture and the C compiler.
+If the process is stopped
+in a function prolog or epilog (near the beginning or end
+of a function) and function pointers are passed as arguments, 
+the function pointed to may appear in the stack trace.
+If the program is optimized,
+there may not be a frame for the optimized
+function calls.
+..

@@ -1,0 +1,74 @@
+'\"macro stdmacro
+.if n .pH g1a.share_rfs @(#)share_rfs	40.11 of 1/3/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} share 1M "RFS" "\&"
+.if \nX=1 .ds x} share 1M "RFS"
+.if \nX=2 .ds x} share 1M "" "\&"
+.if \nX=3 .ds x} share "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4share\f1 \- make local RFS resource available for mounting by remote systems
+.SH SYNOPSIS
+\f4share\f1
+[\f4\-F \f1rfs\f1]
+[\f4\-o \f2access_spec\f1]
+[\f4\-d \f2description\f1]
+[\f2pathname \f2resourcename\f1]
+.br
+.SH DESCRIPTION
+The
+\f4share\f1
+command makes a resource available for mounting through Remote File
+Sharing.
+The \f4\-F\f1 flag may be omitted if rfs is the first file system type
+listed in the file \f4/etc/dfs/fstypes\f1.  When invoked with
+only a file system type (or no arguments),
+\f4share\f1 displays all local resources shared through Remote File Sharing.
+.P
+The \f2access_spec\f1 is used to control client access 
+of the shared resource.
+Clients may be specified in any of the following forms:
+.nf
+
+	\f2domain.\fP
+	\f2domain.system\fP
+	\f2system\fP
+
+.fi
+The \f2access_spec\f1 can be one of the following:
+.RS 5
+.IP rw 15
+\f2resourcename\f1 is shared read/write to all clients.
+This is also the default behavior.
+.IP rw=\f2client\f1[\f2:client\f1]... 15
+\f2resourcename\f1 is shared read/write only to the
+listed clients.  No other systems can
+access \f2resourcename\f1.
+.IP ro 15
+\f2resourcename\f1 is shared read-only to all clients.
+.IP ro=\f2client\f1[\f2:client\f1]... 15
+\f2resourcename\f1 is shared read-only only to the
+listed clients.  No other systems can
+access \f2resourcename\f1.
+.RE
+.P
+The \f4\-d\f1 flag may be used to provide a description of the
+resource being shared.
+.SH ERRORS
+If the network is not up and running or \f2pathname\f1 is not a full path,
+an error message will be sent to standard error.
+If \f2pathname\f1 isn't on a file system mounted locally or
+the \f2client\f1 is specified but syntactically incorrect, an
+error message will be sent to standard error.  If the
+same \f2resource\f1 name in the network over the same transport provider
+is to be shared more than once, an error message will be sent to standard error.
+.SH FILES
+\f4/etc/dfs/dfstab
+.br
+/etc/dfs/sharetab
+.br
+/etc/dfs/fstypes\f1
+.SH "SEE ALSO"
+\f4unshare\fP(1M)

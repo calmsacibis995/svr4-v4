@@ -1,0 +1,56 @@
+'\"macro stdmacro
+.if n .pH g1a.xtt @(#)xtt	40.15 of 5/21/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} xtt 1M "Layers Windowing Utilities" "\&"
+.if \nX=1 .ds x} xtt 1M "Layers Windowing Utilities"
+.if \nX=2 .ds x} xtt 1M "" "\&"
+.if \nX=3 .ds x} xtt "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4xtt\f1 \- extract and print xt driver packet traces
+.SH SYNOPSIS
+\f4xtt [\-f] [\-o]  \f1
+.SH DESCRIPTION
+The
+\f4xtt\fP
+command
+is a debugging tool for the \f4xt\fP(7) driver.
+It performs an
+\f4XTIOCTRACE\f1
+\f4ioctl\fP(2)
+call on its standard input file to turn on tracing and extract the
+circular packet trace buffer
+for the attached group of channels.
+This call will fail if 
+the standard input is not attached to an active
+\f4xt\fP(7)
+channel.
+The packets are printed on the standard output.
+.PP
+The optional flags are:
+.TP
+\f4\-f\f1
+Causes a
+``formfeed''
+character to be put out at the end of the output, 
+for the benefit of page-display programs.
+.TP
+\f4\-o\f1
+Turns off further driver tracing.
+.SH DIAGNOSTICS
+Returns \f40\f1 upon successful completion, \f41\f1 otherwise.
+.SH NOTES
+If driver tracing has not been turned on for the
+terminal session by invoking \f4layers\fP(1)
+with the \f4\-t\f1 option,
+\f4xtt\fP will not generate any output the first
+time it is executed.
+.SH SEE ALSO
+\f4layers\fP(1) in the \f2User's Reference Manual\f1
+.br
+\f4xts\fP(1M), \f4ioctl\fP(2), \f4xtproto\fP(5)
+.br
+\f4xt\fP(7) in the \f2Programmer's Guide: STREAMS\f1
+.Ee

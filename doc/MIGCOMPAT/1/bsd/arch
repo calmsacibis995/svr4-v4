@@ -1,0 +1,26 @@
+'\"macro stdmacro
+.if n .pH g1.arch @(#)arch	40.9
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} arch 1 "BSD Compatibility Package" "\&"
+.if \nX=1 .ds x} arch 1 "BSD Compatibility Package"
+.if \nX=2 .ds x} arch 1 "" "\&"
+.if \nX=3 .ds x} arch "" "" "\&"
+.TH \*(x}
+.\" @(#)arch.1 1.4 88/12/11 SMI; from UCB 4.1
+.\" Copyright (c) 1988 Sun Microsystems, Inc. - All Rights Reserved.
+.SH NAME
+\f4arch\f1 \- display the architecture of the current host 
+.SH SYNOPSIS
+\f4/usr/ucb/arch\f1
+.SH DESCRIPTION
+The
+\f4arch\f1
+command displays the architecture of the current host system.
+.SH SEE ALSO
+\f4mach\fP(1)
+.P
+\f4uname\fP(1)
+in the \f2User's Reference Manual\f1
+.Ee

@@ -1,0 +1,35 @@
+.if n .pH portkern.pg.COLFILE @(#)COLFILE	40.11.1.1
+.# This book ("Programmer's Guide:  Porting the Kernel")
+.# contains the following files,
+.# listed in the order in which they are printed.
+.# Next to each file name is its SCCS delta number.
+.FT
+portkern.pg/titlepage	40.4
+portkern.pg/copyright	40.8
+portkern.pg/MasterToc	40.3
+portkern.pg/Cintro	40.2
+portkern.pg/intro	40.2
+portkern.pg/Cstartup	40.2
+portkern.pg/startup	40.2
+portkern.pg/Cboot	40.2
+portkern.pg/boot	40.2
+portkern.pg/Cos	40.2
+portkern.pg/os	40.4
+portkern.pg/Cvm	40.2
+portkern.pg/vm	40.2
+portkern.pg/Cfs	40.2
+portkern.pg/fs	40.2
+portkern.pg/Cio	40.2
+portkern.pg/io	40.2
+portkern.pg/Cexec	40.2
+portkern.pg/exec	40.2
+portkern.pg/Cml	40.2
+portkern.pg/ml	40.4
+portkern.pg/Cdisp	40.2
+portkern.pg/disp	40.4
+portkern.pg/CappA	40.2
+portkern.pg/appA	40.2
+portkern.pg/CappB	40.2
+portkern.pg/appB	40.2
+portkern.pg/Cindex	40.2
+portkern.pg/index	40.2

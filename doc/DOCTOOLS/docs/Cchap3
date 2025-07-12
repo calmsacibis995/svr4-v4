@@ -1,0 +1,217 @@
+.if n .pH doctools.Cchap3 @(#)Cchap3	40.2
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.PM "DN" "FINAL COPY"
+.BK "Documenter's Tool Set User's Guide" "Release 1.0" "" ""   
+.\ACRONYM	                  
+.CH "Manual Page Macros" "" "Table of Contents" "3"
+.\CHAPTER	3
+.tC 1 "Introduction" 3-1  
+.Index: macros, manual pages      	1
+.Index: manual page macros      	1
+.tC L "Figure 3-1:\0" "The Manual Page Macros" 3-1
+.tC 1 "Manual Page Title" 3-2  
+.tC 2 "The \&.TH Macro" 3-2  
+.Index: \&.TH macro       	2
+.Index: macro, \&.TH       	2
+.Index: manual page title macro     	2
+.Index: macro, manual page title     	2
+.Index: title macro, manual pages     	2
+.tC 3 "Name" 3-2  
+.tC 3 "Synopsis" 3-2  
+.tC 3 "Description" 3-2  
+.tC 3 "Examples" 3-3  
+.tC 2 "A Variation on the \&.TH Macro" 3-5  
+.Index: defined strings, \&.TH macro     	5
+.Index: \&.TH macro, defined strings     	5
+.tC 1 "Headings" 3-7  
+.Index: heading macros, manual pages     	7
+.Index: manual page macros, headings     	7
+.tC 2 "The \&.SH Macro" 3-7  
+.Index: \&.SH macro       	7
+.Index: macro, \&.SH       	7
+.Index: manual page macros, section heading    	7
+.Index: section heading macro, \&.SH     	7
+.tC 3 "Name" 3-7  
+.tC 3 "Synopsis" 3-7  
+.tC 3 "Description" 3-7  
+.tC 3 "Example" 3-7  
+.tC 2 "The \&.SS Macro" 3-8  
+.Index: \&.SS macro       	8
+.Index: macro, \&.SS       	8
+.Index: manual page macros, sub-section heading    	8
+.Index: sub-section heading, \&.SS macro     	8
+.tC 3 "Name" 3-8  
+.tC 3 "Synopsis" 3-8  
+.tC 3 "Description" 3-8  
+.tC 3 "Example" 3-9  
+.tC 1 "Paragraphs" 3-10  
+.Index: paragraph macros, manual pages     	10
+.Index: manual page macros, paragraphs     	10
+.tC 2 "The \&.P Macro" 3-10  
+.Index: \&.P macro       	10
+.Index: macro, \&.P       	10
+.Index: standard paragraph macro, \&.P     	10
+.Index: manual page macros, \&.P     	10
+.tC 3 "Name" 3-10  
+.tC 3 "Synopsis" 3-10  
+.tC 3 "Description" 3-10  
+.tC 3 "Example" 3-10  
+.tC 2 "The \&.TP Macro" 3-11  
+.Index: \&.TP macro       	11
+.Index: macro, \&.TP       	11
+.Index: indented paragraph macros, \&.TP     	11
+.Index: manual page macros, \&.TP     	11
+.tC 3 "Name" 3-11  
+.tC 3 "Synopsis" 3-11  
+.tC 3 "Description" 3-12  
+.tC 3 "Example" 3-12  
+.tC 2 "The \&.IP Macro" 3-13  
+.Index: \&.IP macro       	13
+.Index: macro, \&.IP       	13
+.Index: indented paragraph macro, \&.IP     	13
+.Index: manual page macros, \&.IP     	13
+.tC 3 "Name" 3-13  
+.tC 3 "Synopsis" 3-13  
+.tC 3 "Description" 3-13  
+.tC 3 "Example" 3-13  
+.tC 2 "The \&.HP Macro" 3-14  
+.Index: \&.HP macro       	14
+.Index: macro, \&.HP       	14
+.Index: hanging indentation paragraph macro, \&.HP    	14
+.Index: manual page macros, \&.HP     	14
+.tC 3 "Name" 3-14  
+.tC 3 "Synopsis" 3-14  
+.tC 3 "Description" 3-14  
+.tC 3 "Example" 3-15  
+.tC 2 "The \&.PD Macro" 3-15  
+.Index: \&.PD macro       	15
+.Index: macro, \&.PD       	15
+.Index: inter-paragraph spacing macro, \&.PD     	15
+.Index: manual page macros, \&.PD     	15
+.tC 3 "Name" 3-15  
+.tC 3 "Synopsis" 3-15  
+.tC 3 "Description" 3-16  
+.tC 3 "Example" 3-16  
+.tC 1 "Indentation" 3-17  
+.tC 2 "The \&.RS Macro" 3-17  
+.Index: \&.RS macro       	17
+.Index: macro, \&.RS       	17
+.Index: relative indentation macro, \&.RS     	17
+.Index: manual page macros, \&.RS     	17
+.tC 3 "Name" 3-17  
+.tC 3 "Synopsis" 3-17  
+.tC 3 "Description" 3-17  
+.tC 3 "Example" 3-17  
+.tC 2 "The \&.RE Macro" 3-19  
+.Index: \&.RE macro       	19
+.Index: macro, \&.RE       	19
+.Index: relative indentation macro, \&.RE     	19
+.Index: manual page macros, \&.RE     	19
+.tC 3 "Name" 3-19  
+.tC 3 "Synopsis" 3-19  
+.tC 3 "Description" 3-19  
+.tC 3 "Example" 3-20  
+.tC 1 "Text Size" 3-21  
+.Index: text size       	21
+.tC 2 "The \&.SM Macro" 3-21  
+.Index: \&.SM macro       	21
+.Index: macro, \&.SM       	21
+.Index: reduce text size macro, \&.SM    	21
+.Index: manual page macros, \&.SM     	21
+.tC 3 "Name" 3-21  
+.tC 3 "Synopsis" 3-21  
+.tC 3 "Description" 3-21  
+.tC 3 "Example" 3-21  
+.tC 1 "Tab Distance" 3-23  
+.Index: tab distance       	23
+.tC 2 "The \&.DT Macro" 3-23  
+.Index: \&.DT macro       	23
+.Index: macro, \&.DT       	23
+.Index: tab stop macro, \&.DT     	23
+.Index: manual page macros, \&.DT     	23
+.tC 3 "Name" 3-23  
+.tC 3 "Synopsis" 3-23  
+.tC 3 "Description" 3-23  
+.tC 3 "Example" 3-23  
+.tC 1 "Proprietary Markings and Draft Notices" 3-24  
+.Index: proprietary markings       	24
+.Index: draft notices       	24
+.tC 2 "The \&.PM Macro" 3-24  
+.Index: \&.PM macro       	24
+.Index: macro, \&.PM       	24
+.Index: proprietary marking macro, \&.PM     	24
+.Index: draft notice macro, \&.PM     	24
+.Index: manual page macros, \&.PM     	24
+.tC 3 "Name" 3-24  
+.tC 3 "Synopsis" 3-24  
+.tC 3 "Description" 3-24  
+.tC 3 "Example" 3-24  
+.tC 1 "Fonts" 3-26  
+.Index: fonts        	26
+.Index: font macros       	26
+.tC 2 "The \&.I and \&.B Macros" 3-26  
+.Index: \&.I macro       	26
+.Index: macro, \&.I       	26
+.Index: \&.B macro       	26
+.Index: macro, \&.B       	26
+.Index: bold font macro, \&.B     	26
+.Index: italic font macro, \&.I     	26
+.Index: manual page macros, \&.I     	26
+.Index: manual page macros, \&.B     	26
+.tC 3 "Name" 3-26  
+.tC 3 "Synopsis" 3-26  
+.tC 3 "Description" 3-26  
+.tC 3 "Example" 3-26  
+.tC 2 "The \&.RI, \&.RB, \&.IR, \&.IB, \&.BR, \&.BI Macros" 3-27  
+.Index: \&.RI macro       	27
+.Index: macro, \&.RI       	27
+.Index: \&.RB macro       	27
+.Index: macro, \&.RB       	27
+.Index: \&.IR macro       	27
+.Index: macro, \&.IR       	27
+.Index: \&.IB macro       	27
+.Index: macro, \&.IB       	27
+.Index: \&.BR macro       	27
+.Index: macro, \&.BR       	27
+.Index: \&.BI macro       	27
+.Index: macro, \&.BI       	27
+.Index: roman-italic font macro      	27
+.Index: roman-bold font macro      	27
+.Index: italic-roman font macro      	27
+.Index: italic-bold font macro      	27
+.Index: bold-roman font macro      	27
+.Index: bold-italic font macro      	27
+.Index: manual page macros, \&.RI     	27
+.Index: manual page macros, \&.RB     	27
+.Index: manual page macros, \&.IR     	27
+.Index: manual page macros, \&.IB     	27
+.Index: manual page macros, \&.BR     	27
+.Index: manual page macros, \&.BI     	27
+.tC 3 "Name" 3-27  
+.tC 3 "Synopsis" 3-27  
+.tC 3 "Description" 3-28  
+.tC 3 "Example" 3-28  
+.tC 2 "Font Requests" 3-28  
+.Index: font requests       	28
+.tC 3 "Name" 3-28  
+.Index: \ef1 font request      	28
+.Index: \ef2 font request      	28
+.Index: \ef3 font request      	28
+.Index: \ef4 font request      	28
+.Index: \ef5 font request      	28
+.Index: \&.ft1 font request      	28
+.Index: \&.ft2 font request      	28
+.Index: \&.ft3 font request      	28
+.Index: \&.ft4 font request      	28
+.Index: \&.ft5 font request      	28
+.Index: manual page macros, font requests    	28
+.tC 3 "Synopsis" 3-29  
+.tC 3 "Description" 3-29  
+.tC 3 "Examples" 3-30  
+.tC 1 "String Definitions" 3-32  
+.Index: string definitions, manual pages     	32
+.Index: trademark strings, manual pages     	32
+.Index: defined string, \e\(**R      	32
+.Index: defined string, \e\(**S      	32
+.Index: defined string, \e\(**(Tm      	32
+.Index: manual page defined strings     	32

@@ -1,0 +1,113 @@
+'\"macro stdmacro
+.if n .pH g1a.acctprc @(#)acctprc	40.10 of 4/15/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} acctprc 1M "Job Accounting Utilities" "\&"
+.if \nX=1 .ds x} acctprc 1M "Job Accounting Utilities"
+.if \nX=2 .ds x} acctprc 1M "" "\&"
+.if \nX=3 .ds x} acctprc "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4acctprc\f1, \f4acctprc1\f1, \f4acctprc2\f1 \- process accounting
+.SH SYNOPSIS
+\f4/usr/lib/acct/acctprc\f1
+.sp .15
+\f4/usr/lib/acct/acctprc1\f1
+[\^\f2ctmp\fP\^]
+.sp .15
+\f4/usr/lib/acct/acctprc2\f1
+.SH DESCRIPTION
+\f4acctprc\f1 reads standard input, in the form described by
+\f4acct(4)\f1, and converts it to total accounting records
+(see the \f4tacct\f1 record in \f4acct(4)\f1).
+\f4acctprc\f1 divides CPU time into prime time and non-prime time and
+determines mean memory size (in memory segment units).
+\f4acctprc\f1 then summarizes the \f4tacct\f1 records, according
+to user IDs, and adds login names corresponding to the user IDs.
+The summarized records are then written to standard output.
+\f4acctprc1\fP
+reads input in the form described by
+\f4acct\fP(4),
+adds login names corresponding to user
+.SM ID\*Ss,
+then writes for each process an
+.SM ASCII
+line giving
+user
+.SM ID\*S,
+login name,
+prime
+.SM CPU
+time (tics),
+non-prime
+.SM CPU
+time (tics),
+and mean memory size (in memory segment units).
+If
+.I ctmp
+is given,
+it is expected to contain a list of login sessions
+sorted by user
+.SM ID
+and login name.
+If this file is not supplied,
+it obtains login names from the password file, just as
+\f4acctprc\f1 does.
+The information in
+.I ctmp
+helps it distinguish between different login names sharing the same user
+.SM ID\*S.
+.PP
+From standard input,
+\f4acctprc2\fP
+reads records in the form written by
+\f4acctprc1\fP,
+summarizes them according to user
+.SM ID
+and name,
+then writes the sorted summaries to the standard output
+as total accounting records.
+.SH EXAMPLES
+The \f4acctprc\f1 command is typically used as shown below:
+.PP
+.RS
+\f4acctprc \|< /var/adm/pacct \|> ptacct\f1
+.RE
+.PP
+The \f4acctprc1\f1 and \f4acctprc2\f1 commands are typically used as
+shown below:
+.PP
+.RS
+\f4acctprc1 \|ctmp \|</var/adm/pacct \|\(bv \|acctprc2 \|>ptacct\f1
+.RE
+.SH FILES
+\f4/etc/passwd\fP
+.SH SEE ALSO
+\f4acct\fP(1M), \f4acctcms\fP(1M), \f4acctcon\fP(1M), \f4acctmerg\fP(1M),
+\f4acctsh\fP(1M), \f4cron\fP(1M), \f4fwtmp\fP(1M), \f4runacct\fP(1M),
+\f4acct\fP(4), \f4utmp\fP(4)
+.br
+\f4acctcom\fP(1) in the \f2User's Reference Manual\f1
+.br
+\f4acct\fP(2)
+in the \f2Programmer's Reference
+Manual\f1
+.SH NOTES
+Although it is possible for \f4acctprc1\f1 to distinguish among login names
+that share user
+.SM ID\*Ss
+for commands run normally,
+it is difficult to do this for those commands run from
+\f4cron\fP(1M),
+for example.
+A more precise conversion can be done using the
+\f4acctwtmp\fP
+program in
+\f4acct\fP(1M).
+\f4acctprc\f1 does not distinguish between users with identical user IDs.
+.P
+A memory segment of the mean memory size is a unit of measure
+for the number of bytes in a logical memory segment on a particular
+processor.
+.\"	@(#)acctprc.1m	6.2 of 9/2/83

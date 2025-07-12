@@ -1,0 +1,151 @@
+'\"macro stdmacro
+.if n .pH g3c.select @(#)select	40.10 of 4/22/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} select 3C "" "\&"
+.if \nX=1 .ds x} select 3C ""
+.if \nX=2 .ds x} select 3C "" "\&"
+.if \nX=3 .ds x} select "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4select\f1 \- synchronous \s-1I\s+1/\s-1O\s+1 multiplexing
+.SH SYNOPSIS
+.nf
+.ft 4
+#include <sys/time.h>
+#include <sys/types.h>
+.PP
+.ft 4
+select(int nfds, fd_set *readfds, *writefds, *execptfds, struct 
+    timeval *timeout);
+FD_SET(int fd, fd_set fdset);
+FD_CLR(int fd, fd_set fdset);
+FD_ISSET(int fd, fd_set fdset);
+FD_ZERO(fd_set fdset);
+.fi
+.SH DESCRIPTION
+\f4select\f1
+examines the \s-1I\s+1/\s-1O\s+1 descriptor sets whose addresses are passed in
+.IR readfds ,
+.IR writefds ,
+and
+.I execptfds
+to see if any of their descriptors are ready for reading,
+are ready for writing,
+or have an exceptional condition pending, respectively.
+.I nfds
+is the number of bits to be checked in each bit mask that
+represents a file descriptor; the descriptors from \f40\f1 to
+\f4\-1\f1 in the descriptor sets are examined.
+On return,
+\f4select\f1
+replaces the given descriptor sets with subsets consisting of
+those descriptors that are ready for the requested operation.
+The return value from the call to \f4select()\fP is the number
+of ready descriptors.
+.PP
+The descriptor sets are stored as bit fields in arrays of integers.
+The following macros are provided for manipulating such descriptor
+sets:
+\f4FD_ZERO(&\f2fdset\f4)\f1
+initializes a descriptor set
+.I fdset
+to the null set.
+\f4FD_SET(\f2fd\f4, &\f2fdset\f4)\f1
+includes a particular descriptor
+.IR fd " in " fdset .
+\f4FD_CLR(\f2fd\f4, &\f2fdset\f4)\f1
+removes
+.IR fd " from " fdset .
+\f4FD_ISSET(\f2fd\f4, &\f2fdset\f4)\f1
+is nonzero if
+.I fd
+is a member of
+.IR fdset ,
+zero otherwise.
+The behavior of these macros is undefined if a 
+descriptor value is less than zero or greater than or equal to
+\f4FD_SETSIZE\f1.
+\f4FD_SETSIZE\f1
+is a constant defined in \f4sys/select.h\fP and is
+normally at least equal to the maximum number of descriptors
+supported by the system.
+.PP
+If
+.I timeout
+is not a \s-1NULL\s+1 pointer,
+it specifies a maximum interval to wait for the
+selection to complete.
+If 
+.I timeout
+is a \s-1NULL\s+1 pointer, the \f4select\f1 blocks indefinitely.
+To affect a poll, the
+.I timeout
+argument should be a non-\s-1NULL\s+1 pointer,
+pointing to a zero-valued \f4timeval\fP structure.
+.PP
+Any of
+.IR readfds ,
+.IR writefds ,
+and
+.I execptfds
+may be given as \s-1NULL\s+1
+pointers if no descriptors are of interest.
+.SH "RETURN VALUE"
+\f4select\f1
+returns the number of ready descriptors contained in
+the descriptor sets
+or \f4\-1\fP if an error occurred.
+If the time limit expires, then
+\f4select\f1
+returns \f40\fP.
+.SH "ERRORS"
+An error return from \f4select\fP indicates:
+.TP 15
+\f4EBADF\f1
+One of the \s-1I\s+1/\s-1O\s+1 descriptor sets specified an invalid \s-1I\s+1/\s-1O\s+1 descriptor.
+.TP 15
+\f4EINTR\f1
+A signal was delivered before any of the
+selected events occurred, or the time limit expired.
+.TP 15
+\f4EINVAL\f1
+A component of the pointed-to time limit is outside the
+acceptable range:
+\f4t_sec\f1
+must be between \f40\f1 and
+.if t 10\u\s-38\s0\d,
+.if n 10^8,
+inclusive.  
+\f4t_usec\f1
+must be greater-than or equal to \f40\f1, and less than
+.if t 10\u\s-36\s0\d.
+.if n 10^6.
+.SH "SEE ALSO"
+\f4poll\f1(2),
+\f4read\f1(2),
+\f4write\f1(2)
+.SH NOTES
+The default value for
+\f4FD_SETSIZE\f1
+(currently 1024) is larger than
+the default limit on the number of open files.
+In order to accommodate programs that may
+use a larger number of open files with \f4select\f1, it is possible
+to increase this size within a program by providing
+a larger definition of
+\f4FD_SETSIZE\f1
+before the inclusion of
+\f4<sys/types.h>\f1.
+.PP
+In future versions of the system, \f4select\f1 may return the
+time remaining from the original timeout, if any,
+by modifying the time value in place.
+It is thus unwise to assume that the timeout value will be unmodified
+by the
+\f4select\f1
+call.
+.PP
+The descriptor sets are always modified on return, even
+if the call returns as the result of a timeout.

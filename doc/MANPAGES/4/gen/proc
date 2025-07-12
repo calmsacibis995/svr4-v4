@@ -1,0 +1,817 @@
+'\"macro stdmacro
+.if n .pH g4.proc @(#)proc	40.5 of 5/1/91
+.\" Copyright 1989 AT&T
+.nr X
+.if \nX=0 .ds x} proc 4 "" "\&"
+.if \nX=1 .ds x} proc 4 ""
+.if \nX=2 .ds x} proc 4 "" "\&"
+.if \nX=3 .ds x} proc "" "" "\&"
+.TH \*(x}
+.hw PIOCSHOLD PIOCWSTOP PIOCSENTRY PIOCCRED PIOCNMAP PIOCMAP
+.hw PRMAXSIG SIGKILL signal
+.AT 5 4.0
+.SH NAME
+\f4/proc\fP \- process file system
+.SH DESCRIPTION
+\f4/proc\fP is a file system that provides access
+to the image of each active process in the system.
+The name of each entry in the \f4/proc\fP directory
+is a decimal number corresponding to the process \s-1ID\s+1.
+The owner of each ``file'' is determined by the process's user-\s-1ID\s+1.
+.PP
+Standard system call interfaces are used to access \f4/proc\fP files:
+\f4open\fP, \f4close\fP, \f4read\fP, \f4write\fP, and \f4ioctl\fP.
+An open for reading and writing enables process control;
+a read-only open allows inspection but not control.
+As with ordinary files, more than one process can open
+the same \f4/proc\fP file at the same time.
+Exclusive open is provided to allow controlling
+processes to avoid collisions:
+an \f4open\fP for writing that specifies \f4O_EXCL\fP
+fails if the file is already open for writing;
+if such an exclusive open succeeds, subsequent attempts to open
+the file for writing, with or without the \f4O_EXCL\fP flag,
+fail until the exclusively-opened file descriptor is closed.
+(Exception: a super-user open that does not specify
+\f4O_EXCL\fP succeeds even if the file is exclusively opened.)
+There can be any number of read-only opens, even when an
+exclusive write open is in effect on the file.
+.PP
+Data may be transferred from or to any locations in the
+traced process's address space by applying \f4lseek\fP
+to position the file at the virtual address of interest
+followed by \f4read\fP or \f4write\fP.
+'\"Alternatively \f4mmap\fP may be applied to map the process's
+'\"address space directly.
+The \f4PIOCMAP\fP operation can be applied to determine
+the accessible areas (mappings) of the address space.
+A contiguous area of the address space may appear as
+multiple mappings due to varying read/write/execute permissions.
+.SM I/O
+transfers may span contiguous mappings.
+An
+.SM I/O
+request extending into an unmapped area
+is truncated at the boundary.
+'\"\f4mmap\fP fails if an attempt is made to
+'\"map an address range that extends into an unmapped area.
+.PP
+Information and control operations are provided through \f4ioctl\fP.
+These have the form:
+.PP
+.RS
+.nf
+.ft 4
+#include <sys/types.h>
+#include <sys/signal.h>
+#include <sys/fault.h>
+#include <sys/syscall.h>
+#include <sys/procfs.h>
+void *p;
+retval = ioctl(fildes, code, p);
+.ft 1
+.fi
+.RE
+.PP
+The argument \f2p\fP is a generic pointer whose type depends
+on the specific \f4ioctl\fP code.
+Where not specifically mentioned below, its value should be zero.
+\f4sys/procfs.h\fP contains definitions of \f4ioctl\fP codes
+and data structures used by the operations.
+Certain operations can be performed only if the
+process file is open for writing;
+these include all operations that affect process control.
+.PP
+Process information and control operations
+involve the use of sets of flags.
+The set types \f4sigset_t\fP, \f4fltset_t\fP, and \f4sysset_t\fP
+correspond, respectively, to signal, fault, and system call
+enumerations defined in
+\f4sys/signal.h\fP, \f4sys/fault.h\fP, and \f4sys/syscall.h\fP.
+Each set type is large enough to hold flags for its own enumeration.
+Although they are of different sizes, they have a common structure
+and can be manipulated by these macros:
+.PP
+.RS
+.nf
+.ft 4
+prfillset(&set);            /* turn on all flags in set */
+premptyset(&set);           /* turn off all flags in set */
+praddset(&set, flag);       /* turn on the specified flag */
+prdelset(&set, flag);       /* turn off the specified flag */
+r = prismember(&set, flag); /* != 0 iff flag is turned on */
+.ft 1
+.fi
+.RE
+.PP
+One of \f4prfillset\fP or \f4premptyset\fP must be used to initialize
+\f4set\fP before it is used in any other operation.
+\f4flag\fP must be a member of the enumeration corresponding to \f4set\fP.
+.PP
+The allowable \f4ioctl\fP codes follow.
+Those requiring write access are marked with an asterisk (*).
+Except where noted, an \f4ioctl\fP to a process
+that has terminated elicits the error \f4ENOENT\fP.
+.SS "\f4PIOCSTATUS\fP"
+This returns status information for the process;
+\f2p\fP is a pointer to a \f4prstatus\fP structure:
+.PP
+.ft 4
+.nf
+typedef struct prstatus {
+  long      pr_flags;     /* Process flags */
+  short     pr_why;       /* Reason for process stop (if stopped) */
+  short     pr_what;      /* More detailed reason */
+  struct siginfo pr_info; /* Info associated with signal or fault */
+  short     pr_cursig;    /* Current signal */
+  sigset_t  pr_sigpend;   /* Set of other pending signals */
+  sigset_t  pr_sighold;   /* Set of held signals */
+  struct sigaltstack pr_altstack; /* Alternate signal stack info */
+  struct sigaction pr_action; /* Signal action for current signal */
+  pid_t     pr_pid;       /* Process id */
+  pid_t     pr_ppid;      /* Parent process id */
+  pid_t     pr_pgrp;      /* Process group id */
+  pid_t     pr_sid;       /* Session id */
+  timestruc_t pr_utime;   /* Process user cpu time */
+  timestruc_t pr_stime;   /* Process system cpu time */
+  timestruc_t pr_cutime;  /* Sum of children's user times */
+  timestruc_t pr_cstime;  /* Sum of children's system times */
+  char      pr_clname[8]; /* Scheduling class name */
+  long      pr_filler[20];/* Filler area for future expansion */
+  long      pr_instr;     /* Current instruction */
+  gregset_t pr_reg;       /* General registers */
+} prstatus_t;
+.ft 1
+.fi
+.P
+\f4pr_flags\fP is a bit-mask holding these flags:
+.P
+.RS
+.PD 0
+.TP 14
+\f4PR_STOPPED\fP
+process is stopped
+.TP
+\f4PR_ISTOP\fP
+process is stopped on an event of interest (see \f4PIOCSTOP\fP)
+.TP
+\f4PR_DSTOP\fP
+process has a stop directive in effect (see \f4PIOCSTOP\fP)
+.TP
+\f4PR_ASLEEP\fP
+process is in an interruptible sleep within a system call
+.TP
+\f4PR_FORK\fP
+process has its inherit-on-\f4fork\fP flag set (see \f4PIOCSFORK\fP)
+.TP
+\f4PR_RLC\fP
+process has its run-on-last-\f4close\fP flag set (see \f4PIOCSRLC\fP)
+.TP
+\f4PR_PTRACE\fP
+process is being traced via \f4ptrace\fP
+.TP
+\f4PR_PCINVAL\fP
+process program counter refers to an invalid address
+.TP
+\f4PR_ISSYS\fP
+process is a system process (see \f4PIOCSTOP\fP)
+.RE
+.PD
+.P
+\f4pr_why\fP and \f4pr_what\fP together describe,
+for a stopped process, the reason that the process is stopped.
+Possible values of \f4pr_why\fP are:
+.IP
+\f4PR_REQUESTED\fP indicates that the process stopped because
+\f4PIOCSTOP\fP was applied; \f4pr_what\fP is unused in this case.
+.IP
+\f4PR_SIGNALLED\fP indicates that the process stopped
+on receipt of a signal (see \f4PIOCSTRACE\fP);
+\f4pr_what\fP holds the signal number that caused the stop
+(for a newly-stopped process, the same value is in \f4pr_cursig\fP).
+.IP
+\f4PR_FAULTED\fP indicates that the process stopped on
+incurring a hardware fault (see \f4PIOCSFAULT\fP);
+\f4pr_what\fP holds the fault number that caused the stop.
+.IP
+\f4PR_SYSENTRY\fP and \f4PR_SYSEXIT\fP indicate a stop on entry
+to or exit from a system call (see \f4PIOCSENTRY\fP and \f4PIOCSEXIT\fP);
+\f4pr_what\fP holds the system call number.
+.IP
+\f4PR_JOBCONTROL\fP indicates that the process stopped due to
+the default action of a job control stop signal (see \f4sigaction\fP);
+\f4pr_what\fP holds the stopping signal number.
+.P
+\f4pr_info\fP,
+when the process is in a \f4PR_SIGNALLED\fP or \f4PR_FAULTED\fP stop,
+contains additional information pertinent to the particular signal or fault
+(see \f4sys/siginfo.h\fP).
+.P
+\f4pr_cursig\fP names the current signal\(emthat is,
+the next signal to be delivered to the process.
+\f4pr_sigpend\fP identifies any other pending signals.
+\f4pr_sighold\fP identifies those signals
+whose delivery is being delayed if sent to the process.
+.P
+\f4pr_altstack\fP contains the alternate signal stack information
+for the process (see \f4sigaltstack\fP).
+\f4pr_action\fP contains the signal action information pertaining
+to the current signal (see \f4sigaction\fP);
+it is undefined if \f4pr_cursig\fP is zero.
+.P
+\f4pr_pid\fP, \f4pr_ppid\fP, \f4pr_pgrp\fP, and \f4pr_sid\fP are,
+respectively, the process \s-1ID\s0, the \s-1ID\s0 of the process's parent,
+the process's process group \s-1ID\s0,
+and the process's session \s-1ID\s0.
+.P
+\f4pr_utime\fP, \f4pr_stime\fP,
+\f4pr_cutime\fP, and \f4pr_cstime\fP are, respectively,
+the user
+.SM CPU
+and system
+.SM CPU
+time consumed by the process,
+and the cumulative user
+.SM CPU
+and system
+.SM CPU
+time consumed by the process's children,
+in seconds and nanoseconds.
+.P
+\f4pr_clname\fP contains the name of the process's scheduling class.
+.P
+The \f4pr_filler\fP area is reserved for future use.
+.P
+\f4pr_instr\fP contains the machine
+instruction to which the program counter refers.
+The amount of data retrieved from the process is machine-dependent;
+on the 3B2, it is a single byte.
+In general, the size is that of the machine's smallest instruction.
+If the program counter refers to an invalid address,
+\f4PR_PCINVAL\fP is set and \f4pr_instr\fP is undefined.
+.P
+\f4pr_reg\fP is an array holding the contents of the general registers.
+On the 3B2 the predefined constants
+\f4R_R0\fP, \f4R_R1\fP, \f4.\^.\^.\fP \f4R_R8\fP,
+\f4R_FP\fP, \f4R_AP\fP, \f4R_PS\fP,
+\f4R_SP\fP, and \f4R_PC\fP
+can be used as indices to refer to the corresponding registers.
+.SS "\f4PIOCSTOP*\fP, \f4PIOCWSTOP\fP"
+\f4PIOCSTOP\fP directs the process to stop and waits until it has stopped;
+\f4PIOCWSTOP\fP simply waits for the process to stop.
+These operations complete when the process stops on an event of interest,
+immediately if already so stopped.
+If \f2p\fP is non-zero it points to an instance of \f4prstatus_t\fP
+to be filled with status information for the stopped process.
+.P
+An ``event of interest'' is either a \f4PR_REQUESTED\fP stop
+or a stop that has been specified in the process's tracing flags
+(set by \f4PIOCSTRACE\fP, \f4PIOCSFAULT\fP,
+\f4PIOCSENTRY\fP, and \f4PIOCSEXIT\fP).
+A \f4PR_JOBCONTROL\fP stop is specifically not an event of interest.
+(A process may stop twice due to a stop signal, first showing
+\f4PR_SIGNALLED\fP if the signal is traced and again showing
+\f4PR_JOBCONTROL\fP if the process is set running without
+clearing the signal.)
+If the process is controlled by \f4ptrace\fP, it
+comes to a \f4PR_SIGNALLED\fP stop on receipt of any signal;
+this is an event of interest only if
+the signal is in the traced signal set.
+If \f4PIOCSTOP\fP is applied to a process that is stopped,
+but not on an event of interest, the stop directive takes
+effect when the process is restarted by the competing mechanism;
+at that time the process enters a \f4PR_REQUESTED\fP
+stop before executing any user-level code.
+.P
+\f4ioctl\fPs are interruptible by signals so that, for example,
+an \f4alarm\fP can be set to avoid waiting forever for a process
+that may never stop on an event of interest.
+If \f4PIOCSTOP\fP is interrupted, the stop directive remains
+in effect even though the \f4ioctl\fP returns an error.
+.P
+A system process (indicated by the \f4PR_ISSYS\fP flag)
+never executes at user level,
+has no user-level address space visible through \f4/proc\fP,
+and cannot be stopped.
+Applying \f4PIOCSTOP\fP or \f4PIOCWSTOP\fP to a system process
+elicits the error \f4EBUSY\fP.
+.SS "\f4PIOCRUN*\fP"
+The traced process is made runnable again after a stop.
+If \f2p\fP is non-zero it points to a \f4prrun\fP structure
+describing additional actions to be performed:
+.nf
+.P
+.ft 4
+typedef struct prrun {
+  long      pr_flags;     /* Flags */
+  sigset_t  pr_trace;     /* Set of signals to be traced */
+  sigset_t  pr_sighold;   /* Set of signals to be held */
+  fltset_t  pr_fault;     /* Set of faults to be traced */
+  caddr_t   pr_vaddr;     /* Virtual address at which to resume */
+  long      pr_filler[8]; /* Filler area for future expansion */
+} prrun_t;
+.ft 1
+.fi
+.P
+\f4pr_flags\fP is a bit-mask describing optional actions;
+the remainder of the entries are meaningful only if the
+appropriate bits are set in \f4pr_flags\fP.
+\f4pr_filler\fP is reserved for future use;
+this area must be filled with zeros by the user's program.
+Flag definitions:
+.IP
+\f4PRCSIG\fP clears the current signal, if any
+(see \f4PIOCSSIG\fP).
+.IP
+\f4PRCFAULT\fP clears the current fault, if any
+(see \f4PIOCCFAULT\fP).
+.IP
+\f4PRSTRACE\fP sets the traced signal set to \f4pr_trace\fP
+(see \f4PIOCSTRACE\fP).
+.IP
+\f4PRSHOLD\fP sets the held signal set to \f4pr_sighold\fP
+(see \f4PIOCSHOLD\fP).
+.IP
+\f4PRSFAULT\fP sets the traced fault set to \f4pr_fault\fP
+(see \f4PIOCSFAULT\fP).
+.IP
+\f4PRSVADDR\fP sets the address at which execution resumes
+to \f4pr_vaddr\fP.
+.IP
+\f4PRSTEP\fP directs the process to single-step\(emi.e.,
+to run and to execute a single machine instruction.
+On completion of the instruction, a hardware trace trap occurs.
+If \f4FLTTRACE\fP is being traced, the process stops,
+otherwise it is sent \f4SIGTRAP\fP;
+if \f4SIGTRAP\fP is being traced and not held, the process stops.
+This operation requires hardware support and may not be
+implemented on all processors.
+.IP
+\f4PRSABORT\fP
+is meaningful only if the process is in a \f4PR_SYSENTRY\fP stop
+or is marked \f4PR_ASLEEP\fP;
+it instructs the process to abort execution of the system call
+(see \f4PIOCSENTRY\fP, \f4PIOCSEXIT\fP).
+.IP
+\f4PRSTOP\fP directs the process to stop again as soon
+as possible after resuming execution (see \f4PIOCSTOP\fP).
+In particular if the process is stopped on
+\f4PR_SIGNALLED\fP or \f4PR_FAULTED\fP, the next stop will
+show \f4PR_REQUESTED\fP, no other stop will have intervened,
+and the process will not have executed any user-level code.
+.P
+\f4PIOCRUN\fP fails (\f4EBUSY\fP) if applied to a process
+that is not stopped on an event of interest.
+Once \f4PIOCRUN\fP has been applied, the process is no longer
+stopped on an event of interest even if, due to a competing
+mechanism, it remains stopped.
+.SS "\f4PIOCSTRACE*\fP"
+This defines a set of signals to be traced:
+the receipt of one of these signals causes the traced process to stop.
+The set of signals is defined via an instance
+of \f4sigset_t\fP addressed by \f2p\fP.
+Receipt of \f4SIGKILL\fP cannot be traced.
+.P
+If a signal that is included in the held signal set is sent to
+the traced process, the signal is not received and does not cause a
+process stop until it is removed from the held signal set, either
+by the process itself or by setting the held signal set with
+\f4PIOCSHOLD\fP or the \f4PRSHOLD\fP option of \f4PIOCRUN\fP.
+.SS "\f4PIOCGTRACE\fP"
+The current traced signal set is returned in an instance
+of \f4sigset_t\fP addressed by \f2p\fP.
+.SS "\f4PIOCSSIG*\fP"
+The current signal and its associated signal information are
+set according to the contents of the \f4siginfo\fP structure
+addressed by \f2p\fP (see \f4sys/siginfo.h\fP).
+If the specified signal number is zero or if \f2p\fP is zero,
+the current signal is cleared.
+The semantics of this operation are different from those of
+\f4kill\fP or \f4PIOCKILL\fP in that the signal is
+delivered to the process immediately after execution is resumed
+(even if it is being held) and an additional \f4PR_SIGNALLED\fP
+stop does not intervene even if the signal is traced.
+Setting the current signal to \f4SIGKILL\fP terminates
+the process immediately, even if it is stopped.
+.SS "\f4PIOCKILL*\fP"
+A signal is sent to the process with semantics identical to those of
+\f4kill\fP; \f2p\fP points to an \f4int\fP naming the signal.
+Sending \f4SIGKILL\fP terminates the process immediately.
+.SS "\f4PIOCUNKILL*\fP"
+A signal is deleted, \f4i.e.\fP it is removed from the set of pending signals;
+the current signal (if any) is unaffected.
+\f2p\fP points to an \f4int\fP naming the signal.
+It is an error to attempt to delete \f4SIGKILL\fP.
+.SS "\f4PIOCGHOLD\fP, \f4PIOCSHOLD*\fP"
+\f4PIOCGHOLD\fP returns the set of held signals
+(signals whose delivery will be delayed if sent to the process)
+in an instance of \f4sigset_t\fP addressed by \f2p\fP.
+\f4PIOCSHOLD\fP correspondingly sets the held signal set but does
+not allow \f4SIGKILL\fP or \f4SIGSTOP\fP to be held.
+.SS "\f4PIOCMAXSIG\fP, \f4PIOCACTION\fP"
+These operations provide information about the signal actions
+associated with the traced process (see \f4sigaction\fP).
+\f4PIOCMAXSIG\fP returns, in the \f4int\fP addressed by \f2p\fP,
+the maximum signal number understood by the system.
+This can be used to allocate storage for use with the
+\f4PIOCACTION\fP operation,
+which returns the traced process's signal actions in an
+array of \f4sigaction\fP structures addressed by \f2p\fP.
+Signal numbers are displaced by 1 from array indices,
+so that the action for signal number \f2n\fP appears
+in position \f2n\fP\-1 of the array.
+.SS "\f4PIOCSFAULT*\fP"
+This defines a set of hardware faults to be traced:
+on incurring one of these faults the traced process stops.
+The set is defined via an instance
+of \f4fltset_t\fP addressed by \f2p\fP.
+Fault names are defined in \f4sys/fault.h\fP
+and include the following.
+Some of these may not occur on all processors;
+there may be processor-specific faults in addition to these.
+.RS
+.TP 14
+.PD 0
+\f4FLTILL\fP
+illegal instruction
+.TP
+\f4FLTPRIV\fP
+privileged instruction
+.TP
+\f4FLTBPT\fP
+breakpoint trap
+.TP
+\f4FLTTRACE\fP
+trace trap
+.TP
+\f4FLTACCESS\fP
+memory access fault
+.TP
+\f4FLTBOUNDS\fP
+memory bounds violation
+.TP
+\f4FLTIOVF\fP
+integer overflow
+.TP
+\f4FLTIZDIV\fP
+integer zero divide
+.TP
+\f4FLTFPE\fP
+floating-point exception
+.TP
+\f4FLTSTACK\fP
+unrecoverable stack fault
+.TP
+\f4FLTPAGE\fP
+recoverable page fault
+.PD
+.RE
+.P
+When not traced, a fault normally results in the posting of
+a signal to the process that incurred the fault.
+If the process stops on a fault, the signal is posted
+to the process when execution is resumed unless the fault is cleared
+by \f4PIOCCFAULT\fP or by the \f4PRCFAULT\fP option of \f4PIOCRUN\fP.
+\f4FLTPAGE\fP is an exception; no signal is posted.
+There may be additional processor-specific faults like this.
+\f4pr_info\fP in the \f4prstatus\fP structure identifies the
+signal to be sent and contains machine-specific
+information about the fault.
+.SS "\f4PIOCGFAULT\fP"
+The current traced fault set is returned in an instance
+of \f4fltset_t\fP addressed by \f2p\fP.
+.SS "\f4PIOCCFAULT*\fP"
+The current fault (if any) is cleared;
+the associated signal is not sent to the process.
+.SS "\f4PIOCSENTRY*\fP, \f4PIOCSEXIT*\fP"
+These operations instruct the process to stop on
+entry to or exit from specified system calls.
+The set of syscalls to be traced is defined via an instance
+of \f4sysset_t\fP addressed by \f2p\fP.
+.P
+When entry to a system call is being traced, the traced process
+stops after having begun the call to the system but before the system
+call arguments have been fetched from the process.
+When exit from a system call is being traced, the traced process
+stops on completion of the system call just prior to checking for
+signals and returning to user level.
+At this point all return values have been stored
+into the traced process's saved registers.
+.P
+If the traced process is stopped on entry to a system call
+(\f4PR_SYSENTRY\fP)
+or when sleeping in an interruptible system call
+(\f4PR_ASLEEP\fP is set),
+it may be instructed to go directly to system call exit
+by specifying the \f4PRSABORT\fP flag in a
+\f4PIOCRUN\fP request.
+Unless exit from the system call is being traced the
+process returns to user level showing error \f4EINTR\fP.
+.SS "\f4PIOCGENTRY\fP, \f4PIOCGEXIT\fP"
+These return the current traced system call entry or exit set in an
+instance of \f4sysset_t\fP addressed by \f2p\fP.
+.SS "\f4PIOCSFORK*\fP, \f4PIOCRFORK*\fP"
+\f4PIOCSFORK\fP sets the inherit-on-fork flag in the traced process:
+the process's tracing flags are inherited by the child of a \f4fork\fP.
+\f4PIOCRFORK\fP turns this flag off:
+child processes start with all tracing flags cleared.
+.SS "\f4PIOCSRLC*\fP, \f4PIOCRRLC*\fP"
+\f4PIOCSRLC\fP sets the run-on-last-close flag in the traced process:
+when the last writable \f4/proc\fP file descriptor referring to
+the traced process is closed, all of the process's tracing flags
+are cleared,
+any outstanding stop directive is canceled,
+and if the process is stopped, it is
+set running as though \f4PIOCRUN\fP had been applied to it.
+\f4PIOCRRLC\fP turns this flag off:
+the process's tracing flags are retained and the process
+is not set running when the process file is closed.
+.SS "\f4PIOCGREG\fP, \f4PIOCSREG*\fP"
+These operations respectively get and set the saved process registers
+into or out of an array addressed by \f2p\fP;
+the array has type \f4gregset_t\fP.
+Register contents are accessible using a set of predefined
+indices (see \f4PIOCSTATUS\fP).
+Only certain bits of the processor-status word (\s-1PSW\s0)
+can be modified by \f4PIOCSREG\fP;
+on the 3B2 these include the condition-code bits and the trace-enable bit.
+Other privileged registers cannot be modified at all.
+\f4PIOCSREG\fP fails (\f4EBUSY\fP) if applied to a process
+that is not stopped on an event of interest.
+.SS "\f4PIOCGFPREG\fP, \f4PIOCSFPREG*\fP"
+These operations respectively get and set the saved process floating-point
+registers into or out of a structure addressed by \f2p\fP;
+the structure has type \f4fpregset_t\fP.
+An error (\f4EINVAL\fP) is returned if there is no floating-point
+hardware on the machine.
+\f4PIOCSFPREG\fP fails (\f4EBUSY\fP) if applied to a process
+that is not stopped on an event of interest.
+.SS "\f4PIOCNICE*\fP"
+The traced process's \f4nice\fP priority is incremented by
+the amount contained in the \f4int\fP addressed by \f2p\fP.
+Only the super-user may better a process's priority in this way,
+but any user may make the priority worse.
+.SS "\f4PIOCPSINFO\fP"
+This returns miscellaneous process information such
+as that reported by \f4ps\fP(1).
+\f2p\fP is a pointer to a \f4prpsinfo\fP structure
+containing at least the following fields:
+.P
+.nf
+.ft 4
+typedef struct prpsinfo {
+  char    pr_state;  /* numeric process state (see pr_sname) */
+  char    pr_sname;  /* printable character representing pr_state */
+  char    pr_zomb;   /* !=0: process terminated but not waited for */
+  char    pr_nice;   /* nice for cpu usage */
+  u_long  pr_flag;   /* process flags */
+  uid_t   pr_uid;    /* real user id */
+  gid_t   pr_gid;    /* real group id */
+  pid_t   pr_pid;    /* unique process id */
+  pid_t   pr_ppid;   /* process id of parent */
+  pid_t   pr_pgrp;   /* pid of process group leader */
+  pid_t   pr_sid;    /* session id */
+  caddr_t pr_addr;   /* physical address of process */
+  long    pr_size;   /* size of process image in pages */
+  long    pr_rssize; /* resident set size in pages */
+  caddr_t pr_wchan;  /* wait addr for sleeping process */
+  timestruc_t pr_start;  /* process start time, sec+nsec since epoch */
+  timestruc_t pr_time;   /* usr+sys cpu time for this process */
+  long    pr_pri;    /* priority, high value is high priority */
+  char    pr_oldpri; /* pre-SVR4, low value is high priority */
+  char    pr_cpu;    /* pre-SVR4, cpu usage for scheduling */
+  dev_t   pr_ttydev; /* controlling tty device (PRNODEV if none) */
+  char    pr_clname[8];  /* Scheduling class name */
+  char    pr_fname[16];  /* last component of execed pathname */
+  char    pr_psargs[PRARGSZ]; /* initial characters of arg list */
+  long    pr_filler[20]; /* for future expansion */
+} prpsinfo_t;
+.ft 1
+.fi
+.P
+Some of the entries in \f4prpsinfo\fP, such as \f4pr_state\fP and
+\f4pr_flag\fP, are system-specific and should not be expected to retain
+their meanings across different versions of the operating system.
+\f4pr_addr\fP is a vestige of the past and has no real
+meaning in current systems.
+.P
+\f4PIOCPSINFO\fP can be applied to a \f4zombie\fP process
+(one that has terminated but whose parent has not yet performed a
+\f4wait\fP on it).
+.SS "\f4PIOCNMAP\fP, \f4PIOCMAP\fP"
+These operations provide information about the memory mappings
+(virtual address ranges) associated with the traced process.
+\f4PIOCNMAP\fP returns, in the \f4int\fP addressed by \f2p\fP,
+the number of mappings that are currently active.
+This can be used to allocate storage for use with the
+\f4PIOCMAP\fP operation, which returns the list of currently
+active mappings.
+For \f4PIOCMAP\fP, \f2p\fP addresses an array of elements of type
+\f4prmap_t\fP; one array element (one structure) is returned for
+each mapping, plus an additional element containing all zeros
+to mark the end of the list.
+.P
+.nf
+.ft 4
+typedef struct prmap {
+  caddr_t  pr_vaddr;      /* Virtual address base */
+  u_long   pr_size;       /* Size of mapping in bytes */
+  off_t    pr_off;        /* Offset into mapped object, if any */
+  long     pr_mflags;     /* Protection and attribute flags */
+  long     pr_filler[4];  /* Filler for future expansion */
+} prmap_t;
+.ft 1
+.fi
+.P
+\f4pr_vaddr\fP is the virtual address base (the lower limit) of the
+mapping within the traced process and \f4pr_size\fP is its size in bytes.
+\f4pr_off\fP is the offset within the mapped object (if any)
+to which the address base is mapped.
+.P
+\f4pr_mflags\fP is a bit-mask of protection and attribute flags:
+.RS
+.TP 14
+.PD 0
+\f4MA_READ\fP
+mapping is readable by the traced process
+.TP
+\f4MA_WRITE\fP
+mapping is writable by the traced process
+.TP
+\f4MA_EXEC\fP
+mapping is executable by the traced process
+.TP
+\f4MA_SHARED\fP
+mapping changes are shared by the mapped object
+.TP
+\f4MA_BREAK\fP
+mapping is grown by the \f4brk\fP system call
+.TP
+\f4MA_STACK\fP
+mapping is grown automatically on stack faults
+.PD
+.RE
+.SS "\f4PIOCOPENM\fP"
+The return value \f2retval\fP provides a read-only file descriptor
+for a mapped object associated with the traced process.
+If \f2p\fP is zero the traced process's \f4exec\fPed file
+(its \f4a.out\fP file) is found.
+This enables a debugger to find the object file symbol table
+without having to know the path name of the executable file.
+If \f2p\fP is non-zero it points to a \f4caddr_t\fP containing a virtual
+address within the traced process and the mapped object, if any,
+associated with that address is found; this can be used to get a
+file descriptor for a shared library that is attached to the process.
+On error (invalid address or no mapped object for the designated address),
+\-1 is returned.
+.SS "\f4PIOCCRED\fP"
+Fetch the set of credentials associated with the process.
+\f2p\fP points to an instance of \f4prcred_t\fP, which is filled
+by the operation:
+.P
+.RS
+.ft 4
+.nf
+typedef struct prcred {
+    uid_t    pr_euid;     /* Effective user id */
+    uid_t    pr_ruid;     /* Real user id */
+    uid_t    pr_suid;     /* Saved user id (from exec) */
+    uid_t    pr_egid;     /* Effective group id */
+    uid_t    pr_rgid;     /* Real group id */
+    uid_t    pr_sgid;     /* Saved group id (from exec) */
+    u_int    pr_ngroups;  /* Number of supplementary groups */
+} prcred_t;
+.ft 1
+.fi
+.RE
+.SS "\f4PIOCGROUPS\fP"
+Fetch the set of supplementary group \s-1ID\s0s
+associated with the process.
+\f2p\fP points to an array of elements of type \f4uid_t\fP,
+which will be filled by the operation.
+\f4PIOCCRED\fP can be applied beforehand
+to determine the number of groups
+(\f4pr_ngroups\fP) that will be returned
+and the amount of storage that should be allocated to hold them.
+.SS "\f4PIOCGETPR\fP, \f4PIOCGETU\fP"
+These operations copy, respectively, the traced process's \f4proc\fP
+structure and user area into the buffer addressed by \f2p\fP.
+They are provided for completeness
+but it should be unnecessary to access either
+of these structures directly since relevant status information
+is available through other control operations.
+Their use is discouraged because a program making use of them
+is tied to a particular version of the operating system.
+.P
+\f4PIOCGETPR\fP can be applied to a \f4zombie\fP process
+(see \f4PIOCPSINFO\fP).
+.SH NOTES
+Each operation (\f4ioctl\fP or \s-1I/O\s0) is guaranteed to be atomic with
+respect to the traced process, except when applied to a system process.
+.PP
+For security reasons, except for the super-user, an open of a
+\f4/proc\fP file fails unless both the user-\s-1ID\s0 and group-\s-1ID\s0 of
+the caller match those of the traced process and the process's
+object file is readable by the caller.
+Files corresponding to setuid
+and setgid processes can be opened only by the super-user.
+Even if held by the super-user, an open process file descriptor
+becomes invalid if the traced process performs an \f4exec\fP of a
+setuid/setgid object file or an object file that it cannot read.
+Any operation performed on an invalid file descriptor,
+except \f4close\fP, fails with \f4EAGAIN\fP.
+In this situation, if any tracing flags are set and the process
+file is open for writing, the process will have been directed to stop and
+its run-on-last-close flag will have been set (see \f4PIOCSRLC\fP).
+This enables a controlling process (if it has permission) to reopen
+the process file to get a new valid file descriptor, close the
+invalid file descriptor, and proceed.
+Just closing the invalid file descriptor causes the traced process
+to resume execution with no tracing flags set.
+Any process not currently open for writing via \f4/proc\fP but that has
+left-over tracing flags from a previous open and that \f4exec\fPs
+a setuid/setgid or unreadable object file will not be stopped
+but will have all its tracing flags cleared.
+.P
+For reasons of symmetry and efficiency
+there are more control operations than strictly necessary.
+'\".PP
+'\"The version of
+'\".IR proc (4)
+'\"described in this document is the one implemented for SVR4.0\s0.
+'\"This version also exists for SVR3.1\s0 and SVR3.2\s0 on the 3B2
+'\"except for job control signals,
+'\"which do not exist before SVR4.0\s0.
+.SH FILES
+.ta 1i
+\f4/proc\fP	directory (list of active processes)
+.br
+\f4/proc/\f2nnnnn\f1	process image
+.SH SEE ALSO
+\f4open\fP(2),
+\f4ptrace\fP(2),
+\f4sigaction\fP(2),
+\f4signal\fP(2)
+.ig
+truss(1)
+..
+.SH DIAGNOSTICS
+Errors that can occur in addition to the
+errors normally associated with file system access:
+.TP 12
+\f4ENOENT\fP
+The traced process has exited after being opened.
+.TP
+\f4EIO\fP
+I/O was attempted at an illegal address in the traced process.
+.TP
+\f4EBADF\fP
+An I/O or \f4ioctl\fP operation requiring write access was
+attempted on a file descriptor not open for writing.
+.TP
+\f4EBUSY\fP
+\f4PIOCSTOP\fP or \f4PIOCWSTOP\fP was applied to a system process;
+an exclusive \f4open\fP was attempted
+on a process file already already open for writing;
+an \f4open\fP for writing was attempted
+and an exclusive open is in effect on the process file;
+\f4PIOCRUN\fP, \f4PIOCSREG\fP or \f4PIOCSFPREG\fP
+was applied to a process not stopped on an event of interest;
+an attempt was made to mount \f4/proc\fP when it is already mounted.
+.TP
+\f4EPERM\fP
+Someone other than the super-user attempted to better
+a process's priority by issuing \f4PIOCNICE\fP.
+.TP
+\f4ENOSYS\fP
+An attempt was made to perform an unsupported operation
+(such as create, remove, link, or unlink) on an entry in \f4/proc\fP.
+.TP
+\f4EFAULT\fP
+An I/O or \f4ioctl\fP request referred to an invalid
+address in the controlling process.
+.TP
+\f4EINVAL\fP
+In general this means that some invalid argument
+was supplied to a system call.
+The list of conditions eliciting this error includes:
+the \f4ioctl\fP code is undefined;
+an \f4ioctl\fP operation was issued on a file descriptor
+referring to the \f4/proc\fP directory;
+an out-of-range signal number was specified with
+\f4PIOCSSIG\fP, \f4PIOCKILL\fP, or \f4PIOCUNKILL\fP;
+\f4SIGKILL\fP was specified with \f4PIOCUNKILL\fP;
+an illegal virtual address was specified in a \f4PIOCOPENM\fP request;
+\f4PIOCGFPREG\fP or \f4PIOCSFPREG\fP was issued on
+a machine without floating-point hardware.
+.TP
+\f4EINTR\fP
+A signal was received by the controlling process while waiting for
+the traced process to stop via \f4PIOCSTOP\fP or \f4PIOCWSTOP\fP.
+.TP
+\f4EAGAIN\fP
+The traced process has performed an \f4exec\fP
+of a setuid/setgid object file
+or of an object file that it cannot read;
+all further operations on the process file descriptor
+(except \f4close\fP) elicit this error.

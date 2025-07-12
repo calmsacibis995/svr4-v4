@@ -1,0 +1,81 @@
+'\"!  tbl | mmdoc
+'\"macro stdmacro
+.if n .pH g3x.menu_opts @(#)menu_opts	40.5 of 4/11/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.\" ident	"@(#)svid_ti:ti_lib/menu_opts	1.3"
+.nr X
+.if \nX=0 .ds x} menu_opts 3X "" "\&"
+.if \nX=1 .ds x} menu_opts 3X ""
+.if \nX=2 .ds x} menu_opts 3X "" "\&"
+.if \nX=3 .ds x} menu_opts "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4menu_opts\f1: \f4 set_menu_opts\f1, \f4menu_opts_on\f1, \f4menu_opts_off\f1, \f4menu_opts\f1 \- \f4menus\fP option routines
+.SH SYNOPSIS
+.nf
+.ft 4
+#include <menu.h>
+.sp
+int set_menu_opts(MENU *menu, OPTIONS opts);
+int menu_opts_on(MENU *menu, OPTIONS opts);
+int menu_opts_off(MENU *menu, OPTIONS opts);
+OPTIONS menu_opts(MENU *menu);
+.ft 1
+.fi
+.SH DESCRIPTION
+.SS Menu Options
+\f4set_menu_opts\fP turns on the named options for
+\f2menu\f1 and turns off all other options.
+Options are boolean values that can be \f4OR\f1-ed together.
+.PP
+\f4menu_opts_on\fP turns on the named options for \f2menu\f1;
+no other option is changed.
+.PP
+\f4menu_opts_off\fP turns off the named options for \f2menu\f1;
+no other option is changed.
+.PP
+\f4menu_opts\fP returns the current options of \f2menu\f1.
+.PP
+.RS
+.ti -4n
+Menu Options:
+.sp .5
+.PD 0
+.TP 1.5i
+\f4O_ONEVALUE\fP
+Only one item can be selected from the menu.
+.TP 1.5i
+\f4O_SHOWDESC\fP
+Display the description of the items.
+.TP 1.5i
+\f4O_ROWMAJOR\fP
+Display the menu in row major order.
+.TP 1.5i
+\f4O_IGNORECASE\fP
+Ignore the case when pattern matching.
+.TP 1.5i
+\f4O_SHOWMATCH\fP
+Place the cursor within the item name when pattern matching.
+.TP 1.5i
+\f4O_NONCYCLIC\fP
+Make certain menu driver requests non-cyclic.
+.PD
+.RE
+.SH RETURN VALUE
+Except for \f4menu_opts\fP, these routines return one of the following:
+.TS
+lfCWw(1.25i)1 c1 l .
+E_OK	\-	The routine returned successfully.
+E_SYSTEM_ERROR	\-	System error.
+E_POSTED	\-	The menu is already posted.
+.TE
+.RE
+.SH NOTES
+The header file \f4<menu.h>\f1 automatically includes the header files
+\f4<eti.h>\fP and \f4<curses.h>\fP.
+.SH SEE ALSO
+.na
+\f4curses\fP(3X),
+\f4menus\fP(3X)
+.ad

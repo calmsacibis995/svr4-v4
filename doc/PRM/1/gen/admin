@@ -1,0 +1,509 @@
+'\"macro stdmacro
+.if n .pH g1.admin @(#)admin	40.15.1.2 of 4/12/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} admin 1 "Source Code Control System Utilities" "\&"
+.if \nX=1 .ds x} admin 1 "Source Code Control System Utilities"
+.if \nX=2 .ds x} admin 1 "" "\&"
+.if \nX=3 .ds x} admin "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4admin\f1 \- create and administer \s-1SCCS\s0 files
+.SH SYNOPSIS
+.HP
+.na
+.nh
+\f4admin\f1 [\f4\-n\f1] [\f4\-i\f1[\f2name\f1]] [\f4\-r\f2rel\f1]
+[\f4\-t\f1[\f2name\f1]] [\f4\-f\f2flag\f1[\f2flag-val\f1]]
+[\f4\-d\f2flag\f1[\f2flag-val\f1]] [\f4\-a\f2login\f1] [\f4\-e\f2login\f1]
+[\f4\-m\f1[\f2mrlist\f1]] [\f4\-y\f1[\f2comment\f1]] [\f4\-h\f1] [\f4\-z\f1]
+.hy
+.I files
+.SH DESCRIPTION
+\f4admin\fP
+is used to create new \s-1SCCS\s+1 files
+and change parameters of existing ones.
+Arguments to
+\f4admin\fP,
+which may appear in any order,
+consist of keyletter arguments
+(that begin with \f4\-\f1)
+and named files
+(note that \s-1SCCS\s+1 file names must begin with the characters
+\f4s.\f1).
+If a named file does not exist,
+it is created
+and its parameters are initialized according to
+the specified keyletter arguments.
+Parameters not initialized by a keyletter argument
+are assigned a default value.
+If a named file does exist,
+parameters corresponding to specified keyletter arguments
+are changed,
+and other parameters are left unchanged.
+.PP
+If a directory is named,
+\f4admin\fP
+behaves as though each file in the directory were
+specified as a named file,
+except that non-\s-1SCCS\s+1 files
+(last component of the path name does not begin with \f4s.\f1)
+and unreadable files
+are silently ignored.
+If a name of \f4\-\f1 is given, the standard input is read;
+each line of the standard input is taken to be the name of an \s-1SCCS\s+1 file
+to be processed.
+Again, non-\s-1SCCS\s+1 files and unreadable files are silently ignored.
+.PP
+The keyletter arguments are listed below.
+Each argument is explained as if only one named file
+were to be processed
+because the effect of each argument
+applies independently to
+each named file.
+.TP .7i
+\f4\-n\f1
+This keyletter indicates that a new \s-1SCCS\s+1 file is to be created.
+.TP .7i
+\f4\-i\f1[\f2name\f1]
+The \f2name\f1 of a file from which the text for a
+new \s-1SCCS\s+1 file is to be taken.
+The text constitutes the first delta of the file
+(see
+\f4\-r\f1
+keyletter for delta numbering scheme).
+If the
+\f4\-i\f1
+keyletter is used,
+but the file name is omitted,
+the text is obtained by reading the standard input
+until an end-of-file is encountered.
+If this keyletter is omitted,
+then the \s-1SCCS\s+1 file is created empty.
+Only one \s-1SCCS\s+1 file may be created
+by an
+\f4admin\fP
+command on which the
+\f4i\f1
+keyletter is supplied.
+Using a single
+\f4admin\fP
+to create two or more \s-1SCCS\s+1 files requires that they be created
+empty
+(no
+\f4\-i\f1
+keyletter).
+Note that the
+\f4\-i\f1
+keyletter implies the
+\f4\-n\f1
+keyletter.
+.TP .7i
+\f4\-r\f2rel\f1
+The
+.IR rel ease
+into which the initial delta is inserted.
+This keyletter may be used only if the
+\f4\-i\f1
+keyletter is also used.
+If the
+\f4\-r\f1
+keyletter is not used,
+the initial delta is inserted into release 1.
+The level of the initial delta is always 1
+(by default initial deltas are named 1.1).
+.TP .7i
+\f4\-t\f2[name]\f1
+The
+\f2name\f1 of a file from which descriptive text for the \s-1SCCS\s+1 file
+is to be taken.
+If the
+\f4\-t\f1
+keyletter is used
+and
+\f4admin\fP
+is creating a new \s-1SCCS\s+1 file
+(the
+\f4\-n\f1
+and/or
+\f4\-i\f1
+keyletters also used), the descriptive text file name
+must also
+be supplied.
+In the case of existing \s-1SCCS\s+1 files:
+(1) a
+\f4\-t\f1
+keyletter without a file name causes removal of the descriptive text
+(if any) that is currently in the \s-1SCCS\s+1 file, and (2) a
+\f4\-t\f1
+keyletter with a file name causes text (if any) in the
+named file to replace
+the descriptive text (if any) that is currently in the \s-1SCCS\s+1 file.
+.TP .7i
+\f4\-f\f2flag\f1
+This
+keyletter specifies a \f2flag\f1, and, possibly, a value for the \f2flag\f1, to
+be placed in the \s-1SCCS\s+1 file.
+Several
+\f4\-f\f1
+keyletters may be supplied on a single
+\f4admin\fP
+command line.
+The allowable \f2flag\f1s and their values are:
+.RS .7i
+.TP .6i
+\f4b\f1
+Allows
+use of
+the
+\f4\-b\f1
+keyletter on a
+\f4get\fP
+command to create branch deltas.
+.TP
+\f4c\f2ceil\f1
+The
+highest release
+(that is, ceiling):
+a number greater than 0 but less than or equal to 9999 that may be
+retrieved by a
+\f4get\fP
+command for editing.
+The default value for an unspecified
+\f4c\f1
+flag is 9999.
+.TP
+\f4f\f2floor\f1
+The
+lowest release
+(that is, floor):
+a number greater than 0 but less than 9999
+that may be retrieved by a
+\f4get\fP
+command for editing.
+The default value for an unspecified
+\f4f\f1
+flag is 1.
+.TP
+\f4d\f2\s-1SID\s+1\f1
+The
+default delta number
+(\s-1SID\s+1) to be used by a
+\f4get\fP
+command.
+.TP
+\f4i\f1[\f2str\f1]
+Causes
+the \f5No id keywords (ge6)\fP message issued by
+\f4get\fP
+or
+\f4delta\fP
+to be treated as a fatal error.
+In the absence of this flag, the message is only a warning.
+The message is issued if no
+\s-1SCCS\s+1 identification keywords
+[see
+\f4get\fP(1)]
+are found
+in the text retrieved or stored in the \s-1SCCS\s+1 file.
+If a value is supplied, the keywords must exactly
+match the given string.
+The string must contain a keyword,
+and no embedded newlines.
+.TP
+\f4j\f1
+Allows
+concurrent
+\f4get\fP
+commands for editing
+on the same \s-1SID\s+1 of an \s-1SCCS\s+1 file.
+This flag allows multiple concurrent updates to the same
+version of the \s-1SCCS\s+1 file.
+.TP
+\f4l\f2list\f1
+A
+\f2list\f1 of releases to which deltas can no longer be made
+\f1(\f4get \-e\f1
+against one of these "locked" releases fails).
+The \f2list\f1 has the following syntax:
+.RS 12
+.IP
+.ft 2
+<list> ::= <range> \(or <list> , <range>
+.br
+<range> ::= \s-1RELEASE NUMBER\s0 \(or \f4a\f1
+.ft 1
+.RE
+.IP "" 12
+The character \f4a\f1 in the \f2list\f1 is equivalent to specifying
+all releases
+for the named \s-1SCCS\s+1 file.
+.TP .6i
+\f4n\f1
+Causes
+\f4delta\fP
+to create a null delta
+in each of those releases (if any) being skipped when a delta is made
+in a
+new
+release (for example, in making delta 5.1 after delta 2.7, releases 3 and 4
+are skipped).
+These null deltas serve as anchor points so that branch deltas
+may later be created from them.
+The absence of this flag causes skipped releases to be
+non-existent in the \s-1SCCS\s+1 file,
+preventing branch deltas from being created from them in the future.
+.TP
+\f4q\f2text\f1
+User-definable text substituted for all occurrences
+of the \f4%\&Q%\fP keyword in \s-1SCCS\s+1 file text retrieved by
+\f4get\fP.
+.TP
+\f4m\f2mod\f1
+\f2mod\f1ule
+name of the \s-1SCCS\s+1 file
+substituted for all occurrences of the \f4%\&M%\fP keyword in \s-1SCCS\s+1 file
+text retrieved by
+\f4get\fP.
+If the
+\f4m\f1
+flag is not specified, the value
+assigned is the name of the \s-1SCCS\s+1 file with the leading
+\f4s.\f1 removed.
+.TP
+\f4t\f2type\f1
+\f2type\f1
+of module in the \s-1SCCS\s+1 file substituted for all occurrences of
+\f4%\&Y%\fP keyword in \s-1SCCS\s+1 file text retrieved by
+\f4get\fP.
+.TP
+\f4v\f1[\f2pgm\f1]
+Causes
+\f4delta\fP
+to prompt for Modification Request (\s-1MR\s+1) numbers as the
+reason for creating a delta.
+The optional value specifies the name of an \s-1MR\s+1 number validity
+checking program
+[see
+\f4delta\fP(1)].
+This program will receive as arguments the module name,
+the value of the type flag (see \f4t\f2type\f1 above),
+and the \f2mrlist\f1.
+(If this flag is set when creating an
+.SM SCCS
+file, the
+\f4m\f1
+keyletter must also be used even if its value is null).
+.RE
+.TP .7i
+\f4\-d\f2flag\f1
+Causes
+removal (deletion) of the specified \f2flag\f1 from an \s-1SCCS\s+1 file.
+The
+\f4\-d\f1
+keyletter
+may be specified only when processing existing
+\s-1SCCS\s+1 files.
+Several
+\f4\-d\f1
+keyletters may be supplied in a single
+\f4admin\fP
+command.
+See the
+\f4\-f\f1
+keyletter for allowable \f2flag\f1 names.
+.sp .5
+(\f4l\f2list\f1
+used with \f4\-d\f1 indicates
+a \f2list\f1 of releases to be unlocked.
+See the
+\f4\-f\f1
+keyletter for a description of the
+\f4l\f1
+flag and the syntax of a \f2list\f1.)
+.TP .7i
+\f4\-a\f2login\f1
+A
+login name, or numerical \s-1UNIX\s+1 System group \s-1ID\s+1,
+to be added to the list of users who
+may make deltas (changes) to the \s-1SCCS\s+1 file.
+A group \s-1ID\s+1 is equivalent to specifying all
+login names common to that group \s-1ID\s+1.
+Several
+\f4a\f1
+keyletters may be used
+on a single
+\f4admin\fP
+command line.
+As many logins or numerical group \s-1ID\s+1s
+as desired may be on the list simultaneously.
+If the list of users is empty,
+then anyone may add deltas.
+If login or group \s-1ID\s+1 is preceded by
+a
+\f4!\f1
+they are to be denied permission to make deltas.
+.TP .7i
+\f4\-e\f2login\f1
+A
+login name, or numerical group \s-1ID\s+1,
+to be erased from the list of users
+allowed to make deltas (changes) to the \s-1SCCS\s+1 file.
+Specifying a group \s-1ID\s+1 is equivalent to specifying all
+\f4login\fP names common to that group \s-1ID\s+1.
+Several
+\f4\-e\f1
+keyletters may be used on a single
+\f4admin\fP
+command line.
+.TP .7i
+\f4\-m\f1[\f2mrlist\f1]
+The
+list of Modification Requests (\s-1MR\s+1)
+numbers is inserted into the \s-1SCCS\s+1 file
+as the reason for creating the initial delta in a manner
+identical to
+\f4delta\fP.
+The
+\f4v\f1
+flag must be set and the \s-1MR\s+1 numbers are validated if the
+\f4v\f1
+flag has a value (the name of an \s-1MR\s+1 number validation program).
+Diagnostics will occur if the
+\f4v\f1
+flag is not set or \s-1MR\s+1 validation fails.
+.TP .7i
+\f4\-y\f1[\f2comment\f1]
+The
+.I comment\^
+text is inserted
+into the \s-1SCCS\s+1 file as a comment
+for the initial delta in a manner identical to that
+of
+\f4delta\fP.
+Omission of the \f4\-y\f1 keyletter results in a default
+comment line being inserted.
+.IP
+The 
+\f4\-y\f1
+keyletter
+is valid only if the
+\f4\-i\f1
+and/or
+\f4\-n\f1
+keyletters are
+specified (that is, a new \s-1SCCS\s+1 file is being created).
+.TP .7i
+\f4\-h\f1
+Causes
+\f4admin\fP
+to check the structure of the \s-1SCCS\s+1 file
+[see
+\f4sccsfile\fP(4)],
+and to compare a newly
+computed check-sum (the sum of all the characters in the \s-1SCCS\s+1 file
+except those in the first line) with the check-sum that is stored
+in the first line of the \s-1SCCS\s+1 file.
+Appropriate error diagnostics are produced.
+This keyletter inhibits writing to the file, 
+nullifying the effect of any other keyletters supplied; therefore,
+it is only meaningful when processing existing files.
+.TP .7i
+\f4\-z\f1
+The
+\s-1SCCS\s+1 file check-sum is recomputed and stored in the first line
+of the \s-1SCCS\s+1 file
+(see
+\f4\-h\f1,
+above).
+Note that use of this keyletter on a truly corrupted file
+may prevent future detection of the corruption.
+.PP
+The last component of
+all \s-1SCCS\s+1 file names must be of the form \f4s.\f2file\f1.
+New \s-1SCCS\s+1 files are given mode 444
+[see
+\f4chmod\fP(1)].
+Write permission
+in the pertinent directory is,
+of course,
+required to create a file.
+All writing done by
+\f4admin\fP
+is to a temporary x-file,
+called \f4x.\f2file\f1,
+[see
+\f4get\fP(1)],
+created with mode 444 if the
+\f4admin\fP
+command is creating a new \s-1SCCS\s+1 file, or with the same mode
+as the \s-1SCCS\s+1 file if it exists.
+After successful execution of
+\f4admin\fP,
+the \s-1SCCS\s+1 file is removed (if it exists), and the x-file
+is renamed with the name of the \s-1SCCS\s+1 file.
+This renaming process ensures that changes are made to the
+\s-1SCCS\s+1 file only if no errors occurred.
+.PP
+It is recommended that directories containing \s-1SCCS\s+1 files be mode
+755
+and that \s-1SCCS\s+1 files themselves be mode 444.
+The mode of the directories allows
+only the owner to modify
+\s-1SCCS\s+1 files contained in the directories.
+The mode of the \s-1SCCS\s+1 files prevents any modification
+at all except by \s-1SCCS\s+1 commands.
+.PP
+\f4admin\fP
+also makes use of
+a transient lock file
+(called \f4z.\f2file\f1),
+which is used to prevent simultaneous updates to the \s-1SCCS\s+1 file by different users.
+See
+\f4get\fP(1)
+for further information.
+.SH FILES
+.PP
+.PD 0
+.TP "\w`\f4/usr/bin/bdiff\ \ \f1`u"
+x-file
+[see \f4delta\f1(1)]
+.TP
+z-file
+[see \f4delta\f1(1)]
+.TP
+\f4bdiff\fP
+Program to compute differences
+between the ``gotten'' file and the
+g-file [see \f4get\fP(1)].
+.PD
+.SH "SEE ALSO"
+\f4bdiff\fP(1),
+\f4ed\fP(1),
+\f4delta\fP(1),
+\f4get\fP(1),
+\f4help\fP(1),
+\f4prs\fP(1),
+\f4what\fP(1),
+\f4sccsfile\fP(4)
+.SH DIAGNOSTICS
+Use the
+\f4help\fP command
+for explanations.
+.SH NOTES
+If it is necessary to patch an \s-1SCCS\s+1 file for any reason,
+the mode may be changed to 644 by the owner
+allowing use of a text editor.
+You must run
+\f4admin\f1
+\f4\-h\f1
+on the edited file
+to check for corruption followed by an
+\f4admin\f1
+\f4\-z\f1
+to generate a proper check-sum.
+Another
+\f4admin\f1
+\f4\-h\f1
+is recommended to ensure the \s-1SCCS\s+1 file is valid.

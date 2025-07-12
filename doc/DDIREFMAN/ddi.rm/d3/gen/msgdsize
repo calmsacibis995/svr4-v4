@@ -1,0 +1,42 @@
+'\"macro stdmacro
+.if n .pH gen.msgdsize @(#)msgdsize	40.2 of 1/7/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.nr X
+.if \nX=0 .ds x} msgdsize D3DK "STREAMS" "DDI/DKI" "\&"
+.if \nX=1 .ds x} msgdsize D3DK "STREAMS" "DDI/DKI"
+.if \nX=2 .ds x} msgdsize D3DK "" "\&"
+.if \nX=3 .ds x} msgdsize "" "" "\&"
+.TH \*(x}
+.IX "\f4msgdsize\fP(D3DK)"
+.IX "STREAMS messages"
+.SH NAME
+\f4msgdsize\f1 \- return number of bytes of data in a message
+.SH SYNOPSIS
+.nf
+.na
+\f4#include <sys/stream.h>
+.sp 0.5
+int msgdsize(mblk_t *\f2mp\f4);\f1
+.ad
+.fi
+.SH ARGUMENTS
+.RS 0n 10
+.IP "\f2mp\f1" 10n
+Pointer to the message to be evaluated.
+.RE
+.SH DESCRIPTION
+\f4msgdsize\f1 counts the number of bytes of data in the message pointed to by \f2mp\fP.
+Only bytes included in message blocks of type \f4M_DATA\f1 are included
+in the count.
+.SH RETURN VALUE
+The number of bytes of data in the message.
+.SH LEVEL
+Base or Interrupt.
+.SH NOTES
+Does not sleep.
+.SH SEE ALSO
+.na
+\f4msgb\fP(D4DK)
+.ad
+.SH EXAMPLE
+See \f4insq\f1(D3DK) for an example of \f4msgdsize\f1.

@@ -1,0 +1,263 @@
+'\"macro stdmacro
+.if n .pH g1a.backup @(#)backup	40.5 of 1/3/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.if n .pH g1a.backup @(#)backup @(#)backup	40.12 of 9/21/89
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.if \nX=0 .ds x} backup 1M "System Administration Utilities" "\&"
+.if \nX=1 .ds x} backup 1M "System Administration Utilities"
+.if \nX=2 .ds x} backup 1M "" "\&"
+.if \nX=3 .ds x} backup "" "" "\&"
+.nr X
+.TH \*(x} "" "386 Computer Only"
+.SH NAME
+\f4backup\f1 \- initiate or control a system backup session
+.SH SYNOPSIS
+\f4backup \-i\f1 
+[\f4\-t \f2table\f1]
+[\f4\-o \f2name\f1]
+[\f4\-m \f2user\f1]
+[\f4\-ne\f1]
+[\f4\-s\f1 | \f4\-v\f1]
+[\f4\-c \f2week:day | \f4demand\f1]
+.P
+\f4backup\f1
+[\f4\-t \f2table\f1]
+[\f4\-o \f2name\f1]
+[\f4\-m \f2user\f1]
+[\f4\-ne\f1]
+[\f4\-c \f2week:day|\f4demand\f1]
+.P
+\f4backup \-S \f1| \f4\-R \f1| \f4\-C
+\f1[\f4\-u \f2user\f1 | \f4\-A\f1 | \f4\-j \f2jobid\f1]
+.SH DESCRIPTION
+Without options, the
+\f4backup\fP
+command performs all backup operations specified for the current day and
+week of the backup rotation in the backup register.
+This set of backup operations is considered a single job and is assigned a
+\f4backup\fP job id
+which can be used to control the progress of the session.
+As backup operations are processed, their status is tracked
+[See
+\f4bkstatus\f1(1M)].
+As backup operations are completed, they are recorded in the
+backup history log.
+.P
+\f4backup\fP
+may only be executed by a user with superuser privilege.
+.P
+A backup job can be controlled in three ways.
+It can be canceled, suspended or resumed
+(after being suspended).
+.SS Modes of Operator Intervention
+Backup operations may require operator
+intervention to perform such tasks as
+inserting volumes into devices
+or confirming proper volume labels.
+\f4backup\fP provides three modes of operator
+interaction.
+.PP
+\f4backup\fP
+with no options assumes that an operator is present, but
+not at the terminal where the \f4backup\fP
+command was issued.
+This mode sends a \f4mail\f1 message to the operator.
+The mail identifies the device requiring service and
+the volume required.
+The operator reads the mail message,
+invokes the \f4bkoper\f1 command, responds to the prompts,
+and the backup operation continues.
+.PP
+\f4backup \-i\f1
+establishes interactive mode, which assumes that an
+operator is present at the terminal where the \f4backup\fP
+command was issued.
+In this mode,
+\f4bkoper\f1 is automatically invoked at the terminal where
+the \f4backup\f1 command was entered.
+The operator responds to the prompts as they arrive.
+.SS Register Validations
+A number of backup service databases must be consistent before
+the backups listed in a backup register can be performed.
+These consistencies can only be validated at the time
+\f4backup\fP is initiated.
+If any of them fail,
+\f4backup\fP
+will terminate.
+Invoking \f4backup \-ne\f1 performs the validation checks
+in addition to displaying the set of backup operations
+to be performed.
+The validations are:
+.nr IP 0 1
+.IP \\n+(IP. 5
+The backup method must be a default method or be an executable file
+in
+\f4/bkup/method\f1 .
+.IP \\n+(IP. 5
+The dependencies for an entry are all defined
+in the register.
+Circular dependencies (eg., entry
+\f4abc\f1
+depends on entry
+\f4def;\f1
+entry
+\f4def\f1
+depends on
+entry
+\f4abc\f1)
+are allowed.
+.IP \\n+(IP. 5
+The device group for a destination must
+be defined in
+the device group table,
+\f4/etc/dgroup.tab\f1
+[See
+\f2"Device Management" ).\f1
+.SS Options
+.TP 10
+\f4\-c \f2week:day|\f4demand\f1
+Selects from the backup register
+only those backup operations for the specified week and day of the
+backup rotation, instead of the current day and week of the rotation.
+If
+\f4demand\f1
+is specified,
+selects only those backup operations scheduled
+to be performed on demand.
+.TP 10
+\f4\-e\f1
+This option displays an estimate of the number of volumes
+required to perform each backup operation.
+.TP 10
+\f4\-i\f1
+Selects interactive operation
+.TP 10
+\f4\-j\f2 jobid\f1
+Controls only the backup job identified by
+.IR jobid .
+.I jobid
+is a
+\f4backup\fP job id.
+.TP 10
+\f4\-m\f2 user\f1
+Sends mail to the named \f2user\f1
+when all backup operations for the backup job are complete.
+.TP 10
+\f4\-n\f1
+Displays the set of backup operations that would be performed
+but does not actually perform the backup operations.
+The display is ordered according to the dependencies and priorities
+specified in the backup register.
+.TP 10
+\f4\-o\f2 name\f1
+Initiates backup operations only on the named originating object.
+\f2name\f1 is an item in the following form:
+      \f2oname|odevice\f1
+.TP 10
+\f4\-s\f1
+Displays a "." for each 100 (512-byte) blocks transferred to the destination
+device.  The dots are displayed
+while each backup operation is progressing.
+.TP 10
+\f4\-t\f2 table\f1
+Initiates backup operations described in the specified backup
+register instead of the default register,
+\f4etc/bkup/bkreg.tab\f1 .
+\f2table\f1
+is a backup register.
+.TP 10
+\f4\-u\f2 user\f1
+Controls backup jobs started by the named
+.I user
+instead of those started by the user invoking the command.
+.I user
+is a valid login id.
+.TP 10
+\f4\-v\f1
+While each backup operation is progressing,
+display the name of each file or directory
+as soon as it has
+been transferred to the destination device.
+.TP 10
+\f4\-A\f1
+Controls backup jobs for all users instead of those
+started by the user invoking the command.
+.TP 10
+\f4\-C\f1
+Cancels backup jobs.
+.TP 10
+\f4\-R\f1
+Resumes suspended backup jobs.
+.TP 10
+\f4\-S\f1
+Suspends backup jobs.
+.SH DIAGNOSTICS
+The exit codes for the \f4backup\fP command are the following:
+.PP
+\f40\f1 = successful completion of the task
+.br
+\f41\f1 = one or more parameters to \f4backup\fP are invalid.
+.br
+\f42\f1 = an error has occurred which caused \f4backup\fP to fail to
+      complete \f2all\f1 portions of its task.
+.SH EXAMPLES
+Example 1:
+.P
+.in 1.0i
+\f4backup -i -v -c 2:1 -m admin3\fP
+.in 0
+.P
+initiates those backups scheduled for Monday of the
+second week in the rotation period instead of backups
+for the current day and week. 
+Performs the backup
+in interactive mode and displays on standard output the
+name of each file, directory, file system partition, or
+data partition as soon as it is transferred to the
+destination device. 
+When all backups are completed, sends
+mail notification to the user with login id \f4admin3\f1.
+.sp
+Example 2:
+.P
+.in 1.0i
+\f4backup \-o/usr:/dev/rdsk/0s2:usr\fP
+.in 0
+.P
+initiates only those backups from the \f2usr\f1 file
+system that is mounted on
+the originating device
+\f4/dev/rdsk/0s2\f1
+and is labeled
+\f4usr\f1.
+.sp
+Example 3:
+.P
+.in 1.0i
+\f4backup \-S\f1
+.in 0
+.P
+Suspends the backup jobs requested by the invoking user.
+.sp
+Example 4:
+.P
+.in 1.0i
+\f4backup \-R \-j back-359\f1
+.in 0
+.P
+resumes the backup operations included in backup job id
+\f4back-359\f1.
+.SH FILES
+.nf
+\f4/etc/bkup/method/*
+/etc/bkup/bkreg.tab
+/etc/device.tab
+/etc/dgroup.tab\f1
+.fi
+.SH SEE ALSO
+\f4bkhistory\fP(1M),
+\f4bkoper\fP(1M),
+\f4bkreg\fP(1M),
+\f4bkstatus\fP(1M)
+

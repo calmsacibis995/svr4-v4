@@ -1,0 +1,335 @@
+'\"macro stdmacro
+.if n .pH g1a.sacadm @(#)sacadm	40.20.1.1 of 1/3/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.\".if \nX=0 .ds x} sacadm 1M "Networking Services Architecture" "\&"
+.\".if \nX=1 .ds x} sacadm 1M "Networking Services Architecture"
+.if \nX=0 .ds x} sacadm 1M "Essential Utilities" "\&"
+.if \nX=1 .ds x} sacadm 1M "Essential Utilities"
+.if \nX=2 .ds x} sacadm 1M "" "\&"
+.if \nX=3 .ds x} sacadm "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4sacadm\f1 \- service access controller administration
+.SH SYNOPSIS
+.ll +0.5i
+\f4sacadm \-a \-p \f2pmtag \f4\-t \f2type \f4\-c \f2cmd \f4\-v \f2ver \f4[\-f dx] [\-n \f2count\f4]\0\e
+.br
+\0\0\0\f4\[-y \f2comment\f4] [\-z script]
+.ll -0.5i
+.sp .5
+\f4sacadm \-r \-p \f2pmtag
+.sp .5
+\f4sacadm \-s \-p \f2pmtag
+.sp .5
+\f4sacadm \-k \-p \f2pmtag
+.sp .5
+\f4sacadm \-e \-p \f2pmtag
+.sp .5
+\f4sacadm \-d \-p \f2pmtag
+.sp .5
+\f4sacadm \-l [\-p \f2pmtag\f4 | \-t \f2type\f4]
+.sp .5
+\f4sacadm \-L [\-p \f2pmtag\f4 | \-t \f2type\f4]
+.sp .5
+\f4sacadm \-g \-p \f2pmtag [\-z script]
+.sp .5
+\f4sacadm \-G [\-z script]
+.sp .5
+\f4sacadm \-x [\-p \f2pmtag\f4]\f1
+.SH DESCRIPTION
+\f4sacadm\f1 is the
+administrative command for the upper
+level of the Service Access Facility
+hierarchy, that is, for port monitor administration.
+\f4sacadm\f1 performs the following functions:
+.sp .5
+.in +.5i
+\- adds or removes a port monitor
+.sp .25
+\- starts or stops a port monitor
+.sp .25
+\- enables or disables a port monitor
+.sp .25
+\- installs or replaces a per-system configuration script
+.sp .25
+\- installs or replaces a per-port monitor configuration script
+.sp .25
+\- prints requested port monitor information
+.in -.5i
+.P
+Requests about the status of port monitors (\f4\-l\f1 and \f4\-L\f1)
+and requests
+to print per-port
+monitor and per-system configuration scripts
+(\f4\-g\f1 and \f4\-G\f1 without the \f4\-z\f1 option)
+may be executed by any user on the system.
+Other \f4sacadm\f1 commands may be executed only by a privileged user.
+.P
+The options have the following meanings:
+.TP .5i
+\f4\-a\f1
+Add a port monitor.
+When adding a port monitor, \f4sacadm\f1 creates the supporting directory
+structure in \f4/etc/saf\f1 and
+\f4/var\/saf\f1 and adds an entry for the new port
+monitor
+to \f4/etc/saf/_sactab\f1.
+The file \f4_sactab\f1 already exists on the
+delivered system.
+Initially, it is empty except for a single line, which contains the version
+number of the Service Access Controller.
+.sp .5
+Unless the command line that adds the new port monitor includes
+a \f4\-f\f1 option with the argument \f4x\f1,
+the new port monitor will be started.
+Because of the complexity of the options and arguments that follow
+the \f4\-a\f1 option,
+it may be convenient to use a command script or the menu system
+to add
+port monitors.
+If you use the menu system, enter
+\f4sysadm ports\f1
+and then choose the \f4port_monitors\f1 option.
+.TP
+\f4\-c\f1 \f2cmd\f1
+Execute the command string \f2cmd\f1 to
+start a port monitor.
+The \f4\-c\f1 option may be used only with a \f4\-a\f1.
+A \f4\-a\f1 option requires a \f4\-c\f1.
+.TP
+\f4\-d\f1
+Disable the port monitor \f2pmtag\f1.
+.TP
+\f4\-e\f1
+Enable the port monitor \f2pmtag\f1.
+.TP
+\f4\-f\f1 \f4dx\f1
+The \f4\-f\f1 option 
+specifies one or both of the following two flags which are then
+included in the flags field of the
+\f4_sactab\f1 entry for the new port monitor.
+If the \f4\-f\f1 option is not included on the command line,
+no flags are set
+and the default conditions prevail.
+By default, a port monitor is started.
+A \f4\-f\f1 option with no following argument is illegal.
+.sp .5
+.in +.25i
+\f4d\f1\0\0\0Do not enable the new port monitor.
+.sp .25
+\f4x\f1\0\0\0Do not start the new port monitor.
+.in -.25i
+.sp .5
+.TP
+\f4\-g\f1
+The \f4\-g\f1 option is
+used to request output or to install or
+replace the per-port monitor configuration
+script \f4/etc/saf/\f2pmtag\f4/_config\f1.
+\f4\-g\f1 requires a \f4\-p\f1 option.
+The \f4\-g\f1 option with only a \f4\-p\f1 option prints
+the per-port monitor
+configuration script for port monitor \f2pmtag\f1.
+The \f4\-g\f1 option with a \f4\-p\f1 option and a
+\f4\-z\f1 option
+installs 
+the file \f4script\fP as the per-port monitor configuration
+script for port monitor \f2pmtag\f1.
+Other combinations of options with \f4\-g\f1 are invalid.
+.TP
+\f4\-G\f1
+The \f4\-G\f1 option is used to request output or to install or replace
+the per-system configuration script
+\f4/etc/saf/_sysconfig\f1.
+The \f4\-G\f1 option by itself prints the per-system configuration script.
+The \f4\-G\f1 option in combination with a \f4\-z\f1 option 
+installs
+the file \f4script\fP as the per-system configuration script.
+Other combinations of options with a \f4\-G\f1 option are invalid.
+.TP
+\f4\-k\f1
+Stop port monitor \f2pmtag\f1.
+.TP
+\f4\-l\f1
+The \f4\-l\f1 option is
+used to request port monitor information.
+The \f4\-l\f1 by itself lists all port monitors on the system.
+The \f4\-l\f1 option
+in combination with the \f4\-p\f1 option lists only the 
+port monitor specified by \f2pmtag\f1.
+A \f4\-l\f1 in combination with the \f4\-t\f1 option lists all port monitors
+of type \f2type\f1.
+Any other combination of options with the \f4\-l\f1 option is invalid.
+.TP
+\f4\-L\f1
+The \f4\-L\f1 option is identical to the \f4\-l\f1 option except
+that the output appears in a condensed format.
+.TP
+\f4\-n\f1 \f2count\f1
+.br
+Set the restart count to \f2count\f1.
+If a restart count is not specified, count is set to \f40\f1.
+A count of \f40\f1 indicates that the port monitor is not to be restarted
+if it fails.
+.TP
+\f4\-p\f1 \f2pmtag\f1
+.br
+Specifies the tag associated with a port monitor.
+.TP
+\f4\-r\f1
+Remove port monitor \f2pmtag\f1.
+\f4sacadm\f1 removes the port monitor
+entry from \f4/etc/saf/_sactab\f1.
+If the removed port monitor is not running,
+then no further action is taken.
+If the removed port monitor is running, the Service
+Access Controller (\s-1SAC\s+1) sends it \f4SIGTERM\f1
+to indicate that it should shut down.
+Note that the port monitor's directory structure remains intact.
+.TP
+\f4\-s\f1
+Start a port monitor.
+The \s-1SAC\s+1 starts the port
+monitor \f2pmtag\f1.
+.TP
+\f4\-t\f1 \f2type\f1
+Specifies the port monitor type.
+.TP
+\f4\-v\f1 \f2ver\f1
+Specifies the version number of the port monitor.
+This version number may be given as
+.in +.5i
+.sp .5
+.nf
+\f4\-v \`\f2pmspec\fP \-V\`\f1
+.fi
+.sp .5
+.in -.5i
+where \f2pmspec\f1 is the special administrative command
+for port monitor \f2pmtag\f1.
+This special command is \f4ttyadm\f1 for \f4ttymon\f1 and
+\f4nlsadmin\f1 for \f4listen\f1.
+The version stamp of the port monitor is known by
+the command and is returned
+when \f2pmspec\f1 is invoked with a \f4\-V\f1 option.
+.TP
+\f4\-x\f1
+The \f4\-x\f1 option by itself 
+tells the \s-1SAC\s+1 to read its database
+file (\f4_sactab\f1).
+The \f4\-x\f1 option with the \f4\-p\f1 option tells
+port monitor \f2pmtag\f1
+to read its administrative file.
+.TP
+\f4\-y\f1 \f2comment\f1
+.br
+Include \f2comment\f1 in the \f4_sactab\f1
+entry for port monitor \f2pmtag\f1.
+.TP
+\f4\-z\f1 \f4script\fP
+.br
+Used with the \f4\-g\f1 and \f4\-G\f1 options to specify the name
+of a file that contains
+a configuration script.
+With the \f4\-g\f1 option, \f4script\fP is a per-port monitor
+configuration script; with \f4\-G\f1 it is a per-system
+configuration script.
+Modifying a configuration script is a three-step procedure.
+First a copy of the existing script is made (\f4\-g\f1 or \f4\-G\f1).
+Then the copy is edited.
+Finally, the copy is put in place over the existing script
+(\f4\-g\f1 or \f4\-G\f1 with \f4\-z\f1).
+.SH OUTPUT
+If successful, \f4sacadm\f1 will exit with a status of \f40\f1.
+If \f4sacadm\f1 fails for any reason, it will exit with a nonzero status.
+Options that request information will write the information
+on the standard output.
+In the condensed format (\f4\-L\f1),
+port monitor information is printed as a sequence of colon-separated
+fields; empty fields are indicated by two successive colons.
+The standard format (\f4\-l\f1) prints a header identifying the columns,
+and port monitor information is aligned under the appropriate
+headings.
+In this format, an empty field is indicated by a hyphen.
+The comment character is \f4#\f1.
+.SH EXAMPLES
+The following command line adds a port monitor.
+The port monitor tag is \f4npack\f1; its type is \f4listen\f1;
+if necessary, it will restart three times before failing;
+its administrative command
+is \f4nlsadmin\f1;
+and the configuration script to be read is in
+the file \f4script\f1:
+.sp .5
+.nf
+.in +.5i
+\f4sacadm \-a \-p npack \-t listen \-c /usr/lib/saf/listen npack\0\e
+\0\0\0\-v \`nlsadmin \-V\` \-n 3 \-z script\f1
+.in -.5i
+.fi
+.sp .5
+Remove a port monitor whose tag is \f4pmtag\f1:
+.sp .5
+.ti +.5i
+\f4sacadm\f1 \f4\-r\f1 \f4\-p\f1 \f4pmtag\f1
+.sp .5
+Start the port monitor whose tag is \f4pmtag\f1:
+.sp .5
+.ti +.5i
+\f4sacadm\f1 \f4\-s\f1 \f4\-p\f1 \f4pmtag\f1
+.sp .5
+Stop the port monitor whose tag is \f4pmtag\f1:
+.sp .5
+.ti +.5i
+\f4sacadm\f1 \f4\-k\f1 \f4\-p\f1 \f4pmtag\f1
+.sp .5
+Enable the port monitor whose tag is \f4pmtag\f1:
+.sp .5
+.ti +.5i
+\f4sacadm\f1 \f4\-e\f1 \f4\-p\f1 \f4pmtag\f1
+.sp .5
+Disable the port monitor whose tag is \f4pmtag\f1:
+.sp .5
+.ti +.5i
+\f4sacadm\f1 \f4\-d\f1 \f4\-p\f1 \f4pmtag\f1
+.sp .5
+List status information for all port monitors:
+.sp .5
+.ti +.5i
+\f4sacadm\f1 \f4\-l\f1
+.sp .5
+List status information for the port monitor whose tag is \f4pmtag\f1:
+.sp .5
+.ti +.5i
+\f4sacadm\f1 \f4\-l\f1 \f4\-p\f1 \f4pmtag\f1
+.sp .5
+List the same information in condensed format:
+.sp .5
+.ti +.5i
+\f4sacadm\f1 \f4\-L\f1 \f4\-p\f1 \f4pmtag\f1
+.sp .5
+List status information for all port monitors whose type is \f4listen\f1:
+.sp .5
+.ti +.5i
+\f4sacadm\f1 \f4\-l\f1 \f4\-t\f1 \f4listen\f1
+.sp .5
+Replace the per-port monitor
+configuration script associated with the port monitor whose
+tag is \f4pmtag\f1 with the contents of the file \f4file.config\f1:
+.sp .5
+.ti +.5i
+\f4sacadm\f1 \f4\-g\f1 \f4\-p\f1 \f4pmtag\f1 \f4\-z\f1 \f4file.config\f1
+.SH "SEE ALSO"
+\f4doconfig\fP(3N),
+\f4pmadm\fP(1M),
+\f4sac\fP(1M).
+.SH FILES
+\f4/etc/saf/_sactab
+.br
+/etc/saf/_sysconfig
+.br
+/etc/saf/\f2pmtag\f4/_config\f1
+.\"	@(#)sacadm.1	1.5
+.Ee

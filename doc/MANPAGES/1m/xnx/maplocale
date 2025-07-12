@@ -1,0 +1,57 @@
+'\"macro stdmacro
+.if n .pH xnx.maplocale @(#)maplocale	40.2 of 6/18/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.nr X
+.if \nX=0 .ds x} maplocale 1M "Application Compatibility Package" "\&"
+.if \nX=1 .ds x} maplocale 1M "Application Compatibility Package"
+.if \nX=2 .ds x} maplocale 1M "" "\&"
+.if \nX=3 .ds x} maplocale "" "" "\&"
+.TH \*(x}
+.SH NAME
+maplocale \- convert Release 4 locale information to different format
+.SH SYNOPSIS
+\f4maplocale -f \f2new_format \f1[ \f4-t\f2 territory \f1] [ \f4-c\f2 codeset \f1] \f2SVR4_locale_name\f1
+.SH DESCRIPTION
+\f4maplocale\fP converts Release 4 locale information into a format
+suitable for use with applications that require a different locale format.
+Currently, only conversion to SCO UNIX/XENIX format is supported,
+therefore, \f2new_format\fP must be \f4XENIX\fP.
+.P
+The \f2SVR4_locale_name\fP must be the name of a valid locale, which
+will be the name of one of the sub-directories in the \f4/usr/lib/locale\fP
+directory.  
+.P
+Release 4 locale names use the form
+\f2language\fP[\f2_territory\fP[\f2.codeset\fP]].
+If the locale name does not have the optional \f2codeset\fP or
+\f2territory\fP parts the
+\f4-t\fP and \f4-c\fP options must be used to specify the territory and
+code set for the locale.
+.SS "SCO Specific Information"
+.P
+The converted data files will be placed in the directory:
+.br
+\f4/usr/lib/lang/\f2language\fP/\f2territory\fP/\f2codeset\f1.
+.P
+If an abbreviated Release 4 locale name is used,
+the file \f4/etc/default/lang\fP
+will be updated and a line of the following form added to it:
+.IP
+\f4LANG=\f2language_territory.codeset\fP
+.P
+.SH EXAMPLE
+To convert the Spanish locale which is stored in the ISO 8859-1 code set,
+use the command:
+.IP
+\f4maplocale -fXENIX -tES -c88591 es\fP
+.SH DIAGNOSTICS
+All error messages should be self explanatory.
+.SH FILES
+.ft 4
+/usr/lib/locale
+.br
+/usr/lib/lang
+.br
+/etc/default/lang
+.ft 1
+

@@ -1,0 +1,167 @@
+'\"macro stdmacro
+.if n .pH g1.tftp @(#)tftp	40.8 of 5/21/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} tftp 1 "Internet Utilities" "\&"
+.if \nX=1 .ds x} tftp 1 "Internet Utilities"
+.if \nX=2 .ds x} tftp 1 "" "\&"
+.if \nX=3 .ds x} tftp "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4tftp\f1 \- trivial file transfer program
+.SH SYNOPSIS
+\f4tftp\f1
+[
+.I host
+]
+.SH DESCRIPTION
+.LP
+\f4tftp\f1
+is the user interface to the Internet
+.SM TFTP
+(Trivial File Transfer Protocol),
+which allows users to transfer files to and from a remote machine.
+The remote
+.I host
+may be specified on the command line, in which case
+\f4tftp\f1
+uses
+.I host
+as the default host for future transfers (see the
+\f4connect\f1
+command below).
+.SH USAGE
+.SS Commands
+Once
+\f4tftp\f1
+is running, it issues the prompt
+\f4tftp>\f1
+and recognizes the following commands:
+.TP .6i
+\f4connect \f2host-name\fP [ \f2port\fP ]\f1
+Set the
+.I host
+(and optionally
+\f2port\f1)
+for transfers.
+The
+.SM TFTP
+protocol, unlike the
+.SM FTP
+protocol, does not maintain connections between transfers; thus, the
+\f4connect\f1
+command does not actually create a connection,
+but merely remembers what host is to be used for transfers.
+You do not have to use the
+\f4connect\f1
+command; the remote host can be specified as part of the
+\f4get\f1
+or
+\f4put\f1
+commands.
+.TP
+\f4mode \f2transfer-mode\f1
+Set the mode for transfers;
+.I transfer-mode
+may be one of
+\f4ascii\f1
+or
+\f4binary\f1.
+The default is
+\f4ascii\f1.
+.TP
+\f4put \f2filename\f1
+.PD 0
+.TP
+\f4put \f2localfile remotefile\f1
+.TP
+.PD
+\f4put\fP \fIfilename1 filename2 .\|.\|. filenameN remote-directory\fP
+Transfer a file, or a set of files, to the specified
+remote file or directory.  The destination
+can be in one of two forms:
+a filename on the remote host if the host has already been specified,
+or a string of the form
+.RS
+.IP
+\f2host\f4:\f2filename\f1
+.RE
+.IP
+to specify both a host and filename at the same time.
+If the latter form is used,
+the specified host becomes the default for future transfers.
+If the remote-directory form is used, the remote host is
+assumed to be running the
+.SM UNIX
+system.
+.PD 0
+.TP
+\f4get \f2filename\f1
+.TP
+\f4get \f2remotename localname\f1
+.TP
+.PD
+\f4get \f2filename1 filename2 filename3\f1 .\|.\|. \f2filenameN\f1
+Get a file or set of files (three or more) from the specified remote
+.IR sources .
+.I source
+can be in one of two forms:
+a filename on the remote host if the host has already been specified,
+or a string of the form
+.RS
+.IP
+\f2host\f4:\f2filename\f1
+.RE
+.IP
+to specify both a host and filename at the same time.
+If the latter form is used,
+the last host specified becomes the default for future transfers.
+.TP .6i
+\f4quit\f1
+Exit
+\f4tftp\f1.
+An
+.SM EOF
+also exits.
+.TP
+\f4verbose\f1
+Toggle verbose mode.
+.TP
+\f4trace\f1
+Toggle packet tracing.
+.TP
+\f4status\f1
+Show current status.
+.TP
+\f4rexmt \f2retransmission-timeout\f1
+Set the per-packet retransmission timeout, in seconds.
+.br
+.ne 5
+.TP
+\f4timeout \f2total-transmission-timeout\f1
+Set the total transmission timeout, in seconds.
+.TP
+\f4ascii\f1
+Shorthand for
+\f4mode ascii\f1.
+.TP
+\f4binary\f1
+Shorthand for
+\f4mode binary\f1.
+.TP
+\f4? [  \f2command-name\fP .\|.\|. ]
+Print help information.
+.SH NOTES
+.LP
+Because there is no user-login or validation within
+the
+.SM TFTP
+protocol, many remote sites restrict file access in various ways.
+Approved methods for file access are specific to each site, and
+therefore cannot be documented here.
+.LP
+When using the \f4get\f1 command to transfer multiple files
+from a remote host, three or more files must be
+specified.  The command returns an error message if
+only two files are specified.

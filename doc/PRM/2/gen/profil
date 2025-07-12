@@ -1,0 +1,104 @@
+'\"macro stdmacro
+.if n .pH g2.profil @(#)profil	40.16 of 1/3/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} profil 2 "" "\&"
+.if \nX=1 .ds x} profil 2 ""
+.if \nX=2 .ds x} profil 2 "" "\&"
+.if \nX=3 .ds x} profil "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4profil\f1 \- execution time profile
+.SH SYNOPSIS
+\f4#include <unistd.h>
+.sp .5
+\f4void profil(unsigned short \(**buff, size_t bufsiz, int offset, unsigned scale);\f1
+.SH DESCRIPTION
+\f4profil\fP provides \s-1CPU\s0-use statistics by profiling the amount of
+.SM CPU
+time expended by a program.  \f4profil\fP generates the
+statistics by creating an execution histogram for a current process.
+The histogram is defined for a specific region of program code to
+be profiled, and the identified region is logically broken up into
+a set of equal size subdivisions, each of which corresponds to a count
+in the histogram.  With each clock tick, the current subdivision
+is identified and its corresponding histogram count is incremented.
+These counts establish a relative measure of how much time is being
+spent in each code subdivision.  The resulting histogram counts for
+a profiled region can be used to identify those functions that consume
+a disproportionately high percentage of
+.SM CPU
+time.
+.PP
+\f2buff\f1 is a buffer of \f2bufsiz\f1 bytes in which the histogram
+counts are stored in an array of \f4unsigned short int\f1.
+.PP
+\f2offset\f1, \f2scale\f1, and \f2bufsiz\f1 specify the region to be profiled.
+.PP
+\f2offset\f1 is effectively the start address of the region to be profiled.
+.PP
+\f2scale\f1, broadly speaking, is a contraction factor
+that indicates how much smaller
+the histogram buffer is than the region to be profiled.
+More precisely, \f2scale\f1 is interpreted as an unsigned 16-bit
+fixed-point fraction with the decimal point implied on the left.
+Its value is the reciprocal of the number of bytes in a subdivision,
+per byte of histogram buffer.
+Since there are two bytes per histogram counter,
+the effective ratio of subdivision bytes per counter is one half the scale.
+.P
+Several observations can be made:
+.RS 3
+.TP
+\-
+the maximal value of \f2scale\f1, \f40xffff\f1 (approximately 1),
+maps subdivisions 2 bytes long to each counter.
+.TP
+\-
+the minimum value of \f2scale\f1 (for which profiling is performed),
+\f40x0002\f1 (1/32,768), maps subdivision 65,536 bytes long to
+each counter.
+.TP
+\-
+the default value of \f2scale\f1 (currently used by \f4cc -qp\f1), \f40x4000\f1,
+maps subdivisions 8 bytes long to each counter.
+.RE
+.P
+The values are used within the kernel as follows:  when the process
+is interrupted for a clock tick,
+the value of \f2offset\f1 is subtracted
+from the current value of the program counter (pc), and the remainder
+is multiplied by \f2scale\f1 to derive a result.  That result is used
+as an index into the histogram array to locate the cell to be incremented.
+Therefore, the cell count represents the number of times that the process
+was executing code in the subdivision associated with that cell when the
+process was interrupted.
+.PP
+\f2scale\f1 can be computed as (\f2RATIO\f4 \(** 0200000L\f1), where
+\f2RATIO\fP is the desired ratio of \f2bufsiz\f1 to profiled region size,
+and has a value between 0 and 1.
+Qualitatively speaking, the closer \f2RATIO\fP is to 1, the higher
+the resolution of the profile information.
+.PP
+\f2bufsiz\f1 can be computed as (\f2size_of_region_to_be_profiled\f4 \(** \f2RATIO\f1).
+.SH "SEE ALSO"
+\f4prof\fP(1), \f4times\fP(2), \f4monitor\fP(3C).
+.SH NOTES
+Profiling is turned off by giving a
+.I scale\^
+of 0 or 1,
+and is rendered
+ineffective by giving a
+.I bufsiz\^
+of 0.
+Profiling is turned off when an
+\f4exec\fP(2)
+is executed, but remains on in both child and parent 
+processes after a
+\f4fork\fP(2).
+Profiling is turned off if a
+.I buff\^
+update would cause a memory fault.
+.\"	@(#)profil.2	6.2 of 9/6/83
+.Ee

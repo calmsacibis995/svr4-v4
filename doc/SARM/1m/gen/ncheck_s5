@@ -1,0 +1,53 @@
+'\"macro stdmacro
+.if n .pH g1a.ncheck_s5 @(#)ncheck_s5	40.7 of 4/16/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} ncheck 1M "s5" "\&"
+.if \nX=1 .ds x} ncheck 1M "s5"
+.if \nX=2 .ds x} ncheck 1M "" "\&"
+.if \nX=3 .ds x} ncheck  "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4ncheck\f1 (s5) \- generate path names versus i-numbers for \f4s5\fP file systems
+.SH SYNOPSIS
+\f4ncheck\f1 [\f4\-F s5\f1] [\f2generic_options\f1] [\f4\-i\f2 i-number\f1 .\ .\ .\|] [\f4\-a\f1] [\f4\-s\f1] [\f2special\f1 .\ .\ .\|]
+.SH DESCRIPTION
+.I generic_options
+are options supported by the generic \f4ncheck\f1 command.
+.PP
+\f4ncheck\f1
+generates a path-name vs. i-number list of all files on
+the specified \f2special\f1 device(s).
+Names of directory files are followed by
+"\f4/."\f1 .
+.PP
+The options are:
+.PP
+.TP 10
+\f4\-F s5\f1
+Specifies the \f4s5\f1-FSType. 
+.TP 10
+\f4\-i \f2i-number\f1
+Limits the report to those files whose i-numbers follow.
+The \f2i-number\f1s must be separated by commas without spaces.
+.TP
+\f4\-a\f1
+Allows printing of the names
+"\f4.\f1"
+and
+"\f4..\f1",
+which are ordinarily suppressed.
+.TP
+\f4\-s\f1
+Limits the report to special files
+and files with set-user-\s-1ID\s0 mode.
+This option may be used to detect violations
+of security policy.
+.SH DIAGNOSTICS
+If the file system structure is not consistent,
+\f4??\fP denotes the parent of
+a parentless file and
+a path-name beginning with .\ .\ . denotes a loop.
+.SH "SEE ALSO"
+generic \f4ncheck\f1(1M)

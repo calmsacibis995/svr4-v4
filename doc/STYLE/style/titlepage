@@ -1,0 +1,17 @@
+.if n .pH style.titlepage @(#)titlepage	41.1
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.nrNF 1
+
+.rs
+.ft\*(@e
+.ps24
+.vs24
+.nf
+.sp|4.2i
+.in3i
+USL Documentation
+Style Guide
+.ft\*(@d
+.sp0.25
+.ps16
+.vs16

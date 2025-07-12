@@ -1,0 +1,95 @@
+#ident	"@(#)proto:i386/at386/desktop/bld.pkg	1.1.1.2"
+#	Copyright (c) 1990  Intel Corporation
+#	All Rights Rreserved
+#
+#	INTEL CORPORATION PROPRIETARY INFORMATION
+#
+#	This software is supplied to AT & T under the terms of a license 
+#	agreement with Intel Corporation and may not be copied nor 
+#	disclosed except in accordance with the terms of that agreement.
+#
+
+[ -z "$ROOT" ] && {
+	echo "ROOT must be set"
+	exit 1
+}
+pkgs="$*"
+
+# get the global packaging info
+
+. $ROOT/usr/src/proto/i386/at386/desktop/PKG_INFO
+
+if [ ! -d $ROOT/$SPOOL ];then
+	#rm -rf $ROOT/$SPOOL
+	mkdir -p $ROOT/$SPOOL
+fi
+
+# note we don't use the lists out of PKG_INFO, since the 
+# actual packages are scattered all over the place to start
+# with
+
+SRC_LIST_1="
+	pkg.compat\
+	pkg.dfs\
+	pkg.edit\
+	pkg.fmli\
+	pkg.oam\
+	pkg.lp\
+	pkg.sec\
+	pkg.termcap\
+	pkg.acp\
+	pkg.mse\
+	pkg.qt\
+	pkg.nsu\
+	pkg.ie6\
+	pkg.inet\
+	pkg.nfs\
+	pkg.rfs\
+	pkg.imx586\
+	pkg.wd\
+	pkg.rpc\
+	pkg.gdbg\
+	pkg.pci\
+	pkg.pcieth\
+	pkg.window\
+	pkg.xl\
+	pkg.kdbu\
+	pkg.kdb "
+[ -z "$pkgs" ] || SRC_LIST_1="$pkgs"
+cd $ROOT/usr/src/add-on
+for i in $SRC_LIST_1
+do
+	if [ -f $i/prototype ];then
+		cd $i
+		echo $i
+		trap '' 1 2 3
+		[ -x /usr/local/bin/pkgpr ] && pkgpr  -r$ROOT -Z -c Z 
+		pkgmk -o -v"${VERSION}" -l${SIZE} -r$ROOT -d$ROOT/$SPOOL
+		[ -x /usr/local/bin/pkgpr ] && pkgpr  -r$ROOT -U -c Z
+		trap  1 2 3
+
+		cd ..
+	fi
+done
+
+cd $ROOT/usr/src/proto/i386/PACKAGES
+(cd $ROOT/usr/src/proto/i386/PACKAGES/peruser
+ make -f peruser.mk package )
+SRC_LIST_1="terminf face scde peruser"
+[ -z "$pkgs" ] || SRC_LIST_1="$pkgs"
+cd $ROOT/usr/src/pkg
+for i in $SRC_LIST_1
+do
+	if [ -f $i/prototype ];then
+		cd $i
+		echo $i
+		trap '' 1 2 3
+		[ -x /usr/local/bin/pkgpr ] && pkgpr  -r$ROOT -Z -c Z
+		pkgmk -o -v"${VERSION}" -l${SIZE} -r$ROOT -d$ROOT/$SPOOL
+		[ -x /usr/local/bin/pkgpr ] && pkgpr  -r$ROOT -U -c Z 
+		trap  1 2 3
+		cd ..
+	fi
+done
+
+echo "The packages have been built"

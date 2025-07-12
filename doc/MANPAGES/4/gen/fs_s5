@@ -1,0 +1,267 @@
+'\"!tbl | mmdoc
+'\"macro stdmacro
+.if n .pH g4.fs_s5 @(#)fs_s5	40.7 of 5/17/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} fs 4 "s5" "\&"
+.if \nX=1 .ds x} fs 4 "s5"
+.if \nX=2 .ds x} fs 4 "" "\&"
+.if \nX=3 .ds x} fs "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4fs\f1 (s5) \- format of \f4s5\fP file system volume
+.SH SYNOPSIS
+\f4#include <sys/types.h>\f1
+.br
+\f4#include <sys/param.h>\f1
+.br
+\f4#include <sys/fs/s5filsys.h>\f1
+.SH DESCRIPTION
+Every file system storage volume
+has a common format for certain vital information.
+Every such volume is divided into a certain number
+of 512-byte long sectors.
+Sector 0 is unused and is available to contain
+a bootstrap program or other information.
+.PP
+Sector 1 is the super-block.
+The format of a super-block is:
+.PP
+.TS
+l3 l2 l2 l.
+.ft 4
+struct	filsys
+{
+  ushort	s_isize;	/\(** size in blocks of i-list \(**/
+  daddr_t	s_fsize;	/\(** size in blocks of entire volume \(**/
+  short	s_nfree;	/\(** number of addresses in s_free \(**/
+  daddr_t	s_free[NICFREE];	/\(** free block list \(**/
+  short	s_ninode;	/\(** number of i-nodes in s_inode \(**/
+  o_ino_t	s_inode[NICINOD];	/\(** free i-node list \(**/
+  char	s_flock;	/\(** lock during free list \(**/
+  		/\(** manipulation \(**/
+  char	s_ilock;	/\(** lock during i-list manipulation \(**/
+  char  	s_fmod; 	/\(** super block modified flag \(**/
+  char	s_ronly;	/\(** mounted read-only flag \(**/
+  time_t	s_time; 	/\(** last super block update \(**/
+  short	s_dinfo[4];	/\(** device information \(**/
+  daddr_t	s_tfree;	/\(** total free blocks\(**/
+  o_ino_t	s_tinode;	/\(** total free i-nodes \(**/
+  char	s_fname[6];	/\(** file system name \(**/
+  char	s_fpack[6];	/\(** file system pack name \(**/
+  long	s_fill[12];	/\(** ADJUST to make \(**/
+  		/\(** sizeof filsys be 512 \(**/
+  long	s_state;	/\(** file system state \(**/
+  long	s_magic;	/\(** magic number to denote new file
+  		/\(** system \(**/
+  long	s_type;	/\(** type of new file system \(**/
+};
+.ft 1
+.TE
+.TS
+l3 l3 l3 l.
+.ft 4
+#define	FsMAGIC	0xfd187e20	/\(** s_magic number \(**/
+.sp .5
+#define	Fs1b	1	/\(** 512-byte block \(**/
+#define	Fs2b	2	/\(** 1024-byte block \(**/
+#define	Fs4b	3	/\(** 2048-byte block \(**/
+.sp .5
+#define	FsOKAY	0x7c269d38	/\(** s_state: clean \(**/
+#define	FsACTIVE	0x5e72d81a	/\(** s_state: active \(**/
+#define	FsBAD	0xcb096f43	/\(** s_state: bad root \(**/
+#define	FsBADBLK	0xbadbc14b	/\(** s_state: bad block \(**/
+			/\(** corrupted it \(**/
+.ft 1
+.TE
+.PP
+\f4s_type\fP
+indicates the file system type.
+Currently,
+three types of file systems are supported:
+the original 512-byte logical block, the 1024-byte logical block,
+and the 2048-byte logical block.
+\f4s_magic\fP
+is used to distinguish the \f4s5\fP file system
+from other FSTypes.
+The \f4s_type\fP
+field is used
+to determine the blocksize of the file system;
+512-bytes, 1K, or 2K.
+The operating system takes care of all conversions from
+logical block numbers to physical sector numbers.
+.PP
+\f4s_state\fP
+is unique for each file system and
+indicates the state of the file system.
+The numerical value of the ``file system state''
+is computed as the sum of \f4s_state\fP and \f4s_time\fP
+and will ordinarly be one of
+\f4FsOKAY\fP,
+\f4FsACTIVE\fP, or
+\f4FsBAD\fP.
+A cleanly unmounted, undamaged file system
+is indicated by the \f4FsOKAY\fP state.
+After a file system had been mounted for update,
+the state changes to \f4FsACTIVE\fP.
+The state reverts to \f4FsOKAY\fP after a
+file system has been unmounted.
+A special case is used for the root file system.
+If it appears damaged at boot time,
+it is mounted but marked \f4FsBAD\fP.
+.PP
+\f4s_isize\fP
+is the address of the first data block after the i-list;
+the i-list starts just after the super-block, namely in block 2;
+thus the i-list is \f4s_isize\-2\fP blocks long.
+\f4s_fsize\fP
+is the first block not potentially available for allocation to a file.
+These numbers are used by the system to
+check for bad block numbers;
+if an ``impossible'' block number is allocated from the free list
+or is freed,
+a diagnostic is written on the on-line console.
+Moreover, the free array is cleared, so as to prevent further
+allocation from a presumably corrupted free list.
+.PP
+The free list for each volume is maintained as
+follows.
+The
+\f4s_free\fP
+array contains, in
+\f4s_free[1]\fP,
+\&.\|.\|.,
+\f4s_free[s_nfree\-1]\fP,
+up to 49 numbers of free blocks.
+\f4s_free[0]\fP
+is the block number of the head
+of a chain of blocks constituting the free list.
+The first long in each free-chain block is the number
+(up to 50) of free-block numbers listed in the
+next 50 longs of this chain member.
+The first of these 50 blocks is the link to the
+next member of the chain.
+To allocate a block:
+decrement
+\f4s_nfree\fP,
+and the new block is
+\f4s_free[s_nfree]\fP.
+If the new block number is 0,
+there are no blocks left, so give an error.
+If
+\f4s_nfree\fP
+became 0,
+read in the block named by the new block number,
+replace
+\f4s_nfree\fP
+by its first word,
+and copy the block numbers in the next 50 longs into the
+\f4s_free\fP
+array.
+To free a block, check if
+\f4s_nfree\fP
+is 50; if so,
+copy
+\f4s_nfree\fP
+and the
+\f4s_free\fP
+array into it,
+write it out, and set
+\f4s_nfree\fP
+to 0.
+In any event set
+\f4s_free[s_nfree]\fP
+to the freed block's number and
+increment
+\f4s_nfree\fP.
+.PP
+\f4s_tfree\fP
+is the total free blocks available in the file system.
+.PP
+\f4s_ninode\fP
+is the number of free i-numbers in the
+\f4s_inode\fP
+array.
+To allocate an i-node:
+if
+\f4s_ninode\fP
+is greater than 0,
+decrement it and return
+\f4s_inode[s_ninode]\fP.
+If it was 0, read the i-list
+and place the numbers of all free i-nodes
+(up to 100) into the
+\f4s_inode\fP
+array,
+then try again.
+To free an i-node,
+provided
+\f4s_ninode\fP
+is less than 100,
+place its number into
+\f4s_inode[s_ninode]\fP
+and increment
+\f4s_ninode\fP.
+If
+\f4s_ninode\fP
+is already 100, do not bother to enter the freed i-node into any table.
+This list of i-nodes is only to speed
+up the allocation process; the information
+as to whether the i-node is really free
+or not is maintained in the i-node itself.
+.PP
+\f4s_tinode\fP
+is the total free i-nodes available in the file system.
+.PP
+\f4s_flock\fP
+and
+\f4s_ilock\fP
+are flags maintained in the core
+copy of the file system
+while it is mounted
+and their values on disk are immaterial.
+The value of
+\f4s_fmod\fP
+on disk is likewise immaterial;
+it is used as a flag to indicate that the super-block has
+changed and should be copied to
+the disk during the next periodic update of file
+system information.
+.PP
+\f4s_ronly\fP
+is a read-only flag to indicate write-protection.
+.PP
+\f4s_time\fP
+is the last time the super-block of the file system was changed,
+and is
+the number of seconds that have elapsed
+since
+00:00 Jan. 1, 1970 (\s-1UTC\s+1).
+During a reboot, the
+\f4s_time\fP
+of the super-block for the root file system
+is used to set the system's idea of the time.
+.PP
+\f4s_fname\fP
+is the name of the file system and
+\f4s_fpack\fP
+is the name of the pack.
+.PP
+I-numbers begin at 1, and the storage for i-nodes
+begins in block 2.
+Also, i-nodes are 64 bytes long.
+I-node 1 is reserved for future use.
+I-node 2 is reserved for the root directory of the file
+system, but no other i-number has a built-in
+meaning.
+Each i-node represents one file.
+For the format of an i-node and its flags, see
+\f4inode\fP(4).
+.SH SEE ALSO
+\f4mount\fP(2)
+.sp .2
+\f4fsck\fP(1M), \f4fsdb\fP(1M), \f4mkfs\fP(1M),
+\f4s5\fP-specific \f4inode\fP(4)
+.\"	@(#)fs.4	2.0 of 8/15/84
+.Ee

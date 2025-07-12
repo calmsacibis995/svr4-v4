@@ -1,0 +1,80 @@
+'\"!  tbl | mmdoc
+'\"macro stdmacro
+.if n .pH gen.qinit @(#)qinit	40.4 of 7/1/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.nr X
+.if \nX=0 .ds x} qinit D4DK "STREAMS" "DDI/DKI" "\&"
+.if \nX=1 .ds x} qinit D4DK "STREAMS" "DDI/DKI"
+.if \nX=2 .ds x} qinit D4DK "" "\&"
+.if \nX=3 .ds x} qinit "" "" "\&"
+.TH \*(x}
+.IX "\f4qinit\fP(D4DK)"
+.SH NAME
+\f4qinit\fP \- STREAMS queue initialization structure
+.SH SYNOPSIS
+\f4#include <sys/stream.h>\fP
+.SH DESCRIPTION
+The \f4qinit\fP structure contains pointers to
+processing procedures and default values for a \f4queue\fP(D4DK).
+Drivers and modules declare \f4qinit\fP structure for their read
+and write queues, and place the addresses of the structures in their
+\f4streamtab\fP(D4DK) structure.
+After the initial declaration, all fields are intended to be read-only.
+.SH STRUCTURE MEMBERS
+.P
+.TS
+lf4p8 2 lf4p8 2 lf4p8.
+int	(*qi_putp)();	/* put procedure */
+int	(*qi_srvp)();	/* service procedure */
+int	(*qi_qopen)();	/* open procedure */
+int	(*qi_qclose)();	/* close procedure */
+int	(*qi_qadmin)();	/* for future use */
+struct module_info	*qi_minfo;	/* module parameters */
+struct module_stat	*qi_mstat;	/* module statistics */
+.TE
+.P
+The \f4qi_putp\fP field contains the address of the \f4put\fP(D2DK)
+routine for the \f4queue\fP.
+.P
+The \f4qi_srvp\fP field contains the address of the service [\f4srv\fP(D2DK)]
+routine for the \f4queue\fP.
+If there is no service routine, this field should
+be set to \f4NULL\fP.
+.P
+The \f4qi_qopen\fP field contains the address of the \f4open\fP(D2DK) routine
+for the driver or module.
+Only the read-side \f4qinit\fP structure need
+define contain the routine address.
+The write-side value should be set
+to \f4NULL\fP.
+.P
+The \f4qi_qclose\fP field contains the address of the \f4close\fP(D2DK) routine
+for the driver or module.
+Only the read-side \f4qinit\fP structure need
+define contain the routine address.
+The write-side value should be set
+to \f4NULL\fP.
+.P
+The \f4qi_qadmin\fP field is intended for future use and should be set to
+\f4NULL\fP.
+.P
+The \f4qi_minfo\fP field contains the address of the \f4module_info\fP(D4DK)
+structure for the driver or module.
+.P
+The \f4qi_mstat\fP field contains the address of the \f4module_stat\fP
+structure for the driver or module.
+The \f4module_stat\fP structure is
+defined in \f4/usr/include/sys/strstat.h\fP.
+This field should be set
+to \f4NULL\fP if the driver or module does not keep statistics.
+.SH NOTES
+There is usually one \f4qinit\fP structure for the read side of
+a module or driver, and one \f4qinit\fP structure for the write side.
+.SH SEE ALSO
+\f2Programmer's Guide: STREAMS\fP
+.P
+.na
+\f4queue\fP(D4DK),
+\f4module_info\fP(D4DK),
+\f4streamtab\fP(D4DK)
+.ad

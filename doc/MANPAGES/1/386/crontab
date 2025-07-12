@@ -1,0 +1,188 @@
+'\"macro stdmacro
+.if n .pH 386.crontab @(#)crontab	40.1 of 6/11/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.nr X
+.if \nX=0 .ds x} crontab 1 "User Environment Utilities" "\&"
+.if \nX=1 .ds x} crontab 1 "User Environment Utilities"
+.if \nX=2 .ds x} crontab 1 "" "\&"
+.if \nX=3 .ds x} crontab "" "" "\&"
+.TH \*(x}
+'\" t
+.SH NAME
+\f4crontab\f1 \- user crontab file
+.SH SYNOPSIS
+\f4crontab\f1
+[\f2file\f1] 
+.br
+\f4crontab\f1
+\f4\-e\f1
+[ \f4-u \f2username\fP ]
+.br
+\f4crontab\f1
+\f4\-r\f1
+[ \f4-u \f2username\fP ]
+.br
+\f4crontab\f1
+\f4\-l\f1
+[ \f4-u \f2username\fP ]
+.SH DESCRIPTION
+\f4crontab\fP
+copies the specified file,
+or standard input if no file is specified,
+into a directory that holds all users' \f4crontab\fPs.
+The \-e option edits a copy of the current user's
+\f4crontab\f1
+file, or creates an empty file to edit if
+\f4crontab\f1
+does not exist.
+When editing is complete, the file is installed as the user's
+\f4crontab\f1 file.
+If \f4-u\fP
+.I username
+is given, the specified user's
+\f4crontab\f1
+file is edited, rather than the current user's
+\f4crontab\f1 file;
+this may only be done by a privileged user.
+The \f4-e\fP option invokes the editor specified by the
+\f4VISUAL\fP environment variable, and if that is null, it looks at
+the \f4EDITOR\fP environment variable, and if that is null, it
+invokes \f4ed\fP [see ed(1)].
+The \f4\-r\f1 option removes a user's \f4crontab\fP from the \f4crontab\fP directory.
+\f4crontab \-l\f1 will list the \f4crontab\fP file for the
+invoking user.
+Only a privileged user can use \f4-u\fP
+.I username
+following the
+\f4\-r\f1
+or
+\f4\-l\f1
+options to remove or list the
+\f4crontab\f1 file
+of the specified user.
+.P
+Note, the \f4-u\fP before the \f2username\fP only needs to be specified
+on Intel processor based computers.
+Others can specify \f2username\fP without the \f4-u\fP.
+.PP
+Users are permitted to use
+\f4crontab\fP
+if their names appear in the file
+\f4/etc/cron.d/cron.allow.\f1
+If that file does not exist,
+the file
+\f4/etc/cron.d/cron.deny\f1
+is checked to determine if the user
+should be denied access to
+\f4crontab\f1.
+If neither file exists, only root is allowed to
+submit a job.
+If \f4cron.allow\f1 does not exist and \f4cron.deny\f1 exists but is
+empty, global usage is permitted.
+The allow/deny files consist of one user name
+per line.
+.PP
+A crontab file
+consists of lines of six fields each.
+The fields are separated by spaces or tabs.
+The first five are integer patterns that
+specify the following:
+.sp
+.br
+	minute (0\-59),
+.br
+	hour (0\-23),
+.br
+	day of the month (1\-31),
+.br
+	month of the year (1\-12),
+.br
+	day of the week (0\-6 with 0=Sunday).
+.sp
+Each of these patterns may
+be either an asterisk  (meaning all legal values)
+or a list of elements separated by commas.
+An element is either a number or
+two numbers separated by a minus sign
+(meaning an inclusive range).
+Note that the specification of days
+may be made by two fields
+(day of the month and day of the week).
+If both are specified as a list of elements, 
+both are adhered to.
+For example, \f40 0 1,15 \(** 1\f1 would run a command on the
+first and fifteenth of each month, as well as on every Monday.
+To specify days by only one field,
+the other field should be set to \f4\(**\f1
+(for example, \f40 0 \(** \(** 1\f1 would run a command only on Mondays).
+.PP
+The sixth field of a line in a crontab
+file is a string that is executed by the shell 
+at the specified times.
+A percent character
+in this field (unless escaped by 
+\f4\e\fP)
+is translated to a new-line
+character.
+Only the first line (up to a \f4%\f1 or end of line) of
+.br
+.ne.5i
+the command field is executed by the shell.
+The other lines are made available to the
+command as standard input.
+.PP
+Any line beginning with a \f4#\f1 is a comment and will be ignored.
+.PP
+The shell is invoked from your 
+\f4\s-1$HOME\s+1 \f1
+directory with an 
+\f4arg0\f1 of \f4sh.\f1
+Users who desire to have their \f4.profile\fP executed must
+explicitly do so in the crontab file.
+\f4cron\f1
+supplies a default environment for every shell, defining
+\f4\s-1HOME\s+1\f1, \f4\s-1LOGNAME\s+1\f1, \f4\s-1SHELL\s+1(=/bin/sh)\f1,
+and 
+\f4PATH(=:/bin:/usr/bin:/usr/lbin)\f1.
+.PP
+If you do not redirect the standard output 
+and standard error of your commands,
+any generated output or errors
+will be mailed to you.
+.SH FILES
+.ta 2i
+.ft 4
+/usr/sbin/cron.d	\f1main cron directory\fP
+.br
+/var/spool/cron/crontabs	\f1spool area\fP
+.br
+/var/cron/log	accounting \f1information\fP
+.br
+/etc/cron.d/cron.allow	\f1list of allowed users\fP
+.br
+/etc/cron.d/cron.deny	\f1list of denied users\fP
+.ft 1
+.SH "NOTES"
+If you inadvertently enter the 
+\f4crontab\f1
+command with no argument(s), do not attempt to get out with a
+CONTROL-D.  
+This will cause all entries in your
+\f4crontab\f1
+file to be removed.
+Instead, exit with a DEL.
+.PP
+If a privileged user modifies another user's \f4crontab\f1 file, resulting
+behavior may be unpredictable.
+Instead, the privileged user
+should first \f4su\f1(1M) to the other user's login before making
+any changes to the \f4crontab\f1 file.
+.SH "SEE ALSO"
+\f4atq\fP(1),
+\f4atrm\fP(1),
+\f4ed\fP(1),
+\f4sh\fP(1),
+\f4su\fP(1).
+.sp .2
+\f4cron\fP(1M) in the \f2System Administrator's Reference Manual\f1.
+.\"	@(#)crontab.1	6.3 of 10/31/83

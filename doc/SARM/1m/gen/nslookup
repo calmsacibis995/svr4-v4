@@ -1,0 +1,432 @@
+'\"macro stdmacro
+.if n .pH g1a.nslookup @(#)nslookup	40.10 of 5/21/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} nslookup 1M "Internet Utilities" "\&"
+.if \nX=1 .ds x} nslookup 1M "Internet Utilities"
+.if \nX=2 .ds x} nslookup 1M "" "\&"
+.if \nX=3 .ds x} nslookup "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4nslookup\f1 \- query name servers interactively
+.SH SYNOPSIS
+\f4nslookup\f1
+[
+\f4\-l\f1
+] [
+.I address
+]
+.SH DESCRIPTION
+\f4nslookup\f1
+is an interactive program to query
+.SM ARPA
+Internet domain name servers.
+The user can contact servers to
+request information about a specific host or print
+a list of hosts in the domain.
+.SH OPTIONS
+.TP 9
+\f4\-l\f1
+Use the local host's name server instead of the servers in
+\f4/etc/resolve.conf\f1.
+(If
+\f4/etc/resolve.conf\f1
+does not exist or does not contain server information, the
+\f4\-l\f1
+option does not have any effect).
+.TP 9
+.I address
+Use the name server on the host machine
+with the given Internet address.
+.SH USAGE
+.SS Overview
+The Internet domain name-space is tree-structured, with four
+top-level domains at present:
+.RS
+.TP
+.SM COM
+commercial establishments
+.TP
+.SM EDU
+educational institutions
+.TP
+.SM GOV
+government agencies
+.TP
+.SM MIL
+\s-1MILNET\s0 hosts
+.RE
+.LP
+If you are looking for a specific host,
+you need to know something about the host's organization
+in order to determine the top-level domain it belongs to.
+For instance, if you want to find the Internet address of a machine at
+.SM UCLA ,
+do the following:
+.RS 3
+.TP 4
+\(bu
+Connect with the root server using the
+\f4root\f1
+command.
+The root server of the name space has knowledge of the top-level
+domains.
+.TP
+\(bu
+Since
+.SM UCLA
+is a university, its domain name is
+\f4ucla.edu\f1.
+Connect with a server for the
+\f4ucla.edu\f1
+domain with the command
+\f4server ucla.edu\f1.
+The response will print
+the names of hosts that act as servers for that domain.
+Note: the root server does not have information about
+\f4ucla.edu\f1,
+but knows the names and addresses of hosts that do.
+Once located by the root server,
+all future queries will be sent to the
+.SM UCLA
+name server.
+.TP
+\(bu
+To request information about a particular host in the domain
+(for instance,
+\f4locus\f1),
+just type the host name.
+To request a listing of hosts in the
+.SM UCLA
+domain, use the
+\f4ls\f1
+command.
+The
+\f4ls\f1
+command requires a domain name (in this case,
+\f4ucla.edu\f1)
+as an argument.
+.RE
+.LP
+If you are connected with a name server that handles
+more than one domain, all lookups for
+host names must be fully specified with its domain.
+For instance, the domain
+\f4harvard.edu\f1
+is served by
+\f4seismo.css.gov\f1, 
+which also services the\p
+.br
+.ne 1i
+\f4css.gov\f1
+and
+\f4cornell.edu\f1
+domains.
+A lookup request for the host
+\f4aiken\f1 in the
+\f4harvard.edu\f1
+domain must be specified as
+\f4aiken.harvard.edu\f1.
+However, the\p
+.IP
+\f4set domain\|=\|\f2name\f1
+.LP
+and
+.IP
+\f4set defname\f1
+.LP
+commands can be used to automatically
+append a domain name to each request.
+.LP
+After a successful lookup of a host, use the
+\f4finger\f1
+command to
+see who is on the system, or to finger a specific person.
+To get other information about the host, use the
+.IP
+\f4set querytype\|=\|\f2value\f1
+.LP
+command to change the type of information desired and request another
+lookup.
+(\f4finger\f1
+requires the type to be A.)
+.SS Commands
+To exit, type
+.SM Ctrl-D
+(EOF).
+The command line length must be less than 80 characters.
+An unrecognized command will be interpreted as a host name.
+.TP
+\fIhost\fP [\fIserver\fP]
+Look up information for
+.I host
+using the current default server or using
+.I server
+if it is specified.
+.
+.ne 5
+.TP
+\f4server \f2domain\f1
+.ns
+.TP
+\f4lserver \f2domain\f1
+Change the default server to
+.IR domain .
+\f4lserver\f1
+uses the initial server to look up
+information about
+.I domain
+while
+\f4server\f1
+uses the current default server.
+If an authoritative answer can't be found, the names of servers
+that might have the answer are returned.
+.
+.TP
+\f4root\f1
+Changes the default server to the server
+for the root of the domain name space.
+Currently, the host
+\f4sri-nic.arpa\f1
+is used; this command is a synonym for
+\f4lserver sri-nic.arpa\f1.)
+The name of the root server can be changed with the
+\f4set root\f1
+command.
+.
+.TP
+\f4finger\f1 [ \f2name\f1 ]
+Connect with the finger server on the current host, which
+is defined by a previous successful lookup for a host's
+address information (see the
+\f4set \f2querytype\fP =\|A\f1
+command).
+As with the shell, output can be redirected to a named file
+using
+\f4>\f1
+and
+\f4>>\f1.
+.
+.TP \fIdomain\fR
+\f4ls \fR[\f4\-ah\fR]
+List the information available for
+.IR domain .
+The default output contains host names
+and their Internet addresses.
+The \f4\-a\f1
+option lists aliases of hosts in the domain.
+The \f4\-h\f1 option lists
+.SM CPU
+and operating system information for the domain.
+As with the shell, output can be redirected to a named file
+using
+\f4>\f1
+and
+\f4>>\f1.
+When output is directed to a file, hash marks are printed for every
+50 records received from the server.
+.TP
+\f4view \f2filename\f1
+Sort and list the output of the
+\f4ls\f1
+command with
+\f4more\f1(1).
+.br
+.ne1i
+.PD 0
+.TP
+\f4help\f1
+.TP
+\f4?\f1
+Print a brief summary of commands.
+.PD
+.HP
+\f4set \f2keyword\f1
+[
+\f4= \f2value\f1
+]
+This command is used to change state
+information that affects the lookups.
+Valid keywords are:
+.RS
+.TP
+\f4all\f1
+Prints the current values of the various options to
+\f4set\f1.
+Information about the  current default
+server and host is also printed.
+.HP
+[ \f4no\f1 ] \f4deb\c\f1
+[ \f4ug\f1 ]
+.br
+Turn debugging mode on.
+A lot more information is printed about the
+packet sent to the server and the resulting answer.
+The default is
+\f4nodebug\f1.
+.HP
+[ \f4no\f1 ] \f4def\c\f1
+[ \f2name\f1 ]
+.br
+Append the default domain name to every lookup.
+The default is
+\f4nodefname\f1.
+.HP
+\f4do\f1 [ \f4main\f1 ] \f4= \f2filename\f1
+.br
+Change the default domain name to
+\f2filename\f1.
+The default domain name is appended to all lookup requests if
+\f4defname\f1
+option has been set.
+The default is the value in
+\f4/etc/resolve.conf\f1.
+.HP
+\f4q\f1 [ \f4querytype\f1 ] \f4= \f2value\f1
+.br
+Change the type of information returned from a query to one of:
+.RS
+.TP 7
+\f4A\f1
+.PD 0
+The host's Internet address (the default).
+.TP
+\f4CNAME\f1
+The canonical name for an alias.
+.TP
+\f4HINFO\f1
+The host
+.SM CPU
+and operating system type.
+.TP
+\f4MD\f1
+The mail destination.
+.TP
+\f4MX\f1
+The mail exchanger.
+.TP
+\f4MB\f1
+The mailbox domain name.
+.TP
+\f4MG\f1
+The mail group member.
+.TP
+\f4MINFO\f1
+The mailbox or mail list information.
+.PD
+.RE
+.IP
+(Other types specified in the
+.SM RFC\s0883
+document are valid, but are not
+very useful.)
+.HP
+[ \f4no\f1 ] \f4rec\c\f1
+\f4urse\f1
+.br
+Tell the name server to query other servers if it does not have the
+information.
+The default is
+\f4recurse\f1.
+.HP
+\f4ret\f1 [ \f4ry\f1 ] \f4= \f2count\f1
+.br
+Set the number of times to retry a request before giving up to
+.IR count .
+When a reply to a request is not received within a certain
+amount of time (changed with
+\f4set timeout\f1),
+the request is resent.
+The default is
+.I count
+is
+\f42\f1.
+.HP
+\f4ro\f1 [ \f4ot\f1 ] \f4= \f2host\f1
+.br
+Change the name of the root server to
+.IR host .
+This
+affects the
+\f4root\f1
+command.
+The default root server is
+\f4sri-nic.arpa\f1.
+.br
+.ne 1i
+.HP
+\f4t\f1 [ \f4timeout\f1 ] \f4= \f2interval\f1
+.br
+Change the time-out for a reply to
+.I interval
+seconds.
+The default
+.I interval 
+is \f410\f1
+seconds.
+.HP
+[ \f4no\f1 ] \f4v\c\f1
+[ \f4c\f1 ]
+.br
+Always use a virtual circuit when sending requests to the server.
+The default is
+\f4novc\f1.
+.RE
+.SH FILES
+.PD 0
+.TP 22
+\f4/etc/resolve.conf\f1
+initial domain name and name server addresses.
+.PD
+.SH SEE ALSO
+\f4named\f1(1M),
+\f4resolver\f1(3N),
+\f4resolve.conf\f1(4),
+.SM RFC 882,
+.SM RFC 883
+.SH DIAGNOSTICS
+If the lookup request was not successful, an error message is printed.
+Possible errors are:
+.TP
+\f4Time-out\f1
+The server did not respond to a request after a certain amount of
+time (changed with
+\f4set timeout =\|\f2value\f1)
+and a certain number of retries (changed with
+\f4set retry =\|\f2value\f1).
+.TP
+\f4No information\f1
+Depending on the query type set with the
+\f4set querytype\f1
+command,
+no information about the host was available, though the host name is
+valid.
+.TP
+\f4Non-existent domain\f1
+The host or domain name does not exist.
+.TP
+\f4Connection refused\f1
+.ns
+.TP
+\f4Network is unreachable\f1
+The connection to the name or finger server could not be made
+at the current time.
+This error commonly occurs with
+\f4finger\f1
+requests.
+.TP
+\f4Server failure\f1
+The name server found an internal inconsistency in its database
+and could not return a valid answer.
+.TP
+\f4Refused\f1
+The name server refused to service the request.
+.sp 1
+.LP
+The following error should not occur and
+it indicates a bug in the program.
+.TP
+\f4Format error\f1
+The name server found that the request
+packet was not in the proper format.

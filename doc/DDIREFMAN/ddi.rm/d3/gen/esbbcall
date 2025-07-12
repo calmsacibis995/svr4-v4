@@ -1,0 +1,62 @@
+'\"macro stdmacro
+.if n .pH gen.esbbcall @(#)esbbcall	40.2 of 1/7/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.nr X
+.if \nX=0 .ds x} esbbcall D3DK "STREAMS" "DDI/DKI" "\&"
+.if \nX=1 .ds x} esbbcall D3DK "STREAMS" "DDI/DKI"
+.if \nX=2 .ds x} esbbcall D3DK "" "\&"
+.if \nX=3 .ds x} esbbcall "" "" "\&"
+.TH \*(x}
+.IX "\f4esbbcall\fP(D3DK)"
+.SH NAME
+\f4esbbcall\f1 \- call a function when an externally-supplied buffer can be allocated
+.SH SYNOPSIS 
+.nf
+.na
+\f4#include <sys/stream.h>
+.sp 0.5
+int esbbcall(int \f2pri, \f4void (*\f2func\f4)(), long \f2arg\f4);\f1
+.ad
+.fi
+.SH ARGUMENTS 
+.RS 0n 10
+.IP "\f2pri\f1" 10n
+Priority of the \f4esballoc\fP(D3DK) allocation request (\f4BPRI_LO\fP, \f4BPRI_MED\fP, or
+\fPBPRI_HI\fP.)
+.IP "\f2func\f1" 10n
+Function to be called when a buffer becomes available.
+.IP "\f2arg\f1" 10n
+Argument to the function to be called when a buffer becomes available.
+.RE
+.SH DESCRIPTION 
+\f4esbbcall\f1,
+like \f4bufcall\f1(D3DK), serves 
+as a \f4timeout\f1(D3DK) call of indeterminate length.
+If \f4esballoc\f1(D3DK) is unable to allocate a
+message block header and a data block header to go with its externally supplied data buffer,
+\f4esbbcall\f1 can
+be used to schedule the routine \f2func\f1,
+to be called with the argument \f2arg\f1 when memory becomes available.
+.P
+When \f2func\fP runs, all interrupts from STREAMS devices will be blocked.
+\f2func\fP will have no user context and may not call any function that sleeps.
+.SH "RETURN VALUE" 
+If successful, \f4esbbcall\f1 returns a non-zero integer that identifies the
+scheduling request.
+This non-zero identifier may be passed to \f4unbufcall\f1(D3DK) to cancel the request.
+If any failure occurs, \f4esbbcall\f1 returns 0.
+.SH LEVEL 
+Base or Interrupt.
+.SH NOTES
+Does not sleep.
+.sp 0.5
+Even when \f2func\fP is called, \f4esballoc\fP can still fail if another module or
+driver had allocated the memory before \f2func\fP was able to call \f4allocb\fP.
+.SH "SEE ALSO" 
+.na
+\f4allocb\f1(D3DK),
+\f4bufcall\f1(D3DK),
+\f4esballoc\f1(D3DK),
+\f4timeout\fP(D3DK),
+\f4unbufcall\f1(D3DK)
+.ad

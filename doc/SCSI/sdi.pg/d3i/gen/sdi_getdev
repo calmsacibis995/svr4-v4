@@ -1,0 +1,65 @@
+'\"macro stdmacro
+.if n .pH d3i.sdi_getdev @(#)sdi_getdev	40.8 of 3/8/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} sdi_getdev D3I SDI
+.if \nX=1 .ds x} sdi_getdev D3I SDI
+.if \nX=2 .ds x} sdi_getdev D3I "" "\&"
+.if \nX=3 .ds x} sdi_getdev "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4sdi_getdev\fP \- convert device number to SCSI pass-through device number
+.SH SYNOPSIS
+.nf
+.ft 4
+void
+sdi_getdev(struct scsi_ad *\f2addr\f4, dev_t \f2dev\f4);
+.ft 1
+.fi
+.SH ARGUMENTS
+.IX "scsi_ad(D4I)"
+.IX "sa_major"
+.IX "sa_minor"
+.PP
+.TP 8
+\f2addr\f1
+pointer to the \f4scsi_ad\f1 (SCSI device address) structure.  The
+pass-through device number is returned in \f4sa_major\f1 and \f4sa_minor\f1
+members of the structure. 
+.TP
+\f2dev\f1
+device major/minor number pair.
+.SH DESCRIPTION
+\f4sdi_getdev\f1 translates a device major/minor number pair into the
+pass-through interface major/minor number pair for that device.
+The pass-through major/ minor number is returned in the \f4addr\f1 structure.
+.SH RETURN VALUE
+None
+.SH LEVEL
+Base or Interrupt
+.SH EXAMPLE
+A target driver uses the pass-through device number when logging non-buffer
+related errors.  The following example shows how \f4sdi_getdev\f1 can be used
+after an unsuccessful call to \f4sdi_icmd\f1.
+.P
+.nf
+.ft 4
+   struct sb      *sb_ptr;
+   struct scsi_ad  dk_addr;
+   dev_t           pt_dev;
+   ...
+        
+   /* Call sdi_icmd to send an immediate command */
+      if (sdi_icmd(sb_ptr) != SDI_RET_OK)
+   {
+      /* The call was unsuccessful.  Print an error message,
+       * get the pass-through device number, and log an error
+       * against the device.
+       */
+       cmn_err(CE_WARN, "DISK: Bad SB type to SDI. ");
+       sdi_getdev(&disk_addr, &pt_dev);
+   }
+   ...
+.ft 1
+.fi

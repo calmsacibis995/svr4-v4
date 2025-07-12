@@ -1,0 +1,151 @@
+'\"macro stdmacro
+.if n .pH g1f.regex @(#)regex	40.13 of 5/29/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} regex 1F "Form and Menu Language Interpreter Utilities" "\&"
+.if \nX=1 .ds x} regex 1F "Form and Menu Language Interpreter Utilities"
+.if \nX=2 .ds x} regex 1F "" "\&"
+.if \nX=3 .ds x} regex "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4regex\f1 \- match patterns against a string
+.SH SYNOPSIS
+\f4regex\f1
+[\f4\-e\f1] [\f4\-v\f1 \f4"\f2string\f4"\f1] [\f2pattern\f1 \f2template\f1] \f2... pattern\f1 [\f2template\f1]
+.SH DESCRIPTION
+The \f4regex\f1 command takes a string
+from \f2stdin\f1,
+and a list of \f2pattern\f1/\f2template\f1 pairs,
+and runs \f4regex\f1(3X) to compare the string against each \f2pattern\f1
+until there is a match.
+When a match occurs, \f4regex\f1 writes the corresponding \f2template\f1
+to \f2stdout\f1 and returns TRUE.
+The last (or only) \f2pattern\f1 does not need a template.
+If that is the pattern that matches the string,
+the function simply returns TRUE.
+If no match is found, \f4regex\f1 returns FALSE.
+.TP 1i
+\f4\-e\f1
+means \f4regex\f1 will evaluate
+the corresponding template and write the result to \f2stdout\f1.
+.TP
+\f4\-v\f1 "\f2string\f1"
+If \f4-v\f1 is specified, \f2string\f1 will be used instead of \f2stdin\f1
+to match against patterns.
+.PP
+The argument \f2pattern\f1 is a regular expression of the form described in
+\f4regex\f1(3X).
+In most cases \f2pattern\f1 should be enclosed in single quotes
+to turn off special meanings of characters.
+Note that only the final \f2pattern\f1 in the list may lack a \f2template\f1.
+.PP
+The argument \f2template\f1 may contain the strings \f4$m0\f1 through \f4$m9\f1,
+which will be expanded to the part of \f2pattern\f1
+enclosed in \f4( .\|.\|. )$0\f1 through \f4( .\|.\|. )$9\f1 constructs
+(see examples below).
+Note that if you use this feature,
+you must be sure to enclose \f2template\f1 in single quotes
+so that FMLI doesn't expand \f4$m0\f1 through \f4$m9\f1
+at parse time.
+This feature gives \f4regex\f1 much of the power of \f4cut\f1(1),
+\f4paste\f1(1), and \f4grep\f1(1),
+and some of the capabilities of \f4sed\f1(1).
+If there is no \f2template\f1,
+the default is "\f4$m0$m1$m2$m3$m4$m5$m6$m7$m8$m9\f1".
+.SH EXAMPLES
+.PP
+To cut the 4th through 8th letters out of a string (this example
+will output \f4strin\f1 and return TRUE):
+.PP
+.RS
+\f4\(garegex -v "my string is nice" '^.{3}(.{5})$0' '$m0'\(ga\f1
+.RE
+.PP
+In a form, to validate input to field 5 as an integer:
+.PP
+.RS
+\f4valid=\(garegex -v "$F5" '^[0-9]+$'\(ga\f1
+.RE
+.PP
+In a form, to translate an environment variable
+which contains one of the numbers \f41\f1, \f42\f1, \f43\f1, \f44\f1, \f45\f1
+to the letters \f4a\f1, \f4b\f1, \f4c\f1, \f4d\f1, \f4e\f1:
+.PP
+.RS
+\f4value=\(garegex -v "$VAR1" 1 a 2 b 3 c 4 d 5 e '.*' 'Error'\(ga\f1
+.RE
+.PP
+Note the use of the pattern \f4'.*'\f1 to mean ``anything else.''
+.PP
+In the example below,
+all three lines constitute a single backquoted expression.
+This expression, by itself, could be put in a menu definition file.
+Since backquoted expressions are expanded as they are parsed,
+and output from a backquoted expression
+(the \f4cat\f1 command, in this example)
+becomes part of the definition file being parsed,
+this expression would read \f4/etc/passwd\f1
+and make a dynamic menu of all the login ids on the system.
+.PP
+.RS
+.nf
+\f4\(gacat /etc/passwd | regex '^([^:]*)$0.*$' '
+name=$m0
+action=\(gamessage "$m0 is a user"\(ga'\(ga\f1
+.fi
+.RE
+.SH DIAGNOSTICS
+If none of the patterns matches, \f4regex\f1 returns FALSE,
+otherwise TRUE.
+.SH NOTES
+Patterns and templates must often be enclosed in single quotes to
+turn off the special meanings of characters.
+Especially if you use the \f4$m0\f1 through \f4$m9\f1 variables in the template,
+since FMLI will expand the variables
+(usually to "") before \f4regex\f1 even sees them.
+.PP
+Single characters in character classes (inside \f4[\|]\f1) must
+be listed before character ranges, otherwise they will not be
+recognized.
+For example, \f4[a-zA-Z_/]\f1 will not find underscores (\f4_\f1) or
+slashes (\f4/\f1), but \f4[_/a-zA-Z]\f1 will.
+.PP
+The regular expressions accepted by \f4regcmp\f1 differ slightly from
+other utilities (that is, \f4sed\f1, \f4grep\f1, \f4awk\f1, \f4ed\f1, and
+so on).
+.PP
+\f4regex\f1 with the \f4\-e\f1 option forces subsequent commands
+to be ignored.
+In other words if a backquoted statement appears as follows:
+.PP
+.RS
+\f4\(garegex -e ...; command1; command2\(ga\f1
+.RE
+.PP
+\f2command1\f1
+and
+\f2command2\f1
+would never be executed.
+However, dividing the expression into two:
+.PP
+.RS
+\f4\(garegex -e ...\(ga\(gacommand1; command2\(ga\f1
+.RE
+.PP
+would yield the desired result.
+.SH "SEE ALSO"
+\f4regcmp\f1(3),
+\f4regex\f1(3X)
+in the \f2UNIX System V Programmer's Reference Manual\f1
+.sp .4v
+\f4awk\f1(1),
+\f4cut\f1(1),
+\f4grep\f1(1),
+\f4paste\f1(1),
+\f4sed\f1(1)
+in the \f2UNIX System V User's Reference Manual\f1
+.ig
+BUILT-IN FMLI
+..
+.Ee

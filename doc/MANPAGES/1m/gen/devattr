@@ -1,0 +1,78 @@
+'\"macro stdmacro
+.if n .pH g1M.devattr @(#)devattr	40.11.1.2 of 2/5/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} devattr 1M "Essential Utilities" "\&"
+.if \nX=1 .ds x} devattr 1M "Essential Utilities"
+.if \nX=2 .ds x} devattr 1M "" "\&"
+.if \nX=3 .ds x} devattr "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4devattr\f1 \- lists device attributes
+.SH SYNOPSIS
+\f4devattr \f1[\f4-v\f1] \f2device\f1 [\f2attribute \f1[ . . . ]\|]
+.SH DESCRIPTION
+\f4devattr\f1
+displays the values for a device's attributes.
+The display can be
+presented in two formats.
+Used without the \f4-v\f1 option, only the attribute
+values are shown.
+Used with the \f4-v\f1 option, the
+attributes are shown in an \f2attribute\f4=\f2value\f1 format.
+When no attributes are given on the command line, all attributes for the 
+specified device are displayed in alphabetical order by attribute name.
+If attributes are given on the command line, only those are shown and 
+they are displayed in command line order.
+.P
+The options and arguments for this command are:
+.P
+.PD 0
+.TP 13
+\f4-v\f1
+Specifies verbose format.
+Attribute values are displayed in an
+\f2attribute\f4=\f2value\f1 format.
+.P
+.TP 13
+\f2device\f1
+Defines the device whose attributes should be displayed.
+Can be the pathname of the device or the device alias.
+.P
+.TP 13
+\f2attribute\f1
+Defines which attribute, or attributes, should be shown.
+Default is to show
+all attributes for a device.
+See the \f4putdev\fP(1M) manual page for a complete listing and description of
+available attributes.
+.PD
+.SH ERRORS
+The command will exit with one of the following values:
+.TP 4
+\f40\f1 =
+successful completion of the task.
+.TP 4
+\f41\f1 =
+command syntax incorrect, invalid option used, or internal error occurred.
+.TP 4
+\f42\f1 =
+device table could not be opened for reading.
+.TP 4
+\f43\f1 =
+requested device could not be found in the device table.
+.TP 4
+\f44\f1 =
+requested attribute not defined for specified device.
+.SH FILES
+.ft CW
+/etc/device.tab
+.ft
+.SH SEE ALSO
+.na
+\f4putdev\fP(1M).
+.br
+\f4devattr\fP(3X), \f4listdev\fP(3X) 
+in the \f2Programmer's Reference Manual\f1.
+.ad

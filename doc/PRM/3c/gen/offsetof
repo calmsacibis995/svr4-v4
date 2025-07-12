@@ -1,0 +1,23 @@
+'\"macro stdmacro
+.if n .pH g3c.offsetof @(#)offsetof	40.4 of 5/22/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} offsetof 3C "C Development Set" "\&"
+.if \nX=1 .ds x} offsetof 3C "C Development Set"
+.if \nX=2 .ds x} offsetof 3C "" "\&"
+.if \nX=3 .ds x} offsetof "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4offsetof\f1 \- offset of structure member
+.SH SYNOPSIS
+\f4#include <stddef.h>\f1
+.PP
+\f4size_t offsetof (type, member-designator);\f1
+.SH DESCRIPTION
+\f4offsetof\fP is a macro defined in \f4stddef.h\fP which expands to an
+integral constant expression that has type \f4size_t\fP, the value of which
+is the offset in bytes, to the structure member (designated by
+\f2member-designator\fP), from the beginning of its structure (designated by
+\f2type\fP).
+.Ee

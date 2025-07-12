@@ -1,0 +1,132 @@
+'\"macro stdmacro
+.if n .pH g4.a.out @(#)a.out	@(#)a.out	40.9 of 4/11/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} a.out 4 "" "\&"
+.if \nX=1 .ds x} a.out 4 ""
+.if \nX=2 .ds x} a.out 4 "" "\&"
+.if \nX=3 .ds x} a.out "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4a.out\f1 \- ELF (Executable and Linking Format) files
+.SH SYNOPSIS
+\f4#include <elf.h>\f1
+.SH DESCRIPTION
+The file name
+\f4a.out\f1
+is the default output file name from
+the link editor,
+\f4ld\fP(1).
+The link editor will make an
+\f4a.out\fP
+executable if there were no errors in linking.
+The output file of the assembler,
+\f4as\fP(1),
+also follows the format of the
+\f4a.out\fP
+file although its default file name is different.
+.PP
+Programs that manipulate ELF files may use the library
+that \f4elf\fP(3E) describes.
+An overview of the file format follows.
+For more complete information, see the references given below.
+.PP
+.sp 1v
+.TS
+center;
+c c c
+| c | c | c |.
+Linking View		Execution View
+_		_
+ELF header		ELF header
+_		_
+Program header table		Program header table
+\f2optional\fP
+_		_
+Section 1		Segment 1
+_		\^
+\u.\ .\ .\d		\^
+_		_
+Section \f2n\fP		Segment 2
+_		\^
+\u\&.\ .\ .\d		\^
+_		_
+\u\&.\ .\ .\d		\u.\ .\ .\d
+_		_
+Section header table		Section header table
+		\f2optional\fP
+_		_
+.TE
+.PP
+An ELF header resides at the beginning and holds a ``road map''
+describing the file's organization.
+Sections hold the bulk of object file information for the linking view:
+instructions, data,
+symbol table, relocation information, and so on.
+Segments hold the object file information for the
+program execution view.
+As shown, a segment may contain one or more sections.
+.PP
+A program header table,
+if present, tells the system how to create a process image.
+Files used to build a process image (execute a program)
+must have a program header table; relocatable files do not need one.
+A section header table
+contains information describing the file's sections.
+Every section has an entry in the table; each entry
+gives information such as the section name, the
+section size, etc.
+Files used during linking must have a section header table;
+other object files may or may not have one.
+.PP
+Although the figure shows the program header table
+immediately after the ELF header, and the section header table
+following the sections, actual files may differ.
+Moreover, sections and segments have no specified order.
+Only the ELF header has a fixed position in the file.
+.PP
+When an
+\f4a.out\f1
+file is loaded into memory for execution, three logical segments are
+set up: the text segment, the data segment
+(initialized data followed by uninitialized, the latter actually being
+initialized to all 0's),
+and a stack.
+The text segment is not writable by the program;
+if other processes are executing the same
+\f4a.out\f1
+file, the processes will share a single text segment.
+.PP
+The data segment starts at the next maximal page boundary past the last
+text address.
+(If the system supports more than one page size, the ``maximal page''
+is the largest supported size.)\ 
+When the process image is
+created, the part of the file holding the end of
+text and the beginning of data may appear twice.
+The duplicated chunk of text that appears at the beginning of data
+is never executed; it is duplicated so that the operating system may
+bring in pieces of the file in multiples of the actual page size without
+having to realign the beginning of the data section to a page
+boundary.  Therefore, the first data address is the sum of the next
+maximal page boundary past the end of text plus the remainder of the
+last text address divided by the maximal page size.
+If the last text address is a multiple of the maximal page size,
+no duplication is necessary.
+The stack is automatically extended as required.
+The data segment is extended as requested by
+the
+\f4brk\fP(2)
+system call.
+.SH SEE ALSO
+\f4as\fP(1),
+\f4cc\fP(1),
+\f4ld\fP(1),
+\f4brk\fP(2),
+\f4elf\fP(3E)
+.sp .2
+The ``Object Files'' chapter in the
+\f2Programmer's Guide: ANSI C and Programming Support Tools\fP.
+'\"	@(#)a.out.4	6.5 of 4/3/84
+.Ee

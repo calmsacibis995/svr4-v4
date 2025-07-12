@@ -1,0 +1,155 @@
+'\"macro stdmacro
+.if n .pH g1a.install @(#)install	40.13 of 5/22/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} install 1M "Essential Utilities" "\&"
+.if \nX=1 .ds x} install 1M "Essential Utilities"
+.if \nX=2 .ds x} install 1M "" "\&"
+.if \nX=3 .ds x} install "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4install\f1 \- install commands
+.SH SYNOPSIS
+\f4/usr/sbin/install\f1
+\f1[\f4\-c\f1 \f2dira\fP]
+\f1[\f4\-f\f1 \f2dirb\fP]
+\f1[\f4\-i\f1]
+\f1[\f4\-n\f1 \f2dirc\fP]
+\f1[\f4\-m\f1 \f2mode\fP]
+\f1[\f4\-u\f1 \f2user\fP]
+\f1[\f4\-g\f1 \f2group\fP]
+\f1[\f4\-o\f1]
+\f1[\f4\-s\f1]
+\f2file\fP [\f2dirx\fP .\|.\|.]
+.SH DESCRIPTION
+The
+\f4install\fP
+command is most commonly used in ``makefiles''
+[see
+\f4make\fP(1)]
+to install a
+.I file\^
+(updated target file) in a specific place within a file system.
+Each
+.I file\^
+is installed by copying it into the appropriate directory, thereby retaining the
+mode and owner of the original command.
+The program prints messages telling the user exactly what files it is
+replacing or creating and where they are going.
+.PP
+If no options or directories
+.RI ( dirx " .\|.\|.)"
+are given,
+\f4install\fP
+will search
+a set of default directories
+\f1(\f4/bin\f1,
+\f4/usr/bin\f1, \f4/etc\f1, \f4/lib\f1,
+and
+\f4/usr/lib\f1,
+in that order)
+for a file with the same name as 
+.IR file .
+When the first occurrence is found,
+\f4install\fP
+issues a message saying that it is overwriting that file with
+.IR file ,
+and proceeds to do so.
+If the file is not found, the program states this and exits without
+further action.
+.PP
+If one or more directories
+.RI ( dirx " .\|.\|.)"
+are specified after
+.IR file ,
+those directories will be searched before the directories specified
+in the default list.
+.PP
+The meanings of the options are:
+.PP
+.RS 5
+.TP 15
+\f4\-c\f2  dira\^\f1
+Installs a new command (\f2file\fP\^) in the directory specified by
+.IR dira ,
+only if it is
+not
+found.
+If it is found,
+\f4install\fP
+issues a message saying that the file already
+exists, and exits without overwriting it.
+May be used alone or with the
+\f4\-s\f1
+option.
+.TP 15
+\f4\-f\f2  dirb\^\f1
+Forces
+.I file\^
+to be installed in given directory, whether or not one already exists.
+If the file being installed does not already exist, the mode and owner
+of the new file will be set to \f4755\fP and \f4bin\fP, respectively.
+If the file already exists, the mode and owner will be that of the
+already existing file.
+May be used alone or with the
+\f4\-o\f1
+or
+\f4\-s\f1
+options.
+.TP 15
+\f4\-i\f1
+Ignores default directory list, searching only through the given directories
+.RI ( dirx " .\|.\|.)."
+May be used alone or with any other options except
+\f4\-c\f1
+and
+\f4\-f\f1.
+.TP 15
+\f4\-n\f2  dirc\^\f1
+If
+.I file\^
+is not found in any of the searched directories, it is put in the directory
+specified in
+.IR dirc .
+The mode and owner of the new file will be set to \f4755\fP and \f4bin\fP, respectively.
+May be used alone or with any other options except
+\f4\-c\f1
+and
+\f4\-f\f1.
+.TP 15
+\f4\-m\f2  mode\^\f1
+The mode of the new file is set to
+.IR mode "."
+.TP 15
+\f4\-u\f2  user\^\f1
+The owner of the new file is set to
+.IR user "."
+.TP 15
+\f4\-g\f2  group\^\f1
+The group id of the new file is set to
+\f2group\fP.
+Only available to the superuser.
+.TP 15
+\f4\-o\f1
+If
+.I file\^
+is found, this option saves the ``found'' file by copying it to
+\f4\s-1OLD\s0\f2file\^\f1
+in the directory in which it was found.
+This option is useful when installing a frequently used file such as
+\f4/bin/sh\fP
+or
+\f4/lib/saf/ttymon\fP,
+where the existing file cannot be removed.
+May be used alone or with any other options except
+\f4\-c\f1.
+.TP 15
+\f4\-s\f1
+Suppresses printing of messages other than error messages.
+May be used alone or with any other options.
+.RE
+.SH SEE ALSO
+\f4make\fP(1)
+.\"	@(#)install.1m	5.2 of 4/22/83
+.Ee

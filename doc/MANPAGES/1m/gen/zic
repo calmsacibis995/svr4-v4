@@ -1,0 +1,338 @@
+'\"macro stdmacro
+.if n .pH g1a.zic @(#)zic	40.11 of 5/2/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.\" @(#)zic.1M 1.4 88/10/17 SMI; from Arthur Olson
+'\"macro stdmacro
+.\" Copyright (c) 1988 Sun Microsystems, Inc - All Rights Reserved.
+.nr X
+.if \nX=0 .ds x} zic 1M "Essential Utilities" "\&"
+.if \nX=1 .ds x} zic 1M "Essential Utilities"
+.if \nX=2 .ds x} zic 1M "" "\&"
+.if \nX=3 .ds x} zic "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4zic\f1 \- time zone compiler
+.SH SYNOPSIS
+\f4zic\f1
+[
+\f4\-v\f1
+] [
+\f4\-d\f1
+\f4directory\fP
+] [
+\f4\-l\f1
+\f4localtime\fP
+] [
+\f2filename\f1 .\ .\ . ]
+.SH DESCRIPTION
+\f4zic\f1
+reads text from the file(s) named on the command line
+and creates the time conversion information
+files specified in this input.  If a
+.I filename
+is
+\f1`\f4\-\f1',
+the standard input is read.
+.LP
+Input lines are made up of fields.
+Fields are separated by any number of white space characters.
+Leading and trailing white space on input lines is ignored.
+A pound sign (\f4#\f1)
+in the input introduces a comment which extends
+to the end of the line the pound sign appears on.
+White space characters and pound signs
+may be enclosed in
+double quotes (\f4"\f1) if they're to be used as part of a field.
+Any line that is blank (after comment stripping) is ignored.
+Non-blank lines are expected to be of one of three types:
+rule lines, zone lines, and link lines.
+.LP
+A rule line has the form
+.TS
+c2f4 c2Ip8 c2Ip8 c2Ip8 c2Ip8 c2Ip8 c2Ip8 c2Ip8 c2Ip8 c2Ip8
+l s s s s s s s s s
+cf4p9 cf4p9 cf4p9 cf4p9 cf4p9 cf4p9 cf4p9 cf4p9 cf4p9 cf4p9.
+   Rule	NAME	FROM	TO	TYPE	IN	ON	AT	SAVE	LETTER/S
+.sp .5
+For example:
+.sp .5
+   Rule	USA	1969	1973	\-	Apr	lastSun	2:00	1:00	D
+.TE
+The fields that make up a rule line are:
+.TP "\w'LETTER/S'u"
+\f4NAME\f1
+Gives the (arbitrary) name of the set of rules this rule is part of.
+.TP
+\f4FROM\f1
+Gives the first year in which the rule applies.
+The word
+\f4minimum\f1
+(or an abbreviation) means the minimum
+year with a representable time value.
+The word
+\f4maximum\f1
+(or an abbreviation) means the maximum
+year with a representable time value.
+.TP
+\f4TO\f1
+Gives the final year in which the rule applies.
+In addition to
+\f4minimum\f1
+and
+\f4maximum\f1
+(as above),
+the word
+\f4only\f1
+(or an abbreviation)
+may be used to repeat the value of the
+\f4FROM\f1
+field.
+.TP
+\f4TYPE\f1
+Gives the type of year in which the rule applies.
+If
+\f4TYPE\f1
+is
+\f1`\f4\-\f1'
+then the rule applies in all years between
+\f4FROM\f1
+and
+\f4TO\f1
+inclusive;
+if
+\f4TYPE\f1
+is
+\f4uspres\f1,
+the rule applies in U.S. Presidential election years;
+if
+\f4TYPE\f1
+is
+\f4nonpres\f1,
+the rule applies in years other than U.S. Presidential election years.
+If
+\f4TYPE\f1
+is something else, then
+\f4zic\f1
+executes the command
+.RS
+.IP
+\f4yearistype\f1
+.I year
+.I type
+.RE
+.IP
+to check the type of a year:
+an exit status of zero is taken to mean
+that the year is of the given type;
+an exit status of one is taken to mean that
+the year is not of the given type.
+.TP
+\f4IN\f1
+Names the month in which the rule takes effect.
+Month names may be abbreviated.
+.TP
+\f4ON\f1
+Gives the day on which the rule takes effect.
+Recognized forms include:
+.RS
+.TP 11
+\f45\f1
+the fifth of the month
+.TP
+\f4lastSun\f1
+the last Sunday in the month
+.TP
+\f4lastMon\f1
+the last Monday in the month
+.TP
+\f4Sun>=8\f1
+first Sunday on or after the eighth
+.TP
+\f4Sun<=25\f1
+last Sunday on or before the 25th
+.RE
+.IP
+Names of days of the week may be abbreviated or spelled out in full.
+Note: there must be no spaces within the \f4ON\f1 field.
+.TP
+\f4AT\f1
+Gives the time of day at which the rule takes effect.
+Recognized forms include:
+.RS
+.TP 11
+\f42\f1
+time in hours
+.TP
+\f42:00\f1
+time in hours and minutes
+.TP
+\f415:00\f1
+24-hour format time (for times after noon)
+.TP
+\f41:28:14\f1
+time in hours, minutes, and seconds
+.RE
+.LP
+Any of these forms may be followed by the letter
+\f4w\f1
+if the given time is local ``wall clock'' time or
+\f4s\f1
+if the given time is local ``standard'' time; in the absence of
+\f4w\f1
+or
+\f4s\f1,
+wall clock time is assumed.
+.TP
+\f4SAVE\f1
+Gives the amount of time to be added to local standard time when the rule is in
+effect.
+This field has the same format as the
+\f4AT\f1
+field
+(although, of course, the
+\f4w\f1
+and
+\f4s\f1
+suffixes are not used).
+.TP
+\f4LETTER/S\f1
+Gives the ``variable part'' (for example, the ``S''
+or ``D'' in ``\s-1EST\s0''
+or ``\s-1EDT\s0'') of time zone abbreviations
+to be used when this rule is in effect.
+If this field is
+\f1`\f4\-\f1',
+the variable part is null.
+.LP
+A zone line has the form
+.TS
+c2f4 c2Ip8 c2Ip8 c2Ip8 c2Ip8 c2Ip8
+l s s s s s
+cf4 cf4 cf4 cf4 cf4 cf4.
+   Zone	NAME	GMTOFF	RULES/SAVE	FORMAT	[UNTIL]
+.sp .5
+For example:
+.sp .5
+   Zone	Australia/South\-west	GMTOFF	RULES/SAVE	FORMAT
+.TE
+The fields that make up a zone line are:
+.TP "\w'GMTOFF'u"
+\f4NAME\f1
+The name of the time zone.
+This is the name used in creating the time conversion information file for the
+zone.
+.TP
+\f4GMTOFF\f1
+The amount of time to add to GMT to get standard time in this zone.
+This field has the same format as the
+\f4AT\f1
+and
+\f4SAVE\f1
+fields of rule lines;
+begin the field with a minus sign if time must be subtracted from
+.SM GMT\s0.
+.TP
+\f4RULES/SAVE\f1
+The name of the rule(s) that apply in the time zone or,
+alternately, an amount of time to add to local standard time.
+If this field is
+\f1`\f4\-\f1'
+then standard time always applies in the time zone.
+.TP
+\f4FORMAT\f1
+The format for time zone abbreviations in this time zone.
+The pair of characters
+\f4%s\f1
+is used to show where the ``variable part'' of the time zone abbreviation goes.
+\f4UNTIL\f1
+The time at which the
+.SM GMT
+offset or the rule(s) change for a location.
+It is specified as a year, a month, a day, and a time of day.
+If this is specified,
+the time zone information is generated from the given
+.SM GMT
+offset and rule change until the time specified.
+.IP
+The next line must be a
+``continuation'' line; this has the same
+form as a zone line except that the
+string ``Zone'' and the name are omitted, as the continuation line will
+place information starting at the time specified as the
+\f4UNTIL\f1
+field in the previous line in the file used by the previous line.
+Continuation lines may contain an
+\f4UNTIL\f1
+field, just as zone lines do, indicating
+that the next line is a further
+continuation.
+.LP
+A link line has the form
+.P
+.RS
+.ti +.5i
+.if t .ta \w'Link\0\0'u +\w'LINK-FROM\0\0'u
+.if n .ta \w'Link\0\0'u +\w'US/Eastern\0\0'u
+\f4Link\f1	\f2\s-1LINK-FROM	LINK-TO\s0\f1
+.RE
+.P
+For example:
+.P
+.RS
+.ti +.5i
+\f4Link	US/Eastern	EST5EDT\f1
+.RE
+.P
+The \f4LINK-FROM\f1 field should appear as the
+\f4NAME\f1 field in some zone line;
+the \f4LINK-TO\f1 field is used as an alternate name for that zone.
+.LP
+Except for continuation lines,
+lines may appear in any order in the input.
+.SH OPTIONS
+.TP
+\f4\-v\f1
+Complain if a year that appears in a data
+file is outside the range
+of years representable by system time values
+(0:00:00 AM
+.SM GMT\s0,
+January 1, 1970, to 3:14:07 AM
+.SM GMT\s0,
+January 19, 2038).
+.TP
+\f4\-d \f4directory\fP
+Create time conversion information files in the directory
+\f4directory\f1
+rather than in the standard directory
+\f4/usr/share/lib/zoneinfo\f1.
+.ne5
+.TP
+\f4\-l \f4timezone\fP
+Use the time zone
+\f4timezone\fP
+as local time.
+\f4zic\f1
+will act as if the file contained a link line of the form
+.P
+.RS
+Link	\f2timezone\fP
+		localtime
+.RE
+.SH FILES
+.TP 1.75i
+\f4/usr/share/lib/zoneinfo\f1
+standard directory used for created files
+.br
+.ne 1i
+.SH "SEE ALSO"
+\f4time\fP(1),
+\f4ctime\fP(3)
+.SH NOTE
+.LP
+For areas with more than two types of local time,
+you may need to use local standard time in the
+\f4AT\f1
+field of the earliest transition time's rule to ensure that
+the earliest transition time recorded in the compiled file is correct.

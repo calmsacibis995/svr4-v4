@@ -1,0 +1,423 @@
+'\"#ident  "@(#)doctools:macros/gen.src	1.2"
+'\"
+'\"       Copyright (c) 1990, 1991 UNIX System Laboratories, Inc.
+'\"       Copyright (c) 1984, 1986, 1987, 1988, 1989, 1990 AT&T
+'\"         All Rights Reserved
+'\"
+'\"       THIS IS UNPUBLISHED PROPRIETARY SOURCE CODE OF
+'\"       UNIX System Laboratories, Inc.
+'\"       The copyright notice above does not evidence any
+'\"       actual or intended publication of such source code.
+'\"
+'\"     gen: generic macro definitions; used with gmt and rmt mac packages
+'\"
+'\"     Modified by: M. Shapiro
+'\"                 UNIX System Laboratories
+'\"                 attunix!mxs   201-522-5181
+'\"                   
+.\"
+.\" -------------------- End Macro ------------------------------
+.de"M
+.\" if odd page, Q is set, and not title or copyright page, put out blank page
+.if\\nQ .if!\\n(NF=1 .ifo \{\
+.   fi
+.   br
+\v'3i'\s18\f3REPLACE WITH BLANK PAGE\fP\s0\v'-3i'
+'   bp\}
+.\" dont do end game for toc or for file with .RP processing
+.if!\\n(tC=1 .if!\\nR=1 \{\
+.   if\\nC=1 .ds[E Mergefile
+.   sy echo "\\\\tFile:\\\\t\\\\t\\\\t\\*([E" >>\\*([N
+.   ie\\np>0 .nr p# \\n%-(\\np-1)
+.   el .nr p# \\n%
+.   sy echo "\\\\tPages Processed:\\\\t\\n(p#" >>\\*([N
+.   if \\n(>F>0 .sy echo "\\\\tNumber of Figures:\\\\t\\n(>F" >>\\*([N
+.   if \\n(>T>0 .sy echo "\\\\tNumber of Tables:\\\\t\\n(>T" >>\\*([N
+.   sy echo "" >>\\*([N
+.   if\\nC=1 .ds[E \\*([Y
+\}
+.if \\n(>R>0 .sy echo "'" >> \\*([M \" Closes sed lines for .RP
+..
+.\" --------------- Underlining: Not Official ---------------------
+.deUL    
+\\$1\f1\v'.2m'\l'|0\(ul'\v'-.2m'
+..
+.\" ----------------- Tab Distance Reset ---------------------------
+.deDT \" 6n for manpage; 0.5i for expository text
+.ie\\n(MP=1 .ta 6n 12n 18n 24n 30n 36n 42n 48n 54n 60n 66n 72n 78n
+.el .ta 0.5i 1i 1.5i 2i 2.5i 3i 3.5i 4i 4.5i 5i 5.5i 6i 6.5i 7i 7.5i 8i
+..
+.\" ======================== Reset macro  =========================
+.de"g  \" Resets page dimensions to original values
+.ll \\n(LLu             \" Line Length
+.lt \\n(LLu             \" Title Length
+.ps \\n(PS              \" Point Size
+.vs \\n(VS              \" Leading
+.ieo .po \\n(POu        \" Recto Page Offset
+.el .po \\n(PEu         \" Verso Page Offset
+.ft\\*(-1               \" Font
+.hy14                   \" Hypenation
+'in0                    \" Indent
+'fi                     \" Fill Mode
+..
+.\" ============= Inter Paragraph Spacing =========
+.dePD \" $1 = Spacing amount
+.nrPD \\n()du                \" Default spacing
+.ie \w\\$1 \{.ie\\n(MP .nrPD \\$1v \" User Specified Spacing
+.   el.nr"v \\$1v            \" guides only use "v spacing in lists
+.   nrPd 1 \}                \" Turn flag on
+.el .rr Pd "v                \" Remove flag
+..
+.\" ========== Another spacing macro ====================
+.de"v
+.ie \\n(.z \{.ie\\n(Pd=1 .sp\\n("vu      \" override hardcoding with .PD request
+.   el .sp\\$1v \}                \" do hard-coded spacing
+.el \{.ie\\n(Pd=1 \!.sp\\n("vu      \" override hardcoding with .PD request
+.   el \!.sp\\$1v \}                \" do hard-coded spacing
+..
+.\" ================ Proprietary Markings =========================
+.dePM \" Printed in ^T
+.ie\\$1 .nr ;t 0            \" turn off marking
+.el.ie \\$1P .nr ;t 1       \" Proprietary
+.el.ie \\$1RS .nr ;t 2      \" Proprietary restricted
+.el.ie \\$1RG .nr ;t 3      \" Proprietary registered
+.el.ie \\$1CR .nr ;t 5      \" Copyright notice
+.el.ie \\$1UW .nr ;t 6      \" Unpublished work notice
+.el.ie \\$1CP .nr ;t 4      \" Cover Page Message
+.el.ie \\$1DN \{.if \w\\$2 .ds[B \\$2
+.                                 \" replace DRAFT with argument
+.   nr ;t 7 \}                    \" DRAFT notice
+.el \{.ds$1 PM: Argument 1 (\\$1) Unknown; Using Proprietary Marking
+.   it1 )D                        \" show error after first line
+.   nr ;t 1 \}                    \" default is Proprietary
+.if!\\n(MP=1 .tm .PM "\\$1" "\\$2"\" Ensure toc has same markings
+..
+.\"=====================TBL (; # + - | registers)==================
+.deTS \" Table Start
+.br
+.if\\n(;S=1 .)D "TS: PREVIOUS .TE NOT FOUND"
+.ne8                        \" Check for space
+.nr ;S 1                    \" Turn tbl flag on
+.rn TH HT                   \" Rename manpage TH macro, temporarily
+.rn "i TH                   \" Restore tbl TH macro, temporarily
+.nr x1 \\n(.i               \" Record indent
+.nr z1 \\n(.u               \" Record fill mode
+.ie\\n(>G=1 ."a 1           \" Print table legend and rule if requested
+.el.sp0.5                   \" Else do spacing here
+.\" Handle Multi-Page Table
+.if \\$1H \{.wh \\n(nlu+\\n(.tu-2v #f   \" Set page trap
+.   di >t                   \" Open diversion
+.   nr ;H 1 \}              \" Turn flag on
+..
+.de"i  \" Multi-Page Table Header
+.\" Only do work if found H argument to TS; else ignore
+.if\\n(;H=1 \{.nr ;B 1                  \" Turn flag on
+.   if \\n(.du>0.5v \{.nr T. 0          \" Set tbl registers
+.      T# 0 \}
+\.  br                                  \" Force break in diversion
+.   di                                  \" End diversion
+.   nr ;I \\n(.i                        \" capture indent
+.   if\\n(;T .if !\\$1N .nr;T 0   \" Suppress heading if $1 = N
+.   in 0                                \" Force zero indent
+.   mk#a
+.   mk#b
+.   mk#c
+.   mk#d
+.   mk#e
+.   if \\n(;T=0 \{.>t                \" Put out diversion
+.      nr ;T 1 \}                    \" Record diversion printing
+.   in\\n(;Iu                        \" Force back indent
+.   mk#T \}                          \" Mark end of header
+..
+.deTE  \" Table End
+.\" reverse renaming of TH macro
+.if!\\n(;S=1 .)D "TE: PREVIOUS .TS NOT FOUND"
+.rn TH "i                            \" Restore tbl TH name
+.rn HT TH                            \" Restore manpage TH name
+.in \\n(x1u                          \" Restore indent
+.if !\\n(z1=0 .fi                    \" Restore fill mode
+.rm >t T#
+.rm #a #b #c #d #e a+ b+ c+ d+ e+ f+ g+ h+ i+ j+ k+ l+ n+ m+
+.rr ;B ;H ;S ;I x1 z1
+.rr 32 33 34 35 36 37 38 40 79 80 81 82
+.rr a| b| c| d| e| f| g| h| i| j| k| l| m|
+.rr a- b- c- d- e- f- g- h- i- j- k- l- m-
+.ie\\n(>G=1 ."a 2                    \" Do Closing Rule
+.el .sp0.5                           \" Else, space here
+..
+.\"==================PIC WORK=========================
+.dePS  \" Pic Start USER:$1=width $2=height FROM PIC!!!:$1=length $2=width
+.if \\n(>p=1 .)D "PS: UNMATCHED PS"
+.\" set flag and capture indent, line length, fill mode
+.nr >p 1                        \" Turn Flag on
+.nr m1 \\n(.i                   \" Record indent
+.ie!\\n(>G=1 \{.sp0.75          \" If not in FG, space here
+.   ne\\$1+0.35i
+.   nr @s 1 \}                  \" And make note for PE space
+.el\{.ne\\$1+1i                 \" Check for space
+.   if \\n(.z ."a 1 \}
+.nr ]f (\\n(.lu-\\$2)/2u        \" Calculate indent amount
+.in \\n(]fu                     \" Set indent
+..
+.dePE
+.if !\\n(>p=1 .)D "PE: UNMATCHED PE"
+.ie\\n(@s=1 .if\\n(.tu>\\n(PDu .sp\\n(PDu  \" Space if not done in FG
+.el\{.br
+.   if \\n(.z ."a 2 \}
+.in \\n(m1u                    \" Reset indent
+.rr m1 >p ]f @s                \" cleanup
+..
+.\"==========================EQN WORK=============================
+.deEQ  \" Equation Start
+.if \\n(>q=1 .)D "EQ: UNMATCHED EQ"
+.nr >q 1                   \" Turn flag on
+..
+.deEN  \" Equation End
+.if !\\n(>q=1 .)D "EN: UNMATCHED EN"
+.rr >q                     \" Cleanup
+..
+.\"========================Error message===========================
+.de)D
+.\" If $1 = 0, this is fatal error; flush output
+.ie \\$10 \{.sy echo  "****************************************************" >>\\*([N
+.if \w\\$2 .ds$2 \\$2
+.sy echo  "FATAL ERROR:(\\*([E) troff line \\n(.c" >>\\*([N
+.sy echo "\\*($2" >>\\*([N
+.sy echo  "PROCESSING TERMINATED" >>\\*([N
+.sy echo  "****************************************************" >>\\*([N
+.em
+.fl
+.ab  bailing out now: job \\n($$ aborted
+.rm $1 $2 \}
+.\" $1 != 0, so non-fatal error
+.el \{.sy echo  "****************************************************" >>\\*([N
+.if \w\\$1 .ds$1 \\$1
+.sy echo  "NON-FATAL ERROR:(\\*([E) troff line \\n(.c" >>\\*([N
+.sy echo  "\\*($1" >>\\*([N
+.sy echo  "PROCESSING WILL CONTINUE" >>\\*([N
+.sy echo  "****************************************************" >>\\*([N
+.rm $1 \}
+..
+.\" ================ Generic change font macro ===============
+.de"j \" $1 = number of the font to change to
+.nr"j \\n(.f                 \" Store font number
+.ft\\$1
+.ie \w\\$7 \&\\$2 \\$3 \\$4 \\$5 \\$6 \\$7
+.el.ie \w\\$6 \&\\$2 \\$3 \\$4 \\$5 \\$6
+.el.ie \w\\$5 \&\\$2 \\$3 \\$4 \\$5
+.el.ie \w\\$4 \&\\$2 \\$3 \\$4
+.el.ie \w\\$3 \&\\$2 \\$3
+.el.if \w\\$2 \&\\$2
+.ft\\n("j                 
+.rr"j                        \" Cleanup
+..
+.\" =============== Alternating change font macro ============
+.de"k \"  Alternates $1 font and $2 font for 6 args.
+.nr"j \\n(.f                 \" Store font number
+.ft\\$1
+.\" proceed through if 6 args, 5, 4, 3, 2, 1
+.ie \w\\$8 \&\\$3\^\f\\$2\\$4\^\f\\$1\\$5\^\f\\$2\\$6\^\
+\f\\$1\\$7\^\f\\$2\\$8
+.el.ie \w\\$7 \&\\$3\^\f\\$2\\$4\^\f\\$1\\$5\^\f\\$2\\$6\^\
+\f\\$1\\$7
+.el.ie \w\\$6 \&\\$3\^\f\\$2\\$4\^\f\\$1\\$5\^\f\\$2\\$6
+.el.ie \w\\$5 \&\\$3\^\f\\$2\\$4\^\f\\$1\\$5
+.el.ie \w\\$4 \&\\$3\^\f\\$2\\$4
+.el.if \w\\$3 \&\\$3
+.ft\\n("j
+.rr"j                        \" Cleanup
+..
+.deI  \" Italic Font
+.ie \\n(MP=1 \{.ie\\n(.$>0 ."j 2 "\\$1" "\\$2" "\\$3" "\\$4" "\\$5" "\\$6"
+.   el \{.ft2
+.      it1 "p \}\}
+.el \{.ie\\n(.$>0 ."k 2 1 "\\$1" "\\$2" "\\$3" "\\$4" "\\$5" "\\$6"
+.   el .ft2 \}
+..
+.deB  \" Bold Font
+.ie \\n(MP=1 \{.ie\\n(.$>0 ."j 3 "\\$1" "\\$2" "\\$3" "\\$4" "\\$5" "\\$6"
+.   el \{.ft3
+.      it1 "p \}\}
+.el \{.ie\\n(.$>0 ."k 3 1 "\\$1" "\\$2" "\\$3" "\\$4" "\\$5" "\\$6"
+.   el .ft3 \}
+..
+.deRI \" Roman/Italic Alternative Fonts
+."k 1 2 "\\$1" "\\$2" "\\$3" "\\$4" "\\$5" "\\$6"
+..
+.deIR \" Italic/Roman Alternating Fonts
+."k 2 1 "\\$1" "\\$2" "\\$3" "\\$4" "\\$5" "\\$6"
+..
+.deIB \" Italic/Bold Alternating Fonts
+."k 2 3 "\\$1" "\\$2" "\\$3" "\\$4" "\\$5" "\\$6"
+..
+.deRB \" Roman/Bold Alternating Fonts
+."k 1 3 "\\$1" "\\$2" "\\$3" "\\$4" "\\$5" "\\$6"
+..
+.deBR \" Bold/Roman Alternating Fonts
+."k 3 1 "\\$1" "\\$2" "\\$3" "\\$4" "\\$5" "\\$6"
+..
+.deBI \" Bold/Italic  Alternating Fonts
+."k 3 2 "\\$1" "\\$2" "\\$3" "\\$4" "\\$5" "\\$6"
+..
+.de^T  \"----------------- Page Top Work ------------------------
+.ev1              \" switch environments
+.rs               \" ensure spacing
+.po0.25i          \" page offset for crop marks
+.lt\\n(LCu        \" title length for crop marks
+.ps10             \" got to be consistent here, or else
+.vs12             \" got to be consistent here ...
+'sp|0.25i         \" space from page top
+.\" If not 8.5"x11" page, if found TH or CH, draw crops
+.if!\\ns=4 .if(\\n(MP):(\\n(CH) .tl\\*([F\\*([G
+.ieo .po\\n(POu   \" set recto (odd) page offset
+.el .po\\n(PEu    \" set verso (even) page offset
+.lt \\n(LLu       \" set title length to line length
+.ll\\n(LLu        \" line length
+.ft\\*(@e         \" change to header font
+'sp2v             \" space down for baseline-baseline measure
+.ie\\n(CH .ps\\n(PSp-1p \" lower ps one for running header
+.el .ps\\n(PS     \" got to be consistent here, or else
+.vs\\n(VS         \" got to be consistent here ...
+."h               \" print header
+.ps\\n(PS         \" Reset point size
+.ev               \" switch to previous environment
+.ns
+.mk *             \" mark this vertical position
+.\"=======SCREEN TOP WORK==================================
+.\" In Middle of Figure/Table if FL=1
+.if \\n(FL=1 \{.nrpQ \\n(.f   \" record current font
+.   ft\\*(@d                  \" change font for string define
+.   nrpX \\n(.f               \" record new font
+.   nrpZ \\n(PS-1             \" get ps to standard minus 2
+.   ds[v \f\\n(pX\s\\n(pZ(continued\|)\s0\fP
+.   ftP                       \" change back font before we go anywhere
+.   rr pQ pX pZ               \" cleanup a littl
+.   ds[r \\*([s
+.   "a 1
+.   rm [v \}
+.\" print continued screen top if multi-page screen in process
+.if \\n("f=1 \{.rr "f           \" turn off flag
+.   ie\\n(!@>0 \{.nr!! \\n(sLu-\\n(!@u-0.75v \" skip in screen; sub. space
+.      rr !@ \}                 \" get rid of skip space number
+.   el .nr!! \\n(sLu-0.75v      \" No skip, so set num to screen length
+.   nr dn \\n(dnu-\\n(!!u       \" must decrement diversion length
+.   wh-\\n(Stu "f               \" reset higher trap
+.   "d \}                       \" draw screen
+.\" Set registers for tbl processing
+.nr;T 0
+.if \\n(;H=1 \{.nr;h \\n(.i
+.   in0
+.   >t
+.   nr;T 1
+.   in \\n(;hu \}
+.mk #T                 \" mark vertical position for tbl
+.if \\n(~2=1 \{.mk~C   \" mark vertical position for 2C/1C text
+.   nr ~O \\n(.ou+(\\n(LLu-\\n(.lu)u           \" reset offset amount
+.   if\\n(~Z=1 \{.nr ~T \\n(~Tu-\\n(~Pu
+.      ie \\n(~Tu>\\n(.tu .nr ~P \\n(.tu+1v    \" bigger than page
+.      el \{.nr ~E \\n(LPu-(\\n(~Cu+\\n(~Tu)u  \" Place for trap
+.      wh-\\n(PTu                              \" Erase page bottom trap
+.      wh-\\n(~Eu "1 \}\}\}                    \" Set trap
+..
+.de^B \"-------------- Page Bottom Trap ---------------
+.if \\n(~2=1 \{.ie\\n(~1=1 .rr ~1 ~C ~O
+.   el \{.nr~1 1       \" Turn on column-1 flag
+.      po\\n(~Ou       \" move offset over
+'      sp|\\n(~Cu \}\}   \" return to first vertical position
+.\" Only do page bottom if ~1 is not set (not in 2C 1st column)
+.if !\\n(~1=1 \{.ev2                 \" switch environments
+.   rs                               \" ensure we have spacing
+.   ps10                             \" don't play here
+.   vs12                             \" don't play here
+.   lt\\n(LLu                        \" set title length
+.   iee .po\\n(PEu                   \" set verso page offset
+.   el .po\\n(POu                    \" set recto page offset
+.   ft\\*(@e                         \" set font
+'   sp|\\n(LPu-\\n(PTu+0.375i        \" space down for footer
+.   ps\\n(PSp-1p                     \" reduce ps by one for footer
+.   vs\\n(VS                         \" set leading
+.\" Manpage footer first
+.   if\\n(MP=1 \{.ie e .tl \\*([Z%\\*([5
+.      el .tl \\*([5\\*([Z% \}
+.\" Now do guide footer;running footers; strings loaded in .CH
+.   if!\\n(MP=1 \{.if\\n(CH=1 \{.ie e .tl \\*([f%\\*([d\\*([c
+.      el .tl \\*([g\\*([f% \}
+.\" Just put page numbers for chapter w/o .CH (do nada if NF set to 1)
+.      if!\\n(CH=1 .if!\\n(NF=1 \{.ie e .tl %
+.         el .tl % \}\}
+.\" If not full page size, space down, print crops, and print page
+.\" bottom notices (draft copy, date, file name)
+.   ps10                              \" again reset here
+.   vs12                              \" again reset here
+.   if!\\ns=4 \{'sp|\\n(LPu-\\n(PTu+0.85i  \" space down for crops
+.      po0.25i
+.      lt \\n(LCu
+.      ie(\\n(MP):(\\n(CH) .tl\\*([H\\*([I
+.      el .nr;t 0 \" turn off markings; not doing any page work
+.      if\\n(;t>0 ."m \} \" Print Notice
+.   ps\\n(PS             \" Reset point size
+.   vs\\n(VS             \" Reset leading
+.   ev
+'   bp \}
+..
+.de"h \"----^T Sub-Macro to handle heading text --------
+.\" First do manual page header
+.ie \\n(MP=1 \{.tl \\*([1\\*([2\\*([4\\*([3\\*([1\\*([2
+'   sp2v \}
+.\" Now do guide header - omit running header if no H 1
+.\" first handle running header with H1 text
+.el.if \w\\*([i \{.ie!\\n(h1=1 \{.nr&h (\\n(LLu-\w\\*([iu+0.15i)u
+.   ife .tl \\*([i\h0.1i\Dl \\n(&hu 0
+.   ifo .tl \Dl \\n(&hu 0\h0.1i\\*([i
+'   sp3P \}
+.\" Here just print rule for H1 on page
+.      el \{.sp-0.2v
+.         tl \s16\Dl \\n(RUu 0\s0
+.         sp-0.2v \}\}
+.ns
+..
+.de"l \"----------- Spacing Trap ---------------------
+.\" Remove registers to allow for paragraph spacing and bp with H 1.
+.rr >P >H h1
+.nrPD \\n()du                \" Default spacing
+..
+.de"q \" ---------- margin character redefinition for diffmk -----
+.ie \\n(.z .mc \\$1
+.el.ie \\n(MP .mc \\$1
+.el \!."q \\$1
+..
+.de"m \"-------------- ^B Sub-Macro for PM Notices ----------
+'sp0.1i
+.ft\\*(@d
+.ps8
+.vs9
+.ie \\n(;t=7 \{.tl \\*([B
+.   tl \\*([C
+.   tl \\*([D \}
+.el.ie \\n(;t=6 \{.tl \\*(]M
+.   tl \\*(]m
+.   tl \\*(]o
+.   tl \\*(]p
+.   tl \\*(]i
+.   tl \\*(]q
+.   tl \\*(]j
+.   tl  \}
+.el.ie \\n(;t=5 \{.tl \\*(]i
+.   tl \\*(]j
+.   tl  \}
+.el.ie \\n(;t=4 \{.tl \\*(]U
+.   tl  \}
+.el.ie \\n(;t=3 \{.tl \\*(]I
+.   tl \\*(]J
+.   tl \\*(]K
+.   tl  \}
+.el.ie \\n(;t=2 \{.tl \\*(]A
+.   tl \\*(]F
+.   tl \\*(]G
+.   tl  \}
+.el.if \\n(;t=1 \{.tl \\*(]M
+.   tl \\*(]O
+.   tl  \}
+..
+.\" --- Read in Definition File -----
+.\" ======================EOF====================

@@ -1,0 +1,50 @@
+'\"macro stdmacro
+.if n .pH g2.waitsem @(#)waitsem	40.9 of 6/18/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} waitsem 2 "Application Compatibility Package" "\&"
+.if \nX=1 .ds x} waitsem 2 "Application Compatibility Package"
+.if \nX=2 .ds x} waitsem 2 "" "\&"
+.if \nX=3 .ds x} waitsem "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4waitsem\f1, \f4nbwaitsem\fP \- await and check access to a resource governed by a semaphore
+.SH SYNOPSIS
+\f4cc \f1[\f2flag \f1. . .] \f2file\f1 . . . \f4-lx\f1
+.PP
+\f4waitsem(int sem_num)\fP;
+.PP
+\f4nbwaitsem(int sem_num)\fP;
+.SH DESCRIPTION
+\f4waitsem\fP gives the calling process access to the resource governed
+by the semaphore \f2sem_num\f1.
+If the resource is in use by another
+process, \f4waitsem\fP will put the process to sleep until the resource
+becomes available; \f4nbwaitsem\fP will return the error \f4ENAVAIL\fP.
+\f4waitsem\fP and \f4nbwaitsem\fP are used in conjunction with 
+\f4sigsem\fP to allow synchronization of processes withing to access
+a resource.
+One or more processes may \f4waitsem\fP on the given
+semaphore and will be put to sleep until the process which currently
+has access to the resource issues \f4sigsem\fP.
+\f4sigsem\fP causes
+the process which is next in line on the semaphore's queue to be
+rescheduled for execution.
+The semaphore's queue is organized in
+First In, First Out (FIFO) order.
+.SH DIAGNOSTICS
+\f4waitsem\fP returns the value (int) \-1 if an error occurs.
+If \f2sem_num\f1 has not been previously opened by a call to \f4opensem\fP
+or \f4creatsem\fP, \f4errno\f1 is set to \f4EBADF\fP.
+If \f2sem_num\f1
+does not refer to a semaphore type file, \f4errno\f1 is set to \f4ENOTNAM\fP.
+All processes waiting (or attempting to wait) on the semaphore return 
+with \f4errno\f1 set to \f4ENAVAIL\fP when the process controlling the
+semaphore exits without relinquishing control (thereby leaving the 
+resource in an undeterminate state).
+If a process does two 
+\f4waitsems\fP in a row without doing a intervening \f4sigsem\fP,
+\f4errno\f1 is set to \f4EINVAL\fP.
+.SH SEE ALSO
+\f4opensem\fP(2), \f4creatsem\fP(2).

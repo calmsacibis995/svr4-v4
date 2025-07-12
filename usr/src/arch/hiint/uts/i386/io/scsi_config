@@ -1,0 +1,66 @@
+# SCSI configuration script
+
+echo "Configuring SCSI into the kernel"
+
+CONF=$ROOT/etc/conf
+
+cd $ROOT/usr/src/pkg/scsi.in.src/st01
+
+cp Space.c $CONF/pack.d/st01/space.c
+chmod +w $CONF/pack.d/st01/*
+sed -e '/^st01/d' $CONF/cf.d/mdevice > M
+sed -e 's/0	0	0/39	39	0/g' -e 's/iocf/iocbf/g' Master >> M
+mv M $CONF/cf.d/mdevice
+cp Node $CONF/node.d/st01
+cp System $CONF/sdevice.d/st01
+sed -e '/^st01/d' $CONF/cf.d/sdevice > S
+cat $CONF/sdevice.d/st01 >> S
+mv S $CONF/cf.d/sdevice
+
+# cd $ROOT/usr/src/pkg/scsi.in.src/sw01
+# 
+# cp Space.c $CONF/pack.d/sw01/space.c
+# chmod +w $CONF/pack.d/sw01/*
+# sed -e '/^sw01/d' $CONF/cf.d/mdevice > M
+# sed -e 's/0	0	0/48	48	0/g' Master >> M
+# mv M $CONF/cf.d/mdevice
+# cp Node $CONF/node.d/sw01
+# sed -e '/^sw01/s:Y:N:' < System > $CONF/sdevice.d/sw01
+# sed -e '/^sw01/d' $CONF/cf.d/sdevice > S
+# cat $CONF/sdevice.d/sw01 >> S
+# mv S $CONF/cf.d/sdevice
+
+cd $ROOT/usr/src/pkg/scsi.in.src/sc01
+
+cp Space.c $CONF/pack.d/sc01/space.c
+chmod +w $CONF/pack.d/sc01/*
+sed -e '/^sc01/d' $CONF/cf.d/mdevice > M
+sed -e 's/0	0	0/49	49	0/g' Master >> M
+mv M $CONF/cf.d/mdevice
+cp Node $CONF/node.d/sc01
+sed -e '/^sc01/s:Y:N:' < System > $CONF/sdevice.d/sc01
+sed -e '/^sc01/d' $CONF/cf.d/sdevice > S
+cat $CONF/sdevice.d/sc01 >> S
+mv S $CONF/cf.d/sdevice
+
+cd $ROOT/usr/src/pkg/scsi.src/sd01
+
+cp space.c $CONF/pack.d/sd01/space.c
+chmod +w $CONF/pack.d/sd01/*
+sed -e '/^sd01/d' $CONF/cf.d/mdevice > M
+sed -e 's/0-6	0-6	0/41-47	41-47	0/g' Master >> M
+mv M $CONF/cf.d/mdevice
+cp System $CONF/sdevice.d/sd01
+sed -e '/^sd01/d' $CONF/cf.d/sdevice > S
+cat $CONF/sdevice.d/sd01 >> S
+mv S $CONF/cf.d/sdevice
+
+sed -e 's/sf01	0	0/sf01	40	40/g' $CONF/cf.d/mdevice >> M
+mv M $CONF/cf.d/mdevice
+
+sed -e 's/i258/sd01/g' < $CONF/cf.d/sassign > M
+mv M $CONF/cf.d/sassign
+
+# Configure sdevice.d/i258 and i258tp to be turned off
+sed -e '/^i258/s:Y:N:' < $CONF/cf.d/sdevice > N
+mv N $CONF/cf.d/sdevice

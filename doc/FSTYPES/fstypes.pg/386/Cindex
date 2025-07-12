@@ -1,0 +1,8 @@
+.if n .pH fstw_guide.Cfstwg.index @(#)Cindex	40.4
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1990 AT&T
+.BK "Programmer's Guide:  Writing File System Types" "" "" ""   
+.\ACRONYM	                  
+.CH "Index" "" "Table of Contents" "I"
+.\CHAPTER	I
+.tC 1 "Index" I-1  

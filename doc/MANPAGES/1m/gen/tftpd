@@ -1,0 +1,86 @@
+'\"macro stdmacro
+.if n .pH g1a.tftpd @(#)tftpd	40.10 of 5/21/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} tftpd 1M "Internet Utilities" "\&"
+.if \nX=1 .ds x} tftpd 1M "Internet Utilities"
+.if \nX=2 .ds x} tftpd 1M "" "\&"
+.if \nX=3 .ds x} tftpd "" "" "\&"
+.TH \*(x}
+.UC 5
+.SH NAME
+\f4tftpd\f1 \- \s-1DARPA\s0 Trivial File Transfer Protocol server
+.SH SYNOPSIS
+\f4in.tftpd\f1
+[ \f4\-s\f1 ]
+.RI [ " homedir " ]
+.SH DESCRIPTION
+\f4tftpd\f1
+is a server that supports the
+.SM DARPA
+Trivial File Transfer Protocol (\s-1TFTP\s0).
+This server is normally started by
+\f4inetd\f1(1M)
+and operates at the port indicated in the
+\f4tftp\f1
+Internet service description in the
+\f4/etc/inetd.conf\f1 file.
+By default, the entry for \f4tftpd\f1 in \f4etc/inetd.conf\f1
+is commented out.
+To make \f4tftpd\f1 operational, the comment
+character(s) must be deleted from the \f4tftpd\fP entry.
+See
+\f4inetd.conf\f1(4)
+for details.
+.PP 
+Before responding to a request, the server attempts to change its
+current directory to
+.IR homedir ;
+the default value is
+\f4/tftpboot\f1.
+.SH OPTIONS
+.TP
+\f4\-s\f1
+Secure.
+When specified, the directory change must succeed; and
+the daemon also changes its root directory to
+.IR homedir .
+.IP
+The use of
+\f4tftp\f1  
+does not require an account or password on the remote system.
+Due to the lack of authentication information,
+\f4tftp\f1  
+will allow only publicly readable files to be accessed.
+Files may be
+written only if they already exist and are publicly writable.
+Note
+that this extends the concept of \(lqpublic\(rq to include all users on all
+hosts that can be reached through the network; this may not be
+appropriate on all systems, and its implications should be considered
+before enabling this service.
+.PP 
+\f4tftpd\f1
+runs with the user
+.SM ID
+and group
+.SM ID
+set to
+[GU]ID_NOBODY.
+\f4\-2\f1,
+under the assumption that no files exist with that owner or group.
+However, nothing checks this assumption or enforces this restriction.
+.SH "SEE ALSO"
+\f4tftp\f1(1),
+\f4inetd\f1(1M),
+\f4ipallocd\f1(1M),
+\f4netconfig\f1(4)
+.LP
+Sollins, K.R., 
+.IR "The \s-1TFTP\s0 Protocol (Revision 2)" ,
+.SM RFC\s0 783,
+Network Information Center,
+.SM SRI
+International, Menlo Park, Calif.,
+June 1981

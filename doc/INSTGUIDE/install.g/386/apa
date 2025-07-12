@@ -1,0 +1,367 @@
+'\"!  tbl | mmdoc
+.if n .pH 386.apa @(#)apa	40.1.1.1
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.BK "Installation Guide" "System V Release 4"
+.CH "UNIX System Package Descriptions" "A"
+.H 1 "Introduction"
+The following sections describe the function of the base operating system and 
+optional packages. The packages are described in the order they install.
+The media on which the software is delivered is described in Chapter 1.
+Table A-1 shows how much disk space is
+required to install the desired packages and which packages depend on other 
+packages.
+.AB N
+If you aren't sure which packages to install and your hard disk is 
+larger than 170 MB, you can install all the packages (except for the 
+HARDWARE Package Set packages) and remove any unwanted 
+packages later. It is easier to install packages during the initial
+installation than to install the package later.
+To find out about package dependencies and the disk space required 
+to install add-on packages that are sold separately,
+see the documentation that came with the add-on 
+package.
+.IX "disk space, required"
+.IX "packages, dependencies"
+.AC
+.H 1 "Package Descriptions"
+This section describes the packages,
+grouped by the set to which 
+they belong.
+.H 2 "BASIC Packages"
+The following packages are in the BASIC Package Set:
+.BL
+.LI
+\f4ed\fP (Editing). A system tool consisting of advanced editing utilities,
+including the \f4vi\fP, \f4edit\fP, and \f4ex\fP editors, and the file
+comparison and manipulation, 
+and spell checking features. For more information, see the
+.BT "User's Guide". 
+.IX "ed package"
+.LI
+\f4terminf\fP (Terminal Information Utilities). Contains a database that allows 
+programmers to write programs to manipulate screens and parts of screens 
+(such as function keys and soft labels) of ASCII video display terminals. 
+This package contains descriptions for more than 150 terminals. For more
+information, see the
+.BT "System Administrator's Guide" .
+.IX "terminf package"
+.LI
+\f4termcap\fP (Termcap Compatibility). Provides compatibility with XENIX 
+applications. The functionality is similar to the Terminal Information
+Utilities.
+.IX "termcap package"
+.LI
+\f4windowing\fP (Windowing Utilities).
+.IX "windowing package"
+The Windowing Utilities package provides
+the software that is commonly required by 
+AT&T windowing terminals
+(such as the AT&T 630 MTG)
+to create, delete, and manipulate terminal windows,
+query terminal window status, and
+display statistics about usage of windowing routines.
+.LI
+\f4mouse\fP (Mouse Drivers). Contains the device driver and administration 
+files to help administer mouse pointing devices. For more information, see 
+the 
+.IX "mouse package"
+.BT "System Administrator's Guide" .
+.LI
+\f4fmli\fP (Forms Menu Language Interpreter). \f4fmli\fP is an interpreted language 
+used for generating forms and menus based on a consistent user interface. The 
+\f4fmli\fP package is required to run \f4oam\fP and \f4face\fP. For more information, see the 
+.BT "Programmer's Guide: Character User Interfaces" .
+.LI
+.IX "fmli package"
+\f4oam\fP (Operations, Administration and Maintenance). Provides a menu-based
+user interface to perform system administrative functions. The \f4oam\fP 
+package includes:
+.DL
+.IX "oam package"
+.LI
+Basic OA&M: Provides basic system administration tools 
+.LI
+Extended OA&M: Provides extensions to the basic maintenance tools and 
+access to all \f4oam\fP features.
+.LI
+OA&M Help: Provides on-line help messages
+.LI
+System Administrative Interface. Uses \f4fmli\fP. For more information, see 
+the
+.BT " System Administrator's Guide" .
+.LE
+.LI
+\f4lp\fP (Line Printer Spooler). Provides utilities to perform print spooling. Also 
+includes print filters, fonts, and postscript utilities. Enables many users to 
+share a printer, or several printers. For more information, see the 
+.BT "System Administrator's Guide" .
+.IX "lp package"
+.LI
+\f4nsu\fP (Network Support Utilities). Provides support for the Service Access 
+Facility and Transport Level Interface (TLI), as well as commands for
+administering them. This package must be installed to take advantage of
+services provided by the RFS and NFS packages. For more information, see the 
+.BT "Network Users and Administration Guide" .
+.IX "nsu package"
+.LI
+.IX "acp package"
+\f4acp\fP (Application Compatibility Package).
+.IX application compatibility package
+Provides commands and services needed
+by XENIX applications. Some of the functions provided are XENIX 
+system file and record locking interface, and system calls that support the 
+XENIX system shared memory and semaphores. For more information, see 
+the
+.BT "Migration and Compatibility Guide" .
+.IX "xcp package"
+.LE
+.H 2 "NETWORK Packages"
+The following packages are in the NETWORK Package Set:
+.BL
+.LI
+\f4dfs\fP (Distributed File System). Provides the commands that allow an 
+administrator to share and mount RFS and NFS resources. 
+.IX "dfs package"
+.LI
+\f4rpc\fP (Remote Procedure Call). Allows other UNIX and non-UNIX systems 
+that reside on your network to execute programs on your local machine. The 
+package includes RPC, XDR, and socket libraries.
+.IX "rpc package"
+.LI
+\f4inet\fP (Internet Utilities). Installs the TCP/IP network protocols, and 
+commands that allow users to log into remote systems, execute commands on 
+remote systems, and copy files from remote systems.
+.IX "inet package"
+.LI
+\f4nfs\fP (Network File System Utilities). Provides the facilities needed to 
+share resources among computers in a shared environment. Includes PC NFS 
+for DOS connectivity.
+.IX "nfs package"
+.LI
+\f4rfs\fP (Remote File Sharing Utilities). Provides facilities needed to share
+resources transparently among systems running SVR4. The Network 
+Support Utilities package, the Distributed File System package, and 
+.IX "rfs package"
+TCP/IP are required.
+.LE
+.P
+For more information
+about these packages, see the
+.BT " Network User's and Administration Guide" , 
+the
+.BT "Programmer's Guide: Networking Interfaces" ,
+and the
+.BT "PC-Interface Administrator's Guide" .
+.H 2 "DEVELOPMENT Packages"
+The following packages are in the DEVELOPMENT Package Set:
+.BL
+.LI
+.IX "scde package"
+\f4scde\fP (Standard C Development Environment). Provides software formerly 
+in the following packages: C Programming Utilities, Advanced C Utilities, 
+Software Generation Utilities, ETI/curses, and C Programmer Productivity 
+Tools. For more information, see the
+.BT " Programmer's Guide: ANSI C and Programming Support Tools" .
+.LE
+.H 2 "EXTENDED Packages"
+The following packages are in the EXTENDED Package Set:
+.BL
+.IX "compat package"
+.LI
+\f4compat\fP (BSD Compatibility). Contains BSD commands and library routines.
+It also includes software support, as well as \f4sendmail\fP and the BSD 
+versions of \f4nroff\fP, and \f4troff\fP. For more information, see the
+.BT " BSD/XENIX Compatibility Guide" .
+.LI
+\f4face\fP (Framed Access Command Environment). Provides a menu-driven interface
+to commonly used commands, preferences, task scheduling, program services,
+and system administration. \f4face\fP can be extended to include your applications
+also. Requires \f4fmli\fP to be installed. For more information, see the 
+.BT "Programmer's Guide: Character User Interfaces" .
+.LE
+.H 2 "HARDWARE Packages"
+The following packages are in the HARDWARE Package Set:
+.BL
+.LI
+\f4wd\fP	Western Digital 8003 Ethernet Driver 
+.IX "wd package"
+.LI
+\f4imx586\fP	Intel Ethernet Driver
+.IX "imx586 package"
+.LI
+\f4ie6\fP	IE6 (3C503) Ethernet Driver
+.IX "ie6 package"
+.LI
+\f4qt\fP	non-SCSI Cartridge Tape Utilities
+.IX "qt package"
+.LE
+.H 2 "Extra Add-on Packages"
+.BL
+.LI
+\f4kdb\fP (Kernel Debugger). Provides debuggers for device driver developers.
+.IX "kdb package"
+.LI
+.IX "kdb-util package"
+\f4kdb-util\fP (Kernel Debugger Support Utilities). Provides basic kernel
+debuggers and utilities. 
+.LI
+\f4crypt\f1 (Security Administration Utilities).
+.IX "security administration package"
+.IX crypt
+The Security Administration Utilities package provides an
+encryption mechanism for protecting
+information stored in the computer.
+Using the facilities of this package gives additional protection
+beyond that obtained through login IDs, passwords, and permission modes.
+When this package has been installed, the
+encryption mechanism is available by using the \f4crypt\f1 command,
+as well as in the editors \f4ed\f1, \f4edit\f1, \f4ex\f1, and \f4vi\f1.
+.LI
+\f4license\f1 (Unlimited User License).
+.IX unlimited user license package
+Some computers running UNIX System V are configured to allow a limited
+number of users to access the system simultaneously.
+The Unlimited User License package is used to increase the number
+of simultaneous users allowed on a system.
+.LE
+.H 1 "Choosing Packages"
+.IX "disk space, required"
+.IX "packages, dependencies"
+Before installing packages, look at Table A-1 and determine how much disk 
+space is required to install the desired packages.
+You may have to add a bigger hard disk to your system or
+selectively install packages if your system does not have enough disk space.
+.P
+.IX "packages, selecting"
+If you selectively install packages, you must first install all packages that a 
+package depends on (as shown in the table's right column) before installing the 
+package.
+.SK
+\s-1
+.TB "UNIX Operating System Packages" "" bc
+.TS
+center box tab(;);
+cbw(2.5i) | cb | cb | cb
+cbw(2.5i) | cb | cb | cb
+lw(2.5i) | l | n | l.
+.ps 9
+.vs 11
+;\f3Software\f1;;
+\f3Floppy Label;Name;MB;Dependencies\f1
+=
+\f3BASIC Package Set\fP
+=
+T{
+Editing Package
+T};ed;.36;none
+_
+T{
+Terminal Information Utilities
+T};terminf;.67;none
+_
+T{
+Termcap Compatibility Package
+T};termcap;.10;none
+_
+T{
+Windowing Utilities
+T};windowing;.14;none
+_
+T{
+Mouse Driver Package
+T};mouse;.15;none
+_
+T{
+Form & Menu Lang. Interp.
+T};fmli;.35;none
+_
+T{
+Operations, Admin., & Maintenance
+T};oam;3.85;fmli
+_
+T{
+LP Print Service
+T};lp;2.54;nsu
+_
+T{
+Application Compatibility Package
+T};acp;.62;none
+_
+T{
+Networking Support Utilities
+T};nsu;.56;none
+=
+\f3NETWORK Package Set\f1
+=
+T{
+DFS Utilities
+T};dfs;.36;nsu
+_
+T{
+Remote Procedure Call Utilities
+T};rpc;.60;inet, nsu
+_
+T{
+Internet Utilities
+T};inet;1.6;nsu
+_
+T{
+Network File System Utilities
+T};nfs;.56;dfs, nsu, rpc
+_
+T{
+RFS Utilities
+T};rfs;1.32;inet, dfs, nsu
+=
+\f3DEVELOPMENT Package Set\f1
+=
+T{
+Standard C Development Envt.
+T};scde;7.0;none
+=
+\f3EXTENDED Package Set\f1
+=
+T{
+BSD Compatibility Package
+T};compat;2.43;nsu
+_
+T{
+Framed Access Command Envt.
+T};face;.50;ed, terminf, fmli
+=
+\f3HARDWARE Package Set\f1
+=
+T{
+WD8003 Ethernet Driver
+T};wd;.05;none
+_
+T{
+Intel Ethernet Driver
+T};imx586;.05;none
+_
+T{
+IE6 (3C503) Ethernet Driver
+T};ie6;.05;none
+_
+T{
+Cartridge Tape Utilities
+T};qt;.05;none
+=
+\f3Extra Add-on Packages\f1
+=
+T{
+KDB Kernel Debugger
+T};kdb;.10;kdb-util
+_
+T{
+Kernel Debugger Support Utilities
+T};kdb-util;.07;kdb
+_
+T{
+Security Administration Utilities
+T};crypt;.25;none
+_
+T{
+Unlimited User License
+T};license;.01;none
+.TE

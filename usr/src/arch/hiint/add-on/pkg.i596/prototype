@@ -1,0 +1,35 @@
+#ident	"@(#)hiint:add-on/pkg.i596/prototype	1.1"
+
+!PACKDIR=/etc/conf/pack.d
+!MASTDIR=/usr/src/uts/i386/master.d
+
+i copyright
+i depend
+i pkginfo
+i postinstall
+i preremove
+
+!OAMBASE=/usr/sadm/sysadm
+!PKGINST=i596
+!PKGSAV=/var/sadm/pkg/$PKGINST/save
+
+!default 0544 bin bin
+d none /tmp	?	?	?
+d none /tmp/i596               775     bin     bin
+
+v none /tmp/i596/i596.Dr=$PACKDIR/i596/Driver.o	?	?	?
+v none /tmp/i596/i596.Sp=$MASTDIR/i596/space.c	?	?	?
+v none /tmp/i596/i596.Ma=$MASTDIR/i596/mdev	?	?	?
+v none /tmp/i596/i596.Sy=$MASTDIR/i596/sdev	?	?	?
+v none /tmp/i596/i596.No=$MASTDIR/i596/node	?	?	?
+
+d none  usr     ?       ?       ?
+d none  usr/include     ?       ?       ?
+d none  usr/include/sys ?       ?       ?
+
+#	header files: default owner=bin group=bin mode=0444
+
+!default 0444 bin bin
+f none	usr/include/sys/82586.h=usr/src/uts/i386/sys/82586.h
+f none	usr/include/sys/i596.h=usr/src/uts/i386/sys/i596.h
+

@@ -1,0 +1,312 @@
+.\" @(#)ls 40.4 91/04/18 SMI; from UCB 4.3 BSD and S5
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+'\" macro stdmacro
+.\" Copyright (c) 1988 Sun Microsystems, Inc. - All Rights Reserved.
+.\"
+.\" This is SunOS ls(1)
+.nr X
+.if \nX=0 .ds x} ls 1 "BSD Compatibility Package" "\&"
+.if \nX=1 .ds x} ls 1 "BSD Compatibility Package"
+.if \nX=2 .ds x} ls 1 "" "\&"
+.if \nX=3 .ds x} ls "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4ls\f1 \- list the contents of a directory
+.SH SYNOPSIS
+\f4/usr/ucb/ls\f1
+[
+\f4\-aAcCdfFgilLqrRstu1\f1
+]
+.I filename
+\&.\ .\ .
+.SH DESCRIPTION
+For each
+.I filename
+which is a directory,
+\f4ls\f1
+lists the contents of the directory; for each
+.I filename
+which is a file,
+\f4ls\f1
+repeats its name and any other information
+requested.
+By default, the output
+is sorted alphabetically.
+When no argument
+is given, the current directory
+is listed.
+When several arguments are given,
+the arguments are first sorted
+appropriately, but file arguments are
+processed before directories and their
+contents.
+.SS Permissions Field
+.P
+The mode printed under the
+\f4\-l\f1
+option contains 10 characters interpreted as follows.
+If the first character is:
+.sp .5
+.RS
+.PD 0
+.TP 3
+\f4d\f1
+entry is a directory;
+.TP 3
+\f4b\f1
+entry is a block-type special file;
+.TP 3
+\f4c\f1
+entry is a character-type special file;
+.TP 3
+\f4l\f1
+entry is a symbolic link;
+.TP 3
+\f4p\f1
+entry is a
+.SM FIFO
+(also known as \(lqnamed pipe\(rq) special file;
+.TP 3
+\f4s\f1
+entry is an
+\f4AF_UNIX\fP
+address family socket, or
+.TP 3
+\f4\-\f1
+entry is a plain file.
+.PD
+.RE
+.P
+The next 9 characters are interpreted as three sets of three
+bits each.
+The first set refers to owner permissions; the next refers to
+permissions to
+others in the same user-group; and the last refers to all
+others.
+Within each
+set the three characters indicate permission respectively to
+read, to write, or to execute the file as a program.
+For a
+directory, \(lqexecute\(rq
+permission is interpreted to mean permission to search the
+directory.
+The permissions are indicated as follows:
+.sp .5
+.RS
+.PD 0
+.TP 3
+\f4r\f1
+the file is readable;
+.TP 3
+\f4w\f1
+the file is writable;
+.TP 3
+\f4x\f1
+the file is executable;
+.TP 3
+\f4\-\f1
+the indicated permission is not granted.
+.PD
+.RE
+.P
+The group-execute permission character is given as
+\f4s\f1
+if the file has the set-group-id bit set;
+likewise the owner-execute permission character is given as
+\f4s\f1
+if the file has the set-user-id bit set.
+.P
+The last character of the mode (normally
+\f4x\f1
+or
+\f1`\f4\-\f1')
+is
+\f4true\f1
+if the 1000 bit of the mode is on.
+See
+\f4chmod\f1(1)
+for the meaning of this mode.
+The indications of set-\s-1ID\s0 and 1000 bits of the mode
+are capitalized
+\f1(\f4S\f1
+and
+\f4T\f1
+respectively) if the corresponding execute permission is
+.I not
+set.
+.P
+When the sizes of the files in a directory are listed, a
+total
+count
+of blocks,
+including indirect blocks is printed.
+The following options are available:
+.TP
+\f4\-a\f1
+List all entries; in the absence of this option, entries whose
+names begin with a
+\f1`\f4.\f1'
+are
+.I not
+listed (except for the privileged user, for whom
+\f4ls\f1
+normally prints even files that begin with a
+\f1`\f4.\f1').
+.TP
+\f4\-A\f1
+Same as
+\f4\-a\f1,
+except that
+\f1`\f4.\f1'
+and
+\f1`\f4.\|.\f1'
+are not listed.
+.TP
+\f4\-c\f1
+Use time of last edit (or last mode change) for sorting or printing.
+.br
+.ne 5
+.TP
+\f4\-C\f1
+Force multi-column output, with entries sorted down the columns;
+for
+\f4ls\f1,
+this is the default when output is to a terminal.
+.TP
+\f4\-d\f1
+If argument is a directory, list only its name
+(not its contents); often used with
+\f4\-l\f1
+to get the status of a directory.
+.TP
+\f4\-f\f1
+Force each argument to be interpreted as
+a directory and list the name
+found in each slot.
+This option turns off
+\f4\-l\f1,
+\f4\-t\f1,
+\f4\-s\f1,
+and
+\f4\-r\f1,
+and turns on
+\f4\-a\f1;
+the order is the order in which entries appear in the directory.
+.TP
+\f4\-F\f1
+Mark directories with a trailing slash
+\f1(`\f4/\f1'),
+executable files with a trailing asterisk
+\f1(`\f4*\f1'),
+symbolic links with a trailing at-sign
+\f1(`\f4@\f1'),
+and
+\f4AF_UNIX\fP
+address family sockets with a trailing equals sign
+\f1(`\f4=\f1').
+.TP
+\f4\-g\f1
+For
+\f4ls\f1,
+show the group ownership of the file in a
+long output.
+.TP
+\f4\-i\f1
+For each file, print the i-node number in the first column of the report.
+.TP
+\f4\-l\f1
+List in long format, giving mode, number
+of links, owner, size in bytes,
+and time of last modification for each file.
+If the file is a special file the size field will instead
+contain the major and minor device numbers.
+If the time of last modification is greater than six months ago,
+it is shown in the format
+.RI ` "month date year" ';
+files modified within six months show
+.RI ` "month date time" '.
+If the file is a symbolic link the pathname of the
+linked-to file is printed preceded by
+\f1`\f4\(em>\f1'.
+.TP
+\f4\-L\f1
+If argument is a symbolic link, list the file or directory the
+link references rather than the link itself.
+.TP
+\f4\-q\f1
+Display non-graphic characters in filenames as
+the character
+\f4?\f1;
+for
+\f4ls\f1,
+this is the default when output is to a terminal.
+.TP
+\f4\-r\f1
+Reverse the order of sort to get reverse alphabetic
+or oldest first as appropriate.
+.TP
+\f4\-R\f1
+Recursively list subdirectories encountered.
+.TP
+\f4\-s\f1
+Give size of each file, including any
+indirect blocks used to map the file,
+in kilobytes.
+.TP
+\f4\-t\f1
+Sort by time modified (latest first) instead of by name.
+.TP
+\f4\-u\f1
+Use time of last access instead of last modification for sorting
+(with the
+\f4\-t\f1
+option) and/or printing (with the
+\f4\-l\f1
+option).
+.TP
+\f4\-1\f1
+Force one entry per line output format; this is the default
+when output is not to a terminal.
+.br
+.ne 8
+.SH FILES
+.PD 0
+.TP 20
+\f4/etc/passwd\f1
+to get user
+.SM ID\s0's
+for
+\f1`\f4ls \-l\f1'
+and
+\f1`\f4ls \-o\f1'.
+.TP
+\f4/etc/group\f1
+to get group
+.SM ID\s0
+for
+\f1`\f4ls \-g\f1'
+.PD
+.br
+.ne 5
+.SH NOTES
+.P
+.SM NEWLINE
+and
+.SM TAB
+are considered printing characters in filenames.
+.P
+The output device is assumed to be 80 columns wide.
+.P
+The option setting based on whether the output is a teletype is
+undesirable as
+\f1`\f4ls \-s\f1'
+is much different than
+\f1`\f4ls \-s | lpr\f1'.
+On the other hand, not doing this setting would
+make old shell scripts which used
+\f4ls\f1
+almost certain losers.
+.P
+Unprintable characters in file names may confuse the
+columnar output options.

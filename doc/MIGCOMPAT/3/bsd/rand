@@ -1,0 +1,59 @@
+'\"macro stdmacro
+.if n .pH g3.rand @(#)rand	40.10 of 4/24/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.\" Copyright (c) 1988 Sun Microsystems, Inc. - All Rights Reserved.
+.\"
+.nr X
+.if \nX=0 .ds x} rand 3C "BSD Compatibility Package" "\&"
+.if \nX=1 .ds x} rand 3C "BSD Compatibility Package"
+.if \nX=2 .ds x} rand 3C "" "\&"
+.if \nX=3 .ds x} rand "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4rand\f1, \f4srand\f1 \- simple random number generator
+.SH SYNOPSIS
+.nf
+\f4cc \f1[ \f2flag\f1\. \. \. ] \f2file\f1 \. \. \. \f4\-lucb\f1
+.P
+\f4srand(seed)\f1
+\f4int seed;\f1
+.P
+\f4rand()\f1
+.fi
+.SH DESCRIPTION
+.P
+\f4rand\f1
+uses a multiplicative congruential random number generator
+with period
+.if t 2\u\s-332\s0\d
+.if n 2**32
+to return successive pseudo-random
+numbers in the range from 0 to
+.if t 2\u\s-331\s0\d\(mi\|1.
+.if n (2**31)\(mi1.
+.P
+\f4srand\f1
+can be called at any time to reset the random-number generator
+to a random starting point.
+The generator is initially seeded with a value of 1.
+.SH "SEE ALSO"
+\f4random\fP(3)
+.P
+\f4drand48\fP(2),
+\f4drand\f1(3C),
+\f4rand\f1(3C),
+\f4srand\f1(3C)
+in the \f2Programmer's Reference Manual\f1
+.SH NOTES
+The spectral properties of
+\f4rand\f1
+leave a great deal to be desired.
+\f4drand48\f1(2)
+and
+\f4random\f1(3)
+provide much better, though more elaborate, random-number generators.
+.P
+The low bits of the numbers generated are not very random;
+use the middle bits.
+In particular the lowest bit alternates between 0 and 1.

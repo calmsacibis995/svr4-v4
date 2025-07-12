@@ -1,0 +1,10 @@
+#ident	"@(#)pkg.mse:preinstall	1.1"
+
+NAME=/tmp/mouse.$$
+ps -ef > $NAME
+PID=`cat ${NAME}|grep mousemgr|sed "s/[ ] [ ]*/ /g"|cut -d " " -f3`
+if test $PID 
+then
+	kill -9 $PID
+fi
+rm -f $NAME

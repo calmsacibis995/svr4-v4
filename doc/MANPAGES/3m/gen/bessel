@@ -1,0 +1,98 @@
+'\"macro stdmacro
+.if n .pH g3m.bessel @(#)bessel	40.10 of 1/3/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} bessel 3M "Math Libraries" "\&"
+.if \nX=1 .ds x} bessel 3M "Math Libraries"
+.if \nX=2 .ds x} bessel 3M "" "\&"
+.if \nX=3 .ds x} bessel "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4bessel\f2: \f4j0\f1, \f4j1\f1, \f4jn\f1, \f4y0\f1, \f4y1\f1, \f4yn\f1 \- Bessel functions
+.SH SYNOPSIS
+\f4cc\f1
+[\f2flag\fP \|.\|.\|.] \f2file\fP \|.\|.\|.
+\f4\-lm\f1
+[\f2library\fP \|.\|.\|.]
+.PP
+\f4#include <math.h>\f1
+.PP
+\f4double j0 (double x);\f1
+.PP
+\f4double j1 (double x);\f1
+.PP
+\f4double jn (int n, double x);\f1
+.PP
+\f4double y0 (double x);\f1
+.PP
+\f4double y1 (double x);\f1
+.PP
+\f4double yn (int n, double x);\f1
+.SH DESCRIPTION
+\f4j0\fP
+and
+\f4j1\fP
+return Bessel functions of
+.I x\^
+of the first kind of orders 0 and 1,
+respectively.
+\f4jn\fP
+returns the Bessel function of
+.I x\^
+of the first kind of order
+.IR n .
+.PP
+\f4y0\fP
+and
+\f4y1\fP
+return Bessel functions of
+.I x\^
+of the second kind of orders 0 and 1, respectively.
+\f4yn\fP
+returns the Bessel function of
+.I x\^
+of the second kind of order
+.IR n .
+The value of
+.I x\^
+must be positive.
+.SH SEE ALSO
+\f4matherr\fP(3M).
+.SH DIAGNOSTICS
+Non-positive arguments cause
+\f4y0\fP,
+\f4y1\fP,
+and
+\f4yn\fP
+to return the value
+\f4\-HUGE\f1
+and to set
+\f4errno\fP
+to
+\f4EDOM\f1.
+In addition, a message indicating
+\f4DOMAIN\fP
+error is printed on the standard error output.
+.PP
+Arguments too large in magnitude cause
+\f4j0\fP, \f4j1\fP,
+\f4y0\fP, and \f4y1\fP
+to return 0 and to set
+\f4errno\fP
+to
+\f4ERANGE\fP.
+In addition, a message indicating
+\f4TLOSS\fP
+error is printed on the standard error output.
+.PP
+Except when the \f4\-Xc\fP compilation option is used,
+these error-handling procedures may be changed with the function
+\f4matherr\fP.
+When the \f4\-Xa\f1 or \f4\-Xc\fP compilation options are used, 
+\f4HUGE_VAL\fP
+is returned instead of 
+\f4HUGE\f1
+and no error messages are printed.
+.\"	@(#)bessel.3m	6.3 of 10/20/83
+.Ee

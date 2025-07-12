@@ -1,0 +1,2881 @@
+.if n .pH fstw_guide.fstwg @(#)fstwg	40.4.1.12
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.BK "Programmer's Guide:  Writing File System Types"
+.CH "Writing File System Types" "1"
+.H 1 "Introduction"
+The purpose of this guide is to provide some of the information
+necessary for writing a new file system type
+and incorporating it into the virtual file system (VFS)
+architecture of System V Release 4.0.
+It is assumed that the user has a source code license
+and has purchased the UNIX System V Release 4 source code product. 
+It is also assumed that the user is familiar
+with the UNIX operating system and the C programming language.
+There is no introductory information on these topics in the
+following pages.
+.P
+Although it is necessary for the writer of file system types
+to basically understand the VFS architecture,
+this guide is not intended to be a comprehensive
+description of that architecture;
+rather, it documents the VFS interface
+and provides guidelines for its use.
+(To clarify the description of
+some of the more complex file system operations, the implementation
+of the s5 file system is used as an example in the following text.)
+It is not expected that file system writers
+will be able to write new file system types
+using only the information provided in this guide.
+Writers are also expected to refer to the source code of
+existing file system types (such as the s5 file system type) when developing
+new ones.
+.P
+The interface described in this guide is a descendant of the unadvertised
+File System Switch (FSS) mechanism of System V Release 3
+and of the Vnodes architecture of Sun Microsystems' SunOS operating
+system.
+.H 2 "Principles of VFS Architecture"
+VFS is an architecture that allows multiple
+file system types to co-exist under UNIX System V.
+VFS simplifies the design, development, integration, and maintenance
+of new file system types by providing a clean, understandable interface.
+.P
+The following are some of the principles upon which
+the design and implementation of the VFS interface
+are based:
+.BL
+.LI
+The VFS interface should facilitate the development
+of diverse file system types 
+by providing a clean separation of file-system code
+into implementation-independent and implementation-dependent pieces,
+with a well-defined but narrow interface between the pieces.
+.LI
+The VFS interface should support a wide variety
+of existing and conceivable file system implementations.
+Minimally it should support disk-based file systems such as the
+traditional UNIX file system, the 4.2BSD file system,
+remote file systems such as AT&T's RFS and Sun's NFS,
+and ``pseudo-disk'' file systems such as proc
+(which provides an interface, within the file system name space,
+to the images of running processes).
+It should also be able to support many file systems
+of non-UNIX systems such as MS-DOS and VMS.
+.LI
+Although it is primarily intended for use in the implementation of
+file-based system calls,
+the VFS interface should be usable directly by the server side of a remote
+file system in order to satisfy client-side requests.
+.LI
+All file system operations should be atomic
+with respect to the VFS interface,
+except in cases where such atomicity would conflict with
+existing file system semantics.
+System-level locking (e.g., ``inode locking''
+as distinct from \f4lockf\f1-style user-level locking),
+should not be visible above the level of the interface,
+and ideally any such locks
+should not persist across calls through the interface.
+The implementation-specific file system code should be allowed to
+decide what locking, if any, is necessary.
+.LI
+The interface should not compel file system types to
+have fixed-size static tables or to use centralized resources
+(such as a buffer cache).
+Neither should it preclude sharing where possible.
+.LE
+.H 2 "What are File System Types?"
+File system types can be described as services provided within the file
+system name space.
+Some file system types are designed to provide data acquisition and storage;
+they use disks, tapes, or some other storage device as a storage base.
+The traditional s5 file system is an example of this type.
+Other file system types are designed to provide networking
+services; examples include RFS and NFS.
+There are also file system types that fall into neither of these categories;
+they may be very different from 
+traditional file systems and may not even contain regular data files.
+Files in file systems of these types (typically services provided
+within the name space) may not exhibit traditional behavior; 
+one example is the /proc file sytem type
+that provides access to the image of each running process in the 
+system
+and facilitates process control and advanced debugger development. 
+.H 2 "Developing File System Types"
+The list below details the design rules
+that must be followed,
+as well as the system calls, commands, and administrative utilities
+that must be provided if they apply to a particular file system type.
+.P
+.BL
+.LI
+File system types should use the specfs file system type to
+access block and character device special files.
+specfs provides a
+standard interface to device special files
+and allows all file system types to share a common implementation. 
+.LI
+A request for an operation that is not provided
+by a particular file system type must return a new \f4errno\f1, \f4ENOSYS\f1.
+This must be the only meaning of \f4ENOSYS\f1.
+.LI
+Path name components above the file system interface
+are delimited by '/' (ASCII 057),
+and a specific file system type implementation must recognize '/' as
+a pathname delimiter when it is passed down through the VFS interface.
+(This does not preclude individual file system types from using their own
+pathname delimiter internally or from not
+using a delimiter at all.
+In such cases some internal mapping will
+have to be done.)
+.LI
+Each file system type must have a root.
+.LI
+Each file system type must follow
+the convention of using ``.'' to denote the current directory
+and ``..'' to denote the parent directory, respectively.
+This does not mean that each
+file system must physically contain ``.'' and ``..''
+as files in the file system.
+It simply means that each file system type
+must logically recognize ``.'' and ``..'' 
+as representing the current and parent directory, respectively.
+An \f4opendir()\f1 of ``.'' followed by
+a \f4readdir\f1() will return information about the current directory
+even if the file system does not contain ``.'' as a physical file.
+This rule does not preclude the existence of flat file systems;
+it only guarantees the consistency of directories if they do exist.
+.LI
+File system types must not change any file-system-independent code
+or any system-call-level, memory-manager, or process-manager routines.
+.LI
+File system types must not add any flags or fields
+to file-system-independent data structures.
+.LI
+A file system type will normally provide the operations necessary to
+support the following system calls:
+.BL
+.LI
+Mount a file system \(em \f4mount()\f1
+.LI
+Unmount a file system \(em \f4umount()\f1
+.LI
+Get file system information \(em \f4statvfs()\f1, \f4fstatvfs()\f1
+.LI
+Get file status \(em \f4stat()\f1, \f4fstat()\f1, \f4lstat()\f1
+.LI
+Open a file \(em \f4open()\f1
+.LI
+Read a file \(em \f4read()\f1
+.LI
+Write to a file \(em \f4write()\f1
+.LI
+Close a file \(em \f4close()\f1
+.LI
+Determine accessibility of a file \(em \f4access()\f1
+.LI
+Read directory entries and put them in a file-system-independent format:
+\f4(opendir(), readdir(), closedir()) \(em getdents()\f1
+.LE
+.P
+If any of these system calls does not apply to a particular file system type,
+\f4ENOSYS\fP must be returned.
+.LI
+All utilities that are provided must comply
+with the VFS administrative command architecture.
+This architecture specifies that
+each administrative command be logically separated into a generic
+and file-system-type-specific section.
+The generic section of the command may not be modified by the file system type
+developer.
+File system type developers must provide the
+file-system-type-specific portion of those commands
+that they choose to implement.
+.LI
+A basic file system type must provide utilities from the
+following set:
+.BL
+.LI
+File-system-constructing utility (\f4mkfs\f1)
+.LI
+File-system-sanity-checking utility (\f4fsck\f1)
+.LI
+File-system-mounting utility with sanity checking (\f4mount\f1)
+.LI
+Heuristics to identify an unmounted file system of this file system type
+(\f4fstyp\f1)
+.LE
+.sp
+If a file system type does not provide a particular utility,
+the generic portion must return the error message
+\f4Operation not applicable\fP.
+It is not necessary to provide stubs.
+.LI
+File system types may support file name lengths of from 1 to a maximum of
+\f4NAME_MAX\f1 (255) characters (not including the 
+terminating null) if desired by the file system type developer.
+These characters may be selected from the list of all character
+values excluding ASCII NUL ('\\0') and ``slash'' ('/').
+.LI
+VFS will support file system type name lengths of up to a maximum of
+FSTYPSZ characters (not including the terminating null).
+.LE
+A file system type will probably provide far more
+than these basic features.
+This may be done in any way that
+conforms to the VFS interface and does not violate any of the rules above.
+For example, a file system type developer may want the
+file system type to be SVID-compatible.
+The System V Interface Definition (SVID) defines a set of interfaces
+between user applications and the operating system that is independent
+of any particular computer hardware.
+It is useful for a file system type to be compatible 
+with a particular issue of the SVID because it can then be expected
+to be compatible with a large number of existing applications.
+.H 1 "Some Basic Structures"
+File-system code and data are partitioned into
+generic (upper-level) and specific (lower-level) pieces.
+The generic piece contains code that is common to all file system
+types and the specific piece contains code that is file
+system type dependent.
+.P
+The fundamental data structure manipulated by generic
+code is the \f4vnode\f1, or virtual node,
+which is the system's internal representation of a file and
+provides the handle by which file manipulations are performed.
+A \f4vnode\f1 contains both public and private data.
+The public data consists of information
+which is maintained by the upper level
+or which does not change over the life of the file
+(such as the file type);
+the private data is invisible to the upper level
+and is implementation-specific.
+Public data can be used by code at either level;
+private data is neither examined nor altered
+by the upper level.
+A \f4vnode\f1 also describes the set of operations that can be applied to it;
+these operations are discussed in detail
+in the section ``Vnode Operations'' below.
+.P
+File systems (as opposed to individual files)
+are manipulated at the upper level
+through an object called a \f4vfs\f1, or virtual file system,
+that is analogous to a \f4mount\f1 table entry in earlier systems.
+Each mounted file system is linked into a list of active \f4vfs\f1 objects,
+with the root file system
+(\f4rootvfs\f1)
+always appearing first in the list.
+Like a \f4vnode\f1,
+a \f4vfs\f1 contains public data as well as private data
+and points to a list of operations.
+The section ``VFS Operations'' below
+describes the \f4vfs\f1 operations.
+.P
+Each vnode contains a reference count
+(\f4v_count\f1)
+that is maintained by the generic macros
+\f4VN_HOLD\f1 and \f4VN_RELE\f1.
+These are used by both specific and generic code when \f4vnode\f1 pointers are
+copied or destroyed.
+When the last reference to a \f4vnode\f1 is destroyed
+the \f4vop_inactive\f1 operation is applied
+to inform the lower level;
+it may then choose to destroy the \f4vnode\f1 or to cache it, as appropriate.
+For example, the s5 file system maintains a cache of old
+file references, while the proc file system discards them.
+A \f4vnode\f1 points to the \f4vfs\f1
+for the file system in which it resides (\f4v_vfsp\f1).
+If a \f4vnode\f1 is a mount point,
+the \f4v_vfsmountedhere\f1 field points to the \f4vfs\f1
+for the file system that covers it.
+Access to private data is through the \f4v_data\f1 pointer
+which, in the case of the s5 file system,
+refers to an in-core inode table entry.
+.P
+The set of configured file system types
+is described by the \f4vfssw\f1 table,
+which contains one entry for each file system type.
+The \f4vfssw\f1 table is shown in Figure 1.
+.FG "\f4vfssw\f1 table"
+.Ss
+/*
+ * Filesystem type switch table.
+ */
+struct vfssw {
+        char            *vsw_name;      /* type name string */
+        void            (*vsw_init)();  /* init routine (system startup) */
+        struct vfsops   *vsw_vfsops;    /* filesystem operations vector */
+        long            vsw_flags;      /* flags */
+};
+.Se
+.H 2 "Path Names"
+.IX istart pathnames
+During manipulation by the \f4vnode\f1 layer
+a pathname is stored in a \f4pathname\f1 structure.
+.DS
+.ft CW
+.in .10i
+struct pathname {
+.in .5i
+char    *pn_buf;        /* underlying storage */
+char    *pn_path;       /* remaining pathname */
+u_int    pn_pathlen;    /* remaining length */
+.in 0
+};
+.ft P
+.DE
+.P
+The user- or system-supplied pathname is copied
+into an instance of this structure, which is traversed as the name
+is interpreted.
+Typically the copying is performed by the utility routine \f4pn_get\f1,
+which allocates the necessary storage (a buffer of length \f4MAXPATHLEN\f1)
+and copies in the pathname from user or system space.
+.DS
+.in .10i
+.ft CW
+int
+pn_get(name, seg, pnp)
+.in .5i
+char *name;             /* pointer to pathname */
+int seg;                /* addr space indication */
+struct pathname *pnp;   /* structure in which to store result */
+.ft P
+.DE
+.P
+Path name traversal is done by \f4lookuppn\f1 (look up pathname).
+.DS 
+.ft CW
+.in .10i
+int
+lookuppn(pnp, followlink, dirvpp, compvpp)
+.in .5i
+struct pathname *pnp;       /* pathname to lookup */
+enum symfollow followlink;  /* (don't) follow sym links */
+struct vnode **dirvpp;	    /* ptr for parent vnode */
+struct vnode **compvpp;	    /* ptr for entry vnode */
+.in 0
+.ft P
+.DE
+.P
+The caller supplies a \f4pathname\f1 structure and \f4lookuppn\f1 returns
+pointers to \f4vnode\f1s for the named file and/or the directory containing
+the named file.
+.Ns
+Typically (here and elsewhere) routines return an \f4int\fP
+which is either zero or an error number to indicate the success or failure
+of the operation.
+Additional values (such as \f4lookuppn\f1's two \f4vnode\fP pointers)
+are returned through reference parameters.
+.Ne
+The search begins at either the root or the current directory,
+depending on whether an absolute or relative pathname was supplied.
+The pathname is traversed by successive application
+of the \f4vop_lookup\f1 \f4vnode\f1 operation,
+which at each call trims the pathname by one or more components
+and returns a new \f4vnode\f1 with which to continue the search.
+(The \f4vfs\f1 and \f4vnode\f1 operations are described
+in more detail below.)
+The search is complete when no more pathname remains or when an
+error occurs.
+When \f4lookuppn\f1 returns, the supplied \f4pathname\f1 structure
+is updated to indicate the last component of the path.
+One use of this is in the \f4exec\fP system call,
+which records the name of the command being executed
+for accounting purposes.
+.P
+A few additional considerations for \f4lookuppn\f1:
+.BL
+.LI
+Indirection through mount points is performed by following the
+\f4v_vfsmountedhere\f1 pointer
+(whenever it is set in a directory \f4vnode\f1)
+and applying the \f4vfs_root\f1 operation to the mounted file system
+to obtain its root \f4vnode\f1, from which the name search continues.
+.LI
+If ``..'' is encountered at the root of a mounted file system,
+the \f4vfs_vnodecovered\f1 field in the associated vfs structure
+is followed to obtain the underlying \f4vnode\f1, from which the name search
+continues.
+.LI
+If the \f4followlink\fP parameter is set and a symbolic link is encountered,
+the \f4vop_readlink\fP operation is applied to obtain the
+contents of the symbolic link,
+which are then interpolated into the pathname being traversed.
+Depending on whether the symbolic link refers to
+a relative or an absolute pathname
+the name search either continues from where it left off
+or is restarted.
+.LE
+.P
+\f4lookuppn\f1 is a general-purpose routine.
+But often the user wants to translate a pathname
+into a vnode without having to make explicit arrangement for
+such things as storage allocation.
+For this reason there is another name lookup routine;
+\f4lookupname\f1 performs name translation by
+calling \f4lookuppn\f1 and hiding other details.
+Normally it can be used instead of \f4lookuppn\f1
+unless a \f4pathname\f1 structure is required beyond the initial lookup.
+.DS 
+.ft CW
+.in .10i
+int
+lookupname(name, seg, followlink, dirvpp, compvpp)
+.in .5i
+char *name;                 /* user pathname */
+int seg;                    /* addr space name is in */
+enum symfollow followlink;  /* (don't) follow sym links */
+struct vnode **dirvpp;      /* ptr to parent dir vnode */
+struct vnode **compvpp;     /* ptr to component vnode */
+.in 0
+.ft P
+.DE
+.P
+There are also a number of utility routines used by
+\f4lookuppn\f1 (and other code) that manipulate pathnames
+and return errors as appropriate.
+\f4pn_alloc\f1 and \f4pn_free\f1 allocate and free \f4pathname\f1
+structures.
+\f4pn_getchar\f1 extracts a character from a pathname.
+\f4pn_getcomponent\f1 returns the next component of a pathname,
+optionally stripping it from the associated structure.
+\f4pn_combine\f1 is used in symbolic link processing to interpolate
+the contents of a symbolic link into a pathname.
+\f4pn_set\f1 initializes a \f4pathname\f1 structure to a specified
+value.
+\f4copyinstr\f1 and \f4copystr\f1 copy null-terminated strings
+from user- and system-space respectively.
+The limits on maximum pathname length and maximum file name length
+are enforced by the \f4pn_\fP routines,
+which return \f4ENAMETOOLONG\f1 if the limits are exceeded.
+The operating system source code knows these limits as
+\f4MAXPATHLEN\f1 and \f4MAXNAMELEN\f1; they are defined in
+\f4<sys/param.h>\f1.
+For portability, user programs should in preference use the
+POSIX-sanctioned names \f4PATH_MAX\f1 and \f4NAME_MAX\f1,
+which are defined in \f4<limits.h>\f1.
+.IX iend pathnames
+.H 2 "I/O Data Structures"
+.IX istart I/O data structures
+When a file system operation requires reading from or writing to the file
+system,
+I/O parameters are communicated across the interface using the
+data structures displayed in Figure 2.
+.FG "I/O data structures"
+.Ss
+typedef struct iovec {
+        caddr_t iov_base;
+        int     iov_len;
+} iovec_t;
+
+typedef struct uio {
+        iovec_t *uio_iov;       /* pointer to array of iovecs */
+        int     uio_iovcnt;     /* number of iovecs */
+        off_t   uio_offset;     /* file offset */
+        short   uio_segflg;     /* address space (kernel or user) */
+        short   uio_fmode;      /* file mode flags */
+        daddr_t uio_limit;      /* u-limit (maximum "block" offset) */
+        int     uio_resid;      /* residual count */
+} uio_t;
+
+/*
+ * I/O direction.
+ */
+typedef enum uio_rw { UIO_READ, UIO_WRITE } uio_rw_t;
+
+/*
+ * Segment flag values.
+ */
+typedef enum uio_seg { UIO_USERSPACE, UIO_SYSSPACE, UIO_USERISPACE } uio_seg_t;
+.Se
+.P
+The \f4uio\f1 structure and the \f4iovec\f1 list
+to which it refers are passed explicitly (by reference)
+not implicitly (in some global structure)
+across the interface
+and are updated appropriately to reflect I/O that has been performed.
+Use of a list of \f4iovec\f1 structures
+instead of a single base and length pair
+also makes it easy to describe scatter/gather I/O.
+The routine \f4uiomove\f1
+(analogous to the older and now obsolete \f4iomove\f1)
+is available to move data around and to update \f4uio\f1 structures
+to reflect what has been done.
+.DS 
+.ft CW
+.in .10i
+int
+uiomove(cp, n, rw, uiop)
+.in .5i
+caddr_t cp;             /* Target address */
+int n;                  /* Number of bytes to move */
+enum uio_rw rw;         /* UIO_READ or UIO_WRITE */
+struct uio *uiop;       /* I/O parameters */
+.in 0
+.ft P
+.DE
+.H 2 "Credentials"
+Most vnode operations are performed with respect to a supplied set of
+user credentials, described by a \f4cred\f1 structure (shown in Figure 3).
+.FG "User credentials"
+.Ss
+typedef struct cred {
+        u_short cr_ref;                 /* reference count */
+        u_short cr_ngroups;             /* number of groups in cr_groups */
+        uid_t   cr_uid;                 /* effective user id */
+        gid_t   cr_gid;                 /* effective group id */
+        uid_t   cr_ruid;                /* real user id */
+        gid_t   cr_rgid;                /* real group id */
+        uid_t   cr_suid;                /* "saved" user id (from exec) */
+        gid_t   cr_sgid;                /* "saved" group id (from exec) */
+        gid_t   cr_groups[1];           /* supplementary group list */
+};
+
+#define crhold(cr)      (cr)->cr_ref++
+void cred_init(void);
+void crfree(cred_t *);
+cred_t *crget(void);
+cred_t *crcopy(cred_t *);
+cred_t *crdup(cred_t *);
+cred_t *crgetcred(void);
+.Se
+.P
+Providing a separate structure with this information
+reduces the dependence of the lower level
+on global information in the \f4user\f1 or \f4proc\f1 structures
+and simplifies the job of a remote file server wishing to perform
+file operations using credentials supplied by a client.
+\f4cred\f1 instances are shared among processes;
+in general a parent and child will share a single instance
+unless either process has changed its user id, group id, or group membership.
+The structures are allocated from a kernel heap
+and are reference-counted so that they can be freed when
+no longer needed.
+\f4crget\f1 obtains and initializes a new \f4cred\f1 structure;
+this is used, for example, during system startup to assign credentials
+to process zero.
+\f4crfree\f1 gives up a reference, de-allocating the structure when
+the reference count drops to zero.
+\f4crhold\f1 increments the reference count of an existing structure;
+among other places this is used by \f4fork\f1 system call to give the child the same
+credentials as its parent.
+\f4crcopy\f1 obtains a new \f4cred\f1 structure, copies an existing
+structure into it, and frees the reference
+to the old one;
+this is used by the \f4setuid\f1 and \f4setgid\f1 system calls
+in the course of changing the uid or gid of the process.
+\f4crdup\f1 duplicates a structure without freeing the old one.
+.P
+A set of credentials is associated with a process through the \f4p_cred\f1
+field of its process-table entry, which points to a \f4cred\f1 structure.
+In addition \f4file\f1 table entries contain a field \f4f_cred\f1
+which refers to the set of credentials associated with the open file.
+.P
+Some of the generality provided by the credentials mechanism
+is intended for use by stateless remote file servers.
+On a local file system, for example,
+credentials will be checked at \f4open\f1 time
+but will normally not be used
+on subsequent \f4read\f1 or \f4write\f1 accesses.
+A stateless file server retains no memory of previous permission checks
+and must be given the associated set of credentials on every access.
+.IX iend I/O data structures
+.H 1 "VFS Operations"
+.IX istart VFS operations
+.FG "\f4vfs\f1 type definitions"
+.Ss
+typedef struct {
+        long val[2];                    /* file system id type */
+} fsid_t;
+
+#define MAXFIDSZ        16
+#define freefid(fidp) \
+  kmem_free((caddr_t)(fidp), sizeof (struct fid) 
+	- MAXFIDSZ + (fidp)->fid_len)
+
+typedef struct fid {
+        u_short         fid_len;                /* length of data in bytes */
+        char            fid_data[MAXFIDSZ];     /* data (variable length) */
+} fid_t;
+
+typedef struct vfs {
+        struct vfs      *vfs_next;              /* next VFS in VFS list */
+        struct vfsops   *vfs_op;                /* operations on VFS */
+        struct vnode    *vfs_vnodecovered;      /* vnode mounted on */
+        u_long          vfs_flag;               /* flags */
+        u_long          vfs_bsize;              /* native block size */
+        int             vfs_fstype;             /* file system type index */
+        fsid_t          vfs_fsid;               /* file system id */
+        caddr_t         vfs_data;               /* private data */
+        dev_t           vfs_dev;                /* device of mounted VFS */
+        u_long          vfs_bcount;             /* I/O count (accounting) */
+        u_short         vfs_nsubmounts;         /* immediate sub-mount count */
+} vfs_t;
+
+/*
+ * VFS flags.
+ */
+#define VFS_RDONLY      0x01            /* read-only vfs */
+#define VFS_MLOCK       0x02            /* lock vfs so that subtree is stable */
+#define VFS_MWAIT       0x04            /* someone is waiting for lock */
+#define VFS_NOSUID      0x08            /* setuid disallowed */
+#define VFS_REMOUNT     0x10            /* modify mount options only */
+#define VFS_NOTRUNC     0x20            /* does not truncate long file names */
+#define VFS_UNLINKABLE  0x40            /* unlink(2) can be applied to root */
+
+/*
+ * Argument structure for mount(2).
+ */
+struct mounta {
+        char    *spec;                  /* device of mounted file system */
+        char    *dir;                   /* directory where fs is mounted */
+        int     flags;                  /* mount flag */
+        char    *fstype;                /* file system type */
+        char    *dataptr;               /* private data */
+        int     datalen;                /* length of private data */
+};
+
+/*
+ * Operations supported on virtual file system.
+ */
+typedef struct vfsops {
+        int     (*vfs_mount)();         /* mount file system */
+        int     (*vfs_unmount)();       /* unmount file system */
+        int     (*vfs_root)();          /* get root vnode */
+        int     (*vfs_statvfs)();       /* get file system statistics */
+        int     (*vfs_sync)();          /* flush fs buffers */
+        int     (*vfs_vget)();          /* get vnode from fid */
+        int     (*vfs_mountroot)();     /* mount the root filesystem */
+        int     (*vfs_swapvp)();        /* return vnode for swap */
+        int     (*vfs_filler[8])();     /* for future expansion */
+} vfsops_t;
+
+.Se
+This section describes all of the VFS operations.
+In the descriptions below,
+\f4vfsp\fP in the \f4vnode\fP structure is a pointer to the VFS
+to which the operation is being applied.
+All operations return an error number (\f4errno\f1) indicating the success
+or failure of the operation.
+Not all file systems support all of the operations;
+some file systems support only a subset of them.
+For example, the proc file system type cannot be mounted as a root file system, 
+therefore it does not have to support the \f4vfs_mountroot\f1 operation.
+A file system should return the \f4errno\f1, \f4ENOSYS\f1, to indicate that it
+does not support a particular operation.
+In particular, the \f4vfs_filler\f1 operations should return
+\f4ENOSYS\f1. 
+This padding is intended to permit some degree of binary
+compatibility if new operations are added in future releases (though
+such compatibility is not guaranteed).
+.P
+Note that the names of the operations refer to the members of
+\f4struct vfsops\f1;
+in general the operations are invoked using macros
+(\f4VFS_MOUNT\f1, \f4VFS_UMOUNT\f1, etc.) which perform the
+necessary indirection on the \f4vfsp\f1 supplied.
+.P
+The contents of the private data,
+referred to by \f4vfs_data\f1 in the \f4vfs\f1 structure,
+are determined by each file system type.
+The private data for the s5 type points to the in-core superblock and
+contains other information related to variable logical block sizes.
+.H 2 "vfs_init"
+.IX VFS operations, vfs_init
+.DS I
+.ft CW
+vfs_init(vswp, fstype)
+struct vfssw *vswp;
+int fstype;
+.ft P
+.DE
+Perform whatever one-time initialization is required by this
+file system type.
+\f4vswp\f1 refers to a \f4vfssw\f1 table entry which must be
+initialized, and \f4fstype\f1 is the type number being assigned.
+This operation is anomalous in that it is called
+exactly once, when the system is first started up, and it applies to
+the file system type
+rather than to any particular mounted file system.
+The s5 file system type, for example, allocates
+and initializes in-core inodes.
+.H 2 "vfs_mount"
+.IX VFS operations, vfs_mount
+.DS I
+.ft CW
+vfs_mount(vfsp, mvp, uap, cr)
+struct vfs *vfsp;
+struct vnode *mvp;
+struct mounta *uap;
+struct cred *cr;
+.ft P
+.DE
+Mount a file system, performing necessary sanity checks.
+\f4vfsp\fP refers to a \f4vfs\fP structure that is
+being initialized by this operation;
+upon successful completion of a mount it will be linked by the upper level
+into the vfs list by a call to the utility routine \f4vfs_add\fP.
+\f4mvp\fP is a pointer to a vnode referring to the mount point
+(the file or directory that will be covered by the operation).
+\f4uap\fP points to a structure containing the arguments to the
+\f4mount\fP(2) system call provided by the user program,
+and \f4cr\fP points to a \f4cred\fP structure describing the caller's
+credentials.
+The \f4flags\fP word of the user arguments
+contains a bit-mask of values defined in \f4<sys/mount.h>\fP,
+including \f4MS_RDONLY\fP to denote a read-only file system,
+\f4MS_NOSUID\fP to indicate that setuid and setgid bits
+should not be honored for executables on this file system,
+and \f4MS_REMOUNT\fP to denote an attempt to remount
+(possibly with different parameters)
+a file system that is already mounted.
+.P
+The mount operation of s5 performs (among other things) the following:
+initializing both the upper level
+\f4vfs\f1 structure and lower level s5 private data, creating
+a vnode for the block device on which the file system resides,
+invalidating any stale data associated with the device
+and creating and initializing the in-core superblock.
+.H 2 "vfs_unmount"
+.IX VFS operations, vfs_mount
+.DS I
+.ft CW
+vfs_unmount(vfsp, cr)
+struct vfs *vfsp;
+struct cred *cr;
+.ft P
+.DE
+Unmount \f4vfsp\fP. \f4cr\fP points to a \f4cred\fP structure describing
+the caller's credentials.
+There must be no active files on the file system.
+The vfs structure is removed by the upper level from the vfs list.
+.P
+For the s5 file system type, the unmount operation flushes to backing store
+all in-core inodes and their associated data pages, as well as the in-core
+superblock; it also flushes and invalidates data
+associated with the block device on which the file system resides.
+.H 2 "vfs_root"
+.IX VFS operations, vfs_root
+.DS I
+.ft CW
+vfs_root(vfsp, vpp)
+struct vfs *vfsp;
+struct vnode **vpp;
+.ft P
+.DE
+Return in \f4*vpp\f1 a vnode pointer for the root of file system \f4vfsp\f1.
+Providing a vfs operation for this
+instead of merely using a pointer in the vfs structure
+gives the implementation more freedom;
+for example, it may choose not to keep the root vnode around all
+the time if references to it are infrequent or initial construction
+of it is expensive.
+.H 2 "vfs_statvfs"
+.IX VFS operations, vfs_statvfs
+.DS I
+.ft CW
+vfs_statvfs(vfsp, stp)
+struct vfs *vfsp;
+struct statvfs *stp;
+.ft P
+.DE
+Return file system (``generic superblock'') information.
+\f4stp\f1 points to a \f4statvfs\f1 structure
+(described in \f4<sys/statvfs.h>\f1)
+which is filled by the operation.
+.DS 
+.ft CW
+.in .10i
+typedef struct statvfs {
+.in .5i
+u_long  f_bsize;        /* fundamental file system block size */
+u_long  f_frsize;       /* fragment size */
+u_long  f_blocks;       /* total # of blocks of f_frsize on fs */
+u_long  f_bfree;        /* total # of free blocks of f_frsize */
+u_long  f_bavail;       /* # of free blocks avail to non-superuser */
+u_long  f_files;        /* total # of file nodes (inodes) */
+u_long  f_ffree;        /* total # of free file nodes */
+u_long  f_favail;       /* # of free nodes avail to non-superuser */
+u_long  f_fsid;         /* file system id (dev for now) */
+char    f_basetype[FSTYPSZ]; /* target fs type name, null-terminated */
+u_long  f_flag;         /* bit-mask of flags */
+u_long  f_namemax;      /* maximum file name length */
+char    f_fstr[32];     /* filesystem-specific string */
+u_long  f_filler[16];   /* reserved for future expansion */
+.in 0
+.in .10
+} statvfs_t;
+
+/*
+ * Flag definitions.
+ */
+
+#define ST_RDONLY   0x01   /* read-only file system */
+#define ST_NOSUID   0x02   /* does not support setuid/setgid semantics */
+#define ST_NOTRUNC  0x04   /* does not truncate long file names */
+.ft P
+.DE
+.H 2 "vfs_sync"
+.IX VFS operations, vfs_sync
+.DS I
+.ft CW
+vfs_sync(vfsp, flag, cr)
+struct vfs *vfsp;
+int flag;
+struct cred *cr;
+.ft P
+.DE
+Write out (logically flush to backing store, if any) cached information
+associated with this file system.
+If \f4vfsp\f1 is NULL, the ``sync'' is applied to all file
+systems of the type handled by this operation.
+If \f4flag\f1 is NULL, all cached information is flushed.
+If SYNC_ATTR is set in \f4flag\f1, a selective set
+of cached ``attribute'' information
+is to be written out to disk.  \f4cr\fP points to a \f4cred\fP structure
+describing the caller's credentials.
+Each file system type can determine what the set
+should comprise.
+For the s5 file system type, the cached in-core
+inodes are written back to disk.
+.H 2 "vfs_vget"
+.IX VFS operations, vfs_vget
+.DS I
+.ft CW
+vfs_vget(vfsp, vpp, fidp)
+struct vfs *vfsp;
+struct vnode **vpp;
+struct fid *fidp;
+.ft P
+.DE
+Turn the ``unique file id'' referred to by \f4fidp\f1
+(acquired from a previous \f4vop_fid\f1 vnode operation, described below)
+into a pointer to a vnode on this file system;
+the result is returned in \f4*vpp\f1.
+.H 2 "vfs_mountroot"
+.IX VFS operations, vfs_mountroot
+.DS I
+.ft CW
+vfs_mountroot(vfsp, why)
+struct vfs *vfsp;
+enum whymountroot why;
+.ft P
+.DE
+Mount or unmount this file system as the root (\f4/\f1).
+\f4vfsp\f1 refers to a vfs structure to be initialized.
+At system startup exactly one file system type will be mounted this
+way. \
+\f4ROOTFSTYPE\fP in the \f4master.d/kernel\fP file
+specifies the file system type of root.
+\f4why\f1 is \f4ROOT_INIT\f1 to indicate an initial mount of
+the root.
+This operation can also be applied as part of an administrative remount
+of the root file system (after an automatic file system repair, for
+example);
+\f4why\f1 will be \f4ROOT_REMOUNT\f1 to indicate this.
+Finally, \f4why\f1 may be \f4ROOT_UNMOUNT\f1 to indicate that the
+operating system is being shut down and that the root file system should
+be ``cleanly'' unmounted.
+.IX iend VFS operations
+.H 1 "Vnode Operations"
+.IX istart vnode operations
+.FG "\f4vnode\f1 type definitions"
+.Ss
+enum vtype      { VNON, VREG, VDIR, VBLK, VCHR, VLNK, VFIFO, VBAD };
+
+typedef struct vnode {
+        u_short         v_flag;                 /* vnode flags (see below) */
+        u_short         v_count;                /* reference count */
+        struct vfs      *v_vfsmountedhere;      /* ptr to vfs mounted here */
+        struct vnodeops *v_op;                  /* vnode operations */
+        struct vfs      *v_vfsp;                /* ptr to containing VFS */
+        struct stdata   *v_stream;              /* associated stream */
+        struct page     *v_pages;               /* vnode pages list */
+        enum vtype      v_type;                 /* vnode type */
+        dev_t           v_rdev;                 /* device (VCHR, VBLK) */
+        caddr_t         v_data;                 /* private data for fs */
+        struct filock   *v_filocks;             /* ptr to filock list */
+        long            v_filler[8];            /* padding */
+} vnode_t;
+
+/*
+ * vnode flags.
+ */
+#define VROOT   0x01    /* root of its file system */
+#define VNOMAP  0x04    /* file cannot be mapped/faulted */
+#define VDUP    0x08    /* file should be dup'ed rather then opened */
+#define VISSWAP 0x40    /* vnode is part of virtual swap device */
+#define VXLOCKED 0x8000 /* Xenix frlock */
+
+.Se
+.FG "\f4vnode\f1 operations"
+.Ss
+/*
+ * Operations on vnodes.
+ */
+typedef struct vnodeops {
+        int     (*vop_open)();
+        int     (*vop_close)();
+        int     (*vop_read)();
+        int     (*vop_write)();
+        int     (*vop_ioctl)();
+        int     (*vop_setfl)();
+        int     (*vop_getattr)();
+        int     (*vop_setattr)();
+        int     (*vop_access)();
+        int     (*vop_lookup)();
+        int     (*vop_create)();
+        int     (*vop_remove)();
+        int     (*vop_link)();
+        int     (*vop_rename)();
+        int     (*vop_\f4mkdir\f1)();
+        int     (*vop_rmdir)();
+        int     (*vop_readdir)();
+        int     (*vop_symlink)();
+        int     (*vop_readlink)();
+        int     (*vop_fsync)();
+        void    (*vop_inactive)();
+        int     (*vop_fid)();
+        void    (*vop_rwlock)();
+        void    (*vop_rwunlock)();
+        int     (*vop_seek)();
+        int     (*vop_cmp)();
+        int     (*vop_frlock)();
+        int     (*vop_space)();
+        int     (*vop_realvp)();
+        int     (*vop_getpage)();
+        int     (*vop_putpage)();
+        int     (*vop_map)();
+        int     (*vop_addmap)();
+        int     (*vop_delmap)();
+        int     (*vop_poll)();
+        int     (*vop_pathconf)();
+        int     (*vop_allocstore)();
+        int     (*vop_filler[31])();
+} vnodeops_t;
+.Se
+The set of operations applicable to a vnode is described below.
+In these descriptions \f4vp\f1 refers to a vnode pointer,
+\f4cr\f1 to a pointer to a credentials structure,
+and \f4nm\f1 to a character string containing a name.
+Except where noted all operations return an error number (errno)
+indicating the success or failure of the operation;
+invoking an operation which is not supported on a particular file system
+will elicit the errno \f4ENOSYS\f1.
+(The \f4vop_filler\f1 operations should also return \f4ENOSYS\f1.)
+The names used here for the operations
+(\f4vop_open\f1, \f4vop_close\f1, etc.)
+are the member names of \f4struct\ vnodeops\f1;
+the actual operations are invoked from generic code
+by macros
+(\f4VOP_OPEN\f1, \f4VOP_CLOSE\f1, etc.)
+which de-reference the \f4v_op\f1 pointer in the vnode.
+.P
+Note that, except in the context of I/O atomicity as indicated below,
+the notion of ``vnode locking'' does not appear in the interface.
+In general, such locks are for synchronization purposes
+and are applied and released as necessary
+by each vnode operation before returning.
+.H 2 "vop_open"
+.IX vnode operations, vop_open
+.DS I
+.ft CW
+vop_open(vpp, flag, cr)
+struct vnode **vpp;
+int flag;
+struct cred *cr;
+.ft P
+.DE
+Perform any required \f4open\f1 protocol (e.g., device initialization)
+upon the vnode pointed at by \f4*vpp\f1.
+The double indirection (a pointer to a pointer) allows the generic routine
+to replace the supplied vnode with another if it wishes.
+(This is used, for example, by a \f4STREAMS\f1 ``clone'' open.)
+\f4flag\f1
+contains the ``open'' flags (\f4FREAD\f1, \f4FWRITE\f1)
+associated with the file.
+An \f4open\f1 system call that doesn't specify the \f4O_CREAT\f1 flag
+will result in a call to this operation.
+The s5 file system type, for example, does nothing,
+because no special action is required at this level
+for ordinary files.
+.H 2 "vop_close"
+.IX vnode operations, vop_close
+.DS I
+.ft CW
+vop_close(vp, flag, cnt, off, cr)
+struct vnode *vp;
+int flag;
+int cnt;
+off_t off;
+struct cred *cr;
+.ft P
+.DE
+Perform any required \f4close\f1 protocol (e.g., device shutdown)
+upon the vnode to which \f4vp\f1 refers.
+This operation is called
+not only on the last close,
+but whenever a file descriptor
+associated with \f4vp\f1 is closed.
+The current file-table flags,
+file descriptor reference count (before decrementing),
+and file offset
+are supplied in \f4flag\f1, \f4cnt\f1, and \f4off\f1.
+.H 2 "vop_read & vop_write"
+.IX vnode operations, vop_read
+.IX vnode operations, vop_write
+.DS I
+.ft CW
+vop_read(vp, uiop, ioflag, cr)
+struct vnode *vp;
+struct uio *uiop;
+int ioflag;
+struct cred *cr;
+.SP
+vop_write(vp, uiop, ioflag, cr)
+struct vnode *vp;
+struct uio *uiop;
+int ioflag;
+struct cred *cr;
+.ft P
+.DE
+Read or write a vnode \f4vp\f1.
+The I/O arguments are supplied in a \f4uio\f1 structure
+to which \f4uiop\f1 refers;
+the structure will be updated to reflect the data movement
+that is performed.
+I/O flags are supplied in \f4ioflag\f1;
+they include IO_SYNC (perform I/O synchronously) and
+\f4IO_APPEND\f1 (append data to the end of the file regardless of the
+current offset).
+In order to guarantee the I/O atomicity that has historically been
+provided by the UNIX file system,
+the \f4vop_read\fP and \f4vop_write\fP operations
+must be preceded by the application of \f4vop_rwlock\fP
+and followed by the application of \f4vop_rwunlock\fP
+in order to enforce any necessary serialization of I/O.
+.P
+VM provides the \f4seg_map\fP segment driver for fast kernel mappings of vnode pages.
+The \f4vop_read\fP and \f4vop_write\fP operations of s5 use the driver to get
+a mapping of the \f4<vnode, offset>\fP pair to a kernel virtual address.
+A subsequent call to \f4uiomove()\fP causes a page fault to take place if
+the kernel address does not have a valid page associated with it.
+I/O data described by the \f4uio\f1 structure is copied to or from
+the kernel address space.
+The mapping is released when the I/O has completed.
+.H 2 "vop_ioctl"
+.IX vnode operations, vop_ioctl
+.DS I
+.ft CW
+vop_ioctl(vp, cmd, arg, flag, cr, rvalp)
+struct vnode *vp;
+int cmd;
+int arg;
+int flag;
+struct cred *cr;
+int *rvalp;
+.ft P
+.DE
+Perform an \f4ioctl\fP operation on \f4vp\fP.
+\f4cmd\fP is the command, \f4arg\fP is a pointer to additional data,
+and \f4flag\fP contains the open file flags. \f4rvalp\fP is an integer
+pointer to the returned value.
+\f4vop_ioctl\fP is the single ``grab-bag''
+provided by the interface; it is intended to incorporate
+object-specific (i.e., non-generic) operations.
+Generic operations (those that can be meaningfully applied to a general class of
+objects) will be added as new vnode operations
+in future versions of the VFS interface.
+.H 2 "vop_setfl"
+.IX vnode operations, vop_setfl
+.DS I
+.ft CW
+vop_setfl(vp, oflags, nflags, cr)
+struct vnode *vp;
+int oflags;
+int nflags;
+struct cred *cr;
+.ft P
+.DE
+Verify and perform any processing necessary in order to change the set
+of flags associated with a file table entry
+from \f4oflags\f1 to \f4nflags\f1.
+This might be used, for example,
+to wait for a state change in the associated vnode.
+An \f4fcntl\f1
+system call that specifies \f4F_SETFL\f1 will result in a call to this operation.
+The modification, if any, of the actual file table entry is performed
+not by this operation (which has no direct access to file table entries)
+but by the caller.
+.H 2 "vop_getattr"
+.IX vnode operations, vop_getattr
+.DS I
+.ft CW
+vop_getattr(vp, vap, flags, cr)
+struct vnode *vp;
+struct vattr *vap;
+int flags;
+struct cred *cr;
+.ft P
+.DE
+Get the attributes currently associated with \f4vp\f1.
+\f4vap\f1 points to a \f4vattr\f1 structure which is filled by the
+operation.
+Underlying file-system attributes must be mapped into the usual
+UNIX attributes.
+.DS
+.ft CW
+.in .10
+typedef struct vattr {
+.in .5i
+long        va_mask;      /* bit-mask of attributes */
+vtype_t     va_type;      /* vnode type (for create) */
+mode_t      va_mode;      /* access mode and type */
+uid_t       va_uid;       /* owner user id */
+gid_t       va_gid;       /* owner group id */
+l_dev_t     va_fsid;      /* file system id (dev for now) */
+l_ino_t     va_nodeid;    /* node id */
+nlink_t     va_nlink;     /* number of references to file */
+u_long      va_size0;     /* file size pad */
+u_long      va_size;      /* file size in bytes */
+timestruc_t va_atime;     /* time of last access */
+timestruc_t va_mtime;     /* time of last modification */
+timestruc_t va_ctime;     /* time file ``created'' */
+l_dev_t     va_rdev;      /* device the file represents */
+u_long      va_blksize;   /* fundamental block size */
+u_long      va_nblocks;   /* # of blocks allocated */
+u_long      va_vcode;     /* version code */
+long        va_filler[8]; /* padding */
+.in 0
+.in .10i
+} vattr_t;
+.in 0
+.ft P
+.DE
+The bit-mask \f4va_mask\f1 must be set
+to indicate those attributes in which the caller is interested;
+by analogy to the structure members,
+the attributes
+are named \f4AT_TYPE\f1, \f4AT_MODE\f1, \f4AT_UID\f1, etc.
+The operation may return more attributes than the caller requests
+(if it is convenient or cheap to do so) but must provide at least
+those that were requested.  It is illegal for the
+caller to refer subsequently to attributes that were not requested.
+.P
+\f4va_vcode\fP requires special mention: it holds
+a ``version code'' for use by file servers (such as RFS)
+in supporting cache coherence and I/O atomicity as part of
+providing traditional UNIX file system semantics.
+The version code associated with a file is maintained by the
+file system and must be updated whenever the file is modified
+(e.g. by application of \f4VOP_WRITE\fP or \f4VOP_CREATE\fP).
+The utility routine \f4fs_vcode\fP, which maintains a suitable
+global counter, should be used to update the version code;
+it returns zero if successful and a non-zero \f4errno\fP otherwise.
+.P
+Certain logical ``attributes'' of a file do not appear
+explicitly in this structure but are implicitly encoded in
+the file type and mode.
+The potential presence of a mandatory file lock, for example, is
+indicated for a regular file by a specific combination of mode bits.
+The macro \f4MANDLOCK(vp,\ mode)\f1 is available to facilitate
+checking for this ``attribute.''
+.H 2 "vop_setattr"
+.IX vnode operations, vop_setattr
+.DS I
+.ft CW
+vop_setattr(vp, vap, flags, cr)
+struct vnode *vp;
+struct vattr *vap;
+int flags;
+struct cred *cr;
+.ft P
+.DE
+Set the attributes associated with \f4vp\f1.
+\f4vap\f1 points to a \f4vattr\f1 structure
+specifying the attributes that are to be changed,
+each of which will be represented in the bit-mask \f4va_mask\f1.
+Only certain attributes
+(uid, gid, mode, size, and file times)
+can be set with this operation, which must map
+UNIX file attributes into appropriate file-system specific
+attributes.
+Additional attribute-specific information is passed in 
+the bit-mask \f4flags\f1.
+(One such flag is \f4ATTR_UTIME\f1,
+which indicates that a \f4utime\f1 system call has supplied
+new file times; this is needed to distinguish such a case from one
+in which a NULL pointer was supplied instead, since the required permission
+checks are different in the two cases.)
+.H 2 "vop_access"
+.IX vnode operations, vop_access
+.DS I
+.ft CW
+vop_access(vp, mode, flags, cr)
+struct vnode *vp;
+int mode;
+int flags;
+struct cred *cr;
+.ft P
+.DE
+Check access permissions for \f4vp\f1.
+\f4mode\f1 encodes the permissions to be checked (a combination of
+\f4VREAD\f1, \f4VWRITE\f1, and \f4VEXEC\f1).
+``flags'' is a bit-mask of additional information.
+UNIX-style permissions must be mapped into the appropriate
+file-system-specific permissions.
+.H 2 "vop_lookup"
+.IX vnode operations, vop_lookup
+.DS I
+.ft CW
+vop_lookup(vp, nm, vpp, pnp, flags, rdir, cr)
+struct vnode *vp;
+char *nm;
+struct vnode **vpp;
+struct pathname *pnp;
+int flags;
+struct vnode *rdir;
+struct cred *cr;
+.ft P
+.DE
+Look up a component name \f4nm\f1 in directory \f4vp\f1 and return
+a pointer to a result vnode in \f4*vpp\f1.
+The remainder of the pathname is described
+by the \f4pathname\f1 structure to which \f4pnp\f1 refers.
+The operation may optionally consume additional components of
+the pathname, in which case the \f4pathname\f1 structure is updated
+accordingly and \f4*vpp\f1 refers to the last component
+consumed.
+\f4vop_lookup\f1 must consume at least the component \f4nm\f1.
+In addition, it should traverse neither mount points nor symbolic links,
+both of which are interpreted by the upper level.
+\f4rdir\f1 denotes the ``root'' directory of the caller with respect to
+the lookup and is provided so that a multiple-component lookup
+can detect and prevent attempts to escape from a restricted file system
+hierarchy.
+Additional information may be passed in the bit-mask \f4flags\f1.
+Currently the only flag defined for \f4vop_lookup\f1 is
+\f4LOOKUP_DIR\f1, which indicates that the caller is interested
+in the parent directory of the named file;
+if this flag is set, then any multiple-component lookup should stop
+consuming components
+when it encounters that parent.
+.H 2 "vop_create"
+.IX vnode operations, vop_create
+.DS I
+.ft CW
+vop_create(vp, nm, vap, excl, mode, vpp, cr)
+struct vnode *vp;
+char *nm;
+struct vattr *vap;
+enum vcexcl excl;
+int mode;
+struct vnode *vpp;
+struct cred *cr;
+.ft P
+.DE
+Create a (possibly new) file with the name \f4nm\f1 in directory \f4vp\f1.
+\f4vap\f1 points to a \f4vattr\f1 structure that specifies the type of the
+file and its size if the file is to be truncated.
+\f4excl\f1 indicates an exclusive or non-exclusive create,
+\f4mode\f1 is the open mode,
+and \f4vpp\f1 is a pointer to a vnode pointer for the result.
+A \f4creat\f1
+or an \f4open\f1 system call that specifies the \f4O_CREAT\f1 flag
+will result in a call to this operation.
+This operation creates all types of files except
+directories and symbolic links, for which there
+are separate interfaces.
+(See \f4vop_mkdir\fP and \f4vop_symlink\fP below.)
+.H 2 "vop_remove"
+.IX vnode operations, vop_remove
+.DS I
+.ft CW
+vop_remove(vp, nm, cr)
+struct vnode *vp;
+char *nm;
+struct cred *cr;
+.ft P
+.DE
+Remove the file \f4nm\f1 from the directory \f4vp\f1.
+.H 2 "vop_link"
+.IX vnode operations, vop_link
+.DS I
+.ft CW
+vop_link(tdvp, svp, tnm, cr)
+struct vnode *tdvp;
+struct vnode *svp;
+char *tnm;
+struct cred *cr;
+.ft P
+.DE
+Create in target directory \f4tdvp\f1
+a link named \f4tnm\f1 to vnode \f4svp\f1.
+.H 2 "vop_rename"
+.IX vnode operations, vop_rename
+.DS I
+.ft CW
+vop_rename(sdvp, snm, tdvp, tnm, cr)
+struct vnode *sdvp;
+char *snm;
+struct vnode *tdvp;
+char *tnm;
+struct cred *cr;
+.ft P
+.DE
+Rename file \f4snm\f1 in directory \f4sdvp\f1 to the target name
+\f4tnm\f1 in target directory \f4tdvp\f1.
+If the file \f4tnm\f1 already exists it will be replaced by \f4snm\f1.
+.H 2 "vop_mkdir"
+.IX vnode operations, vop_mkdir
+.DS I
+.ft CW
+vop_mkdir(dvp, dirname, vap, vpp, cr)
+struct vnode *vp;
+char *nm;
+struct vattr *vap;
+struct vnode **vpp;
+struct cred *cr;
+.ft P
+.DE
+Make a directory named \f4dirname\f1 in directory \f4dvp\f1.
+\f4vap\f1 refers to a \f4vattr\f1 structure containing
+new directory attributes;
+\f4vpp\f1 points to a vnode pointer in which the result is
+returned.
+.H 2 "vop_rmdir"
+.IX vnode operations, vop_rmdir
+.DS I
+.ft CW
+vop_rmdir(vp, nm, cdir, cr)
+struct vnode *vp;
+char *nm;
+struct vnode *cdir;
+struct cred *cr;
+.ft P
+.DE
+Remove the directory named \f4nm\f1 from the directory \f4vp\f1.
+\f4cdir\f1 denotes the caller's current directory and is provided
+so that the lower level can enforce the prohibition
+(required for backward compatibility) against removal of that directory.
+.H 2 "vop_readdir"
+.IX vnode operations, vop_readdir
+.DS I
+.ft CW
+vop_readdir(vp, uiop, cr, eofp)
+struct vnode *vp;
+struct uio *uiop;
+struct cred *cr;
+int *eofp;
+.ft P
+.DE
+Read directory entries in a file-system independent format
+(\f4struct dirent\f1)
+from directory \f4vp\f1.
+.DS
+.in .10i
+.ft CW
+struct dirent {
+.in .5i
+long            d_ino;     /* "inode number" of entry */
+off_t           d_off;     /* offset of disk directory entry */
+unsigned short  d_reclen;  /* length of this record */
+char            d_name[1]; /* name of file */
+.in 0
+.in .10
+};
+.in 0
+.ft P
+.DE
+\f4uiop\f1 points to a \f4uio\f1 structure
+describing the I/O arguments, including the offset
+within the directory file at which reading should begin;
+the \f4uio_offset\f1 field will be updated to reflect the
+new file offset.
+By analogy with \f4vop_read\f1 this operation expects that
+\f4vop_rwlock\f1 has already been applied to the associated vnode
+and that \f4vop_rwunlock\f1 will subsequently be applied.
+.P
+\f4eofp\fP points to an integer that should be updated to indicate
+whether end-of-file was encountered in reading the directory.
+If it is known that the next read of the directory will return
+end-of-file, then \f4*eofp\fP should be
+set to one; otherwise it should be set to zero.  (This can be used by
+remote file systems to reduce network traffic in some cases.)
+.H 2 "vop_symlink"
+.IX vnode operations, vop_symlink
+.DS I
+.ft CW
+vop_symlink(dvp, linkname, vap, target, cr)
+struct vnode *dvp;
+char *linkname;
+struct vattr *vap;
+char *target;
+struct cred *cr;
+.ft P
+.DE
+In directory \f4dvp\f1 make a symbolic link \f4linkname\f1 which refers to
+the target pathname \f4target\f1.
+.H 2 "vop_readlink"
+.IX vnode operations, vop_readlink
+.DS I
+.ft CW
+vop_readlink(vp, uiop, cr)
+struct vnode *vp;
+struct uio *uiop;
+struct cred *cr;
+.ft P
+.DE
+Read the contents of file \f4vp\f1, which must refer to a symbolic link.
+\f4uiop\f1 describes the I/O parameters.
+.H 2 "vop_fsync"
+.IX vnode operations, vop_fsync
+.DS I
+.ft CW
+vop_fsync(vp, cr)
+struct vnode *vp;
+struct cred *cr;
+.ft P
+.DE
+Perform a synchronous write of all cached information for file \f4vp\f1.
+.H 2 "vop_inactive"
+.IX vnode operations, vop_inactive
+.DS I
+.ft CW
+void
+vop_inactive(vp, cr)
+struct vnode *vp;
+struct cred *cr;
+.ft P
+.DE
+Called when the upper level no longer holds any references to the
+file \f4vp\f1; this allows the lower level to take any appropriate
+action.
+In the case of the s5 file system type,
+if there are no more links to this inode (\f4i_nlink <= 0\fP),
+the file's disk blocks, and the disk inode itself, are freed.
+Otherwise, any modified pages associated with the vnode,
+as well as the inode itself, are written to disk.
+.H 2 "vop_fid"
+.IX vnode operations, vop_fid
+.DS I
+.ft CW
+vop_fid(vp, fidpp)
+struct vnode *vp;
+struct fid **fidpp;
+.ft P
+.DE
+Generate a unique (with respect to the containing vfs)
+identifier for the file to which \f4vp\f1 refers;
+\f4fidpp\f1 refers to a pointer to an \f4fid\f1 structure in which
+the result should be stored.
+This operation should be implemented in a way that will satisfy the
+needs of a stateless remote file server.
+.P
+More specifically, the need is for an operation that returns
+some sort of opaque file identifier or ``file handle''
+that at some later time
+can be reliably mapped (using the \f4vfs_vget\f1 operation)
+back into a reference to that file,
+or that can at least detect the disappearance of that file
+if it has gone away since the creation of the file handle.
+A stateless server is essentially transaction-oriented
+and retains no memory of previous requests for file handles
+(nor, indeed, of any remote requests at all),
+so file handles must be generated and interpreted in the context
+of the file system alone, independent of any surrounding context.
+A traditional UNIX file system might, for these purposes,
+identify a file by its device and i-number,
+but these alone are insufficient because an i-number may be reused
+between the time a file handle is generated and the time it is
+remapped.  An implementation technique that retains uniqueness
+of file handles in spite of the reuse of i-numbers is to augment
+the file handle with a \f4generation number\f1, which is maintained
+in the disk inode and which is incremented each time that inode is
+reused.
+.H 2 "vop_rwlock & vop_rwunlock"
+.IX vnode operations, vop_rwlock
+.IX vnode operations, vop_rwunlock
+.DS I
+.ft CW
+void
+vop_rwlock(vp)
+struct vnode *vp;
+.SP
+void
+vop_rwunlock(vp)
+struct vnode *vp;
+.ft P
+.DE
+Apply or release any necessary I/O serialization lock
+on the file referred to by \f4vp\fP.
+Calls to these operations must bracket all applications
+of \f4vop_read\fP, \f4vop_write\fP, and \f4vop_readdir\fP.
+The main reason the interface provides such I/O serialization explicitly
+(rather than hiding it entirely within the I/O operations themselves)
+is to allow the RFS server to preserve
+the historical atomicity of read/write operations.
+For a user-requested I/O operation to be atomic,
+other accesses to the file must be locked out during the I/O.
+Implementation constraints make it sometimes necessary for the server
+to satisfy a single large client-requested \f4read\fP or \f4write\fP
+by means of several calls to the underlying
+\f4vop_read\fP or \f4vop_write\fP operation.
+.P
+This operation may be a no-op in the case of file systems (such as NFS)
+that choose not to implement all details of traditional UNIX semantics.
+.H 2 "vop_seek"
+.IX vnode operations, vop_seek
+.DS I
+.ft CW
+vop_seek(vp, ooff, noffp)
+struct vnode *vp;
+off_t ooff;
+off_t *noffp;
+.ft P
+.DE
+Validate and possibly compute a new seek pointer associated
+with \f4vp\f1. \f4ooff\f1 contains the old (current) offset
+and \f4noffp\f1 is a pointer to the new (proposed) offset.
+Upon return, in the absence of any error, \f4*noffp\f1 will
+contain the new offset to be used.
+The purpose of this operation is to allow file-system-dependent code to
+verify the validity of a seek pointer at the time the \f4lseek\f1 system call
+is issued, and possibly to change it.
+.H 2 "vop_cmp"
+.IX vnode operations, vop_cmp
+.DS I
+.ft CW
+vop_cmp(vp1, vp2)
+struct vnode *vp1, *vp2;
+.ft P
+.DE
+Returns true if \f4vp1\f1 and \f4vp2\f1 refer to the same file,
+false otherwise.
+Ordinarily this test can be performed by checking the identity of
+the two pointers,
+but some file system types may permit multiple vnodes to refer to
+the same file.
+.P
+For performance reasons
+this operation should ordinarily be invoked
+by using the macro \f4VN_CMP\f1 (which tries to avoid a call)
+rather than \f4VOP_CMP\f1.
+.H 2 "vop_frlock"
+.IX vnode operations, vop_frlock
+.DS I
+.ft CW
+vop_frlock(vp, cmd, bfp, flag, offset, cr)
+struct vnode *vp;
+int cmd;
+struct flock *bfp;
+int flag;
+off_t offset;
+struct cred *cr;
+.ft P
+.DE
+Establish or interrogate the state of an advisory or mandatory file lock
+on file \f4vp\f1. \f4flag\f1 contains the current file-table
+flags and \f4offset\f1 the current file offset. \f4bfp\f1
+points to a \f4struct flock\f1 (see \f4fcntl\f1(5))
+describing the file segment to which the lock applies. \f4cmd\f1
+is \f4F_GETLK\f1 to interrogate a lock, \f4F_SETLK\f1 to set
+or clear a lock without blocking,
+or \f4F_SETLKW\f1 to set or clear a lock (an operation that may
+block until other locks have been removed).
+The \f4vnode\fP contains a pointer that points
+to a list of active file locks on the file.
+.H 2 "vop_space"
+.IX vnode operations, vop_space
+.DS I
+.ft CW
+vop_space(vp, cmd, bfp, flag, offset, cr)
+struct vnode *vp;
+int cmd;
+struct flock *bfp;
+int flag;
+off_t offset;
+struct cred *cr;
+.ft P
+.DE
+Allocate or free storage associated with the file \f4vp\f1. \f4flag\f1
+contains the current file-table flags and \f4offset\f1 the current file
+offset. \f4bfp\f1 points to a \f4struct flock\f1 (see \f4fcntl\f1(5))
+describing the file segment to be allocated or freed. \f4cmd\f1
+is \f4F_ALLOCSP\f1 to allocate the file segment
+or \f4F_FREESP\f1 to free it.  (Currently only simple file truncation
+or extension, described through \f4F_FREESP\f1, are supported.)
+.H 2 "vop_realvp"
+.IX vnode operations, vop_realvp
+.DS I
+.ft CW
+vop_realvp(vp, vpp)
+struct vnode *vp;
+struct vnode **vpp;
+.ft P
+.DE
+Return, in \f4*vpp\fP, a pointer to the lowest-level
+underlying vnode represented by \f4vp\fP,
+or an error if \f4vp\fP already represents the lowest-level vnode.
+While ``lowest-level underlying vnode'' is admittedly an ill-defined concept,
+the idea is that a file system type may provide a ``wrapper'' for vnodes
+of another type, and \f4vop_realvp\fP provides access to the vnodes
+so shadowed.  The device file system \f4specfs\fP is one example
+of a file system type that shadows vnodes of another type: some
+operations applied to a \f4specfs\fP vnode are handled directly
+whereas others (e.g., \f4vop_getattr\fP and \f4vop_setattr\fP)
+are applied to the underlying ``real'' vnode.
+.H 2 "vop_getpage"
+.IX vnode operations, vop_getpage
+.DS I
+.ft CW
+vop_getpage(vp, off, len, protp, pl, plsz, seg, addr, rw, cr)
+struct vnode *vp;
+u_int off, len;
+u_int *protp;
+struct page *pl[];
+u_int plsz;
+struct seg *seg;
+addr_t addr;
+enum seg_rw rw;
+struct cred *cr;
+.DE
+Fill one or more pages from vnode \f4vp\fP at page-aligned offset \f4off\fP,
+usually in response to a hardware fault on a single page
+or a software request for access to a specific set of pages.
+\f4len\fP is the number of bytes to be filled and is a multiple of the
+page size.
+\f4protp\fP, if not NULL, points to an \f4int\fP that will
+be updated to contain the permissions for the requested pages
+(\f4PROT_READ\fP, \f4PROT_WRITE\fP, \f4PROT_EXEC\fP, or \f4PROT_USER\fP,
+all defined in \f4<sys/mman.h>\fP).
+\f4pl\fP, if not NULL, points to an array of pointers
+to \f4page\fP structures;
+the array is populated by the operation
+and terminated with a NULL pointer
+to indicate the pages that are
+filled.
+A NULL \f4pl\fP implies that the I/O may be done asynchronously.
+\f4plsz\fP indicates, for non-NULL \f4pl\fP,
+the size in bytes of the memory mapped by
+the \f4page\fP structures in \f4pl\fP
+(i.e. it is an indirect indication of the size of the array).
+It is permissible to fill more pages than can be described by \f4pl\fP.
+\f4seg\fP is a pointer to the VM segment into which the pages will
+be mapped, and \f4addr\fP the page-aligned virtual address therein.
+\f4rw\fP contains a value of the enumeration type \f4seg_rw\fP
+(defined in \f4<vm/seg.h>\fP)
+to indicate the type of access being attempted
+(\f4S_READ\fP, \f4S_WRITE\fP, \f4S_EXEC\fP, or \f4S_OTHER\fP).
+.P
+For s5, \f4vop_getpage\fP performs the following operations for each
+page of size \f4PAGESIZE\fP
+within the range \f4<off, off+len>\fP.
+It checks to see if the page is in memory
+and returns it if it is.
+If the page is not in memory, it must be created.
+In this case, one of two operations is performed,
+depending on whether or not the file offset has a physical block
+allocated for it.
+If it does not, there is no backing store for the page
+and no physical I/O is needed.
+In this case a new page is created and
+the \f4getpage\f1
+operation returns with a blank page.
+If it does, physical I/O is needed to fill the page.
+In this case,
+a page is allocated and a buffer header is set up to fill in
+detailed information that the driver needs to do the I/O.
+Then, the strategy routine of the appropriate device driver
+is called to do the I/O.
+If the logical block size of the file system is smaller than the page
+size, multiple I/O will be needed to fill up the whole page.
+When all the I/O requests complete, \f4getpage\f1 returns.
+.H 2 "vop_putpage"
+.IX vnode operations, vop_putpage
+.DS I
+.ft CW
+vop_putpage(vp, off, len, flags, cr)
+struct vnode *vp;
+u_int off, len;
+int flags;
+struct cred *cr;
+.DE
+Update the backing store (if any) for all modified pages associated
+with vnode \f4vp\fP and offsets \f4off\fP through \f4off+len\fP;
+a \f4len\fP of zero indicates all offsets through to the end of
+the file.
+\f4flags\fP contains a bit-mask of values defined in \f4<sys/buf.h>\fP
+and including
+\f4B_ASYNC\fP (initiate the I/O asynchronously),
+\f4B_INVAL\fP (flush and invalidate the pages),
+\f4B_FREE\fP (return the pages to a free page list),
+\f4B_DONTNEED\fP (an indication that the pages will not be needed again soon),
+and \f4B_FORCE\fP (the page cache is being explicitly flushed
+by an \f4msync\fP operation).
+.P
+For s5, vop_putpage is implemented as follows:
+If len is zero, call pvn_vplist_dirty to find all the dirty pages
+beyond off and put them out.
+Otherwise, call pvn_range_dirt to get a list
+of dirty pages within the range of <off, off+len>.
+Then set up a buffer header to fill in detailed information
+that the driver needs to perform the physical I/O.
+The strategy routine of the appropriate device driver is called to do the I/O.
+If I/O is not ASYNC, wait for
+the I/O to complete.
+When it does, free the buffer header,
+decrement the reference count of the vnode,
+inactivate the inode if necessary, and return.
+.H 2 "vop_map"
+.IX vnode operations, vop_map
+.DS I
+.ft CW
+vop_map(vp, off, as, addrp, len, prot, maxprot, flags, cr)
+struct vnode *cp;
+u_int off;
+struct as *as;
+caddr_t addrp;
+u_int len;
+u_int prot;
+u_int maxprot;
+u_int flags;
+struct cred *cr;
+.DE
+Create a mapping of \f4len\fP bytes
+to vnode \f4vp\fP at offset \f4off\fP
+in address space \f4as\fP at address \f4*addrp\fP,
+and remove any overlapping mapping that already exists.
+Unless \f4MAP_FIXED\fP is set in \f4flags\fP,
+\f4*addrp\fP is treated only as a hint to the system,
+and in particular a value of zero gives the system
+complete freedom in choosing the address, which is
+returned in \f4*addrp\fP.
+\f4prot\fP and \f4maxprot\fP indicate the initial and maximum
+(least restrictive) protections associated with the mapping.
+Valid values of
+\f4flags\fP are described in \f4<sys/mman.h>\fP.
+\f4MAP_SHARED\fP indicates that write references to the mapping will
+result in changes to the underlying object;
+\f4MAP_PRIVATE\fP indicates that write references will affect only a
+private copy of the object.
+\f4MAP_FIXED\fP causes \f4*addrp\fP to be treated as a requirement
+and not just as a hint.
+.H 2 "vop_addmap"
+.IX vnode operations, vop_addmap
+.DS I
+.ft CW
+vop_addmap(vp, off, as, addr, len, prot, maxprot, flags, cr)
+struct vnode *vp;
+u_int off;
+struct as *as;
+addr_t addr;
+u_int len;
+u_int prot, maxprot;
+u_int flags;
+struct cred *cr;
+.ft P
+.DE
+Increment the count of the number of mappings associated with
+the vnode.
+.H 2 "vop_delmap"
+.IX vnode operations, vop_delmap
+.DS I
+.ft CW
+vop_delmap(vp, off, as, addr, len, prot, maxprot, flags, cr)
+struct vnode *vp;
+u_int off;
+struct as *as;
+addr_t addr;
+u_int len;
+u_int prot, maxprot;
+u_int flags;
+struct cred *cr;
+.ft P
+.DE
+Decrement the count of the number of mappings when a
+mapping is removed. The arguments passed to \f4vop_addmap\fP
+and \f4vop_delmap\fP are the same as \f4vop_map\fP, although some
+of the arguments are not used at the present time.
+.H 2 "vop_poll"
+.IX vnode operations, vop_poll
+.DS I
+.ft CW
+vop_poll(vp, events, anyyet, reventsp, phpp)
+struct vnode *vp;
+short events;
+int anyyet;
+short *reventsp;
+struct pollhead **phpp;
+.ft P
+.DE
+``Poll'' a file \f4vp\fP (in the sense of \f4poll\fP(2)) for a set of events.
+\f4events\fP is a bit-mask of events to be checked,
+\f4anyyet\fP is non-zero if any other file descriptors in the associated
+\f4pollfd\fP array have pending events,
+\f4reventsp\fP points to a bit-mask of the satisfied events (returned by
+the operation),
+and \f4phpp\fP is a pointer to a pointer to a \f4pollhead\fP structure.
+.H 2 "vop_pathconf"
+.IX vnode operations, vop_pathconf
+.DS I
+.ft CW
+vop_pathconf(vp, cmd, valp, cr)
+struct vnode *vp;
+int cmd;
+u_long *valp;
+struct cred *cr;
+.ft P
+.DE
+POSIX \f4pathconf\fP support.
+For the given \f4vp\fP,
+return the value of the attribute indicated by \f4cmd\fP.
+\f4valp\f1 points to a \f4long\fP that is updated to contain
+the requested value.
+Possible values of \f2cmd\f1 include
+\f4_PC_LINK_MAX\f1 (maximum number of hard links to an inode),
+\f4_PC_MAX_CANON\f1 (maximum bytes in a line for canonical processing),
+\f4_PC_MAX_INPUT\f1 (maximum bytes stored in the input queue),
+\f4_PC_NAME_MAX\f1 (maximum length of a file name),
+\f4_PC_PATH_MAX\f1 (maximum length of a pathname),
+\f4_PC_PIPE_BUF\f1 (maximum number of bytes written atomically in a write to a pipe),
+\f4_PC_NO_TRUNC\f1 (are long file names truncated?),
+\f4_PC_VDISABLE\f1 (are special character functions disabled?),
+\f4_PC_CHOWN_RESTRICTED\f1 (is use of \f4chown\fP(2) restricted to the 
+super-user?).
+.H 2 "vop_allocstore"
+.IX vnode operations, vop_allocstore
+.DS I
+.ft CW
+vop_allocstore(vp, off, len, cr)
+struct vnode *vp;
+u_int off;
+u_int len;
+struct cred *cr;
+.ft P
+.DE
+Allocate file storage for a portion of the file associated with vnode vp.
+The storage is for \f4len\f1 bytes of the file beginning at offset \f4off\f1.
+Currently, the primary use of this operation is to allocate space for a file used for swapping.
+In s5, \f4vop_allocstore\f1 allocates disk blocks for the specified portion of the file.
+.P
+Some file systems may implement this operation as a no-op.
+For instance, for \f4specfs\f1, allocation of backing store is
+unnecessary.
+Another such example is a networking file system, in which allocation
+is not the responsibility of the client.
+.IX iend vnode operations
+.H 1 "VM Interaction"
+.IX istart VM interaction
+The Virtual Memory system is the least mature of the new system interfaces;
+the interactions with VFS code are well-contained
+(largely confined to \f4vop_getpage\fP and \f4vop_putpage\fP)
+but in some cases are complex.
+(See the source code for s5 or UFS.)
+The complexity arises not from the architecture,
+but from an attempt to improve performance given varying page sizes
+and block sizes on different architectures, in other words,
+from portability considerations.
+.P
+The VM/VFS interactions are likely to change in future releases of
+the system.  The interfaces are not described in any detail in this
+guide; file system type writers should refer to the source of s5
+or UFS as a model.
+.IX iend VM interaction
+.H 1 "Additional Kernel Interfaces"
+.IX istart additional kernel interfaces
+A veneer layer is provided over the vnode interface in order to collect
+some common code in one place and to make it easier for kernel subsystems
+to manipulate files.
+.H 2 "vn_open"
+.IX additional kernel interfaces, vn_open
+.DS
+.ft CW
+vn_open(name, seg, filemode, createmode, vpp, crwhy)
+char *name;             /* file name */
+enum uio_seg seg;       /* address space name is in */
+int filemode;           /* open mode (r/w/rw) */
+int createmode;         /* create mode (permission bits) */
+struct vnode **vpp;     /* pointer to result */
+enum create crwhy;	/* reason: \f4mkdir\f1, \f4mknod\f1, \f4create\f1 */
+.ft P
+.DE
+Perform permission checks and open a file by name, returning a pointer
+to the resulting vnode. \f4name\fR contains the file name. \f4seg\fR
+is the address space the file name is in, either user space or
+kernel space. \f4filemode\fR is the open mode. \f4createmode\fR contains
+the permission bits if the file is to be created. \f4vpp\fR is a pointer
+to a vnode pointer for the result. \f4crwhy\fR is the reason why
+this routine is called;
+it is defined if and only if \f4filemode\fR has the \f4FCREAT\f1 bit on.
+.H 2 "vn_create"
+.IX additional kernel interfaces, vn_create
+.DS 
+.ft CW
+vn_create(pnamep, seg, vap, excl, mode, vpp, why)
+char *pnamep;           /* pathname */
+enum uio_seg seg;       /* addr space of name */
+struct vattr *vap;      /* attributes of file */
+enum vcexcl excl;       /* EXCL or NONEXCL create */
+int mode;               /* create mode bits */
+struct vnode **vpp;     /* pointer to vnode for result */
+enum create why;        /* reason: \f4mkdir\f1, \f4mknod\f1, \f4create\f1 */
+.ft P
+.DE
+Perform permission checks and create or truncate a vnode by name.
+\f4name\fR contains the pathname of the file. \f4seg\fR
+is the address space the pathname is in, either user space or
+kernel space. \f4vap\fR is a pointer to the vattr
+structure. \f4excl\fR indicates whether an exclusive or a non-exclusive
+create is to be performed. \f4mode\fR contains the permission bits of the
+file. \f4vpp\fR is a pointer
+to a vnode pointer for the result. \f4why\fR is the reason why
+this routine is called.
+.H 2 "vn_rdwr"
+.IX additional kernel interfaces, vn_rdwr
+.DS
+.ft CW
+vn_rdwr(rw, vp, base, len, offset, seg, ioflag, ulimit, cr, residp)
+enum rw rw;        /* I/O directions (read or write) */
+struct vnode *vp;  /* File to be read or written */
+caddr_t base;      /* Base address for I/O */
+int len;           /* Length of data */
+off_t offset;      /* Offset in file */
+enum uio_seg seg;  /* Addr space of data (kernel or user) */
+int ioflag;        /* I/O flags */
+long ulimit;       /* file size limit */
+cred_t *cr;        /* user credentials */
+int *residp;       /* Number of bytes not read or written */
+.ft P
+.DE
+Build a \f4uio\f1 structure and read or write a vnode.
+.H 2 "vn_remove"
+.IX additional kernel interfaces, vn_remove
+.DS
+.ft CW
+vn_remove(fnamep, seg, dirflag)
+char *fnamep;       /* pathname */
+enum uio_seg seg;   /* addr space of name */
+enum rm dirflag;    /* FILE or DIRECTORY */
+.ft P
+.DE
+Remove a file by name.  The caller indicates the type of file being
+removed so that traditional error checks can be done
+(for example, the \f4rmdir\f1 system call should not succeed
+if applied to a regular file).
+.H 2 "vn_link"
+.IX additional kernel interfaces, vn_link
+.DS
+.ft CW
+vn_link(from, to, seg)
+char *from;          /* Source pathname */
+char *to;            /* Target pathname (link name) */
+enum uio_seg seg;    /* Address space of names */
+.ft P
+.DE
+Make a (hard) link to a file.
+.H 2 "vn_rename"
+.IX additional kernel interfaces, vn_rename
+.DS
+.ft CW
+vn_rename(from, to, seg)
+char *from;          /* Source pathname */
+char *to;            /* Target pathname */
+enum uio_seg seg;    /* Address space of names */
+.ft P
+.DE
+Rename a file.
+.IX iend additional kernel interfaces
+.H 1 "Common Vnode Operations"
+.IX istart common vnode operations
+A set of functions is available to support vnode operations that are
+common to many file system type implementations.
+.H 2 "fs_nosys"
+.IX common vnode operations, fs_nosys
+.DS
+.ft CW
+int
+fs_nosys()
+.ft P
+.DE
+Return \f4ENOSYS\fP.
+Can be used if the associated operation is not supported by the file system type.
+.H 2 "fs_sync"
+.IX common vnode operations, fs_sync
+.DS
+.ft CW
+int
+fs_sync(vfsp, flag, cr)
+struct vfs *vfsp;		/* vfs pointer */
+short flag;			/* NULL or SYNC_ATTR */
+cred_t *cr;			/* user credentials */
+.ft P
+.DE
+Silently return success. 
+Can be used if the file system type has no meaningful backing store.
+.H 2 "fs_rwlock & fs_rwunlock"
+.IX common vnode operations, fs_rwlock
+.IX common vnode operations, fs_rwunlock
+.DS
+.ft CW
+void
+fs_rwlock(vp)
+vnode_t *vp;
+
+void
+fs_rwunlock(vp)
+vnode_t *vp;
+.ft P
+.DE
+Read/write and lock/unlock.
+Stub routines that do nothing.
+.H 2 "fs_cmp"
+.IX common vnode operations, fs_cmp
+.DS
+.ft CW
+int
+fs_cmp(vp1, vp2)
+register vnode_t *vp1, *vp2;
+.ft P
+.DE
+Compare two vnode pointers.
+Return one if they are identical, zero otherwise.
+.H 2 "fs_frlock"
+.IX common vnode operations, fs_frlock
+.DS
+.ft CW
+int
+fs_frlock(vp, cmd, bfp, flag, offset, cr)
+register vnode_t *vp;  /* vnode pointer */
+int cmd;               /* operation: F_GETLK, F_SETLK or F_SETLKW */
+struct flock *bfp;     /* flock structure */
+int flag;              /* file-table flag */
+off_t offset;          /* current file offset */
+cred_t *cr;            /* user credentials */
+.ft P
+.DE
+A standard implementation of file- and record-locking
+for types that support it.
+.H 2 "fs_setfl"
+.IX common vnode operations, fs_setfl
+.DS
+.ft CW
+int
+fs_setfl(vp, oflags, nflags, cr)
+vnode_t *vp;          /* vnode pointer */
+int oflags;           /* old flags */
+int nflags;           /* new flags */
+cred_t *cr;           /* user credentials */
+.ft P
+.DE
+Permit any flag combination.
+Silently return success.
+.H 2 "fs_poll"
+.IX common vnode operations, fs_poll
+.DS
+.ft CW
+int
+fs_poll(vp, events, anyyet, reventsp, phpp)
+vnode_t *vp;               /* vnode pointer */
+register short events;     /* bit-mask of events to be checked */
+int anyyet;                /* non-zero if pending events */
+register short *reventsp;  /* bit-mask of the satisfied events */
+struct pollhead **phpp;    /* pointer-to-a-pointer to a pollhead struct*/
+.ft P
+.DE
+Return an answer appropriate for \f4poll\fP(2) on non-device files.
+Only \f4POLLIN\fP and \f4POLLOUT\fP are recognized.
+.H 2 "fs_vcode"
+.IX common vnode operations, fs_vcode
+.DS
+.ft CW
+int
+fs_vcode(vp, vcp)
+register vnode_t        *vp;	/* vnode pointer */
+u_long                  *vcp;	/* version code pointer */
+.ft P
+.DE
+Update \f4*vcp\fP with a version code suitable
+for the \f4va_vcode\fP attribute, possibly the value passed in.
+\f4vcp\fP is an in/out parameter.
+The \f4va_vcode\fP attribute is intended to support cache coherence
+and I/O atomicity for file servers that provide traditional
+UNIX file system semantics.  The vnode of the file object
+whose \f4va_vcode\fP is being updated must be held locked when
+this function is evaluated.
+Return zero for success, a nonzero \f4errno\fP for failure.
+.H 2 "fs_pathconf"
+.IX common vnode operations, fs_pathconf
+.DS
+.ft CW
+int
+fs_pathconf(vp, cmd, valp, cr)
+struct vnode *vp;          /* vnode pointer */
+int cmd;                   /* operation */
+u_long *valp;              /* return value pointer */
+struct cred *cr;           /* user credentials */
+.ft P
+.DE
+A standard implementation of
+POSIX \f4pathconf()\fP support, appropriate for most file system types.
+.IX iend common vnode operations
+.H 1 "Storage Allocation"
+.IX istart storage allocation
+A general-purpose heap-storage allocator that is
+independent of the VFS architecture
+is available for use by system code at any level.
+.P
+The \f4pathname\f1 and \f4cred\f1 utility routines
+(\f4pn_get\f1, \f4crget\f1, etc.)
+use the heap allocator
+for initial allocation of buffers and
+retain a freelist of such buffers for later use.
+The heap allocator can also be used by file system types that
+want to create vnodes dynamically rather than by static pre-allocation.
+.DS
+.ft CW
+char *
+kmem_alloc(size, flags)
+size_t size;
+int flags;
+.ft P
+.DE
+Return the address of a block of memory of at least \f4size\fP bytes.
+If \f4flag\fP contains \f4KM_NOSLEEP\fP,
+\f4kmem_alloc\fP will not sleep
+if the request cannot be satisfied immediately
+and will return NULL.
+This is suitable for use in code running at interrupt level.
+Otherwise \f4kmem_alloc\fP may sleep,
+but the request is guaranteed to have been satisfied upon return.
+.DS
+.ft CW
+char *
+kmem_zalloc(size, flags)
+size_t size;
+int flags;
+.ft P
+.DE
+Identical to \f4kmem_alloc\fP except that the allocated memory is guaranteed
+to be zero-filled.
+.DS
+.ft CW
+void
+kmem_free(addr, size)
+char *addr;
+size_t size;
+.ft P
+.DE
+Release memory allocated by \f4kmem_alloc\fP.
+\f4addr\fP is the address to be freed and \f4size\fP is the size in bytes.
+.DS
+.ft CW
+caddr_t
+kmem_fast_alloc(base, size, chunks, flags)
+caddr_t *base;
+size_t size;
+int chunks;
+int flags;
+.ft P
+.DE
+Quickly allocate memory in
+some commonly used and constant \f4size\f1.
+This routine manages a
+simple linked-list structure, allocating memory from the heap as
+necessary but never returning anything to the heap.
+The \f4chunks\fP argument indicates the number of elements of size \f4size\fP
+that should be allocated from the heap when necessary.
+The base argument is a caller-allocated \f4caddr_t *\fP
+that is the base of the free list of pieces of memory;
+it is maintained by the system and must be provided on every call.
+\f4flags\fP can be \f4KM_NOSLEEP\fP or \f4KM_SLEEP\fP.
+This function serves to reduce the
+number of calls to \f4kmem_alloc\fP, and to reduce memory fragmentation.
+.DS
+.ft CW
+caddr_t
+kmem_fast_zalloc(base, size, chunks, flags)
+caddr_t *base;
+size_t size;
+int chunks;
+int flags;
+.ft P
+.DE
+Similar to \f4kmem_fast_alloc\fP; allocated memory is zero-filled.
+.DS
+.ft CW
+void
+kmem_fast_free(base, p)
+caddr_t *base;
+caddr_t p;
+.ft P
+.DE
+Frees kernel memory allocated by \f4kmem_fast_alloc\fP.
+.IX iend storage allocation
+.H 1 "Name Cache"
+.IX istart name cache
+A directory name lookup cache (\f4dnlc\f1) is available for speeding
+up directory searches.
+Use of the cache is optional and calls to enter or delete entries
+or to search the cache are issued by file system dependent code.
+Although this is invisible to the interface routines,
+the name cache is structured as a set of LRU (least recently used) hash chains;
+each entry is placed on a hash list and within each hash list
+the least-recently-used entries appear first.
+In order to reduce storage requirements
+an arbitrary upper limit (\f4NC_NAMLEN\f1) is imposed on the
+length of names which can be cached.
+.DS
+.ft CW
+#define NC_NAMLEN    15  /* maximum name length we bother with */
+
+.in .10i
+struct  ncache {
+.in .5i
+struct ncache *hash_next;     /* hash chain, MUST BE FIRST */
+struct ncache *hash_prev;
+struct ncache *lru_next;      /* LRU chain */
+struct ncache *lru_prev;
+struct vnode *vp;             /* vnode the name refers to */
+struct vnode *dp;             /* vnode of parent of name */
+char namlen;                  /* length of name */
+char name[NC_NAMLEN];         /* component name */
+struct cred *cred;            /* credentials */
+.in .0
+.in .10
+};
+.in 0
+.ft P
+.DE
+.P
+The following operations are available for manipulating the name cache.
+.DS
+.ft CW
+void
+dnlc_enter(dp, name, vp, cred)
+struct vnode *dp;
+char *name;
+struct vnode *vp;
+struct cred *cred;
+.ft P
+.DE
+.P
+Enter vnode \f4vp\f1 in the name cache; \f4name\f1 is the file name,
+\f4dp\f1 the containing directory,
+and \f4cred\f1 the associated set of user credentials
+or \f4NOCRED\f1 to indicate that no credentials
+should be associated with this entry.
+.DS
+.ft CW
+struct vnode *
+dnlc_lookup(dp, name, cred)
+struct vnode *dp;
+char *name;
+struct cred *cred;
+.ft P
+.DE
+.P
+Find an entry for file \f4name\f1 in directory \f4dp\f1 with
+an associated credentials pointer \f4cr\f1;
+return NULL if no such entry exists.
+\f4cred\f1 can be \f4NOCRED\f1 to match only an entry that has
+no associated credentials or \f4ANYCRED\f1 to indicate that
+the lookup should ignore the credentials.
+.DS
+.ft CW
+void
+dnlc_remove(dp, name)
+struct vnode *dp;
+char *name;
+.ft P
+.DE
+.P
+Remove all cache entries for file \f4name\f1 in directory \f4dp\f1.
+.DS
+.ft CW
+void
+dnlc_purge()
+.ft P
+.DE
+.P
+Purge all entries from the directory name cache.
+.DS
+.ft CW
+void
+dnlc_purge_vp(vp)
+struct vnode *vp;
+.ft P
+.DE
+.P
+Purge all cache entries that refer to vnode \f4vp\f1.
+.DS
+.ft CW
+void
+dnlc_purge_vfsp(vfsp, count)
+struct vfs *vfsp;
+int count;
+.ft P
+.DE
+Purge cache entries referencing a \f4vfsp\fP.  The caller supplies a count
+of entries to purge; up to that many will be freed.  A count of
+zero indicates that all such entries should be purged.  Return
+the number of entries that were purged. 
+(This routine may be called, for example, during an \f4unmount\fP operation.)
+.DS
+.ft CW
+int
+dnlc_purge1()
+.ft P
+.DE
+Purge any cache entry.
+Return one if a cache entry was purged, zero if the cache was
+empty and there were no entries to purge.
+(This may be used by code that needs to release
+name cache entries in order to release the vnodes being held.)
+.IX iend name cache
+.H 1 "Special File Systems"
+.IX istart special file systems
+A special ``device file system,'' specfs,
+and a special ``pipe file system,'' fifofs,
+not explicitly mounted and not directly accessible to user programs
+contain standard code for dealing with devices
+and allow different file system types to share a common
+implementation of devices and pipes.
+The file system dependent code accomplishes this
+by redirecting \f4lookup\f1 and \f4create\f1 operations
+to the appropriate file system.
+Upon encountering a vnode of device or pipe type
+(\f4VCHR\fP, \f4VBLK\fP, or \f4VFIFO\fP)
+the operation can apply a utility routine such as \f4specvp\f1
+that locates or constructs a vnode on the special file system
+to refer to that device or pipe.
+The new vnode takes the place of the old one,
+and subsequent operations
+on the file automatically access the code of
+the special file system.
+specfs and fifofs ensure that
+the user sees a consistent picture of such things as access and
+modification times despite the redirection.
+.DS
+.ft CW
+struct vnode *
+specvp(vp, dev, type, cr)
+struct vnode *vp;
+dev_t dev;
+vtype_t type;
+struct cred *cr;
+.ft P
+.DE
+Return a shadow special vnode (snode) for the given device.
+If no snode exists for this device, create one and put it
+in a table hashed by \f4<dev, realvp>\fP.  If the snode for
+this device is already in the table, increment the reference count
+and return it.  The snode will be flushed from the
+table when the last reference is released. \f4vp\f1 is the real
+vnode of the device and \f4cr\f1 points to user credentials. \f4type\f1
+can be \f4VCHR\f1, \f4VBLK\f1, or \f4VFIFO\f1.
+.DS
+.ft CW
+struct vnode *
+makespecvp(dev, type)
+register dev_t dev;
+register vtype_t type;
+.ft P
+.DE
+Return a special vnode for the given device; no vnode is supplied
+for it to shadow.  It always creates a new snode and puts it in the
+table hashed by <dev, NULL>.  This routine is usually called during
+\f4mount\fP to create a new snode for the device on which the file system
+resides.
+.IX iend special file systems
+.H 1 "Block I/O"
+.IX istart block I/O
+File systems use routines provided by the block I/O subsystem to
+interface with lower level device drivers when physical I/O is necessary.
+In order for the driver to execute the I/O request, certain information
+about the I/O request is needed,
+such as the number of bytes to be transferred,
+the kernel address to or from which the data are to be transferred, 
+and the block number on the device.
+Such information is stored in a \f4buf\f1 structure. Some of the
+fields in the \f4buf\f1 structure are listed below.
+The file system passes the \f4buf\f1 structure to the strategy routine
+of the appropriate device driver to do physical I/O.
+The file system depends on
+the I/O subsystem to handle the interrupt upon I/O completion.
+.P
+Some file systems, e.g. s5, use the buffer pool
+service provided by the block I/O
+subsystem to cache file attribute data (inodes) and indirect blocks.
+Preferably, such data should be mapped in using special device
+files, though they are not in the current implementation.
+(See the fbio section for details.)
+However, file system
+type writers are
+encouraged to use mapping for all file system related data.
+.H 2 "struct buf"
+.IX block I/O, struct buf
+.DS
+.ft 4
+typedef struct  buf {
+.in .5i
+int             b_flags;        /* see defines below */
+struct  buf     *b_forw;        /* buffer hash list */
+struct  buf     *b_back;        /*  "  */
+struct  buf     *av_forw;       /* buffer free list, */
+struct  buf     *av_back;       /*     if not BUSY */
+o_dev_t         b_dev;          /* major+minor device name */
+unsigned        b_bcount;       /* transfer count */
+union {
+.in 0
+	caddr_t     b_addr;     /* low order core address */
+            int *b_words;       /* words for clearing */
+            daddr_t     *b_daddr;       /* disk blocks */
+ } b_un;
+ daddr_t         b_blkno;       /* block # on device */
+	:
+	:
+	:
+} buf_t;
+
+/*
+ *      These flags are kept in b_flags.
+ */
+#define B_WRITE    0x0000     /* non-read pseudo-flag */
+#define B_READ     0x0001     /* read when I/O occurs */
+#define B_DONE     0x0002     /* transaction finished */
+#define B_ERROR    0x0004     /* transaction aborted */
+#define B_BUSY     0x0008     /* not on av_forw/back list */
+#define B_WANTED   0x0040     /* issue wakeup when BUSY goes off */
+#define B_AGE      0x0080     /* delayed write for correct aging */
+#define B_ASYNC    0x0100     /* don't wait for I/O completion */
+#define B_DELWRI   0x0200     /* delayed write - wait until buffer needed */
+#define B_OPEN     0x0400     /* open routine called */
+#define B_STALE    0x0800     /* buffer contains stale data */
+#define B_PAGEIO   0x10000    /* do I/O to pages on bp->p_pages */
+#define B_DONTNEED 0x20000    /* after write, need not be cached */
+#define B_FREE     0x200000   /* free page when done */
+#define B_CACHE    0x800000   /* did bread find us in the cache ? */
+#define B_FORCE    0x2000000  /* semi-permanent removal from cache */
+#define B_NOCACHE  0x8000000  /* don't cache block when released */
+#define B_BAD      0x10000000 /* bad block revectoring in progress */
+.ft P
+.DE
+.H 2 "bread"
+.IX block I/O, bread
+.DS
+.ft 4
+struct buf *
+bread(dev, blkno, bsize)
+register dev_t dev;
+daddr_t blkno;
+long bsize;
+.ft P
+.DE
+Read in the block and return a buffer pointer.
+\f4dev\f1 is the
+device, \f4blkno\f1 is the logical block number on the device,
+and \f4bsize\f1 is the block size.
+This routine tries to find the buffer in the buffer cache.
+If the buffer is not there, it
+calls the strategy routine to do the physical I/O, waits for the
+I/O to complete, and returns a buffer pointer to the caller.
+.H 2 "bwrite"
+.IX block I/O, bwrite
+.DS
+.ft 4
+void
+bwrite(bp)
+register struct buf *bp;
+.ft P
+.DE
+Call the strategy routine to write the buffer.
+If the write is asynchronous, return;
+otherwise, call \f4biowait\fP to wait for completion and then
+release the buffer.
+.H 2 "brelse"
+.IX block I/O, brelse
+.DS
+.ft 4
+void
+brelse(bp)
+register struct buf *bp;
+.ft P
+.DE
+Release the buffer and return it to the buffer free list.
+Wake up anyone waiting for this particular buffer as well as anyone
+waiting for a free buffer.
+If the \f4B_AGE\fP flag is on, return the buffer to
+the front of the buffer free list.
+.H 2 "biowait"
+.IX block I/O, biowait
+.DS
+.ft 4
+int
+biowait(bp)
+register struct buf *bp;
+.ft P
+.DE
+Wait for I/O completion on the buffer; return the error code.
+If I/O is synchronous, free associated resources upon return.
+.H 2 "biodone"
+.IX block I/O, biodone 
+.DS
+.ft 4
+void
+biodone(bp)
+register struct buf *bp;
+.ft P
+.DE
+Mark I/O complete on a buffer, release it if I/O is asynchronous,
+and wake up anyone waiting for it.
+.H 2 "binval"
+.IX block I/O, binval
+.DS
+.ft 4
+void
+binval(dev)
+register dev_t dev;
+.ft P
+.DE
+Invalidate all blocks for the given device.
+.IX iend block I/O
+.H 1 "fbio"
+.IX istart fbio
+One service provided by the virtual memory system is
+a set of ``pseudo-bio'' routines for establishing and
+releasing addressable mappings to a file.
+The interface provided is similar to the more familiar
+``bio'' routines used in the past.
+Once a mapping has been established, the file data is
+directly addressable; page faults and page caching are
+handled transparently by the VM system.
+After a mapping is acquired through
+\f4fbread\fP, it can be released with \f4fbrelse\fP,
+it can be written back to disk with \f4fbwrite\fP
+(causing a synchronous write back using the file mapping information),
+or it can be written back with \f4fbiwrite\fP
+(causing an indirect synchronous write back to
+the block number given without using the file mapping information).
+The mapping information is described by the \f4fbuf\f1 structure.
+.DS
+.ft 4
+struct fbuf {
+	addr_t  fb_addr;	/* mapped kernel address */
+	u_int   fb_count;	/* number of bytes mapped */
+};
+.ft P
+.DE
+
+.H 2 "fbread"
+.IX fbio, fbread
+.DS
+.ft 4
+int
+fbread(vp, off, len, rw, fbpp)
+struct vnode *vp;
+register off_t off;
+u_int len;
+enum seg_rw rw;
+struct fbuf **fbpp;
+.ft P
+.DE
+Return a pointer to a kernel virtual address for
+the given \f4<vp, off>\fP for \f4len\fP bytes.  It is illegal for
+the offset to cross a \f4MAXBSIZE\f1 (8K bytes, maximum unit for block I/O) boundary
+over the range of \f4len\fP bytes.
+.H 2 "fbwrite"
+.IX fbio, fbwrite
+.DS
+.ft 4
+int
+fbwrite(fbp)
+register struct fbuf *fbp;
+.ft P
+.DE
+Perform a direct write using the mapping
+information obtained from fbread(). 
+Upon return the \f4fbp\fP is invalidated.
+.H 2 "fbwritei"
+.IX fbio, fbwritei
+.DS
+.ft 4
+int
+fbwritei(fbp)
+register struct fbuf *fbp;
+.ft P
+.DE
+A variant of fbwrite().  Pages are invalidated upon release.
+.H 2 "fbiwrite"
+.IX fbio, fbiwrite
+.DS
+.ft 4
+int
+fbiwrite(fbp, devvp, bn, bsize)
+register struct fbuf *fbp;
+register struct vnode *devvp;
+daddr_t bn;
+int bsize;
+.ft P
+.DE
+Perform a synchronous indirect write of the given block number
+on the given device, using the given \f4fbuf\fP.  Upon return the \f4fbp\fP
+is invalidated.
+.H 2 "fbrelse"
+.IX fbio, fbrelse
+.DS
+.ft 4
+void
+fbrelse(fbp, rw)
+register struct fbuf *fbp;
+enum seg_rw rw;
+.ft P
+.DE
+Release the \f4fbp\fP using the \f4rw\fP mode specified.
+.H 2 "fbrelsei"
+.IX fbio, fbrelsei
+.DS
+.ft 4
+void
+fbrelsei(fbp, rw)
+register struct fbuf *fbp;
+enum seg_rw rw;
+.ft P
+.DE
+A variant of \f4fbrelse()\fP.  Pages are invalidated upon release.
+.H 2 "fbzero"
+.IX fbio, fbzero
+.DS
+.ft 4
+void
+fbzero(vp, off, len, fbpp)
+struct vnode *vp;
+off_t off;
+u_int len;
+struct fbuf **fbpp;
+.ft P
+.DE
+Similar to \f4fbread()\fP, but the memory mapped is filled with zeros.
+.IX iend fbio
+.H 1 "File System Administrative Commands"
+.IX istart administrative commands
+Most file system types have a set of basic administrative operations such
+as \f4mkfs\fP, \f4mount\fP, and \f4fsck\fP.
+In order to support multiple file system types under the VFS architecture,
+file system administrative commands are organized by file system types and
+a generic switchout interface is provided to access the appropriate file-
+system-type-specific commands.
+.P
+Generic commands are located in \f4/usr/sbin\fP.  The corresponding file-system-
+type-specific executables are located in the directory
+\f4/usr/lib/fs/\fP\f2{fstype}\fP.
+A file system type developer must add a new file system type
+directory containing the commands.
+.P
+In order to provide a more reliable implementation, commands that are
+essential for system operation (for example, \f4fsck\fP and \f4fsdb\fP) are 
+duplicated in the ``root'' file
+system in the directory /sbin.  The corresponding file-system-type-
+specific executables reside in \f4/etc/fs/\fP\f2{fstype}\fP.
+.P
+The file \f4/etc/vfstab\fP provides defaults for file system administrative
+commands.  It contains default command line options for a set of file
+systems that are ordinarily mounted.  An sample \f4vfstab\fP file follows:
+.DS 
+.ft 4
+.nf
+.ps 6
+special		fsckdev		mountp	fstype	ckpass	automnt	mntflags
+
+/dev/dsk/c1d0s2	/dev/rdsk/c1d0s2	/usr	s5	1	yes	rw
+/dev/dsk/c1d0s3	/dev/rdsk/c1d0s3	/stand	bfs	-	yes	rw
+/proc		-		/proc	proc	-	no	rw
+/dev/fd		-		/dev/fd	fd	-	no	rw
+supdom.PORT	-		/n/port	rfs	-	no	ro
+.fi
+.ps
+.ft P
+.DE
+The fields in this file are, in order, the block and character special
+devices on which the file system resides, the directory where the
+file system is usually mounted, and the file system type.  The \f4ckpass\fP
+field specifies whether the file system should be checked before
+mounting.  If this field contains any single digit, the file system is to
+be checked before mounting.  A '-' means no file system check is
+necessary.  The \f4automnt\fP specifies whether the file system is
+to be mounted automatically at boot time.  The \f4mntflags\fP field
+contains other mount options such as if the file system
+is to be mounted read-only.
+.P
+All generic commands access the \f4vfstab\fP file for default options.  However,
+the defaults do not override the information provided by the user
+on the command line.  They are only used by the command when options
+are missing.
+.IX iend administrative commands
+.H 1 "Configuration/Booting"
+.IX istart configuration
+.IX istart booting
+This section describes how a new file system type can be incorporated
+into UNIX.
+The description is 3B2-specific.
+However, similar rules apply to other types of hardware.
+.P
+To implement a new file system type, the following guidelines should be
+observed.
+.BL
+.LI
+The source code for the file system type should be in a directory
+\f4fs/\f2xxx\f1 where \f2xxx\f1 is the name of the file system type.
+.LI
+An \f4init\f1 routine should be is defined and should have the 
+format \f2xxx\f4init\f1, where \f2xxx\f1 is the prefix defined in
+the \f4master.d file\f1.
+.LI
+A \f4master.d\f1 file should be created that:
+.BL
+.LI
+has the \f4j\f1 flag set
+.LI
+has the prefix \f2xxx\f1
+.LI
+defines the name of the file system in a variable called \f2xxx\f4name\f1
+.LI
+includes other specifications for the generation and initialization of
+any memory-resident data structures required by the file system type,
+for example, the number of in-core inodes for s5
+.LE
+A sample master file for s5 follows:
+.DS
+.ft 4
+.ps 6
+*#ident	"@(#)fs:master.d/s5	1.6"
+*
+* S5
+*
+*FLAG	#VEC	PREFIX	SOFT	#DEV	IPL	DEPENDENCIES/VARIABLES
+orxj	-	s5		-	-	-
+						s5name(%15c)= {NAMES5}
+						ninode(%l) = {NINODE}
+
+$$$
+
+NAMES5 = "s5"
+NINODE = 400
+.ps
+.ft P
+.DE
+.LI
+The file system type should be included in \f4/stand/system\f1.
+.LI
+The bootable module should be placed in \f4/boot\f1.
+.LI
+If the file system type is to be a "root" file system,
+it has to support the \f4vfs_mountroot\fP operation.
+Also, the \f4ROOTFSTYPE\fP in the \f4master.d/kernel\fP file
+has to specify this file system type as the fstype of root.
+.LE
+.IX iend configuration
+.IX iend booting
+.H 1 "File System Hardening"
+.IX istart file system hardening
+``File-system hardening'' refers to minimizing file system damage
+during a system crash and
+increasing the reliability of the file system after a system crash.
+To improve the robustness and reliability of a file system, certain
+rules should be followed in the design and implementation of a file
+system type.
+They are:
+.BL
+.LI
+Ordered writes \(em During file system updates, many operations require
+that several parts or blocks of the file system be written.
+If the writes are done in the order (1) data blocks, (2) inode blocks,
+(3) directory blocks, and (4) super-block,
+the file system suffers less damage if there is
+a system crash or disk failure.
+.LI
+Synchronous writes \(em Provide users with the capability to write
+critical files synchronously.
+The s5 file system type does this
+by supporting the \f4O_SYNC\f1 option on an open file.
+When a file is opened with \f4O_SYNC\f1 or if a file flag is changed to turn the
+\f4O_SYNC\f1 option on using the \f4fcntl\f1 system call, all subsequent
+writes are done synchronously.
+.LI
+Automatic file system update \(em Periodically flush cached data to disk.
+Each file system can decide what cached data should be flushed.
+.LI
+File system mount protection \(em The s5 superblock contains
+a ``state'' field that during normal operation marks the file system
+as ``dirty''.
+The state field is marked ``clean'' when the file system is
+cleanly unmounted (such as when a normal system shutdown occurs).
+If the system crashes,
+the super-block is left marked ``dirty,'' and this condition can be
+detected when the system is next started up.
+When this condition is detected, it is an indication that the sanity of
+the file system should be checked before the file system is used.
+.LE
+.IX iend file system hardening
+.H 1 "Glossary"
+.IX istart glossary
+.H 4 "File"
+The smallest unit of storage in UNIX System V that can be referred
+to by name. 
+A file is an object that contains data that can be read or written.
+A file has certain attributes, such as name, access permissions, size, 
+and file type.  Its content has no particular structure \f4a priori\fP
+other than a sequence of zero or more bytes.
+.H 4 "File system"
+The organization imposed on a collection of files.
+Also, the collection of all files available to processes on a given
+machine is the file system.
+The starting point of the file system is ``/'' (root).
+.H 4 "File system type"
+Each different file system implementation that is
+incorporated into the VFS architecture is referred to as a 
+file system type. A file system type may support
+different file types (see file type).
+The traditional System V file system type, a secure file system type,
+a high performance file system type, and an MS-DOS file system type
+are examples of potential file system types.
+.H 4 "File type"
+The general expected characteristics of a file are determined by its file type.
+File types include regular file, character special file,
+block special file, FIFO, directory, and symbolic link.
+Each file type is supported within some \f3file system type\f1 
+(see \f3file system type\f1).
+.H 4 "Fundamental block size"
+The minimal file allocation unit.
+In the case of disk-based file systems
+this is a disk sector or a multiple of disk sectors,
+smaller than or equal to the \f3preferred block size\f1.
+(See also \f3preferred block size\f1.)
+.H 4 "\f4NAME_MAX\f1"
+Maximum number of bytes in a file name excluding the terminating null. 
+.H 4 "\f4PATH_MAX\f1"
+Maximum number of bytes in a pathname excluding the terminating null.
+.H 4 "Preferred block size"
+Also known as \f3logical block size\f1.
+The unit of transfer for block devices in read/write operations.
+.H 4 "Quotas"
+A mechanism for restricting the amount of file system resources that
+a user can obtain.
+The quota mechanism sets limits on both the
+number of files and the number of disk blocks that a user may allocate.
+Implemented by UFS.
+.H 4 "SVID"
+Acronymn for the System V Interface Definition.
+.H 4 "SVR4.0"
+Acronym for UNIX System V Release 4.0.
+.H 4 "UFS"
+The SunOS file system, a derivative of the 4.2BSD file system. 
+It offers file hardening, supports large and fragmented block allocations for
+files, and distributed inode and free block management. 
+Additionally, it supports quotas.
+.H 4 "Vnodes"
+The operating system's internal representation of a file (previously
+known as a file-system independent inode).
+.IX iend glossary

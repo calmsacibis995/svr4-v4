@@ -1,0 +1,513 @@
+.if n .pH 386.sysadmin @(#)sysadmin	40.13
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.BK "Technology File Mapping Guide"
+.CH "System Administration Facilities" 6
+.H 1 "Operation, Administration & Maintenance (OA&M) Facilities"
+SVR4 introduces an enhanced and more extensible administrator's
+interface that makes it easier for a novice administrator
+to set up and maintain a system.
+The new interface is based on form and menu, and incorporates
+a much broader set of administrative tasks than its predecessor.
+The System Administration Menus (accessed using the
+\f4sysadm\fP command) allow a user to administer a
+UNIX system without knowledge of the exact commands and
+utilities needed.
+Context-sensitive help messages make it possible for an
+administrator to explore the interface with a minimum of documentation.
+The \f4edsysadm\fP and \f4delsysadm\fP commands
+for customizing the \f4sysadm\fP interface provides
+tools to use when extending the interface to new tasks.
+.P
+For more information, see the \f2System Administrator's
+Guide\f1 and the System Administration Utilities manual
+pages in the \f2System Administrator's Reference Manual\f1.
+.H 2 "OA&M Interface Libraries"
+.XS I N
+.DS
+\f4lib/libadm/ckdate.c
+lib/libadm/ckgid.c
+lib/libadm/ckint.c
+lib/libadm/ckitem.c
+lib/libadm/ckkeywd.c
+lib/libadm/ckpath.c
+lib/libadm/ckrange.c
+lib/libadm/ckstr.c
+lib/libadm/cktime.c
+lib/libadm/ckuid.c
+lib/libadm/ckyorn.c
+lib/libadm/data.c
+lib/libadm/getinput.c
+lib/libadm/libadm.mk
+lib/libadm/libadm3.2.mk
+lib/libadm/memory.c
+lib/libadm/oampkgncmp.c
+lib/libadm/oampkgnm.c
+lib/libadm/puterror.c
+lib/libadm/puthelp.c
+lib/libadm/putprmpt.c
+lib/libadm/puttext.c
+lib/libadm/regexp.c
+lib/libadm/space.c\fP
+.DE
+.XF
+.H 2 "OA&M Interface Utilities"
+.XS I N
+.DS
+\f4cmd/fmtmsg/*
+cmd/oamintf/edsysadm/*
+cmd/oamintf/interface/*
+cmd/oamintf/intf_include/*
+cmd/oamintf/intf_install/*
+cmd/oamintf/intf_reloc/*
+cmd/oamintf/intf_remove/*
+cmd/oamintf/libintf/*
+cmd/oamintf/oamintf.mk
+cmd/oamintf/peripherals/*
+cmd/oamintf/ports/*
+cmd/oamintf/printers/*
+cmd/printf/*
+cmd/valtools/*\fP
+.DE
+.XF
+.H 1 "Virtual File System Administration Facilities"
+.H 2 "File System Independent Utilities"
+.P
+.XS I N
+.DS
+\f4cmd/dfsck/*
+cmd/fs.d/df.c
+cmd/fs.d/ff.c
+cmd/fs.d/fs.d.mk
+cmd/fs.d/fsck.c
+cmd/fs.d/mount.c
+cmd/fs.d/ncheck.c
+cmd/fs.d/switchout.c
+cmd/fs.d/umount.c
+cmd/fs.d/volcopy.c
+cmd/fsba/*
+cmd/fsinfo/*
+cmd/fsstat/*
+cmd/fstyp/*
+cmd/fuser/*
+cmd/grpck/*
+cmd/link/*
+cmd/mvdir/*
+cmd/oamintf/files/*
+cmd/pwck/*
+cmd/setmnt/*
+cmd/unlink/*\fP
+.DE
+.XF
+.H 2 "Unified File System (\^\f4ufs\fP\^) Utilities"
+The UFS Utilities package includes software support
+for \f4ufs\fP \(em a file system type based on Berkeley's
+``fast file system'' that stores data in blocks as large as 8K bytes.
+.P
+For information about \f4ufs\fP, see the \f2System Administrator's Guide\f1.
+.P
+.XS I N
+.DS
+\f4cmd/fs.d/ufs/*\fP
+.DE
+.XF
+.H 2 "System V (\^\f4s5\fP\^) File System Utilities"
+.P
+.XS I N
+.DS
+\f4cmd/fs.d/s5/*\fP
+.DE
+.XF
+.H 2 "File Descriptor (\^\f4fd\fP\^) File System Utilities"
+.P
+.XS I N
+.DS
+\f4cmd/fs.d/fdfs/*\fP
+.DE
+.XF
+.H 2 "Boot File System (\^\f4bfs\fP\^) Utilities"
+.P
+.XS I N
+.DS
+\f4cmd/fs.d/bfs/*\fP
+.DE
+.XF
+.H 2 "Process (\^\f4proc\fP\^) File System Utilities"
+.P
+.XS I N
+.DS
+\f4cmd/fs.d/proc/*\fP
+.DE
+.XF
+.H 1 "Backup and Restore Facilities"
+SVR4 provides hardware independent backup and restore
+procedures (supporting multiple bus architectures and
+multiple destination types, such as tapes, floppy diskettes,
+and hard disks).
+Multiple commands used as part of the backup procedure
+have been integrated into a single backup service in SVR4.
+.P
+Key features of the backup and restore service include:
+.BL
+.LI
+a backup history log
+.LI
+on-line backups
+.LI
+automated backup initiation
+.LI
+mechanized restore requests
+.LE
+.H 2 "Backup and Restore Libraries"
+.XS I N
+.DS
+\f4lib/libTL/*\fP
+.DE
+.XF
+.XK
+.H 2 "Backup and Restore Utilities"
+.XS I N
+.DS
+\f4cmd/bkrs/*
+cmd/ckbupscd/*\fP
+.DE
+.XF
+.H 1 "Configuration Management Facilities"
+.H 2 "System Configuration Utilities"
+.XS I N
+.DS
+\f4arch/hiint/cmd/idcmd/*
+arch/mbus/cmd/oamintf/machinemgmt/*
+cmd/cfgintf/*
+cmd/cfgmgmt/*
+cmd/idcmd/*
+cmd/oamintf/machinemgmt/*
+cmd/oamintf/syssetup/*
+cmd/rconsole/*
+cmd/setuname/*
+cmd/sysdef/*
+cmd/test/*
+cmd/vtlmgr/*\fP
+.DE
+.XF
+.XK
+.H 2 "Software Packaging Utilities"
+Packaging utilities contains scripts used to produce the binary
+packaging for the 386 computer.
+.P
+.XS I N
+.DS
+\f4\&.setup
+:mk
+:mk.addon
+:mk.arch
+:mk.csds
+:mk.fnd
+:mk.i386
+:mkcmd
+:mkhead
+:mklib
+:mkoam
+:mksyshead
+:mkuts
+add-on/mouse/mouse.mk
+add-on/scsi/scsi.mk
+add-on/scsi.in/scsi.in.mk
+add-on/qt/README
+add-on/qt/pkg/*
+add-on/qt/qt.mk
+add-on/xl/README
+add-on/xl/pkg/*
+add-on/xl/xl.mk
+add-on/pkg.dfs/*
+add-on/pkg.edit/*
+add-on/pkg.fmli/*
+add-on/pkg.gdbg/*
+add-on/pkg.inet/*
+add-on/pkg.kdb/*
+add-on/pkg.kdbu/*
+add-on/pkg.lp/*
+add-on/pkg.mse/*
+add-on/pkg.nfs/*
+add-on/pkg.nsu/*
+add-on/pkg.oam/*
+add-on/pkg.imx586/*
+add-on/pkg.ie6/*
+add-on/pkg.qt/*
+add-on/pkg.rfs/*
+add-on/pkg.rpc/*
+add-on/pkg.sec/*
+add-on/pkg.termcap/*
+add-on/pkg.wd/*
+add-on/pkg.window/*
+add-on/pkg.xl/*
+add-on/source/*
+arch/eisa/:mkuts.eisa	
+arch/eisa/add-on/scsi.in/install/*
+arch/eisa/proto/i386/at386/scsi/*
+arch/eisa/proto/i386/at386/scsi.mk
+arch/hiint/add-on/pkg.i596/*
+arch/hiint/proto/*
+arch/mbus/add-on/pkg.enetdrv/*
+arch/mbus/add-on/pkg.nsu/*
+arch/mbus/add-on/pkg.ots/*
+arch/mbus/add-on/pkg.xx/*
+arch/mbus/proto/*
+pkg/face/*
+pkg/scde/*
+pkg/terminf/*
+proto/*\fP
+.DE
+.XF
+.H 1 "Software Installation Facilities"
+A software installation facility in SVR4 provides a system administrator with installation procedures that are consistent across software packages, releases and machines.
+It also provides tools and guidelines for developing add-on packages that take advantage of the standard software installation script and menu interface.
+Configuration tools allow an administrator easy access to information on system configuration.
+.H 2 "Software Installation Libraries"
+.XS I N
+.DS
+\f4lib/libadm/pkginfo.c
+lib/libadm/pkgnmchk.c
+lib/libadm/pkgparam.c
+lib/libpkg/*\fP
+.DE
+.XF
+.XK
+.H 2 "Software Installation Utilities"
+.XS I N
+.DS
+\f4add-on/scsi.in/install/*	
+cmd/pkging/*
+cmd/proto-cmd/*
+cmd/install/*
+cmd/oamintf/Install
+cmd/oamintf/PROTOTYPE
+cmd/oamintf/Prototype
+cmd/oamintf/applications/*
+cmd/oamintf/softwaremgmt/*
+cmd/oampkg/*\fP
+.DE
+.XF
+.H 1 "Device Management Facilities"
+.H 2 "Device Management Libraries"
+.XS I N
+.DS
+\f4lib/libadm/devattr.c
+lib/libadm/devreserv.c
+lib/libadm/devtab.c
+lib/libadm/devtab.h
+lib/libadm/dgrpent.c
+lib/libadm/filenames.c
+lib/libadm/getdev.c
+lib/libadm/getdgrp.c
+lib/libadm/getvol.c
+lib/libadm/listdev.c
+lib/libadm/listdgrp.c
+lib/libadm/putdev.c
+lib/libadm/putdgrp.c\fP
+.DE
+.XF
+.H 2 "Device Management Utilities"
+.XS I N
+.DS
+\f4add-on/mouse/cmd/*
+add-on/qt/cmd/*
+add-on/qt/uface/*
+add-on/scsi/cmd/*
+add-on/scsi.in/doc/*
+add-on/scsi.in/test/*
+add-on/xl/cmd/*
+add-on/xl/uface/*
+arch/at/cmd/fdisk/*	
+arch/hiint/cmd/disksetup/*
+arch/mbus/cmd/devintf/*
+arch/mbus/cmd/disksetup/*	
+arch/mbus/cmd/format/*	
+arch/mbus/cmd/mt/*
+cmd/conv-cmd/*
+cmd/devintf/*
+cmd/devmgmt/*
+cmd/disksetup/*
+cmd/evgainit/*
+cmd/format/*
+cmd/lnttys/lnsxts.sh
+cmd/lnttys/lnttys.mk
+cmd/lnttys/lnttys.sh
+cmd/mknod/*
+cmd/mkpart/*
+cmd/oamintf/devices/*
+cmd/oamintf/buses/*
+cmd/pt_chmod/*
+cmd/script/*\fP
+.DE
+.XF
+.H 1 "User Management Facilities"
+.H 2 "User Management Libraries"
+.XS I N
+.DS
+\f4lib/libc/port/gen/getgrent.c
+lib/libc/port/gen/getgrnam.c
+lib/libc/port/gen/getpw.c
+lib/libc/port/gen/getpwent.c
+lib/libc/port/gen/getpwnam.c
+lib/libc/port/gen/getspent.c
+lib/libc/port/gen/getut.c
+lib/libc/port/gen/getutx.c
+lib/libc/port/gen/lckpwdf.c
+lib/libc/port/gen/putpwent.c
+lib/libc/port/gen/ttyslot.c\fP
+.DE
+.XF
+.H 2 "User Management Utilities"
+.XS I N
+.DS
+\f4cmd/last/*
+cmd/login/*
+cmd/logins/*
+cmd/oamintf/usermgmt/*
+cmd/oamuser/*
+cmd/passmgmt/*
+cmd/pwconv/*
+cmd/setpgrp/*
+cmd/users/*\fP
+.DE
+.XF
+.H 1 "Service Access Facilities (SAF)"
+SVR4 provides a single point of access to networking facilities for user programs called the Service Access Facility (SAF).
+The SAF allows user programs to be written in a transport-independent and device-independent manner, and to work properly with whatever networking facilities are installed on a system.
+.P
+The design of the SAF is modular, and, as extra types of peripheral devices are added to the system, it is easy to incorporate their connection handlers into this mechanism.
+This feature is new in SVR4.
+.H 2 "Core SAF Utilities"
+.XS I N
+.DS
+\f4cmd/saf/*\fP
+.DE
+.XF
+.H 2 "Port Management Utilities"
+.P
+UNIX System V also provides a single process (or set of identical processes) that manages all external access to the system.
+These daemon processes (or port monitors) monitor all access points to the system (network ports, system console, user terminals, and other peripherals) for connection requests.  They also manage all types of connections to the system.
+This architecture unifies the handling of connections to the system, minimizes system overhead, and makes connection management easier to maintain and enhance.
+.P
+.XS I N
+.DS
+\f4cmd/portmgmt/*\fP
+.DE
+.XF
+.XK
+.H 2 "TTY Monitor (\^\f4ttymon\fP\^) Utilities"
+.P
+The new Unified Access Management feature provides a central manager for all access to the system.  It replaces the \f4getty\fP programs used to manage user terminal lines and the many network-specific daemon processes formerly used to manage network access to the system.
+This feature centralizes access control to the system through all entry points and reduces system overhead.
+For backward compatibility, \f4getty\fP is supported on 386 for setting terminal type, modes, speed, and line discipline.
+.P
+.XS I N
+.DS
+\f4cmd/getty/*
+cmd/ttymon/*\fP
+.DE
+.XF
+.H 1 "System Administration Facilities"
+The System Administration Utilities package contains system administration commands and utilities intended to be used by someone with responsibility for managing the hardware, software, and users on a UNIX system.
+The commands provided in the package perform functions similar to those available through the System Administration Menus described in the \f2System Administrator's Guide\f1; however, these commands offer more flexibility and their use requires a greater understanding of how the UNIX system works.
+.P
+For more information, see the \f2System Administrator's Guide\f1 and the ``System Administration Utilities'' manual pages in the \f2System Administrator's Reference Manual\f1.
+.H 2 "Run-Time Administration Utilities"
+.XS I N
+.DS
+\f4arch/eisa/add-on/ups/*
+arch/mbus/cmd/bootutils/*
+arch/mbus/cmd/.adm/i386/*	
+arch/mbus/cmd/bootutils/*	
+arch/mbus/cmd/initpkg/*	
+cmd/dispadmin/*
+cmd/init/*
+cmd/initpkg/*
+cmd/ipc/*
+cmd/killall/*
+cmd/nice/*
+cmd/oamintf/sched/*
+cmd/sulogin/*
+cmd/swap/*
+cmd/sync/*
+cmd/whodo/*
+cmd/wsinit/*\fP
+.DE
+.XF
+.XK
+.H 2 "System Performance Analysis Utilities"
+The System Performance Analysis Utilities (SPAU)
+package provides performance tools that measure and display
+the following kinds of information: processor utilization,
+buffer and file access activity, terminal device activity,
+disk input/output activity, system calls, process switching,
+swapping activity, queue activity, and inter-process
+communication (IPC) activity.
+.P
+To make the best use of these tools, follow the
+strategies outlined in the \f2System Administrator's Guide\f1.
+See also the related manual pages in the \f2User's
+Reference Manual\f1 and the \f2System Administrator's Reference Manual\f1.
+.P
+.XS I N
+.DS
+\f4cmd/acct/*
+cmd/profiler/*
+cmd/sa/*
+cmd/syslogd/*\fP
+.DE
+.XF
+.XK
+.H 2 "Diagnostic Utilities"
+.XS I N
+.DS
+\f4cmd/.adm/*
+cmd/crash/*\fP
+.DE
+.XF
+.XK
+.H 2 "STREAMS Administration Utilities"
+STREAMS Administration Facilities include several utilities related to administration of STREAMS I/O facilities.
+.P
+.XS I N
+.DS
+\f4arch/mbus/cmd/autopush/*	
+cmd/autopush/*
+cmd/fdetach/*
+cmd/streams/kmacct/*
+cmd/streams/log/*
+cmd/streams/streams.mk\fP
+.DE
+.XF
+.XK
+.H 2 "XENIX System Utilities"
+.XS I N
+.DS
+\f4:mkxcp
+:mkxcpcmd
+add-on/acp/*
+cmd/backup/*
+cmd/copy/*
+cmd/hd/*
+cmd/random/*
+cmd/restore/*
+cmd/sco/*
+cmd/tset/*
+cmd/x286emul/*
+cmd/xinstall/*
+cmd/xrestore/*
+cmd/xtract/*
+cmd/yes/*\fP
+.DE
+.XF
+.XK
+.H 2 "386 Specific Utilities"
+.XS I N
+.DS
+\f4arch/mbus/cmd/mbusutils/*	
+cmd/getclk/*
+cmd/i286emul/*
+cmd/setclk/*
+cmd/uadmin/*\fP
+.DE
+.XF

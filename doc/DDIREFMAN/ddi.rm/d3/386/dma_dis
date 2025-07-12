@@ -1,0 +1,52 @@
+'\"macro stdmacro
+.if n .pH 386.dma_dis @(#)dma_dis	40.2 of 1/7/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.nr X
+.if \nX=0 .ds x} dma_disable D3X "" "DDI" "\&"
+.if \nX=1 .ds x} dma_disable D3X "" "DDI"
+.if \nX=2 .ds x} dma_disable D3X "" "\&"
+.if \nX=3 .ds x} dma_disable "" "" "\&"
+.TH \*(x}
+.IX "\f4dma_disable\fP(D3X)"
+.SH NAME 
+\f4dma_disable\f1 \- disable recognition of hardware requests on a DMA channel
+.SH SYNOPSIS
+.nf
+.na
+\f4#include <sys/dma.h>
+.sp 0.5
+void dma_disable(int \f2chan\f4);\f1
+.ad
+.fi
+.SH ARGUMENTS 
+.RS 0n 10
+.IP "\f2chan" 10n
+Channel to be disabled.
+.RE
+.SH DESCRIPTION 
+\f4dma_disable\f1 disables recognition of hardware requests on
+the DMA channel \f2chan\fP.
+The channel is then released and made available
+for other use.
+.fi
+.ft 1
+.SH "RETURN VALUE" 
+None.
+.SH LEVEL
+Base or Interrupt.
+.SH NOTES
+Does not sleep.
+.sp 0.5
+The caller must ensure that it is acting on behalf of
+the channel owner, and that it makes sense to release the
+channel.
+.P
+The caller must ensure that the channel is in use
+for hardware-initiated DMA transfers and
+not software-initiated transfers.
+.SH "SEE ALSO"
+.na
+\f4dma_enable\f1(D3X),
+\f4dma_prog\fP(D3X),
+\f4dma_cb\fP(D4X)
+.ad

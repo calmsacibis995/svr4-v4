@@ -1,0 +1,140 @@
+'\"macro stdmacro
+.if n .pH g1a.nfsstat @(#)nfsstat	40.3 of 1/3/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1990 AT&T
+.\" @(#)nfsstat.8c 1.20 88/03/02 SMI;
+.nr X
+.if \nX=0 .ds x} nfsstat 1M "" "\&"
+.if \nX=1 .ds x} nfsstat 1M ""
+.if \nX=2 .ds x} nfsstat 1M "" "\&"
+.if \nX=3 .ds x} nfsstat "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4nfsstat\f1 \- Network File System statistics
+.SH SYNOPSIS
+\f4nfsstat\f1 [\f4\-csnrz\f1]
+.\" .SH AVAILABILITY
+.\" This program is available with the
+.\" \f2Networking Tools and Programs\f1
+.\" software installation option.  Refer to
+.\" INSTALL
+.\" for information on how to install optional software.
+.SH DESCRIPTION
+.IX  "nfsstat command"  ""  "\fLnfsstat\fP \(em display network statistics"
+.IX  "NFS statistics, display \(em \fLnfsstat\fP"
+.IX  "statistics of NFS, display \(em \fLnfsstat\fP"
+\f4nfsstat\f1
+displays statistical information about the
+NFS (Network File System) and
+RPC (Remote Procedure Call), interfaces to the kernel.
+It can also be used to reinitialize this information.
+If no options are given the default is
+.IP
+\f4nfsstat \-csnr\f1
+.LP
+That is, display everything, but reinitialize nothing.
+.SS Options
+The options for \f4nfsstat\fP are as follows:
+.TP
+\f4\-c\f1
+Display client information.
+Only the client side NFS and RPC
+information will be printed.
+Can be combined with the
+\f4\-n\f1 and \f4\-r\f1
+options to print client
+NFS or client RPC information only.
+.TP
+\f4\-s\f1
+Display server information.
+.TP
+\f4\-n\f1
+Display NFS information.
+NFS information for both the client and server side will be printed.
+Can be combined with the
+\f4\-c\f1 and \f4\-s\f1
+options to print client or server
+NFS information only.
+.TP
+\f4\-r\f1
+Display RPC information.
+.TP
+\f4\-z\f1
+Zero (reinitialize) statistics.
+This option is for use by the super-user only, and
+can be combined with any of the above options to
+zero particular sets of statistics after printing them.
+.SS Displays
+The server RPC display includes the fields:
+.RS
+.TP 10
+\f4calls\f1
+total number of RPC calls received
+.TP
+\f4badcalls\f1
+total number of calls rejected
+.TP
+\f4nullrecv\f1
+number of times no RPC
+packet was available when trying to receive
+.TP
+\f4badlen\f1
+number of packets that were too short
+.TP
+\f4xdrcall\f1
+number of packets that had a malformed header
+.RE
+.LP
+The server NFS
+display shows the number of NFS calls received 
+(\f4calls\f1) and rejected (\f4badcalls\f1),
+and the counts and percentages for the various calls that were
+made.
+.LP
+The client RPC
+display includes the following fields:
+.RS
+.TP 10
+\f4calls\f1
+total number of RPC calls sent
+.TP
+\f4badcalls\f1
+total of calls rejected by a server
+.TP
+\f4retrans\f1
+number of times a call had to be retransmitted
+.TP
+\f4badxid\f1
+number of times a reply did not match the call
+.TP
+\f4timeout\f1
+number of times a call timed out
+.TP
+\f4wait\f1
+number of times a call had to wait on a busy
+\f4CLIENT\f1
+handle
+.TP
+\f4newcred\f1
+number of times authentication information had to be refreshed
+.RE
+.LP
+The client NFS
+display shows the number of calls sent and rejected, as well
+as the number of times a
+\f4CLIENT\f1
+handle was received
+(\f4nclget\f1),
+the number of times a call had to sleep while awaiting a
+handle (\f4nclsleep\f1),
+as well as a count of the various calls and their respective
+percentages.
+.SH FILES
+.PD 0
+.TP 20
+\f4/vmunix\f1
+system namelist
+.TP
+\f4/dev/kmem\f1
+kernel memory
+.PD

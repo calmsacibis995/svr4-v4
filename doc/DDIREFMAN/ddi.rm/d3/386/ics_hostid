@@ -1,0 +1,24 @@
+'\"macro stdmacro
+.if n .pH 386.ics_hostid @(#)ics_hostid	40.4 of 7/1/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.nr X
+.if \nX=0 .ds x} ics_hostid D3D "Multibus II" "DDI" "\&"
+.if \nX=1 .ds x} ics_hostid D3D "Multibus II" "DDI" "\&"
+.if \nX=2 .ds x} ics_hostid D3D "" "\&"
+.if \nX=3 .ds x} ics_hostid "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4ics_hostid\f1 \- returns the host id field of the HOST ID record in this 
+board's interconnect space
+.SH SYNOPSIS
+.nf
+\f4#include <sys/ics.h>
+int ics_hostid()\f1
+.fi
+.SH DESCRIPTION
+\f4ics_hostid\f1 returns the host id field of the HOST ID record of this
+board's interconnect space.
+.SH RETURN VALUE
+The host ID of the board
+.SH LEVEL 
+Base or Interrupt

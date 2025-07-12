@@ -1,0 +1,57 @@
+'\"macro stdmacro
+.if n .pH gen.geteminor @(#)geteminor	40.2 of 1/7/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.nr X
+.if \nX=0 .ds x} geteminor D3DK "" "DDI/DKI" "\&"
+.if \nX=1 .ds x} geteminor D3DK "" "DDI/DKI"
+.if \nX=2 .ds x} geteminor D3DK "" "\&"
+.if \nX=3 .ds x} geteminor "" "" "\&"
+.TH \*(x}
+.IX "\f4geteminor\fP(D3DK)"
+.SH "NAME" 
+\f4geteminor\f1 \- get external minor device number
+.IX "minor device number, external"
+.SH "SYNOPSIS" 
+.nf
+.na
+\f4#include <sys/types.h>
+#include <sys/ddi.h>
+.sp 0.5
+minor_t geteminor(dev_t \f2dev\f4);\f1
+.ad
+.fi
+.SH "ARGUMENTS" 
+.RS 0n 10
+.IP "\f2dev\f1" 10n
+External device number.
+.RE
+.SH DESCRIPTION 
+\f4geteminor\f1 returns the external minor number given a device number,
+\f2dev\f1.  External minor numbers are visible
+to the user.  Internal minor numbers are only visible in the kernel.
+Since a driver can support more than one external major device that map to
+the same internal major device, the kernel keeps a mapping between external
+minor numbers and internal minor numbers to allow drivers to index arrays
+more easily.  For example, a driver may support two devices, each with five
+minor numbers.  The user may see each set of minor numbers numbered from zero to four,
+but the driver sees them as one set of minor numbers numbered from zero to nine.
+.P
+All driver entry points are passed device numbers
+using external minor numbers.
+.P
+Systems that map external major device numbers one-to-one with internal
+major numbers also map external minor numbers one-to-one with internal minor numbers.
+.SH "RETURN VALUE" 
+The external minor number.
+.SH "LEVEL" 
+Base or Interrupt.
+.SH NOTES
+Does not sleep.
+.SH "SEE ALSO" 
+.na
+\f4etoimajor\f1(D3DK),
+\f4getemajor\f1(D3DK),
+\f4getmajor\f1(D3DK),
+\f4getminor\f1(D3DK),
+\f4makedevice\f1(D3DK)
+.ad

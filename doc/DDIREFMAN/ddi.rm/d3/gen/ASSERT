@@ -1,0 +1,59 @@
+'\"macro stdmacro
+.if n .pH gen.ASSERT @(#)ASSERT	40.3 of 3/26/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.nr X
+.if \nX=0 .ds x} ASSERT D3DK "" "DDI/DKI (DEBUG)" "\&"
+.if \nX=1 .ds x} ASSERT D3DK "" "DDI/DKI (DEBUG)"
+.if \nX=2 .ds x} ASSERT D3DK "" "\&"
+.if \nX=3 .ds x} ASSERT "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4ASSERT\f1 \- verify assertion
+.IX "\f4ASSERT\fP(D3DK)"
+.SH SYNOPSIS
+.nf
+.na
+\f4#include <sys/debug.h>
+.sp 0.5
+void ASSERT(int \f2expression\f4);\f1
+.ad
+.fi
+.SH ARGUMENTS
+.RS 0n 10n
+.IP "\f2expression\f1" 10n
+Expression to be evaluated.
+.RE
+.SH DESCRIPTION
+\f4ASSERT\f1 is a debugging interface for verifying program invariants
+within code that is compiled with the \f4DEBUG\f1 compilation option
+defined.
+\f2expression\f1 is a boolean expression that the caller expects to
+evaluate to non-zero (that is, the caller is asserting that the expression
+has a non-zero value).
+If \f2expression\f1 evaluates to non-zero, the \f4ASSERT\f1
+call has no effect.
+If \f2expression\f1 evaluates to zero, \f4ASSERT\f1 causes the system
+to panic with the following message:
+.P
+.RS
+PANIC: assertion failed: \f2expression\f1, file: \f2filename\f1, line: \f2lineno\f1
+.RE
+.P
+where \f2filename\f1 is the name of the source file in which the failed
+assertion appears and \f2lineno\f1 is the line number of the \f4ASSERT\f1
+call within the file.
+.P
+When the \f4DEBUG\f1 compilation option is not defined,
+\f4ASSERT\f1 calls are not compiled into the code, and therefore have
+no effect.
+.SH RETURN VALUE
+If \f2expression\f1 evaluates to non-zero, \f4ASSERT\f1 returns no value.
+If \f2expression\f1 evaluates to zero, \f4ASSERT\f1 panics the system.
+.SH LEVEL
+Base or Interrupt.
+.SH NOTES
+Does not sleep.
+.SH SEE ALSO
+.na
+\f4cmn_err\f1(D3DK)
+.ad

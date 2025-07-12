@@ -1,0 +1,39 @@
+'\"macro stdmacro
+.if n .pH g1v.face @(#)face	40.8 of 4/12/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} face 1 "Framed Access Command Environment Utilities" "\&"
+.if \nX=1 .ds x} face 1 "Framed Access Command Environment Utilities"
+.if \nX=2 .ds x} face 1 "" "\&"
+.if \nX=3 .ds x} face "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4face\f1 \- executable for the Framed Access Command Environment Interface
+.SH SYNOPSIS
+\f4face\f1 [\f4\-i\f1 \f2init_file\f1] [\f4\-c\f1 \f2command_file\f1] [\f4\-a\f1 \f2alias_file\f1] [\f2file\f1 .\ .\ . ]
+.SH DESCRIPTION
+\f2file\f1 is the full pathname of the file describing
+the object to be opened initially, and must follow the naming convention
+\f4Menu.\f2xxx\f1 for a menu, \f4Form.\f2xxx\f1 for a form,
+and \f4Text.\f2xxx\f1 for a text file,
+where \f2xxx\f1 is any string that conforms to the
+UNIX system file naming conventions.
+The FMLI descriptor \f4lifetime\f1 will be ignored for
+all frames opened by argument
+to \f4face\f1.
+These frames have a lifetime of \f4immortal\f1 by default.
+If \f2file\f1 is not specified on the command line,
+the AT&T FACE Menu will be opened along with those objects specified by
+the \f4LOGINWIN\f1 environment variables.
+These variables are found in the user's \f4.environ\f1 file.
+.SH FILES
+\f4$HOME/pref/.environ\f1
+.SH SEE ALSO
+\f4env\fP(4)
+.SH DIAGNOSTICS
+The \f4face\f1 command will exit with a non-zero exit code if the user
+is not properly set up as a FACE user.
+.ig
+EXECUTABLE FACE
+..

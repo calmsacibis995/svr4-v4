@@ -1,0 +1,74 @@
+'\"macro stdmacro
+.if n .pH g3c.a64l @(#)a64l	40.10 of 5/22/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} a64l 3C "C Development Set" "\&"
+.if \nX=1 .ds x} a64l 3C "C Development Set"
+.if \nX=2 .ds x} a64l 3C "" "\&"
+.if \nX=3 .ds x} a64l "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4a64l\f1, \f4l64a\f1 \- convert between long integer and base-64 \s-1ASCII\s0 string
+.SH SYNOPSIS
+\f4#include <stdlib.h>\f1
+.PP
+\f4long a64l (const char \(**s);\f1
+.PP
+\f4char \(**l64a (long l);\f1
+.SH DESCRIPTION
+These functions are used to maintain numbers stored in
+base-64
+.SM ASCII
+characters.
+These characters define a notation by which
+long integers can be represented by up to six characters; each character
+represents a ``digit'' in a radix-64 notation.
+.PP
+The characters used to represent ``digits''
+are \f4.\f1
+for 0,
+\f4/\f1
+for 1,
+\f40\f1
+through
+\f49\f1
+for 2\-11,
+\f4A\f1
+through
+\f4Z\f1
+for 12\-37, and
+\f4a\f1
+through
+\f4z\f1
+for 38\-63.
+.PP
+\f4a64l\fP
+takes a pointer to a null-terminated base-64 representation and returns
+a corresponding
+\f4long\f1
+value.
+If the string pointed to by \f4s\fP
+contains more than six characters,
+\f4a64l\fP
+will use the first six.
+.PP
+\f4a64l\fP
+scans the character string from left to right
+with the least significant digit on the left,
+decoding each character as a 6-bit radix-64 number.
+.PP
+\f4l64a\fP
+takes a
+\f4long\f1
+argument and returns a pointer to the corresponding base-64 representation.
+If the argument is 0,
+\f4l64a\fP
+returns a pointer to a
+null string.
+.SH NOTES
+The value returned by \f4l64a\fP
+is a pointer into a static buffer, the contents of which are
+overwritten by each call.
+.\"	@(#)a64l.3c	6.2 of 10/20/83
+.Ee

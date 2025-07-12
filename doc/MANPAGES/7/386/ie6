@@ -1,0 +1,284 @@
+'\"macro stdmacro
+.if n .pH 386.ie6 @(#)ie6	40.1 of 5/2/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.nr X
+.if \nX=0 .ds x} ie6 7 "" "\&"
+.if \nX=1 .ds x} ie6 7 ""
+.if \nX=2 .ds x} ie6 7 "" "\&"
+.if \nX=3 .ds x} ie6 "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4ie6\fP - 3C503 3Com Ethernet Driver
+.SH SYNOPSIS
+.nf
+.ft 4
+#include <sys/dlpi.h>
+#include <sys/dlpi_ether.h>
+#include <sys/ie6.h>
+
+fd = open ("/dev/ie6_0", O_RDWR)
+.ft
+.fi
+.P
+.SH DESCRIPTION
+The \f4ie6\fP driver provides a data link interface to the 3C503 ethernet
+controller from 3Com.
+It is a STREAMS-based driver that is compatible with the Data Link Protocol
+Interface (DLPI) and Logical Link Interface (LLI) software interfaces.
+.P
+The \f4ie6\fP driver supports \f4DL_ETHER\fP as MAC type, \f4DL_CL_ETHER\fP as
+service mode, and \f4DL_STYLE1\fP provider style.
+The driver can operate as a cloned or non-cloned device.
+.P
+A process must issue a \f4DL_BIND_REQ\fP primitive to receive frames 
+from the network.
+This primitive includes a \f4dl_bind_req_t\fP structure.
+.PP
+The process must specify the \f4dl_sap\fP field of the \f4dl_bind_req_t\fP 
+structure in host order.
+The type field of an incoming frame is converted to host order and compared
+to the \f4dl_sap\fP value.
+If the values are equal, the frame is placed on the STREAMS read queue 
+of the requesting process.
+A privileged process (that is, a process with a uid of 0) may set 
+the \f4dl_sap\fP field to \f4PROMISCUOUS_SAP\fP.
+The \f4PROMISCUOUS_SAP\fP matches all incoming frames.
+.PP
+A privileged process may bind to an SAP already bound by another process.
+In cases where a frame qualifies to be sent to more than one process,
+independent copies of the frame are made and placed on the STREAMS read
+queue of each process.
+.PP
+Received frames are delivered in \f4dl_unitdata_ind_t\fP structures.
+The source and destination address contains the 6 byte ethernet address
+followed by the two byte SAP, written in network order.
+.P
+.SH ioctl Calls
+The following \f4ioctl\fPs are supported:
+.TP
+\f4DLIOCGMIB\fP
+.IP
+This \f4ioctl\fP returns the \f4DL_mib_t\fP structure, which contains the
+Management Information Base (MIB).
+The MIB holds the Ethernet statistics that are kept in the driver.
+.nf
+.ta 1 6 18 
+.ps -1
+.vs -1
+.IP
+.ft 4
+/*
+ *  Ether statistics structure.
+ */
+typedef struct {
+	int	etherAlignErrors;	/* Frame alignment errors */
+	int	etherCRCerrors;		/* CRC errors */
+	int	etherMissedPkts;	/* Packet overflow or missed inter */
+	int	etherOverrunErrors;	/* Overrun errors */
+	int	etherUnderrunErrors;	/* Underrun errors */
+	int	etherCollisions;	/* Total collisions */
+	int	etherAbortErrors;	/* Transmits aborted at interface */
+	int	etherCarrierLost;	/* Carrier sense signal lost */
+	int	etherReadqFull;	/* STREAMS read queue full */
+	int	etherRcvResources;	/* Receive resource alloc faliure  */
+	int	etherDependent1;	/* Device dependent statistic */
+	int	etherDependent2;	/* Device dependent statistic */
+	int	etherDependent3;	/* Device dependent statistic */
+	int	etherDependent4;	/* Device dependent statistic */
+	int	etherDependent5;	/* Device dependent statistic */
+} DL_etherstat_t;
+
+/*
+ *  Interface statistics compatible with MIB II SNMP requirements.
+ */
+typedef struct {
+	int	ifIndex;	/* 1 through ifNumber */
+	int	ifDescrLen;	/* len of desc. following this struct */
+	int	ifType;	/* type of interface */
+	int	ifMtu;	/* datagram size that can be sent/rcv */
+	ulong_t	ifSpeed;	/* estimate of bandwith in bits PS */
+	uchar_t	ifPhyAddress[DL_MAC_ADDR_LEN];	/* Ethernet Address */
+	int	ifAdminStatus;	/* desired state of the interface */
+	int	ifOperStatus;	/* current state of the interface */
+	ulong_t	ifLastChange;	/* sysUpTime when state was entered */
+	ulong_t	ifInOctets;	/* octets received on interface */
+	ulong_t	ifInUcastPkts;	/* unicast packets delivered */
+	ulong_t	ifInNUcastPkts;	/* non-unicast packets delivered */
+	ulong_t	ifInDiscards;	/* good packets received but dropped */
+	ulong_t	ifInErrors;	/* packets received with errors */
+	ulong_t	ifInUnknownProtos;	/* packets recv'd to unbound proto */
+	ulong_t	ifOutOctets;	/* octets transmitted on interface `*/
+	ulong_t	ifOutUcastPkts;	/* unicast packets transmited */
+	ulong_t	ifOutNUcastPkts;	/* non-unicast packets transmited */
+	ulong_t	ifOutDiscards;	/* good outbound packets dropped */
+	ulong_t	ifOutErrors;	/* number of transmit errors */
+	ulong_t	ifOutQlen;	/* length of output queue */
+	DL_etherstat_t ifSpecific;	/* ethernet specific stats */
+} DL_mib_t;
+
+.fi
+.ft 1
+.ps +1
+.vs +1
+.DT
+.IP
+The values in the MIB are compatible with those needed by the SNMP protocol.
+.IP
+The \f4ifDescrLen\fP field indicates the length of the null-terminated
+description string that immediately follows the \f4DL_mib_t\fP structure.
+.IP
+There are three fields in the MIB that are specific to the \f4ie6\fP driver:
+The \f4ifSpecific.etherDependent1\fP field contains the number
+of times the transceiver failed to transmit a collision signal after
+transmission of a packet.
+The \f4ifSpecific.etherDependent2\fP field contains the number
+of collisions that occurred after a slot time (out-of-window collisions).
+The \f4ifSpecific.etherDependent3\fP field contains the number
+of times a transmit interrupt timeout condition occurred.
+.PP
+.TP
+\f4DLIOCSMIG\fP
+.IP
+This \f4ioctl\fP allows a privileged process to initialize the values
+in the MIB (that is, the \f4DL_mib_t\fP structure).
+A process cannot use this \f4ioctl\fP to change the \f4ifPhyAddress\fP, 
+the \f4ifDescrLen\fP, or the text of the description fields.
+.TP
+\f4DLIOCGENADDR\fP
+.IP
+This \f4iotcl\fP returns the ethernet address in network order.
+.TP
+\f4DLIOCGLPCFLG\fP
+.IP
+This ioctl returns the state of the local packet copy flag in
+the \f4ioc_rval\fP of the \f4iocblk\fP structure.
+The local copy flag determines if packets looped back by the driver should also
+be sent to the network.
+A non-zero value indicates that frames should also be be sent to the network
+after being looped back.
+The default value of this flag is zero.
+.TP
+\f4DLIOCSLPCFLG\fP
+.IP
+This \f4ioctl\fP allows a privileged process to set the local packet copy flag,
+causing all packets looped back by the driver to also be sent to the network.
+.TP
+\f4DLIOCGPROMISC\fP
+.IP
+This \f4ioctl\fP returns the value of the promiscuous flag
+in the \f4ioc_rval\fP of the \f4iocblk\fP structure.
+A non-zero value indicates that the ethernet interface will receive 
+all frames on the network.
+The default value of this flag is zero.
+.TP
+\f4DLIOCSPROMISC\fP
+.IP
+This \f4ioctl\fP allows a privileged process to toggle the current state of the
+promiscuous flag.
+When the flag is non-zero, the driver captures all frames from the network.
+Processes that are bound to the promiscuous SAP, or to an SAP that 
+matches the type field of the received frame, receive a copy of the frame.
+.PP
+.SH Configuration
+The \f4ie6\fP driver has four configurable parameters
+in the \f4/etc/conf/pack.d/ie6/space.c\fP file.
+If you change this file, you must rebuild the kernel and reboot the 
+system in order for the changes to take effect.
+.PP
+The configurable parameters are:
+.TP
+\f4N_SAPS\fP
+.IP
+This defines the number of SAPs that can be bound at any one time.
+This value should be only slightly larger than anticipated SAP usage.
+A typical TCP/IP system requires two SAPs (0x800 and 0x806).
+If you assign too large a value to this parameter, system performance 
+and memory usage may suffer.
+.TP 
+\f4CABLE_TYPE\fP
+.IP
+This defines the type of ethernet cable attached to the ethernet
+controller card.
+A value of 0 specifies thin ethernet cable with a BNC connector.
+A value of 1 specifies thick ethernet cable with a AUI connector.
+.TP
+\f4STREAMS_LOG\fP
+.IP
+This parameter defines whether the driver should log debugging messages 
+to the STREAMS logger for the \f4strace\fP utility
+[see \f4strace\fP(1M)] to display.
+The module ID used with \f4strace\fP is 2101.
+A value of 0 indicates that no STREAMS debug messages should be generated.
+A value of 1 causes STREAMS debug messages to be generated.
+You can also direct the driver to log messages temporarily by using the kernel
+debugger to change the value of \f4ie6strlog\fP (a 4 byte integer) to 1.
+.IP
+Use STREAMS tracing only when debugging a network problem, because
+system performace suffers when full \f4ie6\fP STREAMS logging is occurring.
+.TP
+\f4IFNAME\fP
+.IP
+This parameter is important only in a TCP/IP networking environment.
+It defines the string used in displaying network statistics with the
+\f4netstat\fP command [see \f4netstat\fP(1)].
+This string should match the logical interface name
+assigned in the \f4/etc/inet/strcf\fP file and with \f4ifconfig\fP 
+commands [see \f4ifconfig\fP(1M)] used in
+the \f4/etc/inet/rc.inet\fP configuration script.
+.SH DIAGNOSTICS
+The \f4ie6\fP driver can return the following error codes:
+.TP 20
+\f4ENXIO\fP
+Invalid major number or board is not installed.
+.TP 20
+\f4ECHRNG\fP
+No minor devices left if configured as a cloned device.
+Increase \f4N_SAP\fP value in \f4/etc/conf/pack.d/ie6/space.c\fP
+Invalid minor device number if configured as a non-cloned device.
+.TP 20
+\f4EPERM\fP
+An \f4ioctl\fP was made without the appropriate privilege.
+.TP 20
+\f4EINVAL\fP
+An \f4ioctl\fP was made that did not supply a required input and/or output buffer.
+.TP 20
+\f4DL_NOTSUPPORTED\fP
+Requested service primitive is not supported.
+.TP 20
+\f4DL_BADPRIM\fP
+Unknown service primitive was requested.
+.TP 20
+\f4DL_OUTSTATE\fP
+\f4DL_BIND_REQ\fP, \f4DL_UNBIND_REQ\fP, or \f4DL_UNITDATA_REQ\fP was
+issued when the stream was bound, unbound, or unbound respectively.
+.TP 20
+\f4DL_ACCESS\fP
+An attempt was made to bind to \f4PROMISCUOUS_SAP\fP with insufficient
+privilege.
+.TP 20
+\f4DL_BOUND\fP
+The requested SAP is already bound.
+A privileged process may bind to an already bound SAP.
+.TP 20
+\f4DL_NOTINIT\fP
+A \f4DL_UNITDATA_REQ\fP was made on an ethernet board that has gone offline due
+to an error.
+.TP 20
+\f4DL_BADDATA\fP
+\f4DL_UNITDATA_REQ\fP was made with a data size that was either larger than the
+SPDU maximum or smaller than the SPDU minimum.
+.PP
+.SH FILES
+\f4/dev/ie6_*\fP
+.br
+\f4/etc/conf/pack.d/ie6/space.c\fP
+.SH SEE ALSO
+\f4ifconfig\fP(1M),
+\f4strace\fP(1M),
+\f4netstat\fP(1).
+.br
+\f4open\fP(2),
+\f4putmsg\fP(2),
+\f4getmsg\fP(2),
+\f4ioctl\fP(2),
+in the \f2Programmer's Reference Manual\fP.

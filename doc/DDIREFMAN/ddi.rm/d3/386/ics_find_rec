@@ -1,0 +1,38 @@
+'\"macro stdmacro
+.if n .pH 386.ics_find_rec @(#)ics_find_rec	40.4 of 7/1/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.nr X
+.if \nX=0 .ds x} ics_find_rec D3D "Multibus II" "DDI" "\&"
+.if \nX=1 .ds x} ics_find_rec D3D "Multibus II" "DDI" "\&"
+.if \nX=2 .ds x} ics_find_rec D3D "" "\&"
+.if \nX=3 .ds x} ics_find_rec "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4ics_find _rec\f1 \- reads the interconnect register of the board in the 
+specified slot.
+.SH SYNOPSIS
+.nf
+\f4#include <sys/ics.h>
+int ics_find_rec (\f2slot\fP, \f2recordid\fP)
+unsigned short slot;
+unsigned char recordid;\f1
+.fi
+.SH ARGUMENTS
+.PP
+.PD 0
+.TP 11
+\f2slot\f1
+the slot number of the board that will be searched
+.TP 11
+\f2recordid\f1
+the record ID of the searched-for record
+.SH DESCRIPTION
+\f2ics_find_rec\f1 finds a specific record in the interconnect space of a board.
+.SH RETURN VALUE
+If the searched-for record is found, its starting register number is returned.
+Otherwise, -1 is returned.
+.SH LEVEL
+Base or Interrupt
+.SH SEE ALSO
+\f4ics_read\f1(D3D),
+\f4ics_write\f1(D3D)

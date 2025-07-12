@@ -1,0 +1,61 @@
+'\"macro stdmacro
+.if n .pH g1a.comsat @(#)comsat	40.9 of 5/21/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} comsat 1M "Internet Utilities" "\&"
+.if \nX=1 .ds x} comsat 1M "Internet Utilities"
+.if \nX=2 .ds x} comsat 1M "" "\&"
+.if \nX=3 .ds x} comsat "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4comsat\f1, \f4in.comsat\f1 \- biff server
+.SH SYNOPSIS
+\f4in.comsat\f1
+.SH DESCRIPTION
+\f4comsat\f1
+is the server process which listens for reports of incoming
+mail and notifies users who have requested to be told when
+mail arrives.
+It is invoked as needed by
+\f4inetd\f1(1M),
+and times out if inactive for a few minutes.
+.LP
+\f4comsat\f1
+listens on a datagram port associated with the
+\f4biff\f1
+service specification [see
+\f4services\f1(4)]
+for one line messages of the form
+.IP
+\f2user\f4@\f2mailbox\f4-\f2offset\f1
+.LP
+If the
+.I user
+specified is logged in to the system and the associated terminal has
+the owner execute bit turned on (by a
+\f4biff y\f1),
+the
+.I offset
+is used as a seek offset into the appropriate mailbox file and
+the first 7 lines or 560 characters of the message are printed
+on the user's terminal.
+Lines which appear to be part of the message header other than the
+\f4From\f1,
+\f4To\f1, 
+\f4Date\f1,
+or
+\f4Subject\f1
+lines are not printed when displaying the
+message.
+.SH FILES
+.PD 0
+.TP 20
+\f4/var/utmp\f1
+who's logged on and on what terminals
+.PD
+.SH "SEE ALSO"
+\f4services\f1(4),
+\f4inetd\f1(1M)
+.SH NOTES
+The message header filtering is prone to error.

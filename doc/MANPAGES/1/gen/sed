@@ -1,0 +1,401 @@
+'\"macro stdmacro
+.if n .pH g1.sed @(#)sed	40.14.1.1 of 1/3/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} sed 1 "Essential Utilities" "\&"
+.if \nX=1 .ds x} sed 1 "Essential Utilities"
+.if \nX=2 .ds x} sed 1 "" "\&"
+.if \nX=3 .ds x} sed "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4sed\f1 \- stream editor
+.SH SYNOPSIS
+\f4sed\f1
+[\f4\-n\f1]
+[\f4\-e\f1
+\f2script\fP]
+[\f4\-f\f1
+.IR sfile ]
+.RI [ "file .\|.\|." ]
+.SH DESCRIPTION
+\f4sed\fP
+copies the named
+.I file\^
+(standard input default) to the standard output,
+edited according to a script of commands.
+The
+\f4\-f\f1
+option causes the script to be taken from file
+.IR sfile ;
+these options accumulate.
+If there is just one
+\f4\-e\f1
+option and no
+\f4\-f\f1
+options,
+the flag
+\f4\-e\f1
+may be omitted.
+The
+\f4\-n\f1
+option suppresses the default output.
+A script consists of editing commands, one per line,
+of the following form:
+.PP
+.RS
+\f4[ \|\f2address\fP \|[ \|, \|\f2address\fP \|] \|] \|\f2function\fP \|[ \|\f2arguments\fP \|]\f1
+.RE
+.PP
+In normal operation,
+\f4sed\fP
+cyclically copies a line of input into a
+.I pattern space\^
+(unless there is something left after
+a
+\f4D\f1
+command),
+applies in sequence
+all commands whose
+.I addresses\^
+select that pattern space,
+and at the end of the script copies the pattern space
+to the standard output (except under
+\f4\-n\f1)
+and deletes the pattern space.
+.PP
+Some of the commands use a
+.I hold space\^
+to save all or part of the
+.I pattern space\^
+for subsequent retrieval.
+.PP
+An
+.I address\^
+is either a decimal number that counts
+input lines cumulatively across files, a
+\f4$\f1
+that
+addresses the last line of input, or a context address,
+i.e.,
+a
+\f4/\f2regular expression\f4/\f1
+in the style of
+\f4ed\fP(1)
+modified thus:
+.PP
+.PD 0
+.RS
+.HP
+In a context address, the construction
+\f4\e\fP\f2?regular expression?\^\fP,
+where
+.IR ?
+is any character,
+is identical to
+\f4/\f2regular expression\f4/\f1.\fP\f1
+Note that in the context address
+\f4\exabc\exdefx\f1,
+the second
+\f4x\f1
+stands for itself, so that the
+regular expression is
+\f4abcxdef\f1.
+.HP
+The escape sequence
+\f4\en\f1
+matches a
+new-line
+.I embedded\^
+in the pattern space.
+.HP
+A period \f4(\|.\|)\f1
+matches any character except the
+.I terminal\^
+new-line of the pattern space.
+.HP
+A command line with no addresses selects every pattern space.
+.HP
+A command line with
+one address selects each pattern space that matches the address.
+.HP
+A command line with
+two addresses selects the inclusive range from the first
+pattern space that matches the first address through
+the next pattern space that matches
+the second address.
+(If the second address is a number less than or equal
+to the line number selected by the first address,
+only the line corresponding to the
+first address is selected.)
+Thereafter the process is repeated, looking again for the
+first address.
+.RE
+.PD
+.PP
+Editing commands can be applied only to non-selected pattern
+spaces by use of the negation function
+\f4!\f1
+(below).
+.PP
+In the following list of functions the
+maximum number of permissible addresses
+for each function is indicated in parentheses.
+.PP
+The
+.I text\^
+argument
+consists of one or more lines,
+all but the last of which end with
+\f4\e\f1
+to hide the
+new-line.
+Backslashes in text are treated like backslashes
+in the replacement string of an
+\f4s\f1
+command,
+and may be used to protect initial blanks and tabs
+against the stripping that is done on
+every script line.
+The
+.I rfile\^
+or
+.I wfile\^
+argument
+must terminate the command
+line and must be preceded by exactly one blank.
+Each
+.I wfile\^
+is created before processing begins.
+There can be at most 10 distinct
+.I wfile\^
+arguments.
+.PP
+.TP 10
+(1)\|\f4a\e\fP
+.br
+.ns
+.TP
+.I text\^
+Append.
+Place
+.I text\^
+on the output before
+reading the next input line.
+.TP
+.RI (2)\|\f4b\fP " label\^"
+Branch to the
+\f4:\f1
+command bearing the
+.IR label .
+If
+.I label\^
+is empty, branch to the end of the script.
+.br
+.ne 2.1v
+.TP
+(2)\|\f4c\e\fP
+.br
+.ns
+.TP
+.I text\^
+Change.
+Delete the pattern space.
+Place
+.I text\^
+on the output.
+Start the next cycle.
+.TP
+(2)\|\f4d\fP
+Delete the pattern space.
+Start the next cycle.
+.TP
+(2)\|\f4D\fP
+Delete the initial segment of the
+pattern space through the first new-line.
+Start the next cycle.
+.TP
+(2)\|\f4g\fP
+Replace the contents of the pattern space
+by the contents of the hold space.
+.TP
+(2)\|\f4G\fP
+Append the contents of the hold space to the pattern space.
+.TP
+(2)\|\f4h\fP
+Replace the contents of the hold space by the contents of the pattern space.
+.TP
+(2)\|\f4H\fP
+Append the contents of the pattern space to the hold space.
+.TP
+(1)\|\f4i\e\fP
+.br
+.ns
+.TP
+.I text\^
+Insert.
+Place
+.I text\^
+on the standard output.
+.TP
+(2)\|\f4l\fP
+List the pattern space on the standard output in an
+unambiguous form.
+Non-printable characters are displayed in octal notation
+and long lines are folded.
+.TP
+(2)\|\f4n\fP
+Copy the pattern space to the standard output.
+Replace the pattern space with the next line of input.
+.TP
+(2)\|\f4N\fP
+Append the next line of input to the pattern space
+with an embedded new-line.
+(The current line number changes.)
+.TP
+(2)\|\f4p\fP
+Print.
+Copy the pattern space to the standard output.
+.TP
+(2)\|\f4P\fP
+Copy the initial segment of the pattern space through
+the first new-line to the standard output.
+.TP
+(1)\|\f4q\fP
+Quit.
+Branch to the end of the script.
+Do not start a new cycle.
+.TP
+.RI (2)\|\f4r\fP " rfile\^"
+Read the contents of
+.IR rfile .
+Place them on the output before reading
+the next input line.
+.TP
+.RI (2)\|\f4s\fP/ "regular expression" / replacement / flags\^
+Substitute the
+.I replacement\^
+string for instances of the
+.I regular expression\^
+in the pattern space.
+Any character may be used instead of
+\f4/\f1.
+For a fuller description see
+\f4ed\fP(1).
+.I flags\^
+is zero or more of:
+.RS 10
+.TP 8
+\f2n\f1
+\f2n\fP= 1 - 512.
+Substitute for just the
+.IR n th
+occurrence of the
+.I regular expression.\^
+.TP
+\f4g\f1
+Global.
+Substitute for all nonoverlapping instances of the
+.I regular expression\^
+rather than just the
+first one.
+.TP
+\f4p\f1
+Print the pattern space if a replacement was made.
+.br
+.ne 8
+.TP
+\f4w \f2wfile\f1
+Write.
+Append the pattern space to
+.I wfile\^
+if a replacement
+was made.
+.RE
+.TP
+.RI (2)\|\f4t\fP " label\^"
+Test.
+Branch to the
+\f4:\f1
+command bearing the
+.I label\^
+if any
+substitutions have been made since the most recent
+reading of an input line or execution of a
+\f4t\f1.
+If
+.I label\^
+is empty, branch to the end of the script.
+.TP
+.RI (2)\|\f4w\fP " wfile\^"
+Write.
+Append the pattern space to
+.IR wfile .
+The first occurrence of \f4w\f1 will cause \f2wfile\f1 to be cleared.
+Subsequent invocations of \f4w\f1 will append.
+Each time the \f4sed\f1 command is used, \f2wfile\f1 is overwritten.
+.TP
+(2)\|\f4x\fP
+Exchange the contents of the pattern and hold spaces.
+.TP
+.RI (2)\|\f4y\fP/ string1 / string2 /\^
+Transform.
+Replace all occurrences of characters in
+.I string1\^
+with the corresponding characters in
+.IR string2 .
+.I string1\^
+and
+.I string2\^
+must have the same number of characters.
+.TP
+.RI (2)\f4!\fP " function\^"
+Don't.
+Apply the
+.I function\^
+(or group, if
+.I function\^
+is
+\f4{\|\f1)
+only to lines
+.I not\^
+selected by the address(es).
+.TP
+.RI (0)\|\f4:\fP " label\^"
+This command does nothing; it bears a
+.I label\^
+for
+\f4b\f1
+and
+\f4t\f1
+commands to branch to.
+.TP
+(1)\|\f4=\fP
+Place the current line number on the standard output as a line.
+.TP
+(2)\|\f4{\fP
+Execute the following commands through a matching
+\f4}\f1
+only when the pattern space is selected.
+.TP
+(0)\|
+An empty command is ignored.
+.TP
+(0)\|\f4#\fP
+If a
+\f4#\f1
+appears as the first character on a line of a script file,
+then that entire line is treated as a comment, with one exception:
+if a
+\f4#\f1 appears on the first line and the
+character after the \f4#\f1
+is an \f4n\fP, then the default output will be suppressed.
+The rest of the line after
+\f4#n\f1
+is also ignored.
+A script file must contain at least one non-comment line.
+.PD
+.SH SEE ALSO
+\f4awk\fP(1), \f4ed\fP(1), \f4grep\fP(1).
+.\"	@(#)sed.1	6.2 of 9/2/83
+.Ee

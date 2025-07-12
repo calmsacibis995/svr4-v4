@@ -1,0 +1,10 @@
+.if n .pH release/scp.rn/386/COLFILE @(#)COLFILE	40.39.1.1
+.# This book ("Source Code Product Machine Readable Documentation Release Notes" "" "SCP MRD Release Notes")
+.# contains the following files,
+.# listed in the order in which they are printed.
+.# Next to each file name is its SCCS delta number.
+.FT
+release/scp.rn/386/titlepage	40.5
+release/scp.rn/386/copyright	40.9
+release/scp.rn/386/Cdocnotes	40.13.1.1
+release/scp.rn/386/docnotes	40.21.1.1

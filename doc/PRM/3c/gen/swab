@@ -1,0 +1,40 @@
+'\"macro stdmacro
+.if n .pH g3c.swab @(#)swab	40.11 of 5/22/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} swab 3C "C Development Set" "\&"
+.if \nX=1 .ds x} swab 3C "C Development Set"
+.if \nX=2 .ds x} swab 3C "" "\&"
+.if \nX=3 .ds x} swab "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4swab\f1 \- swap bytes
+.SH SYNOPSIS
+\f4#include <stdlib.h>
+.P
+\f4void swab (const char \(**from, char \(**to, int nbytes);\f1
+.SH DESCRIPTION
+\f4swab\fP
+copies
+.I nbytes\^
+bytes pointed to by
+.I from\^
+to the array pointed to by
+.IR to ,
+exchanging adjacent even and odd bytes.
+.I nbytes\^
+should be even and non-negative.
+If
+.I nbytes\^
+is odd and positive,
+\f4swab\fP
+uses
+.IR nbytes \-1
+instead. If
+.I nbytes\^
+is negative,
+\f4swab\fP
+does nothing.
+.\"	@(#)swab.3c	6.2 of 10/20/83
+.Ee

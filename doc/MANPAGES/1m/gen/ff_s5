@@ -1,0 +1,145 @@
+'\"macro stdmacro
+.if n .pH g1a.ff_s5 @(#)ff_s5	40.6.1.1 of 3/12/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} ff 1M "s5" "\&"
+.if \nX=1 .ds x} ff 1M "s5"
+.if \nX=2 .ds x} ff 1M "" "\&"
+.if \nX=3 .ds x} ff "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4ff\f1 (s5) \- display i-list information
+.SH SYNOPSIS
+\f4ff\f1
+[\f4\-F s5\f1]
+[\f2generic_options\f1]
+[\f4\-I\f1]
+[\f4\-l\f1]
+[\f4\-p\f2prefix\f1]
+[\f4\-s\f1]
+[\f4\-u\f1]
+[\f4\-a\f2n\f1]
+[\f4\-m\f2n\f1]
+[\f4\-c\f2n\f1]
+[\f4\-n\f2file\f1]
+[\f4\-i\f2i-node-list\f1]
+\f2special...\f1
+.SH DESCRIPTION
+.I generic_options
+are options supported by the generic \f4ff\f1 command.
+.PP
+.PP
+\f4ff\f1
+reads the i-list and directories of the 
+.I special\^ 
+file, assuming it is an \f4s5\f1 file system.
+I-node data is saved for files which match the selection criteria.
+Output consists of the pathname for each saved i-node, plus 
+other file information requested
+using the print \f2options\fP below.
+Output fields are positional.
+The output is produced in i-node order; fields are separated by tabs.
+The default line produced by
+\f4ff\f1
+is:
+.PP
+.RS
+\f2pathname \|i-number\f1
+.RE
+.P
+The pathname is preceded by a \f4.\f1 (dot)
+unless the \f4\-p\f1 option is specified.
+.PP
+The maximum information the command will provide is:
+.PP
+.RS
+\f2pathname \|i-number \|size \|uid\f1
+.RE
+.PP
+The argument
+.I n
+in the \f2option\fP descriptions that follow is used 
+as a decimal integer (optionally signed), where
+\f4+\f2 n\^\f1
+means more than
+.IR n ,
+\f4\-\f2 n\^\f1
+means less than
+.IR n ,
+and 
+.I n\^
+means exactly
+.IR n \.
+A day is defined as a 24 hour period.
+.PP
+The options are:
+.TP .75i
+\f4\-F s5\f1
+Specifies the \f4s5\f1-FSType.
+.TP
+\f4\-I\f1
+Do not print the i-node number after each pathname.
+.TP
+\f4\-l\f1
+Generate a supplementary list of all pathnames for multiply-linked
+files.
+.TP
+\f4\-p\f2prefix\^\f1
+The specified
+.I prefix\^
+will be added to each generated pathname.
+The default is
+\f4\&.\f1
+(dot). 
+.TP
+\f4\-s\f1
+Print the file size, in bytes, after each pathname.
+.TP
+\f4\-u\f1
+Print the owner's login name after each pathname.
+.TP
+\f4\-a\f2n\f1
+Select if the i-node has been accessed in
+.I n\^
+days.
+.TP
+\f4\-m\f2n\^\f1
+Select if the i-node has been modified in
+.I n\^
+days.
+.TP
+\f4\-c\f2n\^\f1
+Select if the i-node has been changed in 
+.I n\^
+days.
+.TP
+\f4\-n\f2file\^\f1
+Select if the i-node has been modified more recently than the argument
+.IR file .
+.TP
+\f4\-i\f2i-node-list\f1
+Generate names for only those i-nodes specified in
+\f2i-node-list\f1.
+\%\f2i-node-list\f1 is a list of numbers separated by commas and without 
+spaces.
+.br
+.ne 1i
+.SH NOTE
+If the
+\f4\-l\f1
+option is not specified,
+only a single pathname out of all possible ones is generated for a 
+multiply-linked i-node. 
+If
+\f4\-l\f1
+is specified, 
+all possible names for every linked file on the file system are included
+in the output.
+If \f4-l\fR and \f4-i\fR are both specified, then only the names for linked
+files matching an i-node listed in the i-node list are displayed.
+.SH "SEE ALSO"
+generic \f4ff\f1(1M), \f4ncheck\f1(1M).
+.br
+\f4find\f1(1) in the
+\f2User's Reference Manual\f1.

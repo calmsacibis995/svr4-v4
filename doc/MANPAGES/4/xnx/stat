@@ -1,0 +1,84 @@
+'\"! tbl | mmdoc
+'\"macro stdmacro
+.if n .pH g4.stat @(#)stat	40.8 of 6/18/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} stat 4 "Application Compatibility Package" "\&"
+.if \nX=1 .ds x} stat 4 "Application Compatibility Package"
+.if \nX=2 .ds x} stat 4 "" "\&"
+.if \nX=3 .ds x} stat "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4stat\f1 \- data returned by \f4stat\fP system call
+.SH SYNOPSIS
+\f4#include <sys/types.h>\f1
+.br
+\f4#include <sys/stat.h>\f1
+.SH DESCRIPTION
+The system calls
+\f4stat\fP, \f4lstat\fP and \f4fstat\fP return data in a \f4stat\f1
+structure, which is defined in
+\f4stat.h\f1:
+.RS
+.TS
+lf4 lf4 lf4.
+struct	stat
+{
+	dev_t	st_dev;
+	ino_t	st_ino;
+	mode_t	st_mode;
+	nlink_t	st_nlink;
+	uid_t	st_uid;
+	gid_t	st_gid;
+	dev_t	st_rdev;
+	off_t	st_size;
+	time_t	st_atime;
+	time_t	st_mtime;
+	time_t	st_ctime;
+};
+.TE
+.RE
+.PP
+The constants used in the
+\f4st_mode\f1
+field are also defined in this file:
+.RS
+.TS
+lf4 1 lf4 2 lf4 2 l.
+#define	S_IFMT	0xF000	/\(** type of file \(**/
+#define	S_IAMB	0x1FF	/\(** access mode bits \(**/
+#define	S_IFIFO	0x1000	/\(** fifo \(**/
+#define	S_IFCHR	0x2000	/\(** character special \(**/
+#define	S_IFDIR	0x4000	/\(** directory \(**/
+#define	S_IFNAM	0x5000	/\(** \f4XENIX\fP special named file \(**/
+#define	S_INSEM	0x1	/\(** \f4XENIX\fP semaphore subtype of \f4IFNAM\fP \(**/
+#define	S_INSEM	0x2	/\(** \f4XENIX\fP shared data subtype of \f4IFNAM\fP \(**/
+#define	S_IFBLK	0x6000	/\(** block special \(**/
+#define	S_IFREG	0x8000	/\(** regular \(**/
+#define	S_IFLNK	0xA000	/\(** symbolic link \(**/
+#define	S_ISUID	04000	/\(** set user id on execution \(**/
+#define	S_ISGID	02000	/\(** set group id on execution \(**/
+#define	S_ISVTX	01000	/\(** save swapped text even after use \(**/
+#define	S_IREAD	00400	/\(** read permission, owner \(**/
+#define	S_IWRITE	00200	/\(** write permission, owner \(**/
+#define	S_IEXEC	00100	/\(** execute/search permission, owner \(**/
+#define	S_ENFMT	S_ISGID	/\(** record locking enforcement flag \(**/
+#define	S_IRWXU	00700	/\(** read, write, execute: owner \(**/
+#define	S_IRUSR	00400	/\(** read permission: owner \(**/
+#define	S_IWUSR	00200	/\(** write permission: owner \(**/
+#define	S_IXUSR	00100	/\(** execute permission: owner \(**/
+#define	S_IRWXG	00070	/\(** read, write, execute: group \(**/
+#define	S_IRGRP	00040	/\(** read permission: group \(**/
+#define	S_IWGRP	00020	/\(** write permission: group \(**/
+#define	S_IXGRP	00010	/* execute permission: group \(**/
+#define	S_IRWXO	00007	/* read, write, execute: other \(**/
+#define	S_IROTH	00004	/* read permission: other \(**/
+#define	S_IWOTH	00002	/* write permission: other \(**/
+#define	S_IXOTH	00001	/* execute permission: other \(**/
+.TE
+.RE
+.SH SEE ALSO
+\f4stat\fP(2), \f4types\fP(5)
+.\"	@(#)stat.5	6.2 of 9/6/83
+.Ee

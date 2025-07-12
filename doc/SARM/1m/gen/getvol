@@ -1,0 +1,83 @@
+'\"macro stdmacro
+.if n .pH g1M.getvol @(#)getvol	40.11 of 4/16/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} getvol 1M "Essential Utilities" "\&"
+.if \nX=1 .ds x} getvol 1M "Essential Utilities"
+.if \nX=2 .ds x} getvol 1M "" "\&"
+.if \nX=3 .ds x} getvol "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4getvol\f1 \- verifies device accessibility
+.SH SYNOPSIS
+\f4getvol \-n \f1[\f4\-l \f2label\f1] \f2device\f1
+.br
+\f4getvol \f1[\f4\-f\f1\||\ \f4\-F\f1] [\f4\-wo\f1] [\f4\-l \f2label\f1\||\ \f4\-x \f2label\f1\|] \f2device\f1
+.SH DESCRIPTION
+\f4getvol\f1
+verifies that the specified device is accessible and that a volume of the
+appropriate medium has been inserted.
+The command is interactive and displays instructional prompts, describes
+errors, and shows required label information.
+.P
+Options and arguments for this command are:
+.TP 8
+\f4\-n\f1
+Runs the command in non-interactive mode.
+The volume is assumed to be inserted
+upon command invocation.
+.TP 8
+\f4\-l\f1
+Specifies that the label \f2label\f1 must
+exist on the inserted volume (can be overriden by the \-o option).
+.TP 8
+\f4\-f\f1
+Formats the volume after insertion, using the format command defined for this
+device in the device table.
+.TP 8
+\f4\-F\f1
+Formats the volume after insertion and places a file system on the device.
+Also uses the format command defined for this device in the device table.
+.TP 8
+\f4\-w\f1
+Allows administrator to write a new label on the device.
+User is prompted to supply the label text.
+This option is ineffective if the \f4-n\f1 option is enabled.
+.TP 8
+\f4\-o\f1
+Allows the administrator to override a label check.
+.TP 8
+\f4\-x\f1
+Specifies that the label \f2label\f1 must exist on the device.
+This option should be used in place of the \f4\-l\f1 option when
+the label can only be verified by visual means.
+Use of the option causes a message to be displayed
+asking the administrator to visually verify
+that the label is indeed \f2label\f1.
+.TP 8
+\f2device\f1
+Names the device which should be verified for accessibility.
+.SH ERRORS
+The command will exit with one of the following values:
+.TP 4
+\f40\f1 = 
+successful completion of the task.
+.TP 4
+\f41\f1 =
+command syntax incorrect,
+invalid option used,
+or internal error occurred.
+.TP 4
+\f43\f1 =
+device table could not be opened for reading.
+.SH NOTES 
+This command uses the device table to determine the characteristics of the
+device when performing the volume label checking.
+.SH FILES
+.ft CW
+/etc/device.tab
+.ft
+.SH SEE ALSO
+\f4getvol\fP(3X)
+.Ee

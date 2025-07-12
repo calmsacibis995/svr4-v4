@@ -1,0 +1,85 @@
+#ident  "@(#)doctools:shells/format.src	1.2"
+#
+#       Copyright (c) 1990, 1991 UNIX System Laboratories, Inc.
+#       Copyright (c) 1984, 1986, 1987, 1988, 1989, 1990 AT&T
+#         All Rights Reserved
+#
+#       THIS IS UNPUBLISHED PROPRIETARY SOURCE CODE OF
+#       UNIX System Laboratories, Inc.
+#       The copyright notice above does not evidence any
+#       actual or intended publication of such source code.
+#
+#       format: shell interface for DOCTOOLS
+#
+#     Modified by: M. Shapiro
+#                 UNIX System Laboratories
+#                 attunix!mxs   201-522-5181
+#                   
+#
+# set up variables for directories
+. ${LIB}/init                    # initialize all variables
+. ${LIB}/functions               # load up functions
+# set trap
+trap "rm -f ${TF}*-* 2>${LOG};rm -rf ${TF}; trap 0; exit 0" 0 1 2 3 15
+# If no options specified on command line, produce menus.
+# First define variables and functions
+case $# in
+0)                         # Interactive invocation
+   eval "echo '$USAGE'"
+   AskOpts                 # Prompt for selecting options
+   AskDest                 # Prompt for printer destination
+   AskMore                 # Prompt for other printing options?
+   AskFiles                # Prompt for file names and show options
+   AskIfDone               # Finish up
+   eval "echo '$WAIT'"     # Print wait message
+   ;;
+*)                         # Command line invocation
+   set -- `getopt cd:lmo:p:r:s:v:w $@`      # parse command line
+   set +e                                   # export variables
+   for i in $*
+   do
+      case $i in
+         -c) PTOC=Y; STOC=Y; shift;;           # print and save toc
+         -d) PNAME=$2; shift 2;;               # destination name
+         -l) LAND=Y; shift;;                   # landscape print
+         -m) MAIL=Y; shift;;                   # send mail message
+         -o) PAGES=Y; PAGENUM="-o$2"; shift 2;;# selected pages
+         -p) TROPTS="$TROPTS -rp$2"; shift 2;; # page number start
+         -r) TROPTS="$TROPTS -r$2"             # troff registers
+	     if [ "$2" = "C1" ]; then MERGEFILES=Y; fi; shift 2;;
+         -s) TROPTS="$TROPTS -rs$2"; shift 2;; # page size
+	 -v) tmparg=$2; shift 2;;		# version control
+	 -w) QUIET=Y; shift;;                  # send nothing to screen
+         --) shift;;
+      esac
+   done
+   FILES=$*                                 # collect file names
+   break;;                                  # end for loop
+esac
+# check for files
+if [ "${FILES}" = "" ]; then
+   echo "No Files Specified"
+   eval "echo '$USAGE'"; exit 1
+fi
+if [ "${tmparg}" = "" ]
+then
+        tmparg="1"
+fi
+DoDest               # Set processing parameters for chosen destination
+# If used -rC1, cat named files into one file, and cross fingers
+if [ "${MERGEFILES}" = "Y" ]; then
+   for i in ${FILES}; do DoMerge; done; i=${TF}-MGE; DoPrep
+# Handle files one at a time: preprocess and troff each file
+else for i in ${FILES}; do DoPrep; if [ "${Ret}" = "5" ]; then break; fi; done
+fi
+# Change to landscape orientation, if requested
+if [ "${LAND}" = "Y" ]; then DoOrient; fi
+# Send mail, if requested
+if [ "${MAIL}" = "Y" ]; then DoMail; fi
+. ${LIB}/defs.h     # Reset definitions, if only to get filenames added
+DoDest              # Reestablish LP setting
+eval "${LP}"        # Spool job
+# Either mail messages (if used -w), or cat messages to screen
+if [ "${QUIET}" = "Y" ]; then eval "mail ${MACHINE}!${USER} <${TF}-lp"
+else cat ${TF}-lp; fi
+# EOF

@@ -1,0 +1,132 @@
+'\"macro stdmacro
+.if n .pH g1a.acctcms @(#)acctcms	40.8 of 4/15/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} acctcms 1M "Accounting Utilities" "\&"
+.if \nX=1 .ds x} acctcms 1M "Accounting Utilities"
+.if \nX=2 .ds x} acctcms 1M "" "\&"
+.if \nX=3 .ds x} acctcms "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4acctcms\f1 \- command summary from per-process accounting records
+.SH SYNOPSIS
+\f4/usr/lib/acct/acctcms\f1
+[\f4-a\fP [\f4-p\fP] [\f4-o\fP]] [\f4-c\fP] [\f4-j\f1] [\f4-n\f1] [\f4-s\f1] [\f4-t\f1]
+\f2files\fP
+.SH DESCRIPTION
+\f4acctcms\fP
+reads one or more
+.IR files ,
+normally in the form described in
+\f4acct\fP(4).
+It adds all records for processes that
+executed identically-named commands,
+sorts them,
+and writes them to the standard output,
+normally using an internal summary format.
+The options are:
+.PP
+.PD 0
+.TP
+\f4\-a\f1
+Print output in
+.SM ASCII
+rather than in the internal summary format.
+The output includes command name,
+number of times executed,
+total kcore-minutes,
+total
+.SM CPU
+minutes,
+total real minutes,
+mean size (in K),
+mean
+.SM CPU
+minutes per invocation,
+"hog factor",
+characters transferred, and blocks read and written, as in
+\f4acctcom\fP(1).
+Output is normally sorted by total kcore-minutes.
+.TP
+\f4\-c\f1
+Sort by total
+.SM CPU
+time, rather than total kcore-minutes.
+.TP
+\f4\-j\f1
+Combine all commands invoked only once under "\(**\(**\(**other".
+.TP
+\f4\-n\f1
+Sort by number of command invocations.
+.TP
+\f4\-s\f1
+Any filenames encountered hereafter are already in internal summary format.
+.TP
+\f4\-t\f1
+Process all records as total accounting records.
+The default internal summary format splits
+each field into prime and non-prime
+time parts.
+This option combines the prime and non-prime time parts into a
+single field that is the total of both,
+and provides upward compatibility with old
+(that is, UNIX System V)
+style
+\f4acctcms\fP
+internal summary format records.
+.PD
+.PP
+The following options may be used only with
+the
+\f4\-a\f1
+option.
+.TP
+\f4\-p \f1
+Output a prime-time-only command summary.
+.TP
+\f4\-o\f1
+Output a non-prime (offshift) time only command summary.
+.PD
+.PP
+When
+\f4\-p\f1
+and
+\f4\-o\f1
+are used together,
+a combination prime and non-prime time report
+is produced.
+All the output summaries will
+be total usage except
+number of times executed, CPU minutes,
+and real minutes, which will
+be split into prime and non-prime.
+.PP
+A typical sequence for performing daily command accounting and
+for
+maintaining a running total is:
+.PP
+.RS
+.nf
+\f4acctcms \|file \|.\|.\|. \|> today
+cp \|total \|previoustotal
+acctcms \|\-s \|today \|previoustotal \|> total
+acctcms \|\-a \|\-s \|today\f1
+.fi
+.RE
+.SH SEE ALSO
+\f4acct\fP(1M), \f4acctcon\fP(1M), \f4acctmerg\fP(1M), \f4acctprc\fP(1M),
+\f4acctsh\fP(1M), \f4fwtmp\fP(1M), \f4runacct\fP(1M),
+\f4acct\fP(4), \f4utmp\fP(4)
+.br
+\f4acctcom\fP(1) in the \f2User's Reference Manual\f1
+.br
+\f4acct\fP(2)
+in the \f2Programmer's Reference
+Manual\f1
+.SH NOTES
+Unpredictable output results if
+\f4\-t\f1
+is used on new style internal summary format files,
+or if it is not used with old style internal summary format files.
+.\"	@(#)acctcms.1m	6.3 of 9/2/83

@@ -1,0 +1,10 @@
+.if n .pH 386.files @(#)files	40.9 of 5/17/91
+.BK "Multibus Reference Manual"
+.CH "File Formats" "4"
+.H 1 " File Formats"
+This chapter lists Intel's System V Release 4 file formats for 
+Multibus II.
+.BL
+.LI
+\f4config\f1
+.LE

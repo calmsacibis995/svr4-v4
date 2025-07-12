@@ -1,0 +1,129 @@
+'\"macro stdmacro
+.if n .pH mb2a.sendreply @(#)sendreply	40.8 of 5/15/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} mb2a_sendreply 3tai "" "\&"
+.if \nX=1 .ds x} mb2a_sendreply 3tai ""
+.if \nX=2 .ds x} mb2a_sendreply 3tai "" "\&"
+.if \nX=3 .ds x} mb2a_sendreply "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4mb2a_sendreply\f1 \- Sends a reply message asynchronously.
+.SH SYNOPSIS
+.ft 4
+.nf
+#include <sys/types.h>
+#include <sys/mb2taiusr.h>
+int mb2a_sendreply (fd, socketidptr, ctlbufptr, databufptr, tid, lastflag)
+int fd;
+mb2_socket *socketidptr;
+mb2_buf *ctlbufptr;
+mb2_buf *databufptr;
+unsigned char tid;
+int lastflag;
+.fi
+.SH DESCRIPTION
+This routine is used to send a Multibus II transport reply message or
+reply message fragment in asynchronous mode.
+This routine is used by Multibus II transport servers only.
+.TP .9i
+\f4fd\f1
+specifies an asynchronous mode file descriptor referencing
+an open port.
+.TP .9i
+\f4socketidptr\f1
+contains a pointer to the socket ID of the client.
+.TP .9i
+\f4ctlbufptr\f1
+is a pointer to a structure describing the control
+portion of the message.
+.TP .9i
+\f4databufptr\f1
+is a pointer to a structure describing the data
+portion of the message.
+.TP .9i
+\f4tid\f1
+specifies the Transaction ID of the transaction.
+.TP .9i
+\f4lastflag\f1
+is either \f4MB2_EOT\fP or \f4MB2_NOTEOT\fP to determine whether
+or not this is the last (\f4EOT\fP) fragment of the reply.
+.P
+To send the data portion of the reply message, \f4databufptr\fP must be
+non-NULL and the \f4len\fP field must have a value greater than 0.
+To send the
+control portion of the reply message, the corresponding values must be set for
+\f4ctlbufptr\f1.
+A NULL reply message can be sent if both the \f4ctlbufptr\f1 and
+\f4databufptr\fP are NULL or have their \f4len\fP field set to 0.
+The maximum length of
+the control portion is 20 bytes if no data portion is present.
+The maximum is
+16 bytes if the reply message has a non-NULL data portion.
+.P
+\f4MB2_EOT\fP must be specified for \f4lastflag\fP if the reply message consists
+of only one fragment or if the message has only a control portion and a NULL
+data portion.
+The last flag must be set to \f4MB2_EOT\fP on the last fragment
+transferred.
+The last fragment specifies the end of a transaction. The \f4tid\fP
+must be the transaction ID obtained from a previous request message
+(\f4MB2_REQ_MSG\fP or \f4MB2_REQFRAG_MSG\fP) received.
+\f4mb2a_sendreply\fP blocks if the
+send side queue is full due to internal flow control conditions.
+The flow
+control parameters can be set at the time the port is opened.
+\f4mb2a_sendreply\f1
+also blocks when waiting for availability of internal buffers.
+When this routine returns, the message has been sent out or has
+been queued to be sent.
+No completion or error indication is returned
+to the user if the transfer fails.
+.P
+Upon successful completion of the routine, a value of 0 is returned.
+A value of -1 is returned and an \f4errno\fP is set if there were errors.
+The following is a list of applicable errors for this routine.
+.TP .7i
+\f4EAGAIN\f1
+buffers could not be allocated for the message
+to be sent.
+.TP .7i
+\f4EAGAIN\f1
+the message could not be queued due to flow
+control conditions.
+.TP .7i
+\f4EBADF\f1
+\f4fd\f1 is not a valid file descriptor.
+.TP .7i
+\f4EFAULT\f1
+\f4ctlbufptr\f1 or \f4databufptr\f1 points outside the
+allocated address space.
+.TP .7i
+\f4EINTR\f1
+a signal was caught during the \f4mb2a_sendreply\f1
+call.
+.TP .7i
+\f4EINVAL\f1
+invalid value specified for one of the
+arguments.
+.TP .7i
+\f4ENOSTR\f1
+\f4fd\f1 is not a file descriptor to a Multibus II
+transport endpoint.
+.TP .7i
+\f4ENXIO\f1
+a hardware error condition was generated when sending
+the message.
+.TP .7i
+\f4ERANGE\f1
+the size of the control or the data part of the
+message is outside the range of the minimum/ maximum allowable message size.
+.SH NOTES
+Because the order of Solicited and Unsolicited messages is not
+guaranteed, build the responce message (\f4mb2a_sendreply\fP)
+as either a series of solicited messages with the \f4MB2_EOT\fP
+flag set on the last solicited message,
+or as a single unsolicited message with the \f4MB2_EOT\fP flag set.
+.SH SEE ALSO
+\f4putmsg\f1(2), \f4getmsg\f1(2), \f4write\f1(2)

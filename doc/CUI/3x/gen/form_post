@@ -1,0 +1,55 @@
+'\"!  tbl | mmdoc
+'\"macro stdmacro
+.if n .pH g3x.form_post @(#)form_post	40.5 of 4/10/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.\" ident	"@(#)svid_ti:ti_lib/form_post	1.4"
+.nr X
+.if \nX=0 .ds x} form_post 3X "" "\&"
+.if \nX=1 .ds x} form_post 3X ""
+.if \nX=2 .ds x} form_post 3X "" "\&"
+.if \nX=3 .ds x} form_post "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4form_post\f1: \f4 post_form\f1, \f4unpost_form\f1 \- write or erase \f4forms\fP from associated subwindows
+.SH SYNOPSIS
+.nf
+.ft 4
+#include <form.h>
+.sp
+int post_form(FORM *form);
+.sp 0.5
+int unpost_form(FORM *form);
+.ft 1
+.fi
+.SH DESCRIPTION
+\f4post_form\fP writes \f2form\f1 into its associated subwindow.
+The application programmer must use \f4curses\fP library routines 
+to display the form on the physical screen or call \f4update_panels\f1
+if the \f4panels\fP library is being used.
+.PP
+\f4unpost_form\fP erases \f2form\f1 from its associated subwindow.
+.SH RETURN VALUE
+These routines return one of the following:
+.TS
+lfCWw(1.25i)1 c1 l .
+E_OK	\-	The function returned successfully.
+E_SYSTEM_ERROR	\-	System error.
+E_BAD_ARGUMENT	\-	An argument is incorrect.
+E_POSTED	\-	The form is posted.
+E_NOT_POSTED	\-	The form is not posted.
+E_NO_ROOM	\-	The form does not fit in the subwindow.
+E_BAD_STATE	\-	The routine was called from an initialization
+		or termination function.
+E_NOT_CONNECTED	\-	The field is not connected to a form.
+.TE
+.SH NOTES
+The header file \f4<form.h>\f1 automatically includes the header files
+\f4<eti.h>\fP and \f4<curses.h>\fP.
+.SH SEE ALSO
+.na
+\f4curses\fP(3X),
+\f4forms\fP(3X),
+\f4panels\fP(3X),
+\f4panel_update\fP(3X)
+.ad

@@ -1,0 +1,112 @@
+'\"macro stdmacro
+.if n .pH g4.environ @(#)environ	40.6 of 5/31/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+'\"macro stdmacro
+.if n .pH g4.environ @(#)environ	40.6 of 7/28/89
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.if \nX=0 .ds x} environ 4 "Framed Access Command Environment Utilities" "\&"
+.if \nX=1 .ds x} environ 4 "Framed Access Command Environment Utilities"
+.if \nX=2 .ds x} environ 4 "" "\&"
+.if \nX=3 .ds x} environ "" "" "\&"
+.nr X
+.TH \*(x} "" "386 Computer Only"
+.SH NAME
+\f4\&.environ\f1, \f4\&.pref\f1, \f4\&.variables\f1 \- user-preference variable files for FACE
+.SH DESCRIPTION
+The \f4.environ\f1, \f4.pref\f1, and \f4.variables\f1 files contain variables that indicate
+user preferences for a variety of operations.
+The \f4.environ\f1 and \f4.variables\f1 files are located under the user's
+\f4$HOME/pref\f1 directory.
+The \f4.pref\f1 files are found under \f4$HOME/FILECABINET\f1,
+\f4$HOME/WASTEBASKET\f1, and any directory where preferences were set via
+the \f4organize\f1 command.
+Names and descriptions for each variable are presented below.
+Variables are listed one per line and are of the form \f2variable\f4=\f2value\f1.
+.sp
+Variables found in \f4.environ\f1 include:
+.TP 1.1i
+\f4LOGINWIN\f1[\f41-4\f1]
+Windows that are opened when FACE is initialized
+.TP
+\f4SORTMODE\f1
+Sort mode for file folder listings.
+Values include the following hexadecimal digits:
+.RS 1.1i
+.TP
+\f41\f1
+sorted alphabetically by name
+.TP
+\f42\f1
+files most recently modified first
+.TP
+\f4800\f1
+sorted alphabetically by object type
+.PP
+The values above may be listed in reverse order by
+"\f4OR\f1ing" the following value:
+.TP
+\f41000\f1
+list objects in reverse order.
+For example, a value of \f41002\f1 will produce a folder
+listing with files least recently modified displayed
+first.
+A value of \f41001\f1 would produce a "reverse"
+alphabetical by name listing of the folder
+.RE
+.TP
+\f4DISPLAYMODE\f1
+Display mode for file folders.
+Values include the following hexadecimal digits:
+.RS 1.1i
+.TP
+\f40\f1
+file names only
+.TP
+\f44\f1
+file names and brief description
+.TP
+\f48\f1
+file names, description, plus additional information
+.RE
+.TP
+\f4WASTEPROMPT\f1
+Prompt before emptying wastebasket (yes/no)?
+.TP
+\f4WASTEDAYS\f1
+Number of days before emptying wastebasket
+.TP
+\f4PRINCMD\f1[\f41-3\f1]
+Print command defined to print files.
+.TP
+\f4UMASK\f1
+Holds default permissions that files will be created with.
+.PP
+Variables found in \f4.pref\f1 are the following:
+.TP .75i
+\f4SORTMODE\f1
+which has the same values as the \f4SORTMODE\f1 variable
+described in \f4.environ\f1 above.
+.TP
+\f4DISPMODE\f1
+which has the same values as the \f4DISPLAYMODE\f1 variable
+described in \f4.environ\f1 above.
+.PP
+Variables found in \f4.variables\f1 include:
+.TP .75i
+\f4EDITOR\f1
+Default editor
+.TP
+\f4PS1\f1
+UNIX shell prompt
+.SH FILES
+\f4$HOME/pref/.environ\f1
+.br
+\f4$HOME/pref/.variables\f1
+.br
+\f4$HOME/FILECABINET/.pref\f1
+.br
+\f4$HOME/WASTEBASKET/.pref\f1
+.ig
+FILES FACE
+..

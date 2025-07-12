@@ -1,0 +1,1073 @@
+'\"!  tbl | mmdoc
+.if n .pH 386.new @(#)new	40.1.1.1
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.BK "Installation Guide" "System V Release 4"
+.CH "New Installation" "2"
+.H 1 "Introduction"
+This chapter describes how to install the
+UNIX System V, Release 4 operating system on
+your system's hard disk.
+(Make sure you have done the Pre-Installation Tasks described in Chapter 1
+before you begin the installation described in this chapter.)
+.P
+The installation procedure will completely remove
+the previous UNIX Operating system, its file systems, and
+any files you stored in those file systems.
+If you prefer to overlay your operating system,
+without destroying user files, see Chapter 3.
+It will tell you the cases in which a non-destructive,
+overlay installation is possible.
+.P
+The procedure in this chapter assumes you have already
+done the prerequisite steps described in Chapter 1.
+Make sure you read that chapter before beginning
+installation.
+.H 1 "Installation Procedure (New Installation)"
+Follow the installation described in this chapter from beginning to end.
+The procedure is essentially the same, whether you are installing from
+diskette or cartridge tape.
+.H 2 "Boot from Diskette"
+To boot the system from diskette, do the following: 
+.AL
+.LI
+Make sure that power to any externally-powered devices attached to the 
+system (such as a monitor) is on.
+.LI
+Make sure that power to the computer is off. If you already have a UNIX 
+system running, shut the UNIX system down (using the \f4shutdown\fP(1M) 
+command) before turning off power to the computer. 
+.LI
+Select boot diskette 1 and insert it into the appropriate disk drive.
+Because there are different boot diskettes for different types of hardware,
+your boot diskette 1 will have one of the following labels on it:
+.IX "boot diskettes"
+.IX "diskettes, boot"
+.BL
+.LI
+ST506/ESDI Boot Disk 1 of \f2X\f1 
+.LI
+Adaptec SCSI Boot Disk 1 of \f2X\f1
+.LI
+Western Digital SCSI Boot Disk 1 of \f2X\f1
+.LE
+(\f2X\f1 represents the total number of diskettes in the Base System.)
+.LI
+Turn on power to the computer. 
+After a few minutes, the system says:
+.SS CO
+Booting the system...
+.SE
+Then, the system performs a memory check and allocates memory to the 
+RAM Disk(s.). The system needs at least 4 MB of memory to support the 
+RAM Disk, which is used during installation.
+The system boots from the diskette after the memory check.
+.IX "memory, check"
+.IX "memory, RAM support"
+.LI
+If the system does not reboot, check the following Troubleshooting
+tips:
+.DS I
+.B "Troubleshooting"
+.P
+.IX "troubleshooting, boot problems"
+.BL
+.LI
+If the system doesn't boot from the diskette, make sure the diskette 
+is in disk drive 0 and reboot the system.
+.IX "rebooting the system"
+.P
+.LI
+If you used the wrong boot diskette for your controller, a warning 
+message, \f4"Incorrect UNIX System "Base System Package" Floppy
+Disk 1"\fP displays. If you get such a warning, remove the 
+boot diskette, insert the correct one, then press the
+RESET button. 
+If the system still won't boot, the disk drive may be jumpered incorrectly.
+Look at the hardware reference manual that came with 
+your system to find out how to rejumper the controller. If you need 
+help, contact your service representative.
+.LI
+If you have a non-SCSI cartridge tape controller and drive and you 
+see an error message that says, \f4"Cartridge controller was not found 
+at address 00000300H. Tape driver is disabled"\fP, it means that the 
+tape drive is cabled incorrectly, or the controller is jumpered incorrectly.
+.IX "error messages"
+.IX "tape drive, cable"
+.LI
+If the system warns you that more memory is needed, add memory 
+before installing the SVR4 software.
+.LI
+To fix the hardware problems, press 
+.HK Del
+to abort the installation,
+then shut down the system by typing \f4uadmin 2 0\fP. Unplug all 
+power cords. Reset the jumpers on the controller, if necessary. Make 
+sure the cable to the tape drive is connected correctly. Plug the 
+power cords back in, then reboot the system. 
+.IX "rebooting the system"
+.DE
+.IX "aborting installation"
+.IX "installation, aborting"
+.LE
+.AB W
+Adding memory, reconfiguring the cartridge controller, or 
+checking the tape drive cable involves removing the cover on 
+the computer. When the cover is open, you are exposed to 
+dangerous voltages. To reduce the chance of severe shock, 
+unplug the power cords of the computer and all peripherals 
+before opening the cover. Only qualified service technicians 
+or system integrators should perform these tasks.
+.AC
+.LI
+When prompted to insert the UNIX System "Base System Package" 
+Floppy Disk 2, remove the first boot diskette, insert the Base System diskette, and press
+.HK EK .
+The second diskette contains the basic utilities 
+needed to put UNIX on the hard disk.
+.IX "diskette, base system"
+.P
+The system responds:
+.SS CO
+Checking system configuration...
+.SE
+The screen may be blank for several minutes as the hard disk is searched to 
+see if there are recognizable disk partitions and filesystems on it. What
+displays next depends on which version of UNIX is on the disk, or whether the 
+hard disk was blank.
+.AB N
+If another operating system, such as MS-DOS, is already on part of 
+the disk, installing the UNIX Operating System as instructed won't 
+destroy that operating system, as long as the UNIX Operating System is
+installed on an unused partition.
+.AC
+If your system has pre-Release 4 UNIX on it, the following message displays
+(if your system has SVR4 on it, skip the next step):
+.SS CO
+Checking system configuration ... 
+
+WARNING: You have a UNIX system installed on your 
+hard disk which is NOT AT&T UNIX System V Release 
+4. Installation of the AT&T UNIX System V Release 
+4 will replace your existing system and files.
+
+WARNING: A new installation of the UNIX System 
+will destroy all files currently on the system.
+Do you wish to continue (y or n)? 
+.SE
+.LI
+If you have already saved any desired files, type \f4y\fP, then skip to the next 
+section on selecting packages.
+.AB N
+If you haven't already backed up your files, type \f4n\fP, shut down and 
+reboot the system, then back up your files (as described in Chapter 1).
+Then begin the installation again.
+.AC
+.IX "rebooting the system"
+If your system has SVR4 UNIX on it, the following message displays:
+.SS CO
+Do you wish to overlay your existing UNIX system (y or n)?
+.SE
+.LI
+Since you are doing a new installation, type \f4n\fP.
+If you aren't, go to Chapter 3.
+.sp
+Then the following displays: 
+.SS CO
+WARNING: A new installation of the UNIX System will 
+destroy all files currently on the system.
+Do you wish to continue (y or n)?
+.SE
+.LI
+Type \f4y\fP.
+.LE
+Next, you must choose which package sets and packages you want to install.
+.H 2 "Selecting Packages"
+The software packages are grouped in sets, according to function; BASIC,
+NETWORK, EXTENDED, DEVELOPMENT and HARDWARE. You can install an 
+entire set, or selectively install packages from each set.
+The sets and their corresponding packages are (in the order they are installed, 
+if selected):
+.IX "packages, BASIC"
+.IX "packages, NETWORK"
+.IX "packages, EXTENDED"
+.IX "packages, DEVELOPMENT"
+.IX "packages, HARDWARE"
+.BL
+.LI
+BASIC = ed terminf termcap windowing mouse fmli oam lp acp nsu
+.IX "ed package"
+.IX "terminf package"
+.IX "termcap package"
+.IX "windowing package"
+.IX "mouse package"
+.IX "fmli package"
+.IX "oam package"
+.IX "lp package"
+.IX "acp package"
+.IX "nsu package"
+.LI
+NETWORK = dfs rpc inet nfs rfs
+.IX "dfs package"
+.IX "rpc package"
+.IX "inet package"
+.IX "nfs package"
+.IX "rfs package"
+.LI
+DEVELOPMENT = scde
+.IX "scde package"
+.LI
+EXTENDED = compat face
+.IX "compat package"
+.IX "face package"
+.LI
+HARDWARE = wd imx586 ie6 qt 
+.IX "wd package"
+.IX "imx586 package"
+.IX "ie6 package"
+.IX "qt package"
+.LE
+.AB N
+If you have a SCSI system, the \f4qt\fP tape driver package is not listed 
+in the HARDWARE set.
+.AC
+Before selecting the packages you want to install, make note of the following:
+.BL
+.LI
+The base operating system and all the packages that make up the UNIX Operating System
+use about 100 MB of memory. The DOS partition (if desired), and the optional
+user slices (home, home2, tmp, etc.) must be sized accordingly. If your 
+hard disk is only 80 MB, you cannot install all the packages. Table A-1 in 
+Appendix A shows the minimum required disk space needed to install the 
+various packages.
+.IX "optional slices"
+.IX "DOS, partition"
+.IX "partition, DOS"
+.IX "memory, 100 MB"
+.IX "hard disk, 80 MB"
+.LI
+If your hard disk is smaller than 320 MB and you want to install all the 
+packages, you may not be able to create all the optional slices you desire. 
+Read Appendix B,
+.CT "Selecting Optional Slices" ,
+and plan your disk layout before beginning.
+.IX "hard disk, planning layout"
+.IX "hard disk, 320 MB"
+.IX "optional slices, selecting"
+.LI
+When selecting the Hardware Set packages, install only one Ethernet
+driver package - the one for which you have corresponding hardware.
+.IX "Ethernet, driver packages"
+.LE
+.H 3 "The Package Selection Questions"
+The first question asked about the package selection is as follows:
+.SS CO
+The BASIC Package Set contains the following packages:
+	(ed) Editing Package
+	(terminf) Remote Terminal Package
+	(termcap) AT&T Termcap Compatibility Package
+	(windowing) AT&T Windowing Utilities
+	(mouse)  Mouse Driver Package
+	(fmli)  AT&T Form and Menu Language Interpreter
+	(oam)  Operations, Administration, and Maintenance
+	(lp)  LP Print Service
+	(acp) Application Compatibility Package
+	(nsu) Network Support Utilities
+Do you wish to install any of these packages (default n): \s0
+.SE
+.AL 1
+.LI 10
+Answer as desired. If you press
+.HK EK
+to accept the default, you are 
+asked if you want to install the next package set (the NETWORK set). If 
+you answer \f4y\fP to the previous question, the system asks:
+.SS CO
+Install all packages? (default y):
+.SE
+You can install all the packages, or selectively install them.
+.LI
+To install all the packages in the set, press 
+.HK EK .
+.IX "packages, installing"
+You are then asked about the next package set. Respond as desired.
+.LI
+To selectively install the packages, type \f4n\fP .
+.IX "packages, selecting"
+.sp
+The system asks you one-by-one if you want to install the packages
+in the set. Respond as desired.
+.LI
+After you answer the questions about one package set, the system asks about 
+the next package set. Repeat the required steps.
+.P
+When you have finished selecting packages, a summary of the packages you 
+selected displays. For example:
+.SS CO
+Current Package Selections:
+BASIC:
+
+	Editing Package
+	Terminal Information Utilities
+	Termcap Compatibility Package
+	AT&T Windowing Utilities
+	Mouse Driver Package
+	Form and Menu Language Interpreter
+	Operations, Administration, and Maintenance
+	LP Print Service
+	Application Compatibility Package
+	Network Support Utilities
+    
+NETWORK:
+	DFS Utilities
+	Remote Procedure Call Utilities
+	Internet Utilities
+	Network File System Utilities
+	RFS Utilities
+
+DEVELOPMENT:
+	Standard C Development Environment
+EXTENDED:
+	BSD Compatibility Package
+	Framed Access Command Environment
+HARDWARE:
+	WD8003 Ethernet Driver
+	Intel Ethernet Driver
+	IE6 (3C503) Ethernet Driver
+	Cartridge Tape Utilities
+
+
+Are these Correct (default n):
+.SE
+.LI
+To change the selection, press
+.HK EK .
+The first question about the package sets redisplays and you are cycled through the entire selection process 
+again.
+.LI
+To accept the summary, type \f4y\fP.
+.LE
+Next, you must partition the hard disk for the desired operating systems.
+.H 2 "Partitioning the Hard Disk"
+Partitioning the hard disk involves specifying the desired operating 
+systems (for example, DOS and UNIX), and specifying the percentage of 
+hard disk space to allocate for each operating system. If your system has 
+two hard disks, you can install portions of the base operating system on both 
+hard disks. This leaves more space for file systems on the primary hard 
+disk.
+.IX "partition, UNIX"
+.IX "hard disk, primary"
+.IX "hard disk, partitioning"
+.IX "disk space, allocating"
+.P
+The system expects you to partition the second disk right after partitioning 
+the primary hard disk. However, if the second hard disk contains data 
+that you do not want to destroy, or if you want to manually create your own 
+filesystems on the second hard disk later, you can partition the second hard 
+disk using the \f4diskadd\fP(1M) command, described in the
+.BT "System Administrator's Reference Manual".
+.IX "filesystem"
+.IX "diskadd command"
+.IX "hard disk, secondary"
+.AB N
+All information in this section, unless noted, applies to both one- 
+and two-hard drive systems. Hard disks are referred to as disk 0 
+(the primary disk) and disk 1 (the secondary disk). If you have only 
+one disk, it is called disk 0. Screen messages refer to disk 0 or 1, as 
+appropriate.
+.IX "disk, 0"
+.IX "disk, 1"
+.AC
+If your system has two hard disk drives, the following message displays right 
+after you finish selecting the packages to install (If your system has only one 
+hard disk, skip two steps):
+.SS CO
+This system is equipped with two hard disk drives that can be 
+used for installation of the UNIX system.
+You can elect to install the entire UNIX system on the 
+primary hard disk or to install some of the UNIX system 
+components onto the secondary hard disk, allowing you, for 
+example, to create a larger root file system on the primary.
+
+The next step will create partition(s) on your hard disk(s). 
+Even if you partition both hard disks now, you may still 
+elect to install the UNIX system just on the primary hard disk.
+
+Do you wish to partition both hard disks at this time (y or n)?
+.SE
+.AL 1
+.LI 16
+If desired, type \f4y\fP. 
+.sp
+The system then says:
+.SS CO
+Please strike ENTER when ready or DEL to cancel the 
+installation.
+.SE
+.LI
+Press
+.HK EK .
+.LI
+When the system responds with the following, press
+.HK EK
+to continue the installation:
+.SS CO
+If you wish to use part of your hard disk for other 
+operating system(s) other than the UNIX System, such 
+as MS-DOS, that space MUST be reserved now.
+
+Please strike ENTER when ready or DEL to cancel the 
+installation:
+.SE
+If the disk didn't have an operating system installed on it,
+the system will recommend a default partitioning for your disk.
+If your disk does have an operating system installed,
+the current or default partitioning displays, followed by the following 
+screen:
+.SS CO
+.TS
+tab (;);
+lp;lp;lp;lp;lp;lp;lp.
+Partition;Status;Type;Start;End;Length;%
+1;;DOS;0;141;142;15
+2;Active;UNIX Sys;142;948;807;85
+.TE
+SELECT ONE OF THE FOLLOWING:
+
+1. Create a partition
+2  Change active (Boot from) partition
+3  Delete a partition
+4  Exit (Update disk configuration and exit)
+5  Cancel (Exit without updating disk configuration)
+
+Enter selection:
+.SE
+You can now change the partitioning shown, or accept the default.
+.LI
+To change the partitioning, follow the system prompts. First delete any
+existing UNIX partition, then create the new partition(s).
+.IX "partitioning, changing the default"
+.P
+When partitioning the hard disk, remember the following:
+.BL
+.LI
+The total of all the partitions can't equal more than 100% of the hard 
+disk.
+.LI
+If your hard disk is only 80 MB, you should probably remove any existing 
+DOS partition. Removing the DOS partition destroys any DOS system
+on the disk.
+.IX "DOS, partition"
+.IX "active partition"
+.IX "partition, active"
+.IX "partition, DOS"
+.LI
+If you want a DOS partition, it must be partition one and it cannot be
+designated as the active partition (the partition from which the operating 
+system boots) until after the UNIX installation is done.
+.LI
+If you will be using DOS Merge and your disk is larger than 120 MB, we 
+.IX "DOS, Merge"
+.IX "partition, DOS"
+recommend that you create a 32 MB DOS partition.
+.LE
+.LI
+To accept the default partitioning, type \f45\f1 (cancel).
+Or, after changing the partitioning the way you want, 
+update the disk configuration by typing \f44\fP (update and exit)
+when the above screen is
+displayed.
+.LE
+.H 2 "Selecting the Filesystem Types for Required Filesystems"
+Once the hard disk has been partitioned, you must select the filesystem 
+type for the required filesystems or slices. The following message displays:
+.SS CO
+You have allocated nnn megabytes to the UNIX Operating 
+System.
+
+The following hard disk elements are required and must 
+reside on your primary (disk 0) hard disk:
+Drive   Name               Type        File System/Slice
+----    ----               ----        ----------------
+0       Boot File System   bfs           /stand
+0       Swap Slice                       /dev/swap
+0       Root File System   ufs, s5, s52k /
+
+Please select the File System Type for Root File System (/)
+from the following list:
+s5, ufs, s52k default(s5):
+.SE
+.AL
+.LI 21
+Select the desired filesystem type for the root filesystem.
+If you are in doubt, use \f4s5\f1.
+The choices are:
+.VL .5i
+.LI "s5"
+This is the traditional UNIX System V file system type.
+Its advantage is that it has been around a long time and is proven reliable.
+It allows 14-character file names and handles data in 1024-byte blocks.
+If you will deal with mostly small files, an s5 file system will save space.
+.LI "ufs"
+Before being incorporated into System V, Release 4, this file system was
+traditionally just on Berkeley UNIX systems.
+It allows file names up to 255 characters long and uses 8192-byte block sizes.
+If you need long file names or are dealing with data base storage of
+large files, you may want to use this file system type.
+.LI "s52k"
+This file system type is just an s5 file system type with a logical
+block size of 2K.
+If most files on the system are about 2K logical blocks in size, this
+would be the best choice for fast accessing and efficient use of disk space.
+.IX "filesystem, ufs type"
+.IX "filesystem, s5 type"
+.IX "filesystem, s52k type"
+.LE
+.LE
+.P
+See the 
+.BT "System Administrator's Guide"
+for a further discussion of 
+the differences between s5 and ufs.
+.H 2 "Selecting Optional Disk Slices"
+.IX "optional slices, selecting"
+.IX "slices, selecting optional"
+The first question about the optional slices appears:
+.SS CO
+Do you wish to create any optional disk slices or 
+filesystems (y or n)?
+.SE
+Before deciding, note the following:
+.BL
+.LI
+None of the optional slices are needed to run SVR4 UNIX. 
+.LI
+The optional disk slices or filesystems can be installed on the primary disk 
+(disk 0) or secondary disk (disk 1).
+.LI
+If your hard disk is 140 MB or smaller, we recommend that you do not create 
+any optional slices (except for \f4/dev/dump\fP, if desired).
+.IX "/dev/dump"
+.LE
+.P
+Table 2-1 shows the optional slices that are available, and the purpose of the 
+slice.
+.IX "optional slices"
+.TB "Optional Filesystems and Devices"
+.TS
+center, box, tab (*);
+lb | lb
+l | l.
+Filesystem or Device*Purpose
+=
+.sp .5
+/usr*base system programs
+/home*user data files and programs
+/dev/dump*diagnosing system failures
+/var*add-on packages
+/home2*second user filesystem
+/tmp*temporary files, cleared at boot
+*unless it's a separate filesystem
+.TE
+.sp
+.AL 1
+.LI 22
+If you want to create optional disk slices, type \f4y\fP, then go to Appendix
+B for further instructions. 
+If you do not want optional slices, type \f4n\fP.
+.sp
+A summary of the selected layout displays.
+The summary looks similar to 
+the following:
+.SS CO
+The Hard disk layout you have selected is:
+
+Drive Name                Type    File System/slice
+----- -----------------   ----    -----------------
+0     Boot File System    bfs     /stand
+0     Root File System    ufs     /
+0     Swap slice          -       /dev/swap
+0     usr File System     ufs     /usr 
+1     User File System    ufs     /home
+
+Is this correct (y or n)
+.SE
+.LI
+If the layout shown is acceptable, type \f4y\fP.
+If the layout is unacceptable, type \f4n\fP.
+.sp
+(If you type \f4n\fP, you are again asked to select a
+filesystem as described in the previous section.
+When the layout is correct, type \f4y\fP.)
+.LE
+.H 2 "Surface Analysis"
+.IX "surface analysis, SCSI"
+If you have a SCSI system, the system asks the following:
+.SS CO
+Surface analysis of your hard disk is recommended but 
+not required.
+Do you wish to skip surface analysis? (y/n)
+.SE
+.AL 1
+.LI 24
+Since surface analysis is not necessary, type \f4y\fP.
+Continue with the next section,
+.ST "Recommended Disk Configuration" .
+.P
+If you have a non-SCSI system, the a surface analysis is automatically
+performed, and the following displays:
+.IX "surface analysis, non-SCSI"
+.LE
+.SS CO
+Checking for bad sectors in the UNIX System partition... 
+
+Checking cylinder: nn 
+.SE
+The surface analysis take several minutes.
+When the surface analysis is done,
+the recommended disk configuration displays.
+.H 2 "Recommended Disk Configuration"
+Next, the system displays the recommended disk configuration (the recommended
+sizes for the filesystems/slices). For example, the system displays the 
+following (the numbers differ depending on your hard disk size, the 
+amount of RAM, and the slices that were created):
+.IX "disk, default configuration"
+.SS CO
+The following slice sizes are the recommended 
+configuration for your disk.
+A / filesystem of 664 cylinders (99.2 MB)
+A /dev/swap slice of 108 cylinders (16.1 MB)
+A /stand filesystem of 34 cylinders (5.1 MB)
+
+Is this configuration acceptable? (y/n)
+.SE
+.AL 1
+.LI 25
+If:
+.BL
+.LI
+you didn't create any optional slices, the default configuration displayed 
+should be correct, so type \f4y\fP.
+.LI
+you created optional slices, go to the section,
+.ST "Determining if the Default Configuration is Correct"
+in Appendix B for further instructions.
+.LE
+Once you accept the configuration, the filesystems are automatically created
+on the hard disk, and a message such as the following displays: 
+.SS CO
+Filesystems will now be created on the needed slices
+Creating the / filesystem on /dev/rdsk/c0t0d0s1
+Creating the /stand filesystem on /dev/rdsk/c0t0d0sa
+.SE
+.IX "filesystem, creating"
+.AB N
+If you are partitioning two hard disks at this time, the recommended
+partitioning for the second hard disk displays. Specify whether 
+or not the configuration is acceptable.
+.AC
+When the filesystems have been created on the hard disk(s), the following 
+message displays:
+.SS CO
+A UNIX System will now be installed on your hard disk
+.......
+.SP .5
+Do you want to reclaim the BIOS SHADOW RAM?\s+1
+.SE
+.LI
+Answer Yes to allow the UNIX System to use all available
+sections of memory. Answer No if your computer's hardware
+manuals indicate that it is not possible to reclaim
+shadow RAM. If you aren't certain what your computer's
+manual advises, answer Yes.
+.AB N
+This question does not appear during all installations; it only
+appears if the system will attempt to reclaim shadow RAM.
+.P
+On some hardware configurations, attempting to reclaim
+shadow RAM causes the video to appear scrambled after
+you boot (in the following step). If this occurs, begin the installation
+again and answer No when you are asked whether to reclaim
+shadow RAM.
+.AC
+A minimal kernel and essential commands/utilities are now copied from the
+diskette to the hard disk and the necessary device nodes are created. This 
+takes several minutes.
+.IX "kernel"
+.IX "device nodes, creating"
+The installation then continues with the messages shown below.
+.SS CO
+Please standby.
+
+When you are prompted to reboot your system,
+remove the floppy disk from the disk drive, and strike 
+CTRL-ALT-DEL.
+
+Please wait for the prompt.
+
+Reboot the system now.
+.SE
+.LI
+When prompted to reboot the system, remove the diskette from the
+drive and press
+.HK Ctrl-Alt-Del .
+The system reboots.
+.IX "rebooting the system"
+.P
+.AB N
+Some keyboards may have more than one
+.HK Del
+key.
+If the system doesn't reboot with
+.HK Ctrl-Alt-Del ,
+and your keyboard has more than one 
+.HK Del
+key, try rebooting using the other
+.HK Del
+key.
+.AC
+.LE
+.H 2 "Install Base System"
+.IX istart Base System, copying files to disk
+You have installed the UNIX system's bootstrap programs
+onto your disk.
+Next, copy the remainder of the Base System 
+software onto the target system's hard disk.
+.AL 1
+.LI 28
+The system asks whether you are installing from cartridge tape
+or diskette.
+.SS
+Strike "C" to install from CARTRIDGE TAPE
+or "F" to install from FLOPPY DISKETTE.
+.P
+Strike ESC to stop.
+.SE
+.LI
+Type either \f4C\fP or \f4F\fP (do not press
+.HK EK )
+to indicate the installation media.
+.AB N
+If you press
+.HK EK ,
+since the media is not in the drive yet, you will get an
+error message and the # prompt will display.
+To start over again from the previous step,
+type \f4exit\fP.
+The above question will repeat.
+.AC
+.P
+The system prompts you 
+to insert the media, either a tape or a diskette.
+Depending on the
+installation media you are using, follow either the Diskette or
+Cartridge Tape instructions.
+.AL A
+.LI
+\f4Cartridge Tape\f1 - You will see this message:
+.SS
+Please insert the UNIX System V/386 Release 4.0 Version 4
+Foundation Set cartridge tape into the integral tape drive.
+.SP .5
+Strike ENTER when ready or DEL to cancel the installation.
+.SE
+.DL
+.LI
+Insert the cartridge tape into the drive and press
+.HK EK
+to begin copying the software from the media to the hard disk.
+.P
+It will take about 15 minutes to copy the Base System to the hard disk.
+The machine does not prompt you during this interval, so you 
+need not attend the target system.
+.LE
+.SP 2
+.B "Troubleshooting"
+.IX "troubleshooting, tape drive/controller problems"
+.BL
+.LI
+If you press
+.HK EK
+and the tape is not in the drive yet, you get an 
+error message and the # prompt displays. Make sure the tape cartridge
+is in the tape drive, then type \f4exit\fP. The previous question 
+repeats.
+.IX "error messages"
+.LI
+If you are told to insert the cartridge tape again, remove the tape 
+cartridge and make sure it is the correct one. Then reinsert it, making
+sure the protective, hinged flap goes into the slot first. If one 
+side of the tape cartridge is metal, the metal side should face down. 
+Then press
+.HK EK
+to continue.
+.LI
+If the system tells you that you cannot install off the cartridge 
+tape, it means the tape drive is incorrectly cabled, or the tape controller
+is incorrectly jumpered. If the tape controller is jumpered 
+wrong, the error message also says that the streaming tape should 
+be on host adaptor Slot=0, Target ID=3.
+.IX "tape drive, cable"
+.IX "tape controller, jumper"
+.P
+When these messages display, the installation process automatically aborts,
+and the # prompt displays.
+.P
+To continue the installation without making any changes to the 
+hardware, type \f4INSTALL\fP. Then go to the first question
+in the beginning of this chapter.
+.P
+To fix the hardware problems, shut down the system by typing 
+\f4uadmin 2 0\fP. Unplug all power cords. Reset the jumpers on the controller,
+if necessary. Look at the hardware reference manual that 
+came with your system to find out how to reset the jumpers. Make 
+sure the cable to the tape drive is connected correctly. Plug the power
+cords back in and turn on power to the computer. The system comes 
+back up, and the first question in this chapter repeats. 
+.IX "shutdown"
+.LE
+.AB W
+Reconfiguring the tape controller or checking the tape drive 
+cable involves removing the cover on the base unit. When the 
+cover is open, you are exposed to dangerous voltages. To reduce 
+the chance of severe shock, unplug the power cords of the base 
+unit and all peripherals before opening the base unit cover. Only 
+qualified service technicians or system integrators should perform these tasks. 
+.AC
+.LI
+\f4Diskette\f1 - If you are installing from diskettes, you need
+to remain near the target system to 
+insert and remove Base System diskettes, when prompted. 
+You will see this message:
+.SS
+Please insert the UNIX system "Base System Package"
+floppy disk 3 of \f2X\fP and then strike enter.
+.SE
+.DL
+.LI
+Insert Base System diskette number 3 and press
+.HK EK .
+.P
+When the diskette is installed, you will be prompted to insert
+the next diskette.  Repeat this process until all Base System
+floppies are installed.
+.LE
+.LE
+.SP
+Once the installation has completed, the following message appears:
+.SS
+UNIX System files have been copied to the hard disk. 
+Additional system files will now be setup. 
+Please stand by... System time is:
+Fri. Apr. 5 11:19:27 EST 1991
+.SE
+.IX iend Base System, copying files to disk
+.LE
+If you are doing an overlay installation, your existing root and install
+passwords and the system name are retained, so, skip to the section
+.ST "Installing Optional Packages" .
+If you are doing a new installation, after a few minutes 
+the system prompts you to enter root and install passwords and the system 
+name, as described next.
+.IX "password, root"
+.IX "password, install"
+.IX "root password"
+.IX "install password"
+.H 2 "Assigning Passwords and the System Name"
+After the system date and time displays, if you are doing a new installation,
+the system says:
+.SS CO
+Enter a password for the 'root' or super-user.
+(Note: This password must be kept EXTREMELY secure)
+New password:
+.SE
+.AB C
+It is vital to system security to assign passwords to the root and install
+logins.
+Remember these passwords and keep them secret.
+.AC
+.AL 1
+.LI 30
+.IX "password, root"
+Type the desired root password. The password does not appear on the screen 
+as you type it. Valid passwords are 6 to 8 characters long, and contain at 
+least one upper case letter, digit, or special character.
+.sp
+The system responds:
+.SS CO
+Re-enter new password:
+.SE
+.LI
+Retype the root password.
+.sp .5
+You are then prompted to: 
+.SS CO
+Enter a password for the 'install' user.
+
+(Note: This password must be kept EXTREMELY secure,
+       and should be different from the root password)
+New password:
+.SE
+.LI
+Enter the install password. You must also enter this password twice. 
+.IX "password, install"
+.sp .5
+Then the following message appears:
+.SS CO
+Please enter a System Name for this system. This will 
+set the "node" name and the "system" name. This name 
+will be used for uucp(1) and networking.
+Enter System Name:
+.SE
+.LI
+Enter the desired system name. The system name is the name other systems 
+use to communicate with yours over a network or phone line. Valid system 
+names are from three to eight characters and may contain any alphanumeric 
+character. Make sure your system name is unique among all systems in your 
+local area network.
+.IX "system, name"
+.LE
+.H 2 "Installing Optional Packages"
+At this point, the system asks you questions about the packages you selected 
+to install. 
+.IX "packages, installation questions"
+.AL 1
+.LI 34
+Look at Appendix C to see the questions the system asks about the packages. 
+The appendix tells you when specific answers are required.
+.LI
+Answer the questions when prompted.
+.LI
+When done answering the questions, come back to this procedure to continue.
+.P
+After you answer all the package installation questions,
+the system responds:
+.SS CO
+The question session is complete.
+
+The packages you have selected will now be installed.
+
+The UNIX Operating System will now be rebuilt.
+This will take some time.  Please wait.
+
+.SE
+Installing the package sets will be different for Cartridge Tape
+and Diskette installation.
+.AL A
+.LI
+\f4Cartridge Tape\f1 - All packages assigned to a set are contained on
+the cartridge tape.
+You will not have to change media once the cartridge tape is inserted.
+(Packages can take several hours to install.)
+.LI
+\f4Diskette\f1 - The system will ask you to insert the diskette for each
+package you requested earlier as follows:
+.SS
+Installing from the \f2<SETNAME>\fP Package Set.
+Please insert the \f2<package>\fP diskette.
+
+Insert diskette into Floppy Drive 1.
+Type [go] when ready or [q] to quit:
+.SE
+.DL
+.LI
+Insert the diskette into diskette drive 1.
+.LI
+Type \f4go\f1 when you are ready.
+.LE
+You will need to stay by the computer to repeat these steps until
+all requested packages are installed.
+.LE
+.SP
+You will then see the following messages:
+.SS
+Installation of selected packages is complete.
+Do you wish to install any floppy based packages
+before the system is rebuilt and rebooted (y/n) [n]?
+.SE
+.LI
+Answer 'y' if you want to install any other diskette-based
+packages or 'n' if you are done with installation.
+(At this point there are only a few operating system packages not installed.
+These packages are described in Appendix A.)
+.LE
+.H 2 "Installing Add-on Packages"
+Once all the desired 
+software sets have been copied on to the hard disk, the system
+will ask if you want to install any
+diskette-based add-on packages as follows:
+.SS CO
+\s-1*** IMPORTANT NOTICE ***
+        If installation of all desired packages is complete,
+        the machine should be rebooted in order to
+        ensure sane operation.  Execute the shutdown
+        command with the appropriate options and wait for
+        the "Console Login:" prompt.
+It is safe to remove the cartridge tape.
+Installation of selected packages is complete.
+Do you wish to install any floppy based packages
+before the system is rebuilt and rebooted (y/n) [n] ?\s0
+.SE
+.AL 1
+.LI 38
+Answer 'y' if you want to install any add-on packages or 'n' if
+you do not.
+.DL
+.LI
+If you answer 'y' you will see the following
+.SS CO
+Insert diskette into Floppy Drive 1.
+Type [go] when ready,
+  or [q] to quit:
+.SE
+Insert the diskette containing the add-on you want to install and type \f4go\f1.
+Then select the package you want to add.
+When the package is installed, type \f4q\f1.
+.LE
+You will see the following message:
+.SS CO
+*** IMPORTANT NOTICE ***
+    If installation of all desired packages is complete,
+    the machine should be rebooted in order to
+    ensure sane operation.  Execute the shutdown
+    command with the appropriate options and wait for
+    the "Console Login:" prompt.
+
+        The UNIX Operating System will now be rebuilt.
+        This will take some time.  Please wait.
+
+
+        The UNIX Kernel has been rebuilt
+
+
+The UNIX System installation process is now complete.
+
+Be sure the floppy drive is empty and strike CTRL-ALT-DEL to reboot
+your newly configured UNIX System.
+Reboot the system now.
+.SE
+.AL
+.LI 39
+Remove the media from the drive.
+.LI
+Reboot the system by simultaneously pressing the
+.HK CTRL-ALT-DEL
+keys.
+.AB N
+There may be more than one DEL key on your
+keyboard.
+If the first one you try doesn't work, try
+another.
+.AC
+.LI
+Log in as root.
+.LE
+You have completed the installation of the Operating System.
+.P
+See 
+.CT "Appendix D" 
+of this manual for instructions on installing other add-ons and application packages.
+.P
+See the 
+UNIX System V Release 4
+.BT "System Administrator's Guide"
+for instructions on setting up a new system.

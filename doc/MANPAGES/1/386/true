@@ -1,0 +1,48 @@
+'\"macro stdmacro
+.if n .pH g1.true @(#)true	40.4 of 1/3/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+'\"macro stdmacro
+.if n .pH g1.true @(#)true	40.2 of 5/22/89
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.nr X
+.if \nX=0 .ds x} true 1 "Essential Utilities" "\&"
+.if \nX=1 .ds x} true 1 "Essential Utilities"
+.if \nX=2 .ds x} true 1 "" "\&"
+.if \nX=3 .ds x} true "" "" "\&"
+.nr X
+.nr X
+.TH \*(x} "" "386 Computer Only"
+.SH NAME
+\f4true\f1, \f4false\f1 \- provide truth values
+.SH SYNOPSIS
+\f4true\f1
+.PP
+\f4false\f1
+.SH DESCRIPTION
+\f4true\fP
+does nothing, successfully.
+\f4false\f1
+does nothing, unsuccessfully.
+They are typically used in input to
+\f4sh\f1
+such as:
+.PP
+.RS
+while true
+.br
+do
+.RS
+.I command
+.RE
+done
+.RE
+.SH SEE ALSO
+\f4sh\fP(1).
+.SH DIAGNOSTICS
+\f4true\fP
+has exit status zero,
+\f4false,\fP
+and nonzero.
+.\"	@(#)true.1	6.2 of 9/2/83
+.Ee

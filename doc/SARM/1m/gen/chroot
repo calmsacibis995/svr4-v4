@@ -1,0 +1,62 @@
+'\"macro stdmacro
+.if n .pH g1a.chroot @(#)chroot	40.5.1.4 of 4/17/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} chroot 1M "System Administration Utilities" "\&"
+.if \nX=1 .ds x} chroot 1M "System Administration Utilities"
+.if \nX=2 .ds x} chroot 1M "" "\&"
+.if \nX=3 .ds x} chroot "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4chroot\f1 \- change root directory for a command
+.SH SYNOPSIS
+\f4/usr/sbin/chroot\f1
+\f2newroot command\f1
+.SH DESCRIPTION
+\f4chroot\f1
+causes the given command to be executed
+relative to the new root.
+The meaning of any initial slashes
+(\f4/\^\f1)
+in the path names is changed for the command and any of its child processes to
+\f2newroot\f1 .
+Furthermore, upon execution, the initial working directory is
+\f2newroot\f1 .
+.PP
+Notice, however, that if you redirect the output of the command
+to a file:
+.PP
+.RS
+\f4chroot \|\f2newroot \|command\f1 \|>\f4x\f1
+.RE
+.PP
+will create the file
+\f4x\f1
+relative to the original root of the command, not the new one.
+.PP
+The new root path name is always relative to the current root: even if a
+\f4chroot\fP
+is currently in effect, the
+\f2newroot\f1
+argument is relative to the current root of the
+running process.
+.PP
+This command can be run only by the super-user.
+.SH SEE ALSO
+\f4cd\f1(1) in the
+\f2User's Reference Manual\f1.
+.br
+\f4chroot\f1(2) in the
+\f2Programmer's Reference Manual\f1.
+.br
+\f2Programmer's Guide: ANSI C and Programming Support Tools\f1.
+.SH NOTES
+One should exercise extreme caution when referencing device files
+in the new root file system.
+.P
+When using \f4chroot\f1, do not exec a
+command that uses shared libraries. 
+This will result in killing your process.
+.\"	@(#)chroot.1m	6.2 of 9/2/83
+.Ee

@@ -1,0 +1,204 @@
+'\"macro stdmacro
+.if n .pH g1a.runacct @(#)runacct	40.11 of 5/1/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} runacct 1M "Job Accounting Utilities" "\&"
+.if \nX=1 .ds x} runacct 1M "Job Accounting Utilities"
+.if \nX=2 .ds x} runacct 1M "" "\&"
+.if \nX=3 .ds x} runacct "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4runacct\f1 \- run daily accounting
+.SH SYNOPSIS
+\f4/usr/lib/acct/runacct\f1
+[\f2\^mmdd\f1 [\^\f2state\f1\^]\^]
+.SH DESCRIPTION
+\f4runacct\fP
+is the main daily accounting shell procedure.
+It is normally initiated via
+\f4cron\fP.
+\f4runacct\fP
+processes connect, fee, disk, and process accounting files.
+It also prepares summary files for
+\f4prdaily\fP
+or billing purposes.
+\f4runacct\fP
+is distributed only to source code licensees.
+.PP
+\f4runacct\fP
+takes care not to damage active accounting files or summary
+files in the event of errors.
+It records its progress by writing descriptive diagnostic
+messages into
+.IR active .
+When an error is detected, a message is written to
+\f4/dev/console\f1,
+mail [see \f4mail\fP(1)] is sent to
+\f4root\f1 and \f4adm\f1,
+and \f4runacct\fP terminates.
+\f4runacct\fP
+uses a series of lock files to protect against re-invocation.
+The files
+\f4lock\f1 and \f4lock1\f1
+are used to prevent simultaneous invocation, and
+\f4lastdate\f1
+is used to prevent more than one invocation per day.
+.PP
+\f4runacct\fP
+breaks its processing into separate, restartable
+.I states\^
+using
+.I statefile
+to remember the last
+.I state\^
+completed.
+It accomplishes this by writing the
+.I state\^
+name into
+.IR statefile .
+\f4runacct\fP
+then looks in
+.I statefile
+to see what it has done and to determine what to process next.
+.I states\^
+are executed in the following order:
+.TP .75i
+\f4SETUP\f1
+Move active accounting files into working files.
+.TP
+\f4WTMPFIX\f1
+Verify integrity of
+\f4wtmp\fP
+file, correcting date changes if necessary.
+.TP
+\f4CONNECT\f1
+Produce connect session records in
+\f4tacct.h\f1
+format.
+.TP
+\f4PROCESS\f1
+Convert process accounting records into
+\f4tacct.h\f1
+format.
+.TP
+\f4MERGE\f1
+Merge the connect and process accounting records.
+.TP
+\f4FEES\f1
+Convert output of
+\f4chargefee\fP
+into
+\f4tacct.h\f1
+format and merge with connect and process accounting records.
+.TP
+\f4DISK\f1
+Merge disk accounting records with connect, process, and fee accounting
+records.
+.TP
+\f4MERGETACCT\f1
+Merge the daily total accounting records in \f4daytacct\f1
+with the summary total accounting records in
+\f4/var/adm/acct/sum/tacct\f1.
+.TP
+\f4CMS\f1
+Produce command summaries.
+.TP
+\f4USEREXIT\f1
+Any installation dependent accounting programs can be included here.
+.TP
+\f4CLEANUP\f1
+Clean up temporary files and exit.
+.PP
+To restart \f4runacct\fP after a failure, 
+first check the
+\f2active\f1
+file for diagnostics, then fix any corrupted data files,
+such as \f4pacct\f1 or \f4wtmp\f1.
+The
+\f4lock\f1, \f4lock1\f1, and
+\f4lastdate\f1 files must be removed 
+before \f4runacct\fP can be restarted.
+The argument
+.I mmdd\^
+is necessary if \f4runacct\fP is being restarted,
+and
+specifies the month and day for which
+\f4runacct\fP
+will rerun the accounting.
+The entry point for processing is based on the contents of
+.IR statefile ;
+to override this,
+include the desired
+.I state\^
+on the command line to designate where processing
+should begin.
+.SH EXAMPLES
+To start \f4runacct\fP:
+.RS 5
+\f4nohup runacct 2> /var/adm/acct/nite/fd2log &\f1
+.RE
+.PP
+To restart \f4runacct\fP:
+.RS 5
+\f4nohup runacct 0601 2>> /var/adm/acct/nite/fd2log &\f1
+.RE
+.PP
+To restart \f4runacct\fP at a specific \f2state\fP:
+.RS 5
+\f4nohup runacct 0601 \s-1MERGE\s0 2>> /var/adm/acct/nite/fd2log &\f1
+.RE
+.SH FILES
+\f4/var/adm/wtmp
+.br
+/var/adm/pacct\f2incr\fP
+.br
+/usr/src/cmd/acct/tacct.h
+.br
+/usr/src/cmd/acct/ctmp.h
+.br
+/var/adm/acct/nite/active
+.br
+/var/adm/acct/nite/daytacct
+.br
+/var/adm/acct/nite/lock
+.br
+/var/adm/acct/nite/lock1
+.br
+/var/adm/acct/nite/lastdate
+.br
+/var/adm/acct/nite/statefile
+.SH SEE ALSO
+\f4acct\fP(1M), \f4acctcms\fP(1M), \f4acctcon\fP(1M), \f4acctmerg\fP(1M),
+\f4acctprc\fP(1M), \f4acctsh\fP(1M), \f4cron\fP(1M), \f4fwtmp\fP(1M),
+\f4acct\fP(4), \f4utmp\fP(4)
+.br
+\f4acctcom\fP(1), \f4mail\fP(1) in the \f2User's Reference Manual\f1
+.br
+\f4acct\fP(2)
+in the \f2Programmer's Reference Manual\f1
+.SH NOTES 
+Normally it is not a good idea to restart
+\f4runacct\fP
+in the
+\f4SETUP\f1
+.IR state .
+Run
+\f4SETUP\f1
+manually and restart via:
+.PP
+.RS 5
+\f4runacct\f1
+.I mmdd\^
+\f4WTMPFIX\f1
+.RE
+.PP
+If
+\f4runacct\fP
+failed in the
+\f4PROCESS\f1
+.IR state,
+remove the last
+\f4ptacct\f1
+file because it will not be complete.
+.\"	@(#)runacct.1m	6.2 of 9/2/83

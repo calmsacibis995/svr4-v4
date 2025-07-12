@@ -1,0 +1,166 @@
+'\"macro stdmacro
+.if n .pH g3x.libwindows @(#)libwindows	40.14 of 5/29/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} libwindows 3X "Layers Windowing Utilities" "\&"
+.if \nX=1 .ds x} libwindows 3X "Layers Windowing Utilities"
+.if \nX=2 .ds x} libwindows 3X "" "\&"
+.if \nX=3 .ds x} libwindows "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4libwindows\f1 \- windowing terminal function library
+.SH SYNOPSIS
+\f4cc\f1
+[\f2flag\fP \|.\|.\|.] \f2file\fP \|.\|.\|.
+\f4\-lwindows\f1
+[\f2library\fP \|.\|.\|.]
+.PP
+.nf
+\f4int openagent (void);
+.sp .5
+int New (int cntlfd, int origin_x, int origin_y,
+  int corner_x, int corner_y);
+.sp .5
+int Newlayer (int cntlfd, int origin_x, int origin_y,
+  int corner_x, int corner_y);
+.sp .5
+int openchan (int chan);
+.sp .5
+int Runlayer (int chan, char \(**command);
+.sp .5
+int Current (int cntlfd, int chan);
+.sp .5
+int Delete (int cntlfd, int chan);
+.sp .5
+int Top (int cntlfd, int chan);
+.sp .5
+int Bottom (int cntlfd, int chan);
+.sp .5
+int Move (int cntlfd, int chan, int origin_x, int origin_y);
+.sp .5
+int Reshape (int cntlfd, int chan, int origin_x, int origin_y,
+  int corner_x, int corner_y);
+.sp .5
+int Exit (int cntlfd)\f1;
+.fi
+.SH DESCRIPTION
+This library of routines enables a program running on a host
+.SM UNIX
+system to perform
+windowing terminal functions
+[see \f4layers\fP(1)].
+.PP
+The \f4openagent\f1 routine opens the control channel of the \f4xt\fP(7)
+channel group to which the calling process belongs.
+Upon successful completion, \f4openagent\f1 returns a file descriptor
+that can be passed to any of the other \f4libwindows\fP routines
+except \f4openchan\f1 and \f4Runlayer\f1.
+(The file descriptor can also be passed to the \f4close\fP system call.)
+Otherwise, the value \f4\-1\fP is returned.
+.PP
+The \f4New\f1 routine creates a new layer with a separate shell.
+The \f2 origin_x, origin_y, corner_x\f1, and \f2corner_y\f1 arguments
+are the coordinates of the layer rectangle.
+If all the coordinate arguments are 0, the user must 
+define the layer's rectangle interactively.
+The layer appears on top of any overlapping layers.
+The layer is not made current (i.e., the
+keyboard is not attached to the new layer).
+Upon successful completion, \f4New\f1 returns the \f4xt\f1(7)
+channel number associated with the layer.
+Otherwise, the value \f4\-1\fP is returned.
+.PP
+The \f4Newlayer\f1 routine creates a new layer
+without executing a separate shell.
+Otherwise it is identical to \f4New\f1, described above.
+.PP
+The \f4openchan\f1 routine opens the channel argument \f2chan\f1
+which is obtained from the \f4New\f1 or \f4Newlayer\f1 routine.
+Upon successful completion, \f4openchan\f1 returns a file
+descriptor that can be used as input to 
+\f4write\fP(2) or \f4close\fP(2).
+Otherwise, the value \f4\-1\fP is returned.
+.PP
+The \f4Runlayer\f1 routine runs the specified \f2command\f1 in the
+layer associated with the channel argument \f2chan\f1.
+This layer is usually a layer previously created with \f4Newlayer\fP.
+Any processes currently attached to this layer will be killed,
+and the new process will have the environment of the
+\f4layers\fP
+process.
+.PP
+The \f4Current\f1 routine makes the layer associated with the
+channel argument \f2chan\f1 current (i.e., attached to the
+keyboard).
+.PP
+The \f4Delete\f1 routine deletes the layer associated with the
+channel argument \f2chan\f1 and kills all host processes associated
+with the layer.
+.PP
+The \f4Top\f1 routine makes the layer associated with the channel
+argument \f2chan\f1 appear on top of all overlapping layers.
+.PP
+The \f4Bottom\f1 routine puts the layer associated with the channel
+argument \f2chan\f1 under all overlapping layers.
+.PP
+The \f4Move\f1 routine moves the layer associated with the channel
+argument \f2chan\f1 from its current screen location to a new
+screen location at the origin point (\f2origin_x, origin_y\f1).
+The size and contents of the layer are maintained.
+.PP
+The \f4Reshape\f1 routine reshapes the layer associated with the
+channel argument \f2chan\f1.
+The arguments \f2origin_x, origin_y, corner_x\f1,
+and \f2corner_y\f1 are the new coordinates of the layer rectangle.
+If all the coordinate arguments are 0, the user is allowed to define
+the layer's rectangle interactively.
+.PP
+The \f4Exit\f1 routine causes the \f4layers\f1
+program to exit, killing all
+processes associated with it.
+.SH FILES
+\f2ULIBDIR\f4/libwindows.a\f1   windowing terminal function library
+.br
+\f2ULIBDIR\f1   usually \f4/usr/lib\f1
+.SH "SEE ALSO"
+\f4close\fP(2), \f4write\fP(2), \f4jagent\fP(5).
+.br
+\f4layers\fP(1) in the \f2User's Reference Manual\f1. 
+.SH DIAGNOSTICS
+Upon successful completion, \f4Runlayer\f1, \f4Current\f1,
+\f4Delete\f1, \f4Top\f1, \f4Bottom\f1,
+\f4Move\f1, \f4Reshape\f1, and \f4Exit\f1
+return \f40\f1, while \f4openagent\f1,
+\f4New\f1, \f4Newlayer\f1, and \f4openchan\f1
+return values as described above
+under each routine.
+If an error occurs, \f4\-1\f1 is
+returned.
+.SH NOTES
+The values of layer rectangle coordinates are dependent on the type of 
+terminal.
+This dependency affects the routines that pass layer rectangle coordinates:
+\f4Move\f1, \f4New\f1, \f4Newlayer\f1, and \f4Reshape\f1.
+Some terminals will expect these numbers to be passed as character
+positions (bytes);
+others will expect the information to be in pixels (bits).
+.br
+.ne 2i
+.P
+For example, for the AT&T 5620 DMD terminal,
+\f4New\f1, \f4Newlayer\f1, and
+\f4Reshape\f1 take minimum values of 8 (pixels) for
+.I origin_x
+and
+.I origin_y
+and maximum values of 792 (pixels) for
+.I corner_x
+and 1016 (pixels) for
+.IR corner_y .
+The minimum layer size is 28 by 28 pixels
+and the maximum layer size is 784 by 1008 pixels.
+.P
+It is recommended that applications use \f4/dev/xt/??[0-7]\fP instead of
+\f4/dev/xt??[0-7]\fP when accessing the \f4xt\fP driver.
+.Ee

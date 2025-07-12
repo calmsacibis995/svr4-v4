@@ -1,0 +1,329 @@
+'\"#ident  "@(#)doctools:macros/macros.h.src	1.2"
+'\"
+'\"       Copyright (c) 1990, 1991 UNIX System Laboratories, Inc.
+'\"       Copyright (c) 1984, 1986, 1987, 1988, 1989, 1990 AT&T
+'\"         All Rights Reserved
+'\"
+'\"       THIS IS UNPUBLISHED PROPRIETARY SOURCE CODE OF
+'\"       UNIX System Laboratories, Inc.
+'\"       The copyright notice above does not evidence any
+'\"       actual or intended publication of such source code.
+'\"
+'\"     macros.h: environment dependent settings are here;
+'\"               device specific font settings and preset
+'\"               registers should be changed here, if needed.
+'\"
+'\"
+'\"     Modified by: M. Shapiro
+'\"                 UNIX System Laboratories
+'\"                 attunix!mxs   201-522-5181
+'\"                   
+.\"
+.\" !!!!!!!!!!!!!!!!!! BEGIN FONT SPECIFIC LINES !!!!!!!!!!!
+.\"
+.\" ------------- Font Definitions use Define Strings --------------
+.\" 1. Match Device-Specfic font names with strings -1...-9
+.\" 2. Associate string names with typography needs (e.g. user input, headings)
+.\" 3. Also associate UI,CO,PC with in-line requests with \f or \f( and string
+.\"
+.\" No Matter what device, 1,2,3 are your primary fonts
+.\" These are the ONLY fonts that are loaded with the tools
+.\" -1 = f1 = Running Text Body
+.\" -2 = f2 = Book Titles, Substitutable Elements
+.\" -3 = f3 = Highlighted running text
+.\" =============================================
+.\" ****** !!!! Name of PostScript device for shading !!!! *******
+.ds[L post
+.\" ****** !!!! PostScript setgray value for shading !!!! *******
+.\" use -rg value to set from command line and/or change default here
+.\" -------- First Device: PostScript (-Tpost) ---------
+.ie \*(.Tpost \{.ds-1 PA
+.ds-2 PI
+.ds-3 PB
+.\" other available fonts; the numbers below are not significant
+.ds-4 CW
+.ds-5 CB
+.ds-6 HB
+.ds-7 H
+.\" @a -- font string for "User Input" text !!!MATCH with @A below!!!
+.\" @A -- In-line font string for \f4 "User Input" text  (use \fx or \f(XX
+.\"       depending on whether actual name (e.g., CW) is 1 or 2 letters)
+.ds@a \*(-4
+.ds@A \f(\*(-4
+.\" @b -- font string for "Computer Output" text !!!MATCH with @B below!!!
+.\" @B -- In-line font string for \f5 "Computer Output" text (use \fx or \f(XX)
+.ds@b \*(-4
+.ds@B \f(\*(-4
+.\" @c -- font string for "Program Code" text !!!MATCH with @C below!!!
+.\" @C -- In-line font string for \f6 "Program Code" text (use \fx or \f(XX)
+.ds@c \*(-4
+.ds@C \f(\*(-4
+.\" @d -- font string for Admonition text, tocs, and "screen continued"
+.ds@d \*(-7
+.\" @e -- font string for Headings, running headers/footers,...
+.ds@e \*(-6 \}
+.\" DO NOT LOSE \} AT END OF PREVIOUS LINE !
+.\" =================================================
+.\" ---- Second Device: APS-5 (-Taps) -------
+.el.ie \*(.Taps \{.ds-1 PA
+.ds-2 PI
+.ds-3 PB
+.\" other available fonts
+.ds-4 CW
+.ds-5 CB
+.ds-6 HB
+.ds-7 H
+.\" @a -- font string for "User Input" text !!!MATCH with @A below!!!
+.\" @A -- In-line font string for \f4 "User Input" text  (use \fx or \f(XX)
+.ds@a \*(-4
+.ds@A \f(\*(-4
+.\" @b -- font string for "Computer Output" text !!!MATCH with @B below!!!
+.\" @B -- In-line font string for \f5 "Computer Output" text (use \fx or \f(XX)
+.ds@b \*(-4
+.ds@B \f(\*(-4
+.\" @c -- font string for "Program Code" text !!!MATCH with @C below!!!
+.\" @C -- In-line font string for \f6 "Program Code" text (use \fx or \f(XX)
+.ds@c \*(-4
+.ds@C \f(\*(-4
+.\" @d -- font string for Admonition text and tocs
+.ds@d \*(-7
+.\" @e -- font string for Headings, running headers/footers,...
+.ds@e \*(-6 \}
+.\" DO NOT LOSE \} AT END OF PREVIOUS LINE !
+.\" ==================================================
+.\" ------- Third Device : Other (-T ...) --------
+.el \{.ds-1 PA
+.ds-2 PI
+.ds-3 PB
+.\" other available fonts
+.ds-4 CW
+.ds-5 CB
+.ds-6 HB
+.ds-7 H
+.\" @a -- font string for "User Input" text !!!MATCH with @A below!!!
+.\" @A -- In-line font string for \f4 "User Input" text  (use \fx or \f(XX)
+.ds@a \*(-4
+.ds@A \f(\*(-4
+.\" @b -- font string for "Computer Output" text !!!MATCH with @B below!!!
+.\" @B -- In-line font string for \f5 "Computer Output" text (use \fx or \f(XX)
+.ds@b \*(-4
+.ds@B \f(\*(-4
+.\" @c -- font string for "Program Code" text !!!MATCH with @C below!!!
+.\" @C -- In-line font string for \f6 "Program Code" text (use \fx or \f(XX)
+.ds@c \*(-4
+.ds@C \f(\*(-4
+.\" @d -- font string for Admonition text and tocs
+.ds@d \*(-7
+.\" @e -- font string for Headings, running headers/footers,...
+.ds@e \*(-6 \}
+.\" DO NOT LOSE \} AT END OF PREVIOUS LINE !
+.\" Specify fonts for markup code: CN, SB, EV, BT, HK
+.\" Use either the numbers (-1,-2...) or letters (@a, @b,...)
+.\" [Q -- CN font (command names)
+.ds[Q \*(@a
+.\" [R -- SB font (substitutable elements)
+.ds[R \*(-2
+.\" [S -- EV font (environment variables)
+.ds[S \*(@a
+.\" [W -- BT font (book title)
+.ds[W \*(-2
+.\" [X -- HK font (hard keys)
+.ds[X \*(@e
+.\" Load up fonts 1,2,3 ONLY
+.fp 1 \*(-1
+.fp 2 \*(-2
+.fp 3 \*(-3
+.\" =====================================================
+.\" !!!!!!!!!!!!!!!!!! END FONT SPECIFIC LINES !!!!!!!!!!!
+.\"
+.\" Set line length (LL), crop length (LC), page length of paper (LP),
+.\" page trap (PT), point size (PS), leading (VS),
+.\" page offset, recto (PO) verso (PE).
+.\" Setting depends on on page size selected with -rs option:
+.\" -rs1 is reference card  size (4" x 8.5"),
+.\" -rs2 is PC format (5.5" x 8.5"),
+.\" -rs3 is Squared format (7" x 9"),
+.\" -rs4 is U.S. letter size (8.5" x 11"),
+.\" -rs5 is European A4 size (5.38" x 8.27"),
+.\" -rs6 is European B5 size (5.93 x 9.89").
+.\" -rs7 is current Summit size (6.25" x 8.5") -- default
+.ie \ns=1 \{.nrLL 3i           \" 4x8.5
+.   nrLC 4.178i 
+.   nrLP 11i
+.   nrPT 3.06i
+.   nrPS 8
+.   nrVS 9
+.   nrPO 0.65i
+.   nrPE 0.65i\}
+.el.ie \ns=2 \{.nr LL 4.25i    \" 5.5x8.5
+.   nrLC 5.678i
+.   nrLP 11i
+.   nrPT 3.06i
+.   nrPS 9
+.   nrVS 10
+.   nrPO 0.915i
+.   nrPE 0.75i\}
+.el.ie \ns=3 \{.nrLL 5.75i     \" 7x9
+.   nrLC 7.178i
+.   nrLP 11i
+.   nrPT 2.56i
+.   nrPS 10
+.   nrVS 12
+.   nrPO 0.915i
+.   nrPE 0.75i\}
+.el.ie \ns=4 \{.nrLL 6.5i      \" 8.5x11 (no crops)
+.   nrLP 11i
+.   nrPT 1.37i
+.   nrPS 10
+.   nrVS 12
+.   nrPO 0.915i
+.   nrPE 0.75i\}
+.el.ie \ns=5 \{.nrLL 4.13i   \" 5.38x8.27
+.   nrLC 5.558i
+.   nrLP 11i
+.   nrPT 3.29i
+.   nrPS 10
+.   nrVS 12
+.   nrPO 0.915i
+.   nrPE 0.75i\}
+.el.ie \ns=6 \{.nrLL 4.68i   \" 5.93x9.89
+.   nrLC 6.108i
+.   nrLP 11i
+.   nrPT 1.67i
+.   nrPS 10
+.   nrVS 12
+.   nrPO 0.915i
+.   nrPE 0.75i\}
+.el \{.nrLL 5.08i           \" default 6.25x8.5
+.   nrLC 6.428i
+.   nrLP 11i
+.   nrPT 3.06i
+.   nrPS 10
+.   nrVS 12
+.   nrPO 0.915i
+.   nrPE 0.75i\}
+.ie \n(MP=1 'ad b          \" Justify left and right sides (manpages only)
+.el 'na                    \" No adjust for rest
+.if (\n(MP=1)&(\n(PS=10) \{.nrPS 9 \" change ps and vs for manpages
+.   nrVS 10 \}
+.if (\n(MP=1)&(\nQ=1) .rr Q    \" If manpage and Q not 2, erase rectopage flag
+.wh0 ^T                    \" Trap position for page top
+.wh-\n(PTu ^B              \" Trap position for page bottom
+.nr St \n(PTu+0.45i        \" Raise trap for continued screens
+.nr ?a 6n                  \" Hanging indent (man pages)
+.nr ?b 6n                  \" Default manpage macro indent
+.\" Define String for Date
+.if\nd0 .nr m \n(mo-1
+.if\nm0 .ds[A January
+.if\nm1 .ds[A February
+.if\nm2 .ds[A March
+.if\nm3 .ds[A April
+.if\nm4 .ds[A May
+.if\nm5 .ds[A June
+.if\nm6 .ds[A July
+.if\nm7 .ds[A August
+.if\nm8 .ds[A September
+.if\nm9 .ds[A October
+.if\nm10 .ds[A November
+.if\nm11 .ds[A December
+.if \nl .lg0               \" -rln suppresses ligatures
+.if \nk .bp                \" -rkn insert skip for first page
+.if \nR=2 .rm RP           \" -rRn remove .RP macro (this is 2nd troff)
+.\" String for em-dash (as in mmt file)
+.dsEM \(em
+.\" Set Draft Notice String
+.ds[B DRAFT COPY
+.\"  Set date string
+.ds[C \*([A \n(dy, 19\n(yr
+.\" Set File Name String
+.ds[D File:  \\*([E
+.\" Define crop mark strings
+.ds[F \D'l 0 -0.2i'\v'0.2i'\D'l -0.2i 0'
+.ds[G \D'l 0 -0.2i'\v'0.2i'\D'l 0.2i 0'
+.ds[H \D'l 0 0.2i'\v'-0.2i'\D'l -0.2i 0'
+.ds[I \D'l 0 0.2i'\v'-0.2i'\D'l 0.2i 0'
+.\" set starting values
+.ll \n(LLu
+.lt \n(LCu
+.ps \n(PS
+.vs \n(VS
+.ieo .po \n(POu
+.el .po \n(PEu
+'fi
+'in0
+.ft1
+.nr;t 7                        \" default draft copy notice
+.DT                            \" Set default tab setting
+.iet \{.if\n(MP=1 .nr)d 0.4v   \" Paragraph spacing for manual pages
+.   if!\n(MP=1 .nr)d 0.5v \}   \" Paragraph spacing for guides
+.el .nr)d 1v                   \" Paragraph Spacing for nroff
+.nrPD \n()du           \" PD is set here: )d is absolute value
+.nrRU \n(LLu+1P        \" Rule length
+.if\n(MP 'in \n(INu    \" manpage indent
+.ie \np .pn \np        \" -rpn start numbering with specified page
+.el .pn 1              \" default is page number 1
+.nr >F 0 1             \" Figure legends (FG)
+.nr >T 0 1             \" Table legends (TB)
+.nr >R 0 1             \" Reference Page (RP)
+.nr >s 0 1
+.nr >P 1               \" Paragraph register (.P)
+.nr >D 0 1             \" Display counter (DS/DE)
+.nr >L 0 1             \" List counter (BL/AL/VL/LI/LE)
+.nr >V 0 1             \" Variable list counter (VL/LE)
+.nr >B 0 1             \" Bullet list counter (BL/LE)
+.nr >H 1               \" H 1 marker: insures first H 1 doesn't cause bp
+.nr >r 0 1             \" Counter for RS/RE indent macros in rmt
+.\" Set string [Z with -rS# from shell = section id printed before page#
+.ie\nS .ds[Z \nS\\-
+.el .ds[Z Page\\0
+.\" Set [J to pid number given by -rz from shell
+.ie \nz .ds[J \nz
+.el .ds[J \n($$
+.if !\nv .nrv 1        \" -rvn Set Version number to 1, if not set
+.\" Constant Spacing Setting n/36 ems
+.ds[K 20
+.cs CW 20       \" Always compress CW font
+.\" Default scaling measure in Variable lists: set to i, unless Ch is used
+.ds[y i
+.\" Name of sed file for .RP macro
+.ds[M /tmp/\*([J-rp
+.\" Name of processing information file: # of Figures, etc.
+.ds[N /tmp/\*([J-lp
+.\" Name of expanded .so file for .SO macro
+.ds[O /tmp/\*([J-so
+.\" tmp file for font re-conversion for toc files
+.ds[P /tmp/\*([J-fs
+.\" Define trademark strings here
+.ien \{.dsTm \uTM\d
+.   dsRg (Reg.) \}
+.el \{.dsTm \v'-0.5m'\s-4TM\s+4\v'0.5m'
+.   dsRg \(rg \}
+.\" Define R, S, and Tm in Man Pages for Upwards Compatibility
+.if\n(MP \{.iet .dsR \(rg
+.   el .dsR (Reg.)
+.   iet .dsTm \v'-0.5m'\s-4TM\s+4\v'0.5m'
+.   el .dsTm \uTM\d
+.   dsS \s\n(PS\}
+.\" Proprietary marking strings (from mm)
+.ds]M \f2AT&T \- PROPRIETARY\fP
+.ds]O \f1Use pursuant to Company Instructions.\fP
+.ds]A \f2AT&T \- PROPRIETARY (RESTRICTED)\fP
+.ds]F \f1Solely for authorized persons having a need to know
+.ds]G pursuant to Company Instructions.\fP
+.ds]I \f2AT&T \- PROPRIETARY (REGISTERED)\fP
+.ds]J \f1Solely for authorized persons having a need to know
+.ds]K and subject to cover sheet instructions.\fP
+.ds]U \f1SEE PROPRIETARY NOTICE ON COVER PAGE\fP
+.ds]i \f1Copyright \(co 19\n(yr AT&T\fP
+.ds]j \f1All Rights Reserved.\fP
+.ds]m \f1THIS DOCUMENT CONTAINS PROPRIETARY INFORMATION OF
+.ds]o AT&T AND IS NOT TO BE DISCLOSED OR USED EXCEPT IN
+.ds]p ACCORDANCE WITH APPLICABLE AGREEMENTS.\fP
+.ds]q \f1Unpublished & Not for Publication\fP
+.\"
+.\" Print Date for Next Release: UPDATE AS NECESSARY!!
+.ds[5 6/91
+.\" sed substitution for fonts
+.sy echo "s/\\\\\*(@A/\\\\\f4/g;s/\\\\\*(@B/\\\\\f5/g;s/\\\\\*(@C/\\\\\f6/g" >\*([P
+.\"
+.\" ----------- EOF ------------------------------

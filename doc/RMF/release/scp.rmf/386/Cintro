@@ -1,0 +1,10 @@
+.if n .pH 386.Cintro @(#)Cintro	40.12
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.BK "Read Me First" "" "" ""   
+.\ACRONYM	                  
+.CH "The SCP Product" "" "Table of Contents" "1"
+.\CHAPTER	1
+.tC 1 "Introduction" 1-1  
+.tC 2 "SCP Software" 1-1  
+.tC 2 "SCP Documentation" 1-2  
+.tC L "Table 1-1:\0" "Hard-copy Documents Delivered with SCP" 1-2

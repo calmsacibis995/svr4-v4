@@ -1,0 +1,43 @@
+'\"macro stdmacro
+.if n .pH 386.ics_rdwr @(#)ics_rdwr	40.4 of 7/1/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.nr X
+.if \nX=0 .ds x} ics_rdwr D3D "Multibus II" "DDI" "\&"
+.if \nX=1 .ds x} ics_rdwr D3D "Multibus II" "DDI" "\&"
+.if \nX=2 .ds x} ics_rdwr D3D "" "\&"
+.if \nX=3 .ds x} ics_rdwr "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4ics_rdwr\f1 \- reads or writes a specified number of interconnect
+space registers from a given cardslot ID
+.SH SYNOPSIS
+.nf
+\f4#include <sys/ics.h>
+void ics_rdwr (\f2cmd\fP, \f2addr\fP)
+int cmd;
+struct ics_rw_struct *addr;\f1
+
+.fi
+.SH ARGUMENTS
+.PP
+.PD 0
+.TP 11
+\f2cmd\f1
+Either \f4ICS_READ_ICS\f1 or \f4ICS_WRITE_ICS\f1.
+.TP 11
+\f2addr\f1
+A pointer to the description of the buffers to be used for the transfer.
+.SH DESCRIPTION
+The \f4ics_rdwr\f1 routine reads or writes a specified number of
+interconnect space registers from a given cardslot ID.
+.PP
+In both interconnect space and in memory, \f2addr\f1 is a pointer to
+the description of the buffers to be used for the transfer.  \f2addr\f1
+contains fields for length and addresses.
+.SH RETURN VALUE
+None
+.SH LEVEL
+Base or Interrupt
+.SH SEE ALSO
+\f4ics_read\f1(D3D),
+\f4ics_write\f1(D3D)

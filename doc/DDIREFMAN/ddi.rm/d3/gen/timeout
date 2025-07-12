@@ -1,0 +1,72 @@
+'\"macro stdmacro
+.if n .pH gen.timeout @(#)timeout	40.2 of 1/7/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.nr X
+.if \nX=0 .ds x} timeout D3DK "" "DDI/DKI" "\&"
+.if \nX=1 .ds x} timeout D3DK "" "DDI/DKI"
+.if \nX=2 .ds x} timeout D3DK "" "\&"
+.if \nX=3 .ds x} timeout "" "" "\&"
+.TH \*(x}
+.IX "\f4timeout\fP(D3DK)"
+.SH NAME
+\f4timeout\f1 \- execute a function after a specified length of time
+.SH SYNOPSIS
+.nf
+.na
+\f4#include <sys/types.h>
+.sp 0.5
+int timeout(void (*\f2fn\f4)(), caddr_t \f2arg, \f4long \f2ticks\f4);\f1
+.ad
+.fi
+.SH ARGUMENTS
+.RS 0n 10
+.IP "\f2fn\f1" 10n
+Function to execute when the time increment expires.
+.IP "\f2arg\f1" 10n
+Argument to the function.
+.IP "\f2ticks\f1" 10n
+Number of clock ticks to wait before the function is called.
+A value of zero implies the function should be run as soon as possible.
+.RE
+.SH DESCRIPTION
+\f4timeout\f1 schedules the specified function to be
+called after the time interval specified by \f2ticks\fP.
+\f2arg\fP will be passed as the only argument to function \f2fn\fP.
+The \f4timeout\f1 call returns immediately without waiting for the
+specified function to execute.
+.P
+The length of time before the function is called is not guaranteed to be
+exactly equal to the requested time, but will be at least \f2ticks\fP
+clock ticks in length.
+The function specified by \f2fn\fP must neither sleep nor reference process context.
+When it runs, all interrupts will be blocked.  The function should not call any routine
+that will lower the processor priority level.
+.SH RETURN VALUE
+If the function specified by \f2fn\fP is successfully scheduled, \f4timeout\fP
+returns an identifier that can be passed to \f4untimeout\fP(D3DK) to cancel
+the request.
+If the function could not be scheduled (because the \f4timeout\f1 table is full),
+the following panic message results:
+.P
+.RS
+\f4PANIC:  Timeout table overflow\f1
+.RE
+.SH LEVEL
+Base or Interrupt.
+.SH NOTES
+Does not sleep.
+.sp 0.5
+Drivers should be careful to cancel any pending \f4timeout\fP functions that access
+data structures before these structures are de-initialized or deallocated.
+.sp 0.5
+After the time interval has expired, \f2fn\fP only runs if the processor is
+at base level.  Otherwise, \f2fn\fP is deferred until some time in the near future.
+.SH SEE ALSO
+.na
+\f4bufcall\f1(D3DK),
+\f4delay\f1(D3DK),
+\f4drv_usectohz\fP(D3DK),
+\f4untimeout\f1(D3DK)
+.ad
+.SH EXAMPLE
+See the \f4bufcall\f1(D3DK) function page for an example of \f4timeout\f1.

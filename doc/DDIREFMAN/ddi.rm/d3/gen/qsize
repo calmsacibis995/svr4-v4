@@ -1,0 +1,41 @@
+'\"macro stdmacro
+.if n .pH gen.qsize @(#)qsize	40.2 of 1/7/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.nr X
+.if \nX=0 .ds x} qsize D3DK "STREAMS" "DDI/DKI" "\&"
+.if \nX=1 .ds x} qsize D3DK "STREAMS" "DDI/DKI"
+.if \nX=2 .ds x} qsize D3DK "" "\&"
+.if \nX=3 .ds x} qsize "" "" "\&"
+.TH \*(x}
+.IX "\f4qsize\fP(D3DK)"
+.SH NAME
+\f4qsize\f1 \- find the number of messages on a queue
+.SH SYNOPSIS
+.nf
+.na
+\f4#include <sys/stream.h>
+.sp 0.5
+int qsize(queue_t *\f2q\f4);\f1
+.ad
+.fi
+.SH ARGUMENTS
+.RS 0n 10
+.IP "\f2q\f1" 10n
+Pointer to the queue to be evaluated.
+.RE
+.SH DESCRIPTION
+\f4qsize\f1 evaluates the queue pointed to by \f2q\f1 and returns the number of
+messages it contains.
+.SH RETURN VALUE
+If there are no message on the queue, \f4qsize\f1 returns 0.
+Otherwise, it returns the number of messages on
+the queue.
+.SH LEVEL
+Base or Interrupt.
+.SH NOTES
+Does not sleep.
+.SH SEE ALSO
+.na
+\f4msqb\fP(D4DK),
+\f4queue\fP(D4DK)
+.ad

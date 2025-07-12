@@ -1,0 +1,77 @@
+.if n .pH portguide.FS @(#)fs	40.2
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+..
+.BK "Programmer's Guide: Porting the Kernel"
+.CH "Directory - FS" 6
+.H 2 "Directory - FS"
+.IX FS directory
+The following files/functions in the \f3fs\fP directory
+have machine-specific functionality:
+.BL
+.LI
+\f3proc/prmachdep.c  -  MD\f1
+.br
+The address of the u-area is known.
+.br
+.BL
+.LI
+\f4prgetregs()/prsetregs()\f1 
+.br
+These functions return/set general registers from u-area.
+.LI
+\f4prgetpc()\fP
+.br
+This returns the program counter and it is called from portable code.
+.LI
+\f4prhasfp()\fP
+.br
+This function checks for floating point hardware.
+.LI
+\f4prgetfpregs()/prsetfpregs()\fP
+.br
+The functions get/set floating point registers.
+.LI
+\f4prgetpsaddr()\fP
+.br
+This returns (aligned) page table address for u-area.
+.LI
+\f4prstep()\fP
+.br
+The \f4prstep\f1 function sets a \f4psw\f1 to single-step the process.
+.LI
+\f4prsvaddr()\fP
+.br
+This sets the program counter to the specified virtual address.
+.LI
+\f4prmapin()\fP
+.br
+This maps an address to a kernel virtual address.
+.LI
+\f4prmapout()\fP
+.br
+\f4prmapout\f1 unmaps an address.
+This function is an inverse of \f4prmapin()\f1.
+.LI
+\f4prfastmapin()\f1
+.br
+This function short-cuts fast mapping-in of a processe's page.
+.LI
+\f4prfastmapout()\fP
+.br
+This is an inverse of \f4prfastmapin()\fP.
+.LE
+.LI
+\f3rfs/rf_canon.h  -  MD\f1
+.br
+This header file contains machine-specific translations to XDR format.
+.NE 10
+.LI
+\f3rfs/rfsr_subr.c  -  MD\f1
+.BL
+.LI
+\f4rfsr_rawread()\f1
+.br
+This function uses a segment's worth of memory.
+This may be machine-specific.
+.LE 

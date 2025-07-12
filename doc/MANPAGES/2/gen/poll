@@ -1,0 +1,152 @@
+'\"macro stdmacro
+.if n .pH g2.poll @(#)poll	40.19 of 4/26/91
+.\" Copyright 1989 AT&T
+.nr X
+.if \nX=0 .ds x} poll 2 "" "\&"
+.if \nX=1 .ds x} poll 2 ""
+.if \nX=2 .ds x} poll 2 "" "\&"
+.if \nX=3 .ds x} poll "" "" "\&"
+.if \nX=4 .ds x} poll "2" "EXTENSION" " "
+.TH \*(x}
+.SH NAME
+\f4poll\f1 \- input/output multiplexing
+.SH SYNOPSIS
+.nf
+\f4#include <stropts.h>
+#include <poll.h>
+   
+int poll(struct poll *fds, size_t nfds, int timeout);\f1
+.fi
+.SH DESCRIPTION
+\f4poll\fP provides users with a mechanism for multiplexing input/output
+over a set of file descriptors that reference open files.
+\f4poll\fP identifies those files on which a user can send or
+receive messages, or on which certain events have occurred.
+.P
+\f2fds\f1 specifies the file descriptors to be examined and the 
+events of interest for each file descriptor.
+It is a pointer to an array with one element for each
+open file descriptor of interest.
+The array's elements are \f4pollfd\f1 structures, which contain
+the following members:
+.P
+.RS
+.ta 1.75i
+.nf
+.ft 4
+int fd;	/* file descriptor */
+short events;	/* requested events */
+short revents;	/* returned events */
+.ft 1
+.fi
+.RE
+.P
+\f4fd\f1 specifies an open file descriptor and
+\f4events\f1 and \f4revents\f1 are bitmasks constructed by an OR of
+any combination of the following event flags:
+.TP 15
+\f4POLLIN\fP
+Data other than high priority data may be read without blocking.
+For \s-1STREAMS\s0, this flag is set even if the message is of zero length.
+.TP
+\f4POLLRDNORM\fP
+Normal data (priority band = 0) may be read without blocking.
+For \s-1STREAMS\s0, this flag is set even if the message is of zero length.
+.TP
+\f4POLLRDBAND\fP
+Data from a non-zero priority band may be read without blocking
+For \s-1STREAMS\s0, this flag is set even if the message is of zero length.
+.TP
+\f4POLLPRI\fP
+High priority data may be received without blocking.
+For \s-1STREAMS\s0, this flag is set even if the message is of zero length.
+.TP
+\f4POLLOUT\fP
+Normal data may be written without blocking.
+.TP
+\f4POLLWRNORM\fP
+The same as \f4POLLOUT\fP.
+.TP
+\f4POLLWRBAND\fP
+Priority data (priority band > 0) may be written.
+This event only examines bands that have been written to at least once.
+.TP
+\f4POLLERR\fP
+An error has occurred on the device or stream.
+This flag is only valid in the \f4revents\f1 bitmask;
+it is not used in the \f4events\f1 field.
+.TP
+\f4POLLHUP\fP
+A hangup has occurred on the stream.
+This event and \f4POLLOUT\fP are mutually exclusive;
+a stream can never be writable if a hangup has occurred.
+However, this event and \f4POLLIN, POLLRDNORM, POLLRDBAND\fP, or \f4POLLPRI\fP 
+are not mutually exclusive.
+This flag is only valid in the \f4revents\f1 bitmask;
+it is not used in the \f4events\f1 field.
+.TP
+\f4POLLNVAL\fP
+The specified \f4fd\f1 value does not belong to an open file.
+This flag is only valid in the \f4revents\f1 field;
+it is not used in the \f4events\f1 field.
+.PP
+For each element of the array pointed to by \f2fds\f1,
+\f4poll\fP examines the given file descriptor for the
+event(s) specified in \f4events\f1.
+The number of file descriptors to be examined is specified by \f2nfds\f1.
+.PP
+If the value \f4fd\f1 is less than zero, \f4events\f1 is ignored and \f4revents\f1
+is set to 0 in that entry on return from \f4poll\fP .
+.P
+The results of the \f4poll\fP query are stored in the
+\f4revents\f1 field in the \f4pollfd\f1 structure.
+Bits are set in the \f4revents\f1 bitmask to indicate
+which of the requested events are true.
+If none are true, none of the specified bits are
+set in \f4revents\f1 when the \f4poll\fP call returns.
+The event flags \f4POLLHUP\fP, \f4POLLERR\fP, and \f4POLLNVAL\fP are always 
+set in \f4revents\f1 if the conditions they indicate are true; this
+occurs even though these flags were not present in \f4events\f1.
+.P
+If none of the defined events have occurred on any selected file descriptor,
+\f4poll\fP waits at least \f2timeout\f1 milliseconds for an event to occur
+on any of the selected file descriptors.
+On a computer where millisecond timing accuracy is not available,
+\f2timeout\f1 is rounded up to the nearest legal value available
+on that system.
+If the value \f2timeout\f1 is 0, \f4poll\fP returns immediately.
+If the value of \f2timeout\f1 is \f4INFTIM\fP (or \-1),
+\f4poll\fP blocks until a requested event occurs or
+until the call is interrupted.
+\f4poll\fP is not affected by the \f4O_NDELAY\fP and \f4O_NONBLOCK\fP flags.
+.P
+\f4poll\fP fails if one or more of the following are true:
+.TP 15
+\f4EAGAIN\fP
+Allocation of internal data structures failed, but the request may
+be attempted again.
+.TP
+\f4EFAULT\fP
+Some argument points outside the allocated address space.
+.TP
+\f4EINTR\fP
+A signal was caught during the \f4poll\fP system call.
+.TP
+\f4EINVAL\fP
+The argument \f2nfds\f1 is greater than \f4{OPEN_MAX}\fP.
+.SH "SEE ALSO"
+\f4intro\fP(2), \f4getmsg\fP(2), \f4getrlimit\fP(2), \f4putmsg\fP(2), \f4read\fP(2),
+\f4write\fP(2) 
+.P
+\f2Programmer's Guide: \s-1STREAMS\s0\f1
+.SH DIAGNOSTICS
+Upon successful completion,
+a non-negative value is returned.
+A positive value indicates the total number of file descriptors
+that has been selected
+(that is, file descriptors for which the \f4revents\f1 field is
+non-zero).
+A value of 0 indicates that
+the call timed out and no file descriptors have been selected.
+Upon failure, a value of \-1 is returned and \f4errno\f1
+is set to indicate the error.

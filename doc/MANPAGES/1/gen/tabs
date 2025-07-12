@@ -1,0 +1,308 @@
+'\"macro stdmacro
+.if n .pH g1.tabs @(#)tabs	40.3.1.1 of 1/3/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} tabs 1 "User Environment Utilities" "\&"
+.if \nX=1 .ds x} tabs 1 "User Environment Utilities"
+.if \nX=2 .ds x} tabs 1 "" "\&"
+.if \nX=3 .ds x} tabs "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4tabs\f1 \- set tabs on a terminal
+.SH SYNOPSIS
+\f4tabs\f1 [\f2tabspec\f1] [\f4-T\f2type\f1] [\f4+m\f1\f2n\f1]
+.SH DESCRIPTION
+\f4tabs\fP
+sets the tab stops on the user's terminal according to the tab specification
+.IR tabspec ,
+after clearing any previous settings.
+The user's terminal must have remotely settable hardware tabs.
+.PP
+.TP 8
+.I tabspec
+Four types of tab specification are accepted for
+.IR tabspec .
+They are described below:
+canned
+(\f4\-\f2code\f1), repetitive (\f4\-\f2n\f1),
+arbitrary (\f2n1,n2,...\f1),
+and file (\f4\-\-\f2file\f1).
+If no
+.I tabspec\^
+is given, the default value is
+\f4\-8\f1,
+i.e.,
+\s-1UNIX\s+1 system ``standard'' tabs.
+The lowest column number is 1.
+Note that for
+\f4tabs\fP,
+column 1 always refers to the leftmost column on a terminal,
+even one whose column markers
+begin at 0,
+e.g., the \s-1DASI\s+1 300, \s-1DASI\s+1 300s, and \s-1DASI\s+1 450.
+.PP
+.TP 8
+\f4\-\f2code\^\f1
+Use one of the codes listed below to select a
+\f2canned\f1 set of tabs.
+The legal codes and their meanings are as follows:
+.RS 8
+.PD 0
+.TP 8
+\f4\-a\f1
+1,10,16,36,72
+.br
+Assembler, \s-1IBM\s+1 S/370, first format
+.TP
+\f4\-a2\f1
+1,10,16,40,72
+.br
+Assembler, \s-1IBM\s+1 S/370, second format
+.TP
+\f4\-c\f1
+1,8,12,16,20,55
+.br
+\s-1COBOL\s+1, normal format
+.TP
+\f4\-c2\f1
+1,6,10,14,49
+.br
+\s-1COBOL\s+1 compact format (columns 1-6 omitted).
+Using this code, the first typed character corresponds to card column 7,
+one space gets you to column 8, and a tab reaches column 12.
+Files using this tab setup
+should include a format specification
+as follows (see \f4fspec\fP(4)):
+.in +.5i
+\f4<:t\-c2 \|m6 \|s66 \|d:>\f1
+.in -.5i
+.TP
+\f4\-c3\f1
+1,6,10,14,18,22,26,30,34,38,42,46,50,54,58,62,67
+.br
+\s-1COBOL\s+1 compact format (columns 1-6 omitted), with more tabs than
+\f4\-c2.\f1
+This is the recommended format for \s-1COBOL\s+1.
+The appropriate format specification is [see \f4fspec\fP(4)]:
+.in +.5i
+\f4<:t\-c3 \|m6 \|s66 \|d:>\f1
+.in -.5i
+.TP
+\f4\-f\f1
+1,7,11,15,19,23
+.br
+\s-1FORTRAN\s+1
+.TP
+\f4\-p\f1
+1,5,9,13,17,21,25,29,33,37,41,45,49,53,57,61
+.br
+\s-1PL/I\s+1
+.TP
+\f4\-s\f1
+1,10,55
+.br
+\s-1SNOBOL\s+1
+.TP
+\f4\-u\f1
+1,12,20,44
+.br
+\s-1UNIVAC\s+1 1100 Assembler
+.RE
+.PD
+.br
+.ne 10
+.TP 8
+\f4\-\f2n\^\f1
+A \f2repetitive\f1 specification requests tabs at columns
+.RI 1+ n ,
+.RI 1+2\(** n ,
+etc.
+Of particular importance is the value
+\f48\f1:
+this represents the
+\s-1UNIX\s+1 system ``standard'' tab setting, and is the most likely tab setting to be found
+at a terminal.
+Another special case is the value
+\f40\f1,
+implying no tabs at all.
+.TP
+.IR n1 , n2 ,...
+The \f2arbitrary\f1 format permits the user to type any
+chosen set of numbers, separated by commas, in ascending order.
+Up to 40 numbers are allowed.
+If any number (except the first one) is preceded by a plus sign, it is taken
+as an increment to be added to the previous value.
+Thus, the formats
+\f41\f1,\f410\f1,\f420\f1,\f430\f1,
+and
+\f41\f1,\f410\f1,\f4+10\f1,\f4+10\f1
+are considered identical.
+.TP
+\f4\-\-\f2file\^\f1
+If the name of a \f2file\f1 is given,
+\f4tabs\fP
+reads the first line of the file, searching for a format specification [see
+\f4fspec\fP(4)].
+If it finds one there, it sets the tab stops according to it, otherwise it
+sets them as
+\f4\-8\f1.
+This type of specification may be used to make sure
+that a tabbed file is printed
+with correct tab settings, and would be used with the
+\f4pr\fP
+command:
+.in +.5i
+\f4tabs \-\-\f2 file\f1; \f4pr\f2 file\f1
+.in -.5i
+.RE
+.PP
+Any of the following also may be used;
+if a given flag occurs more than once,
+the last value given takes effect:
+.PP
+.TP 8
+\f4\-T\f2type\^\f1
+\f4tabs\fP
+usually needs to know the type of terminal in order to set tabs
+and always needs to know the type to set margins.
+.I type\^
+is a name listed in
+\f4term\fP(5).
+If no
+\f4\-T\f1
+flag is supplied,
+\f4tabs\fP
+uses the value of the environment variable
+\f4\s-1TERM\s0\f1.
+If
+\f4\s-1TERM\s0\f1
+is not defined
+in the
+.I environment\^
+[see
+\f4environ\fP(5)],
+\f4tabs\fP
+tries a sequence that will work for many terminals.
+.TP
+\f4+m\f2n\^\f1
+The margin argument may be used for some terminals.
+It causes
+all tabs to be moved over
+.I n\^
+columns by making column
+.I n+1\^
+the left margin.
+If
+\f4+m\f1
+is given without a value of
+.IR n ,
+the value assumed is
+\f410\f1.
+For a TermiNet, the first value in the tab list should
+be
+\f41\f1,
+or the margin will move even further to the right.
+The normal (leftmost) margin on most terminals is
+obtained by
+\f4+m0\f1.
+The margin for most terminals is reset only when the
+\f4+m\f1
+flag is given explicitly.
+.PP
+Tab and margin setting is performed via the standard output.
+.SH EXAMPLES
+.TP 15
+\f4tabs \-a\f1
+example using
+.I \-code
+(\f2canned\f1 specification) to set
+tabs to the settings required by the IBM
+assembler:  columns 1, 10, 16, 36, 72.
+.TP
+\f4tabs \-8\f1
+example of using
+.I \-n
+(\f2repetitive\f1 specification), where
+.I n
+is
+\f48\f1,
+causes tabs to be set every eighth position:
+.br
+1+(1*8), 1+(2*8), ... which evaluate to columns
+9, 17, ...
+.TP
+\f4tabs 1,8,36\f1
+example of using
+.IR n1 , n2 ,...
+(\f2arbitrary\f1 specification)
+to set tabs at columns 1, 8, and 36.
+.br
+.ne 10
+.TP
+\f4tabs \-\-$HOME/fspec.list/att4425\f1
+example of using
+.I \-\-file
+(\f2file\f1 specification) to indicate
+that tabs should be set according to the first
+line of
+\f4$HOME/fspec.list/att4425\fP
+[see \f4fspec\fP(4)].
+.br
+.ne 10
+.SH DIAGNOSTICS
+.PD 0
+.TP "\w@\f2unknown\ tab\ code\fP\ \ \ \ @u"
+\f4illegal tabs\f1
+when arbitrary tabs are ordered incorrectly
+.br
+.TP
+\f4illegal increment\f1
+when a zero or missing increment is found in
+an arbitrary specification
+.br
+.TP
+\f4unknown tab code\f1
+when a \f2canned\f1 code cannot be found
+.br
+.TP
+\f4can't open\f1
+if \f4\-\-\fP\f2file\fP option used, and file can't be opened
+.br
+.TP
+\f4file indirection\f1
+if \f4\-\-\fP\f2file\fP option used and the specification
+in that file points to yet another file.
+Indirection of this form is not permitted
+.br
+.PD
+.SH SEE ALSO
+\f4newform\fP(1), \f4pr\fP(1), \f4tput\fP(1).
+.br
+\f4fspec\fP(4),
+\f4terminfo\fP(4),
+\f4environ\fP(5), \f4term\fP(5) in the
+.I
+System Administrator\'s Reference Manual.
+.SH NOTES
+There is no consistency among different terminals regarding ways of
+clearing tabs and setting the left margin.
+.P
+\f4tabs\fP
+clears only 20 tabs (on terminals requiring a long sequence),
+but is willing to set 64.
+.P
+The
+.I tabspec
+used with the
+\f4tabs\fP
+command is different from the one used with the
+\f4newform\fP command.
+For example,
+\f4tabs \-8\f1
+sets every eighth position;
+whereas
+\f4newform \-i\-8\f1
+indicates that tabs are set every eighth position.
+.\"	@(#)tabs.1	6.2 of 9/2/83
+.Ee

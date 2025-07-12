@@ -1,0 +1,410 @@
+'\"macro stdmacro
+.if n .pH g2.sigvec @(#)sigvec	40.12 of 4/24/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.\" Copyright (c) 1988 Sun Microsystems, Inc. - All Rights Reserved.
+.\"
+.\" Copyright (c) 1980 Regents of the University of California.
+.\" All rights reserved.  The Berkeley software License Agreement
+.\" specifies the terms and conditions for redistribution.
+.\"
+.nr X
+.if \nX=0 .ds x} sigvec 3 "BSD Compatibility Package" "\&"
+.if \nX=1 .ds x} sigvec 3 "BSD Compatibility Package"
+.if \nX=2 .ds x} sigvec 3 "" "\&"
+.if \nX=3 .ds x} sigvec "" "" "\&"
+.TH \*(x}
+.ie t .ds d \(dg
+.el .ds d \z|+
+.ie t .ds b \(bu
+.el .ds b @
+.SH NAME
+\f4sigvec\f1 \- software signal facilities
+.SH SYNOPSIS
+.nf
+\f4cc \f1[ \f2flag\f1\. \. \. ] \f2file\f1 \. \. \. \f4\-lucb\f1
+.P
+.ft 4
+#include <signal.h>
+.P
+.ft 4
+int sigvec(sig, vec, ovec)
+int sig;
+struct sigvec \(**vec, \(**ovec;
+.ft 1
+.fi
+.SH DESCRIPTION
+The system defines a set of signals that may be delivered to a process.
+Signal delivery resembles the occurrence of a hardware interrupt:
+the signal is blocked from further occurrence, the current process
+context is saved, and a new one is built.
+A process may specify a
+.I handler
+to which a signal is delivered, or specify that a signal is to be
+.I blocked
+or
+.IR ignored .
+A process may also specify that a default action is to be taken
+by the system when a signal occurs.
+Normally, signal handlers execute on the current stack
+of the process.
+This may be changed, on a per-handler basis,
+so that signals are taken on a special
+.IR "signal stack" .
+.P
+All signals have the same
+.IR priority .
+Signal routines execute with the signal that caused their invocation
+to be
+.IR blocked ,
+but other signals may yet occur.
+A global
+.I "signal mask"
+defines the set of signals currently blocked from delivery
+to a process.
+The signal mask for a process is initialized
+from that of its parent (normally 0).
+It may be changed with a
+\f4sigblock\f1(3)
+or
+\f4sigsetmask\f1(3)
+call, or when a signal is delivered to the process.
+.P
+A process may also specify a set of
+.I flags
+for a signal that affect the delivery of that signal.
+.P
+When a signal condition arises for a process, the signal is added to a
+set of signals pending for the process.
+If the signal is not currently
+.I blocked
+by the process then it is delivered to the process.
+When a signal is
+delivered, the current state of the process is saved, a new signal mask
+is calculated (as described below), and the signal handler is invoked.
+The call to the handler is arranged so that if the signal handling
+routine returns normally the process will resume execution in the
+context from before the signal's delivery.
+If the process wishes to
+resume in a different context, then it must arrange to restore the
+previous context itself.
+.P
+When a signal is delivered to a process a new signal mask is installed
+for the duration of the process' signal handler (or until a
+\f4sigblock\f1
+or
+\f4sigsetmask\f1
+call is made).
+This mask is formed by taking the current signal mask,
+adding the signal to be delivered, and
+.SM OR\s0ing
+in the signal mask associated with the handler to be invoked.
+.P
+The action to be taken when the signal is delivered is specified by a
+\f4sigvec\f1
+structure, which includes the following members:
+.P
+.nf
+.ft 4
+.ps -1
+void    (\(**sv_handler)();      /\(** signal handler \(**/
+int     sv_mask;              /\(** signal mask to apply \(**/
+int     sv_flags;             /\(** see signal options \(**/
+.ps +1
+.ft 1
+.P
+.ps -1
+.ft 4
+#define SV_ONSTACK    /\(** take signal on signal stack \(**/
+#define SV_INTERRUPT  /\(** do not restart system on signal return \(**/
+#define SV_RESETHAND  /\(** reset handler to SIG_DFL when signal taken \(**/
+.ps +1
+.ft 1
+.fi
+.P
+If the
+\f4SV_ONSTACK\fP
+bit is set in the flags for that signal,
+the system will deliver the signal to the process on the signal stack
+specified with
+\f4sigstack\f1(2),
+rather than delivering the signal on the current stack.
+.P
+If
+.I vec
+is not a
+\f4NULL\fP
+pointer,
+\f4sigvec\f1
+assigns the handler specified by
+\f4sv_handler\f1,
+the mask specified by
+\f4sv_mask\f1,
+and the flags specified by
+\f4sv_flags\f1
+to the specified signal.
+If
+.I vec
+is a
+\f4NULL\fP
+pointer,
+\f4sigvec\f1
+does not change the handler, mask, or flags for the specified signal.
+.P
+The mask specified in
+.I vec
+is not allowed to block
+\f4SIGKILL\f1,
+\f4SIGSTOP\f1,
+or
+\f4SIGCONT\f1.
+The system enforces this restriction silently.
+.P
+If
+.I ovec
+is not a
+\f4NULL\fP
+pointer, the handler, mask, and flags in effect for the signal
+before the call to
+\f4sigvec\f1
+are returned to the user.
+A call to
+\f4sigvec\f1
+with
+.I vec
+a
+\f4NULL\fP
+pointer and
+.I ovec
+not a
+\f4NULL\fP
+pointer can be used to determine the handling information
+currently in effect for a signal without changing that information.
+.P
+The following is a list of all signals
+with names as in the include file
+\f4/usr/include/signal.h\f1:
+.RS
+.P
+.nf
+.ta \w'SIGVTALRM 'u +\w'15*  'u
+\f4SIGHUP\f1		hangup
+\f4SIGINT\f1		interrupt
+\f4SIGQUIT\f1	*	quit
+\f4SIGILL\f1	*	illegal instruction
+\f4SIGTRAP\f1	*	trace trap
+\f4SIGABRT\f1	*	abort (generated by \f4abort\fP(3) routine)
+\f4SIGEMT\f1	*	emulator trap
+\f4SIGFPE\f1	*	arithmetic exception
+\f4SIGKILL\f1		kill (cannot be caught, blocked, or ignored)
+\f4SIGBUS\f1	*	bus error
+\f4SIGSEGV\f1	*	segmentation violation
+\f4SIGSYS\f1	*	bad argument to system call
+\f4SIGPIPE\f1		write on a pipe or other socket with no one to read it
+\f4SIGALRM\f1		alarm clock
+\f4SIGTERM\f1		software termination signal
+\f4SIGURG\f1	\*b	urgent condition present on socket
+\f4SIGSTOP\f1	\*d	stop (cannot be caught, blocked, or ignored)
+\f4SIGTSTP\f1	\*d	stop signal generated from keyboard
+\f4SIGCONT\f1	\*b	continue after stop (cannot be blocked)
+\f4SIGCHLD\f1	\*b	child status has changed
+\f4SIGTTIN\f1	\*d	background read attempted from control terminal
+\f4SIGTTOU\f1	\*d	background write attempted to control terminal
+\f4SIGIO\f1	\*b	I/O is possible on a descriptor [see \f4fcntl\f1(2)]
+\f4SIGXCPU\f1		cpu time limit exceeded [see \f4setrlimit\f1(2)]
+\f4SIGXFSZ\f1		file size limit exceeded [see \f4setrlimit\f1(2)]
+\f4SIGVTALRM\f1		virtual time alarm [see \f4setitimer\f1(2)]
+\f4SIGPROF\f1		profiling timer alarm [see \f4setitimer\f1(2)]
+\f4SIGWINCH\f1	\*b	window changed [see \f4termio\f1(4)]
+.br
+.ne 3
+\f4SIGUSR1\f1		user-defined signal 1
+\f4SIGUSR2\f1		user-defined signal 2
+.fi
+.RE
+.P
+The starred signals in the list above cause a core image
+if not caught or ignored.
+.P
+Once a signal handler is installed, it remains installed until another
+\f4sigvec\f1
+call is made, or an
+\f4execve\f1(2)
+is performed, unless the
+\f4SV_RESETHAND\fP
+bit is set in the flags for that signal.
+In that case, the value of the
+handler for the caught signal will be set to \f4SIG_DFL\fP
+before entering the signal-catching function, unless the signal is
+\f4SIGILL\fP, \f4SIGPWR\fP, or \f4SIGTRAP\f1.
+Also, if this bit is set, the bit for that signal
+in the signal mask will not be set; unless the signal mask
+associated with that signal blocks that signal, further occurrences
+of that signal will not be blocked.
+The
+\f4SV_RESETHAND\fP
+flag is not available in 4.2\s-1BSD\s0,
+hence it should not be used if backward compatibility is needed.
+.P
+The default action for a signal may be reinstated by setting the
+signal's handler to
+\f4SIG_DFL\f1;
+this default is termination
+except for signals marked with \*b or \*d.
+Signals marked
+with \*b are discarded if the action is
+\f4SIG_DFL\f1;
+signals marked with
+\*d cause the process to stop.
+If the process is terminated, a ``core image'' will be made in
+the current working directory of the receiving
+process if the signal
+is one for which an asterisk appears in the above list
+[see \f4core\f1(4)].
+.P
+If the handler for that signal is
+\f4SIG_IGN\f1,
+the signal is subsequently ignored,
+and pending instances of the signal are discarded.
+.P
+If a caught signal occurs during certain system calls,
+the call is normally restarted.
+The call can be forced to terminate prematurely with an
+\f4EINTR\fP
+error return by setting the
+\f4SV_INTERRUPT\fP
+bit in the flags for that signal.
+The
+\f4SV_INTERRUPT\fP
+flag is not available in 4.2\s-1BSD\s0,
+hence it should not be used if backward compatibility is needed.
+The affected system calls are
+\f4read\f1(2)
+or
+\f4write\f1(2)
+on a slow device (such as a terminal or pipe or other socket, but not a file)
+and during a
+\f4wait\f1(2).
+.P
+After a
+\f4fork\f1(2)
+or
+\f4vfork\f1(2)
+the child inherits
+all signals, the signal mask, the signal stack,
+and the restart/interrupt and reset-signal-handler flags.
+.P
+The
+\f4execve\f1(2)
+call resets all
+caught signals to default action and
+resets all signals to be caught on the user stack.
+Ignored signals remain ignored;
+the signal mask remains the same;
+signals that interrupt system calls continue to do so.
+.P
+The accuracy of
+.I addr
+is machine dependent.
+For example, certain machines may supply an address that is on the
+same page as the address that caused the fault.
+If an appropriate
+.I addr
+cannot be computed it will be set to \f4SIG_NOADDR\f1.
+.SH "RETURN VALUE"
+A 0 value indicates that the call succeeded.
+A \-1 return value indicates that an error occurred and
+\f4errno\f1 is set to indicate the reason.
+.SH ERRORS
+\f4sigvec\f1
+will fail and no new signal handler will be installed if one
+of the following occurs:
+.TP 15
+\f4EFAULT\fP
+Either
+.I vec
+or
+.I ovec
+is not a
+\f4NULL\fP
+pointer and points to memory that is not a valid part of
+the process address space.
+.TP 15
+\f4EINVAL\fP
+.I Sig
+is not a valid signal number,
+or, \f4SIGKILL\f1, or \f4SIGSTOP\f1.
+.SH "SEE ALSO"
+\f4signal\f1(3),
+\f4sigpause\fP(3),
+\f4sigsetmask\fP(3),
+\f4wait\f1(3)
+.P
+\f4exec\fP(2),
+\f4fcntl\fP(2),
+\f4fork\fP(2),
+\f4getrlimit\fP(2),
+\f4getitimer\fP(2),
+\f4ioctl\fP(2),
+\f4kill\fP(2),
+\f4ptrace\fP(2),
+\f4read\fP(2),
+\f4sigblock\fP(2),
+\f4signal\fP(2),
+\f4sigstack\fP(2),
+\f4umask\fP(2),
+\f4wait\fP(2),
+\f4write\fP(2),
+\f4setjmp\fP(3)
+in the \f2Programmer's Reference Manual\f1
+.P
+\f4streamio\fP(7),
+\f4termio\fP(7)
+in the \f2System Administrator's Reference Manual\f1
+.SH NOTES
+\f4SIGPOLL\fP is a synonym for \f4SIGIO\f1.
+A \f4SIGIO\fP
+will be issued when a file descriptor corresponding to a
+.SM STREAMS
+[see \f4intro\f1(2)]
+file has a ``selectable'' event pending.
+Unless that descriptor has been put into asynchronous mode
+[see \f4fcntl\f1(2)],
+a process must specifically request that this signal be sent
+using the
+\f4I_SETSIG\fP
+\f4ioctl\f1 call
+[see \f4streamio\f1(4)].
+Otherwise, the process will never receive
+\f4SIGPOLL\f1.
+.P
+The handler routine can be declared:
+.RS
+.P
+.nf
+.ft 4
+void handler(sig, code, scp, addr)
+int sig, code;
+struct sigcontext \(**scp;
+char \(**addr;
+.ft 1
+.fi
+.RE
+.P
+Here
+.I sig
+is the signal number;
+.I code
+is a parameter of certain signals that provides additional detail;
+.I scp
+is a pointer to the
+\f4sigcontext\f1
+structure (defined in
+\f4signal.h\f1),
+used to restore the context from before the signal;
+and
+.I addr
+is additional address information.
+.P
+The signals \f4SIGKILL\f1, \f4SIGSTOP\f1, and
+\f4SIGCONT\fP cannot be ignored.

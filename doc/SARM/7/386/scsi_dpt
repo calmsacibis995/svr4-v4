@@ -1,0 +1,94 @@
+'\"macro stdmacro
+.if n .pH 386.scsi_dpt @(#)scsi_dpt	40.5 of 6/24/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.ds dr \f4scsi_dpt\fP
+.ds ha DPT PM2012
+.nr X
+.if \nX=0 .ds x} scsi_dpt 7 "DPT PM2012" "\&"
+.if \nX=1 .ds x} scsi_dpt 7 "DPT PM2012"
+.if \nX=2 .ds x} scsi_dpt 7 "" "\&"
+.if \nX=3 .ds x} scsi_dpt "" "" "\&"
+.TH \*(x}
+.SH NAME
+\*(dr \- \*(ha SCSI host adapter subsystem 
+.SH DESCRIPTION
+The \*(ha host adapter subsystem serves as a means for SCSI target
+drivers (such as \f4scsi_disk\fP, \f4scsi_tape\fP, and so on) to communicate
+on the SCSI bus with target controllers and logical units.  
+This driver implements the SCSI Driver Interface (SDI) 
+for such SCSI target drivers.
+.PP
+It is also possible to access this subsystem via the pass-through
+driver interface.
+To find the appropriate device to use, while any 
+device is being accessed through the target driver, use the \f4B_GETDEV\fP
+\f4ioctl\fP to get the major and minor numbers of the pass-through node.
+This node may be created and opened for use.
+.SH "ioctl Calls"
+There are three groups of \f4ioctl\fP commands [see \f4ioctl\fP(2) in the
+\f2Programmer's Reference Manual\fP] supported by \*(dr.
+The first group contains the \f4ioctl\fP commands used by the
+\*(dr driver itself:
+.RS
+.TP 15
+\f4SDI_SEND\fP
+Used to send a pass-through command to a target controller, bypassing
+the associated target driver.
+.TP
+\f4SDI_BRESET\fP
+Used to reset the SCSI bus.
+.TP
+\f4B_REDT\fP
+Used to read the extended \f4edt\fP data structure that is
+stored in the \*(dr driver's internal data structure. 
+.TP
+\f4B_HA_CNT\fP
+Used to get the value of the number of host adapters the \*(dr driver
+is configured for.
+.RE
+.LP
+The second group is used by the \*(dr driver and all target drivers
+that use the SDI protocol to communicate with
+their associated target controllers.
+.RS
+.TP 15
+\f4B_GETTYPE\fP
+Return the bus name (for example, \f4scsi\fP) and device driver name of a 
+specific device.
+.RE
+.LP
+The third group should be supported by all target drivers
+that use the SDI protocol to communicate with
+their associated target controllers.
+This \f4ioctl\fP is not supported by the 
+\*(dr driver.
+.RS
+.TP 15
+\f4B_GETDEV\fP
+Return the pass-through major and minor numbers to the calling utility
+to allow creation of a pass-through special device file.
+.RE
+.LP
+.SH FILES
+\f4/usr/include/sys/dpt.h\fP
+.br
+\f4/usr/include/sys/scsi.h\fP
+.br
+\f4/usr/include/sys/sdi.h\fP
+.br
+\f4/usr/include/sys/sdi_edt.h\fP
+.br
+\f4/etc/conf/pack.d/\*(dr/space.c\fP
+.SH "SEE ALSO"
+.na
+\f4scsi_adaptec\f1(7),
+\f4scsi_cdrom\fP(7),
+\f4scsi_disk\fP(7),
+\f4scsi_tape\fP(7),
+\f4scsi_wd7000\f1(7),
+\f4scsi_worm\fP(7)
+.P
+\f4ioctl\fP(2) in the \f2Programme's Reference Manual\fP
+.P
+\f2Programmer's Guide: SCSI Driver Interface (SDI)\fP
+.ad

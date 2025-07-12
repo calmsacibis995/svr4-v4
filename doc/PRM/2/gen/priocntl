@@ -1,0 +1,672 @@
+'\"!  tbl | mmdoc
+'\"macro stdmacro
+.if n .pH g2.priocntl @(#)priocntl	40.19.1.2 of 1/3/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} priocntl 2 "" "\&"
+.if \nX=1 .ds x} priocntl 2 ""
+.if \nX=2 .ds x} priocntl 2 "" "\&"
+.if \nX=3 .ds x} priocntl "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4priocntl\f1 \- process scheduler control
+.SH SYNOPSIS
+.nf
+.ft 4
+#include <sys/types.h>
+#include <sys/priocntl.h>
+#include <sys/rtpriocntl.h>
+#include <sys/tspriocntl.h>
+.sp .5
+long priocntl(idtype_t idtype, id_t id, int cmd, ... /* arg */);
+.fi
+.ft 1
+.SH DESCRIPTION
+\f4priocntl\fP provides for control over
+the scheduling of active processes.
+.P
+Processes fall into distinct classes with a separate scheduling
+policy applied to each class.
+The two classes currently supported are the real-time
+class and the time-sharing class.
+The characteristics of these classes are described under the
+corresponding headings below.
+The class attribute of a process is inherited across the \f4fork\fP
+and \f4exec\fP(2) system calls.
+\f4priocntl\fP can be used to
+dynamically change the class and
+other scheduling parameters associated with a running process
+or set of processes given the appropriate permissions as explained below.
+.P
+In the default configuration, a runnable real-time process
+runs before any other process.
+Therefore, inappropriate use of real-time processes can have
+a dramatic negative impact on system performance.
+.P
+\f4priocntl\fP provides an interface for specifying a process or
+set of processes to which the system call is to apply.
+The \f4priocntlset\fP system call
+provides the same functions as
+\f4priocntl\fP,
+but allows a more general interface for
+specifying the set of processes to which the system call is to
+apply.
+.P
+For \f4priocntl\fP, the \f2idtype\f1 and \f2id\f1 arguments are used
+together to specify the set of processes.
+The interpretation of \f2id\fP depends on the value of \f2idtype\f1.
+The possible values for \f2idtype\f1 and corresponding interpretations
+of \f2id\fP are as follows:
+.P
+.IP \f4P_PID 6m
+\f2id\fP is a process \s-1ID\s0 specifying a single process to which the
+\f4priocntl\fP system call is to apply.
+.IP \f4P_PPID 6m
+\f2id\fP is a parent process \s-1ID\s0.
+The \f4priocntl\fP system call applies to all processes with the
+specified parent process \s-1ID\s0.
+.IP \f4P_PGID 6m
+\f2id\fP is a process group \s-1ID\s0.
+The \f4priocntl\fP system call applies to all processes in the
+specified process group.
+.IP \f4P_SID\f1 6m
+\f2id\fP is a session \s-1ID\s0.
+The \f4priocntl\fP system call applies to all processes in the
+specified session.
+.IP \f4P_CID\f1 6m
+\f2id\fP is a class \s-1ID\s0 (returned by \f4priocntl\fP \f4PC_GETCID\f1 as
+explained below).
+The \f4priocntl\fP system call applies to all processes in the
+specified class.
+.IP \f4P_UID\f1 6m
+\f2id\fP is a user \s-1ID\s0.
+The \f4priocntl\fP system call applies to all processes with this effective
+user \s-1ID\s0.
+.IP \f4P_GID\f1 6m
+\f2id\fP is a group \s-1ID\s0.
+The \f4priocntl\fP system call applies to all processes with this effective
+group \s-1ID\s0.
+.IP \f4P_ALL\f1 6m
+The \f4priocntl\fP system call applies to all existing processes.
+The value of \f2id\fP is ignored.
+The permission restrictions described below still apply.
+.P
+An \f2id\fP value of \f4P_MYID\f1 can be used in conjunction with
+the \f2idtype\f1 value to specify the calling process's process \s-1ID\s0,
+parent process \s-1ID\s0, process group \s-1ID\s0, session \s-1ID\s0, class \s-1ID\s0, user \s-1ID\s0,
+or group \s-1ID\s0.
+.P
+In order to change the scheduling parameters of a process (using the
+\f4PC_SETPARMS\f1 command as explained below)
+the real or effective user \s-1ID\s0 of the process calling \f4priocntl\fP must
+match the real or effective user \s-1ID\s0 of the receiving process or the effective
+user \s-1ID\s0 of the calling process must be super-user.
+These are the minimum permission requirements enforced for all classes.
+An individual class may impose additional permissions requirements
+when setting processes to that class and/or when setting class-specific scheduling parameters.
+.P
+A special \f4sys\f1 scheduling class exists for the purpose of
+scheduling the execution of certain special system processes (such
+as the swapper process).
+It is not possible to change the class of any process to \f4sys\f1.
+In addition, any processes in the \f4sys\f1 class that are included
+in a specified set of processes are
+disregarded by \f4priocntl\fP.
+For example, an \f2idtype\f1 of \f4P_UID\f1 and an \f2id\fP value
+of zero would specify all processes with a user \s-1ID\s0 of zero except processes
+in the \f4sys\f1 class and (if changing the parameters using \f4PC_SETPARMS\f1)
+the \f4init\f1 process.
+.P
+The \f4init\f1 process is a special case.
+In order for a \f4priocntl\fP call to change the class or other
+scheduling parameters of the \f4init\f1 process (process \s-1ID\s0 1),
+it must be the only process specified by \f2idtype\f1 and \f2id\fP.
+The \f4init\f1 process may be assigned to any class configured on the
+system, but the time-sharing class is almost always the appropriate choice.
+(Other choices may be highly undesirable; see the
+\f2System Administrator's Guide\fP
+for more information.)
+.P
+The data type and value of \f2arg\f1 are specific to the type of
+command specified
+by \f2cmd\f1.
+.P
+The following structure is used by the \f4PC_GETCID\f1 and \f4PC_GETCLINFO\f1
+commands.
+.P
+.ft 4
+.nf
+typedef struct {
+.RS 3n
+.ft 4
+.TS
+a a a.
+id_t	pc_cid;	/* Class id */
+char	pc_clname[PC_CLNMSZ];	/* Class name */
+long	pc_clinfo[PC_CLINFOSZ];	/* Class information */
+.TE
+.RE
+.ft 4
+} pcinfo_t;
+.fi
+.ft 1
+.P
+\f4pc_cid\f1 is a class \s-1ID\s0 returned by \f4priocntl\fP \f4PC_GETCID\f1.
+\f4pc_clname\f1 is a buffer of size \f4PC_CLNMSZ\f1 (defined in
+\f4<sys/priocntl.h>\f1) used to hold the class name
+(\f4RT\f1 for real-time or \f4TS\f1 for time-sharing).
+.P
+\f4pc_clinfo\f1 is a buffer of size \f4PC_CLINFOSZ\f1 (defined in
+\f4<sys/priocntl.h>\f1) used to return data describing the
+attributes of a specific class.
+The format of this data is class-specific and is described under the
+appropriate heading (\s-1REAL-TIME CLASS\s0 or
+\s-1TIME-SHARING CLASS\s0) below.
+.P
+The following structure is used by the \f4PC_SETPARMS\f1
+and \f4PC_GETPARMS\f1 commands.
+.P
+.ft 4
+.nf
+typedef struct {
+.RS 3n
+.ft 4
+.TS
+a2 a2 a.
+id_t	pc_cid;	/* Process class */
+long	pc_clparms[PC_CLPARMSZ];	/* Class-specific params */
+.TE
+.RE
+.ft 4
+} pcparms_t;
+.fi
+.ft 1
+.P
+\f4pc_cid\f1 is a class \s-1ID\s0 (returned by \f4priocntl\fP \f4PC_GETCID\f1).
+The special class \s-1ID\s0 \f4PC_CLNULL\f1 can also be assigned to \f4pc_cid\f1
+when using the \f4PC_GETPARMS\f1 command as explained below.
+.P
+The \f4pc_clparms\f1 buffer holds class-specific scheduling parameters.
+The format of this parameter data for a particular class is described
+under the appropriate heading below.
+\f4PC_CLPARMSZ\f1 is the length of the \f4pc_clparms\f1 buffer
+and is defined in \f4<sys/priocntl.h>\f1.
+.SH Commands
+Available \f4priocntl\fP commands are:
+.P
+.IP \f4PC_GETCID\f1 3n
+Get class \s-1ID\s0 and class attributes for a specific class given class name.
+The \f2idtype\f1 and \f2id\fP arguments are ignored.
+If \f2arg\f1 is non-null, it points to a structure of type \f4pcinfo_t\f1.
+The \f4pc_clname\f1 buffer contains the name of the class whose attributes
+you are getting.
+.IP "" 3n
+On success, the class \s-1ID\s0 is
+returned in \f4pc_cid\f1, the class attributes are
+returned in the \f4pc_clinfo\f1 buffer, and the \f4priocntl\fP
+call returns the total number of classes configured in the system
+(including the \f4sys\f1 class).
+If the class specified by \f4pc_clname\f1 is invalid or is not currently
+configured the \f4priocntl\fP call returns \-1 with \f4errno\f1 set to
+\f4EINVAL\f1.
+The format of the attribute data returned for a given class is
+defined in the \f4<sys/rtpriocntl.h>\f1 or \f4<sys/tspriocntl.h>\f1 header
+file and described under the appropriate heading below.
+.IP "" 3n
+If \f2arg\f1 is a \f4NULL\f1 pointer, no attribute data is
+returned but the \f4priocntl\fP call still returns the number
+of configured classes.
+.IP \f4PC_GETCLINFO\f1 3n
+Get class name and class attributes for a specific class given class \s-1ID\s0.
+The \f2idtype\f1 and \f2id\fP arguments are ignored.
+If \f2arg\f1 is non-null, it points to a structure of type \f4pcinfo_t\f1.
+\f4pc_cid\f1 is the class \s-1ID\s0 of the class whose attributes you are
+getting.
+.IP "" 3n
+On success, the class name is
+returned in the \f4pc_clname\f1 buffer, the
+class attributes are returned in the \f4pc_clinfo\f1 buffer,
+and the \f4priocntl\fP call returns the total number of classes
+configured in the system (including the \f4sys\f1 class).
+The format of the attribute data returned for a given class is
+defined in the \f4<sys/rtpriocntl.h>\f1 or \f4<sys/tspriocntl.h>\f1 header
+file and described under the appropriate heading below.
+.IP "" 3n
+If \f2arg\f1 is a \f4NULL\f1 pointer, no attribute data is
+returned but the \f4priocntl\fP call still returns the number
+of configured classes.
+.IP \f4PC_SETPARMS\f1 3n
+Set the class and class-specific scheduling parameters of the
+specified process(es).
+\f2arg\f1 points to a structure of type \f4pcparms_t\f1.
+\f4pc_cid\f1 specifies the class you are setting and the \f4pc_clparms\f1
+buffer contains the class-specific parameters you are setting.
+The format of the class-specific parameter data is defined in the
+\f4<sys/rtpriocntl.h>\f1 or \f4<sys/tspriocntl.h>\f1 header file and
+described under the appropriate class heading below.
+.IP "" 3n
+When setting parameters for a set of processes, \f4priocntl\fP acts
+on the processes in the set in an implementation-specific order.
+If \f4priocntl\fP encounters an error for one or more of the target
+processes, it may or may not continue through the set of processes,
+depending on the nature of the error.
+If the error is related to permissions (\f4EPERM\f1),
+\f4priocntl\fP continues through the process set, resetting the
+parameters for all target processes for which the calling process
+has appropriate permissions.
+\f4priocntl\fP then returns \-1 with \f4errno\f1 set to
+\f4EPERM\f1 to indicate that the operation failed for
+one or more of the target processes.
+If \f4priocntl\fP encounters an error other than permissions, it does
+not continue through the set of target processes but returns the
+error immediately.
+.IP \f4PC_GETPARMS\f1 3n
+Get the class and/or class-specific scheduling parameters of a process.
+\f2arg\f1 points the a structure of type \f4pcparms_t\f1.
+.IP "" 3n
+If \f4pc_cid\f1 specifies a configured class and a single process
+belonging to that class is specified  by the \f2idtype\f1 and \f2id\f1
+values or the
+\f4procset\f1 structure, then the scheduling parameters of that
+process are returned in the \f4pc_clparms\f1 buffer.
+If the process specified does not exist or does not belong to the specified
+class, the \f4priocntl\fP call
+returns \-1 with \f4errno\f1 set to \f4ESRCH\f1.
+.IP "" 3n
+If \f4pc_cid\f1 specifies a configured class and a set of processes
+is specified, the scheduling parameters of one of the
+specified processes belonging to the specified class are returned in the
+\f4pc_clparms\f1 buffer and the \f4priocntl\fP call returns the
+process \s-1ID\s0 of the selected process.
+The criteria for selecting a process to return in this case is class dependent.
+If none of the specified processes exist or
+none of them belong to the specified class
+the \f4priocntl\fP call returns \-1 with \f4errno\f1 set to \f4ESRCH\f1.
+.IP "" 3n
+If \f4pc_cid\f1 is \f4PC_CLNULL\f1 and a single process is specified
+the class of the specified process is returned in \f4pc_cid\f1
+and its scheduling parameters
+are returned in the \f4pc_clparms\f1 buffer.
+.IP \f4PC_ADMIN\f1 3n
+This command provides functionality needed for the implementation of
+the \f4dispadmin\fP(1M) command.
+It is not intended for general use by other applications.
+.SH "REAL-TIME CLASS"
+The real-time class provides a fixed priority preemptive scheduling
+policy for those processes requiring fast and deterministic response and
+absolute user/application control of scheduling priorities.
+If the real-time class is configured in the system it should have
+exclusive control of the highest range of scheduling priorities on the system.
+This ensures that a runnable real-time process is given CPU
+service before any process belonging to any other class.
+.P
+The real-time class has a range of real-time priority (\f4rt_pri\f1)
+values that may be assigned to processes within the class.
+Real-time priorities range from 0 to \f2x\f1,
+where the value of \f2x\f1
+is configurable and can be determined for a specific installation by using
+the \f4priocntl\fP \f4PC_GETCID\f1 or \f4PC_GETCLINFO\f1 command.
+.P
+The real-time scheduling policy is a fixed priority policy.
+The scheduling priority of a real-time process is never changed
+except as the result of an explicit request by the user/application to
+change the \f4rt_pri\f1 value of the process.
+.P
+For processes in the real-time class, the \f4rt_pri\f1 value
+is, for all practical purposes, equivalent to the scheduling priority
+of the process.
+The \f4rt_pri\f1 value completely determines the scheduling priority of
+a real-time process relative to other processes within its class.
+Numerically higher \f4rt_pri\f1 values represent higher priorities.
+Since the real-time class controls the highest range of scheduling
+priorities in the system it is guaranteed that the runnable real-time
+process with the highest \f4rt_pri\f1 value is always selected to run
+before any other process in the system.
+.P
+In addition to providing control over priority, \f4priocntl\fP
+provides for control over the length of the time quantum allotted to
+processes in the real-time class.
+The time quantum value specifies the maximum amount of time a process
+may run assuming that it does not complete or enter a resource
+or event wait state (\f4sleep\fP).
+Note that if another process becomes runnable at a higher priority
+the currently running process may be preempted before receiving its
+full time quantum.
+.P
+The system's process scheduler keeps the runnable real-time
+processes on a set of scheduling queues.
+There is a separate queue for each configured real-time priority and all
+real-time processes with a given \f4rt_pri\f1 value are
+kept together on the appropriate queue.
+The processes on a given queue are ordered in FIFO order (that is,
+the process at the front of the queue has been waiting longest
+for service and receives the CPU first).
+Real-time processes that wake up after sleeping,
+processes which change to the real-time
+class from some other class, processes which
+have used their full time quantum,
+and runnable processes
+whose priority is reset by \f4priocntl\fP are all placed
+at the back of the appropriate queue for their priority.
+A process that is preempted by a higher priority process
+remains at the front of the queue (with whatever time is
+remaining in its time quantum) and runs before any other
+process at this priority.
+Following a \f4fork\fP(2) system call by a real-time
+process, the parent process continues to run while the
+child process (which inherits its parent's \f4rt_pri\f1 value)
+is placed at the back of the queue.
+.P
+The following structure (defined in \f4<sys/rtpriocntl.h>\f1)
+defines the format used for the attribute data for the real-time class.
+.P
+.br
+.ne 1i
+.ft 4
+.nf
+typedef struct {
+.RS 3n
+.ft 4
+.TS
+a a a.
+short	rt_maxpri;	/* Maximum real-time priority */
+.TE
+.RE
+.ft 4
+} rtinfo_t;
+.fi
+.ft 1
+.P
+The \f4priocntl\fP \f4PC_GETCID\f1 and
+\f4PC_GETCLINFO\f1 commands return real-time class attributes in
+the \f4pc_clinfo\f1 buffer in this format.
+.P
+\f4rt_maxpri\f1 specifies the configured maximum \f4rt_pri\f1 value
+for the real-time class (if \f4rt_maxpri\f1 is \f2x\f1, the
+valid real-time priorities range from 0 to \f2x\f1).
+.P
+The following structure (defined in \f4<sys/rtpriocntl.h>\f1)
+defines the format used to specify the real-time class-specific
+scheduling parameters of a process.
+.P
+.ft 4
+.nf
+typedef struct {
+.RS 3n
+.ft 4
+.TS
+a2 a2 a.
+short	rt_pri;	/* Real-Time priority */
+ulong	rt_tqsecs;	/* Seconds in time quantum */
+long	rt_tqnsecs;	/* Additional nanoseconds in quantum */
+.TE
+.RE
+.ft 4
+} rtparms_t;
+.fi
+.ft 1
+.P
+When using the \f4priocntl\fP \f4PC_SETPARMS\f1 or \f4PC_GETPARMS\f1
+commands, if \f4pc_cid\f1 specifies
+the real-time class, the data in the \f4pc_clparms\f1 buffer is
+in this format.
+.P
+The above commands can be used to set the real-time priority to the
+specified value or get the current \f4rt_pri\f1 value.
+Setting the \f4rt_pri\f1 value of a process that is currently
+running or runnable (not sleeping) causes the process to be placed
+at the back of the scheduling queue for the specified priority.
+The process is placed at the back of the appropriate queue
+regardless of whether the priority being set is
+different from the previous \f4rt_pri\f1 value of the process.
+Note that a running process can voluntarily release the CPU
+and go to the back of the scheduling queue at the same priority
+by resetting its \f4rt_pri\f1 value to its current real-time priority
+value.
+In order to change the time quantum of a process without setting the
+priority or affecting the process's position on the queue,
+the \f4rt_pri\f1 field should be set to the special value
+\f4RT_NOCHANGE\f1 (defined in \f4<sys/rtpriocntl.h>\f1).
+Specifying \f4RT_NOCHANGE\f1 when changing the class of a process
+to real-time from some other class results in the
+real-time priority being set to zero.
+.P
+For the \f4priocntl\fP \f4PC_GETPARMS\f1 command, if \f4pc_cid\f1
+specifies the real-time class and more than one real-time
+process is specified,
+the scheduling parameters
+of the real-time process with the highest \f4rt_pri\f1
+value among the specified processes are returned and the
+process \s-1ID\s0 of this process is returned by the \f4priocntl\fP
+call.
+If there is more than one process sharing the highest priority,
+the one returned is implementation-dependent.
+.P
+The \f4rt_tqsecs\f1 and \f4rt_tqnsecs\f1 fields are used for getting or
+setting the time quantum associated with a process or group of processes.
+\f4rt_tqsecs\f1 is the number of seconds in the time quantum and
+\f4rt_tqnsecs\f1 is the number of additional nanoseconds in the quantum.
+For example setting \f4rt_tqsecs\f1 to 2 and \f4rt_tqnsecs\f1 to
+500,000,000 (decimal) would result in a time quantum of two and one-half
+seconds.
+Specifying a value of 1,000,000,000 or greater in the \f4rt_tqnsecs\f1
+field results in an error return with \f4errno\f1 set to \f4EINVAL\f1.
+Although the resolution of the \f4tq_nsecs\f1 field is very fine,
+the specified time quantum length is rounded up by the system
+to the next integral multiple of the system clock's resolution.
+For example, the finest resolution currently available on the 3B2 is
+10 milliseconds (1 ``tick'').
+Setting \f4rt_tqsecs\f1 to 0 and \f4rt_tqnsecs\f1 to 34,000,000 would
+specify a time quantum of 34
+milliseconds, which would be rounded up to 4 ticks (40 milliseconds) on the
+3B2.
+The maximum time quantum that can be specified is implementation-specific
+and equal to \f4LONG_MAX\f1 ticks
+(defined in \f4<limits.h>\f1).
+Requesting a quantum greater than this maximum results in an error return
+with \f4errno\f1 set to \f4ERANGE\f1 (although infinite quantums may be requested
+using a special value as explained below).
+Requesting a time quantum of zero (setting both \f4rt_tqsecs\f1 and \f4rt_tqnsecs\f1
+to 0) results in an error return with \f4errno\f1 set to \f4EINVAL\f1.
+.P
+The \f4rt_tqnsecs\f1 field can also be set to one of the following special values
+(defined in \f4<sys/rtpriocntl.h>\f1), in which case the value of
+\f4rt_tqsecs\f1 is ignored.
+.RS 3n
+.IP \f4RT_TQINF\f1 10m
+Set an infinite time quantum.
+.IP \f4RT_TQDEF\f1 10m
+Set the time quantum to the default for this priority [see \f4rt_dptbl\fP(4)].
+.IP \f4RT_NOCHANGE\f1 10m
+Don't set the time quantum.
+This value is useful when
+you wish to change the real-time priority of a
+process without affecting the time quantum.
+Specifying this value when changing the class of a
+process to real-time from some other class
+is equivalent to specifying \f4RT_TQDEF\f1.
+.RE
+.P
+In order to change the class of a process to real-time (from
+any other class) the process invoking \f4priocntl\fP must have
+super-user privileges.
+In order to change the priority or time quantum
+setting of a real-time process the process invoking
+\f4priocntl\fP must have super-user privileges or must
+itself be a real-time process whose real or effective user \s-1ID\s0
+matches the real of effective user \s-1ID\s0 of the target process.
+.P
+The real-time priority and time quantum are inherited
+across the \f4fork\fP(2) and \f4exec\fP(2) system calls.
+.SH "TIME-SHARING CLASS"
+The time-sharing scheduling policy provides for a fair and
+effective allocation of the CPU resource among processes with
+varying CPU consumption characteristics.
+The objectives of the time-sharing policy are to provide good
+response time to interactive processes and good throughput to CPU-bound jobs
+while providing a degree of user/application control
+over scheduling.
+.P
+The time-sharing class has a range of
+time-sharing user priority (see \f4ts_upri\f1 below)
+values that may be assigned to processes within the class.
+A \f4ts_upri\f1 value of zero is defined as the default base priority
+for the time-sharing class.
+User priorities range from \f2\-x\f1 to \f2+x\f1 where the value of \f2x\f1
+is configurable and can be determined for a specific installation by using
+the \f4priocntl\fP \f4PC_GETCID\f1 or \f4PC_GETCLINFO\f1 command.
+.P
+The purpose of the user priority is to provide some degree of
+user/application control over the scheduling of processes in the
+time-sharing class.
+Raising or lowering the \f4ts_upri\f1 value of a process in the time-sharing
+class raises or lowers the scheduling priority of the process.
+It is not guaranteed, however, that a process with
+a higher \f4ts_upri\f1 value will run before one with a lower \f4ts_upri\f1
+value.
+This is because the \f4ts_upri\f1 value is just one factor used to
+determine the scheduling priority of a time-sharing process.
+The system may dynamically adjust the internal scheduling priority
+of a time-sharing process based on other factors such
+as recent CPU usage.
+.P
+In addition to the system-wide limits on user priority (returned by the
+\f4PC_GETCID\f1 and \f4PC_GETCLINFO\f1 commands) there is a per process
+user priority limit (see \f4ts_uprilim\f1 below), which specifies the maximum
+\f4ts_upri\f1 value that may be set for a given process; by default,
+\f4ts_uprilim\f1 is zero.
+.P
+The following structure (defined in \f4<sys/tspriocntl.h>\f1)
+defines the format used for the attribute data for the time-sharing class.
+.P
+.ft 4
+.nf
+typedef struct {
+.RS 3n
+.ft 4
+.TS
+a a a.
+short	ts_maxupri;	/* Limits of user priority range */
+.TE
+.RE
+.ft 4
+} tsinfo_t;
+.fi
+.ft 1
+.P
+The \f4priocntl\fP \f4PC_GETCID\f1 and
+\f4PC_GETCLINFO\f1 commands return time-sharing class attributes in
+the \f4pc_clinfo\f1 buffer in this format.
+.P
+\f4ts_maxupri\f1 specifies the configured maximum user priority value
+for the time-sharing class.
+If \f4ts_maxupri\f1 is \f2x\f1, the valid range for both user priorities
+and user priority limits is from \f2\-x\f1 to \f2+x\f1.
+.P
+The following structure (defined in \f4<sys/tspriocntl.h>\f1)
+defines the format used to specify the time-sharing class-specific
+scheduling parameters of a process.
+.P
+.ft 4
+.nf
+typedef struct {
+.RS 3n
+.ft 4
+.TS
+a a a.
+short	ts_uprilim;	/* Time-Sharing user priority limit */
+short	ts_upri;	/* Time-Sharing user priority */
+.TE
+.RE
+.ft 4
+} tsparms_t;
+.fi
+.ft 1
+.P
+When using the \f4priocntl\fP \f4PC_SETPARMS\f1 or \f4PC_GETPARMS\f1
+commands, if \f4pc_cid\f1 specifies
+the time-sharing class, the data in the \f4pc_clparms\f1 buffer is
+in this format.
+.P
+For the \f4priocntl\fP \f4PC_GETPARMS\f1 command, if \f4pc_cid\f1
+specifies the time-sharing class and more than one
+time-sharing process is specified,
+the scheduling parameters
+of the time-sharing process with the highest \f4ts_upri\f1
+value among the specified processes is returned and the
+process \s-1ID\s0 of this process is returned by the \f4priocntl\fP
+call.
+If there is more than one process sharing the highest user priority,
+the one returned is implementation-dependent.
+.P
+Any time-sharing process may lower its own \f4ts_uprilim\f1
+(or that of another process with the same user \s-1ID\s0).
+Only a time-sharing process with super-user privileges may
+raise a \f4ts_uprilim\f1.
+When changing the class of a process to time-sharing from some
+other class, super-user privileges are required in order to set the
+initial \f4ts_uprilim\f1 to a value greater than zero.
+Attempts by a non-super-user process to raise a \f4ts_uprilim\f1 or set
+an initial \f4ts_uprilim\f1 greater than zero fail with a return
+value of \-1 and \f4errno\f1 set to \f4EPERM\f1.
+.P
+Any time-sharing process may set its own \f4ts_upri\f1
+(or that of another process with the same user \s-1ID\s0) to any value
+less than or equal to the process's \f4ts_uprilim\f1.
+Attempts to set the \f4ts_upri\f1 above the \f4ts_uprilim\f1 (and/or
+set the \f4ts_uprilim\f1 below the \f4ts_upri\f1) result in the
+\f4ts_upri\f1 being set equal to the \f4ts_uprilim\f1.
+.P
+Either of the \f4ts_uprilim\f1 or \f4ts_upri\f1 fields may be
+set to the special value \f4TS_NOCHANGE\f1 (defined in
+\f4<sys/tspriocntl.h>\f1) in order to set one of the values
+without affecting the other.
+Specifying \f4TS_NOCHANGE\f1 for the \f4ts_upri\f1 when the \f4ts_uprilim\f1
+is being set to a value below the current \f4ts_upri\f1 causes the
+\f4ts_upri\f1 to be set equal to the \f4ts_uprilim\f1 being set.
+Specifying \f4TS_NOCHANGE\f1 for a parameter when changing the class of
+a process to time-sharing (from some other class) causes the parameter
+to be set to a default value.
+The default value for the \f4ts_uprilim\f1 is \f40\f1 and the default for the
+\f4ts_upri\f1 is to set it equal to the \f4ts_uprilim\f1 which is being set.
+.P
+The time-sharing user priority and user priority limit are inherited
+across the \f4fork\fP and \f4exec\fP
+system calls.
+.SH "RETURN VALUE"
+Unless otherwise noted above, \f4priocntl\fP returns a value of 0 on success.
+\f4priocntl\fP returns \-1 on failure
+and sets \f4errno\f1 to
+indicate the error.
+.SH ERRORS
+\f4priocntl\fP fails if one or more of the following are true :
+.IP \f4EPERM\f1 8m
+The calling process does not have the required permissions as
+explained above.
+.IP \f4EINVAL\f1 8m
+The argument \f2cmd\f1 was invalid, an invalid or unconfigured
+class was specified, or one of the parameters specified
+was invalid.
+.IP \f4ERANGE\f1 8m
+The requested time quantum is out of range.
+.IP \f4ESRCH\f1 8m
+None of the specified processes exist.
+.IP \f4EFAULT\f1 8m
+All or part of the area pointed to by one of the data pointers
+is outside the process's address space.
+.IP \f4ENOMEM\f1 8m
+An attempt to change the class of a process failed because of
+insufficient memory.
+.IP \f4EAGAIN\f1 8m
+An attempt to change the class of a process failed because of
+insufficient resources other than memory (for example, class-specific
+kernel data structures).
+.SH "SEE ALSO"
+\f4fork\fP(2), \f4exec\fP(2), \f4nice\fP(2), \f4priocntlset\fP(2)
+.P
+\f4priocntl\fP(1) in the
+.I "User's Reference Manual"
+.P
+\f4dispadmin\fP(1M), \f4rt_dptbl\fP(4), \f4ts_dptbl\fP(4) in the
+.I "System Administrator's Reference Manual"

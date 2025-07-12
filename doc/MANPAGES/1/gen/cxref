@@ -1,0 +1,150 @@
+'\macro stdmacro
+.if n .pH g1.cxref @(#)cxref	40.17.1.2 of 4/12/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} cxref 1 "" "\&"
+.if \nX=1 .ds x} cxref 1 ""
+.if \nX=2 .ds x} cxref 1 "" "\&"
+.if \nX=3 .ds x} cxref "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4cxref\f1 \- generate C program cross-reference
+.SH SYNOPSIS
+\f4cxref [\f2options\f4] \f2files\f1
+.SH DESCRIPTION
+The
+\f4cxref\fP
+command analyzes a collection of C files
+and builds a cross-reference table.
+\f4cxref\f
+uses a special version of
+\f4cc\fP
+to include
+\f4#define\f1'd
+information in its symbol table.
+It generates a list of all symbols (auto, static,
+and global) in each individual file, or, with the
+\f4\-c\f1
+option, in combination.
+The table includes four fields: NAME, FILE, FUNCTION, 
+and LINE. The line numbers appearing in the LINE field
+also show reference marks as appropriate. The reference marks include:
+.PP
+.nf
+.sp
+	assignment	=
+	declaration	\-
+	definition	*
+.sp
+.fi
+.PP
+If no reference marks appear, you can assume a general reference.
+.PP
+.SH OPTIONS
+\f4cxref\fP interprets the \f4-D\f1, \f4-I\f1, \f4-U\f1  
+options in the same manner that \f4cc\f1 does.
+In addition, \f4cxref\fP interprets the following options:
+.TP 8
+\f4\-c\f1
+Combine the source files into a single report.
+Without the \f4-c\f1 option, \f4cxref\fP generates a separate report
+for each file on the command line.
+.TP
+\f4\-d\f1
+Disables printing declarations, making the report easier to read.
+.TP
+\f4\-l\f1
+Does not print local variables.  Prints only global and file scope statistics.
+.TP
+\f4\-o \f2file\f1
+Direct output to \f2file\fP.
+.TP
+\f4\-s\f1
+Operates silently; does not print input file names.
+.TP
+\f4\-t\f1
+Format listing for 80-column width.
+.TP
+\f4\-w\f2num\f1
+Width option that formats output no wider than \f2num\f1 (decimal) columns.
+This option will default to 80 if \f2num\f1 is not specified or is less than 51.
+.TP
+\f4\-C\f1
+Runs only the first pass of \f4cxref\fP, creating a \f4.cx\f1 file that
+can later be passed to \f4cxref\fP.
+This is similar to the \f4-c\f1 option of \f4cc\fP or \f4lint\f1.
+.TP
+\f4\-F\f1
+Prints the full path of the referenced file names.
+.TP
+\f4\-L\f2cols\f1
+Modifies the number of columns in the LINE field. 
+If you do not specify a number, \f4cxref\fP defaults to five columns.
+.TP
+\f4\-V\f1
+Prints version information on the standard error.
+.bp
+.TP
+\f4\-W\f2name,file, function, line\f1
+Changes the default width of at least one field.
+The default widths are:
+.nf
+
+	Field		   Characters
+
+	NAME    		15
+	FILE			13
+	FUNCTION		15
+	LINE			20 (4 per column)
+.fi
+.SH FILES
+.TP 20
+\f2TMPDIR\f4/tcx.\(**\f1
+temporary files
+.TP
+\f2TMPDIR\f4/cx.\(**\f1
+temporary files
+.TP
+\f2LIBDIR\f4/xref
+accessed by \f4cxref\f1
+.sp .5
+.TP
+\f2LIBDIR\f1
+usually \f4/usr/ccs/lib\f1
+.TP
+\f2TMPDIR\f1
+usually \f4/var/tmp\f1
+but can be redefined by setting the environment
+variable \f4TMPDIR\f1
+[see \f4tempnam\f1 in \f4tmpnam\f1(3S)].
+.SH EXAMPLE
+.nf
+\f4a.c
+
+1	main()
+2	{
+3		int i;
+4		extern char c;
+5
+6		i=65;
+7	 	c=(char)i;
+8	}  \f1
+.sp2
+Resulting cross-reference table:
+.sp1
+.TS
+lf4 lf4 lf4 lf4 lf4.
+NAME	FILE	FUNCTION	LINE	
+c	a.c	---	4-	7=
+i	a.c	main	3\(**	6=   7
+main	a.c	---	2*	
+u3b2	predefined	---	0*
+unix	predefined	---	0*  \f1
+.TE
+.SH SEE ALSO
+\f4cc\fP(1), \f4lint\fP(1)
+.SH DIAGNOSTICS
+Error messages usually mean you cannot compile the files.
+.\"	@(#)cxref.1	6.2 of 9/2/83
+.Ee

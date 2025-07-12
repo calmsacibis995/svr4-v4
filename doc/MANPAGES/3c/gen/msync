@@ -1,0 +1,75 @@
+'\"macro stdmacro
+.if n .pH g3c.msync @(#)msync	40.15 of 1/3/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+'\" ident	"@(#)svid_rt:rt_os/msync	1.2"
+.\" @(#)msync 1.4 88/09/26 SMI;
+'\"macro stdmacro
+.\" Sun's msync.3
+.nr X
+.if \nX=0 .ds x} msync 3C "" "\&"
+.if \nX=1 .ds x} msync 3C ""
+.if \nX=2 .ds x} msync 3C "" "\&"
+.if \nX=3 .ds x} msync "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4msync\f1 \- synchronize memory with physical storage
+.SH SYNOPSIS
+.ft 4
+.nf
+#include <sys/types.h>
+#include <sys/mman.h>
+.sp0.5
+int msync(caddr_t addr, size_t len, int flags);
+.ft 1
+.fi
+.SH DESCRIPTION
+The function \f4msync\f1
+writes all modified copies of pages over the range
+[\f2addr, addr + len\f1\^)
+to their backing storage locations.
+\f4msync\f1
+optionally invalidates any copies so that further references to the pages
+will be obtained by the system from their backing
+storage locations.
+The backing storage for a modified \f4MAP_SHARED\fP mapping is the file
+the page is mapped to;
+the backing storage for a modified \f4MAP_PRIVATE\fP mapping is its swap area.
+.P
+\f2flags\f1
+is a bit pattern built from the following values:
+.TS
+center;
+l l l.
+\f4MS_ASYNC\f1	perform asynchronous writes
+\f4MS_SYNC\f1	perform synchronous writes
+\f4MS_INVALIDATE\f1	invalidate mappings
+.TE
+.P
+If \f4MS_ASYNC\f1 is set, \f4msync\fP returns immediately once all write operations are scheduled;
+if \f4MS_SYNC\f1 is set, \f4msync\fP does not return until all write operations are completed.
+.P
+\f4MS_INVALIDATE\f1 invalidates all cached copies of data in memory,
+so that further references to the pages will be obtained by the system from
+their backing storage locations.
+.P
+The effect of
+\f4msync(\f2addr\f4, \f2len\f4, \f2flags\f4)\f1
+is equivalent to:
+.P
+.RS
+\f4memcntl(\f2addr\f4, \f2len\f4, MC_SYNC, \f2flags\f4, 0, 0)\f1
+.RE
+.SH SEE ALSO
+\f4memcntl\fP(2),
+\f4mmap\fP(2),
+\f4sysconf\fP(3C).
+.SH DIAGNOSTICS
+Upon successful completion, the function \f4msync\f1 returns
+0; otherwise, it returns \-1 and 
+sets \f4errno\f1 to indicate the error.
+.SH NOTES
+\f4msync\f1
+should be used by programs that require a memory object to
+be
+in a known state, for example, in building transaction facilities.

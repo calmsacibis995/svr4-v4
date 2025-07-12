@@ -1,0 +1,253 @@
+'\"macro stdmacro
+.if n .pH g1.acctcom @(#)acctcom	40.14.1.1 of 1/3/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} acctcom 1 "Accounting Utilities" "\&"
+.if \nX=1 .ds x} acctcom 1 "Accounting Utilities"
+.if \nX=2 .ds x} acctcom 1 "" "\&"
+.if \nX=3 .ds x} acctcom "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4acctcom\f1 \- search and print process accounting file(s)
+.SH SYNOPSIS
+\f4acctcom\f1
+[
+.I options
+] [
+\f2file\f1 . . . ]
+.SH DESCRIPTION
+\f4acctcom\fP
+reads
+.IR file ,
+the standard input, or
+\f4/var/adm/pacct\f1,
+in the form described by
+\f4acct\fP(4)
+and writes selected records to the standard output.
+Each record represents the execution of one process.
+The output shows the
+\f5COMMAND NAME\f1,
+\f5USER\f1,
+\f5TTYNAME\f1,
+\f5START TIME\f1,
+\f5END TIME\f1,
+\f5REAL (SEC)\f1,
+\f5CPU (SEC)\f1,
+\f5MEAN SIZE (K)\f1,
+and optionally,
+\f5F\f1
+(the
+\f4fork\fP/\f4exec\fP
+flag:
+\f41\fP for \f4fork\fP without \f4exec\fP),
+\f5STAT\f1
+(the system exit status),
+\f5HOG FACTOR\f1,
+\f5KCORE MIN\f1,
+\f5CPU FACTOR\f1,
+\f5CHARS TRNSFD\f1,
+and 
+\f5BLOCKS READ\f1
+(total blocks read and written).
+.PP
+A \f4#\f1 is prepended to the command name
+if the command was executed with
+superuser
+privileges.
+If a process is not associated with a known terminal,
+a \f4?\fP is printed in the
+\f5TTYNAME\f1
+field.
+.PP
+If no \f2files\fP are specified, and
+if the standard input is associated with a terminal
+or
+\f4/dev/null\f1
+(as is the case when using
+\f4&\f1
+in the shell),
+\f4/var/adm/pacct\f1
+is read; otherwise, the standard input is read.
+.PP
+If any
+.I file\^
+arguments are given,
+they are read in their respective order.
+Each file is normally read forward, i.e., in chronological order
+by process completion time.
+The file
+\f4/var/adm/pacct\f1
+is usually the current file to be examined;
+a busy system may need several such files
+of which all but the current file are found in
+\f4/var/adm/pacct\f2incr\f1.
+.PP
+The \f2options\fP are:
+.PP
+.PD 0
+.TP 12
+\f4\-a\f1
+Show some average statistics about the processes selected.
+The statistics will be printed after the output records.
+.TP
+\f4\-b\f1
+Read backwards, showing latest commands first.
+This option has no effect when the standard input is read.
+.TP
+\f4\-f\f1
+Print the
+\f4fork\fP/\f4exec\fP
+flag and system exit status columns in the output.
+The numeric output for this option will be in octal.
+.TP
+\f4\-h\f1
+Instead of mean memory size,
+show the fraction of total available
+.SM CPU
+time consumed by the process
+during its execution.
+This ``hog factor'' is computed as (total \s-1CPU\s+1\ time)/(elapsed\ time).
+.TP
+\f4\-i\f1
+Print columns containing the \s-1I/O\s0 counts in the output.
+.TP
+\f4\-k\f1
+Instead of memory size, show total kcore-minutes.
+.TP
+\f4\-m\f1
+Show mean core size (the default).
+.TP
+\f4\-r\f1
+Show
+.SM CPU
+factor (user-time/(system-time + user-time)).
+.TP
+\f4\-t\f1
+Show separate system and user
+.SM CPU
+times.
+.TP
+\f4\-v\f1
+Exclude column headings from the output.
+.TP
+\f4\-l\f2 line\f1
+Show only processes belonging to terminal
+\f4/dev/term/\fP\f2line\fP.
+.TP
+\f4\-u\f2 user\f1
+Show only processes belonging to
+.I user\^
+that may be specified by: a user \s-1ID\s0,
+a login name
+that is then converted to a user \s-1ID\s0,
+a \f4#\fP, which designates only those processes executed with
+superuser
+privileges, or \f4?\fP,
+which designates only those processes associated with unknown
+user \s-1ID\s0s.
+.TP
+\f4\-g\f2 group\f1
+Show only processes belonging to
+\f2group\fP.
+The \f2group\fP may be designated by either the
+group \s-1ID\s+1 or group name.
+.TP
+\f4\-s\f2 time\f1
+Select processes existing at or after
+.IR time\^ ,
+given in the format
+.IR hr \|[\|:\^ min \|[\|:\^ sec \|]\|]\^.
+.TP
+\f4\-e\f2 time\f1
+Select processes existing at or before
+.IR time\^ .
+.TP
+\f4\-S\f2 time\f1
+Select processes starting at or after
+.IR time\^ .
+.TP
+\f4\-E\f2 time\f1
+Select processes ending at or before
+.IR time .
+Using the same
+.I time
+for both
+\f4\-S\f1
+and
+\f4\-E\f1
+shows the processes that existed at
+.IR time .
+.TP
+\f4\-n\f2 pattern\f1
+Show only commands matching
+.I pattern\^
+that may be a regular expression as in
+\f4regcmp\fP(3G), except + means one or more occurrences.
+.TP
+\f4\-q\f1
+Do not print any output records, just print the average statistics as with
+the
+\f4\-a\f1
+option.
+.TP
+\f4\-o\f2 ofile\f1
+Copy selected process records in the input data format to
+.IR ofile ;
+suppress printing to standard output.
+.TP
+\f4\-H\f2 factor\f1
+Show only processes that exceed
+\f2factor\fP,
+where factor is the ``hog factor'' as explained in option
+\f4\-h\f1
+above.
+.TP
+\f4\-O\f2 sec\f1
+Show only processes with
+.SM CPU
+system time exceeding
+.I sec
+seconds.
+.TP
+\f4\-C\f2 sec\f1
+Show only processes with total
+.SM CPU
+time (system-time + user-time) exceeding
+.I sec
+seconds.
+.TP
+\f4\-I\f2 chars\f1
+Show only processes transferring more characters than
+the cutoff number given by
+.IR chars .
+.PD
+.SH FILES
+\f4/etc/passwd\fP
+.br
+\f4/var/adm/pacct\fP\f2incr\fP
+.br
+\f4/etc/group\fP
+.SH SEE ALSO
+\f4ps\fP(1), \f4su\fP(1).
+.br
+\f4acct\fP(2), \f4regcmp\fP(3G)
+in the \f2Programmer's Reference Manual\f1.
+.br
+\f4acct\fP(1M), \f4acctcms\fP(1M), \f4acctcon\fP(1M), \f4acctmerg\fP(1M),
+\f4acctprc\fP(1M), \f4acctsh\fP(1M), \f4fwtmp\fP(1M), \f4runacct\fP(1M),
+\f4acct\fP(4), \f4utmp\fP(4)
+in the \f2System Administrator's Reference Manual\f1.
+.SH NOTES
+\f4acctcom\fP
+reports only on processes that have terminated; use
+\f4ps\fP(1)
+for active processes.
+.PP
+If
+.I time\^
+exceeds the present time,
+then
+.I time\^
+is interpreted as occurring on the previous day.
+.\"	@(#)acctcom.1	6.2 of 9/2/83

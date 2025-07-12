@@ -1,0 +1,49 @@
+'\"macro stdmacro
+.if n .pH g1.script @(#)script	40.7 of 1/3/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.\" @(#)script.1 1.4 88/10/17 SMI; from UCB 4.1
+.\" Copyright (c) 1988 Sun Microsystems, Inc - All Rights Reserved.
+.nr X
+.if \nX=0 .ds x} script 1 "User Environment Utilities" "\&"
+.if \nX=1 .ds x} script 1 "User Environment Utilities"
+.if \nX=2 .ds x} script 1 "" "\&"
+.if \nX=3 .ds x} script "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4script\f1 \- make typescript of a terminal session
+.SH SYNOPSIS
+\f4script\f1
+[
+\f4\-a\f1
+] [
+.I filename
+]
+.SH DESCRIPTION
+.LP
+\f4script\f1
+makes a typescript of everything printed on your terminal.
+The typescript is written to
+.IR filename ,
+or appended to
+.IR filename
+if the
+\f4\-a\f1
+option is given.
+If no file name is given, the typescript is saved in the file
+\f4typescript\f1.
+.LP
+The script ends when the forked shell exits or when \s-1ctrl-D\s+1
+is typed.
+.  \".LP
+.  \"This program is useful when using a crt and a hard-copy
+.  \"record of the dialog is desired, as for a student handing
+.  \"in a program that was developed on a crt when hard-copy
+.  \"terminals are in short supply.
+.SH NOTES
+.LP
+\f4script\f1
+places
+.I everything
+that appears on the screen in the log file,
+including prompts.

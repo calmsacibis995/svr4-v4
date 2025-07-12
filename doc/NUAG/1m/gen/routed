@@ -1,0 +1,253 @@
+'\"macro stdmacro
+.if n .pH g1a.routed @(#)routed	40.10 of 5/21/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} routed 1M "Internet Utilities" "\&"
+.if \nX=1 .ds x} routed 1M "Internet Utilities"
+.if \nX=2 .ds x} routed 1M "" "\&"
+.if \nX=3 .ds x} routed "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4routed\f1 \- network routing daemon
+.SH SYNOPSIS
+\f4in.routed\f1
+[
+\f4\-qstv\f1
+] [
+.I logfile
+]
+.SH DESCRIPTION
+\f4routed\f1
+is invoked at boot time to manage the network routing tables.
+The routing daemon uses a variant of the Xerox NS Routing
+Information Protocol in maintaining up to date kernel routing
+table entries.
+.LP
+In normal operation
+\f4routed\f1
+listens on
+\f4udp\f1(4P)
+socket 520 (decimal)
+for routing information packets.  If the host is an
+internetwork router, it periodically supplies copies
+of its routing tables to any directly connected hosts
+and networks.
+.LP
+When
+\f4routed\f1
+is started, it uses the
+\f4SIOCGIFCONF\f1
+\f4ioctl\f1(2)
+to find those
+directly connected interfaces configured into the
+system and marked \(lqup\(rq (the software loopback interface
+is ignored).  If multiple interfaces
+are present, it is assumed the host will forward packets
+between networks.
+\f4routed\f1
+then transmits a
+.I request
+packet on each interface (using a broadcast packet if
+the interface supports it) and enters a loop, listening
+for
+.I request
+and
+.I response
+packets from other hosts.
+.LP
+When a
+.I request
+packet is received,
+\f4routed\f1
+formulates a reply based on the information maintained in its
+internal tables.  The
+.I response
+packet generated contains a list of known routes, each marked
+with a \(lqhop count\(rq metric (a count of 16, or greater, is
+considered \(lqinfinite\(rq).  The metric associated with each
+route returned provides a metric
+relative to the sender.
+.LP
+.I request
+packets received by
+\f4routed\f1
+are used to update the routing tables if one of the following
+conditions is satisfied:
+.TP
+(1)
+No routing table entry exists for the destination network
+or host, and the metric indicates the destination is
+\(lqreachable\(rq
+(that is, the hop count is not infinite).
+.TP
+(2)
+The source host of the packet is the same as the router in the
+existing routing table entry.  That is, updated information is
+being received from the very internetwork router through which
+packets for the destination are being routed.
+.TP
+(3)
+The existing entry in the routing table has not been updated for
+some time (defined to be 90 seconds) and the route is at least
+as cost effective as the current route.
+.TP
+(4)
+The new route describes a shorter route to the destination than
+the one currently stored in the routing tables; the metric of
+the new route is compared against the one stored in the table
+to decide this.
+.LP
+When an update is applied,
+\f4routed\f1
+records the change in its internal tables and generates a
+.I response
+packet to all directly connected hosts and networks.
+\f4routed\f1
+waits a short period
+of time (no more than 30 seconds) before modifying the kernel's
+routing tables to allow possible unstable situations to settle.
+.LP
+In addition to processing incoming packets,
+\f4routed\f1
+also periodically checks the routing table entries.
+If an entry has not been updated for 3 minutes, the entry's metric
+is set to infinity and marked for deletion.  Deletions are delayed
+an additional 60 seconds to insure the invalidation is propagated
+throughout the internet.
+.LP
+Hosts acting as internetwork routers gratuitously supply their
+routing tables every 30 seconds to all directly connected hosts
+and networks.
+.LP
+Supplying the
+\f4\-s\f1
+option forces
+\f4routed\f1
+to supply routing information whether it is acting as an internetwork
+router or not.
+The
+\f4\-q\f1
+option is the opposite of the
+\f4\-s\f1
+option.  If the
+\f4\-t\f1
+option is specified, all packets sent or received are
+printed on the standard output.  In addition,
+\f4routed\f1
+will not divorce itself from the controlling terminal
+so that interrupts from the keyboard will kill the process.
+Any other argument supplied is interpreted as the name
+of file in which
+\f4routed\f1's
+actions should be logged.  This log contains information
+about any changes to the routing tables and a history of
+recent messages sent and received which are related to
+the changed route.
+The
+\f4-v\f1
+option allows a logfile to be created showing the
+changes made to the routing tables with a timestamp.
+.LP
+In addition to the facilities described above,
+\f4routed\f1
+supports the notion of \(lqdistant\(rq
+.I passive
+and
+.I active
+gateways.  When
+\f4routed\f1
+is started up, it reads the file
+\f4gateways\f1
+to find gateways which may not be identified using
+the
+\f4SIOGIFCONF\f1
+\f4ioctl\f1.
+Gateways specified in this manner should be marked passive
+if they are not expected to exchange routing information,
+while gateways marked active
+should be willing to exchange routing information (that is,
+they should have a
+\f4routed\f1
+process running on the machine).
+Passive gateways are maintained in the
+routing tables forever and information
+regarding their existence is included in
+any routing information transmitted.
+Active gateways are treated equally to network
+interfaces.  Routing information is distributed
+to the gateway and if no routing information is
+received for a period of the time, the associated
+route is deleted.
+.LP
+The
+\f4gateways\f1
+is comprised of a series of lines, each in
+the following format:
+.IP
+< \f4net\f1 | \f4host\f1 > \f2filename1 \f4gateway \f2filename2 \f4metric \f2value\f1
+< \f4passive\f1 | \f4active\f1 >
+.LP
+The
+\f4net\f1
+or
+\f4host\f1
+keyword indicates if the route is to a network or specific host.
+.LP
+.I filename1
+is the name of the destination network or host.  This may be a
+symbolic name located in
+\f4networks\f1
+or
+\f4hosts\f1,
+or an Internet address specified in \(lqdot\(rq notation; see
+\f4inet\f1(3N).
+.LP
+.I filename2
+is the name or address of the gateway to which messages should
+be forwarded.
+.LP
+.I value
+is a metric indicating the hop count to the destination host
+or network.
+.LP
+The keyword
+\f4passive\f1
+or
+\f4active\f1
+indicates if the gateway should be treated as
+passive or active
+(as described above).
+.br
+.ne 2i
+.SH FILES
+.PD 0
+.TP 20
+\f4/etc/gateways\f1
+for distant gateways
+.TP
+\f4/etc/networks\f1
+.TP
+\f4/etc/hosts\f1
+.PD
+.SH "SEE ALSO"
+\f4ioctl\f1(2),
+\f4inet\f1(7),
+\f4udp\f1(7)
+.\".LP
+.\"Internet Transport Protocols, XSIS 028112, Xerox System Integration
+.\"Standard.  (Sun 800-1066-01)
+.SH NOTES
+The kernel's routing tables may not correspond to those of
+\f4routed\f1
+for short periods of time while processes utilizing existing
+routes exit; the only remedy for this is to place the routing
+process in the kernel.
+.LP
+\f4routed\f1
+should listen to intelligent interfaces, such as an
+.SM IMP\s0,
+and
+to error protocols, such as
+.SM ICMP\s0,
+to gather more information.

@@ -1,0 +1,124 @@
+'\"macro stdmacro
+.if n .pH g2.utimes @(#)utimes	40.10 of 4/24/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.\" Copyright (c) 1988 Sun Microsystems, Inc. - All Rights Reserved.
+.\"
+.nr X
+.if \nX=0 .ds x} utimes 3 "BSD Compatibility Package" "\&"
+.if \nX=1 .ds x} utimes 3 "BSD Compatibility Package"
+.if \nX=2 .ds x} utimes 3 "" "\&"
+.if \nX=3 .ds x} utimes "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4utimes\f1 \- set file times
+.SH SYNOPSIS
+\f4cc \f1[ \f2flag\f1\. \. \. ] \f2file\f1 \. \. \. \f4\-lucb\f1
+.P
+.nf
+\f4#include <sys/types.h>\f1
+.P
+\f4int utimes(file, tvp)\f1
+\f4char *file;\f1
+\f4struct timeval \(**tvp;\f1
+.fi
+.SH DESCRIPTION
+.P
+\f4utimes\f1
+sets the access and modification times of the file named by
+.IR file .
+.P
+If
+.I tvp
+is
+\f4NULL\fP,
+the access and modification times are set to the current time.
+A process must be the owner of the file or have write permission for
+the file to use
+\f4utimes\f1
+in this manner.
+.P
+If
+.I tvp
+is not
+\f4NULL\fP,
+it is assumed to point to an array of two
+\f4timeval\f1
+structures.
+The access time is set to the value of the first member,
+and the modification time is set to the value of the second member.
+Only the owner of the file or the privileged user may use
+\f4utimes\f1
+in this manner.
+.P
+In either case, the
+.I inode-changed
+time of the file is set to the current time.
+.SH "RETURN VALUE"
+Upon successful completion, a value of 0 is returned.
+Otherwise, a value of \-1 is returned and
+\f4errno\f1
+is set to indicate the error.
+.SH ERRORS
+\f4utimes\f1
+will fail if one or more of the following are true:
+.TP 20
+\f4ENOTDIR\fP
+A component of the path prefix of
+.I file
+is not a directory.
+.TP
+\f4ENAMETOOLONG\fP
+The length of a component of
+.I file
+exceeds 255 characters, or the length of
+.I file
+exceeds 1023 characters.
+.TP
+\f4ENOENT\fP
+The file referred to by
+.I file
+does not exist.
+.TP
+\f4EACCES\fP
+Search permission is denied for a component of the path prefix of
+.IR file .
+.TP
+\f4ELOOP\fP
+Too many symbolic links were encountered in translating
+.IR file .
+.TP
+\f4EPERM\fP
+The effective user
+.SM ID
+of the process is not privileged user and not the owner of the file, and
+.I tvp
+is not
+\f4NULL\fP.
+.TP
+\f4EACCES\fP
+The effective user
+.SM ID
+of the process is not privileged user and not the owner of the file, write
+permission is denied for the file, and
+.I tvp
+is
+\f4NULL\fP.
+.TP
+\f4EIO\fP
+An I/O error occurred while reading from or writing to the file system.
+.TP
+\f4EROFS\fP
+The file system containing the file is mounted read-only.
+.TP
+\f4EFAULT\fP
+.I file
+or
+.I tvp
+points outside the process's allocated address space.
+.SH SEE ALSO
+\f4stat\fP(2),
+\f4utime\fP(2)
+in the \f2Programmer's Reference Manual\f1
+.SH NOTES
+\f4utimes\f1 is a library routine that calls the \f4utime\f1 system call.

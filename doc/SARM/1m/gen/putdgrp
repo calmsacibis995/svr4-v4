@@ -1,0 +1,111 @@
+'\"macro stdmacro
+.if n .pH g1a.putdgrp @(#)putdgrp	40.12 of 1/3/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} putdgrp 1 "Essential Utilities" "\&"
+.if \nX=1 .ds x} putdgrp 1 "Essential Utilities"
+.if \nX=2 .ds x} putdgrp 1 "" "\&"
+.if \nX=3 .ds x} putdgrp "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4putdgrp\f1 \- edits device group table
+.SH SYNOPSIS
+.ft CW
+putdgrp \f1[\f4\-d\f1] \f2dgroup \f1[\f2device \f1[\f4...\f1]\|]
+.SH DESCRIPTION
+\f4putdgrp\f1
+modifies the device group table.
+It performs two kinds of modification.
+It can modify the table 
+by creating a new device group or removing a device group.
+It can also change group definitions by 
+adding or removing a device from the group definition.
+.P
+When the command is invoked with only a \f2dgroup\f1 specification, the command
+adds the specified group name to the device group table if it does not already
+exist.
+If the \f4-d\f1 option is
+also used with only the \f2dgroup\f1 specification, the command
+deletes the group from the table. 
+.P
+When the command is invoked with both a \f2dgroup\f1 and a \f2device\f1
+specification, it adds the given device name (or names) to the group definition.
+When invoked with both arguments and the \f4-d\f1 option, the command
+deletes the device name (or names) from the group definition.
+.P
+When the command is invoked with both a \f2dgroup\f1 and a \f2device\f1
+specification and the device group does not exist, it creates the group and
+adds the specified devices to that new group.
+.P
+The options and arguments for this command are:
+.TP 10
+\f4-d\f1
+Deletes the group or, if used with \f2device\f1, the device 
+from a group definition.
+.TP 10
+\f2dgroup\f1
+Specifies a device group name.
+.TP 10
+\f2device\f1
+Specifies the pathname or alias of the device that is to added to or deleted
+from the device group.
+.SH ERRORS
+The command will exit with one of the following values:
+.TP 4
+\f40\f1 =
+successful completion of the task.
+.TP 4
+\f41\f1 =
+command syntax incorrect, invalid option used, or internal error occurred.
+.TP 4
+\f42\f1 =
+device group table could not be opened for reading or a new device group table
+could not be created.
+.TP 4
+\f43\f1 =
+if executed with the \f4-d\f1 option, indicates that an entry in the device
+group table for the device group \f2dgroup\f1 does not exist and so cannot be
+deleted.
+Otherwise, indicates that the 
+device group \f2dgroup\f1 already exists and cannot be added.
+.TP 4
+\f44\f1 =
+if executed with the \f4-d\f1 option, indicates that the device group
+\f2dgroup\f1 does not have as members one or more of the specified devices.
+Otherwise, indicates that the device group \f2dgroup\f1 already has one or more
+of the specified devices as members.
+.SH EXAMPLE
+To add a new device group:
+.tr ~
+.sp .5
+.ft CW
+	putdgrp floppies
+.sp .5
+.ft 1
+To add a device to a device group:
+.sp .5
+.ft CW
+	putdgrp floppies diskette2
+.sp .5
+.ft 1
+To delete a device group:
+.sp .5
+.ft CW
+	putdgrp -d floppies
+.sp .5
+.ft 1
+To delete a device from a device group:
+.sp .5
+.ft CW
+	putdgrp -d floppies diskette2
+.ft 1
+.SH FILES
+.ft CW
+/etc/dgroup.tab
+.ft
+.SH SEE ALSO
+.na
+\f4listdgrp\fP(1),
+\f4putdev\fP(1M).
+.ad

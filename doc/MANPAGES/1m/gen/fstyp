@@ -1,0 +1,41 @@
+'\"macro stdmacro
+.if n .pH g1a.fstyp @(#)fstyp	40.6.1.1 of 1/3/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} fstyp 1M "" "\&"
+.if \nX=1 .ds x} fstyp 1M ""
+.if \nX=2 .ds x} fstyp 1M "" "\&"
+.if \nX=3 .ds x} fstyp "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4fstyp (generic)\f1 \- determine file system type 
+.SH SYNOPSIS
+\f4fstyp\f1 [\f4\-v\f1] \f2special\f1
+.SH DESCRIPTION
+\f4fstyp\fP allows the user to determine the file system type of 
+unmounted file systems using heuristic programs. 
+.PP
+An \f4fstyp\fP module for each file system type to
+be checked is executed; 
+each of these modules applies some appropriate
+heuristic to determine whether the supplied 
+\f2special\f1 file is of the type for which it checks.
+If it is, the program prints on standard output the
+usual file-system identifier
+for that type and exits with a return code of 0; 
+if none of the modules succeed,
+the error message \f4unknown_fstyp (no matches)\f1
+is returned and the exit status is 1. If more than one module
+succeeds the error message \f4unknown_fstyp (multiple matches)\f1
+is returned and the exit status is 2. 
+.P
+The options are:
+.TP
+\f4\-v\f1
+Produce verbose output. This is usually information about
+the file systems superblock and varies across different
+\f2FSTypes\f1.
+.SH NOTES
+The use of heuristics implies that the result
+of \f4fstyp\fP is not guaranteed to be accurate.

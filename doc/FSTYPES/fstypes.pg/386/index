@@ -1,0 +1,135 @@
+.\" @(#)index	40.3 /doccenter/unix_docs/src/doc/fstypes.pg/386/s.index 91/01/03 40.3 08:53:49
+.\" Copyright 1990 AT&T
+.BK "Programmer's Guide:  Writing File System Types" "" "" ""   
+.\"  XX macro marks new index entry.
+.de XX
+.	br
+.	ti 0
+.	ne 2
+.	vs 12
+\s10\f1\\$1\0 \s8\fH\\$2\f1
+..
+.\"  header between letters of the alphabet
+.de YY
+.	sp 2
+.	ne 4
+\fH\s16\\$2\s0\f1
+.	sp 0.5
+..
+.\"  markup surrounding book acronym
+.ds B{
+.ds }B
+.\"  markup surrounding chapter number
+.ds C{ " 
+.ds }C :\ 
+.vs 12
+.ps 8
+.CH "Index" I 
+.H 1 "Index"
+.2C
+.in +2
+.\" SCCS path name:	/doc/DMG/Projects/Indexing/sccs/bin/s.index.head
+.\" SCCS version SID:	1.5
+.\" Date this version:	89/09/16
+.\" Time this version:	17:27:45
+.YY a A
+.XX "\&additional kernel interfaces" "\*(C{1\*(}C42\-44"
+.XX "\&\0 vn_create" "\*(C{1\*(}C42"
+.XX "\&\0 vn_link" "\*(C{1\*(}C43"
+.XX "\&\0 vn_open" "\*(C{1\*(}C42"
+.XX "\&\0 vn_rdwr" "\*(C{1\*(}C43"
+.XX "\&\0 vn_remove" "\*(C{1\*(}C43"
+.XX "\&\0 vn_rename" "\*(C{1\*(}C44"
+.XX "\&administrative commands" "\*(C{1\*(}C61"
+.YY b B
+.XX "\&block I/O" "\*(C{1\*(}C54\-57"
+.XX "\&\0 binval" "\*(C{1\*(}C57"
+.XX "\&\0 biodone" "\*(C{1\*(}C56"
+.XX "\&\0 biowait" "\*(C{1\*(}C56"
+.XX "\&\0 bread" "\*(C{1\*(}C55"
+.XX "\&\0 brelse" "\*(C{1\*(}C56"
+.XX "\&\0 bwrite" "\*(C{1\*(}C56"
+.XX "\&\0 struct buf" "\*(C{1\*(}C54"
+.XX "\&booting" "\*(C{1\*(}C62\-63"
+.YY c C
+.XX "\&common vnode operations" "\*(C{1\*(}C45\-47"
+.XX "\&\0 fs_cmp" "\*(C{1\*(}C46"
+.XX "\&\0 fs_frlock" "\*(C{1\*(}C46"
+.XX "\&\0 fs_nosys" "\*(C{1\*(}C45"
+.XX "\&\0 fs_pathconf" "\*(C{1\*(}C47"
+.XX "\&\0 fs_poll" "\*(C{1\*(}C47"
+.XX "\&\0 fs_rwlock" "\*(C{1\*(}C45"
+.XX "\&\0 fs_rwunlock" "\*(C{1\*(}C45"
+.XX "\&\0 fs_setfl" "\*(C{1\*(}C46"
+.XX "\&\0 fs_sync" "\*(C{1\*(}C45"
+.XX "\&\0 fs_vcode" "\*(C{1\*(}C47"
+.XX "\&configuration" "\*(C{1\*(}C62\-63"
+.YY f F
+.XX "\&fbio" "\*(C{1\*(}C58\-60"
+.XX "\&\0 fbiwrite" "\*(C{1\*(}C59"
+.XX "\&\0 fbread" "\*(C{1\*(}C58"
+.XX "\&\0 fbrelse" "\*(C{1\*(}C59"
+.XX "\&\0 fbrelsei" "\*(C{1\*(}C60"
+.XX "\&\0 fbwrite" "\*(C{1\*(}C59"
+.XX "\&\0 fbwritei" "\*(C{1\*(}C59"
+.XX "\&\0 fbzero" "\*(C{1\*(}C60"
+.XX "\&file system hardening" "\*(C{1\*(}C64"
+.YY g G
+.XX "\&glossary" "\*(C{1\*(}C65\-66"
+.YY i I
+.XX "\&I/O data structures" "\*(C{1\*(}C10\-12"
+.YY n N
+.XX "\&name cache" "\*(C{1\*(}C50\-52"
+.YY p P
+.XX "\&path names" "\*(C{1\*(}C7\-9"
+.YY s S
+.XX "\&special file systems" "\*(C{1\*(}C53"
+.XX "\&storage allocation" "\*(C{1\*(}C48\-49"
+.YY v V
+.XX "\&VFS operations" "\*(C{1\*(}C13\-19"
+.XX "\&\0 vfs_init" "\*(C{1\*(}C15"
+.XX "\&\0 vfs_mount" "\*(C{1\*(}C15\-16"
+.XX "\&\0 vfs_mountroot" "\*(C{1\*(}C18"
+.XX "\&\0 vfs_root" "\*(C{1\*(}C16"
+.XX "\&\0 vfs_statvfs" "\*(C{1\*(}C17"
+.XX "\&\0 vfs_sync" "\*(C{1\*(}C18"
+.XX "\&\0 vfs_vget" "\*(C{1\*(}C18"
+.XX "\&VM interaction" "\*(C{1\*(}C41"
+.XX "\&vnode operations" "\*(C{1\*(}C20\-40"
+.XX "\&\0 vop_access" "\*(C{1\*(}C27"
+.XX "\&\0 vop_addmap" "\*(C{1\*(}C38"
+.XX "\&\0 vop_allocstore" "\*(C{1\*(}C39"
+.XX "\&\0 vop_close" "\*(C{1\*(}C23"
+.XX "\&\0 vop_cmp" "\*(C{1\*(}C33"
+.XX "\&\0 vop_create" "\*(C{1\*(}C28"
+.XX "\&\0 vop_delmap" "\*(C{1\*(}C38"
+.XX "\&\0 vop_fid" "\*(C{1\*(}C32"
+.XX "\&\0 vop_frlock" "\*(C{1\*(}C34"
+.XX "\&\0 vop_fsync" "\*(C{1\*(}C31"
+.XX "\&\0 vop_getattr" "\*(C{1\*(}C25"
+.XX "\&\0 vop_getpage" "\*(C{1\*(}C35"
+.XX "\&\0 vop_inactive" "\*(C{1\*(}C31"
+.XX "\&\0 vop_ioctl" "\*(C{1\*(}C24"
+.XX "\&\0 vop_link" "\*(C{1\*(}C28"
+.XX "\&\0 vop_lookup" "\*(C{1\*(}C27"
+.XX "\&\0 vop_map" "\*(C{1\*(}C37"
+.XX "\&\0 vop_mkdir" "\*(C{1\*(}C29"
+.XX "\&\0 vop_open" "\*(C{1\*(}C22"
+.XX "\&\0 vop_pathconf" "\*(C{1\*(}C39"
+.XX "\&\0 vop_poll" "\*(C{1\*(}C39"
+.XX "\&\0 vop_putpage" "\*(C{1\*(}C36"
+.XX "\&\0 vop_read" "\*(C{1\*(}C23"
+.XX "\&\0 vop_readdir" "\*(C{1\*(}C30"
+.XX "\&\0 vop_readlink" "\*(C{1\*(}C31"
+.XX "\&\0 vop_realvp" "\*(C{1\*(}C35"
+.XX "\&\0 vop_remove" "\*(C{1\*(}C28"
+.XX "\&\0 vop_rename" "\*(C{1\*(}C29"
+.XX "\&\0 vop_rmdir" "\*(C{1\*(}C29"
+.XX "\&\0 vop_rwlock" "\*(C{1\*(}C32"
+.XX "\&\0 vop_rwunlock" "\*(C{1\*(}C32"
+.XX "\&\0 vop_seek" "\*(C{1\*(}C33"
+.XX "\&\0 vop_setattr" "\*(C{1\*(}C26"
+.XX "\&\0 vop_setfl" "\*(C{1\*(}C24"
+.XX "\&\0 vop_space" "\*(C{1\*(}C34"
+.XX "\&\0 vop_symlink" "\*(C{1\*(}C30"
+.XX "\&\0 vop_write" "\*(C{1\*(}C23"

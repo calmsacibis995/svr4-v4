@@ -1,0 +1,50 @@
+.if n .pH gen.intro @(#)intro	40.3 of 3/13/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1990, 1989 AT&T
+.nr X
+.if \nX=0 .ds x} intro D3I SDI "\&"
+.if \nX=1 .ds x} intro D3I SDI
+.if \nX=2 .ds x} intro D3I "" "\&"
+.if \nX=3 .ds x} intro "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4intro\fP \- introduction to SCSI target driver functions
+.SH DESCRIPTION
+The SCSI Driver Interface (SDI) consists of the functions
+summarized in the following table:
+.TS
+center ;
+cp8 | cp8 | cp8 | cp8
+cp8 | cp8 | cp8 | cp8
+lp8 | lp8 | cp8 | cp8.
+SDI		Computer	Interrupt
+Function	Description	Type	Usable?
+_
+\f4sdi_freeblk(\f2pt\f4)\f1	Release a SCSI block	Any	Yes
+_
+\f4sdi_getblk()\f1	Get a SCSI block	Any	No
+_
+\f4sdi_getdev(\f2addr, dev\f4)\f1	T{
+Get pass-through device number
+T}	Any	Yes
+_
+\f4sdi_icmd(\f2pt\f4)\f1	Perform command now	Any	Yes
+_
+\f4sdi_init()\f1	Initialize HA driver	Any	No
+_
+\f4sdi_name(\f2addr, name\f4)\f1	Get controller name	Any	Yes
+_
+\f4sdi_send(\f2pt\f4)\f1	T{
+Send command to device
+T}	Any	Yes
+_
+\f4sdi_translate(\f2pt,bflags,procp\f4)\f1	T{
+Translate SCB virtual address
+T}	Any	No
+.TE
+.P
+The ``Computer Type'' column indicates on which computers the function can be
+called.  ``Any'' indicated in the ``Computer Type'' column refers to the type of
+computer the function is supported under. 
+The ``Interrupt Usable?'' column indicates whether the function can be
+called from within an interrupt routine.  HA stands for Host Adapter.

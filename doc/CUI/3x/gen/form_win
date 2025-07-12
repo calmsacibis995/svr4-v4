@@ -1,0 +1,56 @@
+'\"!  tbl | mmdoc
+'\"macro stdmacro
+.if n .pH g3x.form_win @(#)form_win	40.5 of 4/10/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.\" ident	"@(#)svid_ti:ti_lib/form_win	1.3"
+.nr X
+.if \nX=0 .ds x} form_win 3X "" "\&"
+.if \nX=1 .ds x} form_win 3X ""
+.if \nX=2 .ds x} form_win 3X "" "\&"
+.if \nX=3 .ds x} form_win "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4form_win\f1: \f4 set_form_win\f1, \f4form_win\f1, \f4set_form_sub\f1, \f4form_sub\f1, \f4scale_form\f1 \- \f4forms\fP window and subwindow association routines
+.SH SYNOPSIS
+.nf
+.ft 4
+#include <form.h>
+.sp
+int set_form_win(FORM *form, WINDOW *win);
+WINDOW *form_win(FORM *form);
+.sp 0.5
+int set_form_sub(FORM *form, WINDOW *sub);
+WINDOW *form_sub(FORM *form);
+.sp 0.5
+int scale_form(FORM *form, int *rows, int *cols);
+.ft 1
+.fi
+.SH DESCRIPTION
+\f4set_form_win\fP sets the window of \f2form\f1 to \f2win\f1.
+\f4form_win\fP returns a pointer to the window associated with \f2form\f1.
+.PP
+\f4set_form_sub\fP sets the subwindow of \f2form\f1 to \f2sub\f1.
+\f4form_sub\fP returns a pointer to the subwindow associated with \f2form\f1.
+.PP
+\f4scale_form\fP returns the smallest window size necessary for the
+subwindow of \f2form\f1.
+\f2rows\f1 and \f2cols\f1 are pointers to the locations used to return the
+number of rows and columns for the form.
+.SH RETURN VALUE
+Routines that return pointers always return \f4NULL\fP on error.
+Routines that return an integer return one of the following:
+.TS
+lfCWw(1.25i)1 c1 l .
+E_OK	\-	The function returned successfully.
+E_SYSTEM_ERROR	\-	System error.
+E_BAD_ARGUMENT	\-	An argument is incorrect.
+E_NOT_CONNECTED	\-	The field is not connected to a form.
+E_POSTED	\-	The form is posted.
+.TE
+.SH NOTES
+The header file \f4<form.h>\f1 automatically includes the header files
+\f4<eti.h>\fP and \f4<curses.h>\fP.
+.SH SEE ALSO
+\f4curses\fP(3X),
+\f4forms\fP(3X)

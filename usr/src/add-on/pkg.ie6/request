@@ -1,0 +1,129 @@
+#ident	"@(#)pkg.ie6:request	1.2"
+#	All Rights Rreserved
+#
+#	INTEL CORPORATION PROPRIETARY INFORMATION
+#
+#	This software is supplied to AT & T under the terms of a license 
+#	agreement with Intel Corporation and may not be copied nor 
+#	disclosed except in accordance with the terms of that agreement.
+#
+
+#	request script for ie6 package installation
+
+trap 'exit 3' 15
+
+CONFBIN=/etc/conf/bin
+VFILE=/tmp/varfile
+POST_FILE=$1
+rm -rf $VFILE
+
+RETVCHK=0
+VECTMSG=""
+for VECT in 3 4 5 9
+do
+	${CONFBIN}/idcheck -v $VECT
+	RETVCHK=$?
+	if [ "$VECT" = 9 ]
+	then
+		VECT=2
+	fi
+	if [ "$RETVCHK" = 0 ]
+	then
+		VECTMSG="${VECT}\t"
+		echo $VECTMSG >> $VFILE
+		VECTLIST="${VECTLIST} ${VECT}"
+	fi
+done
+	
+if [ "$VECTLIST" = "" ]
+then
+	message "The ${PKG} cannot be installed because interrupts \
+2, 3, 4, and 5 are in use"
+	exit 1
+fi
+DEFLT=3
+cat $VFILE | grep $DEFLT > /dev/null
+if [ $? != 0 ]
+then 
+	DEFLT=`sed -n '1p' $VFILE`
+fi
+IE6_REQINTV=`ckitem -u -l "These are the interrupts that may be available" -p "Type the interrupt you want the ethernet controller to be configured for." -d $DEFLT -f $VFILE` || exit $? 
+
+echo "IE6_REQINTV=$IE6_REQINTV" >>$POST_FILE || exit 1
+rm -rf $VFILE
+# Prompt script to allow the user to select installation
+# of addresses of their choice 
+#
+
+ADDRS="
+base 250 25F
+base 280 28F
+base 2A0 2AF
+base 2E0 2EF
+base 300 30F
+base 310 31F
+base 330 33F
+base 350 35F"
+
+IOAMSG=""
+for LADR in 250 280 2A0 2E0 300 310 330 350
+do
+	ADDCHK=`echo "$ADDRS" | grep "base $LADR"` 
+	set `echo $ADDCHK`
+	LADR=$2
+	HADR=$3
+	${CONFBIN}/idcheck -a -l $LADR -u $HADR > /dev/null 2>&1
+	if [ "$?" = 0 ]
+	then
+		IOAMSG="${LADR}\t${HADR}"
+		echo $IOAMSG >> $VFILE
+		IOALIST="${IOALIST} ${LADR}"
+	fi
+done
+if [ "$IOALIST" = "" ]
+then
+	message "The ${PKG} cannot be installed because all available \
+I/O addresses are in use"
+	exit 1
+fi
+DEFLT=300
+cat $VFILE | grep $DEFLT > /dev/null
+if [ $? != 0 ]
+then 
+	set `sed -n '1p' $VFILE`
+	DEFLT=$1
+fi
+echo "\n\nThe following is a list of I/O address ranges at which your"
+echo "ethernet controller may be jumpered."
+
+IE6_REQLADD=`ckitem -l "I/O address range" -p "Type the corresponding menu number at which your ethernet controller is jumpered." -d $DEFLT -f $VFILE` || exit $?
+
+rm -rf $VFILE
+# Prompt for ethernet cable type.
+#
+
+echo "\n\nThe driver can be configured for one of two ethernet cable types."
+
+IE6_CABLETYPE=`ckitem -p "Type the menu number of the cable type you are using" -d BNC "AUI (thick cable with flat multi-pin connector)" "BNC (thin cable with round twist on connector)"`
+
+echo "IE6_CABLETYPE=$IE6_CABLETYPE" >> $POST_FILE || exit 1
+
+if [ "$IE6_REQINTV" = 2 ]
+then
+	IE6_REQINTV=9
+fi
+
+ADDCHK=`echo "$ADDRS" | grep "base $IE6_REQLADD"` 
+set `echo $ADDCHK`
+IE6_REQLADD=$2
+IE6_REQHADD=$3
+
+echo "IE6_REQLADD=$IE6_REQLADD" >>$POST_FILE || exit 1
+echo "IE6_REQHADD=$IE6_REQHADD" >>$POST_FILE || exit 1
+
+if [ -f ${CONFBIN}/S.idbuild ]
+then
+	echo "ie6	Y	4	6	1	$IE6_REQINTV	$IE6_REQLADD	$IE6_REQHADD	0	0" >> /etc/conf/cf.d/sdevice
+fi
+exit 0
+

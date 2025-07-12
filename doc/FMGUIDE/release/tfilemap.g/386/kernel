@@ -1,0 +1,1134 @@
+'\"!  tbl | mmdoc
+.if n .pH 386.kernel @(#)kernel	40.15
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+'\"!  pic | tbl | mmdoc
+.BK "Technology File Mapping Guide"
+.CH "Operating System Kernel" 3
+.H 1 "Virtual File Subsystem"
+.ig
+Since the introduction of \*(V2, the file-system facilities provided by the system have been significantly extended and enhanced.
+..
+SVR4 includes the Virtual File Subsystem (VFS), a third-generation file-system switch architecture that replaces the ``convertible'' 0.5K or 1K block file-system introduced in SVR2 and its successor (the File-System Switch (FSS) architecture introduced in SVR3).
+The VFS implementation is based on the \f4v-nodes\f1 architecture first implemented in BSD versions of the UNIX system.
+.P
+The VFS architecture provides a modular, clearly-defined interface between the file-system and the rest of the UNIX system kernel, and allows several different file-system types to exist simultaneously on the system.
+These file-systems may have widely different characteristics and internal
+formats.  For example, a set of remote files and traditional UNIX System V files can co-exist on the system.
+The modular nature of VFS lets programmers design and install new
+file-system types in a clean, well-defined manner.
+Configuring a new file-system-type into the system requires about the same effort as installing a new device driver.
+.P
+VFS mediates access to the different file-system-types so that user programs need not know the type of files they access or modify.
+File operations are managed in a manner appropriate for each particular file-system, and user programs manipulate files in all classes of file-systems through a common interface.
+.H 2 "Different Types of File Systems"
+In addition to providing programmers with the ability to define and install new types of file-systems, Release 4 of UNIX System V provides several
+predefined file-system-types:
+.BL
+.LI
+The \f4s5\fP file-system-type provided by earlier releases of UNIX System V supports disk storage in 0.5K, 1K or 2K byte blocks.
+.LI
+The \f4ufs\fP file-system-type (introduced in SVR4) supports disk storage in blocks as large as 8K bytes.
+The \f4ufs\fP type is based on and compatible with the BSD fast
+file-system.
+.LI
+The \f4rfs\fP file-system-type (introduced in SVR3) supports Remote File Sharing capabilities with the ability to access files with full UNIX System V \f4read\fP/\f4write\fP semantics across a network of computers running UNIX System V.
+.LI
+The \f4nfs\fP file-system-type (introduced in SVR4) supports Network File System capabilities with the ability for heterogeneous systems to share text and data files across a network.
+.LI
+The \f4proc\fP file-system-type (introduced in SVR4) provides a mechanism with file-system semantics for accessing the address-space of running processes on a system.
+The \f4proc\fP file-system-type is particularly useful for debuggers and similar utilities.
+.LI
+The \f4fifofs\fP file-system-type (introduced in SVR4) provides common access to pipe files.
+.LI
+The \f4specfs\fP file-system-type (introduced in SVR4) provides a common-code interface to all device or special type files.
+.LI
+The \f4bfs\fP file-system-type (introduced in SVR4) supports file-system independent booting.
+The \f4bfs\fP file-system-type contains all the programs needed by the boot-process.
+.LE
+.H 2 "Data Integrity in File Systems"
+Regardless of the type of a particular physical file-system or individual file, SVR4 contains several safeguards that protect the integrity of the data they contain.
+The specific features that provide this protection are common to all file-system-types supported on a given system, and are described in the sections that follow.
+These features were added in Release 2.1 of UNIX System V.
+.H 2 "Dynamic Bad Block Handling"
+When a portion of a physical disk works improperly on a running system due to some physical defect in the disk, the identity of that portion of the disk
+(that block number) is automatically recorded in a table of bad blocks, and is never used again.
+Once a block is included in this table, the system will not use it for data storage.
+.H 2 "Ordered Writes"
+Creating a file requires several discrete steps in UNIX System V, and the ordered write feature ensures that these steps occur in an order that prevents danger to other files if the system crashes before an operation is complete.
+Without this feature, a system crash can leave a file-system in an inconsistent state that may damage other files when the system is being reinitialized.
+.H 2 "Automatic Cache Flushing"
+In UNIX systems, output to a file is normally written first to a buffer in the system's main memory.
+At some later time, the system copies the contents of this buffer to the physical disk or tape where the file resides for permanent storage.
+If the system crashes before these data are copied to the physical storage device, the data will be lost, even though the program that performed the output may have completed successfully.
+The Automatic Cache Flushing feature minimizes the possibility of this happening by copying the data contained in all modified buffers that have resided in main system memory for more than some fixed period of time to their intended destination on a physical storage device.
+This reduces the time the contents of a file on a storage device and the same file in main memory are allowed to differ.
+.H 2 "Automatic Integrity Check"
+Whenever a file-system is attached (or mounted) to UNIX System V, the system performs a basic integrity check.
+If the file-system does not pass this test, it is rigorously tested and repaired before the file-system is attached to the running system.
+The check is accomplished using a flag that is set when the system is shut down.
+When UNIX System V is shut down, all file-systems are removed from the system (or unmounted) one at a time.
+When a system is cleanly removed, the integrity flag is set.
+Later, when the system is re-initialized and the file-system is mounted, the integrity flag is tested.
+If the flag is set, the system attaches the file-system and unsets the flag.
+If the flag is unset, it means that the file-system was removed from the system irregularly (usually because of a system crash), and the rigorous testing and repair procedures are then executed.
+This procedure minimizes the possibility of attaching a corrupted file-system to the system.
+.H 2 "Synchronous Write Option"
+If a critical user program, such as a data base manager, must be
+absolutely certain of the state of data in its physical files, it
+may perform output operations to those files synchronously.
+.P
+When a user program opens a file, it can set a flag to guarantee that an output call does not return control to the program invoking it until the output data has been completely copied to a physical storage device.
+This means that the data is always copied to disk immediately, and not delayed in the system's buffer cache.
+While this option can slow the execution of a user program, it guarantees that a critical program always knows the state of the data in files it manipulates.
+This capability was first added in Release 2.1 of UNIX System V.
+.P
+In SVR4, the new \f4fsync()\fP routine lets a process explicitly force all data buffers it modified to be stored on disk.
+This routine works without imposing any special semantic when opening a file, and further increases the capability of user programs to safeguard the integrity of their stored files.
+.H 2 "File and Record Locking"
+A file and record locking capability allows whole files or portions of files to be locked or protected from modification by other programs.
+UNIX System V implements several different varieties of file and record locking.
+The supported capabilities are:
+.VL
+.LI "Advisory Locking"
+Where cooperating processes can notify each other that the contents of a file or portion of a file should not be modified.
+.LI "Mandatory Locking"
+Where a process can absolutely prohibit the modification of a file or portion of a file by any other process.
+.LI "XENIX Locking"
+Where a process can lock a file or portion of a file with the mandatory locking semantics supported by XENIX systems [see \f2XENIX System Compatibility Package\f1].
+.LE
+.H 2 "Symbolic Links"
+Until SVR4, the UNIX system has allowed a single file to be assigned more than one name through the linking mechanism; but this mechanism was limited.
+Directory files could not have more than one name, and all the names associated with a file had to reside within a single physical file-system.
+The Symbolic Link capability included in SVR4 significantly expands the linking abilities of the UNIX system.
+The enhancements are:
+.BL
+.LI
+Directory-type files can be linked, as well as all other types of files.
+The result of this change is that the logical structure of a system's file tree can be rearranged without changing the physical locations of files.
+.LI
+Links to a physical file need not reside in the same physical file-system as the file itself.
+A name can be associated with a file that resides in a different physical file-system.
+Names can also be linked across file-systems that reside on different computers.
+.LE
+.H 2 "Virtual File Subsystem Modules"
+The Virtual File Subsystem Modules are made up of source-code files
+from \f4/usr/src/uts\fP, as listed under the following headings:
+.sp
+FF - File-descriptor level
+.br
+FV - File-system independent v-node level
+.br
+FB - File buffer management
+.br
+FS - File-system dependent level
+.H 2 "\*(CfFF\*(Cx \(em File-descriptor Level"
+.TS
+tab(	);
+l3f5w(2.25i) l3f1.
+\f4uts/i386/os/fio.c\fP	file descriptors and file table management:  \f4getf\fP, \f4closef\fP, \f4falloc\fP, etc.
+\f4uts/i386/os/pipe.c\fP	\f4pipe\fP syscall
+\f4uts/i386/sys/fcntl.h\fP	\f4open\fP modes \f4O_\fP\f2XXX\f1; \f4fcntl\fP requests \f4F_\fP\f2XXX\f1; struct \f4flock\fP
+\f4uts/i386/sys/file.h\fP	file table:  struct \f4file\fP with fields \f4f_\fP\f2xxx\f1; flags and \f4open\fP modes \f4F\fP\f2XXX\f1
+.TE
+.H 2 "\*(CfFV\*(Cx \(em File-system Independent v-node Level"
+.TS
+tab(	);
+l3f5w(2.25i) l3f1.
+\f4uts/i386/fs/dnlc.c\fP	directory name lookup cache:  \f4dnlc_enter\fP, \f4dnlc_lookup\fP, etc.
+\f4uts/i386/fs/fs.mk\fP	makefile for file-system routines
+\f4uts/i386/fs/fs_subr.c\fP	file-system routines:  \f4fs_sync\fP, \f4fs_frlock\fP, \f4fs_setfl\fP, \f4fs_poll\fP, etc.
+\f4uts/i386/fs/fs_subr.h\fP	declaration of common routines shared by all FSTypes
+\f4uts/i386/fs/fsflush.c\fP	file-system hardening daemon
+\f4uts/i386/fs/lookup.c\fP	path-name lookup routines:  \f4lookupname\fP, \f4lookuppn\fP, etc.
+\f4uts/i386/fs/pathname.c\fP	path-name management routines:  \f4pn_get\fP, \f4pn_free\fP, etc.
+\f4uts/i386/fs/strcalls.c\fP	STREAMS I/O syscalls:  \f4getmsg\fP, \f4putmsg\fP, etc.
+\f4uts/i386/fs/vfs.c\fP	VFS interface syscalls:  \f4mount\fP, \f4umount\fP, \f4statvfs\fP, \f4fstatvfs\fP, etc.
+\f4uts/i386/fs/vncalls.c\fP	file related syscalls:  \f4open\fP, \f4close\fP, \f4read\fP, \f4write\fP, etc.
+\f4uts/i386/fs/vnode.c\fP	common v-node routines:  \f4vn_rdwr\fP, \f4vn_open\fP, etc.
+\f4uts/i386/os/flock.c\fP	file and record locking
+\f4uts/i386/os/subr.c\fP	assorted routines: \f4strncpy\fP, \f4bcmp\fP, \f4memlow\fP, \f4stoi\fP
+\f4uts/i386/sys/conf.h\fP	device switch tables and related defines
+\f4uts/i386/sys/dir.h\fP	same as \f4sys/fs/s5dir.h\fP for compatibility
+\f4uts/i386/sys/dirent.h\fP	file-system independent directory entry:  struct \f4dirent\fP
+\f4uts/i386/sys/dnlc.h\fP	directory name lookup cache structures
+\f4uts/i386/sys/fblk.h\fP	same as \f4sys/fs/s5fblk.h\fP for compatibility
+\f4uts/i386/sys/filio.h\fP	BSD compatible file \f4ioctl\fP commands:  \f4FIOCLEX\fP, \f4FIONCLEX\fP
+\f4uts/i386/sys/filsys.h\fP	same as \f4sys/fs/s5filsys.h\fP for compatibility
+\f4uts/i386/sys/flock.h\fP	kernel file/record locking structures:  struct \f4filock\fP, \f4flckinfo\fP
+\f4uts/i386/sys/fsiboot.h\fP	file-system independent boot defines
+\f4uts/i386/sys/fsid.h\fP	FSType names for use in \f4fsinfo\fP structure
+\f4uts/i386/sys/fstyp.h\fP	opcode for \f4sysfs\fP syscall
+\f4uts/i386/sys/ino.h\fP	same as \f4sys/fs/s5ino.h\fP for compatibility
+\f4uts/i386/sys/inode.h\fP	structures and definitions of all active UNIX files
+\f4uts/i386/sys/ioctl.h\fP	\f4ioctl\fP commands \f4LIOC\fP\f2XXX\f1, \f4DIOC\fP\f2XXX\f1
+\f4uts/i386/sys/mkdev.h\fP	routines to handle device numbers:  \f4makedevice\fP, \f4major\fP, \f4minor\fP
+\f4uts/i386/sys/mntent.h\fP	mount command options; not used in kernel
+\f4uts/i386/sys/mnttab.h\fP	mount table structure and defines; not used in kernel
+\f4uts/i386/sys/mode.h\fP	mode/type conversion macros for \f4stat\fP and \f4mknod\fP syscalls
+\f4uts/i386/sys/mount.h\fP	flags passed to \f4mount\fP syscall
+\f4uts/i386/sys/pathname.h\fP	path-name lookup structure:  struct \f4path-name\fP
+\f4uts/i386/sys/select.h\fP	bit masks of file descriptor; macros \f4FD_\fP\f2XXX\f1
+\f4uts/i386/sys/stat.h\fP	structure (\f4stat\fP) and defines (\f4S_\fP\f2XXX\f1) for use with \f4stat\fP/\f4fstat\fP syscalls
+\f4uts/i386/sys/statfs.h\fP	structure (\f4statfs\fP) returned by the \f4statfs\fP syscall
+\f4uts/i386/sys/statvfs.h\fP	structure (\f4statvfs\fP) returned by the \f4statvfs\fP syscall
+\f4uts/i386/sys/ustat.h\fP	structure (\f4ustat\fP) returned by the \f4ustat\fP syscall
+\f4uts/i386/sys/utime.h\fP	\f4utime\fP syscall arguments:  struct \f4utimbuf\fP
+\f4uts/i386/sys/vfs.h\fP	struct \f4vfs\fP, VFS operations, switch table and macros \f4VFS_\fP\f2XXX\f1
+\f4uts/i386/sys/vfstab.h\fP	struct \f4vfstab\fP and related defines
+\f4uts/i386/sys/vnode.h\fP	struct \f4vnode\fP, v-node attributes, v-node operations and macros \f4VOP_\fP\f2XXX\f1
+.TE
+.H 2 "\*(CfFB\*(Cx \(em File Buffer Management"
+.XS I N
+.S -1 -2
+.TS
+tab(	);
+l3f5w(2.25i) l3f1.
+uts/i386/os/bio.c	block I/O interface using buffer cache:  \f4bread\fP, \f4bwrite\fP, etc.
+uts/i386/os/fbio.c	block I/O interface using memory mapping:  \f4fbread\fP, \f4fbwrite\fP, etc.
+uts/i386/sys/buf.h	struct \f4buf\fP; flags \f4B_\fP\f2XXX\f1; macros \f4geterror\fP, \f4notavail\fP
+uts/i386/sys/fbuf.h	file buffer structure using memory mapping:  struct \f4fbuf\fP
+.TE
+.S
+.XF
+.H 2 "\*(CfFS\*(Cx \(em File-System-Type (FSType) dependent level"
+.H 4 "Unified FSType \(em \f4ufs\fP"
+.XS I N
+.S -1 -2
+.TS
+tab(	);
+l3f5w(2.50i) l3f1.
+uts/i386/fs/ufs/*
+uts/i386/master.d/ufs/*	configuration files for UFS boot module
+uts/i386/sys/fs/ufs_fs.h	structures and defines for UFS FSType
+uts/i386/sys/fs/ufs_fsdir.h	structures and defines for UFS FSType
+uts/i386/sys/fs/ufs_inode.h	structures and defines for UFS FSType
+uts/i386/sys/fs/ufs_quota.h	structures and defines for UFS FSType
+.TE
+.S
+.XF
+.H 4 "System V FSType \(em \f4s5\fP"
+.XS I N
+.S -1 -2
+.TS
+tab(	);
+l3f5w(2.50i) l3f1.
+uts/i386/fs/s5/*
+uts/i386/master.d/s5/*	configuration files for S5 boot module
+uts/i386/sys/fs/s5dir.h	structures and defines for System V FSType
+uts/i386/sys/fs/s5fblk.h	structures and defines for System V FSType
+uts/i386/sys/fs/s5filsys.h	structures and defines for System V FSType
+uts/i386/sys/fs/s5ino.h	structures and defines for System V FSType
+uts/i386/sys/fs/s5inode.h	structures and defines for System V FSType
+uts/i386/sys/fs/s5macros.h	structures and defines for System V FSType
+uts/i386/sys/fs/s5param.h	structures and defines for System V FSType
+.TE
+.S
+.XF
+.H 4 "FIFO FSType \(em \f4fifofs\fP"
+.XS I N
+.S -1 -2
+.TS
+tab(	);
+l3f5w(2.50i) l3f1.
+uts/i386/fs/fifofs/*
+uts/i386/master.d/fifofs/*	configuration files for FIFO FSType boot module
+uts/i386/sys/fs/fifonode.h	struct \f4fifonode\fP and macros \f4VTOF\fP, \f4FTOV\fP
+.TE
+.S
+.XF
+.H 4 "Named STREAMS FSType \(em \f4namefs\fP"
+.XS I N
+.S -1 -2
+.TS
+tab(	);
+l3f5w(2.50i) l3f1.
+uts/i386/fs/namefs/*
+uts/i386/master.d/namefs/*	configuration files for NAME FSType boot module
+uts/i386/sys/fs/namenode.h	struct \f4namefd\fP, struct \f4namenode\fP; macros \f4VTONM\fP, \f4NMTOV\fP
+.TE
+.S
+.XF
+.H 4 "Special FSType \(em \f4specfs\fP"
+.XS I N
+.S -1 -2
+.TS
+tab(	);
+l3f5w(2.50i) l3f1.
+uts/i386/fs/specfs/*
+uts/i386/master.d/specfs/*	configuration files for SPEC FSType boot module
+uts/i386/sys/fs/snode.h	struct \f4snode\fP; macros \f4VTOS\fP, \f4STOV\fP, \f4SNLOCK\fP, \f4SUNLOCK\fP
+.TE
+.S
+.XF
+.H 4 "Process FSType \(em \f4proc\fP"
+.XS I N
+.S -1 -2
+.TS
+tab(	);
+l3f5w(2.50i) l3f1.
+uts/i386/fs/proc/*
+uts/i386/master.d/proc/*	configuration files for PROC FSType boot module
+uts/i386/sys/fault.h	3B2 hardware fault defines
+uts/i386/sys/procfs.h	PROC FSType \f4ioctl\fP commands \f4PIOC\fP\f2XXX\f1, process status \f4PR_\fP\f2XXX\f1
+.TE
+.S
+.XF
+.H 4 "Boot FSType \(em \f4bfs\fP"
+.XS I N
+.S -1 -2
+.TS
+tab(	);
+l3f5w(2.50i) l3f1.
+uts/i386/fs/bfs/*
+uts/i386/master.d/bfs/*	configuration files for BFS FSType boot module
+uts/i386/sys/fs/bfs.h	BFS FSType data structures:  struct \f4bfsvattr\fP, \f4bfsdirent\fP
+uts/i386/sys/fs/bfs_compact.h	BFS FSType macros \f4BFS_CCT_\fP\f2XXX\f1
+.TE
+.S
+.XF
+.H 4 "File Descriptor FSType \(em \f4fd\fP"
+.XS I N
+.S -1 -2
+.TS
+tab(	);
+l3f5w(2.50i) l3f1.
+uts/i386/fs/fdfs/*
+uts/i386/master.d/fdfs/*
+.TE
+.H 1 "STREAMS I/O Subsystem"
+The STREAMS character I/O and networking architecture provides many benefits over other, older architectures, and greatly enhances the generality and portability of user software:
+.BL
+.LI
+Code for hardware drivers is decoupled from the code for I/O data transformation (such as networking protocols and terminal line disciplines).
+As a result, only a small portion of the code must be changed when new I/O hardware is installed on a system.
+.LI
+The mix-and-match nature of STREAMS I/O modules and drivers in the kernel lets user-programs assemble and disassemble new networking configurations on a running system; processing modules can be pushed and popped on a stream at will.
+.LI
+Most STREAMS I/O modules are source-portable to new implementations, and only need recompilation to run on a new system.
+.LI
+The STREAMS I/O architecture transparently
+integrates different I/O operations (such as support for user terminals and networking) to user programs.
+.LE 1
+STREAMS I/O, first added to SVR3, provides a uniform interface for implementing character I/O devices and networking protocols in the kernel.
+SVR4 converts the terminal subsystem and pipe mechanism to STREAMS I/O, and expands STREAMS I/O with enhancements and added features:
+.BL
+.LI
+A Kernel Memory Allocator (\f2KMA\f1) is a single kernel memory manager that allows different features to allocate and free memory as their needs vary, replacing the pre-SVR4 scheme that statically assigned the amount of memory dedicated to a process.
+.LI
+A new mechanism, using KMA, dynamically allocates various STREAMS I/O data structures within the system, thereby providing a more flexible scheme that does not waste space by preallocating structures.
+.LI
+An extended buffer allocation mechanism that supports memory-mapped I/O saves overhead in copying data between different parts of the operating system.
+.LI
+A general mechanism, autopush, allows an administrator to predefine a set of specified modules that should be pushed on a stream when a specified STREAMS I/O driver is opened.
+.LI
+A new type of multiplexing configuration has persistent links set up below a multiplexor and exists without having an open file descriptor associated with
+the links.
+.LI
+STREAMS I/O supports expedited data service by providing separate data paths and flow control for normal and expedited data.
+This feature supports TCP urgent data and OSI protocols that use expedited data.
+.LE
+.H 2 "Dynamic Buffer Allocation"
+STREAMS I/O drivers and modules temporarily store data in STREAMS I/O buffers, a commodity allocated and managed within the kernel.
+In SVR4, a set of these buffers is allocated when the system is initialized, and more buffers are dynamically allocated if the system requires them.
+This occurs automatically, requiring no intervention from users or the system administrator.
+.H 2 "Persistent PUSH"
+A stream is configured by opening a STREAMS I/O device, and then optionally pushing one or more modules onto the stream to transform input and output data.
+In the original STREAMS I/O implementation, a STREAMS I/O configuration was always dismantled when it was closed.
+In SVR4, a persistent configuration can be established in which the modules are not removed and the stream is not dismantled when the stream is closed.
+Instead, the stream remains set up indefinitely, and processes that open it receive access to a preconfigured stream.
+.H 2 "Pipes and Related Features"
+To provide greater support for networking features, SVR4 includes a STREAMS I/O-based pipe facility.
+In SVR4, STREAMS I/O-based pipes provide all the facilities available from pipes in SVR3, as well as a number of enhancements.
+Because of the inherent nature of STREAMS I/O, pipes become bi-directional, enabling data to flow in both directions.
+Programmers can push processing modules on a pipe, poll a pipe, and send file descriptors across a pipe.
+The named stream feature enables a programmer to associate the name of an existing file with one end of a stream and to obtain a unique connection to a server using a specialized line discipline module.
+.H 2 "Named STREAMS"
+General purpose STREAMS I/O-based Inter-Process Communication (IPC) uses Named STREAMS, a communication channel that is accessed by opening a file.
+Named STREAMS allows an I/O configuration (such as a STREAMS networking connection) to be built and established then associated with a name in the SVR4 file system.
+All processes that open the file then have access to a configured, open connection, without doing any of the set-up work.
+The configuration remains in place and connected until it is explicitly dismantled.
+By default, each process that opens a named stream gains access to a common channel; however, it is also possible to configure the stream (by pushing the \f4connld\fP module supplied with the system) so that each opening process receives a unique connection.
+.H 2 "STREAMS TTY Subsystem"
+The entire TTY subsystem, including drivers for the system
+console, user terminals, line disciplines, and multiplexing drivers for windowing terminal support has been implemented under the
+STREAMS I/O architecture.
+This offers great flexibility and allows user terminals to be
+seamlessly integrated into networking configurations.
+The performance of the STREAMS I/O-based TTY subsystem is the same as for the older, character-type TTY subsystem.
+.H 4 "STREAMS I/O-based TTYs"
+This feature provides all the standard terminal capabilities available
+in SVR3, and it includes a standard line discipline module \f4LDTERM\fP that can be pushed on any stream that requires a terminal interface.
+Within this architecture,
+users can customize their environments by pushing and popping
+additional STREAMS I/O
+modules as needed.
+The STREAMS I/O-based TTY subsystem also provides support for job control and the \f4termios\fP terminal interface.
+Implementing the TTY subsystem in STREAMS I/O offers many advantages including:
+.BL
+.LI
+Decrease in complexity of the kernel
+.LI
+Modularity and flexibility of code
+.LI
+Reusable line discipline modules
+.LI
+Customization
+.LI
+Ease in adding new features to the terminal subsystem
+.LE
+.H 4 "STREAMS I/O-based Pseudo-TTYs"
+To support a windowing system, SVR4 supports a STREAMS I/O-based pseudo-TTY subsystem.
+A pseudo-TTY subsystem enables two processes on the same system to communicate so that one process (the slave) acts as if it is interfacing to a terminal device, while the other process (the master) implements the terminal functions on the other side of the pseudo-TTY.
+Any data written on the slave side of the pseudo-TTY is given to the master side as input and vice versa.
+SVR4 implements the pseudo-TTY subsystem using STREAMS I/O to let user-processes push processing modules onto pseudo-TTYs.
+.H 2 "Driver-Kernel Interface/Device Driver Interface (DKI/DDI)"
+SVR4 supports the Driver-Kernel Interface (DKI), an interface between the UNIX System V kernel and device driver software.
+The DKI specification defines the interface between kernel and drivers in areas that are neither hardware-specific nor boot-specific.
+DKI takes the first step toward promoting driver source portability between UNIX System V implementations, and it expands the possibilities for changing the kernel without breaking drivers.
+DKI makes it easier to port driver code across implementations of SVR4 for different hardware; if the driver writer conforms to the DKI where possible, the portability of the driver to other SVR4 implementations is greatly enhanced. 
+DKI also specifies interfaces to file-system-types.
+.P
+SVR4 also supports the Device Driver Interface (DDI), a superset of the DKI that is specific to the implementation of UNIX System V for the AT&T 3B2 line of computers.
+The DDI enhances driver binary compatibility across releases of UNIX System V for the 3B2 computers.
+.P
+The DDI specification provides and documents a stable interface between device driver software and the rest of the kernel.
+With such an interface, programmers can develop device driver software that is object-compatible across releases of UNIX System V.
+This can substantially reduce the amount of time and money an organization
+must spend porting device drivers to each new release of UNIX System V.
+.P
+Device drivers often break in a new UNIX System V release because kernel utility functions have changed their syntax or are unavailable, or because the offsets of particular fields in kernel data structures have changed.
+At best, these changes require the device drivers to be recompiled, or, at worst, they can require a major redesign of the software.
+.P
+The DDI specification solves these problems by documenting and guaranteeing the availability and syntax of kernel utility functions used by device drivers, and by providing access functions to operate on the contents of system data structures.
+The DDI specification augments existing device driver writer's
+guides and enumerates all kernel utility functions available to device drivers, access methods for all kernel data objects accessible to device drivers, and the syntax of all routines that device drivers must provide to be configured into the UNIX System V kernel.
+.P
+See the \f2Device Driver Interface/Driver-Kernel Interface (DDI/DKI) Reference Manual\f1 for more information.
+.H 2 "STREAMS I/O Subsystem Modules"
+The STREAMS I/O Subsystem Modules comprise source-code files from \f4/usr/src/uts\fP as listed under the following headings:
+.sp
+SS - STREAMS I/O services
+.br
+SM - STREAMS I/O modules
+.br
+ST - STREAMS TTY subsystem
+.br
+SD - STREAMS device drivers
+.br
+SR - STREAMS support routines
+.H 2 "\*(CfSS\*(Cx \(em STREAMS I/O Services"
+.XS I N
+.S -1 -2
+.TS
+tab(	);
+l3f5w(2.25i) l3f1.
+arch/eisa/uts/i386/os/streamio.c	EISA bus specific STREAMS handling
+uts/i386/io/clone.c	STREAMS clone driver
+uts/i386/io/log.c	STREAMS log driver
+uts/i386/io/sad.c	STREAMS admin driver (\f4sad\fP) for autopush and module name check
+uts/i386/io/stream.c	STREAMS message and data buffer management:  \f4allocb\fP, \f4putq\fP, etc.
+uts/i386/master.d/clone/*	configuration files for \f4clone\fP boot module
+uts/i386/master.d/log/*	configuration files for \f4log\fP boot module
+uts/i386/master.d/sad/*	configuration files for \f4sad\fP boot module
+uts/i386/os/streamio.c	STREAMS I/O interface and syscalls:  \f4stropen\fP, \f4strread\fP, etc.
+uts/i386/os/strsubr.c	STREAMS support routines:  \f4strinit\fP, \f4allocq\fP, \f4queuerun\fP, etc.
+uts/i386/sys/log.h	STREAMS log driver structures
+uts/i386/sys/poll.h	structures and defines for use with the \f4poll\fP syscall
+uts/i386/sys/sad.h	structures and defines for STREAMS administrative driver (\f4sad\fP)
+uts/i386/sys/stream.h	STREAMS data structures:  struct \f4queue\fP, \f4module_info\fP, etc.
+uts/i386/sys/strlog.h	STREAMS log driver interface defines
+uts/i386/sys/strmdep.h	machine dependent STREAMS macros
+uts/i386/sys/stropts.h	STREAMS options, \f4ioctl\fP commands and macros
+uts/i386/sys/strppc.h	STREAMS version of PORTS board interface defines
+uts/i386/sys/strstat.h	STREAMS statistics
+uts/i386/sys/strsubr.h	internal data structures for \f4strsubr.c\fP
+.TE
+.S
+.XF
+.H 2 "\*(CfST\*(Cx \(em STREAMS TTY Subsystem"
+.XS I N
+.S -1 -2
+.TS
+tab(	);
+l3f5w(2.25i) l3f1.
+uts/i386/io/clist.c	character based tty subsystem for compatibility
+uts/i386/io/gentty.c	indirect driver for user's controlling TTY
+uts/i386/io/devadp.c	indirect driver for controlling tty
+uts/i386/io/partab.c	character parity table for TTY drivers
+uts/i386/io/pckt.c	pseudo-terminal packetizing module
+uts/i386/io/ptem.c	pseudo-terminal hardware emulator
+uts/i386/io/ptm.c	pseudo-terminal master driver
+uts/i386/io/pts.c	pseudo-terminal slave driver
+uts/i386/io/tt1.c	clist based tty line handling routines for compatibility
+uts/i386/io/ttcompat.c	terminal \f4ioctl\fP compatibility module for XENIX, BSD and V7
+uts/i386/io/tty.c	general tty subroutines
+uts/i386/master.d/clist/*	configuration files for \f4clist\fP boot module
+uts/i386/master.d/devadp/*	configuration files for \f4devadp\fP boot module
+uts/i386/master.d/gentty/*	configuration files for \f4gentty\fP boot module
+uts/i386/master.d/pckt/*	configuration files for \f4pckt\fP boot module
+uts/i386/master.d/ptem/*	configuration files for \f4ptem\fP boot module
+uts/i386/master.d/ptm/*	configuration files for \f4ptm\fP boot module
+uts/i386/master.d/pts/*	configuration files for \f4pts\fP boot module
+uts/i386/master.d/ttcompat/*	configuration files for \f4ttcompat\fP boot module
+uts/i386/sys/crtctl.h	CRT control codes and attributes
+uts/i386/sys/ioccom.h	BSD compatible common \f4ioctl\fP commands
+uts/i386/sys/ptem.h	pseudo-terminal hardware emulation structure:  struct \f4ptem\fP
+uts/i386/sys/ptms.h	structures and defines for pseudo-terminal driver
+uts/i386/sys/stermio.h	\f4ioctl\fP commands for control channels, terminals, and printers
+uts/i386/sys/strtty.h	STREAMS TTY structures \f4t_buf\fP and \f4strtty\fP; related defines
+uts/i386/sys/termio.h	TTY \f4ioctl\fP interface:  struct \f4termio\fP and related defines
+uts/i386/sys/termios.h	TTY \f4ioctl\fP interface:  struct \f4termios\fP and related defines
+uts/i386/sys/termiox.h	extended TTY \f4ioctl\fP interface:  struct \f4termiox\fP and related defines
+uts/i386/sys/ttcompat.h	terminal \f4ioctl\fP compatibility structure
+uts/i386/sys/ttold.h	old TTY \f4ioctl\fP interface:  struct \f4sgttyb\fP and related defines
+uts/i386/sys/tty.h	TTY subsystem structures and defines; struct \f4clist\fP
+uts/i386/sys/ttychars.h	User visible structures and constants for TTY subsystem
+uts/i386/sys/ttydev.h	Hardware specific terminal definitions
+.TE
+.S
+.XF
+.H 2 "\*(CfSM\*(Cx \(em STREAMS I/O Modules"
+.XS I N
+.S -1 -2
+.TS
+tab(	);
+l3f5w(2.25i) l3f1.
+uts/i386/io/connld.c	unique connection establishment module
+uts/i386/io/ldterm.c	terminal line discipline module
+uts/i386/io/pipemod.c	flush queues for STREAMS-based pipes
+uts/i386/io/raio.c	file contains configuration routines
+uts/i386/master.d/connld/*	configuration files for \f4connld\fP boot module
+uts/i386/master.d/ldterm/*	configuration files for \f4ldterm\fP boot module
+uts/i386/master.d/pipemod/*	configuration files for \f4pipemod\fP boot module
+uts/i386/master.d/raio/*	configuration files for \f4raio\fP boot module
+uts/i386/sys/euc.h	expanded character set structure for line discipline module
+uts/i386/sys/eucioctl.h	\f4ioctl\fP structure for expanded character set
+uts/i386/sys/ldterm.h	line discipline structure and translation tables
+.TE
+.S
+.XF
+.H 2 "\*(CfSD\*(Cx \(em STREAMS Device Drivers"
+.XS I N
+.S -1 -2
+.TS
+tab(	);
+l3f5w(2.25i) l3f1.
+uts/i386/io/mem.c	driver for \f4/dev/mem\fP and \f4/dev/kmem\fP
+uts/i386/io/nsxt.c	SXT - streams multiplexing driver for shell layers
+uts/i386/io/nxt.c	XT - streams driver for AT&T windowing terminals
+uts/i386/io/physdsk.c	\f4dma_breakup\fP routine used by 386 integral hard/floppy disk drivers
+uts/i386/io/prf.c	kernel profiler driver
+uts/i386/io/sxt.c	shell layers multiplexed channel driver
+uts/i386/master.d/mem/*	configuration files for \f4mem\fP boot module
+uts/i386/master.d/npat/*	configuration files for MBUS-II ports card
+uts/i386/master.d/nsxt/*	configuration files for \f4nsxt\fP boot module
+uts/i386/master.d/nxt/*	configuration files for \f4nxt\fP boot module
+uts/i386/master.d/prf/*	configuration files for \f4prf\fP boot module
+uts/i386/master.d/rmc/*	configuration files for \f4rmc\fP boot module
+uts/i386/master.d/sxt/*	configuration files for \f4sxt\fP boot module
+uts/i386/sys/alttbl.h	defines bad block table for hard disk driver
+uts/i386/sys/asy.h	defines for chips and registers structures
+uts/i386/sys/elog.h	error logging and disk I/O statistics
+uts/i386/sys/ertyp.h	386 specific hardware error types; not used in kernel
+uts/i386/sys/idtab.h	RFS \f4uid\fP/\f4gid\fP translation table
+uts/i386/sys/nsxt.h	shell layers structures and defines
+uts/i386/sys/pp_dep.h	PORTS I/O defines
+uts/i386/sys/sxt.h	defines for multiplexed channel driver
+uts/i386/sys/xt.h	multiplexed channel driver header
+.TE
+.S
+.XF
+.H 2 "\*(CfSR\*(Cx \(em STREAMS Support Routines"
+.XS I N
+.S -1 -2
+.TS
+tab(	);
+l3f5w(2.25i) l3f1.
+uts/i386/io/cpyrt.c	OEM copyright notices for drivers
+uts/i386/io/ctl87.c	fetches 8087 status word
+uts/i386/io/dmacheck.c	386 DMA controller check routines
+uts/i386/io/emap.c	8-bit for European char mapping for line discipline 0
+uts/i386/io/i8237A.c	io activities on indicated channel
+uts/i386/io/io.mk
+uts/i386/io/iosubr.c	user's io address permission handling routines
+uts/i386/io/osm.c	read os messages via special files
+uts/i386/master.d/cpyrt/*	configuration files for \f4cpyrt\fP boot module
+uts/i386/master.d/osm/*	configuration files for \f4osm\fP boot module
+uts/i386/os/ddi.c	standardized device driver interface (DDI)
+uts/i386/os/kperf.c	kernel performance logging routine \f4kperf_write\fP
+uts/i386/os/predki.c	dummy interface for pre-DDI device drivers
+uts/i386/sys/ddi.h	flags and undefines for standardized device driver interface (DDI)
+uts/i386/sys/dlpi.h	data link protocol interface structures and defines
+uts/i386/sys/dma.h	386 DMA controller and DMA page registers
+uts/i386/sys/dmaable.h	defines for 386 DMA boundaries and check structures
+uts/i386/sys/emap.h	ioctl channel mapping defines
+uts/i386/sys/evc.h	Olivetti EVC-1 board specific defines
+uts/i386/sys/fd.h	defines for floppy disk controller access and structure
+uts/i386/sys/fdisk.h	fdisk partition table structure and master block structure defines
+uts/i386/sys/hd.h	PC AT hard disk controller defines
+uts/i386/sys/i8237A.h	PC AT DMA controller defines
+uts/i386/sys/iobuf.h	struct \f4iobuf\fP:  list head for block device buffer queue
+uts/i386/sys/lihdr.h	data link level interface structures and defines
+uts/i386/sys/lp.h	PC AT lp driver structure and defines
+uts/i386/sys/netconfig.h	network provider selection and configuration
+uts/i386/sys/open.h	types of \f4open\fP/\f4close\fP calls passed to drivers, \f4OTYP_\fP\f2XXX\f1
+uts/i386/sys/protosw.h	protocol switch table: struct \f4protosw\fP
+uts/i386/sys/queue.h	structures and macros for access to board request/completion queues
+uts/i386/sys/sdi_edt.h	SDI equipped device table info
+uts/i386/sys/syslog.h	interface to STREAMS log driver
+uts/i386/sys/trace.h	per trace structure; not used in kernel
+uts/i386/sys/uio.h	I/O parameters:  struct \f4uio\fP, struct \f4iovec\fP
+uts/i386/sys/vtoc.h	386 volume table of contents and related structures
+.TE
+.S
+.XF
+.H 1 "Memory Management Subsystem"
+SVR4 incorporates a third generation memory management architecture that replaces both the original UNIX system swapping architecture and the REGIONS demand-paged virtual memory architecture that superseded the swapping architecture and was first introduced in SVR2.1.
+The SVR4 memory management implementation is based on the VM (Virtual Memory) architecture previously provided in the SunOS operating system.
+The SVR4 memory management architecture provides valuable benefits and capabilities for system porters and providers who implement the operating system on new hardware architectures.
+It also provides several valuable benefits for system users.
+.P
+The customary benefits of a demand-paged virtual memory implementation are the efficient use of a system's main memory and the capability to execute programs much larger than the physical memory provided by the system.
+The SVR4 VM implementation provides these benefits, as well as the more distinctive advantages listed in the sections below.
+.H 2 "Isolation of Hardware-Dependent Code"
+The SVR4 reference implementation of the virtual memory subsystem isolates all hardware-dependent portions of the subsystem in one small block of C language source code.
+This block makes up about 10% of the source code in the memory management system; the remainder of the code is portable across different hardware and system architectures.
+This high degree of kernel code portability is a valuable benefit for system providers.
+.P
+Most of the hardware-dependent code comprises a well-defined Memory-Management Unit (MMU) interface.
+This interface allows the architecture to be implemented on top of different MMU hardware quite easily.
+.H 2 "Flexible Use of Disk Space for Swapping"
+UNIX System V temporarily stores (or swaps) pages of data from the system's main memory to an ordinary file on one of the UNIX system's disks.
+Older systems normally swap memory pages to a formatted physical device partition of fixed size.
+Swapping to a file accommodates the needs of diskless systems and allows for the most efficient use of disk space.
+.H 2 "Portable Implementation"
+The multi-level store implementation of VM allows a system to address extremely large ranges of virtual address space using only a 32-bit hardware address space.
+A 32-bit physical address space is now the industry standard for central processors and hardware memory management units.
+SVR4 avoids introducing any low-level hardware dependencies that could be difficult or impossible to port to existing hardware architectures.
+.H 2 "Mapped Files"
+One by-product of the VM architecture is that it makes an entirely new style of file I/O possible for user programs.
+This new style of input and output is called mapped-files, and is provided by the \f4mmap()\fP family of routines.
+.P
+This mapped-file capability allows a file to be explicitly mapped into the address space of a user program, where the file can then be manipulated just as local data within the program is manipulated.
+Essentially, a mapped-file may be read from and written to as though it was a local character array.
+There is no inherent limit on the number of files that may be mapped into a process's address space.
+The \f4mmap()\fP routines allow an entire file, a portion of a file, or a device file to be mapped into a process's address space.
+.P
+In addition to making user programs easier to write, this feature can also make them more efficient.
+This optimization occurs because the system manages all input and output between the system's main memory and the physical disk.
+All disk I/O is optimized automatically, rather than relying on the skill of an application programmer and a particular set of local parameters for optimization within the user program.
+.H 2 "Shared Memory"
+UNIX System V provides a variety of shared-memory capabilities for user programs:
+.BL
+.LI
+The Mapped File capability described earlier can be considered a form of shared memory, because the system maps the same copy of a file into all processes' memory space, if several processes map a file simultaneously.
+.LI
+The traditional UNIX System V shared memory facilities provided by the \f4shmat()\fP family of routines continues to be available.
+These mechanisms have been available since SVR2.
+.LI
+XENIX shared memory semantics are supported in SVR4, including full source-code compatibility with older XENIX systems [see \f2XENIX System Compatibility Package\f1].
+.LE
+.H 2 "Memory Management Subsystem Modules"
+The Memory Management Subsystem Modules comprise source-code files from \f4/usr/src/uts\fP as listed under the following headings:
+.sp
+MM - Memory management
+.br
+MS - Memory segmentation
+.br
+MP - Memory paging
+.br
+MX - Memory transfer
+.H 2 "\*(CfMM\*(Cx \(em Memory Management"
+.XS I N
+.S -1 -2
+.TS
+tab(	);
+l3f5w(2.25i) l3f1.
+uts/i386/master.d/nmi/*	configuration files for \f4nmi\fP boot module
+uts/i386/os/nmi.c	routines handling no maskable interrupt (for memory error)
+uts/i386/sys/cram.h	defines for accessing PC AT CMOS ram
+uts/i386/sys/immu.h	386 memory management hardware defines and macros
+uts/i386/vm/as.h	struct \f4as\fP and defines for use with virtual address spaces
+uts/i386/vm/hat.h	address translation defines \f4HAT_\fP\f2XXX\f1
+uts/i386/vm/reboot.h	reboot modes and flags to \f4init\fP
+uts/i386/vm/ucopy.c	access user address space
+uts/i386/vm/vm_as.c	virtual address space manipulation
+uts/i386/vm/vm_hat.c	hardware address translation
+uts/i386/vm/vm_hat.h	struct \f4hat\fP and related defines
+.TE
+.S
+.XF
+.H 2 "\*(CfMS\*(Cx \(em Memory Segmentation"
+.XS I N
+.S -1 -2
+.TS
+tab(	);
+l3f5w(2.25i) l3f1.
+uts/i386/ml/tables1.c	interrupt segments handling
+uts/i386/ml/tables2.c	interrupt segments handling
+uts/i386/ml/tool/*	
+uts/i386/sys/region.h	empty header for region-based pre-4.0 source compatibility
+uts/i386/sys/seg.h	structure of segment descriptors
+uts/i386/os/mapfile.c	memory file mapping segment handling
+uts/i386/vm/bootconf.h	boot time configuration information
+uts/i386/vm/kernel.h	defines a few global variables
+uts/i386/vm/seg.h	struct \f4seg\fP and defines for use with object independent segments
+uts/i386/vm/seg_dev.c	segment manipulation for character special devices
+uts/i386/vm/seg_dev.h	structures and defines for segment object type \f4dev\fP
+uts/i386/vm/seg_dummy.c	segment driver reserves address space without actual mapping
+uts/i386/vm/seg_dummy.h	defines for seg_dummy.c
+uts/i386/vm/seg_kmem.c	segment manipulation for misc kernel mapping
+uts/i386/vm/seg_kmem.h	structures and defines for segment object type \f4kmem\fP
+uts/i386/vm/seg_map.c	segment manipulation for kernel mapping to a file
+uts/i386/vm/seg_map.h	structures and defines for segment object type \f4map\fP
+uts/i386/vm/seg_objs.c	map kernel memory resources into user space
+uts/i386/vm/seg_objs.h	defines for seg_objs.c
+uts/i386/vm/seg_u.c	segment manipulation for U-area
+uts/i386/vm/seg_u.h	structures and defines for segment object type \f4u\fP
+uts/i386/vm/seg_vn.c	segment manipulation for user mapping to a file
+uts/i386/vm/seg_vn.h	structures and defines for segment object type \f4vn\fP
+uts/i386/vm/vm_seg.c	object independent segment manipulation
+.TE
+.S
+.XF
+.H 2 "\*(CfMP\*(Cx \(em Memory Paging"
+.XS I N
+.S -1 -2
+.TS
+tab(	);
+l3f5w(2.25i) l3f1.
+uts/i386/io/kmacct.c	kernel memory allocator accounting interface code file
+uts/i386/master.d/kma/*	configuration files for KMA boot module
+uts/i386/master.d/kmacct/*	configuration files for KMACCT boot module
+uts/i386/os/kma.c	kernel memory allocation routines \f4kmem_alloc\fP, \f4kmem_free\fP, etc.
+uts/i386/os/sched.c	physical memory scheduler:  \f4swapout\fP, \f4sched\fP
+uts/i386/os/vm_pageout.c	implements page replacement policy
+uts/i386/vm/faultcatch.h	defines a mechanism for catching page fault errors
+uts/i386/sys/getpages.h	header for backward compatibility
+uts/i386/sys/kmacct.h	kernel memory allocator structures:  struct \f4kmasym\fP, \f4kmabuf\fP
+uts/i386/sys/kmem.h	kernel memory allocator defines \f4KM_SLEEP\fP, \f4KM_NOSLEEP\fP
+uts/i386/sys/page.h	header for backward compatibility
+uts/i386/sys/pfdat.h	page access defines
+uts/i386/sys/swap.h	structures and defines for swap file manipulation
+uts/i386/sys/tuneable.h	memory-related tunable parameters:  struct \f4tune\fP, with fields \f4t_\fP\f2xxx\f1
+uts/i386/vm/anon.h	structures and defines for anonymous pages
+uts/i386/vm/memprobe.c	routine checks validity of referenced page
+uts/i386/vm/page.h	struct \f4page\fP and related defines
+uts/i386/vm/pvn.h	declares routines used to manage memory as a cache of paged v-nodes
+uts/i386/vm/vm_anon.c	management of anonymous pages
+uts/i386/vm/vm_page.c	management of physical pages
+uts/i386/vm/vm_pvn.c	support for v-node operations that deal with pages
+uts/i386/vm/vm_swap.c	routines for swap file manipulation
+uts/i386/vm/vm_vpage.c	virtual page utilities:  \f4vpage_lock\fP, \f4vpage_unlock\fP
+uts/i386/vm/vpage.h	information per virtual page:  struct \f4vpage\fP
+.TE
+.S
+.XF
+.H 2 "\*(CfMX\*(Cx \(em Memory Transfer"
+.XS I N
+.S -1 -2
+.TS
+tab(	);
+l3f5w(2.25i) l3f1.
+uts/i386/os/move.c	data movement between kernel and user space:  \f4iomove\fP, \f4cpass\fP, etc.
+uts/i386/os/vm_meter.c	memory management statistical data collector
+uts/i386/os/vm_subr.c	miscellaneous memory management routines
+uts/i386/sys/mman.h	defines for use with memory management syscalls
+uts/i386/sys/vm.h	includes \f4vmparam.h\fP, \f4vmmac.h\fP, \f4vmmeter.h\fP, \f4vmsystm.h\fP
+uts/i386/sys/vmmac.h	defines various macros for memory management
+uts/i386/sys/vmmeter.h	structures and defines used in memory management activity logging
+uts/i386/sys/vmparam.h	defines of various constants for memory management subsystem
+uts/i386/sys/vmsystm.h	memory management structures and global variables
+uts/i386/vm/debugger.h	kernel debugger interface
+uts/i386/vm/faultcode.h	\f4SIGBUS\fP and \f4SIGSEGV\fP exception codes
+uts/i386/vm/pte.h	empty file
+uts/i386/vm/rm.h	resource manager defines
+uts/i386/vm/trace.h	memory management trace point defines
+uts/i386/vm/vm.mk	memory management makefile
+uts/i386/vm/vm_machdep.c	machine dependent virtual memory support
+uts/i386/vm/vm_rm.c	virtual memory resource manager
+uts/i386/vm/vmlog.h	memory management event logging interface
+.TE
+.H 1 "Process Management Subsystem"
+SVR4 includes many features in its process management subsystem that enhance the portability and the usefulness of UNIX System V.
+These enhancements make this part of the kernel easier to port to new
+hardware.  It also makes UNIX System V more useful for
+time-critical programs, such as real-time control applications.
+.H 2 "Switchable Schedulers"
+A process-scheduler is kernel code that determines what program will
+run, when, and for how long.
+SVR4 includes a new process-scheduler architecture that features a modular, switchable interface to allow several different classes of process-schedulers to reside on the system simultaneously.
+Control of the system is switched from one scheduler to another on a running system as a result of commands from user programs.
+SVR4 provides two different process-schedulers described below:
+.VL
+.LI "Fair-Share Time-Sharing Scheduler"
+This is the traditional UNIX System V process-scheduling mechanism.
+.LI "Fixed-Priority Tunable Scheduler"
+This scheduler is new in SVR4.  It features the ability to assign a fixed priority to a user process and tune the size of the time-slice assigned to
+the process when it runs.
+Both of these adjustments are made by user programs and are
+particularly useful for real-time applications and other time-critical programs.
+.LE 1
+.H 2 "User-Controlled Process Scheduler"
+SVR4 supports both the traditional scheduling policy and a new real-time scheduling policy.
+Each process has its own scheduler properties, which a user can change while the process is running.
+The scheduler runs each process for a configurable time-slice, then gives other processes a chance to run.
+The new scheduler can be visualized as a network of multi-level feedback
+queues where each priority level has a tunable time-slice associated with it.
+.P
+Process scheduling priorities fall into two distinct categories, namely: time-sharing and real-time.
+Accordingly, a process is either a time-sharing process or a real-time process depending on its current priority.
+The time-sharing scheduler policy manages processes in a traditional manner: it dynamically adjusts time-sharing process priorities to give good response to all interactive processes.
+The priority of a real-time process stays fixed until a further explicit request via a system call.
+With this new scheduler, a runnable real-time process always gets served by the CPU before any time-sharing process.
+Processes having the same real-time priorities are served in round-robin fashion.
+Once a real-time process gets control of the CPU, it executes until one of the following events occurs:
+.AL
+.LI
+The process is preempted by a higher priority process becoming runnable.
+.LI
+The process enters a resource or event wait state (i.e. sleeping).
+.LI
+The current time slice expires.
+.LI
+The process exits.
+.LE
+The real-time scheduler policy never changes a real-time process priority except as the result of an explicit user request to change it.
+Moreover, all real-time processes run before any other processes.
+Thus, applications can perform time-critical tasks using real-time processes with the assurance that these processes always get priority over all other processes.
+Using real-time processes, an application can guarantee fast (on the
+order of microseconds), deterministic response to its critical processes.
+.H 2 "Kernel Preemption"
+Also to support real-time processing, SVR4 provides new pre-emption points in the kernel.  These are points where the scheduler may switch control of the CPU from one process to another.
+The additional pre-emption points improve system response time for high-priority processes.
+.P
+The UNIX System V kernel contains many discrete preemption points at which one process may relinquish control of the system to another.
+In SVR4, many new preemption points were added to greatly increase the responsiveness of the system.
+This feature allows user programs to respond more quickly to external stimuli.
+Discrete preemption points provide the required responsiveness in a clear, reliable implementation that operates with very low overhead and
+minimizes the possibility of scheduling deadlocks.  This increased
+responsiveness is particularly useful for real-time applications and other time-critical programs.
+.H 2 "Process Management Subsystem Modules"
+The Process Management Subsystem Modules comprise source-code files from \f4/usr/src/uts\fP as listed under the following headings:
+.sp
+PP - Process creation, deletion, and related functions
+.br
+PS - Process scheduling
+.br
+PM - Process memory management
+.br
+PI - Inter-process communication
+.H 2 "\*(CfPP\*(Cx \(em Process Creation, Deletion and Related Functions"
+.XS I N
+.S -1 -2
+.TS
+tab(	);
+l3f5w(2.25i) l3f1.
+uts/i386/sys/sigaction.h	defines for \f4sigaction\fP structure
+uts/i386/os/acct.c	process accounting:  \f4acct\fP syscall
+uts/i386/os/core.c	dump process memory to file \f4core\fP
+uts/i386/os/exit.c	process termination:  \f4exit\fP, \f4wait\fP syscalls
+uts/i386/os/fork.c	process creation:  \f4fork\fP, \f4vfork\fP syscalls
+uts/i386/os/pgrp.c	process group management
+uts/i386/os/pid.c	process identification routines
+uts/i386/os/pmstub.c	testing routine to identify privileged process
+uts/i386/os/scalls.c	process management syscalls:  \f4setuid\fP, \f4kill\fP, \f4alarm\fP, \f4umask\fP
+uts/i386/os/session.c	process session management
+uts/i386/os/sig.c	process signaling:  \f4ptrace\fP syscall
+uts/i386/os/slp.c	process synchronization:  \f4sleep\fP, \f4wakeup\fP, \f4setrun\fP, etc.
+uts/i386/sys/acct.h	process accounting:  struct \f4acct\fP, with fields \f4ac_\fP\f2xxx\f1
+uts/i386/sys/privilege.h	defines of known privileges on the system
+uts/i386/sys/proc.h	process data:  struct \f4proc\fP, with fields \f4p_\fP\f2xxx\f1
+uts/i386/sys/prsystm.h	declarations of \f4/proc\fP file-system routines
+uts/i386/sys/reg.h	location of saved 386 registers in U-area \f4u.u_ar0[]\fP
+uts/i386/sys/regset.h	386 general purpose register set
+uts/i386/sys/resource.h	struct \f4rlimit\fP and defines for resource limit syscalls
+uts/i386/sys/session.h	defines for session control; struct \f4sess\fP
+uts/i386/sys/siginfo.h	reason codes for various signals, macros \f4si_\fP\f2xxx\f1, and struct \f4siginfo\fP
+uts/i386/sys/signal.h	signal numbers \f4SIG\fP\f2XXX\f1 and macros \f4SIG_\fP\f2XXX\f1
+uts/i386/sys/sysconfig.h	commands for \f4_sysconfig\fP syscall
+uts/i386/sys/ucontext.h	user process context:  struct \f4ucontext\fP
+uts/i386/sys/user.h	process data not needed while swapped:  struct \f4user\fP, with fields \f4u_\fP\f2xxx\f1
+uts/i386/sys/wait.h	defines for use with \f4wait\fP and \f4waitid\fP syscalls
+.TE
+.S
+.XF
+.H 2 "\*(CfPS\*(Cx \(em Process Scheduling"
+.XS I N
+.S -1 -2
+.TS
+tab(	);
+l3f5w(2.25i) l3f1.
+uts/i386/disp/disp.c	class-independent process scheduler code file
+uts/i386/disp/disp.mk	class-independent process scheduler makefile
+uts/i386/disp/priocntl.c	process priority control:  \f4priocntlsys\fP, \f4nice\fP
+uts/i386/disp/rt.c	real-time class specific scheduler:  \f4rt_init\fP, \f4rt_fork\fP
+uts/i386/disp/sysclass.c	system-class process interface:  \f4sys_fork\fP, \f4sys_sleep\fP, \f4sys_wakeup\fP
+uts/i386/disp/ts.c	time-sharing class specific scheduler:  \f4ts_init\fP, \f4ts_fork\fP, \f4ts_preempt\fP
+uts/i386/master.d/events/*	configuration files for \f4events\fP boot module
+uts/i386/master.d/gendisp/*	configuration files for \f4gendisp\fP boot module (scheduler tunables)
+uts/i386/master.d/rt/*	configuration files for \f4rt\fP boot module
+uts/i386/master.d/ts/*	configuration files for \f4ts\fP boot module
+uts/i386/ml/cswitch.s	non-local goto:  \f4setjmp\fP and \f4longjmp\fP
+uts/i386/os/cred.c	process credential manipulation routines \f4crget\fP, \f4suser\fP, etc.
+uts/i386/os/procset.c	process set management:  \f4procinset\fP, \f4checkprocset\fP
+uts/i386/sys/class.h	struct \f4class\fP, \f4classfuncs\fP and macros \f4CL_\fP\f2XXX\f1
+uts/i386/sys/cred.h	process credentials:  struct \f4cred\fP
+uts/i386/sys/disp.h	scheduler queue entry:  struct \f4dispq\fP, macro \f4PREEMPT\fP
+uts/i386/sys/priocntl.h	structs and defines (\f4PC_\fP\f2XXX\f1) for use with the \f4priocntl\fP syscall
+uts/i386/sys/procset.h	structs and defines for dealing with sets of processes
+uts/i386/sys/rt.h	real-time scheduler structs \f4rtdpent\fP, \f4rtproc\fP
+uts/i386/sys/rtpriocntl.h	real-time priority control structs \f4rtparms\fP, \f4rtinfo\fP, \f4rtadmin\fP
+uts/i386/sys/ts.h	time-sharing scheduler structs \f4tsdpent\fP, \f4tsproc\fP
+uts/i386/sys/tsproc.h	time-sharing class specific process structures
+uts/i386/sys/tspriocntl.h	time-sharing priority control structs \f4tsparms\fP, \f4tsinfo\fP, \f4tsadmin\fP
+uts/i386/master.d/vc/*	configuration files for \f4vc\fP boot module
+uts/i386/sys/vc.h
+uts/i386/sys/vcpriocntl.h
+.TE
+.S
+.XF
+.H 2 "\*(CfPM\*(Cx \(em Process Memory Management"
+.XS I N
+.S -1 -2
+.TS
+tab(	);
+l3f5w(2.25i) l3f1.
+uts/i386/exec/coff/coff.c	routines to handle Common Object File Format (COFF) object files
+uts/i386/exec/coff/coff.mk	makefile for routines to handle COFF object files
+uts/i386/exec/elf/elf.c	routines to handle Extensible Linker Format (ELF) object files
+uts/i386/exec/elf/elf.mk	makefile for routines to handle ELF object files
+uts/i386/exec/exec.mk	makefile for process execution routines
+uts/i386/exec/intp/intp.c	routines to deal with \f4#!\fP interpreter files
+uts/i386/exec/intp/intp.mk	makefile for interpreter routines
+uts/i386/master.d/coff/*	configuration files for COFF boot module
+uts/i386/master.d/elf/*	configuration files for ELF boot module
+uts/i386/master.d/intp/*	configuration files for \f4intp\fP boot module
+uts/i386/ml/Gensymvals	script generates \f4.set\fP pseudo for assembler
+uts/i386/os/exec.c	process execution:  \f4exece\fP, \f4exec\fP syscalls
+uts/i386/os/execargs.c	routines handling argument list of \f4exec.c\fP
+uts/i386/os/grow.c	process memory management:  \f4brk\fP, \f4mmap\fP, \f4munmap\fP, etc.
+uts/i386/os/lock.c	process, text, and data segment locks
+uts/i386/sys/auxv.h	type \f4auxv_t\fP and related defines
+uts/i386/sys/elf.h	ELF object file format and related defines
+uts/i386/sys/elf_386.h	ELF relocation types for 386 machines
+uts/i386/sys/elftypes.h	typedefs for ELF object files
+uts/i386/sys/exec.h	process execution stack:  struct \f4uarg\fP
+uts/i386/sys/lock.h	flags for process and text locking
+uts/i386/sys/x.out.h	object file structure declarations
+.TE
+.S
+.XF
+.H 2 "\*(CfPI\*(Cx \(em Inter-process Communication"
+.XS I N
+.S -1 -2
+.TS
+tab(	);
+l3f5w(2.25i) l3f1.
+uts/i386/master.d/ipc/*	configuration files for IPC boot module
+uts/i386/master.d/msg/*	configuration files for \f4msg\fP boot module
+uts/i386/master.d/sem/*	configuration files for \f4sem\fP boot module
+uts/i386/master.d/shm/*	configuration files for \f4shm\fP boot module
+uts/i386/os/ipc.c	common routines for System V IPC
+uts/i386/os/msg.c	System V message-queue IPC
+uts/i386/os/sem.c	System V semaphore IPC
+uts/i386/os/shm.c	System V shared memory IPC
+uts/i386/sys/ipc.h	common IPC access structure \f4ipc_perm\fP; common defines \f4IPC_\fP\f2XXX\f1
+uts/i386/sys/msg.h	structures and defines for message-queue IPC facility
+uts/i386/sys/sem.h	structures and defines for semaphore IPC facility
+uts/i386/sys/sema.h	defines for semaphore mapping
+uts/i386/sys/shm.h	structures and defines for shared memory IPC facility
+.TE
+.H 1 "Kernel Management Subsystem"
+UNIX System V began as an operating system for minicomputers, but now it is used as the native operating system on computers of all sizes, from medium-sized personal computers based on the Intel 80286 processor, to the largest supercomputers, such as the Cray-3.
+SVR4 includes many characteristics that make UNIX System V work efficiently across this large range of system sizes.
+.P
+SVR4 expands many variables inside UNIX System V to accommodate the needs of larger UNIX systems.
+These include such values as process-ID numbers, user-ID numbers, and major and minor device numbers, as well as several others.
+This change makes the UNIX System more useful on large systems and large configurations of networked workstations.
+.H 2 "Swapping the User Area"
+UNIX System V maintains a data structure for each system user called the user area or \f4u-block\f1.
+Older UNIX systems keep this data in the system's main memory constantly for all current users.
+UNIX System V has been modified so that the \f2u-block\f1 for users whose processes are not running can be swapped out of main memory, thus freeing more system memory for user programs.
+This feature was added to UNIX System V in Release 3.1.
+.H 2 "Restructuring and Hashing System Tables"
+UNIX System V continuously maintains internal tables containing data on its internal state.
+On large systems, these tables can become very long, and searching through them can consume a significant amount of processor time that unnecessarily increases system overhead.
+UNIX System V has taken two steps toward eliminating this problem:
+.BL
+.LI
+System tables (such as the \f4proc\fP structure) have been redesigned to
+eliminate linear searches of major tables inside the kernel.
+This restructuring includes the addition of extra links to related table entries and more intelligent searching algorithms.
+.LI
+Access to some system tables has been hashed so the system can numerically compute the location of an entry and not be required to exhaustively search
+for it.
+.LE 1
+These features were first added to UNIX System V in Release 2.1.
+.H 2 "Dynamic Allocation of System Tables"
+Before SVR4, the number of processes allowed to run on a system and other such parameters were limited to statically-configured values built into a system.
+In Release 4 of UNIX System V, all major system tables are expanded dynamically as extra entries are required and reduced in size when many unused slots are available.
+.P
+This feature optimizes the use of system memory by dynamically altering the size of the kernel.
+There are always enough system table entries available for the system's current work load, and the kernel is never larger than it has to be; the remaining memory space is available for user programs, not locked into statically-allocated tables within the kernel.
+.H 2 "\f4nfile\fP Tunability"
+In past UNIX systems, the number of files a single process could have open simultaneously was a static parameter; SVR3 made this parameter adjustable on a system-wide basis, while SVR4 makes it dynamically tunable for each process with no inherent upper limit.
+This capability makes it possible for a program to monitor many files, devices, or network ports simultaneously.
+.H 2 "Kernel Memory Management"
+The SVR4 kernel uses the virtual memory hardware to good advantage in providing a common memory pool for program text, program data, and file information.
+This makes very effective use of physical memory without requiring
+special hardware support or large kernel virtual address spaces.
+The flexibility of this approach is that both the kernel and the application can dynamically map files into their address spaces and use only as much space as is needed.
+.H 2 "Expanded Fundamental Types (EFT)"
+Expanded Fundamental Types (EFT) expand the size of certain data types, such as user-ID (\^\f4uid\fP\^), group-ID (\^\f4gid\fP\^), process-ID (\^\f4pid\fP\^), and device-ID.
+The intent is to increase the capacities of fundamental system data types that have been operating under the artificial constraints imposed by the UNIX operating system's original hardware implementation. 
+.H 2 "System Initialization"
+SVR4 has further enhanced UNIX System V with a new configuration and booting procedure that will allow UNIX System V to initialize itself using any type of file-system, and will relink the UNIX System V kernel more quickly than in previous releases.
+.H 2 "File-system Independent Booting"
+Earlier releases for UNIX System V used the \f4lboot\fP method of booting the operating system.
+This procedure reads the UNIX system from the root device that was hard-coded into the \f4lboot\fP program and reconfigures it (if it was out of date),
+both linking and loading it.
+Post-Release 3 UNIX systems are intended to be able to boot from any device containing a bootable file-system-type.
+To accomplish this, SVR4 provides for File-system independent booting and a separate \f4cunix\fP program to link the operating system; this combination has proved to be more efficient and faster than \f4lboot\fP alone.
+.P
+File-system independent booting lets a user boot any standalone program, regardless of the root file-system type (see section on "Virtual File Subsystem").
+Programs can boot from any device readable by the firmware.
+Along with this new procedure, a new partition (\f4/stand\fP) appears.
+This partition contains all standalone files and text files required for booting.
+.H 2 "Auto-configuration"
+In concert with the new capability to perform file-system independent booting,
+SVR4 replaces the auto-configuration process, that automatically detected software or hardware changes, to allow a customer to generate a new bootable.
+The new SVR4 auto-configuration method offers the same features as \f4lboot\fP\^, but in a file-system independent environment.
+.H 2 "Kernel Management Subsystem Modules"
+The Kernel Management Subsystem Modules consist of source-code files from \f4/usr/src/uts\fP as listed under the following headings:
+.sp
+KK - System initialization/termination
+.br
+KU - Kernel/User interface (user services and assorted system-calls)
+.br
+KT - Time services
+.br
+KS - Kernel support routines
+.H 2 "\*(CfKK\*(Cx \(em System Initialization/Termination"
+.TS
+tab(	);
+l3f5w(2.25i) l3f1.
+\f4arch/eisa/uts/i386/boot/*\fP	EISA bus specific bootstrap programs
+\f4arch/mbus/uts/i386/boot/*\fP	MBUS-II specific bootstrap programs
+\f4uts/i386/boot/*\fP	system bootstrap programs
+.TE
+.TS
+tab(	);
+l3f5w(2.25i) l3f1.
+\f4uts/i386/master.d/init.base\fP	defaults for inittab
+\f4uts/i386/master.d/master.d.mk\fP
+\f4uts/i386/master.d/mtune\fP	master set of kernel ids
+\f4uts/i386/master.d/sassign\fP	id file; device number for special files
+\f4uts/i386/master.d/stune\fP	system specific ids
+\f4uts/i386/ml/syms.s\fP	for ELF compilation; assigns system board addresses
+\f4uts/i386/ml/uprt.s\fP	runtime startup for the part of kernel boot that runs in physical mode
+\f4uts/i386/os/main.c\fP	perform system initialization, fork to create \f4/etc/init\fP
+\f4uts/i386/os/name.c\fP	initializes system version and release name strings
+\f4uts/i386/os/startup.c\fP	machine dependent startup code
+\f4uts/i386/sys/boot.h\fP	system boot devices and modes (auto/demand)
+\f4uts/i386/sys/boothdr.h\fP	format of boot module headers, etc.
+\f4uts/i386/sys/bootinfo.h\fP	structure used to pass info between bootstraps and the kernel
+\f4uts/i386/sys/cdump.h\fP	crash dump header and related defines
+.TE
+.H 2 "\*(CfKU\*(Cx \(em Kernel/User interface (User Services and Assorted System-calls)"
+.TS
+tab(	);
+l3f5w(2.25i) l3f1.
+\f4uts/i386/master.d/pic/*\fP	configuration files for \f4pic\fP boot module
+\f4uts/i386/ml/intr.s\fP	interrupt handling 
+\f4uts/i386/ml/pic.c\fP	program interrupt controller handling
+\f4uts/i386/ml/ttrap.s\fP	trap interface and related routines
+\f4uts/i386/os/mod.c\fP	routines enable users for system services
+\f4uts/i386/os/sysi86.c\fP	386-specific \f4sysi86\fP syscall
+\f4uts/i386/os/sysent.c\fP	defines the syscall table, \f4sysent[]\fP
+\f4uts/i386/os/trap.c\fP	trap and syscall handling; syscall stubs
+\f4uts/i386/sys/errno.h\fP	syscall error codes \f4E\fP\f2XXX\f1
+\f4uts/i386/sys/info.h\fP	version and release number of the operating system
+\f4uts/i386/sys/pic.h\fP	defines for \f48259\fP program interrupt controller
+\f4uts/i386/sys/sysi86.h\fP	structures and defines for use with the \f4sysi86\fP syscall
+\f4uts/i386/sys/syscall.h\fP	syscall numbers
+\f4uts/i386/sys/systm.h\fP	syscall interface:  struct \f4sysent\fP, with fields \f4sy_\fP\f2xxx\f1; assorted declarations
+\f4uts/i386/sys/trap.h\fP	trap type values
+\f4uts/i386/sys/uadmin.h\fP	header for \f4uadmin\fP syscall command arguments
+\f4uts/i386/sys/ulimit.h\fP	header for \f4ulimit\fP syscall command arguments
+\f4uts/i386/sys/unistd.h\fP	implementation-specific counterpart of \f4head/unistd.h\fP.
+\f4uts/i386/sys/utsname.h\fP	struct \f4utsname\fP, containing system name, release, version, etc.
+\f4uts/i386/sys/utssys.h\fP	header for \f4utssys\fP syscall arguments
+.TE
+.H 2 "\*(CfKT\*(Cx \(em Time Services"
+.TS
+tab(	);
+l3f5w(2.25i) l3f1.
+\f4uts/i386/ml/pit.c\fP	program interrupt timer handling
+\f4uts/i386/os/clock.c\fP	clock interrupt handler
+\f4uts/i386/os/todc.c\fP	read and write hardware time-of-day clock
+\f4uts/i386/sys/callo.h\fP	callout table:  struct \f4callo\fP, with fields \f4c_\fP\f2xxx\f1
+\f4uts/i386/sys/clock.h\fP	not needed by kernel; defines \f4SECHR\fP, \f4SECDAY\fP, \f4SECYR\fP
+\f4uts/i386/sys/pit.h\fP	defines for 8254 program interrupt timer
+\f4uts/i386/sys/rtc.h\fP	defines for real time clock driver
+\f4uts/i386/sys/time.h\fP	structure (\f4timeval\fP) returned by the \f4gettimeofday\fP syscall
+\f4uts/i386/sys/times.h\fP	structure (\f4tms\fP) returned by the \f4times\fP syscall
+.TE
+.H 2 "\*(CfKS\*(Cx \(em Kernel Support Routines"
+.TS
+tab(	);
+l3f5w(2.25i) l3f1.
+\f4arch/eisa/uts/i386/os/oem.c\fP	EISA bus oem specific routines
+\f4uts/i386/kdb/*\fP	kernel debugger
+\f4uts/i386/kernmap\fP	linker control file for ELF compilation; assigns system board addresses
+\f4uts/i386/master.d/gdebugger/*\fP	configuration files for \f4gdebugger\fP boot module
+\f4uts/i386/master.d/kdb/*\fP	configuration files for \f4kdb\fP boot module
+\f4uts/i386/master.d/kdb-util/*\fP	configuration files for \f4kdb\fP utilities boot module
+\f4uts/i386/master.d/kernel/*\fP	configuration files for \f4kernel\fP boot module
+\f4uts/i386/ml/misc.s\fP	assorted set of routines:  \f4addupc\fP, \f4splx\fP, etc.
+\f4uts/i386/ml/ml.mk\fP	makefile for machine language routines
+\f4uts/i386/ml/oemsup.s\fP	oem specific routines
+\f4uts/i386/ml/string.s\fP	assembly language versions of \f4strcmp\fP, \f4strlen\fP, \f4strcpy\fP
+\f4uts/i386/os/bitmap.c\fP	routines to manipulate bitmaps of arbitrary size
+\f4uts/i386/os/bitmasks.c\fP	bitmask arrays \f4setmask[]\fP, \f4sbittab[]\fP, \f4cbittab[]\fP
+\f4uts/i386/os/bs.c\fP	routines to parse bootstring
+\f4uts/i386/os/cmn_err.c\fP	code for \f4cmn_err\fP, \f4printf\fP, \f4panic\fP and related routines
+\f4uts/i386/os/fp.c\fP	routines dealing with floating point
+\f4uts/i386/os/list.c\fP	generic doubly-linked circular list manipulation routines \f4ls_\fP\f2xxx\f1
+\f4uts/i386/os/machdep.c\fP	encapsulates low-level machine dependencies
+\f4uts/i386/os/malloc.c\fP	general space management:  \f4rmalloc\fP, \f4rmfree\fP
+\f4uts/i386/os/mapfile.c\fP	general space management:  \f4rmalloc\fP, \f4rmfree\fP
+\f4uts/i386/os/oem.c\fP	oem specific routines
+\f4uts/i386/os/os.mk\fP	makefile for operating system kernel
+\f4uts/i386/sys/bitmap.h\fP	macros to manipulate bitmaps of arbitrary size
+\f4uts/i386/sys/bitmasks.h\fP	declares bitmask arrays \f4setmask[]\fP, \f4sbittab[]\fP, \f4cbittab[]\fP
+\f4uts/i386/sys/cmn_err.h\fP	severity levels \f4CE_\fP\f2XXX\f1 and output destinations for \f4cmn_err\fP
+\f4uts/i386/sys/debug.h\fP	debugging macros \f4ASSERT\fP and \f4MONITOR\fP
+\f4uts/i386/sys/debugreg.h\fP	specify masks for accessing i386 debug registers
+\f4uts/i386/sys/erec.h\fP	error record defines
+\f4uts/i386/sys/err.h\fP	386 error structures; not used in kernel
+\f4uts/i386/sys/kdebugger.h\fP	header for kernel debugger
+\f4uts/i386/sys/inline.h\fP	386 inline assembler routines \f4strlen\fP, \f4splx\fP, etc.
+\f4uts/i386/sys/ipl.h\fP	defines of interrupt priority levels
+\f4uts/i386/sys/istk.h\fP	empty file
+\f4uts/i386/sys/list.h\fP	generic doubly-linked circular list structures 
+\f4uts/i386/sys/macro.h\fP	empty file
+\f4uts/i386/sys/map.h\fP	for use with \f4rmalloc\fP:  struct \f4map\fP, with fields \f4m_\fP\f2xxx\f1; related macros
+\f4uts/i386/sys/merge386.h\fP	structure defines for the merge hooks in the kernel files
+\f4uts/i386/sys/param.h\fP	various kernel parameters
+\f4uts/i386/sys/que.h\fP	data structure for queue manipulation
+\f4uts/i386/sys/sys.i386\fP	defines for i386 kernel entry call gates
+\f4uts/i386/sys/sysinfo.h\fP	system statistics:  struct \f4sysinfo\fP, etc. for \f4sar\fP command
+\f4uts/i386/sys/sysmacros.h\fP	various kernel macros
+\f4uts/i386/sys/systeminfo.h\fP	header for \f4sysinfo\fP commands and globals \f4architecture[]\fP, \f4hw_serial[]\fP, etc.
+\f4uts/i386/sys/tss.h\fP	386 TSS register defines
+\f4uts/i386/sys/types.h\fP	various kernel \f4typedef\fPs:  \f4caddr_t\fP, \f4ulong\fP, etc.
+\f4uts/i386/sys/v86.h\fP	virtual 8086 defines
+\f4uts/i386/sys/var.h\fP	system configuration information:  struct \f4var\fP, with fields \f4v_\fP\f2xxx\f1/\f4ve_\fP\f2xxx\f1
+\f4uts/i386/sys/xdebug.h\fP	kernel debugging macros
+\f4uts/i386/unix.mk\fP	top-level makefile
+\f4uts/i386/vm/cpu.h\fP	empty file
+\f4uts/i386/vm/mp.h\fP	typedef and defines for multiprocessor support
+\f4uts/i386/vm/vm_mp.c\fP	synchronization primitives for multiprocessor support
+\f4uts/i386/vuifile\fP	linker control file for COFF compilation; assigns system board addresses
+.TE

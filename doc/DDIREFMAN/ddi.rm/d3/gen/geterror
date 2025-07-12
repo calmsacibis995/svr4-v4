@@ -1,0 +1,41 @@
+'\"macro stdmacro
+.if n .pH gen.geterror @(#)geterror	40.3 of 5/15/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.nr X
+.if \nX=0 .ds x} geterror D3DK "" "DDI/DKI" "\&"
+.if \nX=1 .ds x} geterror D3DK "" "DDI/DKI"
+.if \nX=2 .ds x} geterror D3DK "" "\&"
+.if \nX=3 .ds x} geterror "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4geterror\f1 \- retrieve error number from a buffer header
+.SH SYNOPSIS
+.nf
+.na
+\f4#include <sys/buf.h>
+.sp 0.5
+int geterror(struct buf *\f2bp\f4);\f1
+.ad
+.fi
+.SH ARGUMENTS
+.RS 0n 10
+.IP "\f2bp\f1" 10n
+Pointer to the buffer header.
+.RE
+.SH DESCRIPTION
+\f4geterror\f1 is called to retrieve the error number 
+from the error field of a
+buffer header (\f4buf\fP(D4DK) structure).
+.SH RETURN VALUE
+An error number indicating the error condition of the I/O request is 
+returned.
+If the I/O request completed successfully, 0 is returned.
+.SH LEVEL
+Base or Interrupt.
+.SH NOTES
+Does not sleep.
+.SH SEE ALSO
+.na
+\f4buf\f1(D4DK),
+\f4errnos\fP(D5DK)
+.ad

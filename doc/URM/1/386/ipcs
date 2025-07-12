@@ -1,0 +1,337 @@
+'\"macro stdmacro
+.if n .pH g1.ipcs @(#)ipcs	40.4 of 1/3/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+'\"macro stdmacro
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} ipcs 1 "Interprocess Communication Utilities" "\&"
+.if \nX=1 .ds x} ipcs 1 "Interprocess Communication Utilities"
+.if \nX=2 .ds x} ipcs 1 "" "\&"
+.if \nX=3 .ds x} ipcs "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4ipcs\f1 \- report inter-process communication facilities status
+.SH SYNOPSIS
+\f4ipcs\f1
+[
+.I options
+]
+.SH DESCRIPTION
+\f4ipcs\fP
+prints information about active inter-process communication facilities.
+Without
+.IR options ,
+information is printed in short format for message queues,
+shared memory,
+and semaphores that are currently active in the system.
+Otherwise, the information that is displayed is controlled
+by the following
+.IR options :
+.TP
+\f4\-q\f1
+Print information about active message queues.
+.TP
+\f4\-m\f1
+Print information about active shared memory segments.
+.TP
+\f4\-s\f1
+Print information about active semaphores.
+.PP
+If
+\f4\-q\f1,
+\f4\-m\f1,
+or
+\f4\-s\f1
+are specified,
+information about only those indicated is printed.
+If none of these three are specified,
+information about all three is printed subject to these options:
+.TP
+\f4\-b\f1
+Print information on biggest allowable size:
+maximum number of bytes in messages on queue for message queues,
+size of segments for shared memory,
+and number of semaphores in each set for semaphores.
+See below for meaning of columns in a listing.
+.TP
+\f4\-c\f1
+Print creator's login name and group name.
+See below.
+.TP
+\f4\-o\f1
+Print information on outstanding usage:
+number of messages on queue and total number of bytes in messages on queue for
+message queues and number of processes attached to shared memory segments.
+.TP
+\f4\-p\f1
+Print process number information:
+process
+.SM ID
+of last process to send a message,
+process
+.SM ID
+of last process to receive a message on message queues,
+process
+.SM ID
+of creating process, and process
+.SM ID
+of last process to attach or detach on shared memory segments.
+See below.
+.TP
+\f4\-t\f1
+Print time information:
+time of the last control operation that changed the access permissions for
+all facilities,
+time of last
+\f4msgsnd\fP
+and last
+\f4msgrcv\fP
+on message queues,
+time of last
+\f4shmat\fP
+and last
+\f4shmdt\fP
+on shared memory,
+time of last
+\f4semop\fP
+on semaphores.
+See below.
+.TP
+\f4\-a\f1
+Use all print
+options.
+(This is a shorthand notation for
+\f4\-b\f1,
+\f4\-c\f1,
+\f4\-o\f1,
+\f4\-p\f1,
+and
+\f4\-t.\f1)
+.TP
+\f4\-C\f2 corefile\^\f1
+Use the file
+.I corefile\^
+in place of
+\f4/dev/kmem\f1.
+.TP
+\f4\-N\f2 namelist\^\f1
+Use the file
+.I namelist\^
+in place of \f4/stand/unix\f1.
+.PD
+.PP
+.TP
+\f4\-X\f1
+Print information about XENIX interprocess communication, in addition
+to the standard interprocess communication status.  The XENIX process 
+information describes a second set of semaphores and shared memory.
+.PP
+Note that the \f4\-p\f1 option does not print process number information
+for XENIX shared memory, and the \f4\-t\f1 option does not print time
+information about XENIX semaphores and shared memory.
+.PP
+The column headings and the meaning of the columns in an
+\f4ipcs\fP
+listing
+are given below; the letters in parentheses indicate the
+options
+that cause the corresponding heading to appear;
+``all''
+means that the heading always appears.
+Note that these
+options
+only determine
+what information is provided for each facility; they do
+not
+determine which facilities are listed.
+.ta 10n
+.PP
+.PD 0
+.TP 16
+\f4T\f1	(all)
+Type of the facility:
+.RS 20
+.TP 4
+\f4q\f1
+message queue
+.TP
+\f4m\f1
+shared memory segment
+.TP
+\f4s\f1
+semaphore
+.RE
+.PD
+.TP 16
+\f4ID\f1	(all)
+The identifier for the facility entry.
+.TP
+\f4KEY\f1	(all)
+The key used as an argument to
+\f4msgget\fP,
+\f4semget\fP,
+or
+\f4shmget\fP
+to create the facility entry.
+(Note:\ 
+The key of a shared memory segment is changed to
+\f4IPC_PRIVATE\f1
+when the segment has been removed until all processes attached to the segment
+detach it.)\ 
+.TP
+\f4MODE\f1	(all)
+The facility access modes and flags:
+The mode consists of 11 characters that are interpreted as follows.
+The first two characters are:
+.sp \n(PDu
+.RS 20
+.PD 0
+.TP 4
+\f4R\f1
+A process is waiting on a
+.IR msgrcv .
+.TP
+\f4S\f1
+A process is waiting on a
+.IR msgsnd .
+.TP
+\f4D\f1
+The associated shared memory segment has been removed.
+It will disappear when the last process attached to the segment
+detaches it.
+.TP
+\f4C\f1
+The associated shared memory segment is to be cleared when the
+first attach is executed.
+.TP
+\f4\-\f1
+The corresponding special flag is not set.
+.RE
+.PD
+.IP "" 16
+The next nine characters are interpreted as three sets of three bits each.
+The first set refers to the owner's permissions;
+the next to permissions of others in the user-group of the facility entry;
+and the last to all others.
+Within each set, the first character indicates permission to read,
+the second character indicates permission to write
+or alter the facility entry,
+and the last character is currently unused.
+.IP
+The permissions are indicated as follows:
+.sp \n(PDu
+.RS 20
+.PD 0
+.TP 4
+\f4r\f1
+Read permission is granted.
+.TP
+\f4w\f1
+Write permission is granted.
+.TP
+\f4a\f1
+Alter permission is granted.
+.TP
+\f4\-\f1
+The indicated permission is
+not
+granted.
+.RE
+.PD
+.TP 16
+\f4OWNER\f1	(all)
+The login name of the owner of the facility entry.
+.TP
+\f4GROUP\f1	(all)
+The group name of the group of the owner of the facility entry.
+.TP
+\f4CREATOR\f1	(a,c)
+The login name of the creator of the facility entry.
+.TP
+\f4CGROUP\f1	(a,c)
+The group name of the group of the creator of the facility entry.
+.TP
+\f4CBYTES\f1	(a,o)
+The number of bytes in messages currently outstanding on the associated
+message queue.
+.TP
+\f4QNUM\f1	(a,o)
+The number of messages currently outstanding on the associated message queue.
+.TP
+\f4QBYTES\f1	(a,b)
+The maximum number of bytes allowed in messages outstanding on the associated
+message queue.
+.TP
+\f4LSPID\f1	(a,p)
+The process
+.SM ID
+of the last process to send a message to the associated queue.
+.TP
+\f4LRPID\f1	(a,p)
+The process
+.SM ID
+of the last process to receive a message from the associated queue.
+.TP
+\f4STIME\f1	(a,t)
+The time the last message was sent to the associated queue.
+.TP
+\f4RTIME\f1	(a,t)
+The time the last message was received from the associated queue.
+.TP
+\f4CTIME\f1	(a,t)
+The time when the associated entry was created or changed.
+.TP
+\f4NATTCH\f1	(a,o)
+The number of processes attached to the associated shared memory segment.
+.TP
+\f4SEGSZ\f1	(a,b)
+The size of the associated shared memory segment.
+.TP
+\f4CPID\f1	(a,p)
+The process
+.SM ID
+of the creator of the shared memory entry.
+.TP
+\f4LPID\f1	(a,p)
+The process
+.SM ID
+of the last process to attach or detach the shared memory segment.
+.TP
+\f4ATIME\f1	(a,t)
+The time the last attach was completed to the associated shared memory
+segment.
+.TP
+\f4DTIME\f1	(a,t)
+The time the last detach was completed on the associated shared memory
+segment.
+.TP
+\f4NSEMS\f1	(a,b)
+The number of semaphores in the set associated with the semaphore entry.
+.TP
+\f4OTIME\f1	(a,t)
+The time the last semaphore operation was completed on the set associated
+with the semaphore entry.
+.DT
+.PD
+.SH FILES
+.nf
+.ta \w'\f4/etc/passwd     \fP'u
+\f4/stand/unix\fP	system namelist
+\f4/dev/kmem\fP	memory
+\f4/etc/passwd\fP	user names
+\f4/etc/group\fP	group names
+.fi
+.DT
+.SH NOTES
+If the user specifies either the \f4\-C\fP or \f4\-N\fP flag, the real
+and effective \f2UID/GID\f1 is set to the real \f2UID/GID\f1 of the
+user invoking \f4ipcs\fP.
+.P
+Things can change while
+\f4ipcs\fP
+is running; the information it gives is guaranteed to be accurate
+only when it was retrieved.
+.SH SEE ALSO
+\f4msgop\fP(2),
+\f4semop\fP(2),
+\f4shmop\fP(2) in the \f2Programmer's Reference Manual\f1.

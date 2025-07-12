@@ -1,0 +1,92 @@
+'\"!  tbl | mmdoc
+'\"macro stdmacro
+.if n .pH g3x.menu_driver @(#)menu_driver	40.6 of 4/11/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.\" ident	"@(#)svid_ti:ti_lib/menu_driver	1.3"
+.nr X
+.if \nX=0 .ds x} menu_driver 3X "" "\&"
+.if \nX=1 .ds x} menu_driver 3X ""
+.if \nX=2 .ds x} menu_driver 3X "" "\&"
+.if \nX=3 .ds x} menu_driver "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4menu_driver\f1 \- command processor for the \f4menus\fP subsystem
+.SH SYNOPSIS
+.nf
+.ft 4
+#include <menu.h>
+.sp
+int menu_driver(MENU *menu, int c);
+.ft 1
+.fi
+.SH DESCRIPTION
+\f4menu_driver\fP is the workhorse of the \f4menus\fP subsystem.
+It checks to determine whether
+the character \f2c\f1 is a menu request or data.
+If \f2c\f1 is a request, the menu driver executes the request
+and reports the result.
+If \f2c\f1 is data (a printable ASCII character), it enters the data
+into the pattern buffer and tries to find a matching item.
+If no match is found, the menu driver deletes 
+the character from the pattern buffer
+and returns \f4E_NO_MATCH\fP.
+If the character is not
+recognized, the menu driver assumes it is an application-defined
+command and returns \f4E_UNKNOWN_COMMAND\fP.
+.PP
+Menu driver requests:
+.TS
+lfCWw(1.65i)1 l .
+REQ_LEFT_ITEM	Move left to an item.
+REQ_RIGHT_ITEM	Move right to an item.
+REQ_UP_ITEM	Move up to an item.
+REQ_DOWN_ITEM	Move down to an item.
+.sp 0.5
+REQ_SCR_ULINE	Scroll up a line.
+REQ_SCR_DLINE	Scroll down a line.
+REQ_SCR_DPAGE	Scroll up a page.
+REQ_SCR_UPAGE	Scroll down a page.
+.sp 0.5
+REQ_FIRST_ITEM	Move to the first item.
+REQ_LAST_ITEM	Move to the last item.
+REQ_NEXT_ITEM	Move to the next item.
+REQ_PREV_ITEM	Move to the previous item.
+.sp 0.5
+REQ_TOGGLE_ITEM	Select/de-select an item.
+REQ_CLEAR_PATTERN	Clear the menu pattern buffer.
+REQ_BACK_PATTERN	Delete the previous character from pattern buffer.
+REQ_NEXT_MATCH	Move the next matching item.
+REQ_PREV_MATCH	Move to the previous matching item.
+.TE
+.SH RETURN VALUE
+\f4menu_driver\fP returns one of the following:
+.TS
+lfCWw(1.25i)1 c1 l .
+E_OK	\-	The routine returned successfully.
+E_SYSTEM_ERROR	\-	System error.
+E_BAD_ARGUMENT	\-	An incorrect argument was passed to the routine.
+E_BAD_STATE	\-	T{
+The routine was called from an initialization or termination function.
+T}
+E_NOT_POSTED	\-	The menu has not been posted.
+.br
+.ne 1i
+E_UNKNOWN_COMMAND	\-	T{
+An unknown request was passed to the menu driver.
+T}
+E_NO_MATCH	\-	The character failed to match.
+E_NOT_SELECTABLE	\-	The item cannot be selected.
+E_REQUEST_DENIED	\-	The menu driver could not process the request.
+.TE
+.SH NOTES
+Application defined commands should be defined relative to (greater than)
+\f4MAX_COMMAND\fP, the maximum value of a request listed above.
+.PP
+The header file \f4<menu.h>\f1 automatically includes the header files
+\f4<eti.h>\fP and \f4<curses.h>\fP.
+.SH SEE ALSO
+.na
+\f4curses\fP(3X),
+\f4menus\fP(3X)
+.ad

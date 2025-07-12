@@ -1,0 +1,98 @@
+'\"macro stdmacro
+.if n .pH g1.pkgproto @(#)pkgproto	40.14.1.1 of 3/2/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} pkgproto 1 "Essential Utilities" "\&"
+.if \nX=1 .ds x} pkgproto 1 "Essential Utilities"
+.if \nX=2 .ds x} pkgproto 1 "Essential Utilities" "\&"
+.if \nX=3 .ds x} pkgproto "Essential Utilities" "\&"
+.TH \*(x}
+.SH NAME
+\f4pkgproto\f1 \- generate a \f4prototype\fP file
+.SH SYNOPSIS
+\f4pkgproto \f1[\f4-i\f1] [\f4-c \f2class\f1] [\f2path1\f1[\f4=\f2path2\f1] . . . ]
+.SH DESCRIPTION
+\f4pkgproto\f1
+scans the indicated paths and generates a \f4prototype\fP file 
+that may be used as input to the \f4pkgmk\f1 command.
+.TP 10
+\f4-i\f1
+Ignores symbolic links and records the paths as \f4ftype=f\fP (a file)
+versus \f4ftype=s\fP(symbolic link)
+.TP 10
+\f4-c\f1
+Maps the class of all paths to \f2class\f1.
+.TP 10
+\f2path1\f1
+Path of directory where objects are located.
+.TP 10
+\f2path2\f1
+Path that should be substituted on output for \f2path1\f1.
+.P
+If no paths are specified on the command line,
+standard input is assumed to be a
+list of paths.
+If the path listed on the command line is a directory, 
+the contents of the directory are searched.
+However,
+if input is read from \f4stdin\f1,
+a directory specified as a path will not be searched.
+.SH NOTES
+By default,
+\f4pkgproto\f1 creates symbolic link entries for any symbolic link
+encountered (\f4ftype=s\fP).
+When you use the \f4-i\f1 option,
+\f4pkgproto\f1 creates a file
+entry for symbolic links (\f4ftype=f\fP).
+The \f4prototype\fP file would
+have to be edited to assign such file types as \f4v\fP (volatile), \f4e\fP
+(editable), or \f4x\fP (exclusive directory).
+\f4pkgproto\f1 detects linked files.
+If multiple files are linked together,
+the first path encountered is considered
+the source of the link.
+.SH EXAMPLE
+The following two examples show uses of \f4pkgproto\f1 and a parial
+listing of the output produced.
+.P
+Example 1:
+.in +.5i
+.nf
+.ft CW
+.vs -1
+$ pkgproto /usr/bin=bin /usr/usr/bin=usrbin /etc=etc
+f none bin/sed=/bin/sed 0775 bin bin
+f none bin/sh=/bin/sh 0755 bin daemon
+f none bin/sort=/bin/sort 0755 bin bin
+f none usrbin/sdb=/usr/bin/sdb 0775 bin bin
+f none usrbin/shl=/usr/bin/shl 4755 bin bin
+d none etc/master.d 0755 root daemon
+f none etc/master.d/kernel=/etc/master.d/kernel 0644 root daemon
+f none etc/rc=/etc/rc 0744 root daemon
+.ft 1
+.vs +1
+.in -.5i
+Example 2:
+.in +.5i
+.nf
+.ft CW
+.vs -1
+$ find / \-type d \-print | pkgproto
+d none / 755 root root
+d none /usr/bin 755 bin bin
+d none /usr 755 root root
+d none /usr/bin 775 bin bin
+d none /etc 755 root root
+d none /tmp 777 root root
+.ft 1
+.vs +1
+.fi
+.in -.5i
+.sp -.5
+.SH SEE ALSO
+.na
+\f4pkgmk\fP(1),
+\f4pkgparam\fP(1),
+\f4pkgtrans\fP(1).
+.ad

@@ -1,0 +1,188 @@
+'\"! tbl | mmdoc
+'\"macro stdmacro
+.if n .pH g3c.lockf @(#)lockf	40.15 of 5/22/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} lockf 3C "C Development Set" "\&"
+.if \nX=1 .ds x} lockf 3C "C Development Set"
+.if \nX=2 .ds x} lockf 3C "" "\&"
+.if \nX=3 .ds x} lockf "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4lockf\f1 \- record locking on files
+.SH SYNOPSIS
+\f4#include <unistd.h>\f1
+.PP
+\f4int lockf (int fildes, int function, long size);\f1
+.SH DESCRIPTION
+\f4lockf\fP locks sections of a file.
+Advisory or mandatory write locks depend
+on the mode bits of the file; see \f4chmod\fP(2).
+Other processes that try
+to lock the locked file section
+either get an error or go to sleep until the resource
+becomes unlocked.
+All the locks for a process are removed when the process terminates.
+See \f4fcntl\fP(2) for more information about record locking.
+.PP
+\f2fildes\f1 is an open file descriptor.
+The file descriptor must have
+\f4O_WRONLY\fP
+or
+\f4O_RDWR\fP
+permission in order to establish locks with this function call.
+.PP
+\f2function\f1 is a control value that specifies the action to be taken.
+The permissible values for \f2function\f1 are defined in \f4unistd.h\f1
+as follows:
+.PP
+.TS
+lf4 2 lf4 2 lf4.
+#define F_ULOCK	0	/\(** unlock previously locked section \(**/
+#define F_LOCK	1	/\(** lock section for exclusive use \(**/
+#define F_TLOCK	2	/\(** test & lock section for exclusive use \(**/
+#define F_TEST	3	/\(** test section for other locks \(**/
+.TE
+All other values of \f2function\f1 are reserved for future extensions and will
+result in an error return if not implemented.
+.PP
+\f4F_TEST\fP
+is used to detect if a lock by another process is
+present on the specified section.
+\f4F_LOCK\fP
+and
+\f4F_TLOCK\fP
+both lock a section of a file if the section is available.
+\f4F_ULOCK\fP
+removes locks from a section of the file.
+.PP
+\f2size\f1 is the number of contiguous bytes to be locked or unlocked.
+The resource to be locked or unlocked
+starts at the current offset in the file and extends forward
+for a positive size and backward for a negative size (the preceding bytes up to but
+not including the current offset).
+If \f2size\f1 is zero, the section from the current offset through the largest file
+offset is locked (that is, from the current offset through the
+present or any future end-of-file).
+An area need not be allocated to the file in order to be locked as such locks
+may exist past the end-of-file.
+.PP
+The sections locked with
+\f4F_LOCK\fP
+or
+\f4F_TLOCK\fP
+may, in whole or in part,
+contain or be contained by a previously locked section for the same process.
+Locked sections will be unlocked starting at the the point
+of the offset through
+\f2size\f1
+bytes or to the end of file if
+\f2size\f1
+is (\f4off_t\f1) 0.
+When this situation occurs,
+or if this situation occurs in adjacent sections,
+the sections are combined into a single section.
+If the request requires that a new element be added to the table of active
+locks and this table is already full,
+an error is returned,
+and the new section is not locked.
+.PP
+\f4F_LOCK\fP
+and
+\f4F_TLOCK\fP
+requests differ only by the action taken if the resource
+is not available.
+\f4F_LOCK\fP
+will cause the calling process to sleep until the resource is available.
+\f4F_TLOCK\fP
+will cause the function to return a \-1 and set
+\f4errno\f1 to
+\f4EACCES\fP
+if the section is already locked by another process.
+.PP
+\f4F_ULOCK\fP
+requests may, in whole or in part,
+release one or more locked sections controlled by the process.
+When sections are not fully released,
+the remaining sections are still locked by the process.
+Releasing the center section of a locked section
+requires an additional element in the table
+of active locks.
+If this table is full,
+an
+\f4errno\fP
+is set to
+\f4ENOLCK\fP
+and the requested section is not released.
+.PP
+A potential for deadlock occurs if a process controlling a locked
+resource is put to sleep by requesting another process's locked resource.
+Thus calls to \f4lockf\fP or \f4fcntl\fP scan
+for a deadlock prior to sleeping on a locked resource.
+An error return is made if sleeping on the locked resource would cause a deadlock.
+.PP
+Sleeping on a resource is interrupted with any signal.
+The \f4alarm\fP system call may be used to provide a timeout facility
+in applications that require this facility.
+.PP
+\f4lockf\fP will fail if one or more of the following are true:
+.TP .75i
+\f4EBADF\fP
+\f2fildes\f1 is not a valid open descriptor.
+.TP .75i
+\f4EAGAIN\fP
+\f2cmd\f1 is
+\f4F_TLOCK\fP
+or
+\f4F_TEST\fP
+and the section is already locked by another process.
+.TP .75i
+\f4EDEADLK\fP
+\f2cmd\f1 is
+\f4F_LOCK\fP
+and a deadlock would occur.
+.TP .75i
+\f4ENOLCK\fP
+\f2cmd\f1 is
+\f4F_LOCK\fP,
+\f4F_TLOCK\fP,
+or
+\f4F_ULOCK\fP
+and the number of entries in the lock table
+would exceed the number allocated on the system.
+.TP .75i
+\f4ECOMM\fP
+\f2fildes\f1 is on a remote machine and the link
+to that machine is no longer active.
+.SH SEE ALSO
+\f4intro\fP(2),
+\f4alarm\fP(2),
+\f4chmod\fP(2),
+\f4close\fP(2),
+\f4creat\fP(2),
+\f4fcntl\fP(2),
+\f4open\fP(2),
+\f4read\fP(2),
+\f4write\fP(2)
+.SH DIAGNOSTICS
+On success,
+\f4lockf\fP returns 0.
+On failure,
+\f4lockf\fP returns \-1 and sets \f4errno\f1 to
+indicate the error.
+.SH NOTES
+Unexpected results may occur in processes that do buffering
+in the user address space.
+The process may later read/write data that is/was locked.
+The standard \s-1I/O\s+1 package is the most common source of
+unexpected buffering.
+.PP
+Because in the future the variable \f4errno\f1 will be
+set to 
+\f4EAGAIN\fP
+rather than
+\f4EACCES\fP
+when a section of a file is already locked by another process,
+portable application programs should expect and test for either value.
+.Ee

@@ -1,0 +1,78 @@
+.if n .pH prod_ovr.copyright @(#)copyright	40.6
+.\" Copyright 1990 AT&T
+.\" Copyright 1991 USL
+.tr~ 
+~~
+.sp 1P
+.po 5P
+.ps 8
+.vs 10
+.fp 3 HB
+.fp 1 H
+.nf
+.ft 3
+Copyright 1991 UNIX System Laboratories, Inc.
+Copyright 1990, 1989, 1988, 1987, 1986, 1985, 1984 AT&T
+All Rights Reserved
+Printed in USA
+.ft 1
+.fi
+.sp
+No part of this publication may be reproduced or transmitted in
+any form
+or by any means\(emgraphic, electronic, electrical, mechanical, or
+chemical, including photocopying, recording in any medium, taping,
+by any computer or information storage and retrieval systems, etc.,
+without prior permissions in writing from UNIX System
+Laboratories, Inc.
+(USL).
+.sp
+.ft 3
+IMPORTANT NOTE TO USERS
+.ft 1
+.sp .5
+While every effort has been made to ensure the accuracy and
+completeness of all
+information in this document, USL assumes no liability to any
+party for any loss or
+damage caused by errors or omissions or by statements of any kind
+in this
+document, its updates, supplements, or special editions, whether
+such errors,
+omissions, or statements result from negligence, accident, or any
+other cause.  USL further assumes no liability arising out of the
+application or use of any product or system described herein; nor any
+liability for incidental or consequential damages arising from the
+use of this
+document.  \f3USL disclaims all warranties regarding the information
+contained herein, whether expressed, implied or statutory, including
+implied warranties of merchantability or fitness for a particular
+purpose\f1.
+.P
+USL makes no representation that the interconnection of products
+in the
+manner described herein will not infringe on existing or future
+patent rights, nor do the descriptions contained herein imply the
+granting of any license
+to make, use or sell equipment constructed in accordance with this
+description.
+.P
+USL reserves the right to make changes
+to any products herein
+without further notice.
+.sp
+.ft 3
+TRADEMARKS
+.ft 1
+.sp .5
+.nf
+MULTIBUS is a registered trademark of Intel Corporation.
+OPEN LOOK is a registered trademark of UNIX System Laboratories, Inc. in the USA and other countries.
+PostScript is a registered trademark of Adobe Systems, Inc.
+SunOS is a registered trademark of Sun Microsystems, Inc.
+UNIX is a registered trademark of UNIX System Laboratories, Inc. in the USA and other countries.
+VAX is a trademark of Digital Equipment Corporation.
+X11/NeWS is a registered trademark of Sun Microsystems, Inc.
+XENIX is a registered trademark of Microsoft Corporation.
+XWIN is a registered trademark of UNIX System Laboratories, Inc. in the USA and other countries.
+.fi

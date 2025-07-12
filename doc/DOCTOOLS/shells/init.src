@@ -1,0 +1,82 @@
+#ident	"@(#)doctools:shells/init.src	1.2"
+#
+#       Copyright (c) 1990, 1991 UNIX System Laboratories, Inc.
+#       Copyright (c) 1984, 1986, 1987, 1988, 1989, 1990 AT&T
+#         All Rights Reserved
+#
+#       THIS IS UNPUBLISHED PROPRIETARY SOURCE CODE OF
+#       UNIX System Laboratories, Inc.
+#       The copyright notice above does not evidence any
+#       actual or intended publication of such source code.
+#
+#       init: variable initialization; called by format shell
+#
+#     Modified by: M. Shapiro
+#                 UNIX System Laboratories
+#                 attunix!mxs   201-522-5181
+#                   
+#
+# Initialization of variables
+# Following variables should be location INDEPENDENT
+MACBIN=${LIB}                # local macro directory (matches .so lines!)
+LOG=/tmp/Log.${LOGNAME}       # log file for errors
+PTOC=N                       # default is not to process toc
+PAGENUM=-o-                  # default is process page 1 - end of file
+TF=/tmp/$$                   # temporary file location
+TROPTS="${TROPTS} -rz$$"	# pass PID and other options to troff
+CNT=0                        # start file counter at 0
+TROFF=troff                  # name for troff
+MACHINE=`uname`              # name of processing machine
+USER=${LOGNAME}              # name of user
+umask 022                    # file creation mode
+. ${LIB}/defs.h              # local definitions
+: ${DEFDEST:=$d0}            # default destination: either DEFDEST or d0n
+: ${STOC:=N}                 # don't save Cfile for toc, unless STOC exists
+PNAME=${DEFDEST}             # default destination carried through here
+# short destination list for USAGE message
+SDEST="\nAvailable Destinations Are:
+\t${d0} ${d1} ${d2} ${d3} ${d4} ${d5} ${d6} ${d7}
+\t${d8} ${d9} ${d10} ${d11} ${d12} ${d13} ${d14} ${d15} ${d16}
+\tDefault is: ${DEFDEST}"
+# long destination list
+LDEST="\nAvailable Destinations:
+\n\tNAME\tDESCRIPTION\t\tLOCATION
+\t----\t-----------\t\t--------
+\t${d0}\t${d0DE}\t${d0LO}
+\t${d1}\t${d1DE}\t${d1LO}
+\t${d2}\t${d2DE}\t${d2LO}
+\t${d3}\t${d3DE}\t${d3LO}
+\t${d4}\t${d4DE}\t${d4LO}
+\t${d5}\t${d5DE}\t${d5LO}
+\t${d6}\t${d6DE}\t${d6LO}
+\t${d7}\t${d7DE}\t${d7LO}
+\t${d8}\t${d8DE}\t${d8LO}
+\t${d9}\t${d9DE}\t${d9LO}
+\t${d10}\t${d10DE}\t${d10LO}
+\t${d11}\t${d11DE}\t${d11LO}
+\t${d12}\t${d12DE}\t${d12LO}
+\t${d13}\t${d13DE}\t${d13LO}
+\t${d14}\t${d14DE}\t${d14LO}
+\t${d15}\t${d15DE}\t${d15LO}
+\t${d16}\t${d16DE}\t${d16LO}
+\n\tDefault is:  ${DEFDEST}"
+# usage information
+USAGE="\n$0 - format files for printing
+\nUSAGE: $0 [-c] [-d destination] [-l] [-m] [-o pages] [-p page]
+\t[-s size ] [-v version] [-w] [files]
+${SDEST}"
+# wait message
+WAIT="\n\t!! Please Wait !!
+\tFormatting In Progress"
+# Printing sizes
+SIZES='\nAvailable Page Sizes:
+\n\tSIZE\tPAGE DIMENSIONS\tDESCRIPTION
+\t----\t---- ----------\t-----------
+\t1\t4" by 8"\tReference Card Format
+\t2\t5.5" by 8.5"\tPC Format
+\t3\t7" by 9"\tEnlarged Summit Format
+\t4\t8.5" by 11\tU.S. Letter Format
+\t5\t5.38" by 8.27"\tEuropean A5 Format
+\t6\t5.93" by 9.89"\tEuropean B5 Format
+\t7\t6.25" by 8.5"\tSummit Format [DEFAULT]'
+# EOF

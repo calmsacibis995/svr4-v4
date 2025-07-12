@@ -1,0 +1,93 @@
+'\"macro stdmacro
+.if n .pH g7.wd @(#)wd	40.5 of 1/4/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.ds ]Z Version 1.1.0
+.nr X
+.if \nX=0 .ds x} wd 7 "" "\&"
+.if \nX=1 .ds x} wd 7 ""
+.if \nX=2 .ds x} wd 7 "" "\&"
+.if \nX=3 .ds x} wd "" "" "\&"
+.TH \*(x}
+.SH NAME
+wd \- Western Digital 8003 Adapter Board
+.SH DESCRIPTION
+The wd driver is a STREAMS
+based driver conforming to the AT&T Data Link Provider (DLPI)
+interface.
+It provides DLPI Style 1
+access to the Western Digital 8003 family of Local Area Network Adapters.
+The board provides a pool of buffers for packets received from the
+network and provides for all the management of the on-board buffers.
+.P
+The driver provides for IEEE 802.2 LLC Class 1
+and Ethernet encapsulation of data.
+All communication with the driver is done via STREAMS
+messages in the Data Link Interface format specified in the file
+/\f4usr\f1/\f4include\f1/\f4sys\f1/\f4dlpi.h\f1.
+.P
+The LLC1 protocol supports receipt of and response to
+XID and TEST but currently does not generate them.
+This may change with a later release of the driver.
+Group SAPs are not currently supported although the broadcast
+SAP is.
+.P
+A user may bind to any non-group SAP
+address that is not already bound to another STREAM.
+Attempts to bind to a non-legal SAP address are rejected.
+.P
+If the SAP value to be bound is larger than 255 (0xFF),
+then the type of encapsulation is taken to be the older Ethernet style
+rather than IEEE 802.2.
+Rather than a SAP value, the value passed will be used as the
+Ethernet type field for the STREAM.
+.P
+By supporting both link level types, the driver is capable of
+supporting a wide variety of protocols.
+.P
+A number of ioctl operations are supported.
+Some of the operations may be specific to the
+Western Digital ViaNet\(rg product.
+.P
+.RS
+.TP 1i
+\f4DLGADDR\f1
+Get the MAC address of the interface.
+Takes a pointer to a 6-byte buffer.
+.TP 1i
+\f4DLSADDR\f1
+Set a new MAC
+address to be used by the interface.
+Takes a pointer to a 6-byte buffer.
+.TP 1i
+\f4DLGBROAD\f1
+Get the MAC broadcast address.
+Takes a pointer to a 6-byte buffer.
+.TP 1i
+\f4DLGSTAT\f1
+Get the current board statistics counters.
+Takes a pointer to a \f4wdstat\f1 structure.
+.TP 1i
+\f4DLPROM\f1
+Enable promiscuous mode.
+Takes a pointer to an integer.
+If the value is non-zero, promiscuous mode is enabled.
+A zero value disables promiscuous mode.
+.TP 1i
+\f4DLSMULT\f1
+Set a new multicast address and enable its reception.
+A 6-byte buffer pointing to the multicast address must be passed
+as the parameter.
+.TP 1i
+\f4DLGMULT\f1
+Get the current multicast address table and its size.
+The buffer provided by the user is filled with as many
+multicast addresses as will fit.
+The result of the ioctl will be the number of addresses in the whole table.
+.TP 1i
+\f4DLDMULT\f1
+Delete a multicast address by passing a pointer to the 6-byte
+multicast address that should be removed from the multicast table.
+.RE
+.SH SEE ALSO
+ANSI/IEEE Standard 802.2 - Logical Link Control.

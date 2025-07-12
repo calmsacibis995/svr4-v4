@@ -1,0 +1,33 @@
+'\"macro stdmacro
+.if n .pH g4.pnch @(#)pnch	40.6 of 1/3/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} pnch 4 "" "\&"
+.if \nX=1 .ds x} pnch 4 ""
+.if \nX=2 .ds x} pnch 4 "" "\&"
+.if \nX=3 .ds x} pnch "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4pnch\f1 \- file format for card images
+.SH DESCRIPTION
+The
+.SM PNCH
+format is a convenient representation for
+files consisting of card images in an arbitrary code.
+.PP
+A
+.SM PNCH
+file is a simple concatenation of card records.
+A card record consists of a single control byte followed
+by a variable number of data bytes.
+The control byte specifies the number
+(which must lie in the range 0\-80) of data bytes that
+follow.
+The data bytes are 8-bit codes that constitute
+the card image.
+If there are fewer than 80 data bytes, it is understood
+that the remainder of the card image consists of trailing
+blanks.
+.\"	@(#)pnch.4	6.2 of 10/20/83
+.Ee

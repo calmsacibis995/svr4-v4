@@ -1,0 +1,87 @@
+'\"macro stdmacro
+.if n .pH g3e.elf_strptr @(#)elf_strptr	40.10.1.1 of 4/8/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.\"#ident	"@(#)ci5-doc:req/libelf/strptr.man	1.3"
+.nr X
+.if \nX=0 .ds x} elf_strptr 3E "ELF Library" "\&"
+.if \nX=1 .ds x} elf_strptr 3E "ELF Library"
+.if \nX=2 .ds x} elf_strptr 3E "" "\&"
+.if \nX=3 .ds x} elf_strptr "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4elf_strptr\f1 \- make a string pointer
+.SH SYNOPSIS
+\f4cc\f1
+[\f2flag\fP \|.\|.\|.] \f2file\fP \|.\|.\|.
+\f4\-lelf\f1
+[\f2library\fP \|.\|.\|.]
+.PP
+.nf
+.ft 4
+#include <libelf.h>
+.sp 0.5
+char \(**elf_strptr(Elf \(**elf, size_t section, size_t offset);
+.ft 1
+.fi
+.SH DESCRIPTION
+This function converts a string section
+.I offset
+to a string pointer.
+.I elf
+identifies the file in which the string section resides, and
+.I section
+gives the section table index for the strings.
+\f4elf_strptr\fP
+normally returns a pointer to a string, but it
+returns a null pointer when
+.I elf
+is null,
+.I section
+is invalid or is not a section of type
+\f4SHT_STRTAB\f1,
+the section data cannot be obtained,
+.I offset
+is invalid, or an error occurs.
+.SH EXAMPLE
+A prototype for retrieving section names appears below.
+The file header specifies the section name string table
+in the \f4e_shstrndx\fP member.
+The following code loops through the sections, printing
+their names.
+.P
+.RS .5i
+.DT
+.nf
+.ft 4
+.ta 8u*\w' 'u +8u*\w' 'u +8u*\w' 'u +8u*\w' 'u +8u*\w' 'u +8u*\w' 'u
+.ne 18
+if ((ehdr = elf32_getehdr(elf)) =\^= 0)
+{
+	/\(** handle the error \(**/
+	return;
+}
+ndx = ehdr->e_shstrndx;
+scn = 0;
+while ((scn = elf_nextscn(elf, scn)) != 0)
+{
+	char	\(**name = 0;
+	if ((shdr = elf32_getshdr(scn)) != 0)
+	  name = elf_strptr(elf, ndx, (size_t)shdr->sh_name);
+	printf("'%s'\en", name? name: "(null)");
+}
+.fi
+.RE
+.SH "SEE ALSO"
+.na
+\f4elf\fP(3E),
+\f4elf_getdata\fP(3E),
+\f4elf_getshdr\fP(3E),
+\f4elf_xlate\fP(3E)
+.SH NOTE
+A program may call
+\f4elf_getdata\fP
+to retrieve an entire string table section.
+For some applications, that would be both
+more efficient and more convenient than using
+\f4elf_strptr\fP.

@@ -1,0 +1,48 @@
+'\"macro stdmacro
+.if n .pH doctools.checkmacs.1 @(#)checkmacs.1	40.2 of 5/16/91
+.\" @(#) SCCS File: checkmacs.1; ID:1.4; DATED:1/5/90 
+.\"
+.\"     Copyright (c) 1989 AT&T   
+.\"     All Rights Reserved       
+.\"
+.\"     THIS IS UNPUBLISHED PROPRIETARY SOURCE CODE OF AT&T   
+.\"     The copyright notice above does not evidence any     
+.\"     actual or intended publication of such source code.  
+.\"
+.\"     Manual Page for checkmacs
+.\"
+.\"     Written by: J.R. Okin
+.\"                 AT&T Bell Laboratories
+.\"                 Department XT91124000
+.\"                 attunix!jro   201-522-5015
+.\"                   
+.\"
+.\"
+.PM DN "FINAL COPY"
+.nr X
+.if \nX=0 .ds x} checkmacs 1 "" "Documenter's Tool Set" "\&"
+.if \nX=1 .ds x} checkmacs 1 "" "Documenter's Tool Set"
+.if \nX=2 .ds x} checkmacs 1 "" "\&"
+.if \nX=3 .ds x} checkmacs "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4checkmacs\f1 \- check DOCTOOLS manual page and guide files for errors
+.SH SYNOPSIS 
+\f4checkmacs \f2filenames\f1
+.SH DESCRIPTION
+The \f4checkmacs\fP
+command examines one or more source text files containing
+DOCTOOLS manual page macros or guide macros.
+\f4checkmacs\fP
+searches for incomplete or incorrect macro usage, such
+as unended lists and displays, displays nested within screens,
+lists nested more than three levels, and so on.
+.P
+Diagnostic messages are written to your terminal and
+include the line number in your source file where the error
+occurred.
+\f4checkmacs\fP
+displays the total number of lines read upon completing
+its examination of your file.
+.SH "SEE ALSO"
+\f4format\&\fP(1)

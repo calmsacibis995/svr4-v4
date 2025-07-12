@@ -1,0 +1,71 @@
+'\"macro stdmacro
+.if n .pH g1a.cciattach @(#)cciattach	40.9 of 5/17/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} cciattach 1iref "System Administration Utilities" "" "\&"
+.if \nX=1 .ds x} cciattach 1iref "System Administration Utilities" ""
+.if \nX=2 .ds x} cciattach 1iref "" "\&"
+.if \nX=3 .ds x} cciattach "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4cciattach\f1 \- Creates a connection to a subchannel on the communications
+controller.
+.SH SYNOPSIS
+\f4/usr/lib/cci/cciattach\f1 [\f4\-p \f2portid\f1] \f2slot-ID line-number sub-channel\f1
+.SH DESCRIPTION
+\f4cciattach\f1 associates a subchannel on a previously bound line with
+this host on the communications controller.  This program sends a
+\f4CCI_Attach\f1 message to the CCI server.  If at the time the \f4CCI_Attach\f1
+message is received by the CCI server and the subchannel is already
+attached by another host, the response will be delayed until the other
+host relinquishes control of the subchannel and control eventually comes
+back to this host.  When the response arrives, a Multibus II Transport
+portID will be returned for the subchannel.  The issuing host may now
+send line discipline specific messages to the line discipline program
+directed at the subchannel using this port ID.  This host remains the
+active host on the subchannel until it gives up control either by
+using the \f4ccidetach\f1(1iref) command or the \f4cciswitch\f1(1iref)
+command.
+.P
+Command line options are:
+.PP
+.TP
+\f4\-p \f2n\f1
+Set the Multibus II Transport source Portid to \f2n\f1 instead of the
+default value 0x1ff.  This value is also used in the default_portid
+field of the \f4CCI_Attach\f1 message.
+.PP
+The host can receive a response to the \f4CCI_Attach\f1 message as a result of
+another host sending a \f4cciswitch\f1(1iref) or a \f4ccidetach\f1(1iref)
+command to the CCI server.  In this case, the \f4CCI_Attach\f1 response will
+indicate this fact and will contain the host ID of the previous host.
+The response also contains the line discipline specific information
+returned from the line discipline program and the status of the session
+on the subchannel from the previous host.
+.PP
+The host issuing this command must have previously issued \f4CCI_Bind\f1
+message using the \f4ccibind\f1(1iref) command to register itself
+as a potential user of the line.  Otherwise an error will be returned
+from the CCI server.
+.PP
+The \f2line-number\f1 can range from 0 to (\f4MAX_LINES - 1\f1), where
+\f4MAX_LINES\f1 is returned in the \f4ccisrvinfo\f1(1iref) command. The
+subchannel can range from 0 to (\f4MAX_SUBCHANNELS - 1\f1), where
+\f4MAX_SUBCHANNELS\f1 is returned in the \f4ccibind\f1(1iref) command.
+The communications controller hosting the CCI server is selected by
+specifying its Multibus II iPSB slot-ID.
+.SH FILES
+\f4/usr/lib/cci/cciattach\f1
+.SH SEE ALSO
+\f4ccisrvinfo\f1(1iref),
+\f4ccildlist\f1(1iref),
+\f4ccilinfo\f1(1iref),
+\f4ccisubinfo\f1(1iref),
+\f4ccildinfo\f1(1iref),
+\f4ccifree\f1(1iref),
+\f4cciunbind\f1(1iref),
+\f4cciload\f1(1iref),
+\f4ccidetach\f1(1iref),
+\f4cciswitch\f1(1iref),
+\f4cci\f1(7iref).

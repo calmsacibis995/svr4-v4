@@ -1,0 +1,304 @@
+.if n .pH portguide.IO @(#)io	40.2
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+..
+.BK "Programmer's Guide: Porting the Kernel"
+.CH "Directory - IO" 7
+.H 2 "Directory - IO"
+The following are the notes for the \f3io\f1 directory, which contains the
+code for device drivers.
+.P
+It may be necessary to modify the headers included in some of the source files.
+For example, the file \f3sys/pcb.h\f1 is included in many of the files in the 
+\f3io\f1 directory,
+but this file may not be implemented on every port.
+Such header modifications are not mentioned further in these notes.
+.P
+The files in the \f3io\f1 directory fall into two groups:
+1. files which typically are not ported, but which may be used as a basis for drivers
+on the target machine, and
+2. files which typically, but not always, will be ported.
+.P
+The following files typically will not be ported, but may be used as a
+basis for drivers on the target machine:
+.BL
+.LI
+\f3hde.c  -  MD\f1
+.br
+This is a hard disk error logger for the 3B2.
+The commands \f4hdeadd, hdefix\f1, and \f4hdelogger\f1 use this driver to
+provide the administrative interface to bad block handling;
+source for these commands is in \f3usr/src/cmd/bbh\f1.
+.LI
+\f3id.c  -  MD\f1
+.br
+This is an integral hard disk driver for the 3B2.
+.LI
+\f3if.c  -  MD\f1
+.br
+This is an integral floppy disk driver for the 3B2.
+.LI
+\f3iuart.c  -  MD\f1
+.br
+\f3iuart.c\f1 has a code for the 3B2 console driver.
+.LI
+\f3lla_ppc.c  -  MD\f1
+.br
+This includes low level access routines for 3B2 PORTS (quad serial line/single 
+parallel line) board.
+It is used by \f3io/nppc.c\f1 that is the driver for the PORTS board.
+.LI
+\f3mau.c  - MD\f1
+.br
+A driver for the 3B2 math acceleration unit.
+.LI
+\f3nppc.c  -  MD\f1
+.br
+This is a driver for the 3B2 PORTS board.
+The \f4ports\f1 command, which has source in \f3usr/src/cmd/ports/ports.c\f1,
+is responsible for downloading code to the PORTS board
+to be run by the on-board processor.
+.LI
+\f3sddrv.c  -  MD\f1
+.br
+An umbrella driver for the hard disk and floppy disk.
+.LE
+.P
+The remaining files typically will be ported, although not always:
+.BL
+.LI
+\f3clone.c  -  NCR\f1
+.br
+This is a code for a clone driver.
+.LI
+\f3connld.c  -  NCR\f1
+.br
+This is a module that establishes a connection to a STREAMS-based pipe.
+.LI
+\f3gentty.c  -  NCR\f1
+.LI
+\f3hrtimers.c  -  MD\f1
+.br
+This has high resolution timer support.
+.BL
+.LI
+\f4clock_int  -  MD\f1
+.br
+The computation of process virtual time interacts with the \f4idle\f1 routine
+in \f3ml/misc.s\f1.
+Specifically, it needs to determine whether the system is idle before incrementing
+the virtual time of the current process.
+This determination is machine dependent.
+.LI
+\f4clkstart  -  MD\f1
+.br
+This code starts the clock interrupting periodically.
+.LI
+\f4sitcmd  -  MD\f1
+.br
+This routine issues commands to the clock device registers.
+.LI
+\f4clkreld  -  MD\f1
+.br
+This stops the clock.
+.LE
+.LI
+\f3icd.c  -  NCR\f1
+.br
+In-core disk, used during system installation.
+.LI
+\f3kmacct.c  -  MD\f1
+.br
+This has kernel memory accounting package that is used in conjunction with kernel 
+memory allocator.
+.BL
+.LI
+\f4getcaller  -  MD\f1 
+.br
+This routine is used to trace back through the stack.
+It relies on assembly routines \f4getap, getfp\f1, and \f4getsp\f1 to get
+the argument pointer, frame pointer, and stack pointer respectively.
+.LE
+.LI
+\f3ladd.s  -  MD\f1
+.BL
+.LI
+\f4ladd  -  MD\f1
+.br
+This is a double long add routine written in assembler.
+The interface from C is:
+.br
+	\f4dl_t ladd(a, b) dl_t a, b;\f1
+.br
+It adds the two arguments and returns the result.
+.LE
+.LI
+\f3ldiv.c  -  NCR\f1
+.LI
+\f3ldterm.c  -  NCR\f1
+.br
+This is a code for the standard line discipline module.
+.LI
+\f3lmul.c  -  NCR\f1
+.LI
+\f3log.c  -  NCR\f1
+.LI
+\f3lshiftl.s  -  MD\f1
+.BL
+.LI
+\f4lshiftl  -  MD\f1
+.br
+This is a double long shift routine written in assembler.
+The interface from C is:
+.br
+	\f4dl_t lshiftl(d, count) dl_t d; int count;\f1
+.br
+It shifts the double long argument \f2d\f1 by \f2count\f1 bits and returns the result.
+A positive count is a left shift, a negative count is a right shift.
+.LE
+.LI
+\f3lsign.s  -  MD\f1
+.BL
+.LI
+\f4lsign\f1
+.br
+This determines the sign of a double long.
+The interface from C is:
+.br
+	\f4int lsign(d) dl_t d;\f1
+.br
+It returns 0 if \f2d\f1 is positive, and 1 if \f2d\f1 is negative.
+.LE
+.LI
+\f3lsub.s  -  MD\f1
+.BL
+.LI
+\f4lsub  -  MD\f1
+.br
+This is a double long subtract routine written in assembler.
+The interface from C is:
+.br
+	\f4dl_t lsub(a, b) dl_t a, b;\f1
+.br
+It subtracts the second argument from the first and returns the result.
+.LE
+.LI
+\f3mem.c  -  MD\f1
+.br
+This is a driver for memory-based devices. 
+In addition to the machine dependencies listed below, a given port may make 
+additional changes based on the memory or bus configuration of the target
+machine.
+.BL
+.LI
+\f4VSIZEOFMEM  -  MD\f1
+.br
+This is a macro defining a firmware location which points to the total
+size of memory in the 3B2.
+.LI
+\f4mmrw  -  MD\f1
+.br
+This is a memory read-write routine.
+It relies on knowledge of memory size, from \f4VSIZEOFMEM\f1. 
+It assumes that all of physical memory is mapped into kernel space as a one-to-one 
+virtual to physical map and avoids reading I/O ports (VKIO).
+It references to \f4MAINSTORE\f1 that is the base of physical memory.
+.LI
+\f4mmmap  -  MD\f1
+.br
+This is a memory map routine.
+It has some machine dependencies such as those in \f4mmrw\f1.
+.LE
+.LI
+\f3monitor.c  -  NCR\f1
+.LI
+\f3opts.c  -  NCR\f1
+.LI
+\f3osm.c  -  NCR\f1
+.LI
+\f3partab.c  -  NCR\f1
+.LI
+\f3pckt.c  -  NCR\f1
+.br
+This is a module that packetizes STREAMS messages.
+.LI
+\f3physdsk.c  -  MD\f1
+.BL
+.LI
+\f4dma_breakup  -  MD\f1
+.br
+This routine breaks up an I/O request into chunks compatible with the DMA hardware.
+The routine is present for backwards compatibility only, for use with device 
+drivers written to the old driver interface. 
+If implemented, it may be changed to reflect DMA capabilities of the target machine.
+.LI
+\f4dma_pageio  -  MD\f1
+.br
+This routine breaks up an I/O request into chunks compatible with the DMA hardware.
+The routine is used with device drivers written to the new interface.
+The implementation may be changed to reflect the DMA capabilities of the target
+machine.
+.LE
+.LI
+\f3pipemod.c  -  NCR\f1
+.br
+This is a module that flushes STREAMS-based pipe.
+.LI
+\f3prf.c  -  NCR\f1
+.LI
+\f3ptc.c  -  NCR\f1
+.LI
+\f3ptem.c  -  NCR\f1
+.br
+This is a module used as a pseudo driver emulator.
+It emulates \f4ioctl\f1 functions of the terminal device driver.
+.LI
+\f3ptm.c  -  NCR\f1
+.br
+\f3ptm\f1 is a pseudo terminal driver on the master side.
+.LI
+\f3pts.c  -  NCR\f1
+.br
+\f3pts\f1 is a pseudo terminal driver on the slave side.
+.LI
+\f3sad.c  -  NCR\f1
+.br
+The \f3sad\f1 driver is a STREAMS administrative driver used to handle the
+autopush mechanism.
+.LI
+\f3sockmod.c  -  NCR\f1
+.LI
+\f3sp.c  -  NCR\f1
+.LI
+\f3stream.c  -  NCR \f1
+.br
+This code has STREAMS utility routines used by STREAMS modules and drivers.
+.LI
+\f3stubs.c  -  NCR\f1
+.LI
+\f3sxt.c  -  NCR\f1
+.br
+The \f3sxt\f1 driver is a pseudo device driver.
+.LI
+\f3ticlts.c  -  NCR\f1
+.LI
+\f3ticots.c  -  NCR\f1
+.LI
+\f3timod.c  -  NCR\f1
+.br
+This is a STREAMS module used with the Transport Interface (TI) functions.
+.LI
+\f3tirdwr.c  -  NCR\f1
+.br
+\f3tirdwr\f1 is a STREAMS module that provides an alternative interface to a
+transport provider supporting TI.
+.LI
+\f3ttcompat.c  -  NCR\f1
+.br
+This is a module that supports V7, BSD, and XENIX in the STREAMS environment.
+.LI
+\f3xt.c  -  NCR\f1
+.br
+This includes a code for the STREAMS-based xt driver.
+.LE
+

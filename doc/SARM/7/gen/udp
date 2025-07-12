@@ -1,0 +1,229 @@
+'\"macro stdmacro
+.if n .pH g7.udp @(#)udp	40.9 of 5/21/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} UDP 7 "Internet Utilities" "\&"
+.if \nX=1 .ds x} UDP 7 "Internet Utilities"
+.if \nX=2 .ds x} UDP 7 "" "\&"
+.if \nX=3 .ds x} UDP "" "" "\&"
+.TH \*(x}
+.SH NAME
+UDP \- Internet User Datagram Protocol
+.SH SYNOPSIS
+.nf
+\f4#include <sys/socket.h>\f1
+\f4#include <netinet/in.h>\f1
+.LP
+\f4s = socket(\s-1AF_INET\s0, \s-1SOCK_DGRAM\s0, 0);\f1
+.LP
+\f4t = t_open("/dev/udp", \s-1O_RDWR\s0);\f1
+.fi
+.SH DESCRIPTION
+.SM UDP
+is a simple datagram protocol which is
+layered directly above the
+Internet Protocol (\s-1IP\s0).
+Programs may access 
+.SM UDP
+using the socket interface, where it supports the
+.SM
+\f4SOCK_DGRAM\f1
+socket type,
+or using the Transport Level Interface (\s-1TLI\s0),
+where it supports the connectionless
+(\f4T_CLTS\f1)
+service type.
+.LP
+Within the socket interface,
+.SM UDP
+is normally used with the
+\f4sendto(\|)\f1,
+\f4sendmsg(\|)\f1,
+\f4recvfrom(\|)\f1,
+and
+\f4recvmsg(\|)\f1
+calls [see
+\f4send\f1(2)
+and
+\f4recv\f1(2)].
+If the
+\f4connect\f1(2)
+call is used to fix the destination for future packets,
+then the
+\f4recv\f1(2)
+or
+\f4read\f1(2)
+and
+\f4send\f1(2)
+or
+\f4write\f1(2)
+calls may be used.
+.LP
+.SM UDP
+address formats are identical to those used by the
+Transmission Control Protocol (\s-1TCP\s0).
+Like
+.SM TCP\s0,
+.SM UDP
+uses a port number along with an
+.SM IP
+address to identify the endpoint of communication.
+The
+.SM UDP
+port number space is separate from the
+.SM TCP
+port number space (that is, a
+.SM UDP
+port
+may not be \(lqconnected\(rq to a
+.SM TCP
+port).
+The
+\f4bind\f1(2)
+call can be used to set the local address and port number of
+a
+.SM UDP
+socket.
+The local
+.SM IP
+address may be left unspecified in the
+\f4bind(\|)\f1
+call by using the special value
+\f4INADDR_ANY\f1.
+If the
+\f4bind(\|)\f1
+call is not done, a local
+.SM IP
+address and port number will be assigned to 
+the endpoint when the first packet is sent.
+Broadcast packets may be sent
+(assuming the underlying network supports this)
+by using a reserved \(lqbroadcast address\(rq;
+This address is network interface dependent.
+Broadcasts may only be sent by the privileged user.
+.LP
+Options at the
+.SM IP
+level may be used with
+.SM UDP\s0; see
+\f4ip\f1(7).
+.LP
+There are a variety of ways that a
+.SM UDP
+packet can be lost or corrupted,
+including a failure of the underlying communication mechanism.
+.SM UDP
+implements a checksum over the data portion of the packet.
+If the checksum of a received packet is in error,
+the packet will be dropped with no indication given to the user.
+A queue of received packets is provided for each
+.SM UDP
+socket.
+This queue has a limited capacity.
+Arriving datagrams which will not fit within its
+.I high-water
+capacity are silently discarded.
+.LP
+.SM UDP
+processes Internet Control Message Protocol (\s-1ICMP\s0)
+error messages received in response to
+.SM UDP
+packets it has sent.
+See
+\f4icmp\f1(7).
+.SM ICMP
+\(lqsource quench\(rq messages are ignored.
+.SM ICMP
+\(lqdestination unreachable,\(rq \(lqtime exceeded\(rq and \(lqparameter
+problem\(rq messages disconnect the socket from
+its peer so that subsequent attempts to send packets using that socket
+will return an error.
+.SM UDP
+will not guarantee that packets are delivered in the
+order they were sent.
+As well, duplicate packets may be generated
+in the communication process.
+.SH SEE ALSO
+\f4read\f1(2),
+\f4write\f1(2),
+\f4bind\f1(3N),
+\f4connect\f1(3N),
+\f4recv\f1(3N),
+\f4send\f1(3N),
+\f4icmp\f1(7),
+\f4inet\f1(7),
+\f4ip\f1(7),
+\f4tcp\f1(7)
+.LP
+Postel, Jon,
+.IR "User Datagram Protocol" ,
+.SM RFC
+768,
+Network Information Center,
+.SM SRI
+International, Menlo Park, Calif.,
+August 1980
+.SH DIAGNOSTICS
+A socket operation may fail if:
+.TP 20
+\f4EISCONN\f1
+A
+\f4connect(\|)\f1
+operation was attempted on a socket on which a
+\f4connect(\|)\f1
+operation had already been performed, and the socket could not be successfully
+disconnected before making the new connection.
+.TP 20
+\f4EISCONN\f1
+A
+\f4sendto(\|)\f1
+or
+\f4sendmsg(\|)\f1
+operation specifying an address to which the message should be sent
+was attempted on a socket on which a
+\f4connect(\|)\f1
+operation had already been performed.
+.TP
+\f4ENOTCONN\f1
+A
+\f4send(\|)\f1
+or
+\f4write(\|)\f1
+operation, or a
+\f4sendto(\|)\f1
+or
+\f4sendmsg(\|)\f1
+operation not specifying an address to which the message should be sent,
+was attempted on a socket on which a
+\f4connect(\|)\f1
+operation had not already been performed.
+.TP
+\f4EADDRINUSE\f1
+A
+\f4bind(\|)\f1
+operation was attempted on a socket with a network address/port pair that has
+already been bound to another socket.
+.TP
+\f4EADDRNOTAVAIL\f1
+A
+\f4bind(\|)\f1
+operation was attempted on a socket with a network address
+for which no network interface exists.
+.TP
+\f4EINVAL\f1
+A \f4sendmsg(\|)\f1 operation with a non-\s-1NULL\s0
+\f4msg_accrights\f1
+was attempted.
+.TP
+\f4EACCES\f1
+A
+\f4bind(\|)\f1
+operation was attempted with a \(lqreserved\(rq port number and the effective user
+.SM ID
+of the process was not the privileged user.
+.TP
+\f4ENOBUFS\f1
+The system ran out of memory for internal data structures.
+.br
+.ne 6

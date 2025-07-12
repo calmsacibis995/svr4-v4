@@ -1,0 +1,87 @@
+'\"macro stdmacro
+.if n .pH g5.math @(#)math	40.9 of 4/12/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} math 5 "" "\&"
+.if \nX=1 .ds x} math 5 ""
+.if \nX=2 .ds x} math 5 "" "\&"
+.if \nX=3 .ds x} math "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4math\f1 \- math functions and constants
+.SH SYNOPSIS
+\f4#include <math.h>\f1
+.SH DESCRIPTION
+This file contains declarations of all the functions in the
+Math Library (described in Section 3M),
+as well as various functions in the C Library (Section 3C)
+that return floating-point values.
+.P
+It defines the structure and constants used by the
+\f4matherr\fP(3M)
+error-handling mechanisms, including
+the following constant used as a
+error-return value:
+.TP 15
+\f4HUGE\fP
+The maximum value of a single-precision floating-point number.
+.P
+The following mathematical constants are defined for user convenience:
+.TP 15
+\f4M_E\fP
+The base of natural logarithms
+.RI ( e ).
+.TP 15
+\f4M_LOG2E\fP
+The base-2 logarithm of
+.IR e .
+.TP 15
+\f4M_LOG10E\fP
+The base-10 logarithm of
+.IR e .
+.TP 15
+\f4M_LN2\fP
+The natural logarithm of 2.
+.TP 15
+\f4M_LN10\fP
+The natural logarithm of 10.
+.TP 15
+\f4M_PI\fP
+\(*p, the ratio of the circumference of a circle to its diameter.
+.TP 15 
+\f4M_PI_2\fP
+\(*p/2.
+.TP 15
+\f4M_PI_4\fP
+\(*p/4.
+.TP 15
+\f4M_1_PI\fP
+1/\(*p.
+.TP 15
+\f4M_2_PI\fP
+2/\(*p.
+.TP 15
+\f4M_2_SQRTPI\fP
+2/\(sr\(*p.
+.TP 15
+\f4M_SQRT2\fP
+The positive square root of 2.
+.TP 15
+\f4M_SQRT1_2\fP
+The positive square root of 1/2.
+.P
+The following mathematical constants are also defined in this header file:
+.TP 15
+\f4MAXFLOAT\fP
+The maximum value of a non-infinite single-precision floating point number.
+.TP 15
+\f4HUGE_VAL\fP
+positive infinity.
+.P
+For the definitions of various machine-dependent constants,
+see \f4values\fP(5).
+.SH "SEE ALSO"
+\f4intro\fP(3), \f4matherr\fP(3M), \f4values\fP(5)
+.\"	@(#)math.5	1.2 of 4/2/84
+.Ee

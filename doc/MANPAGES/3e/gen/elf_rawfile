@@ -1,0 +1,107 @@
+'\"macro stdmacro
+.if n .pH g3e.elf_rawfile @(#)elf_rawfile	40.10 of 5/1/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.\"#ident	"@(#)ci5-doc:req/libelf/rawfile.man	1.1"
+.nr X
+.if \nX=0 .ds x} elf_rawfile 3E "ELF Library" "\&"
+.if \nX=1 .ds x} elf_rawfile 3E "ELF Library"
+.if \nX=2 .ds x} elf_rawfile 3E "" "\&"
+.if \nX=3 .ds x} elf_rawfile "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4elf_rawfile\f1 \- retrieve uninterpreted file contents
+.SH SYNOPSIS
+\f4cc\f1
+[\f2flag\fP \|.\|.\|.] \f2file\fP \|.\|.\|.
+\f4\-lelf\f1
+[\f2library\fP \|.\|.\|.]
+.PP
+.nf
+.na
+.ft 4
+#include <libelf.h>
+.sp 0.5
+char \(**elf_rawfile(Elf \(**elf, size_t \(**ptr);
+.ft 1
+.ad
+.fi
+.SH DESCRIPTION
+\f4elf_rawfile\fP
+returns a pointer to an uninterpreted byte image of the file.
+This function should be used only to retrieve a file being read.
+For example, a program might use
+\f4elf_rawfile\fP
+to retrieve the bytes for an archive member.
+.P
+A program
+may not close or disable [see
+\f4elf_cntl\fP(3E)]
+the file descriptor associated with
+.I elf
+before the initial call to
+\f4elf_rawfile\fP,
+because
+\f4elf_rawfile\fP
+might have to read the data from the file if it does not
+already have the original bytes in memory.
+Generally, this function is more efficient for unknown
+file types than for object files.
+The library implicitly translates object files in memory,
+while it leaves unknown files unmodified.
+Thus asking for the uninterpreted image of an object file
+may create a duplicate copy in memory.
+.P
+\f4elf_rawdata\fP
+[see \f4elf_getdata\fP(3E)]
+is a related function, providing access to sections
+within a file.
+.P
+If
+.I ptr
+is non-null, the library also stores the file's size, in bytes,
+in the location to which
+.I ptr
+points.
+If no data are present,
+.I elf
+is null, or an error occurs, the return value is a null pointer,
+with zero optionally stored through
+.IR ptr .
+.SH "SEE ALSO"
+.na
+\f4elf\fP(3E),
+\f4elf_begin\fP(3E),
+\f4elf_cntl\fP(3E),
+\f4elf_getdata\fP(3E),
+\f4elf_getehdr\fP(3E),
+\f4elf_getident\fP(3E),
+\f4elf_kind\fP(3E)
+.SH NOTE
+A program that uses
+\f4elf_rawfile\fP
+and that also interprets the same file as an object file
+potentially has two copies of the bytes in memory.
+If such a program requests the raw image first,
+before it asks for translated information
+(through such functions as
+\f4elf_getehdr\fP,
+\f4elf_getdata\fP,
+and so on), the library ``freezes'' its original memory
+copy for the raw image.
+It then uses this frozen copy as the source for creating
+translated objects, without reading the file again.
+Consequently, the application should view the raw file
+image returned by
+\f4elf_rawfile\fP
+as a read-only buffer, unless it wants to alter its
+own view of data subsequently translated.
+In any case, the application may alter the translated
+objects without changing bytes visible in the raw image.
+.P
+Multiple calls to
+\f4elf_rawfile\fP
+with the same
+.SM ELF
+descriptor return the same value;
+the library does not create duplicate copies of the file.

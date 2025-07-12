@@ -1,0 +1,121 @@
+'\"macro stdmacro
+.if n .pH g2.setreuid @(#)setreuid	40.10 of 4/24/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.\" Copyright (c) 1988 Sun Microsystems, Inc. - All Rights Reserved.
+.\"
+.nr X
+.if \nX=0 .ds x} setreuid 3 "BSD Compatibility Package" "\&"
+.if \nX=1 .ds x} setreuid 3 "BSD Compatibility Package"
+.if \nX=2 .ds x} setreuid 3 "" "\&"
+.if \nX=3 .ds x} setreuid "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4setreuid\f1 \- set real and effective user IDs
+.SH SYNOPSIS
+\f4cc \f1[ \f2flag\f1\. \. \. ] \f2file\f1 \. \. \. \f4\-lucb\f1
+.P
+.ft 4
+.nf
+int setreuid(ruid, euid)
+int ruid, euid;
+.fi
+.ft 1
+.SH DESCRIPTION
+\f4setreuid\f1
+is used to set the real and effective user
+.SM ID\s0s
+of the calling process.
+If
+.I ruid
+is \-1, the real user
+.SM ID
+is not changed; if
+.I euid
+is \-1, the effective user
+.SM ID
+is not changed.
+The real and effective user
+.SM ID\s0s
+may be set to different values
+in the same call.
+.P
+If the effective user
+.SM ID
+of the calling process is super-user,
+the real user
+.SM ID
+and the effective user
+.SM ID
+can be set to any legal value.
+.P
+If the effective user
+.SM ID
+of the calling process is not super-user,
+either the real user
+.SM ID
+can be set to the effective user
+.SM ID\s0,
+or the effective user
+.SM ID
+can either be set to the saved set-user
+.SM ID
+from
+\f4execv\f1
+or the real user
+.SM ID\s0.
+Note: if a set-\s-1UID\s0
+process sets its effective user
+.SM ID
+to its real user
+.SM ID\s0,
+it can still set its effective user
+.SM ID
+back to the saved set-user
+.SM ID\s0.
+.P
+In either case, if the real user
+.SM ID
+is being changed (that is, if
+.I ruid
+is not \-1), or the effective user
+.SM ID
+is being changed to a value not equal to the real user
+.SM ID\s0,
+the saved set-user
+.SM ID
+is set equal to the new effective user
+.SM ID\s0.
+.SH "RETURN VALUE"
+Upon successful completion, a value of 0 is returned.
+Otherwise, a value of \-1 is returned and
+\f4errno\f1
+is set to indicate the error.
+.SH ERRORS
+\f4setreuid\f1
+will fail and neither of the user
+.SM ID\s0s
+will be changed if:
+.TP 15
+\f4EPERM\fP
+The calling process's effective user
+.SM ID
+is not the super-user and a change
+other than changing the real user
+.SM ID
+to the effective user
+.SM ID\s0,
+or changing the effective user
+.SM ID
+to the real user
+.SM ID
+or the saved set-user
+.SM ID\s0,
+was specified.
+.SH "SEE ALSO"
+\f4setregid\fP(3)
+.P
+\f4exec\fP(2),
+\f4getuid\fP(2),
+\f4setuid\fP(2)
+in the \f2Programmer's Reference Manual\f1

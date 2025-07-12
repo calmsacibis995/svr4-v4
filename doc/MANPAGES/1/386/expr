@@ -1,0 +1,220 @@
+'\"macro stdmacro
+.if n .pH g1.expr @(#)expr	40.1 of 5/29/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} expr 1 "Essential Utilities" "\&"
+.if \nX=1 .ds x} expr 1 "Essential Utilities"
+.if \nX=2 .ds x} expr 1 "" "\&"
+.if \nX=3 .ds x} expr "" "" "\&"
+.TH \*(x}
+.if t .ds ' \h@.05m@\s+4\v@.333m@\'\v@-.333m@\s-4\h@.05m@
+.if n .ds ' '
+.if t .ds ` \h@.05m@\s+4\v@.333m@\`\v@-.333m@\s-4\h@.05m@
+.if n .ds ` `
+.SH NAME
+\f4expr\f1 \- evaluate arguments as an expression
+.SH SYNOPSIS
+\f4expr\f1
+.I arguments
+.SH DESCRIPTION
+The
+.I arguments
+are taken as an expression.
+After evaluation, the result is written on the standard output.
+Terms of the expression must be separated by blanks.
+Characters special to the shell
+must be escaped.
+Note that \f40\fP is returned to indicate a zero value,
+rather than the null string.
+Strings containing blanks or other special characters should be quoted.
+Integer-valued arguments may be preceded by a unary minus sign.
+Internally, integers are treated as 32-bit, 2s complement numbers.
+The length of the expression is limited to 512 characters.
+.PP
+The operators and keywords are listed below.
+Characters that need to be escaped in the shell [see \f4sh\fP(1)] are preceded by \f4\\\fP.
+The list is in order of increasing precedence,
+with equal precedence operators grouped within \f4{\|}\fP symbols.
+.TP .5i
+\f2expr \f4\e|\f2 expr\f1
+returns the first
+\f2expr\fP
+if it is neither null nor \f40\fP, otherwise
+returns the second
+\f2expr\fP.
+.TP .5i
+\f2expr \f4\e&\f2 expr\f1
+returns the first
+\f2expr\fP
+if neither
+\f2expr\fP
+is null or \f40\fP, otherwise returns \f40\fP.
+.TP .5i
+\f2expr \f1{ \f4=\f1, \f4\e>\f1, \f4\e>=\f1, \f4\e<\f1, \f4\e<=\f1, \f4!=\f1 } \f2expr\fP
+returns the result of an integer comparison if both arguments are integers,
+otherwise returns the result of a lexical comparison.
+.TP .5i
+\f2expr \f1{ \f4+\f1, \f4\- \f1} \f2expr\fP
+addition or subtraction of integer-valued arguments.
+.TP .5i
+\f2expr \f1{ \f4\e\(**\f1, \f4/\f1, \f4% \f1} \f2expr\fP
+multiplication, division, or remainder of the integer-valued arguments.
+.TP .5i
+\f2expr\f4 : \f2expr\f1
+The matching operator \f4:\fP compares the first argument
+with the second argument, which must be a regular expression.
+Regular expression syntax is the same as that of
+\f4ed\fP(1),
+except that all patterns are ``anchored'' (i.e., begin with \f4^\fP)
+and, therefore, \f4^\fP is not a special character, in that context.
+Normally,
+the matching operator returns the number of bytes matched
+(\f40\fP on failure).
+Alternatively, the
+\f4\\(\|.\|.\|.\|\\)\fP
+pattern symbols can be used to return a portion of the
+first argument.
+.TP .5i
+\f4match\fP \f2expr\fP \f2expr\fP
+Compare the first argument with the second argument which
+must be a regular expression.
+Regular expression syntax is the same as that of \f4ed\fP(1),
+except that all patterns are
+anchored (i.e. begin with \f4^\fP) and, therefore, \f4^\fP is not
+a special character, in that context.
+Normally, the number of characters matched (0 on failure) is returned.
+Alternatively, the \f4\\(...\\)\fP pattern symbols can be used to
+return a portion of the first argument.
+.TP .5i
+\f4length\fP \f2string\fP
+Return the length of \f2string\fP.
+.TP .5i
+\f4substr\fP \f2string\fP \f2index\fP \f2count\fP
+Return the portion of \f2string\fP composed of at most \f2count\fP
+characters starting at the character position of \f2string\fP
+as expressed by \f2index\fP (where the first character of
+\f2string\fP is index 1, not 0).
+.TP .5i
+\f4index\fP \f2string\fP \f2character_sequence\fP
+Return the index of the first character in \f2string\fP that is
+also in \f2character_sequence\fP or 0 to indicate no match.
+.SH EXAMPLES
+Add 1 to the shell variable
+\f4a\fP:
+.PP
+.RS
+.ft 4
+a=\*`expr\| $a\| +\| 1\*`
+.ft 1
+.RE
+.ne 5
+.PP
+The following example emulates
+\f4basename\fP(1)\(emit returns the last segment of the path name
+\f4$a\fP.
+For
+\f4$a\fP
+equal to either
+\f4/usr/abc/file\fP
+or just
+\f4file\fP,
+the example
+.br
+.ne 1.5i
+returns \f4file\fP.
+(Watch out for \f4/\fP alone as an argument:
+\f4expr\fP
+takes it as the division operator;
+see the
+.SM NOTES
+below.)
+.PP
+.RS
+.ft 4
+expr $a : \*'.\(**/\e(.\(**\e)\*' \e| $a
+.ft 1
+.RE
+.PP
+Here is a better version of the previous example.
+The addition of the
+\f4//\f1
+characters eliminates any ambiguity about the division operator and simplifies
+the whole expression.
+.PP
+.RS
+.ft 4
+expr //$a : \*'.\(**/\e(.\(**\e)\*'
+.ft 1
+.RE
+.PP
+Return the number of characters in
+\f4$VAR\f1:
+.PP
+.RS
+.ft 4
+expr $VAR : \*'.\(**\*'
+.ft 1
+.RE
+.SH "SEE ALSO"
+\f4ed\fP(1), \f4sh\fP(1).
+.SH DIAGNOSTICS
+As a side effect of expression evaluation,
+\f4expr\fP
+returns the following exit values:
+.br
+	0	if the expression is neither null nor \f40\fP
+.br
+	1	if the expression
+.I is\^
+null or \f40\fP
+.br
+	2	for invalid expressions.
+.PP
+.PD 0
+.TP 1.75i
+\f4syntax error\fP
+for operator/operand errors
+.TP
+\f4non-numeric argument\fP
+if arithmetic is attempted on such a string
+.PD
+.SH NOTES
+After argument processing by the shell,
+\f4expr\fP
+cannot tell the difference between an operator and an operand
+except by the value.
+If
+\f4$a\f1
+is an
+\f4=\f1,
+the command:
+.PP
+.RS
+.ft 4
+expr $a = \*'=\*'
+.ft 1
+.RE
+.PP
+looks like:
+.PP
+.RS
+.ft 4
+expr = = =
+.ft 1
+.RE
+.PP
+as the arguments are passed to
+\f4expr\fP
+(and they are all taken as the
+\f4=\f1
+operator).
+The following works:
+.PP
+.RS
+.ft 4
+expr X$a = X=
+.ft 1
+.RE
+.\"	@(#)expr.1	6.2 of 9/2/83
+.Ee

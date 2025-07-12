@@ -1,0 +1,408 @@
+'\"macro stdmacro
+.if n .pH g1.more @(#)more	40.17 of 5/29/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} more 1 "Directory and File Management Utilities" "\&"
+.if \nX=1 .ds x} more 1 "Directory and File Management Utilities"
+.if \nX=2 .ds x} more 1 "" "\&"
+.if \nX=3 .ds x} more "" "" "\&"
+.TH \*(x}
+.\" Copyright (c) 1988 Sun Microsystems, Inc. - All Rights Reserved.
+.SH NAME
+\f4more\f1, \f4page\f1 \- browse or page through a text file
+.SH SYNOPSIS
+\f4more\f1 [\f4\-cdflrsuw\f1] [\f4\-\f2lines\f1] [\f4+\f2linenumber\f1] [\f4+/\f2pattern\f1]
+.if n .ti +0.5i
+[
+\f2filename \f1. . .
+.br
+\f4page\f1 [\f4\-cdflrsuw\f1] [\f4\-\f2lines\f1] [\f4+\f2linenumber\f1] [\f4+/\f2pattern\f1] [
+\f2filename \f1. . .
+.if n .ti +05i
+.SH DESCRIPTION
+\f4more\f1
+is a filter that displays the contents of a text
+file
+on the terminal, one screenful at a time.
+It normally pauses after
+each screenful, and prints
+\f4--More--\f1
+at the bottom of the screen.
+\f4more\f1
+provides a two-line overlap between screens for continuity.
+If
+\f4more\f1
+is reading from a file rather than a pipe, the percentage of
+characters displayed so far is also shown.
+.PP
+\f4more\f1
+scrolls up to display one more line in response to a
+.SM RETURN
+character; it displays another screenful in response to a
+.SM SPACE
+character.
+Other commands are listed below.
+.PP
+\f4page\fP
+clears the screen before displaying the next screenful of text;
+it only provides a one-line overlap between screens.
+.PP
+\f4more\f1
+sets the terminal
+to
+.I noecho
+mode, so that the output can be continuous.
+Commands that you type do not normally show up on your terminal,
+except for the
+\f4/\f1
+and
+\f4!\f1
+commands.
+.PP
+If the standard output is not a terminal,
+\f4more\f1
+acts just like
+\f4cat\f1(1V),
+except that a header is printed before each file in a series.
+.SH OPTIONS
+The following options are available with
+\f4more\f1:
+.TP .75i
+\f4\-c\f1
+Clear before displaying.
+Redrawing the screen instead of scrolling
+for faster displays.
+This option is ignored if
+the terminal does not have the ability to clear to the end of a line.
+.TP
+\f4\-d\f1
+Display error messages rather than ringing the terminal bell if
+an unrecognized command is used.
+This is helpful for inexperienced users.
+.TP
+\f4\-f\f1
+Do not fold long lines.
+This is useful when lines contain
+nonprinting characters or escape sequences, such as those generated
+when
+\f4nroff\f1(1)
+output is piped through
+\f4ul\f1(1).
+.TP
+\f4\-l\f1
+Do not treat
+.SM FORMFEED
+characters (CTRL-d) as \(lqpage breaks.\(rq If
+\f4\-l\f1
+is not used,
+\f4more\f1
+pauses to accept commands after any line containing a
+\f4^L\f1
+character (CTRL-d).
+Also, if a file begins with a
+.SM FORMFEED\s0,
+the screen is cleared before the file is printed.
+.TP
+\f4\-r\f1
+Normally,
+\f4more\f1
+ignores control characters that it does not interpret in some way.
+The
+\f4\-r\f1
+option causes these to be displayed as
+\f4^\f2C\f1
+where
+.I C
+stands for any such control character.
+.TP
+\f4\-s\f1
+Squeeze.
+Replace multiple blank lines with a single
+blank line.
+This is helpful when viewing
+\f4nroff\f1(1)
+output, on the screen.
+.TP
+\f4\-u\f1
+Suppress generation of underlining escape sequences.
+Normally, \f4more\f1
+handles underlining, such as that produced by \f4nroff\f1(1),
+in a manner appropriate to the terminal.
+If the terminal can
+perform underlining or has a stand-out mode,
+\f4more\f1
+supplies appropriate escape sequences as called for in the
+text file.
+.TP
+\f4\-w\f1
+Normally,
+\f4more\f1
+exits when it comes to the end of its input.
+With
+\f4\-w\f1,
+however,
+\f4more\f1 prompts and waits for any key to be struck before exiting.
+.TP
+\f4\-\f2lines\f1
+Display the indicated number of
+.I lines
+in each screenful, rather than the default (the number of lines
+in the terminal screen less two).
+.TP
+\f4+\f2linenumber\fP\f1
+Start up at
+.IR linenumber .
+.TP
+\f4+/\f2pattern\fP\f1
+Start up two lines above the line containing the
+regular expression \f2pattern\f1.
+Note: unlike
+editors, this construct should
+.I not
+end with a
+\f1`\f4/\f1'.
+If it does, then the trailing slash is taken as a character in the
+search pattern.
+.br
+.ne 8
+.SH USAGE
+.SS Environment
+.LP
+\f4more\f1
+uses the terminal's
+\f4termcap\f1(5)
+entry to determine its display characteristics, and
+looks in the environment variable
+.SB MORE
+for any preset options.
+For instance, to page through files using
+the
+\f4\-c\f1
+mode by default, set the value of this variable to
+\f4\-c\f1.
+(Normally, the command sequence to set up this
+environment variable is placed in the
+\f4\&.login\f1
+or
+\f4\&.profile\f1
+file).
+.SS Commands
+.LP
+The commands take effect immediately;  it is not necessary to
+type a carriage return.
+Up to the time when the command character itself is given,
+the user may type the line kill character to cancel the numerical
+argument being formed.
+In addition, the user may type the erase character to redisplay the
+\f1`\f4--More--(\f2xx\fP%)\f1'
+message.
+.LP
+In the following commands,
+.I i
+is a numerical argument
+\f1(\f41\f1
+by default).
+.TP 10
+.IR i \s-1SPACE\s0
+Display another screenful, or
+.I i
+more lines if
+.I i
+is specified.
+.TP
+.IR i \s-1RETURN\s0
+Display another line, or
+.I i
+more lines, if specified.
+.TP
+\f2i\f4^D\f1
+(CTRL-d)
+Display (scroll down) 11 more lines.
+If
+.I i
+is given, the scroll size is set to
+.IR i\| .
+.TP
+.IR i d
+Same as
+\f4^D\f1.
+.TP
+\f2i\f4z\f1
+Same as
+.SM SPACE,
+except that
+.IR i\| ,
+if present, becomes the new default number
+of lines per screenful.
+.TP
+\f2i\f4s\f1
+Skip
+.I i\|
+lines and then print a screenful.
+.TP
+\f2i\f4f\f1
+Skip
+.I i
+screenfuls and then print a screenful.
+.TP
+\f2i\f4^B\f1
+(CTRL-b)
+Skip back
+.I i
+screenfuls and then print a screenful.
+.TP
+.I b
+Same as
+\f4^B\f1
+(CTRL-d).
+.br
+.ne 1i
+.PD 0
+.TP
+\f4q\f1
+.TP
+\f4Q\f1
+Exit from \f4more\f1.
+.PD
+.TP
+\f4=\f1
+Display the current line number.
+.TP
+\f4v\f1
+Drop into the
+editor indicated by the \f4EDITOR\f1 environment variable,
+at the current line of the current file.
+The default editor is \f4ed\f1(1).
+.TP
+\f4h\f1
+Help.
+Give a description of all the
+\f4more\f1
+commands.
+.TP
+\f2i\f4/\f2pattern\f1
+Search forward for the
+.IR i\| th
+occurrence of the regular expression
+.IR pattern .
+Display the screenful starting two lines before the line
+that contains the
+.IR i\| th
+match for the regular expression
+.IR pattern ,
+or the end of a pipe, whichever comes first.
+If
+\f4more\f1
+is displaying a file and there is no such match, its position
+in the file remains unchanged.
+Regular expressions can be
+edited using erase and kill characters.
+Erasing back past the first column cancels the search command.
+.TP
+\f2i\f4n\f1
+Search for the
+.IR i\| th
+occurrence of the last
+.I pattern
+entered.
+.TP
+\f4\'\f1
+Single quote.
+Go to the point from which the last search started.
+If no search has been performed in the current file,
+go to the beginning of the file.
+.TP
+\f4!\f2command\f1
+Invoke a shell to execute
+.IR command\| .
+The characters
+\f4%\f1
+and
+\f4!\f1,
+when used within
+.I command
+are replaced with the current filename
+and the previous shell command,
+respectively.
+If there is no current filename,
+\f4%\f1
+is not expanded.
+Prepend a backslash to these characters to
+escape expansion.
+.TP
+\f2i\f4:n\f1
+Skip to the
+.IR i\| th
+next filename given in the command line,
+or to the last filename in the list if
+.I i
+is out of range.
+.TP
+\f2i\f4:p\f1
+Skip to the
+.IR i\| th
+previous filename given in the command line,
+or to the first filename if
+.I i
+is out of range.
+If given while
+\f4more\f1
+is positioned within a file, go to the
+beginning of the file.
+If
+\f4more\f1
+is reading from a pipe,
+\f4more\f1
+simply rings the terminal bell.
+.br
+.ne 2
+.TP
+\f4:f\f1
+Display the current filename and line number.
+.br
+.ne 5
+.PD 0
+.TP
+\f4:q\f1
+.TP
+\f4:Q\f1
+Exit from \f4more\f1 (same as \f4q\f1 or \f4Q\f1).
+.PD
+.TP
+\f4\&.\f1
+Dot.
+Repeat the previous command.
+.TP
+\f4\s+3^\s0\|\e\f1
+Halt a partial display of text.
+\f4more\f1
+stops sending output, and displays the usual
+\f4--More--\f1
+prompt.
+Unfortunately, some output is lost as a result.
+.sp -.5
+.SH FILES
+.PD 0
+.TP 10P
+\f4/usr/share/lib/termcap\f1
+terminal data base
+.TP
+\f4/usr/lib/more.help\f1
+help file
+.PD
+.sp -.5
+.SH "SEE ALSO"
+\f4cat\fP(1),
+\f4csh\fP(1),
+\f4man\fP(1),
+\f4script\fP(1),
+\f4sh\fP(1)
+.br
+\f4environ\fP(5V),
+\f4termcap\fP(5)
+in the \f2System Administrator's Reference Manual\f1
+.sp -.5
+.SH NOTES
+Skipping backwards is too slow on large files.
+.Ee

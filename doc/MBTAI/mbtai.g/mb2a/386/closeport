@@ -1,0 +1,46 @@
+.if n .pH 386.closeport @(#)closeport	40.9 of 5/15/91
+'\"macro stdmacro
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} mb2a_closeport 3tai "" "\&"
+.if \nX=1 .ds x} mb2a_closeport 3tai ""
+.if \nX=2 .ds x} mb2a_closeport 3tai "" "\&"
+.if \nX=3 .ds x} mb2a_closeport "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4mb2a_closeport\f1 \- Closes an asynchronous Multibus II transport endpoint.
+.SH SYNOPSIS
+.ft 4
+.nf
+#include <sys/types.h>
+#include <sys/mb2taiusr.h>
+int mb2a_closeport (fd)
+int fd;
+.fi
+.SH DESCRIPTION
+The \f4mb2a_closeport\f1 function is invoked to close a previously opened
+asynchronous Multibus II transport endpoint.
+\f4fd\f1 must be a file descriptor
+obtained from a call to \f4mb2a_openport\f1.
+This routine unbinds the endpoint
+from the associated Port ID, frees the Port ID if it is in the range of
+dynamically allocated port ID's, and issues a close for that file descriptor.
+Upon successful completion of the routine, a value of 0 is returned.
+A value of -1 is returned and an \f4errno\fP
+is set if there were errors.
+The following is a list of applicable errors for this routine.
+.TP .7i
+\f4EBADF\f1
+\f4fd\f1 does not correspond to an open MB II endpoint.
+.TP .7i
+\f4ENOSTR\f1
+a stream is not associated with \f4fd\f1.
+.TP .7i
+\f4EINTR\f1
+a signal was caught during the close operation.
+.TP
+\f4EIO\f1
+an error occurred during a STREAMS close.
+.SH SEE ALSO
+\f4close\f1(2), \f4getmsg\f1(2), \f4putmsg\f1(2), \f4mb2a_openport\f1(3tai)

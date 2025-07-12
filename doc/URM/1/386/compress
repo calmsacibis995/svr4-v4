@@ -1,0 +1,77 @@
+'\"macro stdmacro
+.if n .pH 386.compress @(#)compress	40.1 of 5/22/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.nr X
+.if \nX=0 .ds x} compress 1 "" "\&"
+.if \nX=1 .ds x} compress 1 ""
+.if \nX=2 .ds x} compress 1 "" "\&"
+.if \nX=3 .ds x} compress "" "" "\&"
+.TH \*(x}
+.SH NAME
+compress, uncompress, zcat \- compress data for storage, uncompress and display compressed files
+.SH SYNOPSIS
+.nf
+\f4compress\fP [\f4-dfFqcv\fP] [\f4-b\fP \f2bits\fP] \f2file\fP
+.sp .5
+\f4uncompress\fP [\f4-fqc\fP] \f2file\fP
+.sp .5
+\f4zcat\fP \f2file\fP
+.fi
+.SH DESCRIPTION
+\f4compress\fP takes a file and compresses it to the
+smallest possible size, creates a compressed output file, and
+removes the original file unless the \f4-c\fP option is present.
+Compression is achieved by encoding
+common strings within the file.
+\f4uncompress\fP restores
+a previously compressed file to its uncompressed state and
+removes the compressed version.
+\f4zcat\fP uncompresses and displays
+a file on the standard output.
+.P
+If no file is specified on the command line,
+input is taken from the standard input and the output
+is directed to the standard output.
+Output defaults to a file with the same
+filename as the input file with the suffix \f4.Z\fP or it can
+be directed through the standard output.
+The output files have the same permissions and ownership
+as the corresponding input files or the
+user's standard permissions if output is
+directed through the standard output.
+.P
+If no space is saved by compression,
+the output file is not written unless the \f4-F\fP flag
+is present on the command line.
+.SH OPTIONS
+The following options are available from the command line:
+.TP 9
+\f4-d\fP
+Decompresses a compressed file.
+.TP
+\f4-c\fP
+Writes output on the standard output and does not remove original file.
+.TP
+\f4-b\fP \f2bits\fP
+Specifies the maximum number of bits to use in encoding.
+.TP
+\f4-f\fP
+Overwrites previous output file.
+.TP
+\f4-F\fP
+Writes output file even if compression saves no space.
+.TP
+\f4-q\fP
+Generates no output except error messages, if any.
+.TP
+\f4-v\fP
+Prints the name of the file being compressed,
+the percentage of compression achieved.
+With
+\f4uncompress\fP,
+the name of of the uncompressed file is printed.
+.SH "SEE ALSO"
+\f4pack\fP(1),
+\f4ar\fP(1),
+\f4tar\fP(1),
+\f4cat\fP(1)

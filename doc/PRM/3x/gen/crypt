@@ -1,0 +1,162 @@
+'\"macro stdmacro
+.if n .pH g3x.crypt @(#)crypt	40.17 of 5/23/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} crypt 3X "Encryption Utilities" "\&"
+.if \nX=1 .ds x} crypt 3X "Encryption Utilities"
+.if \nX=2 .ds x} crypt 3X "" "\&"
+.if \nX=3 .ds x} crypt "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4crypt\f1 \- password and file encryption functions
+.SH SYNOPSIS
+\f4cc\f1
+[\f2flag\fP \|.\|.\|.] \f2file\fP \|.\|.\|.
+\f4\-lcrypt\f1
+[\f2library\fP \|.\|.\|.]
+.nf
+.PP
+\f4#include <crypt.h>
+.PP
+\f4char \(**crypt (const char \(**key, const char \(**salt);
+.PP
+\f4void setkey (const char \(**key);
+.PP
+\f4void encrypt (char \(**block, int flag);
+.PP
+\f4char \(**des_crypt (const char \(**key, const char \(**salt);
+.PP
+\f4void des_setkey (const char \(**key);
+.PP
+\f4void des_encrypt (char \(**block, int flag);
+.PP
+\f4int run_setkey (int \(**connection, const char \(**key);
+.PP
+\f4int run_crypt (long offset, char \(**buffer, unsigned int count,
+    int \(**connection);
+.PP
+\f4int crypt_close(int \(**connection);
+.fi
+.SH DESCRIPTION
+\f4des_crypt\fP
+is the password encryption function.
+It is based on a one-way hashing encryption algorithm
+with
+variations intended (among other things) to frustrate use of hardware
+implementations of a
+key search.
+.PP
+.I key\^
+is a user's typed password.
+.I salt\^
+is a two-character string chosen from the
+set [\f4a-zA-Z0-9.\/\f1];
+this
+string is used to perturb the
+hashing
+algorithm in one of 4096
+different ways, after which the password
+is used as the key to encrypt repeatedly a constant string.
+The returned value points to the encrypted password.
+The first two characters are the salt itself.
+.PP
+The
+\f4des_setkey\fP
+and
+\f4des_encrypt\fP
+entries provide (rather primitive)
+access to the actual
+hashing
+algorithm.
+The argument of
+\f4des_setkey\fP
+is a character array of length 64 containing only the characters
+with numerical value 0 and 1.
+If this string is divided into groups of 8,
+the low-order bit in each group is ignored,
+thereby creating a 56-bit key that is set into the machine.
+This key is the key that will be used
+with the hashing algorithm to encrypt
+the string
+.I block\^
+with the function
+\f4des_encrypt\fP.
+.PP
+The argument to the
+\f4des_encrypt\fP
+entry is a character array of length 64
+containing only the characters with
+numerical value 0 and 1.
+The argument array is modified in place
+to a similar array
+representing the bits of the argument after having been
+subjected to the
+hashing
+algorithm using the key set by
+\f4des_setkey\fP.
+If 
+.IR flag
+is zero, the argument is encrypted; if non-zero, it is decrypted.
+.PP
+Note that decryption is not provided in the international version
+of \f4crypt\fP.
+The international version is part of the
+C Development Set, and the domestic version is part of
+the Encryption Utilities.
+If decryption is attempted with
+the international version of \f4des_encrypt\f1, an error message is printed.
+.PP
+\f4crypt\fP, \f4setkey\fP, and \f4encrypt\fP are front-end 
+routines that invoke \f2des_crypt\f1,
+\f2des_setkey\f1, and \f2des_encrypt\f1 respectively.
+.PP
+The routines \f4run_setkey\f1 and \f4run_crypt\f1 are designed for use
+by applications that need cryptographic capabilities [such as \f4ed\fP(1) and 
+\f4vi\fP(1)]
+that must be compatible with the \f4crypt\fP(1) user-level utility.
+\f4run_setkey\f1 establishes a two-way pipe connection with the \f4crypt\fP utility, 
+using \f2key\f1 as the password argument.
+\f4run_crypt\f1 takes a block of
+characters and transforms the cleartext or ciphertext into their ciphertext or
+cleartext using the \f4crypt\fP utility.
+\f2offset\f1 is the relative byte position from the beginning
+of the file that the block of text provided in \f2buffer\f1 is coming from.
+\f2count\f1 is the number of characters in \f2buffer\f1, and \f2connection\f1 
+is an array
+containing indices to a table of input and output file streams.
+When encryption is finished,
+\f4crypt_close\f1 is 
+used to terminate the connection with the \f4crypt\fP utility.
+.PP
+\f4run_setkey\f1 returns \-1 if a connection with the \f4crypt\fP utility 
+cannot be established.
+This result will occur in international versions of the
+.SM UNIX 
+system in which the \f4crypt\fP utility is not available.
+If a null key is
+passed to \f4run_setkey\f1, 
+0 is returned.
+Otherwise, 1 is returned.
+\f4run_crypt\f1 returns
+\-1 if it cannot write output or read input from the pipe attached to \f4crypt\fP.
+Otherwise it returns 0.
+.PP
+The program must be linked with the object file access routine library
+\f4libcrypt.a\f1.
+.SH SEE ALSO
+\f4getpass\fP(3C), \f4passwd\fP(4)
+.br
+\f4crypt\fP(1), \f4login\fP(1), \f4passwd\fP(1) in the
+\f2User's Reference Manual\f1
+.SH DIAGNOSTICS
+In the international version of \f4crypt\fP(3X),
+a flag argument of 1 to \f4encrypt\f1 or \f4des_encrypt\f1
+is not accepted, and \f4errno\fP is set to \f4ENOSYS\fP to
+indicate that the functionality is not available.
+.SH NOTES
+The return value in \f4crypt\fP
+points to static data that are overwritten
+by each call.
+.\"	@(#)crypt.3x	6.2 of 10/20/83
+.Ee

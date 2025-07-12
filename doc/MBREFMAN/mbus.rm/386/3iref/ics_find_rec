@@ -1,0 +1,32 @@
+'\"macro stdmacro
+.if n .pH g1a.ics_find_rec @(#)ics_find_rec	40.6 of 5/17/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} ics_find_rec 3iref "System Administration Utilities" "" "\&"
+.if \nX=1 .ds x} ics_find_rec 3iref "System Administration Utilities" ""
+.if \nX=2 .ds x} ics_find_rec 3iref "" "\&"
+.if \nX=3 .ds x} ics_find_rec "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4ics_find_rec\f1 \- finds a specific record in the interconnect space of
+a board
+.SH SYNOPSIS
+\f4register = ics_find_rec(\f2fd\f1, \f2slot\f1, \f2recordid\f1)
+.br
+\f4int \f2fd\f1;
+.br
+\f4unsigned short \f2slot\f1;
+.br
+\f4unsigned char \f2recordid\f1;
+.br
+\f4int register\f1;
+.SH DESCRIPTION
+This function is used to find a specific record in the interconnect space
+of a board.  \f2slot\f1 is the slot number of the board whose interconnect
+space is searched for a record with the record ID \f2recordid\f1.  If such a
+record is found, its starting register number is returned.  If the
+interconnect space register can not be found in the specified slot, a -2
+is returned.  Otherwise, -1 is returned.
+.SH FILES
+\f4/usr/lib/libmb2.a\f1

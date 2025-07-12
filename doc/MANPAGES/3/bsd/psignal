@@ -1,0 +1,62 @@
+'\"macro stdmacro
+.if n .pH g3.psignal @(#)psignal	40.10 of 4/24/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.\" @(#)psignal.3 1.2 88/12/09 SMI; from UCB 4.2
+.\" Copyright (c) 1988 Sun Microsystems, Inc. - All Rights Reserved.
+.\"
+.nr X
+.if \nX=0 .ds x} psignal 3 "BSD Compatibility Package" "\&"
+.if \nX=1 .ds x} psignal 3 "BSD Compatibility Package"
+.if \nX=2 .ds x} psignal 3 "" "\&"
+.if \nX=3 .ds x} psignal "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4psignal\f1, \f4sys_siglist\f1 \- system signal messages
+.SH SYNOPSIS
+.nf
+\f4cc \f1[ \f2flag\f1\. \. \. ] \f2file\f1 \. \. \. \f4\-lucb\f1
+.P
+\f4psignal(sig, s)\f1
+\f4unsigned sig;\f1
+\f4char *s;\f1
+.P
+\f4char *sys_siglist[\|];\f1
+.fi
+.SH DESCRIPTION
+.P
+\f4psignal\f1
+produces a short message
+on the standard error file
+describing the indicated signal.
+First the argument string
+.I s
+is printed, then a colon, then the name of the signal
+and a
+.SM NEWLINE\s0.
+Most usefully, the argument string is the name
+of the program which incurred the signal.
+The signal number should be from among those found
+in
+\f4<signal.h>\f1.
+.P
+To simplify variant formatting
+of signal names, the vector of message strings
+\f4sys_siglist\f1
+is provided;
+the signal number
+can be used as an index in this table to get the
+signal name without the newline.
+The define
+\f4NSIG\fP
+defined in
+\f4<signal.h>\f1
+is the number of messages provided for in the table;
+it should be checked because new
+signals may be added to the system before
+they are added to the table.
+.SH "SEE ALSO"
+\f4signal\fP(3)
+.P
+\f4perror\fP(3C)
+in the \f2Programmer's Reference Manual\f1

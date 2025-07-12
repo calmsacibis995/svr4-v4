@@ -1,0 +1,330 @@
+'\"macro stdmacro
+.if n .pH @(#)inittab	40.13.1.2 of 3/5/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} inittab 4 "" "\&"
+.if \nX=1 .ds x} inittab 4 ""
+.if \nX=2 .ds x} inittab 4 "" "\&"
+.if \nX=3 .ds x} inittab "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4inittab\f1 \- script for \f4init\fP
+.SH DESCRIPTION
+The file
+\f4/etc/inittab\fP
+controls process dispatching by 
+\f4init\fP.
+The processes most typically dispatched by
+\f4init\fP
+are daemons.
+.PP
+The \f4inittab\fP file is composed of entries that are position dependent and
+have the following format:
+.PP
+.RS
+.ft 2
+id\f4:\fPrstate\f4:\fPaction\f4:\fPprocess
+.ft 1
+.RE
+.PP
+Each entry is delimited by a newline, however, a
+backslash (\^\e\^) preceding a newline indicates
+a continuation of the entry.  Up to 512 characters per entry
+are permitted. 
+Comments may be inserted
+in the
+.I process
+field using the convention for comments described in \f4sh\fP(1).
+There are no limits (other than maximum entry size)
+imposed on the number of entries
+in the
+\f4inittab\fP
+file.
+The entry fields are:
+.PP
+.TP \w'process\ \ \ 'u
+\f2id\fP
+This is a one to four character tag
+used to uniquely identify an entry.
+.TP
+.I rstate
+This defines the
+run level
+in which this entry is to be
+processed.  
+Run-levels
+effectively correspond to a configuration of processes in the system.
+That is, each process spawned by 
+\f4init\fP
+is assigned a run level or run levels in which it is allowed to exist.
+The run levels
+are represented by a number ranging from
+\f40\f1
+through
+\f46\f1.
+As an example, if the system is in 
+run level
+\f41\f1,
+only those entries having a
+\f41\f1
+in the
+.IR rstate
+field are processed. 
+When
+\f4init\fP
+is requested to change
+run levels,
+all processes that do not have an entry in the
+.I rstate
+field for the target 
+run level
+are sent the warning signal
+\f4SIGTERM\fP
+and allowed a 5-second grace period before being forcibly terminated
+by the kill signal
+\f4SIGKILL\fP.
+The 
+.I rstate
+field can define multiple 
+run levels
+for a process
+by selecting 
+more than one run level in any combination from \f40\fP through \f46\fP.
+If no
+run level
+is specified,
+then the process is assumed to be valid at
+all
+run levels
+\f40\fP through \f46\fP.
+There are three other values, 
+\f4a\f1,
+\f4b\f1
+and
+\f4c\f1,
+which can appear in the
+.I rstate
+field,
+even though they are not true 
+run levels.
+Entries which have these characters in the
+.I rstate
+field are processed only when an \f4init\fP or 
+\f4telinit\fP
+process requests them to be run (regardless of the
+current
+run level
+of the system).
+See
+\f4init\fP(1M).
+They differ from 
+run levels
+in that  
+\f4init\fP
+can never enter
+run level 
+\f4a\f1,
+\f4b\f1
+or
+\f4c\f1.
+Also, a request for the execution of any of these processes
+does not change the current 
+run level.
+Furthermore, a process started by an
+\f4a\f1,
+\f4b\f1
+or
+\f4c\f1
+command is not killed when
+\f4init\fP
+changes levels.  They are killed only if their line in
+\f4inittab\f1
+is marked \f4off\fP in the
+.I action
+field, their line is deleted entirely from
+\f4inittab\f1,
+or
+\f4init\fP
+goes into single-user state.
+.TP
+.I action
+Key words in this field tell
+\f4init\fP
+how to treat the process specified in the
+.I process
+field.
+The actions recognized by 
+\f4init\fP
+are
+as follows:
+.PP
+.RS \w'process\ \ \ 'u
+.TP \w'\f4initdefault\fP\ \ \ 'u
+\f4respawn\f1
+If the process does not exist, then start the
+process; do not wait for its termination (continue scanning the \f4inittab\fP
+file), and when the process dies, restart the process.
+If the process currently exists, do nothing and continue scanning the
+\f4inittab\fP
+file.
+.TP
+\f4wait\f1
+When
+\f4init\fP
+enters the run level that matches the entry's
+.IR rstate ,
+start the process and wait for its termination.
+All subsequent reads of the
+\f4inittab\fP
+file while 
+\f4init\fP
+is in the same run level cause 
+\f4init\fP
+to ignore this entry.
+.TP
+\f4once\f1
+When
+\f4init\fP
+enters a run level that matches the entry's
+.IR rstate ,
+start the process, do not wait for its termination.
+When it dies, do not restart the process.
+If \f4init\fP enters a new run level and the process is still running from a
+previous run level change, the program is not restarted.
+.TP
+\f4boot\f1
+The entry is to be processed only at
+\f4init\fP's
+boot-time read of the 
+\f4inittab\fP
+file.  
+\f4init\fP
+is to start the process, not wait for its termination;
+and when it dies, not restart the process.  In order for
+this instruction to be meaningful, the
+.I rstate
+should be the default or it must match
+\f4init\fP's
+run level at boot time.
+This action is useful for an initialization function following
+a hardware reboot of the system.
+.TP
+\f4bootwait\f1
+The entry is to be processed the first time
+\f4init\fP
+goes from single-user to multi-user state after the system is booted.
+(If \f4initdefault\f1 is set to \f42\f1,
+the process runs right after the boot.)
+\f4init\fP
+starts the process, waits for its termination and,
+when it dies, does not restart the process.  
+.TP
+\f4powerfail\f1
+Execute the process associated with this entry only when
+\f4init\fP
+receives a power fail signal, \f4SIGPWR\fP [see \f4signal\fP(2)].
+.TP
+\f4powerwait\f1
+Execute the process associated with this entry only when
+\f4init\fP
+receives a
+power fail signal, \f4SIGPWR\fP, 
+and wait until it terminates before continuing any processing of
+\f4inittab\fP.
+.TP
+\f4off\f1
+If the process associated with this entry is currently
+running, send the warning signal
+\f4SIGTERM\fP
+and wait 5 seconds before forcibly terminating the process
+with the kill signal
+\f4SIGKILL\fP.
+If the process
+is nonexistent, ignore the entry.
+.TP
+\f4ondemand\f1
+This instruction is really a synonym for the
+\f4respawn\f1
+action.  It is functionally identical to
+\f4respawn\f1
+but is given a different keyword in
+order to divorce its association
+with run levels.
+This instruction is used only with the 
+\f4a\f1,
+\f4b\f1
+or
+\f4c\f1
+values
+described in the
+.I rstate
+field. 
+.TP
+\f4initdefault\f1
+An entry with this action is scanned only when
+\f4init\fP
+is initially invoked.
+\f4init\fP
+uses this entry, if it exists, to determine which
+run level
+to enter initially.
+It does this by taking the highest
+run level specified in the
+\f2rstate\f1
+field and using that as its initial state. 
+If the
+.I rstate
+field is empty, this is interpreted as
+\f40123456\f1
+and 
+\f4init\fP
+therefore
+enters run level
+\f46\f1.
+This will cause the system to loop, that is, it will go to firmware 
+and reboot continuously.
+Additionally, if
+\f4init\fP
+does not find an
+\f4initdefault\f1
+entry in
+\f4inittab\f1,
+it requests an initial run level from the user at reboot time.
+.TP
+\f4sysinit\f1
+Entries of this type are executed before
+\f4init\fP
+tries to access the console (i.e., before the \f5Console Login:\f1 prompt).
+It is expected that this entry will be only used
+to initialize devices on which
+\f4init\fP
+might try to ask the run level question.
+These entries are executed and waited for before continuing.
+.RE
+.TP \w'process\ \ \ 'u
+.I process
+This is a
+command to be executed.  The entire
+\f4process\f1
+field is prefixed with
+\f4exec\fP
+and passed to a forked
+\f4sh\fP
+as
+\f4sh \-c \(fmexec\f2 command\f4\(fm\f1.\fP\f1
+For this reason, any legal
+\f4sh\fP
+syntax can appear in the
+.I process
+field.
+.SH "SEE ALSO"
+\f4init\fP(1M),
+\f4ttymon\fP(1M),
+\f4exec\fP(2), \f4open\fP(2), \f4signal\fP(2)
+.P
+\f4sh\fP(1),
+\f4who\fP(1) in the
+\f2User's Reference Manual\f1
+.\"	@(#)inittab.4	6.2 of 10/20/83
+.Ee

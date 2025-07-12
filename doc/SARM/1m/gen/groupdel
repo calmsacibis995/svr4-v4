@@ -1,0 +1,52 @@
+'\"macro stdmacro
+.if n .pH g1a.groupdel @(#)groupdel @(#)groupdel	40.8
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} groupdel 1M "Essential Utilities" "\&"
+.if \nX=1 .ds x} groupdel 1M "Essential Utilities"
+.if \nX=2 .ds x} groupdel 1M "" "\&"
+.if \nX=3 .ds x} groupdel "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4groupdel\f1 \- delete a group definition from the system
+.SH SYNOPSIS
+.nf
+\f4groupdel\f2 group\f1
+.fi
+.SH DESCRIPTION
+The \f4groupdel\f1 command deletes a group definition from the system.
+It deletes the appropriate entry from the \f4/etc/group\f1 file.
+.P
+The following options are available:
+.TP
+\f2group\fP
+A string of printable characters that specifies the group to be deleted.
+.SH FILES
+\f4/etc/group\f1
+.SH SEE ALSO
+.na
+\f4groupadd\fP(1M),
+\f4groupmod\fP(1M),
+\f4logins\fP(1M),
+\f4useradd\fP(1M),
+\f4userdel\fP(1M),
+\f4usermod\fP(1M),
+\f4users\fP(1)
+.SH DIAGNOSTICS
+The \f4groupdel\f1 command exits with one of the following values:
+.TP
+\f40\f1
+Success.
+.TP
+\f42\f1
+Invalid command syntax.
+A usage message for the \f4groupdel\f1 command
+is displayed.
+.TP
+\f46\f1
+\f4group\fP does not exist.
+.TP
+\f410\f1
+Cannot update the \f4/etc/group\f1 file.
+

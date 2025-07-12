@@ -1,0 +1,359 @@
+'\"! tbl | mmdoc
+'\"macro stdmacro
+.if n .pH g1a.lpfilter @(#)lpfilter	40.16.1.1 of 1/3/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} lpfilter 1M "" "" "\&"
+.if \nX=1 .ds x} lpfilter 1M "" ""
+.if \nX=2 .ds x} lpfilter 1M "" "" "\&"
+.if \nX=3 .ds x} lpfilter 1M "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4lpfilter\f1 \- administer filters used with the LP print service
+.SH SYNOPSIS
+\f4lpfilter \-f \f2filter-name\f4 \-F \f2path-name\f1
+.br
+\f4lpfilter \-f \f2filter-name\f4 \-\f1
+.br
+\f4lpfilter \-f \f2filter-name\f4 \-i\f1
+.br
+\f4lpfilter \-f \f2filter-name\f4 \-x\f1
+.br
+\f4lpfilter \-f \f2filter-name\f4 \-l\f1
+.SH DESCRIPTION
+The \f4lpfilter\fP command is used to add, change,
+delete, and list a filter used with the \s-1LP\s+1 print
+service.
+These filters are used to convert the content type
+of a file to a content type acceptable to a 
+printer.
+One of the following options must be used with the
+\f4lpfilter\fP command:
+\f4\-F\ \f2path-name\f1 (or \f4\-\f1 for standard input)
+to add or change a filter;
+\f4\-i\f1 to reset an original filter to its factory setting;
+\f4\-x\f1 to delete a filter;
+or \f4\-l\f1 to list a filter description.
+.PP
+The argument \f4all\f1 can be used instead of a \f2filter-name\f1
+with any of these options.
+When \f4all\f1 is specified with the \f4\-F\f1 or \f4\-\f1
+option, the requested change is made to all filters.
+Using \f4all\f1 with the \f4\-i\f1 option
+has the effect of restoring to their original settings 
+all filters for which predefined settings
+were initially available.
+Using the \f4all\f1 argument 
+with the \f4\-x\f1 option
+results in all filters being deleted,
+and using it with the \f4\-l\f1 option 
+produces a list of all filters.
+.SS "Adding or Changing a Filter"
+The filter named in the
+\f4\-f\f1
+option is added to the filter table.
+If the filter already exists,
+its description is changed to reflect the new information in
+the input.
+.P
+The filter description is taken from the
+.I "path-name"
+if the
+\f4\-F\f1
+option is given,
+or from the standard input if the
+\f4\-\f1
+option is given.
+One of the two must be given to define or change a filter.
+If the filter named is one originally delivered with the LP
+print service,
+the
+\f4\-i\f1
+option will restore the original filter description.
+.iE
+.dH "DEFAULT"
+.P
+When an existing filter is changed with the \f4\-F\f1
+or \f4\-\f1 option,
+items that are not specified in the new information
+are left as they were.
+When a new filter is added with this command,
+unspecified items are given default values.
+(See below.)
+.P
+Filters are used to convert the content of a request into a
+data stream acceptable to a printer.
+For a given print request,
+the LP print service will know the following:
+.DL 5 1
+.LI
+the type of content in the request,
+.LI
+the name of the printer,
+.LI
+the type of the printer,
+.LI
+the types of content acceptable to the printer, and
+.LI
+the modes of printing asked for by the originator of the
+request.
+.LE 1
+It will use this information to find a filter 
+or a pipeline of filters
+that will convert
+the content into a type acceptable to the printer.
+.P
+Below is a list of items 
+that provide input to this command,
+and a description of each item.
+All lists are comma or space separated.
+.sp .5
+.RS
+.nf
+\f4Input types: \f2content-type-list\f1
+\f4Output types: \f2content-type-list\f1
+\f4Printer types: \f2printer-type-list\f1
+\f4Printers: \f2printer-list\f1
+\f4Filter type: \f2filter-type\f1
+\f4Command: \f2shell-command\f1
+\f4Options: \f2template-list\f1
+.fi
+.RE
+.sp .5
+.TP .85i
+\f4Input types\f1
+This gives the types of content that can be accepted by the
+filter.
+(The default is \f4any\fP.)
+.TP
+\f4Output types\f1
+This gives the types of content that the filter can produce
+from any of the input content types.
+(The default is \f4any\fP.)
+.TP
+\f4Printer types\f1
+This gives the type of printers for which the filter can be
+used.
+The \s-1LP\s+1 print service will restrict the use of the filter
+to these types of printers.
+(The default is \f4any\fP.)
+.TP
+\f4Printers\f1
+This gives the names of the printers for which the filter can
+be used.
+The \s-1LP\s+1 print service will restrict the use of the filter to just the
+printers named.
+(The default is \f4any\fP.)
+.TP
+\f4Filter type\f1
+This marks the filter as 
+a \f4slow\fP filter or a \f4fast\fP filter.
+Slow filters are generally those that take a long time to
+convert their input.
+They are run unconnected to a printer,
+to keep the printers from being tied up 
+while the filter is running.
+If a listed printer is on a remote system,
+the filter type for it must have the value \f4slow\fP.
+Fast filters are generally those 
+that convert their input quickly,
+or those that must be connected to the printer when run.
+These will be given to the interface program
+.cX IP
+to run connected to the physical printer.
+.TP
+\f4Command\f1
+This specifies the program to run to invoke the filter.
+The full program pathname as well as fixed options must 
+be included in the
+.IR "shell-command" ;
+additional options are constructed, based on the characteristics of
+each print request and on the
+\f4Options\f1
+field.
+A command must be given for each filter.
+.sp .5
+The command must accept a data stream as standard input and
+produce the converted data stream on its standard output.
+This allows filter pipelines to be constructed to convert data
+not handled by a single filter.
+.TP
+\f4Options\f1
+This is a comma separated list of templates
+used by the \s-1LP\s+1 print service to construct
+options to the filter from the characteristics of each print
+request listed in the table later.
+.sp .5
+In general, each template is of the following form:
+.sp .5
+\0\0\0\f2keyword pattern \f4=\f2 replacement\f1
+.sp .5
+The
+.I "keyword"
+names the characteristic that the template attempts to map into
+a filter specific option;
+each valid
+.I "keyword"
+is listed in the table below.
+A
+.I "pattern"
+is one of the following: 
+a literal pattern of one of the forms listed in the table,
+a single asterisk (\f4*\f1),
+or a regular expression.
+If \f2pattern\fP matches 
+the value of the characteristic,
+the template fits and is used 
+to generate a filter specific option.
+The \f2replacement\fP is
+what will be used as the option.
+.P
+Regular expressions are the same as those
+found in the \f4ed\fP(1) or \f4vi\fP(1) commands.
+This includes the \f4\e(\f1...\f4\e)\fP and \f4\e\f2n\f1 constructions,
+which can be used to extract portions of the \f2pattern\f1
+for copying into the \f2replacement\f1, and the \f4&\f1,
+which can be used to copy the entire \f2pattern\f1 into the
+\f2replacement\f1.
+.PP
+The \f2replacement\fP can also contain a \f4*\fP;
+it too, is replaced with the entire \f2pattern\f1,
+just like the \f4&\fP of \f4ed\fP(1).
+.TS
+center box;
+l2 l2w(1.375i) l2 lw(1.125i).
+.sp 6p
+\f4lp\f1 Option	Characteristic	\f2keyword\f1	Possible \f2pattern\fPs
+.sp 6p
+_
+.sp 6p
+.T&
+l2f4 l2 l2 lI.
+\-T	Content type (input)	INPUT	content-type
+\f1N/A\fP	Content type (output)	OUTPUT	content-type
+\f1N/A\fP	Printer type	TERM	printer-type
+\f4\-d	\f1Printer name	PRINTER	\f2printer-name\fP
+\-f, \-o cpi=	Character pitch	CPI	integer
+\-f, \-o lpi=	Line pitch	LPI	integer
+\-f, \-o length=	Page length	LENGTH	integer
+\-f, \-o width=	Page width	WIDTH	integer
+\-P	Pages to print	PAGES	page-list
+\-S	T{
+Character set
+.br
+Print wheel
+T}	T{
+CHARSET
+.br
+CHARSET
+T}	T{
+character-set-name
+.br
+print-wheel-name
+T}
+\-f	Form name	FORM	form-name
+\-y	Modes	MODES	mode
+\-n	Number of copies	COPIES	\f2integer\f1
+.TE
+.PP
+For example, the template
+.sp .5
+.in +2m
+\f4MODES landscape = \-l
+.ft P
+.sp .5
+.in -2m
+shows that if a print request is submitted with
+the \f4\-y landscape\f1 option,
+the filter will be given the option \f4\-l\f1.
+As another example,
+the template
+.sp .5
+.in +2m
+\f4TERM * = \-T *\f1
+.sp .5
+.in -2m
+shows that the filter will be given the option
+\f4\-T \f2printer-type\f1
+for whichever \f2printer-type\f1
+is associated with a print request using the filter.
+.P
+As a last example, consider the template
+.sp .5
+.in +2m
+\f4MODES prwidth\e=\e(.\(**\e) = \-w\e1\f1
+.sp .5
+.in -2m
+.P
+Suppose a user gives the command
+.sp .5
+.in +2m
+\f4lp \-y prwidth=10\fP
+.sp .5
+.in -2m
+.P
+From the table above,
+the \s-1LP\s+1 print service
+determines that the \f4\-y\fP option
+is handled by a \f4MODES\fP
+template.
+The \f4MODES\fP template
+here works because the \f2pattern\fP
+\f4prwidth\e=\e(.*\e)\fP
+matches the \f4prwidth=10\fP
+given by the user.
+The \f2replacement\fP
+\f4\-w\e1\fP
+causes the \s-1LP\s+1 print service
+to generate the filter option \f4\-w10\fP.
+.PP
+If necessary, the \s-1LP\s+1 print service
+will construct a filter
+pipeline by concatenating several filters to handle
+the user's file and all the print options.
+(See \f4sh\fP(1) for a description of a pipeline.)
+If the print service constructs a filter pipeline,
+the \f4INPUT\fP and \f4OUTPUT\fP values 
+used for each filter in the pipeline
+are the types of the input and output
+for that filter, not for the entire pipeline.
+.SS "Deleting a Filter"
+The
+\f4\-x\f1
+option is used to delete the filter specified in
+\f2filter-name\f1 from the 
+.SM LP
+filter table.
+.SS "Listing a Filter Description"
+The
+\f4\-l\f1
+option is used to list the description of the filter
+named in \f2filter-name\f1.
+If the command is successful,
+the following message is sent to standard output:
+.P
+.RS
+.nf
+\f4Input types: \f2content-type-list\f1
+.br
+\f4Output types: \f2content-type-list\f1
+.br
+\f4Printer types: \f2printer-type-list\f1
+.br
+\f4Printers: \f2printer-list\f1
+.br
+\f4Filter type: \f2filter-type\f1
+.br
+\f4Command: \f2shell-command\f1
+.br
+\f4Options: \f2template-list\f1
+.fi
+.RE
+.P
+If the command fails,
+an error message is sent to standard error.
+.SH SEE ALSO
+\f4lpadmin\fP(1M).
+.br
+\f4lp\fP(1) in the \f2User's Reference Manual\f1.

@@ -1,0 +1,78 @@
+'\"macro stdmacro
+.if n .pH g1.restore @(#)restore	40.9 of 6/18/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} restore 1 "Application Compatibility Package" "\&"
+.if \nX=1 .ds x} restore 1 "Application Compatibility Package"
+.if \nX=2 .ds x} restore 1 "" "\&"
+.if \nX=3 .ds x} restore "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4restore\f1 \- restore file to original directory
+.SH SYNOPSIS
+\f4restore\f1
+[\f4\-c\f1]
+[\f4\-i\f1]
+[\f4\-o\f1]
+[\f4\-t\f1]
+[\f4\-d \f2device\f1] | [\f2pattern\f1 [\f2pattern\f1]. . .]
+.SH DESCRIPTION
+.TP
+\f4-c\f1
+complete restore.
+All files on the tape are restored.
+.TP
+\f4-i\fP
+gets the index file off of the medium.
+This only works when the archive was created
+using \f4backup\fP.
+The output is a list of all the files on the medium.
+No files are actually restored.
+.TP
+\f4-o\fP
+overwrite existing files.
+If the file being restored already exists it
+will not be restored unless this option is specified.
+.TP
+\f4-t\fP
+indicates that the tape device is to be used.
+Must be used with the \f4-d\fP option when restoring
+from tape.
+.TP
+\f4-d\fP
+\f2device\f1 is the raw device to be used.
+It defaults to \f4dev/SA/diskette\fP
+.P
+When doing a restore, one or more patterns can be specified.
+These patterns are matched against the files on the tape.
+When a match is found, the file is restored.
+Since backups are done using full pathnames,
+the file is restored to its original directory.
+Metacharacters can be used to match multiple files.
+The patterns should be in quotes to prevent the
+characters from being expanded before they are passed to the
+command.
+If no patterns are specified, it defaults
+to restoring all files.
+If a pattern does not match any file on the tape,
+a message is printed.
+.P
+When end of medium is reached, the user is prompted
+for the next media.
+The user can exit at this point by typing
+\f4q\fP.
+(This may cause files to be corrupted if a file
+happens to span a medium.)
+In general, quitting in the middle is not a good idea.
+.P
+If the file already exists and an attempt is made to
+restore it without the \f4-o\f1 option,
+the file name will be printed on the screen followed by a
+question mark.
+This file will not be retored.
+.P
+In order for multi-volume restores to work correctly,
+the raw device must be used.
+.SH SEE ALSO
+\f4sh\fP(1)

@@ -1,0 +1,104 @@
+'\"macro stdmacro
+.if n .pH g2.wait @(#)wait	40.30.1.1 of 1/3/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} wait 2 "" "\&"
+.if \nX=1 .ds x} wait 2 ""
+.if \nX=2 .ds x} wait 2 "" "\&"
+.if \nX=3 .ds x} wait "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4wait\f1 \- wait for child process to stop or terminate
+.SH SYNOPSIS
+\f4#include <sys/types.h>\f1
+.br
+\f4#include <sys/wait.h>\f1
+.PP
+\f4pid_t wait(int *stat_loc);\f1
+.SH DESCRIPTION
+\f4wait\f1
+suspends the calling process until
+one of its immediate children
+terminates or until a child that is
+being traced stops because it has received a signal.
+The \f4wait\f1 system call will return
+prematurely if a signal is received.
+If all child processes stopped or terminated prior to the call on
+\f4wait\f1,
+return is immediate.
+.PP
+If \f4wait\fP returns because the
+status of a child process is available, it
+returns the process ID of the child process.
+If the calling process had specified a non-zero value for \f2stat_loc\f1, the
+status of the child process will be stored in the location
+pointed to by \f2stat_loc\f1.
+It may be evaluated with the
+macros described on \f4wstat\fP(5).
+In the following, \f2status\fP is the object pointed to by
+\f2stat_loc\fP:
+.IP
+If the child process stopped, the high order 8 bits of \f2status\f1 will contain
+the number of the signal that caused the process to stop and
+the low order 8 bits will be set equal to \f4WSTOPFLG\fP.
+.IP
+If the child process terminated due to an
+\f4exit\f1
+call, the low order 8 bits of \f2status\f1 will be 0 and the high order 8 bits
+will contain the low order 8 bits of the argument that the child process
+passed to
+\f4exit\f1;
+see
+\f4exit\f1(2).
+.IP
+If the child process terminated due to a signal, the high order 8 bits
+of \f2status\f1 will be 0 and the low order 8 bits will contain the number of the
+signal that caused the termination. In addition, if 
+\f4WCOREFLG\fP is set, a ``core image'' will have been 
+produced; see
+\f4signal\f1(2).
+.PP
+If
+\f4wait\f1
+returns because the status of a child process is available, then that 
+status may be evaluated with the macros defined by
+\f4wstat\f1(5).
+.PP
+If a parent process terminates without waiting for its child processes
+to terminate, the parent process
+.SM ID
+of each child process is set to 1.  This means the initialization process
+inherits the child processes; see
+\f4intro\f1(2).
+.PP
+\f4wait\f1 will fail if one or both of the following is true:
+.TP 15
+\f4ECHILD\f1
+The calling process has no existing unwaited-for child processes.
+.TP 15
+\f4EINTR\f1
+The function was interrupted by a signal.
+.SH "SEE ALSO"
+.na
+\f4exec\f1(2), \f4exit\f1(2), \f4fork\f1(2), \f4intro\f1(2), \f4pause\f1(2),
+\f4ptrace\f1(2), \f4signal\f1(2),
+.br
+\f4signal\f1(5), \f4wstat\f1(5).
+.SH NOTES
+See
+.SM NOTES
+in
+\f4signal\f1(2).
+.PP
+If \f4SIGCLD\fP
+is held, then \f4wait\fP does not recognize death of children.
+.SH DIAGNOSTICS
+If
+\f4wait\f1
+returns due to a stopped or terminated child process, the process
+.SM ID
+of the child is returned to the calling process.
+Otherwise, a value of \-1 is returned and
+\f4errno\f1
+is set to indicate the error.

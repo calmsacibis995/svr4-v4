@@ -1,0 +1,209 @@
+'\"macro stdmacro
+.if n .pH g1a.ifconfig @(#)ifconfig	40.5 of 1/28/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1990 AT&T
+.nr X
+.if \nX=0 .ds x} ifconfig 1M "TCP/IP" "\&"
+.if \nX=1 .ds x} ifconfig 1M "TCP/IP"
+.if \nX=2 .ds x} ifconfig 1M "" "\&"
+.if \nX=3 .ds x} ifconfig "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4ifconfig\f1 \- configure network interface parameters
+.SH SYNOPSIS
+\f4ifconfig\f1
+.I interface
+[
+.I address_family
+] [
+.I address
+[
+.I dest_address
+] ] [
+.I parameters
+] 
+.br
+             [ \f4broadcast\f1 \f2address\f1 ]
+[ \f4metric\f1 \f2n\f1 ]
+.HP
+\f4ifconfig\f1
+.I interface
+[
+.I protocol_family
+]
+.SH DESCRIPTION
+\f4ifconfig\f1
+is used to assign an address
+to a network interface and/or to configure
+network interface parameters.
+\f4ifconfig\f1
+must be used at boot time to define the network address
+of each interface present on a machine; it may also be used at
+a later time to redefine an interface's address
+or other operating parameters.
+Used without options,
+\f4ifconfig\f1
+displays the current configuration for a network interface.
+If a protocol family is specified,
+\f4ifconfig\f1
+will report only the details specific to that protocol family.
+Only the super-user may modify the configuration
+of a network interface.
+.LP
+The
+.I interface
+parameter is a string of the form \(lqname unit\(rq, for example
+\f4emd1\f1.
+.\" The interface name
+.\" \f4\-a\f1
+.\" is reserved, and causes the remainder of the arguments to be applied to
+.\" each address of each interface in turn.
+.LP
+Since an interface may receive transmissions in differing protocols,
+each of which may require separate naming schemes, the parameters and
+addresses are interpreted according to
+the rules of some address family,
+specified by the
+.I address_family
+parameter.  The address families currently supported are
+\f4ether\f1 and \f4inet\f1.
+If no address family is specified,
+\f4inet\f1
+is assumed.
+.LP
+For the
+.SM DARPA
+Internet family
+(\f4inet\f1),
+the address is either a host name present in the host name data
+base [see
+\f4hosts\f1(4)],
+or a
+.SM DARPA
+Internet address expressed in the Internet standard
+\(lqdot notation\(rq.  Typically, an Internet
+address specified in dot notation
+will consist of your system's network number and the machine's
+unique host number.  A typical Internet address is
+\f4192.9.200.44\f1,
+where
+\f4192.9.200\f1
+is the network number and
+\f444\f1
+is the machine's
+host number.
+.LP
+For the
+\f4ether\f1
+address family,
+the address is an Ethernet address represented as
+.IR x : x : x :\c
+.IR x : x : x
+where
+.I x
+is a hexadecimal number between 0 and ff.
+Only the super-user may use the
+\f4ether\f1
+address family.
+.LP
+If the
+.I dest_address
+parameter is supplied in addition to the
+.I address
+parameter, it specifies the address of
+the correspondent on the other end
+of a point to point link.
+.SH OPTIONS
+The following
+.I parameters
+may be set with
+\f4ifconfig\f1:
+.TP .75i
+\f4up\f1
+Mark an interface \(lqup\(rq.
+This may be used to enable an interface after an \(lqifconfig down.\(rq
+It happens automatically when setting the
+first address on an interface.
+If the interface was reset when previously marked down,
+the hardware will be re-initialized.
+.TP
+\f4down\f1
+Mark an interface \(lqdown\(rq.  When an interface is
+marked \(lqdown\(rq, the system will not attempt to
+transmit messages through that interface.
+If possible, the interface will be reset to disable reception as\p
+.br
+.ne 1i
+well.
+This action does not automatically disable routes using the interface.
+.TP
+\f4trailers\f1
+(\f4inet\f1 only)
+Enable the use of a \(lqtrailer\(rq
+link level encapsulation when
+sending.
+If a network interface supports trailer encapsulation,
+the system will, when possible, encapsulate outgoing
+messages in a manner which minimizes the number of
+memory to memory copy operations performed by the receiver.
+This feature is machine-dependent, and therefore not recommended.
+On networks that support the Address Resolution Protocol [see
+\f4arp\f1(7)];
+currently, only 10 Mb/s Ethernet),
+this flag indicates that the system should request that other
+systems use trailer encapsulation when sending to this host.
+Similarly, trailer encapsulations will be used when sending to other
+hosts that have made such requests.
+.TP
+\f4\-trailers\f1
+Disable the use of a \(lqtrailer\(rq link level encapsulation.
+.TP
+\f4arp\f1
+Enable the use of the Address Resolution Protocol in mapping
+between network level addresses and link level addresses (default).
+This is currently implemented for mapping between
+.SM DARPA
+Internet addresses and 10Mb/s Ethernet addresses.
+.TP
+\f4\-arp\f1
+Disable the use of the Address Resolution Protocol.
+.TP
+\f4metric \f2n\f1
+Set the routing metric of the interface to
+.IR n ,
+default 0.
+The routing metric is used by the routing protocol
+[\f4routed\f1(1M)].
+Higher metrics have the effect of making a route
+less favorable; metrics are counted as addition hops
+to the destination network or host.
+.TP
+\f4broadcast \f2address\f1
+(\f4inet\f1
+only)
+Specify the address to use to represent broadcasts to the
+network.
+The default broadcast address is the
+address with a host part of all 1's.
+A
+\f4+\f1
+(plus sign) given for the broadcast value causes the broadcast address to
+be reset to a default appropriate for the (possibly new) Internet address.
+.SH EXAMPLES
+.LP
+If your workstation is not attached to an Ethernet, the
+\f4emd1\f1
+interface should be marked \(lqdown\(rq as follows:
+.IP
+\f4ifconfig emd1 down\f1
+.SH FILES
+.PD 0
+.TP 20
+\f4/dev/nit\f1
+.PD
+.SH "SEE ALSO"
+\f4netstat\f1(1M),
+.SH DIAGNOSTICS
+Messages indicating the specified interface does not exist, the
+requested address is unknown, or the user is not privileged and
+tried to alter an interface's configuration.

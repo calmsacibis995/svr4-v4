@@ -1,0 +1,94 @@
+'\"macro stdmacro
+.if n .pH g1.intro_ccs @(#)intro_ccs	40.8.1.1 of 4/12/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} intro 1 "" "\&"
+.if \nX=1 .ds x} intro 1 ""
+.if \nX=2 .ds x} intro 1 "" "\&"
+.if \nX=3 .ds x} intro "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4intro\f1 \- introduction to programming commands
+.SH DESCRIPTION
+This section describes the programming commands in alphabetical order.
+Unless otherwise noted, the commands accept options and
+other arguments according to the following syntax:
+.PP
+.I name
+.RI [ option ( s )]
+.RI [ cmdarg ( s )]
+.PP
+where:
+.TP 13
+.I name
+is the name of an executable file.
+.TP 13
+.I option\^
+is 
+\f4\-\f2noargletter\f1(\f2s\f1)
+or \f4\-\f2argletter <> optarg\f1, 
+where:
+.sp .4
+.I noargletter\^
+is a single letter representing an option without an option argument;
+.sp .4
+.I argletter\^
+is a single letter representing an option requiring an option argument;
+.sp .4
+<> is optional white space;
+.sp .4
+.I optarg\^
+is an option argument (character string) satisfying the preceding
+.IR argletter .
+.TP 13
+.I cmdarg\^
+is \f1``\f4\-\f1'' by itself, which indicates the standard input,
+or a path name (or other command argument)
+.I not\^
+beginning with
+\f1``\f4\-\f1''.
+.PP
+Throughout the manual pages there are references to 
+\f2TMPDIR, BINDIR, INCDIR, \f1and \f2LIBDIR\f1.
+These represent directory names whose value
+is specified on each manual page as necessary.
+For example, \f2TMPDIR\f1 might refer to \f4/var/tmp\f1.
+These are not environment variables and cannot be set.
+[There is an environment variable called \f4TMPDIR\f1 which
+can be set.
+See \f4tmpnam\fP\^(3S).]
+There are also references to \f2LIBPATH\f1,
+the default search path of the link
+editor and other tools.
+.SH SEE ALSO
+\f4exit\fP(2),
+\f4wait\fP(2),
+\f4getopt\fP(3C)
+.br
+\f4getopts\fP(1) in the \f2User's Reference Manual\f1.
+.PD 0
+.PD
+.SH DIAGNOSTICS
+Upon termination, each command returns two bytes of status,
+one supplied by the system and giving the cause for
+termination, and (in the case of ``normal'' termination)
+one supplied by the program
+[see
+\f4wait\fP(2)
+and
+\f4exit\fP(2)].
+The former byte is 0 for normal termination; the latter
+is customarily 0 for successful execution and non-zero
+to indicate troubles such as erroneous parameters, or bad or inaccessible data.
+It is called variously ``exit code,'' ``exit status,'' or
+``return code,'' and is described only where special
+conventions are involved.
+.SH NOTES
+Some commands produce unexpected results
+when processing files containing null characters.
+These commands often treat text input lines as strings and therefore
+become confused upon encountering a null character (the string terminator) 
+within a line.
+.\"	@(#)intro.1	6.2 of 9/2/83
+.Ee

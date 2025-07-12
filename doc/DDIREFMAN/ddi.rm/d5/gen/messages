@@ -1,0 +1,83 @@
+'\"macro stdmacro
+.if n .pH gen.messages @(#)messages	40.2 of 1/7/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.nr X
+.if \nX=0 .ds x} messages D5DK "" "DDI/DKI" "\&"
+.if \nX=1 .ds x} messages D5DK "" "DDI/DKI"
+.if \nX=2 .ds x} messages D5DK "" "\&"
+.if \nX=3 .ds x} messages "" "" "\&"
+.TH \*(x}
+.IX "\f4messages\fP(D5DK)"
+.SH NAME
+\f4messages\fP \- STREAMS messages
+.SH SYNOPSIS
+.nf
+\f4#include <sys/stream.h>\fP
+.ad
+.fi
+.SH DESCRIPTION
+The following is a list of the STREAMS messages types that can be used by drivers and
+modules.
+.IP \f4M_DATA\fP 12n
+Data message.
+.IP \f4M_PROTO\fP
+Protocol control message.
+.IP \f4M_BREAK\fP
+Control message used to generate a line break.
+.IP \f4M_SIG\fP
+Control message used to send a signal to processes.
+.IP \f4M_DELAY\fP
+Control message used to generate a real-time delay.
+.IP \f4M_CTL\fP
+Control message used between neighboring modules and drivers.
+.IP \f4M_IOCTL\fP
+Control message used to indicate a user \f4ioctl\fP(2) request.
+.IP \f4M_SETOPTS\fP
+Control message used to set stream head options.
+.IP \f4M_IOCACK
+High priority control message used to indicate success of an \f4ioctl\fP request.
+.IP \f4M_IOCNAK
+High priority control message used to indicate failure of an \f4ioctl\fP request.
+.IP \f4M_PCPROTO
+High priority protocol control message.
+.IP \f4M_PCSIG
+High priority control message used to send a signal to processes.
+.IP \f4M_READ
+High priority control message used to indicate the occurrence of a \f4read\fP(2)
+when there are no data on the stream head read queue.
+.IP \f4M_FLUSH
+High priority control message used to indicate that queues should be flushed.
+.IP \f4M_STOP
+High priority control message used to indicate that output should be stopped immediately.
+.IP \f4M_START
+High priority control message used to indicate that output can be restarted.
+.IP \f4M_HANGUP
+High priority control message used to indicate that the device has been disconnected.
+.IP \f4M_ERROR
+High priority control message used to indicate that the stream has incurred a fatal error.
+.IP \f4M_COPYIN
+High priority control message used during transparent \f4ioctl\fP processing to copy data
+from the user to a STREAMS message.
+.IP \f4M_COPYOUT
+High priority control message used during transparent \f4ioctl\fP processing to copy data
+from a STREAMS message to the user.
+.IP \f4M_IOCDATA
+High priority control message used during transparent \f4ioctl\fP processing to return
+the status and data of a previous \f4M_COPYIN\fP or \f4M_COPYOUT\fP request.
+.IP \f4M_STOPI
+High priority control message used to indicate that input should be stopped immediately.
+.IP \f4M_STARTI
+High priority control message used to indicate that input can be restarted.
+.SH SEE ALSO
+.na
+\f4put\fP(D2DK),
+\f4srv\fP(D2DK),
+\f4allocb\fP(D3DK),
+\f4copyreq\fP(D4DK),
+\f4copyresp\fP(D4DK),
+\f4datab\fP(D4DK),
+\f4iocblk\fP(D4DK),
+\f4linkblk\fP(D4DK),
+\f4msgb\fP(D4DK),
+\f4stroptions\fP(D4DK)
+.ad

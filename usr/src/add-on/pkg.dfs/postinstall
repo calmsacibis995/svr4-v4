@@ -1,0 +1,8 @@
+#ident	"@(#)pkg.dfs:postinstall	1.1"
+#
+# Initialize FAILURE to 1 (fatal error)
+#
+FAILURE=1
+
+installf -f $PKGINST || exit FAILURE
+exit 	0

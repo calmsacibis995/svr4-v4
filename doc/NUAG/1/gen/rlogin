@@ -1,0 +1,211 @@
+'\"macro stdmacro
+.if n .pH g1.rlogin @(#)rlogin	40.10 of 5/21/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} rlogin 1 "Internet Utilities" "\&"
+.if \nX=1 .ds x} rlogin 1 "Internet Utilities"
+.if \nX=2 .ds x} rlogin 1 "" "\&"
+.if \nX=3 .ds x} RLOGIN "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4rlogin\f1 \- remote login
+.SH SYNOPSIS
+\f4rlogin\f1
+[
+\f4\-L\f1
+]
+[
+\f4\-8\f1
+] 
+[
+\f4\-e \f2c\f1
+] [
+\f4\-l\f1
+.I username
+]
+.\"[
+.\".B \-7
+.\"]
+.I hostname
+.SH DESCRIPTION
+.LP
+\f4rlogin\f1
+establishes a remote login session from
+your terminal to the remote machine named
+.IR hostname .
+.LP
+Hostnames are listed in the 
+.I hosts 
+database,
+which may be contained in the
+\f4/etc/hosts\f1
+file,
+the Internet domain name server,
+or in both.
+Each host has one official name (the
+first name in the database entry),
+and optionally one or more nicknames.
+Either official hostnames or nicknames may be specified in
+.IR hostname.
+.LP
+Each remote machine may have a file named
+\f4/etc/hosts.equiv\f1
+containing a list of trusted hostnames
+with which it shares usernames.
+Users with the same username on both the local
+and remote machine may 
+.nh
+\f4rlogin \f1
+.hy
+from the
+machines listed in the remote machine's
+\f4/etc/hosts.equiv\f1
+file without supplying a password.
+Individual users
+may set up a similar private equivalence list with the file
+\f4\&.rhosts\f1
+in their home directories.
+Each line in this file contains two names: a
+.I hostname
+and a
+.I username
+separated by a 
+space.
+An entry in a remote user's
+\f4\&.rhosts\f1
+file permits the user named
+.I username
+who is logged into
+.I hostname
+to log in to the remote machine as the remote user
+without supplying a password.
+If the name of the local host is not found in the 
+\f4/etc/hosts.equiv\f1
+file on the remote machine,
+and the local username and hostname are not found in
+the remote user's 
+\f4\&.rhosts \f1
+file, then
+the remote machine will prompt for a password.
+Hostnames listed in 
+\f4/etc/hosts.equiv\f1
+and 
+\f4\&.rhosts\f1
+files must be the official hostnames listed in the hosts database;
+nicknames may not be used in either of these files.
+.LP
+To counter security problems, the
+\f4\&.rhosts\f1
+file must be owned by
+either the remote user or by root.
+.LP
+The remote terminal type is the same as your local
+terminal type (as given in your environment
+\f4TERM\f1
+variable).  The terminal or window size
+is also copied to the remote system
+if the server supports the option, and
+changes in size are reflected as well.
+All echoing takes place at the remote site, so that (except for
+delays) the remote login is transparent.  Flow control using
+\f4CTRL-S\f1
+and
+\&\f4CTRL-Q\f1
+and
+flushing of input and output on interrupts are handled properly.
+.LP
+The following options are available:
+.TP
+\f4\-L\f1
+Allow the
+\f4rlogin\f1
+session to be run in \(lqlitout\(rq mode.
+.TP 
+\f4\-8\f1
+Pass eight-bit data across the net instead of seven-bit data.
+.\"this is the default.
+.TP 
+\f4\-e \f2c\f1
+Specify a different escape character,
+.IR c ,
+for the line used to disconnect from the remote host.
+.\".IP \fB\-7\fP 5
+.\"Pass seven-bit data across the net instead of eight-bit data.
+.TP 
+\f4\-l \f2username\f1
+Specify a different
+.I username
+for the remote login.  If you do not use
+this option, the remote username used is the
+same as your local username.
+.SS Escape Sequences
+.LP
+Lines that you type which start with the tilde
+character are \(lqescape sequences\(rq (the
+escape character can be changed using the
+\f4\-e\f1
+options):
+.TP
+\f4~\^.\f1
+Disconnect from the remote host \(em this is not the same as a logout,
+because the local host breaks the connection with no warning to the
+remote end.
+.TP
+\f4susp\f1
+Suspend the login session (only if you are using a shell
+with Job Control).
+\f4susp\f1
+is your \(lqsuspend\(rq character, usually
+\f4\CTRL-Z\f1,
+see
+\f4tty\f1(1).
+.SH FILES
+.PD 0
+.TP 20
+\f4/etc/passwd\f1
+.TP
+\f4/usr/hosts/*\f1
+for \fIhostname\fP version of the command
+.TP
+\f4/etc/hosts.equiv	\f1
+list of trusted hostnames
+with shared usernames
+.TP
+\f4$HOME/\fB.\fPrhosts\f1
+private list of trusted hostname/username combinations
+.PD
+.SH SEE ALSO
+\f4rsh\f1(1),
+\f4stty\f1(1),
+\f4tty\f1(1),
+\f4named\f1(1M),
+\f4hosts\f1(4),
+\f4hosts.equiv\f1(4)
+.ne 4
+.SH NOTES
+.LP
+When a system is listed in
+\f4hosts.equiv\f1, its security must be as good as
+local security.  One insecure system listed in
+\f4hosts.equiv\f1 can compromise the security of the entire
+system.
+.LP
+When a line of the form \f2hostname username\f1 appears in 
+\f4hosts.equiv\f1, the user named may log in as anyone in the 
+local password file by using the command
+.PP
+.RS
+\f4rlogin \-l \f2username hostname\f1
+.RE
+.PP
+where \f2username\f1 is any valid username in the \f4passwd\f1 
+file.
+.LP
+If you use a windowing terminal and you intend 
+to run \f4layers\f1(1) on the remote system, then you must 
+invoke \f4rlogin\f1 with the \f4\-8\f1 option.
+.LP
+This implementation can only use the
+.SM TCP
+network service.

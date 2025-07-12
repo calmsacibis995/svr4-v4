@@ -1,0 +1,51 @@
+'\"macro stdmacro
+.if n .pH g1a.devnm @(#)devnm	40.6.1.1 of 1/3/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} devnm 1M "Essential Utilities" "\&"
+.if \nX=1 .ds x} devnm 1M "Essential Utilities"
+.if \nX=2 .ds x} devnm 1M "" "\&"
+.if \nX=3 .ds x} devnm "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4devnm\f1 \- device name
+.SH SYNOPSIS
+\f4/usr/sbin/devnm\f1
+.RI [ name ...
+]
+.SH DESCRIPTION
+The \f4devnm\fP command identifies the special file
+associated with the mounted file system
+where the argument \f2name\fP resides.
+One or more \f2name\fPs can be specified.
+.PP
+This command is most commonly used by the \f4brc\f1 command
+to construct a mount table entry for the \f4root\f1 device.
+.SH EXAMPLE
+The command:
+.sp.5
+.RS
+.nf
+\f4/usr/sbin/devnm /usr\f1
+.fi
+.RE
+.sp.5
+produces:
+.sp.5
+.RS
+.nf
+\f4/dev/dsk/c1d0s2 /usr\f1
+.fi
+.RE
+.sp.5
+if \f4/usr\f1 is mounted on \f4/dev/dsk/c1d0s2\f1.
+.SH FILES
+\f4/dev/dsk/\(**\fP
+.br
+\f4/etc/mnttab\fP
+.SH SEE ALSO
+\f4brc\fP(1M),
+\f4mnttab\fP(4).
+.\"	@(#)devnm.1m	6.2 of 9/2/83
+.Ee

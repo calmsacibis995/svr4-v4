@@ -1,0 +1,63 @@
+#ident	"@(#)proto:i386/at386/desktop/flop.instl.1	1.1.1.2"
+
+echo "
+	Portions Copyright (C) 1990, 1991 Intel Corporation.
+	Portions Copyright (C) 1990 Interactive Systems Corporation.
+	All Rights Reserved
+"
+PATH=/:/sbin:/usr/bin:/etc:/install/sbin:/install/usr/bin
+init_flags=""
+export PATH init_flags
+
+if [ -f /tape ];then
+	mach_flag=-s
+	val=0
+	msg="not appropriate for"
+else
+	mach_flag=-es
+	val=1
+	msg="appropriate only for"
+fi
+
+machid $mach_flag
+if [ $? != "$val" ];then 
+	echo "Incorrect UNIX System \"Base System Package\" Floppy Disk 1.\n"
+	echo "This disk is ${msg} machines"
+	echo "exclusively equipped with SCSI peripherals.\n"
+	echo "Please refer to the Installation Guide for more information.\n"
+	uadmin 2 0
+	exit
+fi
+cd /
+while [ 1 ]
+do
+	echo "Please insert the UNIX System \"Base System Package\""
+	echo "Floppy Disk 2 and then strike ENTER.\c"
+	read x
+	init_flags="$x"
+	/etc/fs/s5/mount -r /dev/dsk/f0t /install > /dev/null 2>&1
+	if [ -f /install/LABEL.4.0.dt ];then
+		break
+	fi
+	umount /install > /dev/null 2>&1
+	echo "\nError reading UNIX System \"Base System Package\" Floppy Disk 2."
+	echo "Please check that it is the correct floppy disk\nand that it is \c"
+	echo "correctly inserted.\n"
+	echo "Please strike ENTER when ready or DEL to cancel the installation.\n"
+done
+
+ln -s /install/usr/bin/ln /usr/bin/ln  >/dev/null 2>&1
+ln -s /install/usr/lib/libc.so.1 /usr/lib/libc.so.1  >/dev/null 2>&1
+mkdir /etc/fs/bfs /usr/sbin /etc/fs/ufs  >/dev/null 2>&1
+mkdir /etc/scsi /etc/scsi/format.d > /dev/null 2>&1
+
+cd /install
+
+find etc/scsi etc/fs -type f -print | while read i
+do
+	ln -s /install/$i /$i >/dev/null 2>&1
+done 
+sync
+cd /
+/install/flop.instl.2
+exit

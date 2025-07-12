@@ -1,0 +1,70 @@
+'\"macro stdmacro
+.if n .pH g1a.pkgrm @(#)pkgrm	40.13 of 3/2/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} pkgrm 1M "Essential Utilities" "\&"
+.if \nX=1 .ds x} pkgrm 1M "Essential Utilities"
+.if \nX=2 .ds x} pkgrm 1M "Essential Utilities" "\&"
+.if \nX=3 .ds x} pkgrm 1M "Essential Utilities" "\&"
+.TH \*(x}
+.SH NAME
+\f4pkgrm\f1 \- removes a package from the system
+.SH SYNOPSIS
+\f4pkgrm \f1[\f4-n\f1] [\f4-a \f2admin\f1] [\f2pkginst1\f1 [\f2pkginst2\f1[ . . . ]\|]\|]
+.P
+\f4pkgrm -s \f2spool \f1[\f2pkginst\f1]
+.SH DESCRIPTION
+\f4pkgrm\f1
+will remove a previously installed or partially installed package from the
+system.
+A check is made to determine if any other packages depend on the one
+being removed.
+The action taken if a dependency exists is defined in the
+\f4admin\fP file.
+.PP
+The default state for the command is interactive mode, meaning that
+prompt messages are given during processing to allow the
+administrator to confirm the actions being taken.
+Non-interactive mode can be
+requested with the \f4-n\f1 option.
+.PP
+The \f4-s\f1 option can be used to specify the directory
+from which spooled packages should be removed.
+.PP
+The options and arguments for this command are:
+.TP 13
+\f4-n\f1
+Non-interactive mode.
+If there is a need for interaction, the command will exit.
+Use of this option requires that at least
+one package instance be named upon invocation
+of the command.
+.TP 13
+\f4-a \f2admin\f1
+Defines an installation administration file, \f2admin\fP, to be used in
+place of the default \f2admin\fP file.
+.TP 13
+\f4-s \f2spool\f1
+Removes the specified package(s) from the directory \f2spool\f1.
+.TP 13
+\f2pkginst\f1
+Specifies the package to be removed.
+The format \f2pkginst\f4.\(**\f1
+can be used to remove all instances of a package.
+When using this format,
+enclose the command line in single quotes
+to prevent the shell from interpreting the \(** character.
+.SH SEE ALSO
+.na
+\f4installf\fP(1M),
+\f4pkgadd\fP(1M),
+\f4pkgask\fP(1M),
+\f4pkgchk\fP(1),
+\f4pkginfo\fP(1),
+\f4pkgmk\fP(1),
+\f4pkgparam\fP(1),
+\f4pkgproto\fP(1),
+\f4pkgtrans\fP(1),
+\f4removef\fP(1M).
+.ad

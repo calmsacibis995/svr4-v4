@@ -1,0 +1,9 @@
+*ident	"@(#)hiint:uts/i386/master.d/pic/sdev	1.1"
+#ifdef AT386
+pic	Y	1	0	1	0	020	021	0	0
+pic	Y	1	8	1	2	0A0	0A1	0	0
+#else
+pic	Y	1	0	1	0	0c0	0c2	0	0
+pic	Y	1	8	1	7	0c4	0c6	0	0
+pic	Y	1	8	1	5	108	10A	0	0
+#endif

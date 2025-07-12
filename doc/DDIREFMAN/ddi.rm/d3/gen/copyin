@@ -1,0 +1,58 @@
+'\"macro stdmacro
+.if n .pH gen.copyin @(#)copyin	40.2 of 1/7/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.nr X
+.if \nX=0 .ds x} copyin D3DK "" "DDI/DKI" "\&"
+.if \nX=1 .ds x} copyin D3DK "" "DDI/DKI"
+.if \nX=2 .ds x} copyin D3DK "" "\&"
+.if \nX=3 .ds x} copyin "" "" "\&"
+.TH \*(x}
+.IX "\f4copyin\fP(D3DK)"
+.SH NAME
+\f4copyin\f1 \- copy data from a user buffer to a driver buffer
+.SH SYNOPSIS
+.nf
+.na
+\f4#include <sys/types.h>
+.sp 0.5
+int copyin(caddr_t \f2userbuf, \f4caddr_t \f2driverbuf, \f4size_t \f2count\f4);\f1
+.ad
+.fi
+.SH ARGUMENTS
+.RS 0n 13
+.IP "\f2userbuf\f1" 10n
+User source address from which copy is made.
+.IP "\f2driverbuf\f1" 10n
+Driver destination address to which copy is made.
+.IP "\f2count\f1" 10n
+Number of bytes to copy.
+.RE
+.SH DESCRIPTION
+\f4copyin\f1 copies \f2count\f1 bytes of data from the user virtual
+address specified by \f2userbuf\f1 to the kernel virtual address
+specified by \f2driverbuf\f1.
+The driver must ensure that adequate space is
+allocated for the destination address.
+.P
+\f4copyin\fP chooses the best algorithm based on address alignment and number of bytes to copy.
+Although the source and destination addresses are not required to
+be word aligned, word aligned addresses may result in a more efficient
+copy.
+.SH RETURN VALUE
+If the copy is successful, 0 is returned.
+Otherwise, \-1 is returned to indicate that the specified user address
+range is not valid.
+.SH LEVEL
+Base Only.
+.SH NOTES
+May sleep.
+.sp 0.5
+Drivers usually convert a return value of \-1 into an \f4EFAULT\fP error.
+.SH SEE ALSO
+.na
+\f4bcopy\f1(D3DK),
+\f4copyout\f1(D3DK),
+\f4uiomove\f1(D3DK),
+\f4ureadc\fP(D3DK),
+\f4uwritec\fP(D3DK)
+.ad

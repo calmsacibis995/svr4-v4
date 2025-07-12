@@ -1,0 +1,77 @@
+.if n .pH rn4.Cchap5 @(#)Cchap5	40.32
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.BK "Software Notes" "" "" ""   
+.\ACRONYM	                  
+.CH "System Administration and Maintenance" "" "Table of Contents" "5"
+.\CHAPTER	5
+.tC 1 "System Administration and Maintenance Notes" 5-1  
+.Index: istart UNIX System V/386 Release 4, system administration notes	1
+.tC 2 "Improved Backup and Restore Operations" 5-1  
+.tC 3 "Extended Backup and Restore" 5-1  
+.tC 3 "Source Compatibility" 5-1  
+.tC 3 "Future Directions" 5-1  
+.Index: \f4ckbupscd\fP        	1
+.tC 2 "Specific Backup/Restore Notes and Workarounds" 5-1  
+.tC 3 "backup and cpio" 5-1  
+.Index: backup jobs, label checking override    	1
+.tC 3 "-o Method Option" 5-1  
+.Index: backup jobs, \f4-o\f1 method     	1
+.tC 3 "Backup and Device Names" 5-2  
+.Index: \f4backup\f1 and \f4restore\f1      	2
+.tC 3 "Fimage Archives" 5-2  
+.Index: backup methods, full image     	2
+.Index: backup methods, full file     	2
+.tC 3 "Backup Strategy" 5-2  
+.Index: backup strategy, \f4fimage\f1 and \f4ffile\f1    	2
+.tC 3 "Viewing Archive Labels" 5-2  
+.Index: backup jobs, archive label viewing    	2
+.tC 3 "sysadm Backup Service" 5-2  
+.tC 3 "backup and Relative Paths" 5-2  
+.tC 3 "/etc/bkup/rsstatus.tab: Not Created During Installation" 5-3  
+.Index: \f4etc/bkup/rsstatus.tab\f1        	3
+.tC 2 "Console Logging" 5-3  
+.tC 3 "Future Directions" 5-3  
+.Index: consol logging, future directions, \f4/dev/console\f1 and \f4/dev/syscon\f1  	3
+.tC 2 "System Administration Menus sysadm" 5-3  
+.Index: menus (\f4sysadm\fP), dependencies and compatibilities    	3
+.Index: \f4sysadm\fP, dependencies and compatibilities     	3
+.Index: function key resets      	3
+.tC 3 "Future Directions" 5-3  
+.Index: unsupported administrative logins      	3
+.Index: \f4sysadmn\f1        	3
+.Index: \f4setup\f1        	3
+.Index: \f4powerdown\f1        	3
+.Index: \f4makefys\f1        	3
+.Index: \f4mountfsys\f1        	3
+.tC 2 "Device Management" 5-3  
+.Index: table driven device mangement facility    	3
+.tC 3 "Source Compatibility" 5-3  
+.Index: source compatibility, installation commands     	3
+.Index: \f4installpkg\f1        	3
+.Index: \f4removepkg\f1        	3
+.Index: \f4displaypkg\f1        	3
+.tC 2 "User and Password Administration" 5-4  
+.tC 3 "useradd Command" 5-4  
+.Index: useradd        	4
+.tC 3 "passwd Command" 5-4  
+.Index: passwd(1)        	4
+.tC 3 "Future Directions" 5-4  
+.Index: \f4pwconv\fP        	4
+.Index: \f4passmgmt\fP        	4
+.tC 2 "EVGA Mode Changes" 5-4  
+.Index: EVGA mode changes      	4
+.tC 3 "Supported Video cards" 5-4  
+.Index: supported video cards      	4
+.tC 2 "Commands" 5-5  
+.tC 3 "pkgadd" 5-5  
+.Index: \f4pkgadd\f1        	5
+.tC 3 "pkgmk" 5-5  
+.Index: \f4pkgmk\f1        	5
+.tC 3 "pkgrm" 5-5  
+.tC 3 "pwck" 5-6  
+.Index: \f4pwck\fP        	6
+.tC 2 "OA&M Screens and Help" 5-6  
+.Index: OA&M screens and Help     	6
+.tC 2 "Setting up RFS through sysadm" 5-6  
+.Index: RFS via \f4sysadm\f1 menus     	6
+.Index: iend UNIX System V/386 Release 4, system administration notes	6

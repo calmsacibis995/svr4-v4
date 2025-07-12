@@ -1,0 +1,195 @@
+'\"macro stdmacro
+.if n .pH g4.ypfiles @(#)ypfiles	40.6 of 5/30/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.\" @(#)ypfiles.5 1.10 89/09/28 SMI;
+.\" Copyright (c) 1988 Sun Microsystems, Inc. - All Rights Reserved.
+.nr X
+.if \nX=0 .ds x} ypfiles 4 "" "\&"
+.if \nX=1 .ds x} ypfiles 4 ""
+.if \nX=2 .ds x} ypfiles 4 "" "\&"
+.if \nX=3 .ds x} ypfiles "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4ypfiles\fP \- the Network Information Service (NIS) database and directory 
+structure
+.SH DESCRIPTION
+.P
+The 
+\s-1NIS\s0
+network lookup service uses a distributed,
+replicated database of
+\f4dbm\f1
+files contained in the
+\f4/var/yp\f1
+directory hierarchy on each
+\s-1NIS\s0
+server.
+A
+\f4dbm\f1
+database consists of two files,
+one has the filename extension
+\f4\&.pag\f1
+and the other has the filename extension
+\f4\&.dir\f1.
+For instance, the database named
+\f4publickey\f1,
+is implemented by the pair of files
+\f4publickey.pag\f1
+and
+\f4publickey.dir\f1.
+.P
+A
+\f4dbm\f1
+database served by the
+\s-1NIS\s0
+is called a
+\s-1NIS\s0
+\f2map\f1.
+A
+\s-1NIS\s0
+\f2ypdomain\f1
+is a subdirectory of
+\f4/var/yp\f1
+containing a set of
+\s-1NIS\s0
+maps. 
+Any number of
+\s-1NIS\s0
+domains can exist.
+Each may contain any number of maps.
+.P
+No maps are required by the
+\s-1NIS\s0
+lookup service itself, although they may
+be required for the normal operation of
+other parts of the system. 
+There is no list of maps which
+\s-1NIS\s0
+serves \(em if the map exists in a given domain, and a
+client asks about it, the
+\s-1NIS\s0
+will serve it.
+For a map to be
+accessible consistently, it must exist on all
+\s-1NIS\s0
+servers that serve the domain.
+To provide data consistency between the
+replicated maps, an  entry to run
+\f4ypxfr\f1
+periodically should be made in the privileged user's
+\f4crontab\f1
+file on each server.
+More information on this topic is in
+\f4ypxfr\f1(1M).
+.P
+\s-1NIS\s0
+maps should contain two distinguished
+key-value pairs.
+The first is the key
+\f4YP_LAST_MODIFIED\f1,
+having as a value a ten-character
+\s-1ASCII\s0
+order number.
+The order number should be the
+system time in seconds when the map was built.
+The second key is
+\f4\s-1YP_MASTER_NAME\s0\f1,
+with the name of the
+\s-1NIS\s0
+master server as a value.
+\f4makedbm\f1(1M)
+generates both key-value pairs automatically.
+A map that does not contain both
+key-value pairs can be served by the
+\s-1NIS\s0,
+but the
+\f4ypserv\f1
+process will not be able to return values for
+``Get order number'' or ``Get master name'' requests.
+See
+\f4ypserv\f1(1M).
+In addition, values of these two keys are used by
+\f4ypxfr\f1
+when it transfers a map from a master
+\s-1NIS\s0
+server to a slave.
+If
+\f4ypxfr\f1
+cannot figure out where to get the map,
+or if it is unable to
+determine whether the local copy is more
+recent than the copy at the master,
+extra command line switches must be set
+when it is run.
+.P
+\s-1NIS\s0
+maps must be generated and modified
+only at the master server. 
+They are copied to the slaves using
+\f4ypxfr\f1(1M)
+to avoid potential byte-ordering problems among
+\s-1NIS\s0
+servers running on machines with different
+architectures, and to minimize the amount of disk
+space required for the \f4dbm\f1 files.
+The
+\s-1NIS\s0
+database can be initially
+set up for both masters and slaves by using
+\f4ypinit\f1(1M).
+.P
+After the server databases are set up, it
+is probable that the contents of
+some maps will change.
+In general, some
+\s-1ASCII\s0
+source version of the
+database exists on the master, and it
+is changed with a standard text editor.
+The update is incorporated into the
+\s-1NIS\s0
+map and is propagated from
+the master to the slaves by running
+\f4/var/yp/Makefile\f1,
+see
+\f4ypmake\f1(1M).
+All Sun-supplied maps have entries in
+\f4/var/yp/Makefile\f1;
+if a
+\s-1NIS\s0
+map is added, edit this file to support the new map.
+The makefile uses
+\f4makedbm\f1(1M)
+to generate the
+\s-1NIS\s0
+map on the master, and
+\f4yppush\f1(1M)
+to propagate the changed map to the slaves.
+\f4yppush\f1
+is a client of the map
+\f4ypservers\f1,
+which lists all the
+\s-1NIS\s0
+servers.
+For more information on this topic, see
+\f4yppush\f1(1M).
+.SH FILES
+.PD 0
+.TP 20
+\f4/var/yp\f1
+.TP
+\f4/var/yp/aliases\f1
+.TP
+\f4/var/yp/Makefile\f1
+.PD
+.SH "SEE ALSO"
+\f4makedbm\f1(1M),
+\f4ypinit\f1(1M),
+\f4ypmake\f1(1M),
+\f4yppoll\f1(1M),
+\f4yppush\f1(1M),
+\f4ypserv\f1(1M),
+\f4ypxfr\f1(1M),
+\f4dbm\f1(3),
+\f4publickey\f1(4)

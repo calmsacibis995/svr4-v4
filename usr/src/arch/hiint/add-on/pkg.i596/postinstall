@@ -1,0 +1,147 @@
+#ident	"@(#)hiint:add-on/pkg.i596/postinstall	1.1"
+
+# install a module.  $1 is the module name
+
+do_install() {
+	ERR=/tmp/${1}.err
+	IDCOMPS="Driver.o Master System Mfsys Sfsys Node Space.c"
+	if
+		[ -f ${1}.Dr ]
+	then
+		mv ${1}.Dr Driver.o
+	fi
+	if
+		[ -f ${1}.Sp ]
+	then
+		mv ${1}.Sp Space.c
+	fi
+	if
+		[ -f ${1}.Ma ]
+	then
+		grep -v "^[\*#]ident" ${1}.Ma > Master
+		rm -rf ${1}.Ma
+	fi
+	if
+		[ -f ${1}.Sy ]
+	then
+		grep -v "^[\*#]ident" ${1}.Sy |
+			sed "${SEDCMD1}"  > System
+		rm -rf ${1}.Sy
+	fi
+	if
+		[ -f ${1}.Mf ]
+	then
+		grep -v "^[\*#]ident" ${1}.Mf > Mfsys
+		rm -rf ${1}.Mf
+	fi
+	if
+		[ -f ${1}.Sf ]
+	then
+		grep -v "^[\*#]ident" ${1}.Sf |
+			sed "${SEDCMD2}" > Sfsys
+		rm -rf ${1}.Sf
+	fi
+	if
+		[ -f ${1}.No ]
+	then
+		grep -v "^[\*#]ident" ${1}.No > Node
+		rm -rf ${1}.No
+	fi
+	echo "Installing ${NAME} ${1} module ..."
+	${CONFBIN}/idcheck -p ${1} > ${ERR} 2>&1
+	if [ $? = 0 ]
+	then
+		${CONFBIN}/idinstall -a ${1} > ${ERR} 2>&1
+		RET=$?
+	else
+		${CONFBIN}/idinstall -u ${1} > ${ERR} 2>&1
+		RET=$?
+	fi
+	rm -rf ${IDCOMPS}
+	if [ ${RET} != 0 ]
+	then
+		message "The installation cannot be completed due to \
+an error in the driver installation during the installation of the ${1} \
+module of the ${NAME}.  The file ${ERR} contains the errors."
+			exit ${FAILURE}
+	fi
+	rm -rf ${ERR}
+}
+
+do_strcf() {
+if [ -f /etc/inet/strcf ]
+then 
+	cp /etc/inet/strcf /etc/inet/.strcf.old
+	if [ `grep -c $1 /etc/inet/strcf` = 0 ] ; then
+		cat << CATEND | ex /etc/inet/strcf > /dev/null 2>&1
+/pc586
+a
+	cenet ip /dev/$1_ emd 0		# i386/$1
+.
+x!
+CATEND
+	else
+		sed "/\# i386\/$1/s/^#//" < /etc/inet/.strcf.old > /etc/inet/strcf 
+	fi
+fi
+}
+
+FAILURE=1	# fatal error
+
+CONFDIR=/etc/conf
+CONFBIN=${CONFDIR}/bin
+
+NOTOOLS="ERROR: The Installable Driver feature has been removed. \
+The ${NAME} cannot be installed."
+
+SEDCMD1="s/[	 ]N[	 ]/	Y	/"
+SEDCMD2="s/[	 ]N/	Y/"
+
+cd /var/sadm/pkg/${PKG}/install
+
+errflag=0
+
+# determine that ID/TP tools are available
+
+if
+	[ ! -x ${CONFBIN}/idbuild -o ! -x ${CONFBIN}/idinstall \
+		-o ! -x ${CONFBIN}/idcheck ]
+then
+	message ${NOTOOLS}
+	exit $FAILURE
+fi
+
+cd /tmp/i596
+# install drivers/modules
+
+for MODULE in i596
+do
+	do_install ${MODULE}
+done
+
+do_strcf i596
+
+# rebuild for changes to take effect
+
+${CONFBIN}/idbuild
+if
+	[ "$?" -ne "0" ]
+then
+	exit ${FAILURE}
+fi
+errflag=`expr ${errflag:=0} + 10`
+
+installf -f $PKGINST
+
+# Now clean up
+#
+removef $PKGINST /tmp/i596/* >/dev/null 2>&1
+for i in i596.Dr i596.Sp i596.Ma i596.Sy i596.No 
+do
+	removef $PKGINST /tmp/i596/$i >/dev/null 2>&1
+done
+removef $PKGINST /tmp/i596 >/dev/null 2>&1
+removef -f $PKGINST >/dev/null 2>&1
+rm -f $TMP 1>/dev/null 2>&1
+exit ${errflag}
+

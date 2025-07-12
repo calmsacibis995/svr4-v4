@@ -1,0 +1,41 @@
+'\"macro stdmacro
+.if n .pH g1.ismpx @(#)ismpx	40.7 of 5/21/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+'\"macro stdmacro
+.nr X
+.if \nX=0 .ds x} ismpx 1 "Layers Windowing Utilities" "\&"
+.if \nX=1 .ds x} ismpx 1 "Layers Windowing Utilities"
+.if \nX=2 .ds x} ismpx 1 "" "\&"
+.if \nX=3 .ds x} ismpx "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4ismpx\f1 \- return windowing terminal state
+.SH SYNOPSIS
+\f4 ismpx\f1
+\f1[\f4\-s\f1]
+.SH DESCRIPTION
+The
+\f4ismpx\fP
+command
+reports whether its standard input is connected to a multiplexed
+\f4xt\fP channel; that is, whether it's running under \f4layers\fP or not.
+It is useful for shell scripts that download programs to a windowing terminal.
+.PP
+\f4ismpx\fP prints \f4yes\f1 and returns \f40\f1
+if invoked under \f4layers\fP,
+and prints \f4no\f1 and returns \f41\f1 otherwise.
+.TP 8
+\f4\-s\f1
+Do not print anything; just return the proper exit status.
+.SH SEE ALSO
+\f4layers\fP(1), \f4jwin\fP(1), \f4xt\fP(7)
+.SH EXAMPLE
+.nf
+.ft 4
+if ismpx \-s
+then
+	jwin
+fi
+.fi
+.ft 1

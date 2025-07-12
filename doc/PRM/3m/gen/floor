@@ -1,0 +1,136 @@
+'\"macro stdmacro
+.if n .pH g3m.floor @(#)floor	40.14 of 1/3/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} floor 3M "Math Libraries" "\&"
+.if \nX=1 .ds x} floor 3M "Math Libraries"
+.if \nX=2 .ds x} floor 3M "" "\&"
+.if \nX=3 .ds x} floor "" "" "\&"
+.TH \*(x}
+.SH NAME
+.nh
+\f4floor\f1, \f4floorf\f1, \f4ceil\f1, \f4ceilf\f1, \f4copysign\f1, \f4fmod\f1, \f4fmodf\f1, \f4fabs\f1, \f4fabsf\f1, \f4rint\f1, \f4remainder\f1 \- floor, ceiling, remainder, absolute value functions
+.hy
+.SH SYNOPSIS
+\f4cc\f1
+[\f2flag\fP \|.\|.\|.] \f2file\fP \|.\|.\|.
+\f4\-lm\f1
+[\f2library\fP \|.\|.\|.]
+.PP
+\f4#include <math.h>\f1
+.PP
+\f4double floor (double x);\f1
+.PP
+\f4float floorf (float x);\f1
+.PP
+\f4double ceil (double x);\f1
+.PP
+\f4float ceilf (float x);\f1
+.PP
+\f4double copysign (double x, double y);\f1
+.PP
+\f4double fmod (double x, double y);\f1
+.PP
+\f4float fmodf (float x, float y);\f1
+.PP
+\f4double fabs (double x);\f1
+.PP
+\f4float fabsf (float x);\f1
+.PP
+\f4double rint (double x);\f1
+.PP
+\f4double remainder (double x, double y);\f1
+.SH DESCRIPTION
+\f4floor\fP
+and
+\f4floorf\fP
+return the
+largest integer
+not greater than
+.IR x .
+\f4ceil\fP
+and
+\f4ceilf\fP
+return the
+smallest integer
+not less than
+.IR x .
+.PP
+\f4copysign\fP
+returns 
+.I x\^
+but with the sign of 
+.IR y .
+.PP
+\f4fmod\fP
+and
+\f4fmodf\fP
+return the floating point remainder of the division of
+.I x\^
+by
+.IR y .
+More precisely, they return
+the number
+.I f\^
+with the same sign as
+.IR x ,
+such that
+.I "x = i\^y + f"
+for some integer
+.IR i ,
+and | \f2f\f1\|| <\|| \f2y\f1\||\|.
+.PP
+\f4fabs\fP
+and
+\f4fabsf\fP
+return the absolute value of
+.IR x ,
+| \f2x\f1\||\|\|.
+.PP
+\f4rint\fP
+returns the nearest integer value to its floating point argument 
+.I x\^
+as a double-precision floating point number.  The returned value
+is rounded according to the currently set machine rounding mode.
+If round-to-nearest (the default mode) is set and the difference
+between the function argument and the rounded result is exactly
+0.5, then the result will be rounded to the nearest even
+integer.
+.PP
+\f4remainder\fP
+returns the floating point remainder of the division of
+.I x\^
+by 
+.IR y .
+More precisely, it returns the value
+.I "r = x \- yn,"
+where
+.I n\^
+is the integer nearest the exact value
+.I "x/y."
+Whenever | \f2n \- x/y\f1\|| = \f2\(12\f1,
+then 
+.I n\^
+is even.  
+.SH SEE ALSO
+\f4abs\fP(3C), \f4matherr\fP(3M).
+.SH DIAGNOSTICS
+\f4fmod\f1 and \f4fmodf\f1 return \f2x\fP
+when \f2y\fP is 0 and set
+\f4errno\fP to \f4EDOM\fP. 
+\f4remainder\fP
+returns \f4NaN\f1 when \f2y\f1 is 0 and sets
+\f4errno\fP
+to 
+\f4EDOM\f1.
+In both cases, except in compilation modes
+\f4\-Xa\f1 or \f4\-Xc\f1,
+a message indicating
+\f4DOMAIN\fP
+error is printed on standard error. 
+Except under \f4\-Xc\f1,
+these error-handling procedures may be changed with
+the function \f4matherr\fP.
+.\"	@(#)floor.3m	6.3 of 10/20/83
+.Ee

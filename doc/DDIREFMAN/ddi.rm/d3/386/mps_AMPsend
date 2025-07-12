@@ -1,0 +1,53 @@
+'\"macro stdmacro
+.if n .pH 386.mps_AMPsend @(#)mps_AMPsend	40.5 of 7/1/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.nr X
+.if \nX=0 .ds x} mps_AMPsend D3D "Multibus II" "DDI" "\&"
+.if \nX=1 .ds x} mps_AMPsend D3D "Multibus II" "DDI" "\&"
+.if \nX=2 .ds x} mps_AMPsend D3D "" "\&"
+.if \nX=3 .ds x} mps_AMPsend "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4mps_AMPsend\f1 \- sends unsolicited messages that are not part of
+any request-response transaction
+.SH SYNOPSIS
+.nf
+\f4#include <sys/mps.h>
+long mps_AMPsend(\f2chan\fP, \f2mbp\fP)
+long chan;
+mps_msgbuf_t *mbp;\f1
+.fi
+.SH ARGUMENTS
+.PD 0
+.TP 11
+\f2chan\f1
+Channel number obtained from a previous \f4mps_open_chan\f1 call.
+.TP 11
+\f2mbp\f1
+Points to a message buffer obtained from the message handler.
+This message
+buffer contains the message to be sent.
+The user is expected to have built
+the message in \f2mbp\f1 using \f4mps_mk_unsol\f1, \f4mps_mk_breject\f1, or
+\f4mps_mk_brdcst\f1 with a zero \f2tid\f1.
+.SH DESCRIPTION
+The \f4mps_AMPsend\f1 routine is used for unsolicited data transmission that
+is not part of any request-response transaction.
+This routine is
+synchronous in operation.
+After a message buffer has been handed over to
+the message handler for transmission, it is assumed to be allocated to
+the message handler and the sender should not try to access that message
+buffer.
+.SH RETURN VALUE
+When no error is detected, 0 (zero) is returned.
+If an error is
+encountered, \-1 is returned.
+.SH LEVEL
+Base or Interrupt
+.SH SEE ALSO
+.na
+\f4mps_open_chan\f1(D3D),
+\f4mps_mk_unsol\f1(D3D),
+\f4mps_mk_brdcst\f1(D3D),
+\f4mps_mk_breject\f1(D3D)

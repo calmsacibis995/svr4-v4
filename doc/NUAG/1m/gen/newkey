@@ -1,0 +1,58 @@
+'\"macro stdmacro
+.if n .pH g1a.newkey @(#)newkey	40.8 of 5/16/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+'\" macro stdmacro
+.\" Copyright (c) 1988 Sun Microsystems, Inc. - All Rights Reserved.
+.\"
+.nr X
+.if \nX=0 .ds x} newkey 1M "" "\&"
+.if \nX=1 .ds x} newkey 1M ""
+.if \nX=2 .ds x} newkey 1M "" "\&"
+.if \nX=3 .ds x} newkey "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4newkey\f1 \- create a new key in the publickey database
+.SH SYNOPSIS
+\f4newkey \f1
+\f4\-h\f2 hostname\f1
+.sp
+\f4newkey \f1
+\f4\-u\f2 username\f1
+.SH DESCRIPTION
+.PP
+The
+\f4newkey\f1
+command
+is normally run by the RPC administrator on the
+machine that contains the
+\f4publickey\fP(4) database,
+to establish public keys
+for users and privileged users on the network.
+These keys are needed when using secure RPC or secure NFS.
+.PP
+\f4newkey\f1
+will prompt for a password for the given \f2username\fP
+or \f2hostname\fP
+and then
+create a new public/secret key pair for the user or host in
+\f4/etc/publickey\f1,
+encrypted with the given password.
+.PP
+The following options are available:
+.TP 14
+\f4\-h\f2 hostname\f1
+Create a new public/secret key pair for the privileged user at the given
+\f2hostname\fP.
+Prompts for a password for the given
+\f2hostname\fP.
+.TP
+\f4\-u\f2 username\f1
+Create a new public/secret key pair for the given \f2username\fP.
+Prompts for a password for the given \f2username\fP.
+.SH "SEE ALSO"
+\f4chkey\fP(1),\f1
+\f4keylogin\fP(1),\f1
+\f4keylogout\fP(1),\f1
+\f4keyserv\fP(1M),\f1
+\f4publickey\fP(4)\f1

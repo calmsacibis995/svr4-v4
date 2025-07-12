@@ -1,0 +1,62 @@
+.if n .pH 386.COLFILE.mp @(#)COLFILE.mp	40.5
+.# This book ("Integrated Software Development Guide (Manual Pages)")
+.# contains the following files,
+.# listed in the order in which they are printed.
+.# Next to each file name is its SCCS delta number.
+.FT
+isd.g/386/voltitle.mp	40.2
+isd.g/386/volcopyright	40.7
+1/gen/ckdate	40.17
+1/gen/ckgid	40.15
+1/gen/ckint	40.15
+1/gen/ckitem	40.17
+1/gen/ckkeywd	40.15
+1/gen/ckpath	40.18
+1/gen/ckrange	40.19
+1/gen/ckstr	40.16
+1/gen/cktime	40.17
+1/gen/ckuid	40.17
+1/gen/ckyorn	40.17
+1/gen/dispgid	40.6
+1/gen/dispuid	40.6
+1/386/mouseadmin	40.9
+1/386/newvt	40.6
+1/gen/pkginfo	40.9.1.5
+1/gen/pkgmk	40.12.1.5
+1/gen/pkgparam	40.8
+1/gen/pkgproto	40.14.1.1
+1/gen/pkgtrans	40.20
+1/386/vtlmgr	40.7
+1m/gen/delsysadm	40.9
+1m/gen/edsysadm	40.11
+1m/386/idbuild	40.6
+1m/386/idcheck	40.5
+1m/386/idconfig	40.7
+1m/386/idinstall	40.5
+1m/386/idmkinit	40.8
+1m/386/idmknod	40.10
+1m/386/idmkunix	40.6
+1m/386/idspace	40.5
+1m/386/idtune	40.4
+1m/gen/installf	40.10.1.2
+1m/gen/pkgadd	40.8
+1m/gen/pkgask	40.7
+1m/gen/pkgchk	40.9
+1m/gen/pkgrm	40.13
+1m/gen/removef	40.13
+4/gen/compver	40.9
+4/gen/copyright	40.10
+4/gen/depend	40.12
+4/386/mdevice	40.11
+4/386/mfsys	40.4
+4/386/mtune	40.4
+4/gen/pkginfo	40.11.1.3
+4/gen/pkgmap	40.14.1.2
+4/gen/prototype	40.16.1.3
+4/386/sdevice	40.6
+4/386/sfsys	40.4
+4/gen/space	40.11
+4/386/stune	40.4
+7/386/display	40.17
+7/386/keyboard	40.9
+7/386/mouse	40.10

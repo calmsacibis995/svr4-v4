@@ -1,0 +1,166 @@
+.if n .pH g1a.bkhistory @(#)bkhistory @(#)bkhistory	40.16.1.2 of 1/3/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} bkhistory 1M "System Administration Utilities" "\&"
+.if \nX=1 .ds x} bkhistory 1M "System Administration Utilities"
+.if \nX=2 .ds x} bkhistory 1M "" "\&"
+.if \nX=3 .ds x} bkhistory "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4bkhistory\f1 \- report on completed backup operations
+.SH SYNOPSIS
+\f4bkhistory\f1 [\f4\-hl\f1] [\f4\-f \f2field_separator\f1] [\f4\-d \f2dates\f1]
+[\f4\-o \f2names\f1] [\f4\-t \f2tags\f1]
+.br
+\f4bkhistory \-p \f2period\f1
+.SH DESCRIPTION
+\f4bkhistory\f1
+without options
+reports a summary of the contents of the backup history log,
+\f4bkhist.tab\f1.
+Backup operations are sorted alphabetically by tag.
+For each tag, operations are listed from most to least
+recent.
+\f4backup\f1(1M)
+updates this log
+after each successful backup operation.
+.PP
+\f4bkhistory\f1
+may be executed only by a user with the superuser privilege.
+.PP
+\f4bkhistory \-p\f1
+assigns a rotation
+.I period
+(in weeks) for the history log;
+all entries older than the specified number of weeks are
+deleted from the log.
+The default rotation period is one (1) week.
+.SS Options
+.TP
+\f4\-d\f2 dates\f1
+Restricts the report to backup operations performed on the specified
+dates.
+\f2dates\f1 are in the \f4date\f1 format.
+\f2day, hour, minute,\f1 and \f2 year,\f1 are optional and
+will be ignored.
+The list of \f2dates\f1 is either comma-separated or
+blank-separated and surrounded by quotes.
+.TP
+\f4\-f\f2 field_separator\f1
+Suppresses field wrap on the display and
+specifies an output field separator to be used.
+The value of \f2c\f1 is the character
+that will appear as the field separator on the display output.
+For clarity of output,
+do not use a separator character that is likely to
+occur in a field.
+For example, do not use the colon as a
+field separator character if the display
+will contain dates that use
+a colon to separate hours from minutes.
+To use the default field separator (tab), specify the
+null character ("") for \f2c\f1.
+.TP
+\f4\-h\f1
+Suppresses header for the reports.
+.TP
+\f4\-l\f1
+Displays a long form of the report.
+This produces an
+\f4ls \-l\f1 listing of the files included in the backup archive
+(if backup tables of contents are available on-line).
+.TP
+\f4\-o\f2 names\f1
+Restricts the report to the specified originating objects
+(file systems or data partitions).
+\f2names\f1 is a list of \f2onames\f1 and/or \f2odevices\f1.
+[See \f4bkreg\f1(1M)].
+.IP
+The list of names is either comma-separated or blank-separated and surrounded by quotes.
+.TP
+\f4\-p\f2 period\f1
+Sets the number of weeks of information that will be saved
+in the backup history table.
+The minimum value of \f2period\f1 is 1, which is also the
+default value.
+the size of int.
+By default, \f2period\f1 is 1.
+.TP
+\f4\-t\f2 tags\f1
+Restricts the report to backups
+with the specified \f2tags\f1.
+\f2tags\f1 is a list of
+tag values as specified in the backup register.
+The list of \f2tags\f1 is either comma-separated or
+blank-separated and surrounded by quotes.
+.SH DIAGNOSTICS 
+The exit codes for the \f4bkhistory\f1 command are the following:
+.RS
+.TP
+\f40\f1 =
+the task completed successfully
+.PD 0
+.TP
+\f41\f1 =
+one or more parameters to \f4bkhistory\fP are invalid
+.TP
+\f42\f1 =
+an error has occurred, causing \f4bkhistory\fP to fail to
+complete \f2all\f1 portions of its task
+.PD
+.RE
+.SH EXAMPLES
+Example 1:
+.P
+.RS
+.ft 4
+bkhistory \-p 3
+.ft 1
+.RE
+.P
+sets the rotation period for the history log to three weeks.
+Entries older than three weeks are deleted from the log.
+.P
+Example 2:
+.P
+.RS
+.ft 4
+bkhistory \-t SpoolDai,UsrDaily,TPubsWed
+.ft 1
+.RE
+.P
+displays a report of completed backup operations
+for the three tags listed.
+.P
+Example 3:
+.P
+.RS
+.ft 4
+bkhistory \-l \-o /usr 
+.ft 1
+.RE
+.P
+Displays an \f4ls \-l\f1 listing of the files
+that were backed up from \f4/usr\f1 (the originating object)
+if there is a
+table of contents.
+.SH FILES
+.TP 1.5i
+\f4/etc/bkup/bkhist.tab\f1
+the backup history log
+that contains information about successfully completed
+backup operations
+.TP
+\f4/etc/bkup/bkreg.tab\f1
+description of the backup policy
+established by the administrator
+.TP
+\f4/var/sadm/bkup/toc\f1
+list of directories with on-line tables of contents
+.SH SEE ALSO
+\f4backup\fP(1M), \f4bkreg\fP(1M).
+.br
+\f4date\fP(1), \f4ls\fP(1)
+in the \f2User's Reference Manual\f1.
+

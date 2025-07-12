@@ -1,0 +1,184 @@
+.if n .pH m_index.refcard @(#)refcard	40.8
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.tr ~
+.\" .Ch "INDEX REFERENCE CARD"
+.\" .BK "PRODUCT OVERVIEW AND MASTER INDEX"
+.ft H
+.ps 12
+.ft HB
+.ce
+USING THE MASTER INDEX
+.ps 9
+.vs 11
+\l'5i'
+.sp 0.25
+.ce
+SUBJECT INDEX
+.ft H
+.sp0.25
+.ta 1i
+EXAMPLE:
+.sp -1.5
+.PS
+scale=100
+define t325 |
+[ box invis ht 30 wid 112 with .sw at 0,0
+"\fH\s9\&SAG 5: 41; URM\f1" at 56,23
+"\fH\s9\&\f1" at 56,7
+] |
+
+define t317 |
+[ box invis ht 30 wid 56 with .sw at 0,0
+"\fH\s9\&keyword\f1" at 28,23
+"\fH\s9\&\f1" at 28,7
+] |
+
+define t314 |
+[ box invis ht 30 wid 40 with .sw at 0,0
+"\fH\s9\&book*\f1" at 20,23
+"\fH\s9\&\f1" at 20,7
+] |
+
+define t311 |
+[ box invis ht 30 wid 34 with .sw at 0,0
+"\fH\s9\&book\f1" at 17,23
+"\fH\s9\&\f1" at 17,7
+] |
+
+define t308 |
+[ box invis ht 30 wid 50 with .sw at 0,0
+"\fH\s9\&chapter\f1" at 25,23
+"\fH\s9\&\f1" at 25,7
+] |
+
+define t305 |
+[ box invis ht 46 wid 40 with .sw at 0,0
+"\fH\s9\&pages\f1" at 20,39
+"\fH\s9\&\f1" at 20,23
+"\fH\s9\&\f1" at 20,7
+] |
+
+define t327 |
+[ box invis ht 28 wid 36 with .sw at 0,0
+"\f(CW\s9\&find\f1" at 18,23
+"\f(CW\s9\&\f1" at 18,7
+] |
+
+define t326 |
+[ box invis ht 32 wid 20 with .sw at 0,0
+"\fH\s10\&(1)\f1" at 10,25
+"\fH\s10\&\f1" at 10,8
+] |
+
+box invis ht 32 wid 216 with .sw at 0,0
+t325 with .nw at 88,31
+t317 with .nw at 0,-1
+t314 with .nw at 204,-1
+line  from 56,16 to 40,0 
+line  from 104,16 to 88,0 
+line  from 152,16 to 176,0 
+line  from 184,16 to 216,0 
+t311 with .nw at 67,-1
+line  from 128,16 to 128,0 
+t308 with .nw at 107,-1
+t305 with .nw at 160,-1
+t327 with .nw at 34,30
+t326 with .nw at 66,30
+.PE
+.ft H
+.sp -2.5
+.ta 0.15i
+.ps 9
+.vs 11
+.nf
+*	Some books hold alphabetized manual pages; chapters and page numbers do not
+	apply.  When a book acronym is given without chapter and page numbers, it means
+	that you can find a manual page for the index entry in the book section given in
+	parentheses.  In the example above, look for the \f4find\fP page in section (1) of the URM.
+.fi
+\l'5i'
+.tr ~
+.ce
+.ft HB
+.sp 0.25
+PERMUTED INDEX
+.ta 1i
+.ft H
+EXAMPLE:
+.sp -1.5
+.PS
+scale=100
+define t132 |
+[ box invis ht 30 wid 24 with .sw at 0,0
+"\fH\s9\&.....\f1" at 12,23
+"\fH\s9\&\f1" at 12,7
+] |
+
+box invis ht 64 wid 448 with .sw at 0,0
+line  from 424,40 to 448,24 
+line  from 400,40 to 400,24 
+line  from 376,40 to 360,24 
+"\fH\s8\&\f1" at 92,3
+"\fH\s9\&qualifying information\f1" at 72,13
+"\fH\s8\&\f1" at 384,3
+"\fH\s9\&manpage (section) book\f1" at 396,13
+t132 with .nw at 300,23
+"\fH\s9\&alphabetized keyword\f1" at 232,13
+line  from 72,40 to 72,24 
+"\fH\s9\&directory.\f1" at 196,51
+"\fH\s9\&\f1" at 300,37
+"\fH\s9\&...................................\f1" at 300,51
+"\fH\s9\&\f1" at 408,37
+"\fH\s9\&cd(1) URM\f1" at 408,51
+"\fH\s9\&\f1" at 72,37
+"\fH\s9\&cd: change working\f1" at 72,51
+"\fH\s9\&\f1" at 196,37
+line  from 192,40 to 192,24 
+.PE
+.in -.5i
+.sp -1.5
+.ft H
+.in +.15i
+The first two columns of the permuted index are built with
+phrases taken from the NAME line on each manual page.
+Look in the middle column for the word you are interested in,
+then read the complete
+phrase by starting with the manual page name, which may appear
+in the left or middle column;  long phrases wrap around to
+the beginning of the left column. See page 3-1 for more details.
+.in -.15i
+\l'5i'
+.sp .25
+.tr ~
+.ce
+.ft HB
+BOOK ACRONYMS
+.ft H
+.TS
+center;
+lp8 lp8.
+.vs -1.5
+ACG	Programmer's Guide:  Application Compatibility
+BSD	Programmer's Guide:  BSD System Compatibility
+CPG	Programmer's Guide:  ANSI C and Programming Support Tools
+CHAR	Programmer's Guide:  Character User Interface
+CTG	ANSI C Transition Guide
+DDRM	Device Driver Interface\/Driver-Kernel Interface (DDI\/DKI) Reference Manual
+IG	Installation Guide
+ISDG	Integrated Software Development Guide
+MBRMAN	MULTIBUS Reference Manual
+MBTAI	Transport Application Interface Guide
+MG	Migration Guide
+NI	Programmer's Guide: Networking Interfaces
+NUAG	Network User's and Administrator's Guide
+PRM	Programmer's Reference Manual
+PSX	Programmer's Guide: POSIX Conformance
+SAG	System Administrator's Guide
+SARM	System Administrator's Reference Manual
+SCSI	Programmer's Guide: SCSI Driver Interface
+SN	Software Notes
+STRM	Programmer's Guide: STREAMS
+UG	User's Guide
+URM	User's Reference Manual
+.TE

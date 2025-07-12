@@ -1,0 +1,14 @@
+.if n .pH 386.Cappa @(#)Cappa	40.10
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.BK "Multibus Reference Manual" "" "" ""   
+.\ACRONYM	                  
+.CH "Appendix A" "" "Table of Contents" "A"
+.\CHAPTER	A
+.tC 1 "Window Interface" A-1  
+.tC 2 "Windows, What are They?" A-1  
+.tC L "Figure A-1:\0" "An Example of Windows Displayed on the SYP 520" A-2
+.tC 3 "Using The Mouse" A-3  
+.tC 3 "Basic Menu" A-4  
+.tC L "Figure A-2:\0" "Basic Menu Selections" A-4
+.tC 3 "Expanded Menu" A-7  
+.tC L "Figure A-3:\0" "Expanded Menu Selections" A-7

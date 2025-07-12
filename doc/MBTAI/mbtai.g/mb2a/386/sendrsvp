@@ -1,0 +1,163 @@
+'\"macro stdmacro
+.if n .pH mb2a.sendrsvp @(#)sendrsvp	40.8 of 5/15/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} mb2a_sendrsvp 3tai "" "\&"
+.if \nX=1 .ds x} mb2a_sendrsvp 3tai ""
+.if \nX=2 .ds x} mb2a_sendrsvp 3tai "" "\&"
+.if \nX=3 .ds x} mb2a_sendrsvp "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4mb2a_sendrsvp\f1 \- Sends a rsvp request message.
+.SH SYNOPSIS
+.ft 4
+.nf	
+#include <sys/types.h>
+#include <sys/mb2taiusr.h>
+int mb2a_sendrsvp (fd, socketidptr, reqcbufptr, reqdbufptr,
+                   resplen, reference)
+int fd
+mb2_socket *socketidptr;
+mb2_buf *reqcbufptr;
+mb2_buf *reqdbufptr;
+unsigned long resplen;
+unsigned long reference;
+.fi
+.SH DESCRIPTION
+This routine is used for starting \f4send_rsvp\fP transactions by sending
+request messages and receiving response messages.
+Only Multibus II transport
+clients use this routine.
+.TP .9i
+\f4fd\f1
+specifies an asynchronous mode file descriptor referencing
+an open port.
+.TP .9i
+\f4socketidptr\f1
+is a pointer to a structure identifying the socket
+ID of the destination socket.
+.TP .9i
+\f4reqcbufptr\f1
+is a pointer to a structure describing the control
+portion of the request message of the transaction.
+.TP .9i
+\f4reqdbufptr\f1
+is a pointer to a structure describing the data
+portion of the request message of the transaction.
+.TP .9i
+\f4resplen\f1
+is the length of the response message expected.
+.TP .9i
+\f4reference\f1
+is any user defined value which will be returned
+with the corresponding response message.
+.P
+To send the data portion of the request message, \f4reqdbufptr\fP must be
+non-NULL and the \f4len\fP field of \f4reqdbufptr\fP must have a value greater than 0.
+If a NULL data portion of the request message is to be sent, then \f4reqdbufptr\fP
+can be set to NULL or the \f4len\fP field of \f4reqdbufptr\fP can be set to 0.
+Similarly, to send the control portion or a NULL control portion of the
+request message, the corresponding values must be set for \f4reqcbufptr\fP.
+A NULL
+request message, can be sent if both \f4reqcbufptr\fP and \f4reqdbufptr\fP are NULL or
+have their \f4len\fP field set to 0.
+The maximum length of the control request
+message is 20 bytes if no data portion is present.
+The maximum length is 16
+bytes if the request message has a non-NULL data portion.
+.P
+\f4resplen\f1 is used to determine the expected size of the data portion of
+the response message.
+A response message larger than the specified response
+message size results in a protocol error.
+The reference is the user supplied
+reference value that will be returned when the corresponding "response"
+message is received.
+\f4mb2a_sendrsvp\f1 fails and \f4errno\fP is set to \f4EAGAIN\f1 if the
+send side queue is full due to internal flow control conditions.
+The flow
+control parameters can be set at the time the port is opened.
+\f4mb2a_sendrsvp\fP
+blocks when waiting for the availability of internal system buffers if these
+buffers are unavailable.
+When this routine returns, the message has been sent
+out or has been queued to be sent.
+Once this call returns successfully the
+user receives either:
+.RS
+.TP .2i
+\-
+a response (\f4MB2_RESP_MSG\fP)
+.TP
+\-
+a cancel (\f4MB2_CANCEL_MSG\fP)
+.TP
+\-
+or a status (\f4MB2_STATUS_MSG\fP) message.
+.RE
+.P
+These messages can be received by using the \f4mb2a_receive\fP routine.
+.P
+A response or a cancel message returns when:
+.RS
+.TP .2i
+\-
+the remote server has successfully transmitted a reply or,
+.TP
+\-
+the remote server has canceled the transaction
+.RE
+.P
+A status message returns when:
+.RS
+.TP .2i
+\-
+a response message or a cancel message has not arrived in the
+timeout interval specified when the port was opened or,
+.TP
+\-
+when a transport protocol error occurs in sending the request
+message or receiving the response message
+.RE
+.P
+Upon successful completion of the routine, a value of 0 is returned.
+A value of -1 is returned and an \f4errno\fP is set if there were errors.
+The following is a list of applicable errors for this routine.
+.TP .7i
+\f4EAGAIN\f1
+send/receive side flow control limit reached.
+.TP .7i
+\f4EAGAIN\f1
+buffers could not be allocated for message to
+be sent.
+.TP .7i
+\f4EBADF\f1
+\f4fd\f1 is not a valid file descriptor.
+.TP .7i
+\f4EFAULT\f1
+\f4ctlbuf\fP, \f4databuf\fP or \f4socketid\fP points outside the
+allocated address space.
+.TP .7i
+\f4EINTR\f1
+a signal was caught during the \f4mb2a_sendrsvp\fP
+call.
+.TP .7i
+\f4EINVAL\f1
+invalid value specified in one of the argument
+buffers.
+.TP .7i
+\f4ENOSTR\f1
+\f4fd\f1 is not a file descriptor to a Multibus II
+transport endpoint.
+.TP .7i
+\f4ENXIO\f1
+a hardware error condition was generated when sending
+the message.
+.TP .7i
+\f4ERANGE\f1
+the size of the control or the data part of the
+message is outside the range of minimum/ maximum allowable message size.
+.SH SEE ALSO
+\f4putmsg\f1(2), \f4mb2a_openport\f1(3tai),
+\f4mb2a_sendreply\f1(3tai), \f4mb2a_receive\f1(3tai)

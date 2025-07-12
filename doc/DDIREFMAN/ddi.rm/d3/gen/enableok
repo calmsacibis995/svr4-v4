@@ -1,0 +1,72 @@
+'\"macro stdmacro
+.if n .pH gen.enableok @(#)enableok	40.2 of 1/7/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.nr X
+.if \nX=0 .ds x} enableok D3DK "STREAMS" "DDI/DKI" "\&"
+.if \nX=1 .ds x} enableok D3DK "STREAMS" "DDI/DKI"
+.if \nX=2 .ds x} enableok D3DK "" "\&"
+.if \nX=3 .ds x} enableok "" "" "\&"
+.TH \*(x}
+.IX "\f4enableok\fP(D3DK)"
+.IX "STREAMS message queues"
+.SH NAME
+\f4enableok\f1 \- allow a queue to be serviced
+.SH "SYNOPSIS"
+.nf
+.na
+\f4#include <sys/stream.h>
+#include <sys/ddi.h>
+.sp 0.5
+void enableok(queue_t *\f2q\f4);\f1
+.ad
+.fi
+.SH "ARGUMENTS" 
+.RS 0n 10
+.IP "\f2q\f1" 10n
+Pointer to the queue.
+.RE
+.SH DESCRIPTION
+The \f4enableok\f1 function allows the service routine of the
+queue pointed to by \f2q\f1 to be rescheduled for
+service.  It cancels the effect of a previous use of the
+\f4noenable\f1(D3DK) function on \f2q\f1.
+.SH "RETURN VALUE" 
+None.
+.SH LEVEL
+Base or Interrupt.
+.SH NOTES
+Does not sleep.
+.SH "SEE ALSO"
+\f4srv\fP(D2DK),
+\f4noenable\f1(D3DK),
+\f4qenable\f1(D3DK),
+\f4queue\fP(D4DK)
+.ad
+.SH EXAMPLE
+The \f4qrestart\f1 routine uses two STREAMS functions
+to re-enable a queue that has been
+disabled.  The \f4enableok\f1 function removes the restriction that prevented the
+queue from being scheduled when a message was enqueued.  Then, if there are
+messages on the queue, it is
+scheduled by calling \f4qenable\fP(D3DK).
+.ne 4
+.P
+.nf
+.ft 4
+.ps 7
+.vs 9
+1  void
+2  qrestart(q)
+3	register queue_t *q;
+4  {
+5	enableok(q);
+6	if (q->q_first)
+7		qenable(q);
+8  }
+.vs
+.ps
+.ft 1
+.fi
+.FG "enableok \- restart a queue"
+.IX "\f4enableok\fP(D3DK), example"
+.IX "\f4qenable\fP(D3DK), example"

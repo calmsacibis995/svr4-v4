@@ -1,0 +1,59 @@
+'\"macro stdmacro
+.if n .pH g3e.elf_hash @(#)elf_hash	40.11 of 5/1/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.\"#ident	"@(#)ci5-doc:req/libelf/hash.man	1.3"
+.nr X
+.if \nX=0 .ds x} elf_hash 3E "ELF Library" "\&"
+.if \nX=1 .ds x} elf_hash 3E "ELF Library"
+.if \nX=2 .ds x} elf_hash 3E "" "\&"
+.if \nX=3 .ds x} elf_hash "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4elf_hash\f1 \- compute hash value
+.SH SYNOPSIS
+\f4cc\f1
+[\f2flag\fP \|.\|.\|.] \f2file\fP \|.\|.\|.
+\f4\-lelf\f1
+[\f2library\fP \|.\|.\|.]
+.PP
+.nf
+.ft 4
+#include <libelf.h>
+.sp 0.5
+unsigned long elf_hash(const char \(**name);
+.ft 1
+.fi
+.SH DESCRIPTION
+\f4elf_hash\fP
+computes a hash value, given a null terminated string,
+.IR name .
+The returned hash value,
+.IR h ,
+can be used as a bucket index, typically after computing
+\f2h\ \fPmod\fP\ x\f1 to ensure appropriate bounds.
+.P
+Hash tables may be built on one machine and used on another
+because \f4elf_hash\f1 uses unsigned arithmetic to avoid possible 
+differences in various machines' signed arithmetic.
+Although
+.I name
+is shown as \f4char\(**\fP above,
+\f4elf_hash\fP
+treats it as \f4unsigned\ char\(**\fP to avoid
+sign extension differences.
+Using \f4char\(**\fP eliminates type conflicts with
+expressions such as \f4elf_hash("name")\fP.
+.P
+.SM ELF
+files' symbol hash tables are computed using this function [see
+\f4elf_getdata\fP(3E)
+and
+\f4elf_xlate\fP(3E)].
+The hash value returned is guaranteed not to be the bit
+pattern of all ones (\f4~0UL\fP).
+.SH "SEE ALSO"
+.na
+\f4elf\fP(3E),
+\f4elf_getdata\fP(3E),
+\f4elf_xlate\fP(3E)

@@ -1,0 +1,29 @@
+.if n .pH 386.colfile @(#)COLFILE	40.12.1.3
+.# This book ("Installation Guide")
+.# contains the following files,
+.# listed in the order in which they are printed.
+.# Next to each file name is its SCCS delta number.
+.FT
+install.g/386/titlepage	40.5.1.1
+install.g/386/copyright	40.6.1.4
+install.g/386/MasterToc	40.5.1.2
+install.g/386/Cintro	40.1.1.1
+install.g/386/intro	40.2.1.1
+install.g/386/Cnew	40.1.1.1
+install.g/386/new	40.1.1.1
+install.g/386/Coverlay	40.1.1.1
+install.g/386/overlay	40.1.1.1
+install.g/386/Csetup	40.1.1.1
+install.g/386/setup	40.1.1.1
+install.g/386/Capa	40.1.1.1
+install.g/386/apa	40.1.1.1
+install.g/386/Capb	40.1.1.1
+install.g/386/apb	40.1.1.1
+install.g/386/Capc	40.1.1.1
+install.g/386/apc	40.1.1.1
+install.g/386/Capd	40.1.1.1
+install.g/386/apd	40.1.1.1
+install.g/386/Cape	40.1.1.1
+install.g/386/ape	40.1.1.1
+install.g/386/Cindex	40.3.1.1
+install.g/386/index	40.7.1.1

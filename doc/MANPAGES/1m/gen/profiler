@@ -1,0 +1,100 @@
+'\"macro stdmacro
+.if n .pH g1a.profiler @(#)profiler	40.8 of 1/3/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} profiler 1M "System Performance Analysis Utilities" "\&"
+.if \nX=1 .ds x} profiler 1M "System Performance Analysis Utilities"
+.if \nX=2 .ds x} profiler 1M "" "\&"
+.if \nX=3 .ds x} profiler "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4profiler\f2: \f4prfld\f1, \f4prfstat\f1, \f4prfdc\f1, \f4prfsnap\f1, \f4prfpr\f1 \- \s-1UNIX\s+1 system profiler
+.SH SYNOPSIS
+\f4/usr/sbin/prfld\f1
+[ \f2system_namelist\f1 ]
+.br
+\f4/usr/sbin/prfstat\fP \f4on\fP
+.br
+\f4/usr/sbin/prfstat\fP \f4off\fP
+.br
+\f4/usr/sbin/prfdc\f1
+\f2file\f1
+[ \f2period\f1 [ \f2off_hour\f1 ] ]
+.br
+\f4/usr/sbin/prfsnap\f1
+\f2file\f1
+.br
+\f4/usr/sbin/prfpr\f1
+\f2file\f1 [ \f2cutoff\f1 [ \f2system_namelist\f1 ] ]
+.SH DESCRIPTION
+\f4prfld\f1,
+\f4prfstat\fP,
+\f4prfdc\fP,
+\f4prfsnap\fP,
+and
+\f4prfpr\fP
+form a system of programs
+to facilitate an activity study of the
+.SM UNIX
+operating system.
+.PP
+\f4prfld\f1
+is used to initialize the recording
+mechanism in the system.
+It generates a table
+containing the starting address of each
+system subroutine as extracted from
+.IR system_namelist .
+.PP
+\f4prfstat\f1
+is used to enable or disable the sampling mechanism.
+Profiler overhead is less than 1% as calculated
+for 500 text addresses.
+\f4prfstat\f1
+will also reveal the number of
+text addresses
+being measured.
+.PP
+\f4prfdc\f1
+and
+\f4prfsnap\fP
+perform the data collection function of the profiler
+by copying the current value of all the text address counters
+to a file where the data can be analyzed.
+\f4prfdc\f1
+will store the counters into
+.I file\^
+every
+.I period\^
+minutes and will turn off at
+.I off_hour
+(valid values for
+.I off_hour
+are
+\f40\f1\-\f424\f1).
+\f4prfsnap\f1
+collects data at the time of invocation only,
+appending the counter values to
+.IR file .
+.PP
+\f4prfpr\f1
+formats the data collected by
+\f4prfdc\fP
+or
+\f4prfsnap\fP.
+Each text address is converted to the nearest text symbol
+(as found in
+.IR system_namelist )
+and is printed if the percent activity
+for that range is greater than
+.IR cutoff .
+.SH FILES
+.TP 1i
+\f4/dev/prf\f1
+interface to profile data and text addresses
+.TP 1i
+\f4/stand/unix\f1
+default for system namelist file
+.\"	@(#)profiler.1m	6.2 of 9/2/83
+.Ee

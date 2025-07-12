@@ -1,0 +1,50 @@
+'\"macro stdmacro
+.if n .pH g1a.domainname @(#)domainname	40.6 of 5/16/91
+'\"macro stdmacro
+.if n .pH g1a.domainname @(#)domainname	41.1 of 5/16/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} domainname 1M "" "\&"
+.if \nX=1 .ds x} domainname 1M ""
+.if \nX=2 .ds x} domainname 1M "" "\&"
+.if \nX=3 .ds x} domainname "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4domainname\f1 \- get/set name of current secure RPC domain
+.SH SYNOPSIS
+\f4domainname\f1
+[
+\f2newname\fP
+]
+.SH DESCRIPTION
+The \f4domainname\fP command is used on secure RPC machines.
+With no argument, the name of the machine's secure RPC domain is written
+to standard output.
+.P
+The \f4domainname\f1 command with an argument sets the name of the secure RPC domain to
+\f2newname\fP.
+\f2newname\fP may be up to 255 characters long.
+.P
+\f4domainname\fP
+is normally run by the RPC administrator on all machines
+to set the name of the secure RPC domain.
+To use secure RPC, machines must have secure RPC domain names.
+.SH NOTES
+Secure RPC domain names are not related to and should not be confused
+with RFS domains.
+.P
+The RPC package expects the \f2newname\fP argument to be a valid
+filename for the underlying file system in use on the networked machines using
+secure RPC.
+For example, machines based on the s5 file system should not have
+domain names longer than 14 characters in length or problems may occur
+when using secure RPC.
+.P
+The secure RPC domain name set by \f4domainname\fP
+will not be remembered across reboots.
+To give a machine a "permanent" name, set the \f4SRPC_DOMAIN\fP tunable
+in \f4/etc/master.d/name\fP to the secure RPC domain name.
+.SH "SEE ALSO"
+\f2RPC Administration\fP in the
+\f2Programmer's Guide: Networking Interfaces\fP

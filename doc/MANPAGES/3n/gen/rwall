@@ -1,0 +1,33 @@
+'\"macro stdmacro
+.if n .pH g3n.rwall @(#)rwall	40.6 of 4/9/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.\" Copyright (c) 1988 Sun Microsystems, Inc. - All Rights Reserved.
+.\"
+.nr X
+.if \nX=0 .ds x} rwall 3N "" "\&"
+.if \nX=1 .ds x} rwall 3N ""
+.if \nX=2 .ds x} rwall 3N "" "\&"
+.if \nX=3 .ds x} rwall "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4rwall\f1 \- write to specified remote machines
+.SH SYNOPSIS
+.ft 4
+.nf
+#include <rpcsvc/rwall.h>
+.P
+.ft 4
+rwall(char *\f2host\fP, char *\f2msg\fP);
+.ft 1
+.fi
+.SH DESCRIPTION
+\f4rwall\fP executes \f4wall\fP(1M) on \f2host\fP.
+\f2host\f1
+prints the string
+\f2msg\f1
+to all its users.
+It returns 0 if successful.
+.SH SEE ALSO
+\f4rwall\fP(1M),
+\f4rwalld\fP(1M)

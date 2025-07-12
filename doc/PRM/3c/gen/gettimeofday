@@ -1,0 +1,91 @@
+'\"macro stdmacro
+.if n .pH g3c.gettimeofday @(#)gettimeofday	40.16 of 1/3/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.\" Copyright (c) 1980 Regents of the University of California.
+.\" All rights reserved.  The Berkeley software License Agreement
+.\" specifies the terms and conditions for redistribution.
+.\"
+.\" Copyright (c) 1988 Sun Microsystems, Inc. - All Rights Reserved.
+.\"
+.hw gettimeofday
+.nr X
+.if \nX=0 .ds x} gettimeofday 3C "" "\&"
+.if \nX=1 .ds x} gettimeofday 3C ""
+.if \nX=2 .ds x} gettimeofday 3C "" "\&"
+.if \nX=3 .ds x} gettimeofday "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4gettimeofday\f1, \f4settimeofday\f1 \- get or set the date and time
+.SH SYNOPSIS
+.nf
+.ft 4
+#include <sys/time.h>
+.P
+.ft 4
+int gettimeofday (struct timeval \(**tp);
+.P
+.ft 4
+int settimeofday (struct timeval \(**tp);
+.fi
+.SH DESCRIPTION
+\f4gettimeofday\f1 gets 
+and
+\f4settimeofday\f1 sets 
+the system's notion of the current time.
+The current time is expressed in elapsed seconds and microseconds
+since 00:00 Universal Coordinated Time, January 1, 1970.
+The resolution of the system clock is hardware dependent;
+the time may be updated continuously
+or in clock ticks.
+.P
+.I tp
+points to a
+\f4timeval\f1
+structure, which includes the following members:
+.P
+.RS
+.nf
+.ft 4
+long    tv_sec;    /\(** seconds since Jan. 1, 1970 \(**/
+long    tv_usec;   /\(** and microseconds \(**/
+.ft 1
+.fi
+.RE
+.P
+If
+.I tp
+is a
+null pointer, the current time information is not returned or set.
+.P
+The \f4TZ\f1 environment variable holds time zone information.
+See \f4timezone\fP(4).
+.P
+Only the privileged user may set the time of day.
+.SH "SEE ALSO"
+\f4adjtime\f1(2),
+\f4ctime\fP(3C),
+\f4timezone\fP(4).
+.SH DIAGNOSTICS
+A \-1 return value indicates that an error occurred and \f4errno\f1 has been set.
+The following error codes may be set in
+\f4errno\f1:
+.TP 20
+\f4EINVAL\fP
+.I tp
+specifies an invalid time.
+.TP
+\f4EPERM\fP
+A user other than the privileged user attempted to set the time or time
+zone.
+.SH NOTES
+The implementation of \f4settimeofday\f1
+ignores the
+\f4tv_usec\f1
+field of
+\f4tp\f1.
+If the time needs to be set with better than one second accuracy, call
+\f4settimeofday\f1 for the seconds
+and then
+\f4adjtime\f1
+for finer accuracy.

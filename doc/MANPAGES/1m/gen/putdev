@@ -1,0 +1,223 @@
+'\"macro stdmacro
+.if n .pH g1a.putdev @(#)putdev	40.12.1.1 of 1/3/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} putdev 1 "Essential Utilities" "\&"
+.if \nX=1 .ds x} putdev 1 "Essential Utilities"
+.if \nX=2 .ds x} putdev 1 "" "\&"
+.if \nX=3 .ds x} putdev "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4putdev\f1 \- edits device table 
+.SH SYNOPSIS
+.ft CW
+.nf
+putdev \-a \f2alias\f4 \f1[\f4\f2attribute=value \f4\f1[\f4...\f1]\|\f4\f1]\f4
+.sp .5
+putdev \-m \f2device\f4 \f2attribute=value\f4 \f1[\f4\f2attribute=value \f4\f1[\f4...\f1]\|\f4\f1]\f4
+.sp .5
+putdev \-d \f2device\f4 \f1[\f4\f2attribute \f4\f1[\f4...\f1]\|\f4\f1]\f4
+.fi
+.SH DESCRIPTION
+\f4putdev\f1
+can add a new device to the device table, modify an existing device
+description or remove a device entry from the table.
+The first synopsis is used to add a device.
+The second synopsis is used to modify existing entries
+by adding or changing attributes.
+If a specified attribute is not defined,
+this option adds that attribute to the device definition.
+If it is already
+defined, it modifies the attribute definition.
+The third synopsis is used to delete either an entire device entry or,
+if the attribute argument is used, to
+delete an attribute assignment for a device.
+.P
+The options and arguments for this command are:
+.TP 10
+\f4-a \f1
+Adds a device to the device table using the specified attributes.
+The device must be referenced by its \f2alias\f1.
+.TP 10
+\f4-m\f1
+Modifies a device entry in the device table.
+If an entry already exists, it
+adds any specified attributes that are not defined.
+It also modifies any
+attributes which already have a value 
+with the value specified with this command.
+.TP 10
+\f4-d\f1
+Removes a device from the device table,
+when executed without the \f2attributes\f1 argument.
+Used with the \f2attribute\f1 argument, it deletes the given attribute
+specification for \f2device\f1 from the table.
+.TP 10
+\f2alias\f1
+Designates the alias of the device to be added.
+.TP 10
+\f2device\f1
+Designates the pathname or alias of the device 
+whose attribute is to be added, modified, or removed.
+.TP 10
+\f2attribute\f1
+Designates a device attribute to be added or modified.
+Can be any of the device attributes described under NOTES except alias.
+This prevents an accidental modification or deletion
+of a device's alias from the table.
+.TP 10
+\f2value\f1
+Designates the value to be assigned to a device's attribute.
+.SH NOTES
+The following list shows all of the attributes which can be defined for a
+device:
+.TP 15
+\f4alias\f1
+The unique name by which a device is known.
+No two devices in the database may
+share the same alias name.
+The name is limited in length to 14 characters and
+should contain only alphanumeric
+characters and also the following special characters
+if they are escaped with a backslash:  underscore (_), dollar sign ($),
+hyphen (-), and period (.).
+.TP 15
+\f4bdevice\f1
+The pathname to the block special device node
+associated with the device, if any.
+The associated major/minor combination should be unique within the database
+and should match that associated with the \f4cdevice\f1 field, if any.
+(It is the administrator's responsibility to ensure
+that these \f4major/minor\f1 numbers
+are unique in the database.)
+.TP 15
+\f4capacity\f1
+The capacity of the device or of the typical volume, if removable.
+.TP 15
+\f4cdevice\f1
+The pathname to the character special device node associated with the device,
+if any.
+The associated major/minor combination should
+be unique within the database
+and should match that associated with the \f4bdevice\f1 field, if any.
+(It is the administrator's responsibility to ensure
+that these \f4major/minor\f1 numbers
+are unique in the database.)
+.TP 15
+\f4cyl\f1
+Used by the command specified in the \f4mkfscmd\f1 attribute.
+.TP 15
+\f4desc\f1
+A description of any instance of a volume associated with this device
+(such as floppy diskette).
+.TP 15
+\f4dpartlist\f1
+The list of disk partitions associated with this device.
+Used only if \f4type=disk\f1.
+The list should contain device aliases, each of which must have
+\f4type=dpart\f1.
+.TP 15
+\f4dparttype\f1
+The type of disk partition represented by this device.
+Used only if \f4type=dpart\f1.
+It should be either \f4fs\f1 (for filesystem) or \f4dp\f1 (for data
+partition).
+.TP 15
+\f4erasecmd\f1
+The command string that, when executed, erases the device.
+.TP 15
+\f4fmtcmd\f1
+The command string that, when executed, formats the device.
+.TP 15
+\f4fsname\f1
+The filesystem name on the file system administered on this
+partition, as supplied to the
+\f4/usr/sbin/labelit\f1 command.
+This attribute is specified only if \f4type=dpart\f1 and
+\f4dparttype=fs\f1.
+.TP 15
+\f4gap\f1
+Used by the command specified in the \f4mkfscmd\f1 attribute.
+.TP 15
+\f4mkfscmd\f1
+The command string that, when executed, places a file system on a previously
+formatted device.
+.TP 15
+\f4mountpt\f1
+The default mount point to use for the device.
+Used only if the device is mountable.
+For disk partitions where \f4type=dpart\f1 and \f4dparttype=fs\f1, this
+attribute should specify the location where the partition is normally mounted.
+.TP 15
+\f4nblocks\f1
+The number of blocks in the filesystem administered on this partition.
+Used only if \f4type=dpart\f1 and \f4dparttype=fs\f1.
+.TP 15
+\f4ninodes\f1
+The number of inodes in the filesystem administered on this partition.
+Used only if \f4type=dpart\f1 and \f4dparttype=fs\f1.
+.TP 15
+\f4norewind\f1
+The name of the character special device node that allows access to the serial
+device without rewinding when the device is closed.
+.TP 15
+\f4pathname\f1
+Defines the pathname to an
+i-node describing the device (used for non-block or character device
+pathnames, such as directories).
+.TP 15
+\f4type\f1
+A token that represents inherent qualities of the device.
+Standard types
+include: 9-track, ctape, disk, directory, diskette, dpart, and qtape.
+.TP 15
+\f4volname\f1
+The volume name on the filesystem administered on this partition, as supplied to
+the \f4/usr/sbin/labelit\f1 command.
+Used only if \f4type=dpart\f1 and \f4dparttype=fs\f1.
+.TP 15
+\f4volume\f1
+A text string used to describe any instance of a volume associated with this
+device.
+This attribute should not be defined for devices which are not
+removable.
+.SH ERRORS
+The command will exit with one of the following values:
+.TP 4
+\f40\f1 =
+successful completion of the task.
+.P
+.TP 4
+\f41\f1 =
+command syntax incorrect,
+invalid option used, or internal error occurred.
+.P
+.TP 4
+\f42\f1 =
+device table could not be opened for reading
+or new device table could not be created.
+.P
+.TP 4
+\f43\f1 =
+if executed with the \f4-a\f1 option, indicates that an
+entry in the device table
+with the alias \f2alias\f1 already exits.
+If executed with the \f4-m\f1 or \f4-d\f1 options,
+indicates that no entry exists for device \f2device\f1.
+.P
+.TP 4
+\f44\f1 =
+indicates that \f4-d\f1 was requested and one
+or more of the specified
+attributes were not defined for the device.
+.PD
+.SH FILES
+.ft CW
+/etc/device.tab
+.ft
+.SH SEE ALSO
+.na
+\f4devattr\fP(1),
+\f4putdgrp\fP(1M).
+.ad

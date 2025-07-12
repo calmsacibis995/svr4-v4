@@ -1,0 +1,607 @@
+'\"macro stdmacro
+.if n .pH g1.telnet @(#)telnet	40.8.1.2 of 1/3/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} telnet 1 "TCP/IP" "\&"
+.if \nX=1 .ds x} telnet 1 "TCP/IP"
+.if \nX=2 .ds x} telnet 1 "" "\&"
+.if \nX=3 .ds x} telnet "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4telnet\f1 \- user interface to a remote system using the 
+\s-1TELNET\s0 protocol
+.SH SYNOPSIS
+\f4telnet\f1
+[
+.I host
+[
+.I port
+] ]
+.SH DESCRIPTION
+.LP
+\f4telnet\f1
+communicates with another host using the
+.SM TELNET
+protocol.  If
+\f4telnet\f1
+is invoked without arguments, it enters command mode, indicated by its
+prompt 
+\f4telnet>\f1.
+In this mode, it accepts and executes the
+commands listed below.  If it is
+invoked with arguments, it performs an
+\f4open\f1
+command (see
+``Telnet Commands''
+below) with those arguments.
+.LP
+Once a connection has been opened,
+\f4telnet\f1
+enters input mode.  In this mode, text
+typed is sent to the remote host.
+The input mode entered will be either
+\(lqcharacter at a time\(rq
+or \(lqline by line\(rq
+depending on what the remote system supports.
+.LP
+In \(lqcharacter at a time\(rq mode, most
+text typed is immediately sent to the remote host for processing.
+.LP
+In \(lqline by line\(rq mode, all text is echoed locally,
+and (normally) only completed lines are sent to the remote host.
+The \(lqlocal echo character\(rq (initially
+\f4^E\f1)
+may be used
+to turn off and on the local echo
+(this would mostly be used to enter passwords
+without the password being echoed).
+.LP
+In either mode, if the
+.I localchars
+toggle is
+.SM TRUE
+(the default in line mode; see below),
+the user's
+\f4quit\f1,
+\f4intr\f1,
+and
+\f4flush\f1
+characters are trapped locally, and sent as
+.SM TELNET
+protocol sequences to the remote side.
+There are options (see
+\f4toggle\f1,
+\f4autoflush\f1,
+and
+\f4toggle\f1,
+\f4autosynch\f1)
+which cause this action to flush subsequent output to the terminal
+(until the remote host acknowl\%edges the
+.SM TELNET
+sequence) and flush previous terminal input
+(in the case of
+\f4quit\f1
+and
+\f4intr\f1).
+.LP
+While connected to a remote host,
+\f4telnet\f1
+command mode may be entered by typing the
+\f4telnet\f1
+escape character (initially
+\f4^]\f1).
+When in command
+mode, the normal terminal editing conventions are available.
+.SH USAGE
+.SS Telnet Commands
+.LP
+The following commands are available.
+Only enough of each command to uniquely identify it need be typed
+(this is also true for arguments to the
+\f4mode\f1,
+\f4set\f1,
+\f4toggle\f1,
+and
+\f4display\f1
+commands).
+.LP
+.TP
+\f4open \fIhost\fP \fR[\fP \fIport\fP \fR]\fP\f1
+Open a connection to the named host.  If no port number
+is specified,
+\f4telnet\f1
+will attempt to contact a
+.SM TELNET
+server at the default port.
+The host specification may be either a host name [see
+\f4hosts\f1(4)]
+or an Internet address specified in the \(lqdot notation\(rq [see
+\f4inet\f1(7)].
+.TP
+\f4close\f1
+Close any open
+.SM TELNET
+session and exit
+\f4telnet\f1.
+An
+.SM EOF
+(in command mode) will also close a session and exit.
+.TP
+\f4quit\f1
+Same as \f4close\f1, above.
+.TP
+\f4z\f1
+Suspend
+\f4telnet\f1.
+This command only works when the user is using a shell that supports
+job control, such as
+\f4sh\f1(1).
+.TP
+\f4mode \fItype\fP\f1
+.I type
+is either
+\f4line\f1
+(for \(lqline by line\(rq mode)
+or
+.I character
+(for \(lqcharacter at a time\(rq mode).
+The remote host is asked for permission to go into the requested mode.
+If the remote host is capable of entering that mode, the requested
+mode will be entered.
+.TP
+\f4status\f1
+Show the current status of
+\f4telnet\f1.
+This includes the peer one is connected to, as well
+as the current mode.
+.br
+.ne 8
+.TP
+\f4display \fR[\fP \fIargument...\fP \fR]\fP\f1
+Display all, or some, of the
+\f4set\f1
+and
+\f4toggle\f1
+values (see
+\f4toggle\f1,
+\f2arguments\f1).
+.TP
+\f4? \fR[\fP \fIcommand\fP \fR]\fP\f1
+Get help.  With no arguments,
+\f4telnet\f1
+print a help summary.
+If a command is specified,
+\f4telnet\f1
+will print the help information for just that command.
+.TP
+\f4send \fIarguments\fP\f1
+Send one or more special character sequences to the remote host.
+The following are the arguments which may be specified
+(more than one argument may be specified at a time):
+.RS
+.TP
+\f4escape\f1
+Send the current
+\f4telnet\f1
+escape character (initially
+\f4^]\f1).
+.TP
+\f4synch\f1
+Send the
+.SM TELNET
+\f4SYNCH\f1
+sequence.
+This sequence discards all previously typed
+(but not yet read) input on the remote system.
+This sequence is sent as
+.SM TCP
+urgent data (and may not work if the remote system is a 4.2
+.SM BSD
+system \(em if it does not work, a lower
+case \(lqr\(rq may be echoed on the terminal).
+.TP
+\f4brk\f1
+Send the
+.SM TELNET 
+\f4BRK\f1
+(Break) sequence, which may have significance to the remote
+system.
+.TP
+\f4ip\f1
+Send the
+.SM TELNET 
+\f4IP\f1
+(Interrupt Process) sequence, which aborts
+the currently running process on the remote system.
+.TP
+\f4ao\f1
+Sends the
+.SM TELNET 
+\f4AO\f1
+(Abort Output) sequence, which flushes
+all output
+\f4from\f1
+the remote system
+\f4to\f1
+the user's terminal.
+.TP
+\f4ayt\f1
+Sends the
+.SM TELNET 
+\f4AYT\f1
+(Are You There)
+sequence, to which the remote system may or may not choose to respond.
+.TP
+\f4ec\f1
+Sends the
+.SM TELNET 
+\f4EC\f1
+(Erase Character)
+sequence, which erases the last character
+entered.
+.TP
+\f4el\f1
+Sends the
+.SM TELNET 
+\f4EL\f1
+(Erase Line)
+sequence, which should cause the remote system to erase the line currently
+being entered.
+.TP
+\f4ga\f1
+Sends the
+.SM TELNET 
+\f4GA\f1
+(Go Ahead)
+sequence, which likely has no significance to the remote system.
+.TP
+\f4nop\f1
+Sends the
+.SM TELNET
+\f4NOP\f1
+(No Operation)
+sequence.
+.TP
+\f4?\f1
+Prints out help information for the
+\f4send\f1
+command.
+.RE
+.TP
+\f4set \fIargument value\fP\f1
+Set any one of a number of
+\f4telnet\f1
+variables to a specific value.
+The special value \(lqoff\(rq turns off the function associated with
+the variable.
+The values of variables may be interrogated with the
+\f4display\f1
+command.
+The variables which may be specified are:
+.RS
+.TP
+\f4echo\f1
+This is the value (initially
+\f4^E\f1)
+which, when in
+\(lqline by line\(lq mode, toggles between doing local echoing
+of entered characters (for normal processing), and suppressing
+echoing of entered characters (for example, entering a password).
+.TP
+\f4escape\f1
+This is the
+\f4telnet\f1
+escape character (initially
+\f4^]\f1)
+which enters\p \%\f4telnet\f1
+command mode (when connected to a remote system).
+.TP
+\f4interrupt\f1
+If
+\f4telnet\f1
+is in
+\f4localchars\f1
+mode (see
+\f4toggle\f1
+\f4localchars\f1)
+and the
+\f4interrupt\f1
+character is typed, a
+.SM TELNET 
+\f4IP\f1
+sequence (see
+\f4send\f1 and
+\f4ip\f1)
+is sent to the remote host.
+The initial value for the interrupt character is taken to be
+the terminal's
+\f4intr\f1
+character.
+.TP
+\f4quit\f1
+If
+\f4telnet\f1
+is in
+\f4localchars\f1
+mode (see
+\f4toggle\f1
+\f4localchars\f1)
+and the
+\f4quit\f1
+character is typed, a
+.SM TELNET 
+\f4BRK\f1
+sequence (see
+\f4send\f1, 
+\f4brk\f1)
+is sent to the remote host.
+The initial value for the quit character is taken to be
+the terminal's
+\f4quit\f1
+character.
+.br
+.ne 5
+.TP
+\f4flushoutput\f1
+If
+\f4telnet\f1
+is in
+\f4localchars\f1
+mode (see
+\f4toggle\f1
+\f4localchars\f1)
+and the
+\f4flushoutput\f1
+character is typed, a
+.SM TELNET
+\f4AO\f1
+sequence (see
+\f4send\f1,
+\f4ao\f1)
+is sent to the remote host.
+The initial value for the flush character is taken to be
+the terminal's
+\f4flush\f1
+character.
+.TP
+\f4erase\f1
+If
+\f4telnet\f1
+is in
+\f4localchars\f1
+mode (see
+\f4toggle\f1
+\f4localchars\f1),
+\f4and\f1
+if
+\f4telnet\f1
+is operating in \(lqcharacter at a time\(rq mode, then when this
+character is typed, a
+.SM TELNET
+\f4EC\f1
+sequence (see
+\f4send\f1,
+\f4ec\f1)
+is sent to the remote system.
+The initial value for the erase character is taken to be
+the terminal's
+\f4erase\f1
+character.
+.TP
+\f4kill\f1
+If
+\f4telnet\f1
+is in
+\f4localchars\f1
+mode (see
+\f4toggle\f1
+\f4localchars\f1),
+\f4and\f1
+if
+\f4telnet\f1
+is operating in \(lqcharacter at a time\(rq mode, then when this
+character is typed, a
+.SM TELNET
+\f4EL\f1
+sequence (see
+\f4send\f1,
+\f4el\f1)
+is sent to the remote system.
+The initial value for the kill character is taken to be
+the terminal's
+\f4kill\f1
+character.
+.TP
+\f4eof\f1
+If
+\f4telnet\f1
+is operating in \(lqline by line\(rq mode, entering this character
+as the first character on a line sends this character to the remote system.
+The initial value of the eof character is taken to be the terminal's
+\f4eof\f1
+character.
+.RE
+.TP
+\f4toggle \fIarguments...\fP\f1
+Toggle (between
+.SM TRUE
+and
+.SM FALSE\s0)
+various flags that control how
+\f4telnet\f1
+responds to events.
+More than one argument may be specified.
+The state of these flags may be interrogated with the
+\f4display\f1
+command.
+Valid arguments are:
+.RS
+.TP
+\f4autoflush\f1
+If
+\f4autoflush\f1
+and
+\f4localchars\f1
+are both
+.SM TRUE\s0,
+then when the
+\f4ao\f1,
+\f4intr\f1,
+or
+\f4quit\f1
+characters are recognized (and transformed into\p
+.br
+.SM TELNET
+sequences; see
+\f4set\f1
+for details),
+\f4telnet\f1
+refuses to display any data on the user's terminal
+until the remote system \%acknowledges (using a
+.SM TELNET
+\f4Timing Mark\f1
+option)
+that it has processed those
+.SM TELNET
+sequences.
+The initial value for this toggle is
+.SM TRUE
+if the terminal user had not
+done an \(lqstty noflsh\(rq, otherwise
+.SM FALSE
+[see
+\f4stty\f1(1)].
+.TP
+\f4autosynch\f1
+If
+\f4autosynch\f1
+and
+\f4localchars\f1
+are both
+.SM TRUE\s0,
+then when either the
+\f4intr\f1
+or
+.I quit
+characters are typed (see
+\f4set\f1
+for descriptions of the
+\f4intr\f1
+and
+\f4quit\f1
+characters), the resulting
+.SM TELNET
+sequence sent is followed by the
+.SM TELNET
+\f4SYNCH\f1
+sequence.
+This procedure
+\f4should\f1
+cause the remote system to begin throwing away all previously
+typed input until both of the
+.SM TELNET
+sequences have been read and acted upon.
+The initial value of this toggle is
+.SM FALSE\s0.
+.TP
+\f4crmod\f1
+Toggle 
+.SM RETURN 
+mode.
+When this mode is enabled, most 
+.SM RETURN 
+characters received from
+the remote host will be mapped into a 
+.SM RETURN 
+followed by
+a line feed.
+This mode does not affect those characters typed by the user, only
+those received from the remote host.
+This mode is not very useful unless the remote host
+only sends 
+\s-1RETURN\s0, but never \s-1LINEFEED\s0.
+The initial value for this toggle is
+.SM FALSE\s0.
+.TP
+\f4debug\f1
+Toggle socket level debugging (useful only to the
+super-user).
+The initial value for this toggle is
+.SM FALSE .
+.TP
+\f4localchars\f1
+If this is
+.SM TRUE ,
+then the
+\f4flush\f1,
+\f4interrupt\f1,
+\f4quit\f1,
+\f4erase\f1,
+and
+\f4kill\f1
+characters (see
+\f4set\f1)
+are recognized locally, and
+transformed into appropriate
+.SM TELNET
+control sequences
+(respectively
+\f4ao\f1,
+\f4ip\f1,
+\f4brk\f1,
+\f4ec\f1,
+and
+\f4el\f1;
+see
+\f4send\f1).
+The initial value for this toggle is
+.SM TRUE
+in \(lqline by line\(rq mode, and
+.SM FALSE
+in \(lqcharacter at a time\(rq mode.
+.TP
+\f4netdata\f1
+Toggle the display of all network data (in hexadecimal format).
+The initial value for this toggle is
+.SM FALSE\s0.
+.TP
+\f4options\f1
+Toggle the display of some internal
+\f4telnet\f1
+protocol processing\p
+.br
+.ne 1i
+(having to do with
+.SM TELNET
+options).
+The initial value for this toggle is
+.SM FALSE\s0.
+.TP
+\f4?\f1
+Display the legal
+\f4toggle\f1
+commands.
+.RE
+.SH SEE ALSO
+\f4rlogin\f1(1),
+\f4sh\f1(1),
+\f4stty\f1(1),
+\f4hosts\f1(4),
+\f4inet\f1(7).
+.SH NOTES
+Do not attempt to run \f4layers\f1(1) while using \f4telnet\f1.
+.LP
+There is no adequate way for dealing with flow control.
+.LP
+On some remote systems, echo has to be turned off manually when in
+\(lqline by line\(rq mode.
+.LP
+There is enough settable state to justify a
+\f4.telnetrc\f1
+file.
+.LP
+In \(lqline by line\(rq mode, the terminal's
+.SM EOF
+character is only recognized (and sent to the remote system)
+when it is the first character on a line.

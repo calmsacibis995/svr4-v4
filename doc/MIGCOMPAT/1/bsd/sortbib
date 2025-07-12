@@ -1,0 +1,106 @@
+'\"macro stdmacro
+.if n .pH g1.sortbib @(#)sortbib	40.8 of 4/18/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.\" @(#)sortbib.1 1.2 89/01/25 SMI;
+.\" Copyright (c) 1988 Sun Microsystems, Inc. - All Rights Reserved.
+.\"
+.nr X
+.if \nX=0 .ds x} sortbib 1 "BSD Compatibility Package" "\&"
+.if \nX=1 .ds x} sortbib 1 "BSD Compatibility Package"
+.if \nX=2 .ds x} sortbib 1 "" "\&"
+.if \nX=3 .ds x} sortbib "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4sortbib\f1 \- sort a bibliographic database
+.SH SYNOPSIS
+\f4/usr/ucb/sortbib\f1 [ \f4\-s\f2key-letters\f1 ] \f2database\f1 .\ .\ .
+.SH DESCRIPTION
+The
+\f4sortbib\f1
+command sorts files of records containing
+\f4refer\f1
+key-letters by user-specified keys.
+Records may be separated by blank lines,
+or by
+\f1`\f4\&.[\f1'
+and
+\f1`\f4\&.]\f1'
+delimiters, but the two styles may not be mixed together.
+This program reads through each
+.I database
+and pulls out key fields, which are sorted separately.
+The sorted key fields contain the file pointer,
+byte offset, and length of corresponding records.
+These records are delivered using disk seeks and reads, so
+\f4sortbib\f1
+may not be used in a pipeline to read standard input.
+.P
+By default,
+\f4sortbib\f1
+alphabetizes by the first
+\f4%A\f1
+and the
+\f4%D\f1
+fields, which contain the senior author and date.
+The
+\f4\-s\f1
+option is used to specify new
+.IR key-letters .
+See
+\f4addbib\f1
+for a list of the most common key letters.
+For instance,
+\f4\-sATD\f1
+will sort by author, title, and date, while
+\f4\-sA+D\f1
+will sort by all authors, and date.
+Sort keys past the fourth are not meaningful.
+No more than 16 databases may be sorted together at one time.
+Records longer than 4096 characters will be truncated.
+.P
+\f4sortbib\f1
+sorts on the last word on the
+\f4%A\f1
+line, which is assumed to be the author's last name.
+A word in the final position, such as
+\f1`\f4jr.\f1'
+or
+\f1`\f4ed.\f1',
+will be ignored if the name beforehand ends with a comma.
+Authors with two-word last names or unusual constructions
+can be sorted correctly by using the
+\f4nroff\f1
+convention
+\f1`\f4\e0\f1'
+in place of a blank.
+A
+\f4%Q\f1
+field is considered to be the same as
+\f4%A\f1,
+except sorting begins with the first, not the last, word.
+\f4sortbib\f1
+sorts on the last word of the
+\f4%D\f1
+line, usually the year.
+It also ignores leading articles (like
+\f1`\f4A\f1'
+or
+\f1`\f4The\f1')
+when sorting by titles in the
+\f4%T\f1
+or
+\f4%J\f1
+fields;
+it will ignore articles of any modern European language.
+If a sort-significant field is absent from a record,
+\f4sortbib\f1
+places that record before other records containing that field.
+.SH SEE ALSO
+\f4addbib\fP(1),
+\f4indxbib\fP(1),
+\f4lookbib\fP(1),
+\f4refer\fP(1),
+\f4roffbib\fP(1)
+.SH NOTES
+Records with missing author fields should probably be sorted by title.

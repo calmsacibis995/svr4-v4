@@ -1,0 +1,140 @@
+'\"macro stdmacro
+.if n .pH g3e.elf_flag @(#)elf_flag	40.12 of 5/1/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.\"#ident	"@(#)ci5-doc:req/libelf/flag.man	1.3"
+.nr X
+.if \nX=0 .ds x} elf_flag 3E "ELF Library" "\&"
+.if \nX=1 .ds x} elf_flag 3E "ELF Library"
+.if \nX=2 .ds x} elf_flag 3E "" "\&"
+.if \nX=3 .ds x} elf_flag "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4elf_flagdata, elf_flagehdr, elf_flagelf, elf_flagphdr, elf_flagscn, elf_flagshdr\f1 \- manipulate flags
+.SH SYNOPSIS
+\f4cc\f1
+[\f2flag\fP \|.\|.\|.] \f2file\fP \|.\|.\|.
+\f4\-lelf\f1
+[\f2library\fP \|.\|.\|.]
+.PP
+.nf
+.na
+.ft 4
+#include <libelf.h>
+.sp 0.5
+unsigned elf_flagdata(Elf_Data \(**data, Elf_Cmd cmd, unsigned flags);
+.sp 0.5
+unsigned elf_flagehdr(Elf \(**elf, Elf_Cmd cmd, unsigned flags);
+.sp 0.5
+unsigned elf_flagelf(Elf \(**elf, Elf_Cmd cmd, unsigned flags);
+.sp 0.5
+unsigned elf_flagphdr(Elf \(**elf, Elf_Cmd cmd, unsigned flags);
+.sp 0.5
+unsigned elf_flagscn(Elf_Scn \(**scn, Elf_Cmd cmd, unsigned flags);
+.sp 0.5
+unsigned elf_flagshdr(Elf_Scn \(**scn, Elf_Cmd cmd, unsigned flags);
+.ft 1
+.ad
+.fi
+.SH DESCRIPTION
+These functions manipulate the flags associated with
+various structures of an
+.SM ELF
+file.
+Given an
+.SM ELF
+descriptor
+.RI ( elf ),
+a data descriptor
+.RI ( data ),
+or a section descriptor
+.RI ( scn ),
+the functions may set or clear the associated status bits,
+returning the updated bits.
+A null descriptor is allowed, to simplify error handling;
+all functions return zero for this degenerate case.
+.P
+.I cmd
+may have the following values.
+.TP 18
+\f4ELF_C_CLR\f1
+The functions clear the bits that are asserted in
+.IR flags .
+Only the non-zero bits in
+.I flags
+are cleared; zero bits do not change the status of the descriptor.
+.TP
+\f4ELF_C_SET\f1
+The functions set the bits that are asserted in
+.IR flags .
+Only the non-zero bits in
+.I flags
+are set; zero bits do not change the status of the descriptor.
+.P
+Descriptions of the defined
+.I flags
+bits appear below.
+.TP 18
+\f4ELF_F_DIRTY\f1
+When the program intends to write an
+.SM ELF
+file, this flag
+asserts the associated information needs to be written to
+the file.
+Thus, for example, a program that wished to update the
+.SM ELF
+header of an existing file would call
+\f4elf_flagehdr\fP
+with this bit set in
+.I flags
+and
+.I cmd
+equal to
+\f4ELF_C_SET\f1.
+A later call to
+\f4elf_update\fP
+would write the marked header to the file.
+.TP
+\f4ELF_F_LAYOUT\f1
+Normally, the library decides how to arrange an output file.
+That is, it automatically decides where to place sections,
+how to align them in the file, etc.
+If this bit is set for an
+.SM ELF
+descriptor, the program assumes
+responsibility for determining all file positions.
+This bit is meaningful only for
+\f4elf_flagelf\fP
+and applies to the entire file associated with the descriptor.
+.P
+When a flag bit is set for an item, it affects all the
+subitems as well.
+Thus, for example, if the program sets the
+\f4ELF_F_DIRTY\f1
+bit with
+\f4elf_flagelf\fP,
+the entire logical file is ``dirty.''
+.SH EXAMPLE
+The following fragment shows how one might mark the
+.SM ELF
+header
+to be written to the output file.
+.P
+.RS .5i
+.DT
+.nf
+.ft 4
+.ta 8u*\w' 'u +8u*\w' 'u +8u*\w' 'u +8u*\w' 'u +8u*\w' 'u +8u*\w' 'u
+.ne 15
+ehdr = elf32_getehdr(elf);
+/\(** dirty ehdr ... \(**/
+elf_flagehdr(elf, ELF_C_SET, ELF_F_DIRTY);
+.fi
+.RE
+.SH "SEE ALSO"
+.na
+\f4elf\fP(3E),
+\f4elf_end\fP(3E),
+\f4elf_getdata\fP(3E),
+\f4elf_getehdr\fP(3E),
+\f4elf_update\fP(3E)

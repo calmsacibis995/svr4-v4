@@ -1,0 +1,31 @@
+'\"macro stdmacro
+.if n .pH g1.random @(#)random	40.8 of 6/18/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} random 1 "Application Compatibility Package" "\&"
+.if \nX=1 .ds x} random 1 "Application Compatibility Package"
+.if \nX=2 .ds x} random 1 "" "\&"
+.if \nX=3 .ds x} random "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4random\fP \- generate a random number
+.SH SYNOPSIS
+\f4random\f1 [\f4-s\f1] [\f2scale\f1]
+.SH DESCRIPTION
+\f4random\fP generates a random number on the standard
+output, and returns the number as its exit value.
+By default, this
+number is either 0 or 1.
+If \f2scale\f1 is given a value between
+1 and 255, then the range of the random value is from 0 to \f2scale\f1.
+If \f2scale\f1 is greater than 255, an error message is printed.
+.P
+When the \f4-s\fP (silent) option is given, then the random number is
+returned as an exit value, but is not printed on the standard output.
+If an error occurs, \f4random\fP returns an exit value of zero.
+.SH SEE ALSO
+\f4rand\fP(3C)
+.SH NOTES
+This command does not perform any floating point computations.
+\f4random\fP uses the time of day as a seed.

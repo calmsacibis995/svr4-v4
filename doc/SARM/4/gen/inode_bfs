@@ -1,0 +1,50 @@
+'\"! tbl | mmdoc
+'\"macro stdmacro
+.if n .pH g4.inode_bfs @(#)inode_bfs	40.9 of 5/1/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} inode 4 "bfs" "\&"
+.if \nX=1 .ds x} inode 4 "bfs"
+.if \nX=2 .ds x} inode 4 "" "\&"
+.if \nX=3 .ds x} inode "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4inode\f1 (bfs) \- format of a \f4bfs\fP i-node
+.SH SYNOPSIS
+\f4#include <sys/types.h>\f1
+.br
+\f4#include <sys/fs/bfs.h>\f1
+.SH DESCRIPTION
+.PP
+.RS
+.ps -1
+.vs -1
+.nf
+.ft 4
+.ta .5i 2.25i
+struct bfs_dirent
+{
+	ushort  d_ino;	/* inode number */
+	daddr_t d_sblock;	/* Start block */
+	daddr_t d_eblock;	/* End block */
+	daddr_t d_eoffset;	/* EOF disk offset (absolute) */
+	struct  bfsvattr d_fattr;	/* File attributes */
+};
+.ps +1
+.vs +1
+.RE
+.fi
+.ft 1
+.PP
+For the meaning of the defined type
+\f4daddr_t\fP
+see
+\f4types\fP(5).
+The \f4bfsvattr\fP structure appears in the
+header file \f4sys/fs/bfs.h\fP.
+.SH SEE ALSO
+bfs \f4fs\fP(4)
+.br
+\f4types\fP(5)
+in the \f2Programmer's Reference Manual\fP

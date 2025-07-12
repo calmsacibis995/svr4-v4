@@ -1,0 +1,144 @@
+'\"macro stdmacro
+.if n .pH g1a.passmgmt @(#)passmgmt	40.9 of 5/29/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} passmgmt 1M "" "\&"
+.if \nX=1 .ds x} passmgmt 1M ""
+.if \nX=2 .ds x} passmgmt 1M "" "\&"
+.if \nX=3 .ds x} passmgmt "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4passmgmt\f1 \- password files management
+.SH SYNOPSIS
+\f4passmgmt \-a \f2options name\f1
+.br
+\f4passmgmt \-m \f2options name\f1
+.br
+\f4passmgmt \-d \f2name\f1 
+.SH DESCRIPTION
+The \f4passmgmt\f1 command updates information in the password files.
+This command works with both
+\f4/etc/passwd\f1
+and
+\f4/etc/shadow\f1.
+.PP
+\f4passmgmt \-a\f1
+adds an entry for user \f2name\f1 to the password files.
+This command does not create any directory for the new user and the new
+login remains locked (with the string \f4*LK*\f1 in the password
+field) until the \f4passwd\f1(1)
+command is executed to set the password.
+.PP
+\f4passmgmt \-m\f1
+modifies the 
+entry for user \f2name\f1 in the password files.
+The name field in the \f4/etc/shadow\f1 entry
+and all the fields (except the password field) in the \f4/etc/passwd\f1 entry 
+can be modified by this command.
+Only fields entered on the command line
+will be modified.
+.PP
+\f4passmgmt \-d \f1
+deletes the entry for user \f2name\f1 from the password files.
+It will not remove any files that
+the user owns on the system; they must be removed manually.
+.PP
+The following options are available:
+.TP 12 
+\f4\-c \f2comment\f1 
+A short description of the login.
+It is limited to a maximum
+of 128 characters and defaults to an empty field.
+.TP 12
+\f4\-h \f2homedir\f1 
+Home directory of \f2name\f1.
+It is limited to a maximum 
+of 256 characters and defaults to 
+\f4/usr/\f2name\f1.\f1
+.TP 12
+\f4\-u \f2uid\f1
+UID of the \f2name\f1.
+This number must range from 0 to the 
+maximum non-negative value for the system.
+It defaults to
+the next available UID greater than 99.
+Without the \f4\-o\f1 option, it enforces the uniqueness of a UID.
+.TP 12
+\f4\-o\f1
+This option allows a UID to be non-unique.
+It is used only with the \-u option.
+.TP 12
+\f4\-g \f2gid\f1
+GID of the \f2name\f1.
+This number must range from 0 to 
+the maximum non-negative value for the system.
+The default is 1.
+.TP 12
+\f4\-s \f2shell\f1
+Login shell for \f2name\f1.
+It should be the full pathname of the 
+program that will be executed when the 
+user logs in.
+The maximum size of \f2shell\f1 is 256 characters. 
+The default is for this field to be empty and to be
+interpreted as \f4/usr/bin/sh\f1.
+.TP 12
+\f4\-l \f4logname\fP
+This option changes the \f2name\f1 to \f4logname\fP.
+It is used only with the \-m option.
+.PP
+The total size of each login entry
+is limited to a
+maximum of 511 bytes
+in each of the password files.
+.SH FILES
+.nf
+\f4/etc/passwd\fP,
+\f4/etc/shadow\fP,
+\f4/etc/opasswd\fP,
+\f4/etc/oshadow\fP		
+.fi
+.SH "SEE ALSO"
+\f4useradd\fP(1M), \f4userdel\fP(1M), \f4usermod\fP(1M),
+\f4passwd\fP(4), and \f4shadow\fP(4) in the
+.br
+\f2System Administrator's Reference Manual\f1
+.br
+\f4passwd\fP(1) in the \f2User's Reference Manual\f1
+.SH DIAGNOSTICS
+The 
+\f4passmgmt\f1
+command exits with one of the following values:
+.IP  0  10
+Success.
+.IP  1  10
+Permission denied.
+.IP  2  10
+Invalid command syntax.  Usage message of the \f4passmgmt\f1 command will be
+displayed.
+.IP  3  10
+Invalid argument provided to option.
+.IP  4  10
+UID in use.
+.IP  5  10
+Inconsistent password files (e.g., \f2name\f1 is in the \f4/etc/passwd\f1 file and 
+not in the \f4/etc/shadow\f1 file, or vice versa).
+.IP  6  10
+Unexpected failure.  Password files unchanged.
+.IP  7  10
+Unexpected failure.  Password file(s) missing.
+.IP  8  10
+Password file(s) busy.  Try again later.
+.IP  9  10
+\f2name\f1 does not exist (if \f4\-m\f1 or \f4\-d\f1 is specified), already exists (if \f4\-a\f1 is specified), or \f4logname\fP already exists (if \f4\-m 
+\-l\f1 is specified).
+.SH NOTES
+You cannot use a colon or carriage return as part of an argument
+because it is interpreted as a field separator
+in the password file.
+.sp
+This command will be removed in a future release.
+Its functionality has been replaced and enhanced by
+\f4useradd\f1, \f4userdel\f1, and \f4usermod\f1.
+These commands are currently available.

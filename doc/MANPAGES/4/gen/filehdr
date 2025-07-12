@@ -1,0 +1,94 @@
+'\"! tbl | mmdoc
+'\"macro stdmacro
+.ds n t
+.if n .pH g4.filehdr @(#)filehdr	40.7     1/3/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} filehdr 4 "" "\&"
+.if \nX=1 .ds x} filehdr 4 ""
+.if \nX=2 .ds x} filehdr 4 "" "\&"
+.if \nX=3 .ds x} filehdr "" "" "\&"
+.TH \*(x}
+'\" t
+.SH NAME
+\f4filehdr\f1 \- file header for common object files
+.SH SYNOPSIS
+\f4#include <filehdr.h>\f1
+.SH DESCRIPTION
+Every common object file begins with a 20-byte header.
+The following C
+\f4struct\f1
+declaration is used:
+.PP
+.if t .RS
+.ta \w'\f4\ \ \ \fP'u +\w'\f4unsigned\fP'u +\w'\f4\ short\ \ \fP'u +\w'\f4f_symptr\ ;\ \ \fP'u
+.nf
+.ft 4
+struct  filehdr
+{
+	unsigned short	f_magic ;	/\(** magic number \(**/
+	unsigned short	f_nscns ;	/\(** number of sections \(**/
+	long		f_timdat ;	/\(** time & date stamp \(**/
+	long		f_symptr ;	/\(** file ptr to symtab \(**/
+	long		f_nsyms ;	/\(** number of symtab entries \(**/
+	unsigned short	f_opthdr ;	/\(** sizeof(opt and header) \(**/
+	unsigned short	f_flags ;	/\(** flags \(**/
+} ;
+.ft 1
+.fi
+.if t .RE
+.PP
+\f4f_symptr\fP
+is the byte offset into the file at which the symbol table can be found.
+Its value can be used as the offset in
+\f4fseek\fP(3S)
+to position an I/O stream to the symbol table.
+The \s-1UNIX\s+1 system optional header is 28 bytes.
+The valid magic numbers are given below:
+.if t .RS
+.PP
+.TS
+l1f4 l1f4 lf4 lf4.
+#define	I386MAGIC	0514	/\(** i386 Computer \(**/
+#define	WE32MAGIC	0560	/\(** 3B2, 3B5, and 3B15 computers \(**/
+#define	N3BMAGIC	0550	/\(** 3B20 computer \(**/
+#define	NTVMAGIC	0551	/\(** 3B20 computer \(**/
+.sp 1v
+#define	VAXWRMAGIC	0570	/\(** \s-1VAX\s+1 writable text segments \(**/
+#define	VAXROMAGIC	0575	/\(** \s-1VAX\s+1 read only sharable 
+			   text segments \(**/
+.TE
+.if t .RE
+.PP
+The value in
+\f4f_timdat\fP
+is obtained from the
+\f4time\fP(2)
+system call.
+Flag bits currently defined are:
+.PP
+.if t .RS
+.TS
+l1f4 l1f4 lf4 lf4.
+#define	F_RELFLG	0000001	/\(** relocation entries stripped \(**/
+#define	F_EXEC	0000002	/\(** file is executable \(**/
+#define	F_LNNO	0000004	/\(** line numbers stripped \(**/
+#define	F_LSYMS	0000010	/\(** local symbols stripped \(**/
+#define	F_AR16WR	0000200	/\(** 16-bit DEC host \(**/
+#define	F_AR32WR	0000400	/\(** 32-bit DEC host \(**/
+#define	F_AR32W	0001000	/\(** non-DEC host \(**/
+#define	F_BM32ID	0160000	/\(** WE32000 family ID field \(**/
+#define	F_BM32B	0020000	/\(** file contains WE 32100 code \(**/
+#define	F_BM32MAU	0040000	/\(** file reqs MAU to execute \(**/
+#define	F_BM32RST	0010000	/\(** this object file contains restore
+			   work around [3B5/3B2 only] \(**/
+.TE
+.if t .RE
+.SH "SEE ALSO"
+\f4time\fP(2), \f4fseek\fP(3S), \*\f4pa.out\fP(4)
+.P
+The ``Common Object File Format (COFF)'' chapter
+in the \f2Programmer's Guide\f1
+.\"	@(#)filehdr.4	6.4 of 4/2/84
+.Ee

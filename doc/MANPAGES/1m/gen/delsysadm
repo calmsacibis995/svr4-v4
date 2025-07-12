@@ -1,0 +1,79 @@
+'\"macro stdmacro
+.if n .pH g1a.delsysadm @(#)delsysadm	40.9 of 4/15/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} delsysadm 1M "Essential Utilities" "\&"
+.if \nX=1 .ds x} delsysadm 1M "Essential Utilities"
+.if \nX=2 .ds x} delsysadm 1M "Essential Utilities" "\&"
+.if \nX=3 .ds x} delsysadm 1M "Essential Utilities" "\&"
+.TH \*(x}
+.SH NAME
+\f4delsysadm\f1 \- \f4sysadm\fP interface menu or task removal tool
+.SH SYNOPSIS
+\f4delsysadm\f1\0\f2task\f1 | [\f4\-r\f1] \f2menu\fP
+.SH DESCRIPTION
+The \f4delsysadm\f1 command
+deletes a \f2task\fP or \f2menu\fP from the \f4sysadm\f1 interface and
+modifies the interface directory structure on the target machine.
+.TP 0.75i
+.I task | menu
+The logical name and location of the menu or task within the
+interface menu hierarchy.
+Begin with the top menu \f4main\f1 and
+proceed to where the menu or the task resides, separating each
+name with colons.
+See EXAMPLES.
+.IP
+If the \f4-r\f1 option is used, this command will recursively remove all
+sub-menus and tasks for this menu.
+If the \f4-r\f1 option is not used, the menu must be empty.
+.P
+\f4delsysadm\f1 should only be used to remove items added as "on-line"
+changes with the \f4edsysadm\f1 command.
+Such an addition will have a package instance tag of ONLINE.
+If the task or menu (and its sub-menus and tasks) have any
+package instance tags other than ONLINE, you are asked whether to
+continue with the removal or to exit.
+Under these circumstances, you probably do not want to continue and you should
+rely on the package involved to take the necessary actions to delete
+this type of entry.
+.P
+The command exits successfully or provides the
+error code within an error message.
+.SH EXAMPLES
+To remove the \f4nformat\f1 task, execute:
+.P
+.RS
+\f4delsysadm main:applications:ndevices:nformat\fP.
+.RE
+.SH DIAGNOSTICS
+.nf
+0   Successful execution
+2   Invalid syntax
+3   Menu or task does not exist
+4   Menu not empty
+5   Unable to update interface menu structure
+.fi
+.SH NOTES
+Any menu that was originally a placeholder menu (one that only appears if
+submenus exist under it) will be returned to placeholder status when a deletion
+leaves it empty.
+.P
+When the \f4\-r\f1 option is used, \f4delsysadm\f1 checks for dependencies
+before removing any subentries.
+(A dependency exists if the menu being
+removed contains an entry placed there by an application package).
+If a dependency is found, the user is shown a list of packages that depend on
+the menu being deleted and asked whether or not to continue.
+If the answer is yes, the menu and all of its menus and tasks are removed
+(even those shown to have dependencies).
+If the answer is no, the menu is not deleted.
+.P
+\f4delsysadm\f1 should only be used to remove menu or task entries that have
+been added to the interface with \f4edsysadm\f1.
+.SH SEE ALSO
+\f4edsysadm\fP(1M),
+\f4sysadm\fP(1M)
+.\"	@(#)delsysadm.1M	5.2 of 6/16/87
+.Ee

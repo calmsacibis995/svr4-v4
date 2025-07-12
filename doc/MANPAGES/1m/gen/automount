@@ -1,0 +1,460 @@
+'\"macro stdmacro
+.if n .pH g1a.automount @(#)automount	40.17 of 5/29/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} automount 1M "NFS" "\&"
+.if \nX=1 .ds x} automount 1M "NFS"
+.if \nX=2 .ds x} automount 1M "" "\&"
+.if \nX=3 .ds x} automount "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4automount\f1 \- automatically mount NFS file systems
+.SH SYNOPSIS
+\f4automount\f1
+[\f4\-mnTv\f1] 
+[\f4\-D \f2name\f1=\f2value\f1] 
+[\f4\-M \f2mount-directory\f1] [\f4\-f \f2master-file\f1]
+.if t .ti +.5i
+[\f4\-t \f2sub-options\f1] 
+[\f2directory  map\f1 
+[\f2\-mount-options\f1] ] . . .
+.SH DESCRIPTION
+.LP
+\f4automount\f1
+is a daemon that automatically and transparently mounts an
+NFS
+file system as needed. 
+It monitors attempts to access
+directories that are associated with an
+\f4automount\f1
+map,
+along with any directories or files that reside under them.
+When a file is to be accessed,
+the daemon mounts the appropriate
+NFS file system.
+You can assign a map to a directory using an entry in a direct\p
+.br
+\f4automount\f1
+map,
+or by specifying an indirect map on the command line.
+The \f4automount\f1 daemon resides in \f4/usr/lib/nfs\f1 directory.
+.LP
+\f4automount\f1
+uses a map to locate an appropriate
+NFS file server,
+exported file system, and mount options.
+It then mounts the file system in a temporary location,
+and replaces the file system entry for the directory
+or subdirectory with a symbolic link
+to the temporary location.
+If the file system is not accessed within
+an appropriate interval (five minutes by default),
+the daemon unmounts
+the file system and removes the symbolic link.
+If the indicated directory has not already been created,
+the daemon creates it,
+and then removes it upon exiting.
+.LP
+Since the name-to-location binding is dynamic,
+updates to an
+\f4automount\f1
+map are transparent to the user.
+This obviates the need to \(lqpre-mount\(rq shared file
+systems for applications that have \(lqhard coded\(rq
+references to files.
+.LP
+If you specify the dummy directory
+\f1/\-\f4,\f1
+\f4automount\f1
+treats the
+.I map
+argument that follows as the name of a direct map.
+In a direct map,
+each entry associates the full pathname of a mount
+point with a remote file system to mount.
+.LP
+If the
+\f4directory\fP
+argument is a pathname, the
+.I map
+argument points to a file called an indirect map.
+An indirect map
+contains a list of the subdirectories contained
+within the indicated
+\f4directory\fP.
+With an indirect map,
+it is these subdirectories that are mounted automatically.
+The
+.I map
+argument must be a full pathname.
+.LP
+The
+\f4\-\f2mount-options\f1
+argument,
+when supplied,
+is a comma-separated list of
+\f4mount\f1(1M)
+options,
+preceded by a hyphen (\-).
+If mount options are specified in the indicated map,
+however,
+those in the map take precedence.
+.PP
+Only a privileged user can execute this command.
+.LP
+The following options are available:
+.TP
+\f4\-m\f1
+Disable the search of the Network Interface Services map file.
+(See ``The NIS'' chapter of the \f2Programmer's Guide:
+Networking Interfaces\f1.)
+This option can only be used in conjunction with the \f4\-f\f1 option.
+.TP
+\f4\-n\f1
+Disable dynamic mounts.
+With this option,
+references through the\p
+.br
+\f4automount\f1
+daemon only succeed when the target file system has been
+previously mounted.
+This can be used to prevent
+NFS
+servers from cross-mounting each other.
+.TP
+\f4\-T\f1
+Trace.
+Expand each
+NFS
+call and display it on the standard output.
+.TP
+\f4\-v\f1
+Verbose.
+Log status messages to the console.
+.TP
+\f4\-D\f2 name\f4=\f2value\f1
+Assign
+.I value
+to the indicated
+\f4automount\f1
+(environment) variable.
+.TP
+\f4\-f\f2 master-file\f1
+Specify all arguments in \f2master-file\f1 and
+instruct the daemon to look in
+it for instructions.
+.TP
+\f4\-M\f2 mount-directory\f1
+Mount temporary file systems in the named directory,
+instead of
+\f4/tmp_mnt\f1.
+.TP
+\f4\-t\f2 sub-options\f1
+Specify 
+.I sub-options 
+as a comma-separated list that
+contains any combination of the following:
+.RS
+.TP
+\f4l \f2duration\f1
+Specify a
+.IR duration ,
+in seconds,
+that a file system is to remain mounted when not in use.
+The default is 5 minutes.
+.TP
+\f4m \f2interval\f1
+Specify an
+.IR interval ,
+in seconds,
+between attempts
+to mount a file system.
+The default is 30 seconds.
+.br
+.ne 5
+.TP
+\f4w \f2interval\f1
+Specify an
+.IR interval ,
+in seconds,
+between attempts to unmount
+file systems that have exceeded their cached times.
+The default is 1 minute.
+.RE
+.SH ENVIRONMENT
+.LP
+Environment variables can be used within an
+\f4automount\f1
+map.
+For instance,
+if
+\f4$\s-1HOME\s0\f1
+appeared within a map,
+\f4automount\f1
+would expand it to its current value for the
+\f4\s-1HOME\s0\f1
+variable.
+.LP
+If a reference needs to be protected from affixed characters,
+enclose the variable name within braces.
+.SH USAGE
+.SS Direct/Indirect Map Entry Format
+.LP
+A simple map entry (mapping) takes the form:
+.IP
+\f4directory\fP
+[
+\f4\-\f2mount-options\f1
+]
+.I location\ .\|.\|.
+.LP
+where
+\f4directory\fP
+is the full pathname of the directory to mount
+when used in a direct map, 
+or the basename of a subdirectory in an indirect map.
+.I mount-options
+is a comma-separated list of
+\f4mount\f1
+options, and
+.I location
+specifies a remote file system from which the
+directory may be mounted.
+In the simple case,
+.I location
+takes the form:
+.IP
+\f2host\f4:\f2pathname\f1
+.LP
+Multiple
+.I location
+fields can be specified, in which case
+\f4automount\f1
+sends multiple
+\f4mount\f1
+requests;
+\f4automount\f1
+mounts the file system from the first host that replies to the
+\f4mount\f1
+request.
+This request is first made to the local net or subnet.
+If there is no response,
+any connected server may respond.
+.LP
+If
+.I location
+is specified in the form:
+.IP
+\f2host\f4:\f2path\f4:\f2subdir\f1
+.LP
+.I host
+is the name of the host from which to mount the file system,
+.I path
+is the pathname of the directory to mount,
+and
+.IR subdir ,
+when supplied,
+is the name of a\p
+.br
+subdirectory to which the
+symbolic link is made.
+This can be used to prevent duplicate
+mounts when multiple directories in the same remote
+file system may be accessed.
+With a map for
+\f4/home\f1
+such as:
+.LP
+.RS
+\f4able	homebody:/home/homebody:able\f1
+.br
+\f4baker	homebody:/home/homebody:baker\f1
+.RE
+.LP
+and a user attempting to access a file in
+\f4/home/able\f1,
+\f4automount\f1
+mounts
+\f4homebody:/home/homebody\f1,
+but creates a symbolic link called
+\f4/home/able\f1
+to the
+\f4able\f1
+subdirectory in the temporarily mounted file system.
+If a user immediately tries to access a file in
+\f4/home/baker\f1,
+\f4automount\f1
+needs only to create a symbolic link that points to the
+\f4baker\f1
+subdirectory;
+\f4/home/homebody\f1
+is already mounted.
+With the following map:
+.LP
+.RS
+\f4able	homebody:/home/homebody/able\f1
+.br
+\f4baker	homebody:/home/homebody/baker\f1
+.RE
+.LP
+\f4automount\f1
+would have to mount the file system twice.
+.LP
+A mapping can be continued across input lines by escaping the
+NEWLINE
+with a backslash.
+Comments begin with a
+\f4 #\f1
+and end at the subsequent
+NEWLINE.
+.br
+.ne 7
+.SS "\f2Directory Pattern Matching\fP"
+.LP
+The
+\f1&
+character is expanded to the value of the
+\f4directory\fP
+field for the entry in which it occurs.
+In this case:
+.LP
+.IP
+\f4able	homebody:/home/homebody:&\f1
+.LP
+the
+\f4&\f1
+expands to
+\f4able\f1.
+.LP
+The
+\f1*
+character, when supplied as the
+\f4directory\fP
+field,
+is recognized as the catch-all entry.
+Such an entry resolves to any entry not previously matched.
+For instance,
+if the following entry appeared in the indirect map for
+\f4/home\f1:
+.IP
+\f4*	&:/home/&\f1
+.LP
+this would allow automatic mounts in
+\f4/home\f1
+of any remote file system whose location could be specified as:
+.IP
+\f2hostname\f4:/home/\f2hostname\f1
+.br
+.ne 6
+.SS "\f2Hierarchical Mappings\fP"
+.LP
+A hierarchical mapping takes the form:
+.SP
+.RS
+\f4directory\fP
+\f1[\f4\|/\f1\|[\f2subdirectory\fP]\|]
+.RI [ \-mount-options ]
+.IR location .\|.\|.
+.if t .ti +.5i
+\f1[\f4\|/\f1\|[\f2subdirectory\fP]
+.RI [ \-mount-options ]
+.IR location .\|.\|.\|]\|.\|.\|.
+.RE
+.LP
+The initial
+\f4/\f1[\f2subdirectory\|\f1]
+is optional for the first location list
+and mandatory for all subsequent lists.
+The optional
+.I subdirectory
+is taken as a filename relative to the
+\f4directory\fP.
+If
+.I subdirectory
+is omitted in the first occurrence, the
+\f4/\f1
+refers to the directory itself.
+.LP
+Given the direct map entry:
+.LP
+.nf
+\f4/arch/src\ \ \ \e
+/         \-ro,intr  arch:/arch/src          alt:/arch/src\ \ \ \e
+/1.0      \-ro,intr  alt:/arch/src/1.0       arch:/arch/src/1.0\ \ \ \e
+/1.0/man  \-ro,intr  arch:/arch/src/1.0/man  alt:/arch/src/1.0/man\f1
+.fi
+.LP
+\f4automount\f1
+would automatically mount
+\f4/arch/src\f1,
+\f4/arch/src/1.0\f1
+and
+\f4/arch/src/1.0/man\f1,
+as needed, from either
+\f4arch\f1
+or
+\f4alt\f1,
+whichever host responded first.
+.SS Direct Maps
+.LP
+A direct map contains mappings for any number of directories.
+Each directory listed in the map is automatically mounted as
+needed.
+The direct map as a whole is not associated with any
+single directory.
+.SS Indirect Maps
+.LP
+An indirect map allows you to specify mappings for the
+subdirectories you wish to mount under the
+\f4directory\fP
+indicated on the command line.
+It also obscures local subdirectories for
+which no mapping is specified. 
+In an indirect map, each
+\f4directory\fP
+field consists of the basename of a subdirectory to
+be mounted as needed.
+.SS "Included Maps"
+.LP
+The contents of another map can be included within a map
+with an entry of the form
+.IP
+\f4+\f2mapname\f1
+.LP
+where
+.I mapname
+is a filename.
+.SS Special Maps
+.LP
+The
+\f4\-null\f1
+map is the only special map currently available.
+The
+\f4\-null\f1
+map, when indicated on the command line,
+cancels a previous map for the directory indicated.
+.SH FILES
+.PD 0
+.TP 20
+\f4/tmp_mnt\f1
+parent directory for dynamically mounted file systems
+.PD
+.SH "SEE ALSO"
+\f4df\f1(1M),
+\f4mount\f1(1M),
+\f4passwd\f1(4)
+.SH NOTES
+.LP
+Mount points used by \f4automount\fP are not recorded in \f4/etc/mnttab\fP.
+\f4mount\fP(1M) on such mount points will fail, saying mount point busy,
+although the mount point is not in \f4/etc/mnttab\fP.
+.LP
+Shell filename expansion does not apply to objects
+not currently mounted.
+.LP
+Since
+\f4automount\f1
+is single-threaded, any request that is delayed by a slow or
+non-responding NFS
+server will delay all subsequent automatic mount requests until it completes. 

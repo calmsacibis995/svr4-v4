@@ -1,0 +1,77 @@
+'\"macro stdmacro
+.if n .pH g1.look @(#)look	40.9 of 4/18/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.\" @(#)look.1 1.3 89/01/30 SMI; 
+.\" Copyright (c) 1988 Sun Microsystems, Inc. - All Rights Reserved.
+.\"
+.nr X
+.if \nX=0 .ds x} look 1 "BSD Compatibility Package" "\&"
+.if \nX=1 .ds x} look 1 "BSD Compatibility Package"
+.if \nX=2 .ds x} look 1 "" "\&"
+.if \nX=3 .ds x} look "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4look\f1 \- find words in the system dictionary or lines in a sorted list
+.SH SYNOPSIS
+\f4/usr/ucb/look\f1
+[
+\f4\-d\f1
+]
+[
+\f4\-f\f1
+]
+[
+\f4\-t\f2c\f1
+]
+.I string
+.RI [ " filename " ]
+.SH DESCRIPTION
+.P
+The
+\f4look\f1
+command consults a sorted
+.I filename
+and prints all lines that begin with
+.IR string .
+.P
+If no 
+.IR filename
+is specified,
+\f4look\f1
+uses
+\f4/usr/ucblib/dict/words\f1
+with collating sequence
+\f4\-df\f1.
+.P
+The following options are available:
+.TP 
+\f4\-d\f1
+Dictionary order.
+Only letters, digits, 
+.SM TAB
+and
+.SM SPACE
+characters are used in comparisons.
+.TP
+\f4\-f\f1
+Fold case.
+Upper case letters are not distinguished from
+lower case in comparisons.
+.TP
+\f4\-t\f2c\f1
+Set termination character.
+All characters to the right of
+.I c
+in 
+.I string
+are ignored.
+.SH FILES
+.PD 0
+.TP 20
+\f4/usr/ucblib/dict/words\f1
+.PD
+.SH "SEE ALSO"
+\f4grep\f1(1),
+\f4sort\f1(1)
+in the \f2User's Reference Manual\f1

@@ -1,0 +1,42 @@
+'\"macro stdmacro
+.if n .pH g1a.initbp @(#)initbp	40.6 of 5/17/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} initbp 8iref "System Administration Utilities" "" "\&"
+.if \nX=1 .ds x} initbp 8iref "System Administration Utilities" ""
+.if \nX=2 .ds x} initbp 8iref "" "\&"
+.if \nX=3 .ds x} initbp "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4initbp\f1 \- initializes the bootstrap parameter string on the processor in 
+the given slot
+.SH SYNOPSIS
+\f4/usr/lbin/initbp\f1  [\-\f2v\f1]  \f2slot-ID\f1
+.SH DESCRIPTION
+The \f4initbp\f1 command initializes the bootstrap parameter string on a
+processor to a NULL string.  This places the processor into a state similar
+to that which exists after a cold reset.  All bootstrap parameters from all
+sources (the configuration file or those supplied from the operator interface)
+are deleted.
+.PP
+The \f4initbp\f1 command resets the processor in the specified slot after
+the initialization of the bootstrap parameter string is complete.
+.P
+Command line options are:
+.TP
+\-\f2v\f1
+Display diagnostic information.
+.SH FILES
+\f4/usr/lbin/initbp\f1
+.br
+\f4/usr/lbin/reset\f1
+.SH SEE ALSO
+\f4dbon\f1(8iref),
+\f4ics\f1(8iref),
+\f4reset\f2(8iref).
+.SH NOTES
+For additional information on the initialization of  Multibus II processor
+boards, see the \f2Multibus II Initialization and Diagnostics Specification\f1.
+Also note that any processor can be reset when using \f4initbp\f1, resulting
+in a loss of data.

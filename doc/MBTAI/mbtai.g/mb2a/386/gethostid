@@ -1,0 +1,30 @@
+'\"macro stdmacro
+.if n .pH mb2a.gethostid @(#)gethostid	40.5 of 12/20/90
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} mb2_gethostid 3tai "" "\&"
+.if \nX=1 .ds x} mb2_gethostid 3tai ""
+.if \nX=2 .ds x} mb2_gethostid 3tai "" "\&"
+.if \nX=3 .ds x} mb2_gethostid "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4mb2_gethostid\f1 \- gets host ID.
+.SH SYNOPSIS
+.nf
+.ft 4
+#include <sys/types.h>
+#include <sys/mb2taiusr.h>
+unsigned short mb2_gethostid ();
+.fi
+.ft
+.SH DESCRIPTION
+This routine returns the host ID of the host that the application is 
+executing on  (the local host).
+This routine always succeeds.
+.SH "SEE ALSO"
+\f4intro\f1(2) 
+.SH DIAGNOSTICS
+This routine will fail and return a value of \f4FFFF\fP if there are more 
+than (\f4NOFILES - 1\fP) file descriptors open for the process
+executing this routine.

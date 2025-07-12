@@ -1,0 +1,35 @@
+'\"macro stdmacro
+.if n .pH g3x.form_data @(#)form_data	40.5 of 4/10/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.\" ident	"@(#)svid_ti:ti_lib/form_data	1.5"
+.nr X
+.if \nX=0 .ds x} form_data 3X "" "\&"
+.if \nX=1 .ds x} form_data 3X ""
+.if \nX=2 .ds x} form_data 3X "" "\&"
+.if \nX=3 .ds x} form_data "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4form_data\f1: \f4 data_ahead\f1, \f4data_behind\f1 \- tell if \f4forms\fP field has off-screen data ahead or behind
+.SH SYNOPSIS
+.nf
+.ft 4
+#include <form.h>
+.sp
+int data_ahead(FORM *form);
+.sp 0.5
+int data_behind(FORM *form);
+.ft 1
+.fi
+.SH DESCRIPTION
+\f4data_ahead\fP returns \f4TRUE\f1 (\f41\f1) if the current field has more
+off-screen data ahead; otherwise it returns \f4FALSE\f1 (\f40\f1).
+.PP
+\f4data_behind\fP returns \f4TRUE (1)\fP if the current field has more
+off-screen data behind; otherwise it returns \f4FALSE (0)\fP.
+.SH NOTES
+The header file \f4<form.h>\f1 automatically includes the header files
+\f4<eti.h>\fP and \f4<curses.h>\fP.
+.SH SEE ALSO
+\f4curses\fP(3X),
+\f4forms\fP(3X)

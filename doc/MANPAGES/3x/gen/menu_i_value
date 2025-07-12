@@ -1,0 +1,56 @@
+'\"!  tbl | mmdoc
+'\"macro stdmacro
+.if n .pH g3x.menu_i_value @(#)menu_i_value	40.5 of 4/11/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.\" ident	"@(#)svid_ti:ti_lib/menu_i_value	1.3"
+.nr X
+.if \nX=0 .ds x} menu_item_value 3X "" "\&"
+.if \nX=1 .ds x} menu_item_value 3X ""
+.if \nX=2 .ds x} menu_item_value 3X "" "\&"
+.if \nX=3 .ds x} menu_item_value "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4menu_item_value\f1: \f4 set_item_value\f1, \f4item_value\f1 \- set and get \f4menus\fP item values
+.SH SYNOPSIS
+.nf
+.ft 4
+#include <menu.h>
+.sp
+int set_item_value(ITEM *item, int bool);
+.sp 0.5
+int item_value(ITEM *item);
+.ft 1
+.fi
+.SH DESCRIPTION
+Unlike single-valued menus, multi-valued
+menus enable the end-user to select one or more items from a menu.
+\f4set_item_value\fP sets the selected value of the \f2item\fP \(em
+\f4TRUE\fP (selected) or \f4FALSE\fP (not selected).
+\f4set_item_value\f1 may be used only with multi-valued menus.
+To make a menu multi-valued, use \f4set_menu_opts\f1 or
+\f4menu_opts_off\f1 to turn off the option \f4O_ONEVALUE\fP.
+[see \f4menu_opts\f1(3X)].
+.PP
+\f4item_value\fP returns the select value of \f2item\f1, either
+\f4TRUE\fP (selected) or \f4FALSE\fP (unselected).
+.SH RETURN VALUE
+\f4set_item_value\fP returns one of the following:
+.TS
+lfCWw(1.25i)1 c1 l .
+E_OK	\-	The routine returned successfully.
+E_SYSTEM_ERROR	\-	System error.
+E_REQUEST_DENIED	\-	T{
+The menu driver could not process the request.
+T}
+.TE
+.RE
+.SH NOTES
+The header file \f4<menu.h>\f1 automatically includes the header files
+\f4<eti.h>\fP and \f4<curses.h>\fP.
+.SH SEE ALSO
+.na
+\f4curses\fP(3X),
+\f4menus\fP(3X),
+\f4menu_opts\fP(3X)
+.ad

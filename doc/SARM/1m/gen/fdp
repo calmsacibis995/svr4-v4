@@ -1,0 +1,215 @@
+'\"macro stdmacro
+.if n .pH g1a.fdp @(#)fdp	40.13 of 4/15/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.ig
+This file is for delivery to OAM9.
+Reviewed by Roger Massey.
+..
+'\"macro stdmacro
+.nr X
+.if \nX=0 .ds x} fdp 1M "System Administration Utilities" "\&"
+.if \nX=1 .ds x} fdp 1M "System Administration Utilities"
+.if \nX=2 .ds x} fdp 1M "" "\&"
+.if \nX=2 .ds x} fdp "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4fdp\f1 \- create, or restore from, a full file system archive
+.SH SYNOPSIS
+\f4fdp \-B \f1[\f4\-dovAENS\f1]
+[\f4\-c\f2 count\f1]
+\f2bkjobid odpname odpdev odplab descript
+.PP
+\f4fdp \-RC \f1[\f4\-dovAENS\f1] [\f4\-c\f2 count\f1]
+\f2odpname odpdev redpname redev rsjobid descript\f1
+.SH DESCRIPTION
+The \f4fdp\fP command is invoked as a child process by other
+shell commands.
+The command name, \f4fdp\fP, is read either from the
+\f2bkhist.tab\f1 file or the \f4bkreg -m\f1 command and option.
+The \f4 -B, -R, \f1and \f4-C \f1options
+are passed to \f4fdp\fP by
+the shell commands \f4backup\fP, and \f4restore\fP.
+The other options are passed from the
+\f4bkhist.tab\f1 file or the \f4bkreg -p\f1 command and option.
+The arguments are sent to \f4fdp\fP from various locations
+in the backup service.
+.PP
+\f4fdp \-B\f1 is invoked as a child process by
+the \f4backdaemon\fP command to perform a backup of the data partition
+.I odpdev
+(the originating data partition).
+All blocks in
+the data partition are archived.
+The resulting backup is created in the format described on \f4dd\fP(1).
+The backup is recorded in the backup history log,
+\f4/etc/bkup/bkhist.tab\fP.
+.PP
+\f4fdp \-RC\f1 is invoked as a child process by the \f4rsoper\fP
+command to restore the entire data partition from an archive
+created by \f4fdp \-B\f1.
+The data partition archive is assumed to be in the format described
+on \f4dd\fP(1).
+.I
+dd(1)
+format.
+.P
+The arguments to \f4fdp\fP are defined as follows:
+.TP 0.7i
+.I bkjobid
+the job id assigned by \f2backup\fP.
+The method uses the \f2bkjobid\f1 when it creates
+history log entries.
+.TP
+.I odpname
+the name of the data partition that is to be backed up.
+Unused by \f4fdp\fP, but supplied by \f4backup\f1
+for command-line compatibility with other archiving methods.
+.TP
+.I odpdev
+the name of the
+block special device on which the data partition resides.
+.TP
+.I odplab
+the volume name on the file system [see \f4labelit\fP(1M)].
+Unused by \f4fdp\fP, but supplied by \f4backup\f1
+for command-line compatibility with other archiving methods.
+.TP
+.I descript
+is a description for a destination device in the form:
+.sp .5
+.nf
+.I
+	dgroup:dname:dchar:dlabels
+.fi
+.sp .5
+.I dgroup
+specifies a device group [see \f4devgroup.tab\fP(4)].
+.br
+\f2dname\fP
+specifies a particular device name [see \f4device.tab\fP(4)].
+.br
+.I dchars
+specifies characteristics associated with the device.
+If specified, \f2dchar\f1
+overrides the defaults for the specified device and group.
+[See \f4device.tab\fP(4)
+for a further description of device characteristics].
+.br
+.I dlabels
+specifies the volume names
+for the media to be used for reading or writing the archive.
+.TP
+.I rsjobid
+the job id assigned by \f4restore\fP.
+.TP
+.I redev
+if non-null, the partition to be restored to instead of
+.IR ofsdev .
+.TP
+.I redpname
+unused, but provided for consistency with other methods.
+.SS Options
+Some options are only significant during \f4fdp \-B\f1
+invocations;  they are accepted but ignored during
+\f4fdp \-R\f1 invocations because the command is invoked
+and options are specified automatically by \f4restore\fP.
+These options are flagged with an asterisk (*).
+.TP 10
+\f4c*\f2count\f1
+Archives or restores only the first \f2count\f1
+(512 byte) blocks of data in the data partition.
+.TP 10
+\f4d*\f1
+Inhibits recording the archive in the backup history log.
+.TP 10
+\f4o\f1
+Permits the user to override media insertion requests [see
+\f4getvol\fP(1M) and the description of the \f4\-o\fP option].
+.TP 10
+\f4v*\f1
+Validates the archive as it is written.
+A checksum is computed as the archive is being written;
+as each medium is completed, it is re-read and the checksum
+recomputed to verify that each block is readable and correct.
+If either check fails, the medium is considered unreadable.
+If \f4-A\f1 has been specified, the archiving operation fails;
+otherwise, the operator is prompted to replace the failed medium.
+.TP 10
+\f4A\f1
+Establishes automated mode,
+(that is, does not prompt the user to insert or remove media).
+.TP 10
+\f4E*\f1
+Reports an estimate of media usage for the archive;
+then performs the backup.
+.TP 10
+\f4N*\f1
+Reports an estimate of media usage for the archive;
+does not perform the backup.
+.TP 10
+\f4S\f1
+Displays
+a period (.) for every 100 (512 byte) blocks read-from or written-to
+the archive on the destination device.
+.SS User Interactions
+The connection between an archiving method and
+\f4backup\fP is more complex than a simple fork/exec or pipe.
+The \f4backup\fP command
+is responsible for all interactions with the user,
+either directly, or through the \f4bkoper\fP command.
+Therefore, \f4fdp\fP
+neither reads from standard-input nor writes to standard-output or
+standard-error.
+A method library must be used [see \f4libbrmeth\fP(3)]
+to communicate reports (estimates, filenames, periods, status, and so on)
+to \f4backup\fP.
+.SH DIAGNOSTICS
+The exit codes for \f4fdp\fP are the following:
+.PD 0
+.TP 5
+0
+successful completion of the task
+.TP
+1
+one or more parameters to \f4fdp\fP are invalid.
+.TP
+2
+an error has occurred which caused \f4fdp\fP to fail to
+complete all portions of its task.
+.PD
+.br
+.ne 1.5i
+.SH FILES
+.TP 1.75i
+\f4/etc/bkup/bkexcept.tab\fP
+lists the files that are to be excluded from an
+incremental file system backup.
+.TP
+\f4/etc/bkup/bkhist.tab\fP
+lists the labels of all volumes that have been used for backup operations.
+.TP
+\f4/etc/bkup/rsstatus.tab\fP
+tracks the status ofall restore requests from users.
+.TP
+\f4/etc/bkup/bklog\fP
+logs errors generated by the backup methods and the \f4backup\f1 command
+.TP
+\f4/etc/bkup/rslog\fP
+logs errors generated by the restore methods and the \f4restore\f1 command
+.TP
+\f4$TMP/filelist$$\fP
+temporarily stores a table of contents for a backup archive.
+.PD
+.SH SEE ALSO
+\f4backup\fP(1M),
+\f4device.tab\fP(4),
+\f4fdp\fP(1),
+\f4ffile\fP(1),
+\f4fimage\fP(1),
+\f4getvol\fP(1M),
+\f4incfile\fP(1),
+\f4labelit\fP(1M),
+\f4libbrmeth\fP(3),
+\f4prtvtoc\fP(1M),
+\f4rsoper\fP(1M)

@@ -1,0 +1,52 @@
+'\"macro stdmacro
+.if n .pH g1.whatis @(#)whatis	40.9 of 4/19/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.\" Copyright (c) 1988 Sun Microsystems, Inc. - All Rights Reserved.
+.\"
+.nr X
+.if \nX=0 .ds x} whatis 1 "BSD Compatibility Package" "\&"
+.if \nX=1 .ds x} whatis 1 "BSD Compatibility Package"
+.if \nX=2 .ds x} whatis 1 "" "\&"
+.if \nX=3 .ds x} whatis "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4whatis\f1 \- display a one-line summary about a keyword
+.SH SYNOPSIS
+\f4/usr/ucb/whatis\f1 \f2command\f1 .\ .\ .
+.SH DESCRIPTION
+\f4whatis\f1
+looks up a given
+.I command
+and displays the header line
+from the manual section.
+You can then run the
+\f4man\f1(1)
+command to get more information.
+If the line starts
+.RI ` name ( section ")\ \f1.\|.\|.'"
+you can do
+\f1`\f4man \f2section\ \ name\f1'
+to get the documentation for it.
+Try
+\f1`\f4whatis ed\f1'
+and then you should do
+\f1`\f4man 1 ed\f1'
+to get the manual page for
+\f4ed\f1(1).
+.P
+\f4whatis\f1
+is actually just the
+\f4\-f\f1
+option to the
+\f4man\f1
+command.
+.SH FILES
+.PD 0
+.TP 26
+\f4/usr/share/man/whatis\f1
+data base
+.PD
+.SH SEE ALSO
+\f4\f4man\fP(1),
+\f4\f4catman\fP(1M)

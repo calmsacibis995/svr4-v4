@@ -1,0 +1,46 @@
+'\"macro stdmacro
+.if n .pH g1a.xts @(#)xts	40.16 of 5/21/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} xts 1M "Layers Windowing Utilities" "\&"
+.if \nX=1 .ds x} xts 1M "Layers Windowing Utilities"
+.if \nX=2 .ds x} xts 1M "" "\&"
+.if \nX=3 .ds x} xts "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4xts\f1 \- extract and print xt driver statistics
+.SH SYNOPSIS
+\f4 xts [\-f]\f1
+.SH DESCRIPTION
+The
+\f4xts\fP
+command
+is a debugging tool for the \f4xt\fP(7) driver.
+It performs an
+\f4XTIOCSTATS\f1
+\f4ioctl\fP(2)
+call on its standard input file to extract the
+accumulated statistics
+for the attached group of channels.
+This call will fail if 
+the standard input is not attached to an active
+\f4xt\fP(7)
+channel.
+The statistics are
+printed one item per line on the standard output.
+.TP 8
+\f4\-f\f1
+Causes a
+``formfeed''
+character to be put out at the 
+end of the output, for the benefit of page-display programs.
+.SH DIAGNOSTICS
+Returns \f40\f1 upon successful completion, \f41\f1 otherwise.
+.SH SEE ALSO
+\f4layers\fP(1) in the \f2User's Reference Manual\f1
+.br
+\f4xtt\fP(1M), \f4ioctl\fP(2), \f4xtproto\fP(5)
+.br
+\f4xt\fP(7) in the \f2Programmer's Guide: STREAMS\f1
+.Ee

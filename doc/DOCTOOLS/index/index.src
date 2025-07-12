@@ -1,0 +1,66 @@
+#ident	"@(#)doctools:index/index.src	1.1"
+# IBIN has executable help files and troff header
+#  Prepare an index for troff using DOCTOOLS.  -m option produces master index.
+#
+#  Look only at input lines of the form
+#
+#	.\ACRONYM \t book acronym
+#	.\CHAPTER \t n
+#	.Index \t item \t page
+#
+#  A .\ACRONYM line gives an acronym or abbreviation for a book title to
+#  be used only in a master index (an index for more than one book).
+#
+#  A .\CHAPTER line gives the chapter number of the subsequent items.
+#
+#  An .Index line contains an item to be indexed and its page number.
+#
+#  DOCTOOLS writes these lines to its table-of-contents file.
+#
+# IBIN has executable help files and troff header
+PATH=$IBIN:$PATH
+TMP=.
+export PATH TMP
+#
+#  See if this is a master index.
+#
+set -- `getopt m $*`
+if
+	[ $? != 0 ]
+then
+	echo usage: $0 '[ -m ] toc files'
+	exit 2
+fi
+trap "trap 0 1 2 3 15; cd $TMP; rm addf.$$ docl.$$ rprep.$$ mkey.$$ rsort.$$ grange.$$ adash.$$\
+	gnums.$$ gbooks.$$ sitem.$$ 1>/dev/null 2>&1; exit 0 " 0 1 2 3 15
+#
+#  If this is NOT a master, get rid of acronym lines:
+MASTER='grep -v "^\.\\\ACR" |'
+#
+for i in $*
+do
+	case $i in
+	-m) MASTER=""; shift;;
+	--) shift; break;;
+	esac
+done
+#
+#  Put SCCS line at beginning of index.
+echo \.\\\" %\W\% %\P\% %\E\% %\I\% %\U\%
+#  Pass the first book title.
+cat $* | grep '^\.BK' | sed -n '1p' 
+cat $IBIN/index.head
+(
+eval "cat $* | $MASTER addfields > $TMP/addf.$$"
+doclean  $TMP/addf.$$ > $TMP/docl.$$
+range.prep $TMP/docl.$$ > $TMP/rprep.$$
+make.key $TMP/rprep.$$ > $TMP/mkey.$$
+range.sort $TMP/mkey.$$ > $TMP/rsort.$$
+get.ranges $TMP/rsort.$$ > $TMP/grange.$$
+add.dash $TMP/grange.$$ > $TMP/adash.$$
+get.nums $TMP/adash.$$ > $TMP/gnums.$$
+get.books $TMP/gnums.$$ > $TMP/gbooks.$$
+subitems $TMP/gbooks.$$ > $TMP/sitem.$$
+formati $TMP/sitem.$$
+)
+

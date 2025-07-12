@@ -1,0 +1,141 @@
+'\"macro stdmacro
+.if n .pH gen.rmalloc @(#)rmalloc	40.2 of 1/7/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.nr X
+.if \nX=0 .ds x} rmalloc D3DK "" "DDI/DKI" "\&"
+.if \nX=1 .ds x} rmalloc D3DK "" "DDI/DKI"
+.if \nX=2 .ds x} rmalloc D3DK "" "\&"
+.if \nX=3 .ds x} rmalloc "" "" "\&"
+.TH \*(x}
+.IX "\f4rmalloc\fP(D3DK)"
+.SH NAME
+\f4rmalloc\f1 \- allocate space from a private space management map
+.SH SYNOPSIS
+.nf
+.na
+\f4#include <sys/types.h>
+\f4#include <sys/map.h>
+\f4#include <sys/ddi.h>
+.sp 0.5
+ulong_t rmalloc(struct map *\f2mp, \f4size_t \f2size\f4);\f1
+.ad
+.fi
+.SH ARGUMENTS
+.RS 0n 10
+.IP "\f2mp\f1" 10n
+Pointer to the map from which space is to be allocated.
+.IP "\f2size\f1" 10n
+Number of units of space to allocate.
+.RE
+.SH DESCRIPTION
+\f4rmalloc\f1 is used by a driver to allocate space from a previously
+allocated and initialized private space management map.  The map itself is
+initially allocated either as a data array, or by the \f4kmem_alloc\f1(D3DK) function.
+The map must have been initialized by a call to \f4rminit\f1(D3K)
+and the space managed by the map must have been added using
+\f4rmfree\f1(D3DK) prior to the first call to \f4rmalloc\f1 for the map.
+.P
+\f2size\f1 specifies the amount of space to allocate and is
+in arbitrary units.
+The driver using the map places whatever semantics on the units are
+appropriate for the type of space being managed.
+For example, units may be byte addresses, pages of memory, or blocks
+on a device.
+.P
+The system allocates space from the memory map on a first-fit
+basis and coalesces adjacent space fragments when space is returned to the
+map by \f4rmfree\f1.
+.SH RETURN VALUE
+Upon successful completion, \f4rmalloc\f1 returns the base of the
+allocated space.
+If \f2size\f1 units cannot be allocated, 0 is returned.
+.SH LEVEL
+Base or Interrupt.
+.SH NOTES
+Does not sleep.
+.SH SEE ALSO
+.na
+\f4rminit\f1(D3K),
+\f4rmsetwant\f1(D3K),
+\f4rmfree\f1(D3DK)
+.ad
+.SH EXAMPLE
+The following example is a simple memory map, but it illustrates
+the principles of map management.  A driver declares a map table
+(line 4) and initializes the map table by
+calling both the \f4rminit\f1 and \f4rmfree\f1 functions.
+There are 35 entries in the map table, 32 of which can be used to
+represent space allocated.  In the driver's \f4start\fP(D2DK) routine,
+we allocate 16 Kbytes of memory using \f4kmem_alloc\fP(D3DK) (line 8).
+This is the space to be managed.  Then we call
+\f4rminit\f1 to establish the number of slots or entries in the
+map (line 10), and \f4rmfree\f1 to populate the map with the space it
+is to manage (line 11).
+.P
+In the driver's \f4read\f1(D2DK) and
+\f4write\f1(D2DK) routines, we use \f4rmalloc\fP to allocate buffers
+for data transfer.  This example illustrates the \f4write\fP routine.
+Assuming the device can only transfer \f4XX_MAXBUFSZ\fP bytes at a time,
+we calculate the amount of data to copy (line 22) and
+use \f4rmalloc\fP to allocate some space from the map.
+The call to \f4rmalloc\fP is protected against interrupts (line 23) from
+the device that may result in freeing map space.  This way, if
+space is freed, we won't miss the corresponding \f4wakeup\fP(D3K).
+.P
+If the appropriate space cannot be allocated, we use \f4rmsetwant\f1(D3K)
+to indicate that we want space (line 25) and then we sleep
+until a buffer is available.  When a buffer becomes available,
+\f4rmfree\f1 is called to return the space to
+the map and to wake the sleeping process.  Then the call to \f4rmalloc\fP
+will succeed and the driver can then transfer data.
+.ne 4
+.P
+.nf
+.ft 4
+.ps 7
+.vs 9
+ 1  #define XX_MAPSIZE	35
+ 2  #define XX_MEMSIZE	16*1024
+ 3  #define XX_MAXBUFSZ	1024
+
+ 4  struct map xx_map[XX_MAPSIZE];
+    ...
+ 5  xx_start()
+ 6  {
+ 7	register caddr_t bp;
+
+ 8	if ((bp = kmem_alloc(XX_MEMSIZE, KM_NOSLEEP)) == 0)
+ 9		cmn_err(CE_PANIC, "xx_start: could not allocate %d bytes", XX_MEMSIZE);
+10	rminit(xx_map, XX_MAPSIZE);
+11	rmfree(xx_map, XX_MEMSIZE, bp);
+12  }
+    ...
+13  xx_write(dev, uiop, crp)
+14	dev_t dev;
+15	register uio_t *uiop;
+16	cred_t *crp;
+17  {
+18	register caddr_t addr;
+19	register size_t size;
+20	register int s;
+	...
+21	while (uiop->uio_resid > 0) {
+22		size = min(uiop->uio_resid, XX_MAXBUFSZ);
+23		s = spl4();	
+24		while ((addr = (caddr_t)rmalloc(xx_map, size)) == NULL) {  
+25			rmsetwant(xx_map);
+26			sleep((caddr_t)xx_map, PZERO);
+27		}
+28		splx(s);
+  		...
+29	}
+	...
+.vs
+.ps
+.ft 1
+.fi
+.FG "Map usage"
+.IX "\f4rminit\fP(D3K), example"
+.IX "\f4rmfree\fP(D3DK), example"
+.IX "\f4rmalloc\fP(D3DK), example"
+.IX "\f4rmsetwant\fP(D3K), example"

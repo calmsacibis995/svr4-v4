@@ -1,0 +1,56 @@
+'\"!  tbl | mmdoc
+'\"macro stdmacro
+.if n .pH g3x.menu_post @(#)menu_post	40.5 of 4/11/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.\" ident	"@(#)svid_ti:ti_lib/menu_post	1.3"
+.nr X
+.if \nX=0 .ds x} menu_post 3X "" "\&"
+.if \nX=1 .ds x} menu_post 3X ""
+.if \nX=2 .ds x} menu_post 3X "" "\&"
+.if \nX=3 .ds x} menu_post "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4menu_post\f1: \f4 post_menu\f1, \f4unpost_menu\f1 \- write or erase \f4menus\fP from associated subwindows
+.SH SYNOPSIS
+.nf
+.ft 4
+#include <menu.h>
+.sp
+int post_menu(MENU *menu);
+.sp 0.5
+int unpost_menu(MENU *menu);
+.ft 1
+.fi
+.SH DESCRIPTION
+\f4post_menu\fP writes \f2menu\f1 to the subwindow.
+The application programmer must use \f4curses\fP library routines to display the
+menu on the physical screen or call \f4update_panels\f1 if the \f4panels\fP
+library is being used.
+.PP
+\f4unpost_menu\fP erases \f2menu\fP from its associated subwindow.
+.SH RETURN VALUE
+These routines return one of the following:
+.TS
+lfCWw(1.25i)1 c1 l .
+E_OK	\-	The routine returned successfully.
+E_SYSTEM_ERROR	\-	System error.
+E_BAD_ARGUMENT	\-	An incorrect argument was passed to the routine.
+E_POSTED	\-	The menu is already posted.
+E_BAD_STATE	\-	T{
+The routine was called from an initialization or termination function.
+T}
+E_NO_ROOM	\-	The menu does not fit within its subwindow.
+E_NOT_POSTED	\-	The menu has not been posted.
+E_NOT_CONNECTED	\-	No items are connected to the menu.
+.TE
+.RE
+.SH NOTES
+The header file \f4<menu.h>\f1 automatically includes the header files
+\f4<eti.h>\fP and \f4<curses.h>\fP.
+.SH SEE ALSO
+.na
+\f4curses\fP(3X),
+\f4menus\fP(3X),
+\f4panels\fP(3X)
+.ad

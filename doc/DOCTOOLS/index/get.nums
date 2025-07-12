@@ -1,0 +1,20 @@
+#ident	"@(#)doctools:index/get.nums	1.1"
+nawk ' # num.collapse
+#   Input: sort key (tab) index term (tab) roman1 [-arab2] (tab) [chapter] (tab) [book]
+#             $1              $2                 $3                 $4             $5
+#   Output: sort key (tab) index term (tab) numlist (tab) [chapter] (tab) [book]
+BEGIN	{ FS = OFS = "\t" }
+($1 != key)  ||
+($2 != term) ||
+($4 != chap) ||
+($5 != book)	{ if (NR > 1) printf "\t%s\t%s\n", chap, book
+		  key = $1
+		  term = $2
+		  chap = $4
+		  book = $5
+		  printf "%s\t%s\t%s", $1, $2, $3
+		  next
+		}
+		{ printf " %s", $3 }
+END		{ if (NR > 1) printf "\t%s\t%s\n", chap, book }
+' $*

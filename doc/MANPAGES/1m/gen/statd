@@ -1,0 +1,37 @@
+'\"macro stdmacro
+.if n .pH g1a.statd @(#)statd	40.1.1.2 of 1/3/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} statd 1M "NFS" "\&"
+.if \nX=1 .ds x} statd 1M "NFS"
+.if \nX=2 .ds x} statd 1M "" "\&"
+.if \nX=3 .ds x} statd "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4statd\f1 \- network status monitor
+.SH SYNOPSIS
+\f4/usr/lib/nfs/statd\f1
+.SH DESCRIPTION
+.LP
+\f4statd\f1
+is an intermediate version of the status monitor.
+It interacts with
+\f4lockd\f1(1M)
+to provide the crash and recovery
+functions for the locking services on \s-1NFS\s0.
+.SH FILES
+.PD 0
+.TP 20
+\f4/etc/sm\f1
+.TP
+\f4/etc/sm.bak\f1
+.TP
+\f4/etc/state\f1
+.PD
+.SH "SEE ALSO"
+.LP
+\f4lockd\f1(1M)
+.SH NOTES
+.LP
+The crash of a site is only detected upon its recovery.

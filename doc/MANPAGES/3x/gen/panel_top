@@ -1,0 +1,44 @@
+'\"macro stdmacro
+.if n .pH g3x.panel_top @(#)panel_top	40.5 of 4/11/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.\" ident	"@(#)svid_ti:ti_lib/panel_top	1.4"
+.nr X
+.if \nX=0 .ds x} panel_top 3X "" "\&"
+.if \nX=1 .ds x} panel_top 3X ""
+.if \nX=2 .ds x} panel_top 3X "" "\&"
+.if \nX=3 .ds x} panel_top "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4panel_top\f1: \f4 top_panel\f1, \f4bottom_panel\f1 \- \f4panels\fP deck manipulation routines
+.SH SYNOPSIS
+.nf
+.ft 4
+#include <panel.h>
+.sp
+int top_panel(PANEL *panel);
+.sp 0.5
+int bottom_panel(PANEL *panel);
+.ft 1
+.fi
+.SH DESCRIPTION
+\f4top_panel\fP pulls \f2panel\f1 to the top of the desk of panels.
+It leaves the size, location, and contents of its associated window
+unchanged.
+.PP
+\f4bottom_panel\fP
+puts \f2panel\f1 at the bottom of the deck of panels.
+It leaves the size, location, and contents of its associated window
+unchanged.
+.SH RETURN VALUE
+All of these routines return the integer \f4OK\fP upon
+successful completion or \f4ERR\fP upon error.
+.SH NOTES
+The header file \f4<panel.h>\f1 automatically includes the header file
+\f4<curses.h>\f1.
+.SH SEE ALSO
+.na
+\f4curses\fP(3X),
+\f4panels\fP(3X),
+\f4panel_update\fP(3X)
+.ad

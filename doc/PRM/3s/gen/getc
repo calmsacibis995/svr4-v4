@@ -1,0 +1,121 @@
+'\"macro stdmacro
+.if n .pH g3s.getc @(#)getc	40.18 of 5/22/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} getc 3S "C Development Set" "\&"
+.if \nX=1 .ds x} getc 3S "C Development Set"
+.if \nX=2 .ds x} getc 3S "" "\&"
+.if \nX=3 .ds x} getc "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4getc\f1, \f4getchar\f1, \f4fgetc\f1, \f4getw\f1 \- get character or word from a stream
+.SH SYNOPSIS
+\f4#include <stdio.h>\f1
+.PP
+\f4int getc (FILE \(**stream);\f1
+.PP
+\f4int getchar (void);\f1
+.PP
+\f4int fgetc (FILE \(**stream);\f1
+.PP
+\f4int getw (FILE \(**stream);\f1
+.SH DESCRIPTION
+\f4getc\fP
+returns the next character (i.e., byte) from the named input
+.I stream
+[see \f4intro\fP(3)]
+as an \f4unsigned char\fP converted to an \f4int\fP.
+It also moves the file pointer, if defined,
+ahead one character
+in
+.IR stream .
+\f4getchar\fP
+is defined as
+\f4getc(stdin)\fP.
+\f4getc\fP and \f4getchar\fP
+are macros.
+.PP
+\f4fgetc\fP
+behaves like
+\f4getc\fP,
+but is a function rather than a macro.
+\f4fgetc\fP
+runs more slowly than
+\f4getc\fP,
+but it takes less space per invocation
+and its name can be passed as an argument to a function.
+.PP
+\f4getw\fP
+returns the next
+word (i.e., integer) from the named input
+.IR stream.
+\f4getw\fP
+increments the associated file pointer, if defined,
+to point to the next word.
+The size of a word is the size of an integer and varies from machine
+to machine.
+\f4getw\fP
+assumes no special alignment in the file.
+.SH SEE ALSO
+\f4fclose\fP(3S),
+\f4ferror\fP(3S),
+\f4fopen\fP(3S),
+\f4fread\fP(3S),
+\f4gets\fP(3S),
+\f4putc\fP(3S),
+\f4scanf\fP(3S), \f4stdio\fP(3S),
+\f4ungetc\fP(3S).
+.SH DIAGNOSTICS
+These functions return the constant
+\f4EOF\f1
+at end-of-file or upon an error
+and set the \f4EOF\f1 or error indicator of \f2stream\fP,
+respectively.
+Because
+\f4EOF\f1
+is a valid integer,
+\f4ferror\fP
+should be used to detect
+\f4getw\fP
+errors.
+.SH NOTES
+If the integer value returned by
+\f4getc\fP,
+\f4getchar\fP,
+or
+\f4fgetc\fP
+is stored into a character variable and then compared against
+the integer constant
+\f4EOF\f1,
+the comparison may never succeed,
+because sign-extension of a character
+on widening to integer is implementation dependent.
+.P
+The macro version of
+\f4getc\fP
+evaluates a
+.I stream\^
+argument more than once
+and may treat side effects incorrectly.
+In particular,
+\f4getc(\(**f++)\f1
+does not work sensibly.
+Use 
+\f4fgetc\fP
+instead.
+.P
+Because of possible differences in word length and byte ordering,
+files written using
+\f4putw\fP
+are implementation dependent,
+and may not be read using
+\f4getw\fP
+on a different processor.
+.PP
+Functions exist for all the above-defined macros.
+To get the function form,
+the macro name must be undefined
+(e.g., \f4#undef getc\f1).
+.\"	@(#)getc.3s	6.2 of 10/20/83
+.Ee

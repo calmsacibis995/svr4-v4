@@ -1,0 +1,41 @@
+'\"macro stdmacro
+.if n .pH g1a.ics_write @(#)ics_write	40.7 of 5/17/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} ics_write 3iref "System Administration Utilities" "" "\&"
+.if \nX=1 .ds x} ics_write 3iref "System Administration Utilities" ""
+.if \nX=2 .ds x} ics_write 3iref "" "\&"
+.if \nX=3 .ds x} ics_write "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4ics_write\f1 \- writes into interconnect registers of the board
+.SH SYNOPSIS
+\f4ret\f1  \= \f4ics_write\f1 (\f2fd\f1, \f2slot\f1, \f2register\f1, \f2buf\f1, \f2count\f1);
+.br
+\f4int \f2fd\f1;
+.br
+\f4unsigned short \f2slot\f1;
+.br
+\f4unsigned short \f2register\f1;
+.br
+\f4char *\f2buf\f1;
+.br
+\f4int \f2count\f1;
+.br
+\f4int ret\f1;
+.SH DESCRIPTION
+This function will write into interconnect registers of the board in \f2slot\f1
+number slot.   \f2count\f1 registers starting from \f2register\f1 number
+register of the board are written from the values provided in the buffer
+pointed to by \f2buf\f1.
+.PP
+If there is no board in the designated \f2slot\f1, or, if the register number
+specified does not exist in the interconnect space of the board, the results
+are undefined.
+.SH NOTES
+Be careful when using \f4ics_write\f1.  With \f4ics_write\f1, an
+applications program can reset any board on the bus, possibly resulting
+in a loss of data.
+.SH FILES
+\f4/usr/lib/libmb2.a\f1

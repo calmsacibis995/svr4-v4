@@ -1,0 +1,120 @@
+'\"macro stdmacro
+.if n .pH g1a.rexecd @(#)rexecd	40.6 of 5/21/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} rexecd 1M "Internet Utilities" "\&"
+.if \nX=1 .ds x} rexecd 1M "Internet Utilities"
+.if \nX=2 .ds x} rexecd 1M "" "\&"
+.if \nX=3 .ds x} rexecd "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4rexecd\f1 \- remote execution server
+.SH SYNOPSIS
+\f4in.rexecd\f1 \f2host\f4.\fPport\f1
+.SH DESCRIPTION
+\f4rexecd\f1
+is the server for the
+\f4rexec\f1(3N)
+routine.  The server provides remote execution facilities
+with authentication based on user names and encrypted passwords.
+It is invoked automatically as needed by
+\f4inetd\f1(1M),
+and then executes the following protocol:
+.TP
+1)
+The server reads characters from the socket up
+to a null
+(\f4\e0\f1)
+byte.  The resultant string is interpreted as an
+.SM ASCII
+number, base 10.
+.TP
+2)
+If the number received in step 1 is non-zero,
+it is interpreted as the port number of a secondary
+stream to be used for the
+\f4stderr\f1.
+A second connection is then created to the specified
+port on the client's machine.
+.TP
+3)
+A null terminated user name of at most 16 characters
+is retrieved on the initial socket.
+.TP
+4)
+A null terminated, encrypted, password of at most
+16 characters is retrieved on the initial socket.
+.TP
+5)
+A null terminated command to be passed to a
+shell is retrieved on the initial socket.  The length of
+the command is limited by the upper bound on the size of
+the system's argument list.
+.TP
+6)
+\f4rexecd\f1
+then validates the user as is done at login time
+and, if the authentication was successful, changes
+to the user's home directory, and establishes the user
+and group protections of the user.
+If any of these steps fail the connection is
+aborted with a diagnostic message returned.
+.TP
+7)
+A null byte is returned on the connection associated
+with the
+\f4stderr\f1
+and the command line is passed to the normal login
+shell of the user.  The
+shell inherits the network connections established by
+\f4rexecd\f1.
+.SH "SEE ALSO"
+\f4inetd\f1(1M)
+.SH DIAGNOSTICS
+All diagnostic messages are returned on the connection
+associated with the
+\f4stderr\f1,
+after which any network connections are closed.
+An error is indicated by a leading byte with a value of
+1 (0 is returned in step 7 above upon successful completion
+of all the steps prior to the command execution).
+.TP
+\f4username too long\f1
+The name is longer than 16 characters.
+.TP
+\f4password too long\f1
+The password is longer than 16 characters.
+.TP
+\f4command too long\f1
+The command line passed exceeds the size of the argument
+list (as configured into the system).
+.TP
+\f4Login incorrect.\f1
+No password file entry for the user name existed.
+.TP
+\f4Password incorrect.\f1
+The wrong password was supplied.
+.TP
+\f4No remote directory.\f1
+The
+\f4chdir\f1
+command to the home directory failed.
+.TP
+\f4Try again.\f1
+A
+\f4fork\f1
+by the server failed.
+.TP
+\f4/usr/bin/sh: ...\f1
+The user's login shell could not be started.
+.SH NOTES
+Indicating
+\f4Login incorrect\f1
+as opposed to
+\f4Password incorrect\f1
+is a security breach which allows people to probe a system for users
+with null passwords.
+.LP
+A facility to allow all data exchanges
+to be encrypted should be present.

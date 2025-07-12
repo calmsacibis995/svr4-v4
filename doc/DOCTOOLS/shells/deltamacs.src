@@ -1,0 +1,81 @@
+#ident	"@(#)doctools:shells/deltamacs.src	1.1"
+#
+#       Copyright (c) 1989 AT&T   
+#       All Rights Reserved       
+#
+#       THIS IS UNPUBLISHED PROPRIETARY SOURCE CODE OF AT&T   
+#       The copyright notice above does not evidence any     
+#       actual or intended publication of such source code.  
+#
+#       deltamacs: shell to convert docmacs files to DOCTOOLS macros
+#
+#       Written by: J.R. Okin
+#                   AT&T Bell Laboratories
+#                   Department XT91124000
+#                   attunix!jro   201-522-5015
+#                   
+#
+# Set USAGE and check for execution errors
+USAGE="USAGE: $0 file"
+trap "trap 0; exit 0" 0 1 2 3 15
+if [ $# -lt 1 ]; then 
+   echo "\n\tNo Files Specified"
+   echo "\n\t${USAGE}"
+   exit 1
+elif [ $# -gt 1 ]; then 
+   echo "\n\tMore Than One File Was Specified"
+   echo "\n\t${USAGE}"
+   exit 1
+elif [ $# = 1 ]; then 
+   if [ ! -f "$1" ]; then
+      echo "\n\tFile *** $1 *** Not Found"
+      echo "\n\t${USAGE}"
+      exit 1
+   elif [ ! -r "$1" ]; then
+      echo "\n\tFile *** $1 *** Not Readable"
+      echo "\n\t${USAGE}"
+      exit 1
+   fi
+fi
+sed '
+/^\.Ch/ {
+s/^\.Ch /\.CH	/g
+s/\" /\"	/g
+}
+/^\.VL/ {
+/[iPc]/!s/ [0-9.]*/&n/g
+}
+/^\.AL/ {
+s/ .*$//
+}
+/^\.V[0-9]/ {
+s/^\.V/\.VS /g
+}
+s/^\.Ve/\.VE/g
+s/^\.Ss/\.SS/g
+s/^\.Se/\.SE/g
+s/^\.Ns/\.AB N/g
+s/^\.Ne/\.AC/g
+s/^\.Cs/\.AB C/g
+s/^\.Cn/\.AC/g
+s/^\.Ws/\.AB W/g
+s/^\.We/\.AC/g
+s/^\.Ix/\.IX/g
+s/^\.ix/\.IX/g
+' $1 | awk '
+BEGIN {
+FS = "	";
+}
+{
+   if ( $1 == ".CH" )
+   {
+      print ".BK "$3
+      print ".CH "$2" "$4
+      next
+   }
+   else
+   {
+      print
+   }
+}' >N$1
+echo "Created file - N$1 - in current directory"

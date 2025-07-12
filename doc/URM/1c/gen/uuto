@@ -1,0 +1,172 @@
+'\"macro stdmacro
+.if n .pH g1c.uuto @(#)uuto	40.7.1.1 of 1/3/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} uuto 1C "Basic Networking Utilities" "\&"
+.if \nX=1 .ds x} uuto 1C "Basic Networking Utilities"
+.if \nX=2 .ds x} uuto 1C "" "\&"
+.if \nX=3 .ds x} uuto "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4uuto\f1, \f4uupick\f1 \- public \s-1UNIX\s+1-to-\s-1UNIX\s+1 system file copy
+.SH SYNOPSIS
+\f4uuto\f1
+[ \f2options\fP ] \f4source-files destination\fP
+.br
+\f4uupick\f1
+[
+\f4\-s\f1
+\f2system\fP ]
+.SH DESCRIPTION
+\f4uuto\fP
+sends
+.I source-files\^
+to
+.IR destination .
+\f4uuto\fP
+uses the
+\f4uucp\fP(1C)
+facility to send files,
+while it allows the local system to control the file access.
+A source-file name is a path name on your machine.
+Destination has the form:
+.sp
+.nf
+	\f4system\fP[\f2!system\f1]\f2 ... !user\f1
+.fi
+.sp
+.PP
+where
+\f4system\fP
+is taken from a list of system names
+that
+\f4uucp\fP
+knows about (see
+\f4uuname\fP(1C)).
+.I User\^
+is the login name
+of someone on the specified system.
+.PP
+Two options are available:
+.PP
+.PD 0
+.TP 8
+\f4\-p\f1
+Copy the source file into the spool directory before transmission.
+.TP
+\f4\-m\f1
+Send mail to the sender when the copy is complete.
+.PD
+.PP
+The files (or sub-trees if directories are specified) are sent to
+\f2PUBDIR\f1
+on
+\f4system\fP,
+where
+\f2PUBDIR\f1
+is a public directory defined in the
+\f4uucp\fP
+source.
+By default, this directory is \f4/var/spool/uucppublic\f1.
+Specifically the files are sent to
+.PP
+.RS
+\s-1\f2PUBDIR\f1\s+1/receive/\f2user\fP/\f2mysystem\f1/files.
+.RE
+.PP
+The destined recipient is notified by
+\f4mail\fP(1)
+of the arrival of files.
+.PP
+\f4uupick\fP
+accepts or rejects the files transmitted to the user.
+Specifically,
+\f4uupick\fP
+searches
+\f2PUBDIR\f1
+for files destined for the user.
+For each entry (file or directory) found,
+the following message is printed on the standard output:
+.sp
+.RS
+\f4from system \f2sysname\^\f4:\f1 [\^file \f2file-name\^\f1] [dir \f2dirname\^\f1] \f4?\f1
+.RE
+.PP
+\f4uupick\fP
+then reads a line from the standard input to determine the
+disposition of the file:
+.TP 16
+<new-line>
+Go on to next entry.
+.TP
+\f4d\f1
+Delete the entry.
+.TP
+\f4m\fP [ \f2dir\^\fP ]
+Move the entry to named directory
+.I dir.\^
+If
+.I dir\^
+is not specified as a complete path name (in which \f2$HOME\f1 is
+legitimate), a destination relative to the current directory is
+assumed.  If no destination is given, the default is the current
+directory.
+.TP
+\f4a\fP [ \f2dir\^\fP ]
+Same as \f4m\f1 except moving all the files sent from
+\f4system\fP.
+.TP
+\f4p\f1
+Print the content of the file.
+.TP
+\f4q\f1
+Stop.
+.TP
+\s-1EOT\s0 (control-d)
+Same as
+\f4q\f1.
+.TP
+\f4!\f2command\^\f1
+Escape to the shell to do
+.IR command .
+.TP
+\f4\s+4*\s-4\f1
+Print a command summary.
+.PP
+\f4uupick\fP
+invoked with the
+\f4\-s \f4system\fP
+option will only search
+the
+\f2PUBDIR\f1
+for files sent from
+\f4system\fP.
+.sp
+.SH FILES
+.nf
+\s-1\f2PUBDIR\f1\s+1     /var/spool/uucppublic     public directory
+.fi
+.SH SEE ALSO
+\f4mail\fP(1),
+\f4uucp\fP(1C),
+\f4uustat\fP(1C),
+\f4uux\fP(1C).
+.br
+\f4uucleanup\fP(1M) in the \f2System Administrator's Reference Manual\f1.
+.SH NOTES
+In order to send files that begin with a dot (e.g., \s+4.\s-4profile), the files must 
+be qualified with a dot.  For example, the following files are correct:
+.DS
+
+	\s+4.\s-4profile
+	\s+4.\s-4prof\f(CW*\f1
+	\s+4.\s-4profil?
+
+The following files are incorrect:
+
+	\f(CW*\f1prof\f(CW*\f1
+	?profile
+.DE
+.\"	@(#)uuto.1c	6.2 of 9/2/83
+.Ee

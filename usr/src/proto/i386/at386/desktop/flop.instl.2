@@ -1,0 +1,965 @@
+#ident	"@(#)proto:i386/at386/desktop/flop.instl.2	1.1.1.11"
+# Enough of the system is copied to the hard disk that we can boot there
+# and copy the remainder of the system.
+
+set -a
+PATH=/sbin:/usr/bin:/etc
+PATH=$PATH:/install/sbin:/install/usr/bin:/install/etc:/install/usr/sbin
+PATH=$PATH:/etc/fs/s5
+PATH=$PATH:/install/usr/lib/tape
+ROOT=/mnt
+USER=$ROOT/usr
+STATUS=0
+STRIKE="\nStrike ENTER when ready: \c"
+ENTER_DEL="\nPlease strike ENTER when ready or DEL to cancel the installation: \c"
+#BASIC=all
+#EXTENDED=selective
+#NETWORK=all
+#DEVELOPMENT=selective
+#HARDWARD=selective
+TAPE=1
+OFS=" 	"
+BS=102400
+trap 'trap "" 1 2 3 9 15;
+	cd /;
+	echo "\n\tYou have canceled the installation of the UNIX System.
+	If you wish to re-run it, type INSTALL at the prompt.
+	Please consult your \"Installation Guide\"
+	for further information.";
+	rm -f /tmp/FLG /core /etc/.mnt.lock;
+	Restor_files
+	Do_umount
+	exit 2' 1 2 3 15
+
+cd /
+svblks=10
+newinstall=0
+vtoc=0
+rootfs=0
+usrfs=0
+gp_flag=0
+have_packages=0
+
+set +a
+#
+# Function definitions
+#
+Save_files() {
+	mv $ROOT/etc/passwd		$ROOT/etc/UGpasswd	 > /dev/null 2>&1
+	mv $ROOT/etc/profile	$ROOT/etc/UGprofile	 > /dev/null 2>&1
+	mv $ROOT/etc/shadow		$ROOT/etc/UGshadow	 > /dev/null 2>&1
+	mv $ROOT/etc/group		$ROOT/etc/UGgroup	 > /dev/null 2>&1
+	mv $ROOT/etc/Backup		$ROOT/etc/UGBackup	 > /dev/null 2>&1
+	mv $ROOT/etc/Ignore		$ROOT/etc/UGIgnore	 > /dev/null 2>&1
+	cp $ROOT/etc/vfstab		$ROOT/etc/UGvfstab	 > /dev/null 2>&1
+}
+Restor_files() {
+	mv $ROOT/etc/UGpasswd	$ROOT/etc/passwd	> /dev/null 2>&1
+	mv $ROOT/etc/UGprofile	$ROOT/etc/profile	> /dev/null 2>&1
+	mv $ROOT/etc/UGshadow	$ROOT/etc/shadow	> /dev/null 2>&1
+	mv $ROOT/etc/UGgroup	$ROOT/etc/group		> /dev/null 2>&1
+	mv $ROOT/etc/UGBackup	$ROOT/etc/Backup	> /dev/null 2>&1
+	mv $ROOT/etc/UGIgnore	$ROOT/etc/Ignore	> /dev/null 2>&1
+	cp $ROOT/etc/UGvfstab	$ROOT/etc/vfstab	> /dev/null 2>&1
+}
+Do_umount() {
+	cd /
+	umount $ROOT/home	> /dev/null 2>&1
+	umount $ROOT/stand	> /dev/null 2>&1
+	umount $ROOT/usr 	> /dev/null 2>&1
+	umount $ROOT/tmp	> /dev/null 2>&1
+	umount $ROOT/var	> /dev/null 2>&1
+	umount $ROOT/home2	> /dev/null 2>&1
+	umount /dev/dsk/0s1	> /dev/null 2>&1
+	umount $ROOT		> /dev/null 2>&1
+	sync 				> /dev/null 2>&1
+	sync 				> /dev/null 2>&1
+}
+Do_vfstab() {
+	VFSTAB=$ROOT/etc/vfstab
+	echo "/proc	-	/proc	proc	-	no	-" >>$VFSTAB
+	echo "/dev/fd	-	/dev/fd	fdfs	-	no	-" >>$VFSTAB
+	echo "/dev/dsk/f0t	/dev/rdsk/f0t	/install	s5	-	no	-" >>$VFSTAB
+	echo "/dev/dsk/f1t	/dev/rdsk/f1t	/install	s5	-	no	-" >>$VFSTAB
+	echo "/dev/dsk/f0	/dev/rdsk/f0	/install	s5	-	no	-" >>$VFSTAB
+	echo "/dev/dsk/f1	/dev/rdsk/f1	/install	s5	-	no	-" >>$VFSTAB
+}
+
+Do_mount() {
+	mount     -f ufs /dev/dsk/0s1  $ROOT ||	
+		mount -f s5 /dev/dsk/0s1   $ROOT       >/dev/null 2>&1  
+	cp $ROOT/etc/vfstab /etc/vfstab     	   >/dev/null 2>&1
+	mount     -f bfs /dev/dsk/0s10 $ROOT/stand 
+	mount     -f ufs /dev/dsk/0s3  $ROOT/usr   >/dev/null 2>&1 ||
+		mount -f s5 /dev/dsk/0s3   $ROOT/usr   >/dev/null 2>&1
+	$ROOT/usr/sbin/swap -a /dev/dsk/0s2 0 8192 >/dev/null 2>&1 
+	mount     -f ufs /dev/dsk/0s4  $ROOT/home  >/dev/null 2>&1 ||
+		mount -f s5 /dev/dsk/0s4   $ROOT/home  >/dev/null 2>&1
+	mount     -f ufs /dev/dsk/0s11 $ROOT/var   >/dev/null 2>&1 ||
+		mount -f s5 /dev/dsk/0s11  $ROOT/var   >/dev/null 2>&1
+	rm -f /etc/vfstab
+	sync
+}
+Do_shutdown () {
+	sync
+	sync
+	/usr/bin/stty -echo raw 2>/dev/null
+	echo "\n\rPlease standby.\n\n\r"
+	echo "When you are prompted to reboot your system,\n\r"
+	echo "remove the floppy disk from the diskette drive,\n\r"
+	echo "and strike CTRL-ALT-DEL.\n\rPlease wait for the prompt.\n\r"
+	uadmin 2 0 
+}
+Do_shadow () {
+	machine_type > /dev/null 2>&1
+	MACH=$?
+	case $MACH in
+	1|2|3)
+		do_shadow=""
+		echo "\nDo you want to reclaim the BIOS SHADOW RAM ?"
+		while :
+		do
+			echo "Type \"y\" or \"n\" [y] \c"
+			read do_shadow 
+
+			do_shadow=${do_shadow:="y"}
+
+			if [ "$do_shadow" = "y" ]
+			then 
+				break
+			elif [ "$do_shadow" = "n" ]
+			then
+				MACH=0
+				break
+			fi
+		done
+		;;
+	esac
+
+	case $MACH in
+	0) cp $ROOT/etc/default/default.at386 $ROOT/etc/default/boot
+	   cp $ROOT/etc/initprog/at386 $ROOT/stand ;;
+
+	1) cp $ROOT/etc/default/default.cpq $ROOT/etc/default/boot
+	   cp $ROOT/etc/initprog/compaq $ROOT/stand ;;
+
+	2) cp $ROOT/etc/default/default.att $ROOT/etc/default/boot 
+	   cp $ROOT/etc/initprog/att $ROOT/stand ;;
+
+	3) cp $ROOT/etc/default/default.att512 $ROOT/etc/default/boot 
+	   cp $ROOT/etc/initprog/att $ROOT/stand ;;
+
+	esac
+
+	chgrp sys $ROOT/etc/default/boot
+	chmod 444 $ROOT/etc/default/boot
+	if [ -f /tmp/ROOTFS ];then
+		read ROOTFS < /tmp/ROOTFS
+		echo $ROOTFS >> $ROOT/etc/default/boot
+	else
+		ROOTFS=`$ROOT/sbin/grep "root" $ROOT/etc/vfstab 2>/dev/null |
+            $ROOT/usr/bin/cut -f4 2>/dev/null` 2>/dev/null
+   		echo "rootfstype=${ROOTFS}" >> $ROOT/etc/default/boot
+	fi
+	cp $ROOT/etc/default/boot $ROOT/stand/boot
+}
+Get_list() {
+	list=$1
+	def=$2
+	[ -z $def ] && def=y
+	tmp=
+	for i in `eval echo \\$$list`
+	do
+		echo "\tInstall $i (default $def): \c"
+		read ans
+			case $def in
+			y) case $ans in
+					y*|Y*|'') tmp=" $tmp $i";;
+					 *) tmp=" $tmp skip";;
+				esac
+				;;
+			n) case $ans in
+					y*|Y*) tmp=" $tmp $i";;
+					 ''|*) tmp=" $tmp skip";;
+				esac
+				;;
+			esac
+	done
+	echo "${list}=\" $tmp \"" >/tmp/.${list}
+}
+
+Get_sys_type () {
+	echo "\n"	
+	while :
+	do
+		for i in $PKG_GROUPS
+		do
+			case $i in
+				HARDWARE) continue;;
+			esac
+			echo "\n\nThe $i Package Set contains the following packages:"
+			for j in `eval echo \\$$i`
+			do
+				if [ `expr length $j` -lt 6 ]
+				then
+					echo "\t($j)\t\t`eval echo \$\`eval echo ${j}name\``"
+				else
+					echo "\t($j)\t`eval echo \$\`eval echo ${j}name\``"
+				fi
+			done
+			echo "\nDo you wish to install any of these packages (default n): \c"
+			read ans
+			case $ans in
+			  y*|Y*) echo "\tInstall all packages (default y): \c"
+		  			read sel
+					case $sel in
+					 n*|N*)	Get_list $i y
+								;;
+						  ''|*)	echo "$i=\" `eval echo \\$$i` \"" >/tmp/.${i}
+						 		;;
+					esac
+					;;
+			esac
+		done
+		echo "\nPlease select from the following Hardware specific packages\n"
+		for j in `eval echo \\$HARDWARE`
+		do
+			if [ `expr length $j` -lt 6 ]
+			then
+				echo "\t($j)\t\t`eval echo \$\`eval echo ${j}name\``"
+			else
+				echo "\t($j)\t`eval echo \$\`eval echo ${j}name\``"
+			fi
+		done
+		echo "Do you wish to install any of these packages (default n): \c"
+		read ans
+		if [ "$ans" = "y" -o "$ans" = "Y" ]
+		then
+			Get_list HARDWARE n
+		fi
+		if [ ! -f /tmp/.BASIC -a ! -f /tmp/.NETWORK -a ! -f /tmp/.DEVELOPMENT -a ! -f /tmp/.EXTENDED -a ! -f /tmp/.HARDWARE ] 
+		then
+			echo "\nThere are no package selections:"
+		else	
+		echo "\nCurrent Package Selections:"
+		NUMLINE=0
+		SUM=0
+		export NUMLINE SUM
+		for i in $PKG_GROUPS
+		do
+			[ -f /tmp/.$i ] && {
+				echo "$i:"
+				SUM=`while read foo list
+				do
+					NUMLINE=$SUM
+					NUMLINE=\`expr $NUMLINE + 1\`
+					for i in $list
+					do
+						case $i in
+							skip|\") continue;;
+						esac
+						NUMLINE=\`expr $NUMLINE + 1\`
+						if [ \`expr $NUMLINE % 18\` -eq 0 ]  
+						then
+							echo "Press Enter to continue display" > /dev/tty
+							read ans < /dev/tty
+							NUMLINE=0
+						fi
+						echo "\t\`eval echo \$\\\`eval echo ${i}name\\\`\`" > /dev/tty
+					done
+					echo $NUMLINE
+				done </tmp/.$i`
+			}
+		done
+		fi
+		echo "\nIs this Correct (default n): \c"
+		read ans
+		case $ans in 
+			y*|Y*)	break;;
+		esac
+		rm -f /tmp/.[A-Z]*
+	done
+}
+
+elements() {
+IFS="	"
+SECOND=$2
+OPTION=$1
+SZ=$3
+while read ele name ro disk1 disk2 slice sz min_sz vfst
+do
+	if [ "$ele" = "#" -o "$ele" = "" ];then 
+		continue
+	fi
+	if [ "${OPTION}" = "REQ" ];then
+		if [ "$ro" = "R" ];then
+			if [ "$vfst" ]
+			then if [ `expr length $vfst` -ge 8 ]
+			     then TABS="\t"
+			     else TABS="\t\t"
+			     fi
+			else TABS="\t\t"
+			fi
+			echo "0\t$name\t$vfst${TABS}$ele"
+			continue
+		fi
+	fi
+	if [ "$ro" != "${OPTION}" ];then 
+		continue
+	fi
+	if [ "${OPTION}" != "R" ];then
+		echo "\nCreate a slice for ${ele} (y or n)? \c"
+		read ans < /dev/tty
+	else
+		ans=Y
+	fi
+	while [ 1 ]
+	do
+		if [ "$ans" = "y" -o "$ans" = "Y" ];then
+			if [ "$vfst" != "" ];then
+				#note any echo's during while loop must go to >&2 !!
+			    ans=`while [ 1 ]
+			    do
+					IFS=", "
+					set $vfst
+					if [ "$1" = "$vfst" ];then 
+						echo $1
+						break
+					fi
+					echo "\nPlease select the File System Type for ${name} (${ele})" >&2
+					echo "from the following list:" >&2
+					echo "\n${vfst}\t\tdefault($1): \c" >&2
+					read fans < /dev/tty
+					case $fans in
+						'') echo $1;break;;
+						ufs|bfs|s5|s52k) echo $fans;break;;
+						 *) echo "Please enter one of $vfst" >&2;;
+					esac
+			    done`
+			else 
+				ans="-"
+			fi
+			if [ "${SECOND}" = "Yes" -a "${disk2}" = "Yes" ];then
+				#note any echo's during while loop must go to >&2 !!
+				drive=`while [ 1 ]
+				do
+					echo "Please select the drive upon which you wish to install \c" >&2
+					echo "${ele} (0 or 1)? \c" >&2
+					read fdrive < /dev/tty
+					if [ "${fdrive}" = "" ];then 
+						fdrive=0
+					fi
+					if expr $fdrive : '^[0-1]$' > /dev/null;then 
+						echo $fdrive
+					    break
+					else 
+						echo "Please select 0 or 1" >&2
+					fi
+				done`
+			else
+				drive=0
+			fi
+			echo "${drive}\t${name}\t${ans}\t\t${ele}" >> /tmp/hd.lay
+			if [ "${ele}" = "/" ];then
+				echo "rootfstype=${ans}" > /tmp/ROOTFS
+			fi
+			break
+		elif [ "$ans" = "n" -o "$ans" = "N" ];then	
+			break
+		else
+			echo "Please answer \"y\" or \"n\": \c"
+			read ans < /dev/tty
+		fi
+	done
+done < /install/etc/disk.ele${SZ}
+IFS="$OFS"
+}
+
+detune () {
+MEM=$1
+DISK=$2
+SWAPMULT=$3
+THRESHOLD=12	# MB
+mv /tmp/hd.${DISK}.lay /tmp/hd.${DISK}.tmp
+
+IFS="	"
+while read slice ele fsty sz min_sz_ro
+do
+	if [ "$ele" = "/dev/swap" ];then
+		min_sz=`expr $min_sz_ro : '\(.*\)[RO]$'`
+		ro=`expr $min_sz_ro : '.*\([RO]\)$'`
+		T2=`expr $THRESHOLD \* 2`
+		if [ $MEM -gt $T2 ];then
+			min_sz=$MEM
+		else
+			if [ $MEM -gt $THRESHOLD ] ; then
+				MEMPROD=`expr $min_sz + $MEM`
+				if [ `expr $MEMPROD % 2` -ne 0 ] ; then
+					min_sz=`expr $MEMPROD / 2 + 1`
+				else
+					min_sz=`expr $MEMPROD / 2`
+				fi
+			fi
+		fi
+		min_sz_ro=${min_sz}${ro}
+		sz=${min_sz}M
+	fi
+	echo "${slice}	${ele}	${fsty}	${sz}	${min_sz_ro}" >> /tmp/hd.${DISK}.lay
+done < /tmp/hd.${DISK}.tmp
+rm -f /tmp/hd.${DISK}.tmp
+IFS="$OFS"
+}
+
+setup()
+{
+DISK=$1
+SECOND=$2
+SZ=$3
+ONEMB=1048576
+MEM=`memsize`
+IFS="	"
+
+
+if [ `expr $MEM % $ONEMB` -ne 0 ];then
+	MEM=`expr $MEM / $ONEMB + 1`
+else
+	MEM=`expr $MEM / $ONEMB`
+fi
+> /tmp/hd.${DISK}.lay
+while read drive name fsty ele
+do
+	if [ ${drive} != ${DISK} ];then 
+		continue
+	fi
+	IFS="	"
+	while read tele name ro disk1 disk2 slice sz min_sz vl
+	do
+	if [ "$ele" = "$tele" ];then
+		if [ "$ele" = "/dev/swap"  -o "$ele" = "/dev/dump" ];then
+			if [ `expr $sz : '.*m$'` -eq 0 ];then
+				min_sz=`expr $sz : '\(.*\)[MW]$'`
+			else
+				MULT=`expr $sz : '\(.*\)m$'`
+				if [ "$ele" = "/dev/swap" ];then
+					SWAPMULT=$MULT
+				fi
+				min_sz=`expr $MEM \* $MULT`
+				sz=${min_sz}M
+			fi
+		fi
+		echo "${slice}	${ele}	${fsty}	${sz}	${min_sz}${ro}" >> /tmp/hd.${DISK}.lay
+		break;
+	fi
+	done < /install/etc/disk.ele${SZ}
+done < /tmp/hd.lay
+if [ -s /tmp/hd.${DISK}.lay ];then
+	if [ ${DISK} = 0 ];then
+    detune $MEM $DISK $SWAPMULT
+		echo
+		disksetup -d /tmp/hd.${DISK}.lay -IB -b /install/etc/boot /dev/rdsk/c0t${DISK}d0s0
+    else
+		disksetup -d /tmp/hd.${DISK}.lay -I /dev/rdsk/c0t${DISK}d0s0
+	fi
+else
+	echo "\nYou have not allocated any slices/file systems on your second drive,"
+    echo "you may run \"diskadd\" after completing installation if you wish to"
+    echo "install your second drive."
+fi
+rm -f /tmp/hd.${DISK}.lay
+IFS="$OFS"
+}
+#
+# Start main code
+#
+/usr/bin/stty erase '^h'
+/usr/bin/stty echoe
+rm -f /etc/emulator.rel1  >/dev/null 2>&1
+#
+# WARNING: /etc/vfstab cannot exits for  new installs
+# 		   since disksetup will go ther first
+#
+rm -f /etc/vfstab
+OFS=" 	"
+#
+# check start up flags
+# m to create gas pump tape
+# d to turn on debugging
+#
+case $init_flags in
+	Mgp)	Do_mount
+			cd $ROOT
+			echo "\nInsert Blank Tape and $STRIKE"
+			read ans
+			echo "Creating Gas Pump tape"
+			tapecntl -w
+			sleep 5
+			tapecntl -e
+			find . -print |cpio -odVcB |dd bs=$BS >/dev/rmt/c0s0
+			cd /
+			sync
+			Do_umount
+			Do_shutdown
+			;;
+	Igp)	echo "\nInsert Gas Pump Tape and $STRIKE"
+			read ans
+			echo "\nInstall will be performed from Gas Pump Tape"
+			gp_flag=1
+			newinstall=1
+			;;
+	Shell)	Do_mount
+			OPATH=$PATH
+			PATH=$OPATH:$ROOT/sbin:$ROOT/usr/bin:$ROOT/usr/sbin
+			export PATH
+			/sbin/sh 
+			PATH=$OPATH export PATH
+			cd /
+			Do_umount
+			exit
+			;;
+	Newconfig)	Do_mount
+			Do_shadow
+			cd /
+			sync
+			Do_umount
+			Do_shutdown
+			;;
+	Debug)	set -x
+			;;
+esac
+[ -f /tape ] || TAPE=0
+. /install/PKG_INFO
+rm -f /tmp/FLG /core /etc/.mnt.lock /tmp/.[A-Z]*
+echo "\n"
+
+if [ ! -f /etc/mnttab ];then
+	> /etc/mnttab
+fi
+cd /
+Do_umount
+
+#Check to see if the VTOC is OK or if it is a pristine system
+dd if=/dev/rdsk/0s1 count=1 of=/tmp/foo> /dev/null 2>&1
+[ -s /tmp/foo ] || {
+	vtoc=1
+	newinstall=1
+	rm -f /tmp/foo
+}
+
+#Check root filesystem
+
+if [ $vtoc -eq 0 -a $gp_flag -eq 0 ];then
+	echo "Checking system configuration....\c"
+	/etc/fs/s5/mount -r /dev/dsk/0s1 $ROOT > /dev/null 2>&1
+	if [ "$?" != "0" ];then 
+		/etc/fs/ufs/mount -r /dev/dsk/0s1 $ROOT > /dev/null 2>&1
+	     if [ "$?" != "0" ];then
+			rootfs=1
+	     fi
+	fi
+	echo "...\c"
+	cp $ROOT/etc/vfstab /tmp/vfstab.old > /dev/null 2>&1
+	#
+	#Check for usr filesystem
+	#If there is one, check to see if it is ok
+	#
+	if [ "$rootfs" = "0" ];then
+		if [ -f $ROOT/etc/vfstab ];then
+			while read special fsck_dev mount_pt fs_type fsck_pass auto_mnt mnt_flgs
+			do
+			    if [ "$mount_pt" = "/usr" ];then
+				/etc/fs/${fs_type}/mount -r ${special} $ROOT/usr > /dev/null 2>&1
+				echo "...\c"
+				break
+			    fi
+			done < $ROOT/etc/vfstab
+		fi
+		#
+		#If all goes well, root is mounted on $ROOT and usr is mounted
+		#on $ROOT/usr 
+		#
+		#Check to see if this is an AT&T 4.0 system
+		#
+		echo "...\c"
+		release=`$ROOT/sbin/grep '^#define REL' $ROOT/etc/conf/pack.d/kernel/space.c 2>/dev/null |
+			$ROOT/usr/bin/cut -d"	" -f2 2>/dev/null|
+			$ROOT/usr/bin/sed 's/"//g' 2>/dev/null` 2>/dev/null
+		[ -z "$release" ] && release=foo
+
+		echo "...\c"
+		version=`$ROOT/sbin/grep '^#define VER' $ROOT/etc/conf/pack.d/kernel/space.c 2>/dev/null |
+			$ROOT/usr/bin/cut -d"	" -f2 2>/dev/null|
+			$ROOT/usr/bin/sed 's/"//g' 2>/dev/null` 2>/dev/null
+		[ -z "$version" ] && version=foo
+		#
+		# RELEASE and VERSION are set in PKG_INFO
+		#
+		echo
+		if [ $release != $RELEASE -o $version != $VERSION ];then
+			echo "\nWARNING:  You have a UNIX System installed on your hard"
+			echo "disk which is NOT AT&T UNIX System V Release $RELEASE Version $VERSION".
+			echo "Installation of the AT&T UNIX System V Release $RELEASE will"
+			echo "replace your existing system and files.\n"
+			newinstall=1
+		else
+		#
+		# See if they want to overinstall
+		#
+			while [ 1 ]
+			do
+				have_packages=0
+				echo "\nDo you wish to overlay your existing UNIX System (y or n)? \c"
+				read ans
+				case $ans in
+					n|N)	newinstall=1;break;;
+					y|Y)
+						if [ -d $ROOT/var/sadm/pkg ];then
+							cd $ROOT/var/sadm/pkg
+							for i in *
+							do
+								[ $i = usrenv ] && continue
+								[ $i = sys ] && continue
+								[ $i = dfm ] && continue
+								have_packages=1
+							done
+						fi
+						if [ -d $USER/options ];then 
+							cd $USER/options
+							for i in *.name
+							do
+								[ $i = \*.name ] && continue
+								have_packages=1
+							done
+						fi
+						if [ $have_packages -eq 1 ];then
+							echo "\nThere are currently add-on packages installed on the system."
+							echo "You must remove them prior to attempting an overlay installation"
+							echo "Please consult your \"Installation Guide\" for further information."
+			    			cd /
+							Do_umount
+							Do_shutdown
+						else
+							#
+							# add a swap on hard disk
+							#
+							$ROOT/usr/sbin/swap -a /dev/dsk/0s2 0 8192 >/dev/null 2>&1 
+							newinstall=0
+							break
+						fi;;
+					""|*) echo "Please answer \"y\" or \"n\" ";;
+				esac
+			done
+		fi
+	else 
+		newinstall=1
+	fi
+	echo "\n"
+fi
+Do_umount
+if [ $newinstall -eq 1 ];then
+	echo "\nWARNING: A new installation of the UNIX System will destroy"
+	echo "all files currently on the system."
+	echo "Do you wish to continue (y or n)?  \c"
+	read ans
+	while [ "$ans" != "y" -a "$ans" != "n" -a "$ans" != "Y" -a "$ans" != "N" ]
+	do
+		echo "\nInstall a new system (y or n)?  \c"
+		read ans
+	done
+	case $ans in
+		n*|N*)	cd /;exit 0;;
+	esac
+
+	while [ 1 ]
+	do
+		FLG=0; export FLG
+		SECOND=No
+
+		rm -f /tmp/FLG /core /etc/.mnt.lock
+		# check to see if theres a second disk
+		[ $gp_flag -eq 0 ] && Get_sys_type
+		( < /dev/rdsk/c0t1d0s0 ) > /dev/null 2>&1
+		[ $? = 0 ] && SECOND=Yes
+		if [ "${SECOND}" = "Yes" ];then
+			echo "This system is equipped with two hard disk devices"
+			echo "that can be used for installation of the UNIX System.\n"
+			echo "You can elect to install the entire UNIX System on the"
+			echo " primary hard disk, or to install some of the UNIX System"
+			echo "component onto the secondary hard disk, allowing you,"
+			echo "for example, to create a larger root file system on the primary.\n"
+			echo "The next step will create partition(s) on your hard disk(s)."
+			echo "Even if you partition both hard disks now, you may still"
+			echo "elect to install the UNIX System just on the primary hard disk.\n"
+			echo "Do you wish to partition both hard disks at this time (y or n)? \c"
+			while read ans
+			do
+				if [ "$ans" = "y" -o "$ans" = "Y" -o "$ans" = "n" -o "$ans" = "N" ];then 
+					break;
+				else 
+					echo "\nPartition both hard disks (y or n)? \c"
+				fi
+			done
+			if [ "$ans" = "y" -o "$ans" = "Y" ];then 
+				SECOND=Yes
+			else 
+				SECOND=No
+			fi
+		fi
+		echo "\n\nIf you wish to use  part of your hard disk for other"
+		echo "operating system(s) other than the UNIX System, such"
+		echo "as MS-DOS, that space MUST be reserved now."
+		echo "$ENTER_DEL"
+		read ans
+		fdisk /dev/rdsk/c0t0d0s0
+		SZ=`partsize /dev/rdsk/c0t0d0s0`
+		if [ "${SECOND}" = "Yes" ];then
+			echo "You are about to partition hard disk 1.\n$ENTER_DEL"
+			read ans
+			fdisk /dev/rdsk/c0t1d0s0
+			SZ0=$SZ
+			SZ1=`partsize /dev/rdsk/c0t1d0s0`
+			SZ=`expr $SZ0 + $SZ1`
+		fi
+		if [ $SZ -lt 35 ];then
+			echo "You have allocated less than 35 megabytes to "
+			echo "the UNIX Operating System."
+			echo "Please restart the Installation and allocate more.\n"
+			cd /
+			Do_umount
+			exit 1
+		fi
+		if [ $SZ -lt 130 ];then
+			SMALL=sm
+		else
+			SMALL=""
+		fi
+		echo "You have allocated $SZ megabytes to the UNIX Operating System.\n\n"
+		if [ "${SECOND}" = "Yes" ];then
+			echo "Disk 0 has $SZ0 megabytes, disk 1 has $SZ1 megabytes.\n"
+		fi
+
+		derr=1
+
+		echo "The following hard disk elements are required and"
+		echo "must reside on your primary (disk 0) hard disk:"
+		echo "Drive\tName            \tType\t\tFile System/Slice"
+		echo "-----\t----------------\t----\t\t-----------------"
+		elements REQ ${SECOND} ${SMALL}
+
+		while [ 1 ]
+		do
+			> /tmp/hd.lay
+			elements R ${SECOND} ${SMALL}
+
+			echo "\nDo you wish to create any optional"
+			echo "disk slices or filesystems (y or n)? \c"
+			while read ans
+			do
+			if [ "$ans" = "y" -o "$ans" = "Y" ];then
+				elements O ${SECOND} ${SMALL}
+			elif [ "$ans" != "n" -a "$ans" != "N" ];then 
+				echo "Please answer \"y\" or \"n\": \c"
+			     continue
+			fi
+			break
+			done
+			echo "\nThe Hard disk layout you have selected is:\n"
+			echo "Drive\tName            \tType\t\tFile System/Slice"
+			echo "-----\t----------------\t----\t\t-----------------"
+			cp /tmp/hd.lay /dev/console
+			echo "\nIs this correct (y or n)? \c"
+			while read ans
+			do
+				if [ "$ans" = "y" -o "$ans" = "Y" -o "$ans" = "n" -o "$ans" = "N" ];then 
+					break
+				else 
+					echo "Please answer \"y\" or \"n\": \c"
+				fi
+			done
+			if [ "$ans" = "y" -o "$ans" = "Y" ];then 
+				break
+			fi
+		done
+
+		dd if=/dev/rdsk/0s1 of=/dev/null bs=512 count=1 > /dev/null 2>&1
+		setup 0 ${SECOND} ${SMALL}
+		if [ "${SECOND}" = "Yes" ];then
+			setup 1 ${SECOND} ${SMALL}
+		fi
+		sync
+		echo "\n"
+		if [ -f /tmp/FLG ];then 
+			FLG=1
+		     rm -f  /tmp/FLG
+		fi
+		if [ $FLG = 0 ];then
+			break
+		else
+			echo "\nAn error has occured while setting up your hard disk.\n"
+			echo "$STRIKE to install again."
+			read a
+			continue
+		fi
+	done
+	sync
+else		 #an overlay installation 
+	echo "\nWARNING:\n\tA system backup is suggested"
+	echo "\tprior to doing a system overlay.\n"
+	echo "\tTo proceed with the installation strike ENTER,"
+	echo "\totherwise, strike DEL to cancel the installation. \c"
+	read ans
+	while [ "$ans" != "" ]
+	do
+		echo $ENTER_DEL
+		read ans
+	done
+
+	cd /
+	#determine if there is enough space to save the files
+	while read special fsck_dev mount_pt fs_type fsck_pass auto_mnt mnt_flgs
+	do
+	if [ "$mount_pt" = "/" -o "$mount_pt" = "/usr" -o "$mount_pt" = "/stand" -o "$mount_pt" = "/var" -o "$mount_pt" = "/home" ];then
+    if [ "$mount_pt" = "/" ];then
+        echo "rootfstype=${fs_type}" > /tmp/ROOTFS
+    fi
+	echo "..."
+	/etc/fs/${fs_type}/mount ${special} $ROOT${mount_pt} > /dev/null 2>&1
+	if [ $? != 0 ];then 
+		echo "Cleaning the $mount_pt filesystem..."
+		/etc/fs/${fs_type}/fsck -y ${fsck_dev} > /dev/null 2>&1
+		sync
+		sync
+		sleep 2
+	    /etc/fs/${fs_type}/mount ${special} $ROOT${mount_pt} > /dev/null 2>&1
+	    if [ $? != 0 ];then 
+			cd /
+			echo "\nYou will be unable to do an overlay because the "
+			echo "$mount_pt filesystem was found to be unmountable."
+			echo "Please consult your \"Installation Guide\" for further information."
+			Do_umount
+			Do_shutdown
+	     fi
+	fi
+	fi
+	done < /tmp/vfstab.old
+
+	cp /tmp/vfstab.old /etc/vfstab > /dev/null 2>&1
+	blks=`$ROOT/sbin/df $ROOT | $USER/bin/tr -s " " ":" | $USER/bin/cut -d":" -f4`
+	rm -f /etc/vfstab
+	if [ "$blks" -lt "$svblks" ];then
+		cd /
+		echo "\nThere is not enough space in the root filesystem on your hard disk"
+		echo "to back up files for a system overlay.  Please remove some files and"
+		echo "try again.  Consult your \"Installation Guide \" for further information."
+		Do_umount
+		exit 1
+	fi
+	cd /
+	Save_files
+	Get_sys_type
+fi
+
+echo "\nA UNIX System will now be installed on your hard disk"
+if [ -f /install/gp -o $gp_flag -eq 1 ];then
+	cd $ROOT
+	[ -f etc/vfstab ] && mv etc/vfstab etc/vfstab+
+	dd if=/dev/rmt/c0s0 bs=$BS |cpio -idVucB
+	[ -f etc/vfstab+ ] && mv etc/vfstab+ etc/vfstab
+	Do_vfstab
+	cp /install/gp_setup etc/rc2.d/S10setup
+	sync
+	cd /
+	sync
+	Do_umount
+	sync
+
+else
+
+	cd /
+	rm -f $ROOT/unix
+	echo ".\c"
+	cp unix $ROOT || STATUS=1
+	chmod 775 $ROOT
+	chmod 744 $ROOT/unix
+	chown root $ROOT $ROOT/unix
+	chgrp sys $ROOT
+	chgrp other $ROOT/unix
+	echo ".\c"
+	cp $ROOT/unix $ROOT/stand/unix || STATUS=1
+	if [ $STATUS -eq 1 ];then
+		echo "WARNING: copy of unix kernel failed !"
+	else
+		echo ".\c"
+	fi
+	umount $ROOT/tmp > /dev/null 2>&1
+	umount $ROOT/home2 > /dev/null 2>&1
+	#
+	# make sure to take tag files from first floppy
+	# (as long as they are needed)
+	find dev etc usr sbin var ad* wd* dpt* special* tape -print 2>/dev/null | cpio -pdmu $ROOT > /dev/null 2>&1
+	echo ".\c"
+	umount $ROOT/var > /dev/null 2>&1
+	find var -print | cpio -pdmu $ROOT > /dev/null 2>&1
+	echo ".\c"
+	cd /install
+	find usr sbin etc -print 2>/dev/null | cpio -pdmu $ROOT > /dev/null 2>&1
+	echo ".\c"
+	cd /
+	disksetup -b /install/etc/boot /dev/rdsk/c0t0d0s0
+	echo ".\c"
+	mv $ROOT/etc/inittab2 $ROOT/etc/inittab
+	sync
+	echo ".\c"
+	cp .profile $ROOT
+	echo ".\c"
+	[ -d $ROOT/tmp ]   || mkdir $ROOT/tmp 
+	[ -d $ROOT/mnt ]   || mkdir $ROOT/mnt 
+	[ -d $ROOT/usr ]   || mkdir $ROOT/usr 
+	[ -d $ROOT/home ]  || mkdir $ROOT/home 
+	[ -d $ROOT/home2 ] || mkdir $ROOT/home2 
+	[ -d $ROOT/stand ] || mkdir $ROOT/stand 
+	echo ".\c"
+	cp /install/hd.instl.1 $ROOT/tmp/INSTALL
+	cp /install/hd.instl.2 $ROOT/tmp
+	cp /install/hd.instl.3 $ROOT/tmp
+	echo ".\c"
+	cp /install/readfloppy /LABEL $ROOT/tmp 
+	cp /install/PKG_INFO $ROOT/tmp/PKG_INFO.flop
+	[ -f /tape ] && cp /tape $ROOT/tmp/qt
+	#
+	#
+	for z in $PKG_GROUPS
+	do
+		echo ".\c"
+		[ -f /tmp/.$z ] && cp /tmp/.$z $ROOT/tmp/.$z
+	done
+	sync
+	echo ".\c"
+	mv $ROOT/sbin/-sh $ROOT/tmp/-sh
+	find dev/console -print | cpio -pdmu $ROOT/tmp > /dev/null 2>&1
+	echo ".\c"
+	sync
+
+	echo ".\c"
+	Do_vfstab
+	rm -f /etc/vfstab
+	Do_shadow
+
+	umount $ROOT/home > /dev/null 2>&1
+	umount $ROOT/stand > /dev/null 2>&1
+	umount $ROOT/usr > /dev/null 2>&1
+	#
+	# Put an extra copies of things needed at boot time on the boot disk, 
+	# in the root partition
+	#
+	mkdir $ROOT/usr $ROOT/usr/bin $ROOT/usr/lib > /dev/null 2>&1
+	cp /usr/bin/stty $ROOT/usr/bin/stty
+	cp /install/usr/bin/ch* $ROOT/usr/bin
+	cp /install/usr/lib/libc.so.1 $ROOT/usr/lib
+	cp /install/usr/bin/dd $ROOT/sbin/dd
+	rm $ROOT/etc/mnttab
+	echo ".\c"
+
+	ln $ROOT/dev/dsk/0s2 $ROOT/dev/swap
+	umount /dev/dsk/0s1 > /dev/null 2>&1
+fi
+Do_shutdown

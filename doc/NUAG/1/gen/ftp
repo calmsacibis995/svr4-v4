@@ -1,0 +1,1115 @@
+'\"macro stdmacro
+.if n .pH g1.ftp @(#)ftp	40.13 of 5/21/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} ftp 1 "Internet Utilities" "\&"
+.if \nX=1 .ds x} ftp 1 "Internet Utilities"
+.if \nX=2 .ds x} ftp 1 "" "\&"
+.if \nX=3 .ds x} ftp "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4ftp\f1 \- file transfer program
+.SH SYNOPSIS
+\f4ftp\f1
+[ 
+\f4\-dgintv\f1
+] 
+[
+.I hostname
+]
+.SH DESCRIPTION
+.LP
+The
+\f4ftp\f1
+command
+is the user interface to the
+.SM ARPANET
+standard File Transfer Protocol (\s-1FTP\s0).
+\f4ftp\f1
+transfers files to and from a remote network site.
+.LP
+The client host with which 
+\f4ftp\f1
+is to communicate may be specified on the command line.
+If this is done,
+\f4ftp\f1
+immediately attempts to establish a connection to an
+.SM FTP
+server on that host;
+otherwise, 
+\f4ftp\f1
+enters its command interpreter and awaits instructions
+from the user.  When 
+\f4ftp\f1
+is awaiting commands from the user, it
+displays the prompt
+\f4ftp>\f1.  
+.LP
+The following options may be specified at the command line, or to the 
+command interpreter:
+.TP
+\f4\-d\f1
+Enable debugging.
+.TP
+\f4\-g\f1
+Disable filename \(lqglobbing.\(rq
+.TP
+\f4\-i\f1
+Turn off interactive prompting during multiple file transfers.
+.TP
+\f4\-n\f1
+Do not attempt \(lqauto-login\(rq upon initial connection.
+If auto-login is not disabled, 
+\f4ftp\f1
+checks the
+\f4\&.netrc\f1
+file in the user's home directory for an entry describing
+an account on the remote machine.  If no entry exists,
+\f4ftp\f1
+will prompt for the login name of the account on the remote machine (the
+default is the login name on the local machine), and, if necessary,
+for a password and an account with which to log in.
+.TP
+\f4\-t\f1
+Enable packet tracing (unimplemented).
+.TP
+\f4\-v\f1
+Show all responses from the remote server, as well
+as report on data transfer statistics.  This is turned on by
+default if
+\f4ftp\f1
+is running interactively with its input coming from the user's terminal.
+.LP
+The following commands can be specified to the command interpreter:
+.HP
+\f4!\f1
+.RI [ " command " ]
+.br
+Run
+.I command
+as a shell command on the local machine.
+If no 
+.I command
+is given, invoke an interactive shell.
+.HP
+\f4$ \f2macro-name\f1 [ \f2args\f1 ]
+.br
+Execute the macro
+.I macro-name
+that was defined with the
+\f4macdef\f1
+command.
+Arguments are passed to the macro unglobbed.
+.HP
+\f4account\f1
+.RI [ " passwd " ]
+.br
+Supply a supplemental password required by a remote system for access
+to resources once a login has been successfully completed.
+If no argument is included, the user will be prompted for an account
+password in a non-echoing input mode.
+.HP
+\f4append \f2local-file\f1
+.RI [ " remote-file " ]
+.br
+Append a local file to a file on the remote machine.  If
+.I remote-file
+is not specified, the local file name is used, subject to alteration
+by any
+\f4ntrans\f1
+or
+\f4nmap\f1
+settings.
+File transfer uses the current settings for
+\(lqrepresentation type\(rq, \(lqfile structure\(rq,
+and \(lqtransfer mode\(rq.
+.TP
+\f4ascii\f1
+Set the \(lqrepresentation type\(rq
+to \(lqnetwork
+.SM ASCII\s0\(rq.
+This is the default type.
+.TP
+\f4bell\f1
+Sound a bell after each file transfer
+command is completed.
+.TP
+\f4binary\f1
+Set the \(lqrepresentation type\(rq to \(lqimage\(rq.
+.TP
+\f4bye\f1
+Terminate the
+.SM FTP
+session with the remote server and exit
+\f4ftp\f1.
+An
+.SM EOF
+will also terminate the session and exit.
+.br
+.ne 5
+.TP
+\f4case\f1
+Toggle remote computer file name case mapping during
+\f4mget\f1
+commands.
+When
+\f4case\f1
+is on (default is off), remote computer
+file names with all letters in
+upper case are written in the
+local directory with the letters mapped
+to lower case.
+.TP
+\f4cd \f2remote-directory\f1
+Change the working directory on the remote machine to 
+.IR remote-directory .
+.TP
+\f4cdup\f1
+Change the remote machine working directory to the parent of the
+current remote machine working directory.
+.TP
+\f4close\f1
+Terminate the 
+.SM FTP
+session with the remote server, and
+return to the command interpreter.
+Any defined macros are erased.
+.TP
+\f4cr\f1
+Toggle
+.SM RETURN
+stripping during \(lqnetwork
+.SM ASCII\s0\(rq
+type file retrieval.
+Records are denoted by a
+.SM RETURN/LINEFEED
+sequence during \(lqnetwork
+.SM ASCII\s0\(rq
+type file transfer.
+When
+\f4cr\f1
+is on (the default),
+.SM RETURN
+characters are stripped from this
+sequence to conform with the
+.SM UNIX
+system single
+.SM LINEFEED
+record delimiter.
+Records on non-\s-1UNIX\s0-system remote hosts may contain single
+.SM LINEFEED
+characters; when an \(lqnetwork
+.SM ASCII\s0\(rq
+type transfer is made, these
+.SM LINEFEED
+characters may be
+distinguished from a record delimiter only when
+\f4cr\f1
+is off.
+.TP
+\f4delete \f2remote-file\f1
+Delete the file
+.I remote-file
+on the remote machine.
+.HP
+\f4debug\f1
+.br
+Toggle debugging mode. 
+When debugging is on,
+\f4ftp\f1
+prints each command sent to the remote machine, preceded
+by the string
+\f4-->\f1.
+.HP
+\f4dir\f1
+.RI [ " remote-directory " "] [ " local-file " ]"
+.br
+Print a listing of the directory contents in the
+directory,
+.IR remote-directory ,
+and, optionally, placing the output in
+.IR local-file .
+If no directory is specified, the current working
+directory on the remote machine is used.  If no local
+file is specified, or
+.I local-file
+is
+\f4\-\f1,
+output is sent to the terminal.
+.TP
+\f4disconnect\f1
+A synonym for
+\f4close\f1.
+.TP
+\f4form\f1
+.RI [ " format-name " ]
+.br
+Set the carriage control format subtype of the
+\(lqrepresentation type\(rq to
+.IR format-name .
+The only valid
+.I format-name
+is
+\f4non-print\f1,
+which corresponds to the default \(lqnon-print\(rq subtype.
+.HP
+\f4get \f2remote-file\f1
+.RI [ " local-file " ]
+.br
+Retrieve the 
+.I remote-file
+and store it on the local machine.  If the local
+file name is not specified, it is given the same
+name it has on the remote machine, subject to
+alteration by the current
+\f4case\f1,
+\f4ntrans\f1,
+and
+\f4nmap\f1
+settings.
+The current settings for \(lqrepresentation type\(rq,
+\(lqfile structure\(rq, and \(lqtransfer mode\(rq
+are used while transferring the file.
+.TP
+\f4glob\f1
+Toggle filename expansion, or \(lqglobbing\(rq,  
+for
+\f4mdelete\f1,
+\f4mget\f1
+and
+\f4mput\f1.
+If globbing is turned off, filenames are taken literally.
+.IP
+Globbing for
+\f4mput\f1
+is done as in
+\f4sh\f1(1).
+For
+\f4mdelete\f1
+and
+\f4mget\f1,
+each remote file name is
+expanded separately on the remote machine, and the lists are not merged.
+.IP
+Expansion of a directory name is likely to be radically
+different from expansion of the name of an ordinary file:
+the exact result depends on the remote operating system and
+.SM FTP
+server, and can be previewed by doing
+\f4mls\ \fIremote-files\fP\ \-\f1.
+.IP
+\f4mget\f1
+and 
+\f4mput\f1
+are not meant to transfer
+entire directory subtrees of files.  You can do this by
+transferring a
+\f4tar\f1(1)
+archive of the subtree (using a
+\(lqrepresentation type\(rq of \(lqimage\(rq as set by the
+\f4binary\f1
+command).
+.TP
+\f4hash\f1
+Toggle hash-sign 
+(\f4#\f1)
+printing for each data block transferred.
+The size of a data block is 8192 bytes.
+.HP
+\f4help\f1
+.RI [ " command " ]
+.br
+Print an informative message about the meaning of
+.IR command .
+If no argument is given, 
+\f4ftp\f1
+prints a list of the known commands.
+.HP
+\f4lcd\f1
+.RI [ " directory " ]
+.br
+Change the working directory on the local machine.
+If no 
+.I directory
+is specified, the user's home directory is used.
+.HP
+\f4ls\f1
+.RI [ " remote-directory " "] [" " local-file " ]
+.br
+Print an abbreviated listing of the contents of a
+directory on the remote machine.  If
+.I remote-directory
+is left unspecified, the current working directory
+is used.  If no local file is specified, 
+or if
+.I local-file
+is
+\f4\-\f1,
+the output is sent to the terminal.
+.TP
+\f4macdef \f2macro-name\f1
+Define a macro.
+Subsequent lines are stored as the macro
+.IR macro-name ;
+a null line (consecutive
+.SM NEWLINE
+characters in a file or
+.SM RETURN
+characters from the terminal) terminates macro input mode.
+There is a limit of 16 macros and 4096 total characters in all
+defined macros.
+Macros remain defined until a
+\f4close\f1
+command is executed.
+.IP
+The macro processor interprets
+\f4$\f1
+and
+\f4\e\f1
+as special characters.
+A
+\f4$\f1
+followed by a number (or numbers) is replaced by the
+corresponding argument on the macro invocation command line.
+A
+\f4$\f1
+followed by an
+\f4i\f1
+signals that macro processor that the
+executing macro is to be looped. On the first pass
+\f4$i\f1
+is replaced by the first argument on the macro invocation command line,
+on the second pass it is replaced by the second argument, and so on.
+A
+\f4\e\f1
+followed by any character is replaced by that character.
+Use the
+\f4\e\f1
+to prevent special treatment of the
+\f4$\f1.
+.HP
+\f4mdelete\f1
+.RI [ " remote-files " ]
+.br
+Delete the
+.I remote-files
+on the remote machine.
+.TP
+\f4mdir \f2remote-files local-file\f1
+Like
+\f4dir\f1,
+except multiple remote files may be specified.
+If interactive prompting is on,
+\f4ftp\f1
+will prompt the user to verify that the last argument is indeed the
+target local file for receiving
+\f4mdir\f1
+output.
+.TP
+\f4mget \f2remote-files\f1
+Expand the
+.I remote-files
+on the remote machine and do a
+\f4get\f1
+for each file name thus produced.
+See
+\f4glob\f1
+for details on the filename expansion.
+Resulting file names will then be processed according to
+\f4case\f1,
+\f4ntrans\f1,
+and
+\f4nmap\f1
+settings.
+Files are transferred into the local working directory,
+which can be changed with
+\f4lcd \f2directory\f1;
+new local directories can be created with
+\f4! mkdir \f2directory\f1.
+.TP
+\f4mkdir \f2directory-name\f1
+Make a directory on the remote machine.
+.TP
+\f4mls \f2remote-files local-file\f1
+Like
+\f4ls\f1(1),
+except multiple remote files may be specified.
+If interactive prompting is on,
+\f4ftp\f1
+will prompt the user to verify that the last argument is indeed the
+target local file for receiving
+\f4mls\f1
+output.
+.HP
+\f4mode\f1
+.RI [ " mode-name " ]
+.br
+Set the \(lqtransfer mode\(rq to
+.IR mode-name .
+The only valid
+.I mode-name
+is
+\f4stream\f1,
+which corresponds to the default \(lqstream\(rq mode.
+This implementation only supports
+\f4stream\f1,
+and requires that it be specified.
+.TP
+\f4mput \f2local-files\f1
+Expand wild cards in the list of local files given as arguments
+and do a
+\f4put\f1
+for each file in the resulting list.
+See
+\f4glob\f1
+for details of filename expansion.
+Resulting file names will then be processed according to
+\f4ntrans\f1
+and
+\f4nmap\f1
+settings.
+.br
+.ne 6
+.HP
+\f4nmap\f1
+.RI [ " inpattern outpattern " ]
+.br
+Set or unset the filename mapping mechanism.
+If no arguments are specified, the filename mapping mechanism is unset.
+If arguments are specified, remote filenames are mapped during
+\f4mput\f1
+commands and
+\f4put\f1
+commands issued without a specified remote target filename.
+If arguments are specified, local filenames are mapped during
+\f4mget\f1
+commands and
+\f4get\f1
+commands issued without a specified local target filename.
+.IP
+This command is useful when connecting to a non-\s-1UNIX\s0-system
+remote host with different file naming conventions or practices.
+The mapping follows the pattern set by
+.I inpattern
+and
+.IR outpattern .
+.I inpattern
+is a template for incoming filenames (which may have already been
+processed according to the
+\f4ntrans\f1
+and
+\f4case\f1
+settings).
+Variable templating is accomplished by including the sequences
+\f4$1\f1, \f4$2\f1, .\|.\|.\|, \f4$9\f1
+in
+.IR inpattern .
+Use
+\f4\e\f1
+to prevent this\p
+.br
+.ne.5i
+special treatment of the
+\f4$\f1
+character.
+All other characters are treated literally, and are used to determine the
+\f4nmap\f1
+.I inpattern
+variable values.
+.IP
+For example, given
+.I inpattern
+\f4$1.$2\f1
+and the remote file name
+\f4mydata.data\f1,
+\f4$1\f1
+would have the value 
+\f4mydata\f1, and
+\f4$2\f1
+would have the value \f4data\f1.
+.IP
+The
+.I outpattern
+determines the resulting mapped filename.
+The sequences
+\f4$1\f1, \f4$2\f1, .\|.\|.\|, \f4$9\f1
+are replaced by any value resulting from the
+.I inpattern
+template.
+The sequence
+\f4$0\f1
+is replaced by the original filename.
+Additionally, the sequence
+.RI [ \|seq1\| , \|seq2\| ]
+is replaced by
+.I seq1
+if
+.I seq1
+is not a null string; otherwise it is replaced by
+.IR seq2 .
+.IP
+For example, the command
+\f4nmap $1.$2.$3 [$1,$2].[$2,file]\f1
+would yield the output filename
+\f4myfile.data\f1
+for input filenames
+\f4myfile.data\f1
+and
+\f4myfile.data.old\f1,
+\f4myfile.file\f1
+for the input filename
+\f4myfile\f1,
+and
+\f4myfile.myfile\f1
+for the input filename
+\f4myfile\f1.
+.SM SPACE
+characters may be included in
+\f2outpattern\f1,
+as in the example 
+\f4nmap $1 | sed "s/  *$//" > $1\f1.
+Use the
+\f4\e\f1
+character to prevent special treatment
+of the
+\f4$\f1,
+\f4[\f1,
+\f4]\f1,
+and
+\f4,\f1,
+characters.
+.HP
+\f4ntrans\f1 [
+.IR inchars " [ " outchars " ] ]"
+.br
+Set or unset the filename character translation mechanism.
+If no arguments are specified, the filename character
+translation mechanism is unset.
+If arguments are specified, characters in
+remote filenames are translated during
+\f4mput\f1
+commands and
+\f4put\f1
+commands issued without a specified remote target filename, and
+characters in local filenames are translated during
+\f4mget\f1
+commands and
+\f4get\f1
+commands issued without a specified local target filename.
+.IP
+This command is useful when connecting to a non-\s-1UNIX\s0-system
+remote host with different file naming conventions or practices.
+Characters in a filename matching a character in
+.I inchars
+are replaced with the corresponding character in
+.IR outchars .
+If the character's position in
+.I inchars
+is longer than the length of
+.IR outchars ,
+the character is deleted from the file name.
+.HP
+\f4open \f2host\f1
+.RI [ " port " ]
+.br
+Establish a connection to the specified
+.I host
+.SM FTP
+server.
+An optional port number may be supplied, in which case, 
+\f4ftp\f1
+will attempt to contact an 
+.SM FTP
+server at that port.
+If the 
+.I auto-login
+option is on (default setting), 
+\f4ftp\f1
+will also attempt to automatically log the user in to the 
+.SM FTP
+server.
+.TP
+\f4prompt\f1
+Toggle interactive prompting. 
+Interactive prompting
+occurs during multiple file transfers to allow the
+user to selectively retrieve or store files.
+By default, prompting is turned on.
+If prompting is turned off, any
+\f4mget\f1
+or
+\f4mput\f1
+will transfer all files, and any
+\f4mdelete\f1
+will delete all files.
+.TP
+\f4proxy \f2ftp-command\f1
+Execute an 
+.SM FTP
+command on a secondary control connection.
+This command allows simultaneous connection to two remote 
+.SM FTP
+servers for transferring files between the two servers.
+The first
+\f4proxy\f1
+command should be an
+\f4open\f1,
+to establish the secondary control connection.
+Enter\p
+.br
+.ne.5i
+the command
+\f4proxy ?\f1
+to see other 
+.SM FTP
+commands executable on the secondary connection.
+.br
+.ne 8
+.IP
+The following commands behave differently when prefaced by
+\f4proxy\f1:
+\f4open\f1
+will not define new macros during the auto-login process,
+\f4close\f1
+will not erase existing macro definitions,
+\f4get\f1
+and
+\f4mget\f1
+transfer files from the host on the primary control connection
+to the host on the secondary control connection, and
+\f4put\f1,
+\f4mputd\f1,
+and
+\f4append\f1
+transfer files from the host on the secondary control connection
+to the host on the primary control connection.
+.IP
+Third party file transfers depend upon support of the
+\f4PASV\f1
+command by the server on the secondary control connection.
+.HP
+\f4put \f2local-file\f1
+[ \f2remote-file\f1 ]
+.br
+Store a local file on the remote machine.  If 
+.I remote-file
+is left unspecified, the local file name is used
+after processing according to any
+\f4ntrans\f1
+or
+\f4nmap\f1
+settings in naming the remote file.
+File transfer uses the current settings for \(lqrepresentation type\(rq,
+\(lqfile structure\(rq, and \(lqtransfer mode\(rq.
+.TP
+\f4pwd\f1
+Print the name of the current working directory on the remote
+machine.
+.TP
+\f4quit\f1
+A synonym for
+\f4bye\f1.
+.TP
+\f4quote \f2arg1 arg2\f1 .\|.\|.
+Send the arguments specified, verbatim, to the remote 
+.SM FTP
+server.  A single 
+.SM FTP
+reply code is expected in return.
+(The \f4remotehelp\f1 command displays a list of valid arguments.)
+.IP
+\f4quote\f1 should be used only by experienced users who are
+familiar with the FTP protocol.
+.HP
+\f4recv \f2remote-file\f1
+.RI [ " local-file"  ]
+.br
+A synonym for
+\f4get\f1.
+.HP
+\f4remotehelp\f1
+.RI [ " command-name " ]
+.br
+Request help from the remote 
+.SM FTP
+server.
+If a 
+.I command-name
+is specified it is supplied to the server as well.
+.TP
+\f4rename \f2from to\f1
+Rename the file
+.I from
+on the remote machine to have the name
+.IR to .
+.TP
+\f4reset\f1
+Clear reply queue.
+This command re-synchronizes command/reply sequencing with the remote
+.SM FTP
+server.
+Resynchronization may be necessary following a violation of the 
+.SM FTP
+protocol
+by the remote server.
+.TP
+\f4rmdir \f2directory-name\f1
+Delete a directory on the remote machine.
+.TP
+\f4runique\f1
+Toggle storing of files on the local system with unique filenames.
+If a file already exists with a name equal to the target
+local filename for a
+\f4get\f1
+or
+\f4mget\f1
+command, a
+\f4\&.1\f1
+is appended to the name.
+If the resulting name matches another existing file, a
+\f4\&.2\f1
+is appended to the original name.
+If this process continues up to
+\f4\&.99\f1,
+an error message is printed, and the transfer does not take place.
+The generated unique filename will be\p
+.br
+.ne.5i
+reported.
+\f4runique\f1
+will not affect local files generated from a shell command.
+The default value is off.
+.HP
+\f4send \f2local-file\f1
+.RI [ " remote-file " ]
+.br
+A synonym for
+\f4put\f1.
+.TP
+\f4sendport\f1
+Toggle the use of
+\f4PORT\f1
+commands.  By default, 
+\f4ftp\f1
+will attempt to use a
+\f4PORT\f1
+command when establishing
+a connection for each data transfer.
+The use of
+\f4PORT\f1
+commands can prevent delays
+when performing multiple file transfers. If the
+\f4PORT\f1
+command fails, 
+\f4ftp\f1
+will use the default data port. 
+When the use of
+\f4PORT\f1
+commands is disabled, no attempt will be made to use
+\f4PORT\f1
+commands for each data transfer.  This is useful
+when connected to certain 
+.SM FTP
+implementations that ignore
+\f4PORT\f1
+commands but incorrectly indicate they have been accepted.
+.TP
+\f4status\f1
+Show the current status of
+\f4ftp\f1.
+.br
+.ne 5
+.HP
+\f4struct\f1
+.RI [ " struct-name " ]
+.br
+Set the file structure to
+.IR struct-name .
+The only valid
+.I struct-name
+is
+\f4file\f1,
+which corresponds to the default \(lqfile\(rq structure.
+The implementation only supports 
+\f4file\f1,
+and requires that it be specified.
+.br
+.ne 5
+.TP
+\f4sunique\f1
+Toggle storing of files on remote machine under unique file names.
+The remote 
+.SM FTP
+server must support the
+\f4STOU\f1
+command for successful completion.
+The remote server will report the unique name.
+Default value is off.
+.TP
+\f4tenex\f1
+Set the \(lqrepresentation type\(rq to that needed to
+talk to
+.SM TENEX
+machines.
+.TP
+\f4trace\f1
+Toggle packet tracing (unimplemented).
+.HP
+\f4type\f1
+.RI [ " type-name " ]
+.br
+Set the \(lqrepresentation type\(rq to
+.IR type-name .
+The valid
+.IR type-name s
+are
+\f4ascii\f1
+for \(lqnetwork
+.SM ASCII\s0\(rq,
+\f4binary\f1
+or
+\f4image\f1
+for \(lqimage\(rq,
+and
+\f4tenex\f1
+for \(lqlocal byte size\(rq with a byte size of 8 (used to talk to
+.SM TENEX
+machines).
+If no type is specified, the current type
+is printed.  The default type is \(lqnetwork
+.SM ASCII\s0\(rq.
+.HP
+\f4user \f2user-name\f1
+.RI [ " password " "] [ " account " ]"
+.br
+Identify yourself to the remote 
+.SM FTP
+server. 
+If the password is not specified and the server requires it,
+\f4ftp\f1
+will prompt the user for it (after disabling local echo).
+If an account field is not specified, and the 
+.SM FTP
+server requires it, the user will be prompted for it.
+If an account field is specified, an account command will
+be relayed to the remote server after the login sequence
+is completed if the remote server did not require it
+for logging in.
+Unless
+\f4ftp\f1
+is invoked with \(lqauto-login\(rq disabled, this
+process is done automatically on initial connection to the 
+.SM FTP
+server.
+.TP
+\f4verbose\f1
+Toggle verbose mode.
+In verbose mode, all responses from the 
+.SM FTP
+server are displayed to the user.
+In addition,
+if verbose mode is on, when a file transfer completes, statistics
+regarding the efficiency of the transfer are\p
+.br
+.ne.5i
+reported. 
+By default, verbose mode is on if
+\f4ftp\f1's
+commands are coming from a terminal, and off otherwise.
+.HP
+\f4?\f1
+.RI [ " command " ]
+.br
+A synonym for
+\f4help\f1.
+.LP
+Command arguments which have embedded spaces may be quoted with
+quote (") marks.
+.LP
+If any command argument which is not indicated as being optional is
+not specified,
+\f4ftp\f1
+will prompt for that argument.
+.SH "ABORTING A FILE TRANSFER"
+To abort a file transfer, use the terminal interrupt key.
+Sending transfers will be immediately halted.
+Receiving transfers will be halted by sending an 
+.SM FTP 
+protocol
+\f4ABOR\f1
+command to the remote server, and discarding any further data received.
+The speed at which this is accomplished depends upon the remote
+server's support for
+\f4ABOR\f1
+processing.
+If the remote server does not support the
+\f4ABOR\f1
+command, an
+\f4ftp>\f1
+prompt will not appear until the remote server has completed
+sending the requested file.
+.PP
+The terminal interrupt key sequence will be ignored when
+\f4ftp\f1
+has completed any local processing and is awaiting a reply
+from the remote server.
+A long delay in this mode may result from the
+\f4ABOR\f1
+processing described
+above, or from unexpected behavior by the remote server, including
+violations of the ftp protocol.
+If the delay results from unexpected remote server behavior, the local
+\f4ftp\f1
+program must be killed by hand.
+.SH "FILE NAMING CONVENTIONS"
+Local files specified as arguments to
+\f4ftp\f1
+commands are processed according to the following rules.
+.TP
+1)
+If the file name
+\f4\-\f1
+is specified, the standard input (for reading) or standard output
+(for writing) is used.
+.TP
+2)
+If the first character of the file name is 
+\f4|\f1,
+the remainder of the argument is interpreted as a shell command.
+\f4ftp\f1
+then forks a shell, using 
+\f4popen\f1(3S)
+with the argument supplied, and reads (writes) from the standard output
+(standard input) of that shell.  If the shell command includes
+.SM SPACE
+characters, the argument
+must be quoted; for example 
+\f4"| ls \-lt"\f1.
+A particularly useful example of this mechanism is:
+\f4"dir | more"\f1.
+.TP
+3)
+Failing the above checks, if globbing is enabled,
+local file names are expanded
+according to the rules used in the 
+\f4sh\f1(1);
+see the
+\f4glob\f1
+command. 
+If the
+\f4ftp\f1
+command expects a single local file (for example,
+\f4put\f1),
+only the first filename generated by the globbing operation is used.
+.TP
+4)
+For
+\f4mget\f1
+commands and
+\f4get\f1
+commands with unspecified local file names, the local filename is
+the remote filename, which may be altered by a
+\f4case\f1,
+\f4ntrans\f1,
+or
+\f4nmap\f1
+setting.
+The resulting filename may then be altered if
+\f4runique\f1
+is on.
+.TP
+5)
+For
+\f4mput\f1
+commands and
+\f4put\f1
+commands with unspecified remote file names, the remote filename is
+the local filename, which may be altered by a
+\f4ntrans\f1
+or
+\f4nmap\f1
+setting.
+The resulting filename may then be altered by the remote server if
+\f4sunique\f1
+is on.
+.SH "FILE TRANSFER PARAMETERS"
+The 
+.SM FTP
+specification specifies many parameters which may
+affect a file transfer.
+.LP
+The \(lqrepresentation type\(rq
+may be one of \(lqnetwork
+.SM ASCII\s0\(rq,
+\(lq\s-1EBCDIC\s0\(rq, \(lqimage\(rq,
+or \(lqlocal byte size\(rq with a specified
+byte size (for
+.SM PDP\s0-10's
+and 
+.SM PDP\s0-20's
+mostly).  The \(lqnetwork
+.SM ASCII\s0\(rq
+and \(lq\s-1EBCDIC\s0\(rq
+types have a further subtype which
+specifies whether vertical format control
+(\s-1NEWLINE\s0 characters, form feeds, etc.) are to be passed
+through (\(lqnon-print\(rq),
+provided in
+.SM TELNET
+format (\(lq\s-1TELNET\s0 format controls\(rq),
+or provided in
+.SM ASA
+(\s-1FORTRAN\s0) (\(lqcarriage control (\s-1ASA\s0)\(rq) format.
+\f4ftp\f1
+supports the \(lqnetwork
+.SM ASCII\s0\(rq
+(subtype \(lqnon-print\(rq only)
+and \(lqimage\(rq types, plus \(lqlocal byte size\(rq
+with a byte size of 8 for communicating with
+.SM TENEX
+machines.
+.LP
+The \(lqfile structure\(rq may be one of 
+\f4file\f1
+(no record structure),
+\f4record\f1,
+or \f4page\f1. 
+\f4ftp\f1
+supports only the default value, which is
+\f4file\f1.
+.LP
+The \(lqtransfer mode\(rq may be one of
+\f4stream\f1,
+\f4block\f1, 
+or 
+\f4compressed\f1. 
+\f4ftp\f1
+supports only the default value, which is 
+\f4stream\f1. 
+.SH "SEE ALSO"
+\f4ls\f1(1),
+\f4rcp\f1(1),
+\f4tar\f1(1),
+\f4sh\f1(1),
+\f4ftpd\f1(1M),
+\f4popen\f1(3S),
+\f4netrc\f1(4)
+.SH NOTES
+.LP
+Correct execution of many commands depends upon proper behavior
+by the remote server.
+.LP
+An error in the treatment of carriage returns in the 4.2
+.SM BSD
+code handling transfers with a \(lqrepresentation type\(rq of
+\(lqnetwork
+.SM ASCII\s0\(rq
+has been corrected.
+This correction may result in incorrect transfers of binary files
+to and from 4.2
+.SM BSD
+servers using a \(lqrepresentation type\(rq of
+\(lqnetwork
+.SM ASCII\s0\(rq.
+Avoid this problem by using the \(lqimage\(rq type.

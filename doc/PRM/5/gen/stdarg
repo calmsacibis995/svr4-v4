@@ -1,0 +1,136 @@
+'\"macro stdmacro
+.if n .pH g5.stdarg @(#)stdarg	40.10.1.2 of 4/12/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+'\"macro stdmacro
+.if n .pH g5.stdarg @(#)stdarg	40.3 of 8/11/88
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.nr X
+.if \nX=0 .ds x} stdarg 5 "" "\&"
+.if \nX=1 .ds x} stdarg 5 ""
+.if \nX=2 .ds x} stdarg 5 "" "\&"
+.if \nX=3 .ds x} stdarg "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4stdarg\f1 \- handle variable argument list
+.SH SYNOPSIS
+\&\f4#include <stdarg.h>
+.sp .5
+va_list pvar;
+.sp .5
+void va_start(va_list pvar, parmN\&);
+.sp .5
+type\&\f4 va_arg(va_list pvar, type\&);
+.sp .5
+void va_end(va_list pvar);\f1
+.SH DESCRIPTION
+This set of macros allows portable procedures that accept variable
+numbers of arguments of variable types to be written.
+Routines that have variable argument lists [such as
+\&\f4printf\f1] but do not use 
+.I stdarg\^
+are inherently non-portable, as different
+machines use different argument-passing conventions.
+.PP
+\&\f4va_list\f1
+is a type defined for the variable
+used to traverse the list.
+.PP
+The \&\f4va_start()\f1 macro is invoked before any access to the unnamed
+arguments and initializes \&\f4pvar\fP for subsequent use by
+\&\f4va_arg()\fP and \&\f4va_end()\fP.
+The parameter \f2parmN\fP is the
+identifier of the rightmost parameter in the variable parameter list
+in the function definition (the one just before the \&\f4, ...\fP).
+If this parameter is declared with the \&\f4register\fP storage class or
+with a function or array type, or with a type that is not compatible with
+the type that results after application of the default argument promotions,
+the behavior is undefined.
+.P
+The parameter \f2parmN\fP is required under strict ANSI C compilation.
+In other compilation modes, \f2parmN\fP need not be supplied and the
+second parameter to the \&\f4va_start()\fP macro can be left empty
+[for example,
+\&\f4va_start(pvar, );\fP].
+This allows for routines that contain no
+parameters before the \&\f4...\fP in the variable parameter list.
+.P
+The \&\f4va_arg()\fP macro expands to an expression that has the type and
+value of the next argument in the call.
+The parameter \&\f4pvar\fP should have
+been previously initialized by \&\f4va_start()\fP.
+Each invocation of
+\&\f4va_arg()\fP modifies \&\f4pvar\fP so that the values of successive arguments
+are returned in turn.
+The parameter \f2type\fP is the type name of the
+next argument to be returned.
+The type name must be specified in such
+a way so that the type of a pointer to an object that has the specified
+type can be obtained simply by postfixing a \&\f4*\fP to \f2type\fP.
+If there is no actual next argument, or if \f2type\fP is not compatible
+with the type of the actual next argument (as promoted according to
+the default argument promotions), the behavior is undefined.
+.PP
+The \&\f4va_end()\fP macro
+is used to clean up.
+.PP
+Multiple traversals, each bracketed by
+\f4va_start\fP
+and
+\f4va_end\fP,
+are possible.
+.SH EXAMPLE
+This example gathers into an array a list of arguments that are pointers to strings
+(but not more than \&\f4MAXARGS\f1 arguments) with function \&\f4f1\f1, then
+passes the array as a single argument to function \&\f4f2\f1.
+The number of pointers is specified by the first argument to \&\f4f1\f1.
+.P
+.nf
+.ft 4
+	#include <stdarg.h>
+	#define MAXARGS	31
+
+	void f1(int n_ptrs, ...)
+	{
+		va_list ap;
+		char *array[MAXARGS];
+		int ptr_no = 0;
+
+		if (n_ptrs > MAXARGS)
+			n_ptrs = MAXARGS;
+		va_start(ap, n_ptrs);
+		while (ptr_no < n_ptrs)
+			array[ptr_no++] = va_arg(ap, char*);
+		va_end(ap);
+		f2(n_ptrs, array);
+	}
+.ft 1
+.fi
+.PP
+Each call to \&\f4f1\f1 shall have visible the definition of the function or
+a declaration
+such as
+.P
+.RS
+\&\f4void f1(int, ...)\f1
+.RE
+.SH SEE ALSO
+\f4vprintf\fP(3S)
+.SH NOTES
+It is up to the calling routine to specify in some manner how many arguments
+there are, since it is not always possible to determine the number of
+arguments from the stack frame.
+For example,
+\f4execl\fP
+is passed a zero pointer to signal the end of the list.
+\f4printf\fP
+can tell how many arguments there are by the format.
+It is non-portable to specify a second argument of
+\&\f4char\f1, \&\f4short\f1, or \&\f4float\f1 to \&\f4va_arg\f1,
+because arguments seen by the called function are not
+\&\f4char\f1, \&\f4short\f1, or \&\f4float\f1.
+C converts \&\f4char\f1 and \&\f4short\f1 arguments to 
+\&\f4int\f1 and converts \&\f4float\f1 \%arguments to \&\f4double\f1
+before passing them to a function.
+.\"	@(#)stdarg.5	6.4 of 4/2/84
+.Ee

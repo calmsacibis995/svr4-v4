@@ -1,0 +1,29 @@
+'\"macro stdmacro
+.if n .pH g1f.reinit @(#)reinit	40.8 of 1/3/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} reinit 1F "Form and Menu Language Interpreter Utilities" "\&"
+.if \nX=1 .ds x} reinit 1F "Form and Menu Language Interpreter Utilities"
+.if \nX=2 .ds x} reinit 1F "" "\&"
+.if \nX=3 .ds x} reinit "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4reinit\f1 \- runs an initialization file
+.SH SYNOPSIS
+\f4reinit\f1
+\f2file\f1
+.SH DESCRIPTION
+The \f4reinit\f1 command is used to change the values of descriptors defined
+in the initialization file that was named when \f4fmli\f1 was invoked
+and/or define additional descriptors.
+FMLI will parse and evaluate the descriptors in \f2file\f1,
+and then continue running the current application.
+The argument \f2file\f1 must be the name of a valid FMLI initialization file.
+.PP
+The \f4reinit\f1 command does not re-display the introductory frame
+or change the layout of screen labels for function keys.
+.ig
+BUILT-IN FMLI
+..
+.Ee

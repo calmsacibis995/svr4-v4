@@ -1,0 +1,346 @@
+'\"macro stdmacro
+.if n .pH g1.at @(#)at	40.29.1.1 of 1/3/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} at 1 "User Environment Utilities" "\&"
+.if \nX=1 .ds x} at 1 "User Environment Utilities"
+.if \nX=2 .ds x} at 1 "" "\&"
+.if \nX=3 .ds x} at "" "" "\&"
+.TH \*(x}
+.tr ~
+.\" Copyright (c) 1988 Sun Microsystems, Inc - All Rights Reserved.
+.SH NAME
+\f4at\f1, \f4batch\f1 \- execute commands at a later time
+.SH SYNOPSIS
+.br
+\f4at\f1
+[\f4\-f\f1 \f2script\fP]
+[\f4\-m\f1]
+\f2time\f1
+[\f2date\f1]
+[\f4+\f1 \f2increment\f1]
+.sp .2
+\f4at \-l\f1
+[\f2job\f1 \f4...\f1]
+.sp .2
+\f4at \-r\f1 \f2job\f1 \f4...\f1
+.sp .2
+\f4batch\f1
+.ft 1
+.SH DESCRIPTION
+\f4at\fP and \f4batch\fP read commands from standard input to be
+executed at a later time.
+\f4at\fP allows you to specify when the commands should be executed,
+while 
+jobs queued with \f4batch\fP will execute
+when system load level permits.
+\f4at\fP
+may be used with the following options:
+.TP 10
+\f4\-f\f1 \f2script\f1
+Reads commands to be executed from the named
+\f2script\fP
+file.
+.TP
+\f4\-l\f1 [\f2job\f1]
+Reports all jobs scheduled for the invoking user,
+or just the
+\f2job\f1s specified.
+.TP
+\f4\-m\f1
+Sends mail to the user after the job has been completed,
+indicating that the job is finished,
+even if the job produces no output.
+Mail is sent only if the job has not already
+generated a mail message.
+.TP
+\f4\-r\f1 \f2job\f1
+Removes specified \f2job\f1s previously scheduled using \f4at\fP.
+.PP
+Standard output and standard error output are
+mailed to the user unless they are redirected elsewhere.
+The shell environment variables, current directory,
+umask, and ulimit are retained when the commands
+are executed.
+Open file descriptors, traps, and priority are lost.
+.PP
+Users are permitted to use
+\f4at\fP
+if their name appears in the file
+\f4/usr/sbin/cron.d/at.allow\f2.\f1
+If that file does not exist,
+the file
+\f4/usr/sbin/cron.d/at.deny\f1
+is checked to determine if the user
+should be denied access to
+.I at.
+If neither file exists, only root is allowed to
+submit a job.
+If only \f4at.deny\f1 exists and is empty, global usage is permitted.
+The allow/deny files consist of one user name
+per line.
+These files can only be modified by the privileged user.
+.P
+If the
+\f4DATEMSK\f1
+environment variable is set,
+it points to a template file that
+\f4at\f1
+will use to determine the valid
+\f2time\f1
+and
+\f2date\f1
+values
+instead of the values described below.
+For more information about using
+\f4DATEMSK\f1,
+see the last paragraph of the DESCRIPTION section.
+.PP
+.I time
+may be specified as follows, where
+.I h
+is hours and
+.I m
+is minutes:
+.IR h ,
+.IR hh ,
+.IR hhmm ,
+\f2h\f4:\f2m\f1,
+\f2h\f4:\f2mm\f1,
+\f2hh\f4:\f2m\f1,
+\f2hh\f4:\f2mm\f1.
+A 24-hour clock is assumed, unless
+\f4am\f1
+or
+\f4pm\f1
+is appended to
+.IR time .
+If
+\f4zulu\fP
+is appended to
+.IR time ,
+it means Greenwich Mean Time (GMT).
+.I time
+can also take on the values:
+\f4noon\f1,
+\f4midnight\f1,
+and
+\f4now\f1.
+\f4at now\f1
+responds with the error message
+\f4too late\f1;
+use \f4now\f1
+with the
+.I increment
+argument, such as:
+\f4at now + 1 minute\f1.
+.PP
+An optional \f2date\fP may be specified as either
+a month name followed by a day number
+(and possibly a year number preceded by a comma)
+or
+a day of the week.
+(Both the month name and the day of the week may be spelled out or abbreviated to three characters.)
+Two special ``days'',
+\f4today\f1
+and
+\f4tomorrow\f1
+are recognized.
+If no
+.I date
+is given,
+\f4today\f1
+is assumed if the given hour is greater than the current hour
+and
+\f4tomorrow\f1
+is assumed if it is less.
+If the given month is less than the current month (and no year is
+given), next year is assumed.
+.PP
+The optional
+.I increment
+is simply
+a number
+suffixed by one of the following:
+\f4minutes\f1,
+\f4hours\f1,
+\f4days\f1,
+\f4weeks\f1,
+\f4months\f1,
+or
+\f4years\f1.
+(The singular form is also accepted.)
+The modifier
+\f4next\f1
+may precede the
+.I increment;
+it means ``+ 1.''
+.PP
+Thus valid commands include:
+.PP
+.RS
+.ft 4
+.nf
+at 0815am Jan 24
+at 8:15am Jan 24
+at now + 1 day
+at now next day
+at 5 pm Friday
+.fi
+.ft 1
+.RE
+.PP
+\f4at\fP and \f4batch\fP write the job number and schedule time to standard
+error.
+.PP
+\f4at\fP
+\f4\-r\f1
+removes jobs previously scheduled by
+\f4at\fP
+or
+\f4batch\fP.
+The job number is the number returned to you previously by the
+\f4at\fP
+or
+\f4batch\fP
+command.
+You can also get job numbers by typing
+\f4at\fP
+\f4\-l\f1.
+You can only remove your own jobs unless you are the privileged user.
+.P
+If the environment variable
+\f4DATEMSK\f1
+is set,
+\f4at\fP
+will use its value as the full path name of a template file containing
+format strings.
+The strings consist of field descriptors and text characters
+and are used to provide a richer set of allowable date formats
+in different languages by appropriate settings of the environment
+variable
+\f4LANG\f1
+or
+\f4LC_TIME\f1
+(see 
+.IR environ (5)).
+(See
+.IR getdate (3C)
+for the allowable list of field descriptors;
+this list is a subset of the descriptors allowed by
+\f4calendar\fP(1)
+that are listed on the
+.IR date (1)
+manual page.)
+The formats described above for
+the \f2time\f1
+and
+\f2date\f1 arguments,
+the special names \f4noon\f1, \f4midnight\f1,
+\f4now\f1, \f4next\f1, \f4today\f1,
+\f4tomorrow\f1, and the \f2increment\f1 argument are not
+recognized when
+\f4DATEMSK\f1
+is set.
+.SH EXAMPLES
+The \f4at\fP and \f4batch\fP commands read
+from standard input the commands to be executed
+at a later time.
+\f4sh\fP(1)
+provides different ways of specifying standard input.
+Within your commands, it may be useful to redirect standard output.
+.PP
+This sequence can be used at a terminal:
+.PP
+.RS
+.ft 4
+.nf
+batch
+sort \f2filename\fP > \f2outfile\fP
+.ft 1
+<control-D> (hold down `control' and depress `d')
+.fi
+.RE
+.PP
+This sequence, which shows redirecting standard
+error to a pipe, is useful in a shell procedure (the sequence of
+output redirection specifications is significant):
+.PP
+.RS
+.nf
+.ft 4
+batch <<!
+sort \f2filename\fP 2>&1 > \f2outfile\fP | mail \f2loginid\fP
+!
+.ft 1
+.fi
+.RE
+.PP
+To have a job reschedule itself, invoke \f4at\fP from within the
+shell procedure, by including code similar to the following within the shell file:
+.PP
+.RS
+.nf
+.ft 4
+echo "sh \f2shellfile\fP" | at 1900 thursday next week
+.ft 1
+.fi
+.RE
+.PP
+The following example shows the possible contents of a
+template file \f4AT.TEMPL\fP in \f4/var/tmp\fP.
+.PP
+.RS
+.nf
+.ft 4
+%I %p, the %est of %B of the year %Y run the following job
+%I %p, the %end of %B of the year %Y run the following job
+%I %p, the %erd of %B of the year %Y run the following job
+%I %p, the %eth of %B of the year %Y run the following job
+%d/%m/%y
+%H:%M:%S
+%I:%M\&%p
+.ft 1
+.fi
+.RE
+.PP
+The following are examples of valid invocations if the
+environment variable
+\f4DATEMSK\f1
+is set to
+\f4/var/tmp/AT.TEMPL\f1.
+.PP
+.RS
+.nf
+.ft 4
+\f4at\fP 2 PM, the 3rd of July of the year 2000 run the following job
+\f4at\fP 3/4/99
+\f4at\fP 10:30:30
+\f4at\fP 2:30PM
+.ft 1
+.fi
+.RE
+.PP
+.SH FILES
+.ta 0.5i 2i
+.nf
+\f4/usr/sbin/cron.d\fP	main cron directory
+\f4/usr/sbin/cron.d/at.allow\fP	list of allowed users 
+\f4/usr/sbin/cron.d/at.deny\fP	list of denied users 
+\f4/usr/sbin/cron.d/queuedefs\fP	scheduling information
+\f4/var/spool/cron/atjobs\fP	spool area
+.fi
+.SH SEE ALSO
+\f4atq\fP(1), \f4atrm\fP(1), \f4calendar\fP(1), \f4crontab\fP(1), \f4date\fP(1),
+\f4kill\fP(1), \f4mail\fP(1), \f4nice\fP(1), \f4ps\fP(1), \f4sh\fP(1), \f4sort\fP(1).
+.sp .2
+\f4cron\fP(1M),
+\f4environ\fP(5),
+in the \f2System Administrator's Reference Manual\f1.
+.sp .2
+\f4getdate\fP(3C) in the \f2Programmer's Reference Manual\f1.
+.SH DIAGNOSTICS
+Complains about various syntax errors and times out of range.
+.\"	@(#)at.1	6.3 of 4/2/84
+.Ee

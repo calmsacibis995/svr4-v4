@@ -1,0 +1,69 @@
+.if n .pH 386.Coverlay @(#)Coverlay	40.1.1.1
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.BK "Installation Guide" "System V Release 4" "" ""   
+.\ACRONYM	                  
+.CH "Overlay Installation" "" "Table of Contents" "3"
+.\CHAPTER	3
+.tC 1 "Introduction" 3-1  
+.Index: partitioning, hard disk        	1
+.Index: hard disk, partitioning        	1
+.tC 1 "Installation Procedure (Overlay Installation)" 3-2  
+.tC 2 "Prepare Target System" 3-2  
+.tC 2 "Boot from Floppy Diskette" 3-2  
+.Index: boot diskettes        	2
+.Index: diskettes, boot        	2
+.Index: memory, check        	2
+.Index: memory, RAM support        	2
+.Index: troubleshooting, boot problems        	3
+.Index: rebooting the system        	3
+.Index: error messages        	3
+.Index: tape drive, cable        	3
+.Index: rebooting the system        	3
+.Index: aborting installation        	3
+.Index: installation, aborting        	3
+.Index: diskette, base system        	3
+.Index: troubleshooting, overlay problems        	4
+.Index: installation, aborting        	4
+.Index: fsck        	4
+.Index: rebooting the system        	4
+.Index: rebooting the system        	4
+.tC 2 "Selecting Packages" 3-5  
+.Index: packages, BASIC        	5
+.Index: packages, NETWORK        	5
+.Index: packages, EXTENDED        	5
+.Index: packages, DEVELOPMENT        	5
+.Index: packages, HARDWARE        	5
+.Index: ed package        	5
+.Index: terminfo package        	5
+.Index: termcap package        	5
+.Index: windowing package        	5
+.Index: mouse package        	5
+.Index: fmli package        	5
+.Index: oam package        	5
+.Index: lp package        	5
+.Index: acp package        	5
+.Index: nsu package        	5
+.Index: inet package        	5
+.Index: dfs package        	5
+.Index: rpc package        	5
+.Index: nfs package        	5
+.Index: rfs package        	5
+.Index: scde package        	5
+.Index: compat package        	5
+.Index: face package        	5
+.Index: ie6 package        	5
+.Index: qt package        	5
+.Index: wd package        	5
+.Index: imx586 package        	5
+.Index: optional slices        	5
+.Index: DOS, partition        	5
+.Index: partition, DOS        	5
+.Index: memory, 100 MB        	5
+.Index: hard disk, 80 MB        	5
+.Index: hard disk, planning layout        	5
+.Index: hard disk, 320 MB        	5
+.Index: optional slices, selecting        	5
+.Index: Ethernet, driver packages        	5
+.tC 3 "The Package Selection Questions" 3-5  
+.Index: packages, installing        	6
+.Index: packages, selecting        	6

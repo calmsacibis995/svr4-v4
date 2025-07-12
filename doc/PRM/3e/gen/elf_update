@@ -1,0 +1,278 @@
+'\"!  tbl | mmdoc
+'\"macro stdmacro
+.if n .pH g3e.elf_update @(#)elf_update	40.12 of 5/1/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.\"#ident	"@(#)ci5-doc:req/libelf/update.man	1.3"
+.nr X
+.if \nX=0 .ds x} elf_update 3E "ELF Library" "\&"
+.if \nX=1 .ds x} elf_update 3E "ELF Library"
+.if \nX=2 .ds x} elf_update 3E "" "\&"
+.if \nX=3 .ds x} elf_update "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4elf_update\f1 \- update an \s-1ELF\s0 descriptor
+.SH SYNOPSIS
+\f4cc\f1
+[\f2flag\fP \|.\|.\|.] \f2file\fP \|.\|.\|.
+\f4\-lelf\f1
+[\f2library\fP \|.\|.\|.]
+.PP
+.nf
+.ft 4
+#include <libelf.h>
+.sp 0.5
+off_t elf_update(Elf \(**elf, Elf_Cmd cmd);
+.ft 1
+.fi
+.SH DESCRIPTION
+\f4elf_update\fP
+causes the library to examine the information associated with an
+.SM ELF
+descriptor,
+.IR elf ,
+and to recalculate the structural data needed to generate
+the file's image.
+.P
+.I cmd
+may have the following values.
+.TP 16
+\f4ELF_C_NULL\f1
+This value tells
+\f4elf_update\fP
+to recalculate various values, updating only the
+.SM ELF
+descriptor's memory structures.
+Any modified structures are flagged with the
+\f4ELF_F_DIRTY\f1
+bit.
+A program thus can update the structural information
+and then reexamine them
+without changing the file associated with the
+.SM ELF
+descriptor.
+Because this does not change the file,
+the
+.SM ELF
+descriptor may allow reading, writing,
+or both reading and writing [see 
+\f4elf_begin\fP(3E)].
+.TP
+\f4ELF_C_WRITE\f1
+If
+.I cmd
+has this value,
+\f4elf_update\fP
+duplicates its
+\f4ELF_C_NULL\f1
+actions and also writes any ``dirty'' information associated
+with the
+.SM ELF
+descriptor to the file.
+That is, when a program has used
+\f4elf_getdata\fP
+or the
+\f4elf_flag\fP
+facilities to supply new (or update existing) information for an
+.SM ELF
+descriptor, those data will be examined,
+coordinated, translated if necessary [see
+\f4elf_xlate\fP(3E)],
+and written to the file.
+When portions of the file are written, any
+\f4ELF_F_DIRTY\f1
+bits are reset, indicating those items no longer
+need to be written to the file [see
+\f4elf_flag\fP(3E)].
+The sections' data are written in the order of their
+section header entries, and the section header table
+is written to the end of the file.
+.sp .5
+When the
+.SM ELF
+descriptor was created with
+\f4elf_begin\fP,
+it must have allowed writing the file.
+That is, the
+\f4elf_begin\fP
+command must have been either
+\f4ELF_C_RDWR\fP
+or
+\f4ELF_C_WRITE\fP.
+.P
+If
+\f4elf_update\fP
+succeeds, it returns the total size of the file image (not
+the memory image), in bytes.
+Otherwise an error occurred, and the function returns \-1.
+.P
+When updating the internal structures,
+\f4elf_update\fP
+sets some members itself.
+Members listed below are the application's responsibility
+and retain the values given
+by the program.
+.P
+.ne 10
+.TS
+center;
+c c c
+l lf4 | l.
+	Member	Notes
+	_	_
+\s-1ELF\s+1 Header	e_ident[EI_DATA]	Library controls other \f4e_ident\fP values
+\^	e_type
+\^	e_machine
+\^	e_version
+\^	e_entry
+\^	e_phoff	Only when \f4ELF_F_LAYOUT\fP asserted
+\^	e_shoff	Only when \f4ELF_F_LAYOUT\fP asserted
+\^	e_flags
+\^	e_shstrndx
+.sp .3v
+	_	_
+.TE
+.sp 2
+.ne 10
+.TS
+center;
+c c c
+l lf4 | l.
+	Member	Notes
+	_	_
+Program Header	p_type	The application controls all
+\^	p_offset	program header entries
+\^	p_vaddr
+\^	p_paddr
+\^	p_filesz
+\^	p_memsz
+\^	p_flags
+\^	p_align
+.sp .3v
+	_	_
+.TE
+.sp 2
+.ne 10
+.TS
+center;
+c c c
+l lf4 | l.
+	Member	Notes
+	_	_
+Section Header	sh_name
+\^	sh_type
+\^	sh_flags
+\^	sh_addr
+\^	sh_offset	Only when \f4ELF_F_LAYOUT\fP asserted
+\^	sh_size	Only when \f4ELF_F_LAYOUT\fP asserted
+\^	sh_link
+\^	sh_info
+\^	sh_addralign	Only when \f4ELF_F_LAYOUT\fP asserted
+\^	sh_entsize
+.sp .3v
+	_	_
+.TE
+.sp 2
+.ne 10
+.TS
+center;
+c c c
+l lf4 | l.
+	Member	Notes
+	_	_
+Data Descriptor	d_buf
+\^	d_type
+\^	d_size
+\^	d_off	Only when \f4ELF_F_LAYOUT\fP asserted
+\^	d_align
+\^	d_version
+.sp .3v
+	_	_
+.TE
+.P
+Note the program is responsible for two particularly important
+members (among others) in the
+.SM ELF
+header.
+The \f4e_version\fP member
+controls the version of data structures written to the file.
+If the version is
+\f4EV_NONE\f1,
+the library uses its own internal version.
+The \f4e_ident[EI_DATA]\fP entry controls the data
+encoding used in the file.
+As a special case, the value may be
+\f4ELFDATANONE\f1
+to request the native data encoding for the host machine.
+An error occurs in this case if the native encoding
+doesn't match a file encoding known by the library.
+.P
+Further note that the program is responsible for the
+\f4sh_entsize\fP section header member.
+Although the library sets it for sections with known types,
+it cannot reliably know the correct value for all sections.
+Consequently, the library relies on the program to provide
+the values for unknown section type.
+If the entry size is unknown or not applicable, the
+value should be set to zero.
+.P
+When deciding how to build the output file,
+\f4elf_update\fP
+obeys the alignments of individual data buffers to
+create output sections.
+A section's most strictly aligned data buffer controls
+the section's alignment.
+The library also inserts padding between buffers,
+as necessary, to ensure the proper alignment of each buffer.
+.SH "SEE ALSO"
+.na
+\f4elf\fP(3E),
+\f4elf_begin\fP(3E),
+\f4elf_flag\fP(3E),
+\f4elf_fsize\fP(3E),
+\f4elf_getdata\fP(3E),
+\f4elf_getehdr\fP(3E),
+\f4elf_getshdr\fP(3E),
+\f4elf_xlate\fP(3E)
+.ad
+.SH NOTE
+As mentioned above, the
+\f4ELF_C_WRITE\f1
+command translates data as necessary, before writing them to the file.
+This translation is
+not always transparent to the application program.
+If a program has obtained pointers to data associated
+with a file [for example, see
+\f4elf_getehdr\fP(3E)
+and
+\f4elf_getdata\fP(3E)],
+the program should reestablish the pointers after calling
+\f4elf_update\fP.
+.P
+As
+\f4elf_begin\fP(3E)
+describes, a program may ``update'' a
+.SM COFF
+file to
+make the image consistent for
+.SM ELF .
+The
+\f4ELF_C_NULL\f1
+command updates only the memory image;
+one can use the
+\f4ELF_C_WRITE\f1
+command to modify the file as well.
+Absolute executable files
+(\f4a.out\fP files)
+require special alignment, which cannot normally
+be preserved between
+.SM COFF
+and
+.SM ELF .
+Consequently, one may not update an executable
+.SM COFF
+file with the
+\f4ELF_C_WRITE\f1
+command (though
+\f4ELF_C_NULL\f1
+is allowed).

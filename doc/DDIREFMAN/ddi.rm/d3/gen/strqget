@@ -1,0 +1,78 @@
+'\"macro stdmacro
+.if n .pH gen.strqget @(#)strqget	40.2 of 1/7/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.nr X
+.if \nX=0 .ds x} strqget D3DK "STREAMS" "DDI/DKI" "\&"
+.if \nX=1 .ds x} strqget D3DK "STREAMS" "DDI/DKI"
+.if \nX=2 .ds x} strqget D3DK "" "\&"
+.if \nX=3 .ds x} strqget "" "" "\&"
+.TH \*(x}
+.IX "\f4strqget\fP(D3DK)
+.SH NAME
+\f4strqget\f1 \- get information about a queue or band of the queue
+.SH SYNOPSIS
+.nf
+.na
+\f4#include <sys/types.h>
+#include <sys/stream.h>
+.sp 0.5
+int strqget(queue_t *\f2q, \f4qfields_t \f2what, \f4uchar_t \f2pri, \f4long *\f2valp\f4);\f1
+.ad
+.fi
+.SH ARGUMENTS
+.RS 0n 10
+.IP "\f2q\f1" 10n
+Pointer to the queue.
+.IP "\f2what\f1" 10n
+The field of the queue
+about which to return information.
+Valid values are:
+.RS 10n
+.TP 10n
+\f4QHIWAT\fP
+High water mark of the specified priority band.
+.TP
+\f4QLOWAT\fP
+Low water mark of the specified priority band.
+.TP
+\f4QMAXPSZ\fP
+Maximum packet size of the specified priority band.
+.TP
+\f4QMINPSZ\fP
+Minimum packet size of the specified priority band.
+.TP
+\f4QCOUNT\fP
+Number of bytes of data in messages in the specified priority band.
+.TP
+\f4QFIRST\fP
+Pointer to the first message in the specified priority band.
+.TP
+\f4QLAST\fP
+Pointer to the last message in the specified priority band.
+.TP
+\f4QFLAG\fP
+Flags for the specified priority band [see \f4queue\fP(D4DK)].
+.RE
+.IP "\f2pri\f1" 10n
+Priority band of the queue about which to obtain information.
+.IP "\f2valp\f1" 10n
+Pointer to the memory location where the value is to be stored.
+.RE
+.SH DESCRIPTION
+\f4strqget\f1 gives drivers and modules a way to get information
+about a queue or a particular priority band of a queue without
+directly accessing STREAMS data structures.
+.SH RETURN VALUE
+On success, \f40\f1 is returned.
+An error number is returned on failure.
+The actual value of the requested field is returned through the reference
+parameter, \f2valp\fP.
+.SH LEVEL
+Base or Interrupt.
+.SH NOTES
+Does not sleep.
+.SH SEE ALSO
+.na
+\f4strqset\f1(D3DK),
+\f4queue\fP(D4DK)
+.ad

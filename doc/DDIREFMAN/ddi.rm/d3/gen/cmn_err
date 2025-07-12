@@ -1,0 +1,161 @@
+'\"macro stdmacro
+.if n .pH gen.cmn_err @(#)cmn_err	40.4 of 3/26/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.nr X
+.if \nX=0 .ds x} cmn_err D3DK "" "DDI/DKI" "\&"
+.if \nX=1 .ds x} cmn_err D3DK "" "DDI/DKI"
+.if \nX=2 .ds x} cmn_err D3DK "" "\&"
+.if \nX=3 .ds x} cmn_err "" "" "\&"
+.TH \*(x}
+.IX "\f4cmn_err\fP(D3DK)"
+.SH NAME
+\f4cmn_err\f1 \- display an error message or panic the system
+.SH SYNOPSIS
+.nf
+\f4#include <sys/cmn_err.h>
+.sp 0.25
+void cmn_err( int \f2level, \f4char *\f1\f2format, \f4...\f2 /* args */\f4);\f1
+.fi
+.SH ARGUMENTS
+.TP 0.5i
+\f2level\f1
+\f2level\f1 indicates the severity of the error
+condition.
+Valid levels are:
+.RS 0.5i
+.TP 0.7i
+\f4CE_CONT\f1
+used to continue a previous
+message or to display an informative message not connected with an error.
+.TP
+\f4CE_NOTE\f1
+used to display a message preceded with "\f4NOTICE: \f1".
+This message is used
+to report system events that do not necessarily require action,
+but may interest the system administrator.
+For example, a message saying that
+a sector on a disk needs to be accessed repeatedly before it can be
+accessed correctly might be noteworthy.
+.TP
+\f4CE_WARN\f1
+used to display a message preceded with "\f4WARNING: \f1".
+This message is used
+to report system events that require immediate attention, such as those where
+if an action is not taken, the system may panic.
+For example,
+when a peripheral device does not initialize correctly, this level
+should be used.
+.TP
+\f4CE_PANIC\f1
+.IX panic
+used to display a message preceded with "\f4PANIC: \f1", and panic
+the system.
+Drivers should use this level only for debugging or in
+the case of severe errors that indicate that the system cannot continue
+to function.
+This level halts processing.
+.RE
+.TP
+\f2format\f1
+The message to be displayed.
+By default, the message is sent both to the system console and to the
+kernel buffer \f4putbuf\f1.
+If the first character in \f2format\f1 is an exclamation point (``\f4!\f1''),
+the message goes only to \f4putbuf\f1.
+If the first character in \f2format\f1 is a circumflex (``\f4^\f1''),
+the message goes only to the console.
+The size of the kernel buffer \f4putbuf\f1 is defined by the kernel
+variable \f4putbufsz\f1.
+Driver developers or administrators can read the \f4putbuf\f1 buffer using
+appropriate debugging or administrative tools (for example, \f4crash\fP(1M)).
+.sp .5
+\f4cmn_err\f1 appends \f4\\n\f1 to each \f2format\f1 string,
+even when a message is sent to \f4putbuf\f1,
+except when \f2level\f1 is \f4CE_CONT\f1.
+.sp .5
+Valid conversion specifications are %\f4s\f1, %\f4u\f1, %\f4d\f1,
+%\f4o\f1, and %\f4x\f1.
+The \f4cmn_err\f1 function is otherwise
+similar to the \f4printf\f1(3S) library subroutine in its interpretation
+of the \f2format\f1 string, except that \f4cmn_err\f1 does not accept length
+specifications in
+conversion specifications.
+For example, %\f43d\f1 is invalid and
+will be treated as a literal string, resulting in a mismatch of arguments.
+.TP
+\f2args\f1
+the set of arguments passed with the message being displayed.
+Any argument within the range of supported conversion specifications can
+be passed.
+.SH DESCRIPTION
+\f4cmn_err\f1 displays a specified message on the console and/or stores it in
+the kernel buffer \f4putbuf\f1.
+\f4cmn_err\f1 can also panic the system.
+.P
+At times, a driver may encounter error conditions requiring the attention of a
+system console monitor.
+These conditions may mean halting
+the system; however, this must be done with caution.
+Except during
+the debugging stage, or in the case of a serious, unrecoverable error,
+a driver should never stop the system.
+.P
+The \f4cmn_err\f1 function with the \f4CE_CONT\f1 argument can be used by
+driver developers as a driver code debugging tool.
+However, using
+\f4cmn_err\f1 in this capacity can change system timing characteristics.
+.SH RETURN VALUE
+.IX panic
+None.
+.SH LEVEL
+Base or Interrupt.
+.SH NOTES
+Does not sleep.
+.SH SEE ALSO
+.nf
+\f4print\f1(D2DK)
+\f4printf\f1(3S)
+.fi
+.SH EXAMPLE
+.IX "\f4cmn_err\fP(D3DK), example"
+.IX "\f4getminor\fP(D3DK), example"
+.IX panic
+.P
+The \f4cmn_err\f1 function can record tracing and debugging
+information only in the \f4putbuf\f1 buffer (lines 12 and 13) or display
+problems with a device only on the system console (lines 17 and 18).
+.ne 4
+.P
+.nf
+.ft 4
+.ps 7
+.vs 9
+ 1  struct  device {	/* device registers layout */
+	...
+ 2  	int status;	/* device status word */
+ 3  };
+.sp .5
+ 4  extern struct device xx_dev[];	/* physical device registers */
+ 5  extern int xx_cnt;		/* number of physical devices */
+    ...
+ 6  int
+ 7  xxopen(dev_t *devp, int flag, int otyp, cred_t *crp)
+ 8  {
+ 9	register struct device *dp;
+.sp .5
+10	dp = xx_dev[getminor(*devp)];	/* get dev registers */
+11  #ifdef DEBUG				/* in debugging mode, log function call */
+12	cmn_err(CE_NOTE, "!xxopen function call, dev = 0x%x", *devp);
+13	cmn_err(CE_CONT, "! flag = 0x%x", flag);
+14  #endif
+.sp .5
+15	/* display device power failure on system console */
+16	if ((dp->status & POWER) == OFF)
+17		cmn_err(CE_WARN, "^xxopen: Power is OFF on device %d port %d",
+18		   getemajor(*devp), geteminor(*devp));
+.vs
+.ps
+.ft 1
+.fi
+.P
+.FG "cmn_err \- display messages"

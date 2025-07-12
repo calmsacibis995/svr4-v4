@@ -1,0 +1,114 @@
+'\"macro stdmacro
+.if n .pH g1.lastcomm @(#)lastcomm	40.10 of 4/18/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} lastcomm 1 "BSD Compatibility Package" "\&"
+.if \nX=1 .ds x} lastcomm 1 "BSD Compatibility Package"
+.if \nX=2 .ds x} lastcomm 1 "" "\&"
+.if \nX=3 .ds x} lastcomm "" "" "\&"
+.TH \*(x}
+.\" Copyright (c) 1988 Sun Microsystems, Inc. - All Rights Reserved.
+.\"
+.SH NAME
+\f4lastcomm\f1 \- show the last commands executed, in reverse order
+.SH SYNOPSIS
+\f4/usr/ucb/lastcomm\f1
+[
+.I command-name
+] .\ .\ . [
+.I user-name
+] .\ .\ . [
+.I terminal-name
+] .\ .\ .
+.SH DESCRIPTION
+.P
+The
+\f4lastcomm\f1
+command gives information on previously
+executed commands.
+\f4lastcomm\f1
+with no arguments displays information about all the commands recorded
+during the current accounting file's lifetime.
+If called with arguments,
+\f4lastcomm\f1
+only displays accounting entries with a matching
+.IR command-name ,
+.IR user-name ,
+or
+.IR terminal-name .
+.SH EXAMPLE
+.P
+The command:
+.IP
+.ft 4
+lastcomm a.out root term/01
+.ft 1
+.P
+would produce a listing of all the executions of commands named
+\f4a.out\f1,
+by user
+\f4root\f1
+while using the terminal
+\f4term/01\f1.
+and
+.IP
+.ft 4
+lastcomm root
+.ft 1
+.P
+would produce a listing of all the commands executed by user
+\f4root\f1.
+.P
+For each process entry,
+\f4lastcomm\f1
+displays the following items of information:
+.RS
+.TP 3
+\(bu
+The command name under which the process was called.
+.TP 3
+\(bu
+One or more flags indicating special information about the process.
+The flags have the following meanings:
+.RS
+.TP 3
+\f4F\f1
+The process performed a
+\f4fork\f1
+but not an
+\f4exec\f1.
+.TP 3
+\f4S\f1
+The process ran as a set-user-id program.
+.RE
+.TP 3
+\(bu
+The name of the user who ran the process.
+.TP 3
+\(bu
+The terminal which the user was logged in on at the time (if applicable).
+.TP 3
+\(bu
+The amount of
+.SM CPU
+time used by the process (in seconds).
+.TP 3
+\(bu
+The date and time the process exited.
+.RE
+.SH FILES
+.PD 0
+.TP 20
+\f4/var/adm/pacct\f1
+accounting file
+.PD
+.SH "SEE ALSO"
+\f4sigvec\fP(3)
+.P
+\f4last\fP(1)
+in the \f2User's Reference Manual\f1
+.br
+\f4acct\fP(4),
+\f4core\fP(4)
+in the \f2System Administrator's Reference Manual\f1

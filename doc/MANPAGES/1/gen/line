@@ -1,0 +1,32 @@
+'\"macro stdmacro
+.if n .pH g1.line @(#)line	40.4 of 4/12/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} line 1 "User Environment Utilities" "\&"
+.if \nX=1 .ds x} line 1 "User Environment Utilities"
+.if \nX=2 .ds x} line 1 "" "\&"
+.if \nX=3 .ds x} line "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4line\f1 \- read one line
+.SH SYNOPSIS
+\f4line\f1
+.SH DESCRIPTION
+\f4line\fP
+copies one line (up to a new-line) from the standard
+input and writes it on the standard output.
+It
+returns an exit code of 1 on
+.SM
+\f4EOF\f1
+and always
+prints at least a new-line.
+It is often used within shell files to
+read from the user's terminal.
+.SH SEE ALSO
+\f4sh\fP(1)
+.br
+\f4read\fP(2) in the \f2Programmer's Reference Manual\f1
+.\"	@(#)line.1	6.2 of 9/2/83
+.Ee

@@ -1,0 +1,113 @@
+'\"macro stdmacro
+.if n .pH g1.pkgmk @(#)pkgmk	40.12.1.5 of 3/4/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} pkgmk 1 "Essential Utilities" "\&"
+.if \nX=1 .ds x} pkgmk 1 "Essential Utilities"
+.if \nX=2 .ds x} pkgmk 1 "Essential Utilities" "\&"
+.if \nX=3 .ds x} pkgmk "Essential Utilities" "\&"
+.TH \*(x}
+.SH NAME
+\f4pkgmk\f1 \- produce an installable package
+.SH SYNOPSIS
+\f4pkgmk \f1[\f4-o\f1] [\f4-d \f2device\f1] [\f4-r \f2rootpath\f1] [\f4-b \f2basedir\f1] \f1[\f4-l \f2limit\f1]
+[\f4-a \f2arch\f1]
+.br
+	[\f4-v \f2version\f1] [\f4-p \f2pstamp\f1] [\f4-f \f2prototype\f1]
+[\f2variable\f4=\f2value\f1 . . . ] [\f2pkginst\f1]
+.SH DESCRIPTION
+\f4pkgmk\f1
+produces an installable package to be used as input to the \f4pkgadd\f1
+command.
+The package contents will be in directory structure format.
+.PP
+The command uses the package \f4prototype\fP file as input 
+and creates a \f4pkgmap\fP
+file.
+The contents for each entry in the \f4prototype\fP file is copied to the
+appropriate output location.
+Information concerning the contents (checksum,
+file size, modification date) is computed and stored in the \f4pkgmap\fP file,
+along with attribute information specified in the \f4prototype\fP file.
+.TP 15
+\f4-o\f1
+Overwrites the same instance,
+package instance will be overwritten if it already exists.
+.TP 15
+\f4-d \f2device\f1
+Creates the package on \f2device\f1.
+\f2device\f1 can be a
+full pathname to a directory 
+or the identifiers
+for a floppy disk or removable disk
+(for example, \f4/dev/diskette\f1).
+The default device is the installation spool directory.
+.TP 15
+\f4-r \f2rootpath\f1
+Ignores destination paths in the \f4prototype\fP file.
+Instead, uses the indicated \f2rootpath\f1 with the source
+pathname appended to locate objects on the source machine.
+.TP 15
+\f4-b \f2basedir\f1
+Prepends the indicated \f2basedir\f1 to locate relocatable objects on the
+source machine.
+.TP 15
+\f4-l \f2limit\f1
+Specifies the maximum size in 512 byte blocks
+of the output device as \f2limit\f1.
+By default, if the output
+file is a directory or a mountable device,
+\f4pkgmk\f1 will employ the \f4df\f1
+command to dynamically calculate the amount of available space on the output
+device.  Useful in conjunction with \f4pkgtrans\f1 to create
+package with datastream format.
+.TP 15
+\f4-a \f2arch\f1
+Overrides the architecture information provided
+in the \f4pkginfo\f1 file with
+\f2arch\f1.
+.TP 15 
+\f4-v \f2version\f1
+Overrides version information provided in the \f4pkginfo\f1 file with
+\f2version\f1.
+.TP 15
+\f4-p \f2pstamp\f1
+Overrides the production stamp definition in the \f4pkginfo\f1 file with
+\f2pstamp\f1.
+.TP 15
+\f4-f \f2prototype\f1
+Uses the file \f2prototype\fP as input to the command.
+The default name for this file is either \f4Prototype\f1
+or \f4prototype\f1.
+.TP 15
+\f2variable\f4=\f2value\f1
+Places the indicated variable in the packaging environment.
+[See \f4prototype\fP(4) for definitions of packaging variables.]
+.TP 15
+\f2pkginst\f1
+Specifies the package by its instance.
+\f4pkgmk\fP will automatically create a new instance
+if the version and/or architecture is different.
+A user should specify only a package abbreviation;
+a particular instance should not be specified
+unless the user is overwriting it.
+.SH NOTES
+Architecture information is provided on the command line with 
+the \f4-a\f1 option or in the \f4prototype\fP file.
+If no architecture information is supplied at all, 
+the output of \f4uname \-m\f1 will be used.
+.PP
+Version information is provided on the command line with the \f4-v\f1 
+option or in the \f4prototype\fP file.
+If no version information is supplied, a default based on 
+the current date will be provided.
+.PP
+Command line definitions for both architecture and version override the
+\f4prototype\fP definitions.
+.SH SEE ALSO
+.na
+\f4pkgparam\fP(1),
+\f4pkgproto\fP(1),
+\f4pkgtrans\fP(1).
+.ad

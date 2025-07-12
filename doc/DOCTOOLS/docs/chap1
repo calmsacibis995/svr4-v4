@@ -1,0 +1,424 @@
+.if n .pH doctools.chap1 @(#)chap1	40.2
+.\" @(#) SCCS File: chap1; ID:1.6; DATED:1/5/90
+.\"
+.\"     Copyright (c) 1989 AT&T   
+.\"     All Rights Reserved       
+.\"
+.\"                  AT&T - PROPRIETARY
+.\"     THIS DOCUMENT CONTAINS PROPRIETARY INFORMATION OF
+.\"     AT&T AND IS NOT TO BE DISCLOSED OR USED EXCEPT IN
+.\"        ACCORDANCE WITH APPLICABLE AGREEMENTS.
+.\" 
+.\"
+.\"   Documenter's Tool Set User's Guide
+.\"   Written by: J.R. Okin SF E-308 attunix!jro 201-522-5105
+.\"
+.\"
+.PM DN "FINAL COPY"
+.BK "Documenter's Tool Set User's Guide" "Release 1.0"
+.CH "Introduction" 1
+.H 1 "Product Overview"
+.IX product overview
+.IX overview
+Documenter's Tool Set, abbreviated as DOCTOOLS, simplifies
+the task of previewing and printing text files used in
+the production of user's guides, reference manuals, primers,
+reference cards, and other forms of technical documentation.
+DOCTOOLS implements a typesetting
+specification, which is a full typographical description
+of individual page layout and overall book composition.
+The typesetting specification defines the page dimensions and
+layout of books comprising expository text and/or manual pages.
+.P
+The development of DOCTOOLS represents an effort to
+address problems, inconsistencies, and deficiencies
+in the tools used to 
+produce technical documentation in the
+UNIX\s-2\(rg\s0 system environment.
+At the same time, DOCTOOLS makes use of recent advances in document production
+technology, the most significant of which is the development and
+proliferation of the PostScript\s-2\(rg\s0 page description language.
+.H 2 "Text Processing in a UNIX System Environment"
+.IX text processing
+UNIX system document production begins with the creation
+and/or editing of a text file and completes with the text
+file printing on an output device, most often
+a local laser printer or perhaps the user's terminal.
+The text file, such as the file for this chapter,
+consists of lines of text that the author wishes to see printed
+interspersed with formatting codes called macros that specify
+how the text should appear when printed.
+.IX macros
+For example, one macro might identify a word
+or a series of words to print in an italic font,
+while another macro might identify a block of text to be
+centered on the page.
+.P
+A text-formatting program called
+.UI troff
+.IX troff
+translates the
+source text file by interpreting the formatting codes,
+applying the instructions to the surrounding text,
+and producing detailed, device-independent code specifying
+exactly how the text will print on each page.
+This device-independent code is then translated
+.IX PostScript
+into device-specific code, such as PostScript language statements,
+by a
+.UI troff
+postprocessor.
+This device-specific code is then transmitted to a printer
+for its translation to page image.
+.P
+The sequential translation process described above, which may also include
+preprocessing files to format tables, equations, pictures,
+.IX preprocessing
+and graphs, remains largely invisible to the user.
+Instead, the user interacts with this process by
+selecting which macros (pre-defined formatting
+instructions) to include in his or her file
+and on which output device (for example, printer, screen, typesetter, and so
+on)
+the file should be printed.
+The number and type of macros available for use in a file
+largely determine the extent to which a writer can control how his or her
+document will appear when printed.
+Also, the consistent use of a set of macros to produce
+a collection of documents effects a much wanted consistency
+both in the structure of document source files and
+in the typographical output these source files produce.
+In sum, macros represent the starting point and the focal
+point in the whole translation process from source text
+file to printed output.
+.P
+Many tools have been written over the past
+10 to 12 years to facilitate the formatting and printing
+of UNIX system text files; the Memorandum Macros,
+.IX mm macros
+.IX macros, mm
+its associated print command
+.UI mm (1)
+and macro
+checking program
+.UI checkmm (1),
+is one such set of tools.
+Documenter's Tool Set will provide the same basic
+service, but geared specifically for the production
+of technical documentation, such as user's guides,
+reference manuals, primers, reference cards, and 
+the like.
+.H 2 "DOCTOOLS and the Local Environment"
+DOCTOOLS requires integration into an existing UNIX system document production
+environment.
+.IX requirements
+In addition to requiring Release 2.0 or later of Documenter's
+.IX DWB
+Workbench\s-2\(tm\s0 (DWB), which includes such programs as device-independent
+.UI troff
+(\f4ditroff\fP),
+.UI tbl ,
+.UI pic ,
+.UI eqn ,
+and
+.UI grap ,
+a UNIX text editor, such as
+.UI vi
+or
+.UI ed ,
+is needed.
+.IX troff
+.IX tbl
+.IX pic
+.IX eqn
+.IX grap
+.IX vi
+.IX ed
+Printer specific programs and files, that handle
+the translation of device-independent
+.UI troff
+code
+into printer-specific code, are also required.
+This information will vary from location to location,
+considering the multiplicity of printing and proofing devices currently
+used in UNIX document production environments.
+.P
+Emphasis has been placed on developing DOCTOOLS to work with
+.UI troff ,
+as opposed to having it work with both
+.UI nroff
+and
+.UI troff .
+The functionality of many of the macros
+and much of the typography they produce could at best
+be crudely estimated with
+.IX nroff
+.UI nroff ;
+the decision was
+made, therefore, to limit
+.UI nroff 's
+applicability to the formatting and printing of manual page files.
+This allows manual page files to be stored as on-line
+documentation that users can simply print to their screen,
+regardless of the type of screen they have.
+.H 2 "A Feature Description of DOCTOOLS"
+.IX feature description
+Documenter's Tool Set comprises three logical components.
+.BL
+.LI
+The first component is a shell command called 
+.UI format
+.IX format
+that processes
+and prints four types of source text files:
+manual page files, guide files, memoranda files, and
+.IX manual page files
+.IX guide files
+.IX memoranda files
+.IX collection files
+.IX files, manual pages
+.IX files, guides
+.IX files, memoranda
+.IX files, collections
+collection files.
+Several options provide control over how a job is
+processed and where it is printed.
+See chapter 2,
+.CT "Formatting Files,"
+for a complete discussion of processing and printing text
+files.
+.P
+There is also a shell command called
+.UI index
+that translates indexing data into a guide file
+.IX index
+that can be processed with
+.UI format .
+See chapter 6,
+.CT "How to Produce an Index"
+for information on creating and printing indexes.
+.LI
+The second component is a set of macro definitions that
+translate the high-level formatting codes contained in a source text
+.IX macro files
+.IX files, macros
+file into the low-level formatting primitives understood
+by
+.UI troff .
+See chapters 3, 4, and 5
+for more information on the macro definitions.
+.LI
+The third component is a file checking program called
+.UI checkmacs
+that scans a source text file for incorrect or incomplete
+.IX checkmacs
+.IX macro checking program
+usage of macros and checks for errors in file preprocessing.
+.LE
+Documenter's Tool Set accepts a large base of existing
+documentation source files as input to be processed and printed.
+This is because it builds on two existing macro packages:
+.IX text files
+.UI man (5)
+for the production of manual pages;
+.IX man (5)
+and
+.UI docmacs
+for the production of guides.
+.IX docmacs
+Files coded with Memorandum Macros are also accepted as input; however,
+.IX mm
+.IX MM
+.IX memoranda macros
+the MM macros are not included with DOCTOOLS.
+.P
+The following figures present all the macros
+defined in DOCTOOLS: manual page specific macros,
+guide specific macros,
+and the macro used to identify collection files.
+All macros defined in DOCTOOLS are specified by
+a dot(.) followed by one or two upper case letters.
+Macro names enclosed by parentheses are synonyms.
+.FG "Manual Page Macros"
+.DS I UI
+\&.B	\&.BI	\&.BR	\&.DT	\&.HP
+\&.I	\&.IB	\&.IP	\&.IR	\&.P(\&.PP)
+\&.PD	\&.PM	\&.RB	\&.RE	\&.RI
+.IX manual page macros
+\&.RS	\&.SH	\&.SM	\&.SS	\&.TH
+\&.TP
+.DE
+.FG "Guide Macros"
+.DS I UI
+\&.1B	\&.1C	\&.2B	\&.2C	\&.2E	\&.2S
+\&.AB	\&.AC	\&.AL	\&.B	\&.BB	\&.BC
+\&.BK	\&.BL	\&.BP	\&.BT	\&.CH	\&.CN
+.IX guide macros
+\&.CO	\&.CT	\&.DE	\&.DL	\&.DS	\&.DT
+\&.EP	\&.EV	\&.FG	\&.H	\&.HK	\&.I
+\&.IX	\&.LE	\&.LI	\&.NE	\&.NF	\&.P
+\&.PC	\&.PD	\&.PM	\&.R	\&.RP	\&.SB
+\&.SE	\&.SF	\&.SK	\&.SO	\&.SP	\&.SS
+\&.ST	\&.TB	\&.UI	\&.VE	\&.VL	\&.VS
+.DE
+.FG "Collection File Macro"
+.DS I UI
+\&.FT
+.IX collection file macro
+.DE
+.P
+Other functions of DOCTOOLS include the following:
+.BL
+.LI
+A single shell interface to process and print four types of input files.
+.LI
+An interactive mode to the shell interface to simplify
+the selection of processing options.
+.LI
+Printing to a multiplicity of output devices.
+.LI
+Printing in seven page sizes.
+.LI
+An option to create PostScript graphics files.
+.LI
+Automated collection of table of contents and index data.
+.LI
+A file checking program to scan source text files
+for incorrect macro usage and to check for errors in file preprocessing.
+.LE
+.H 1 "Documentation Overview"
+.IX documentation overview
+.H 2 "Intended Audience"
+.IX intended audience
+A wide variety of people use DOCTOOLS; and,
+accordingly, experience with UNIX system text processing
+and document production varies considerably.
+Many users are technical writers,
+editors, text processors, and production specialists.
+DOCTOOLS attempts to accommodate all of these users
+regardless of their experience by offering a simple
+to use, but comprehensive shell interface along
+with macros ranging from the simple to the complex.
+.P
+The administrator for DOCTOOLS might be the System
+.IX administration
+Administrator for a UNIX system, or a user
+installing a personal copy in his or her local
+directory structure.
+Administration for DOCTOOLS
+is minimal; most of the work involves installing the tools initially
+.IX installation
+and, to a lesser extent, adapting the tools to accommodate subsequent changes
+in the document production environment, such as
+the addition of a new printer.
+The inclusion of a makefile should simplify installation.
+However, to make the necessary choices
+in customizing the tools for a particular environment,
+the administrator should possess a rudimentary knowledge
+of UNIX text processing programs and, specifically,
+some familiarity with
+.UI troff
+and knowledge of
+the printing devices that will be known to DOCTOOLS.
+.H 2 "Organization"
+This book is divided into the following chapters:
+.IX book organization
+.BL
+.LI
+Chapter 1 presents an overview of both the product and
+the documentation.
+.LI
+Chapter 2 describes processing files with the
+.UI format
+command.
+.LI
+Chapter 3 describes the manual page macros.
+.LI
+Chapter 4 describes the guide macros.
+.LI
+Chapter 5 describes the file type macro and
+how to use collection files.
+.LI
+Chapter 6 describes how to produce indexes.
+.LE
+.H 2 "Terminology"
+.IX terminology
+The following terms are used in this document:
+.P
+.VL 1.6i
+.LI "\f3admonition\f1"
+.IX admonition
+An icon designed to attract the reader's attention to a highlighted
+section of text.
+.LI "\f3chapter toc\f1"
+.IX chapter toc
+A table of contents preceding a chapter of a book.
+.LI "\f3collection file\f1"
+.IX collection file
+A file containing a list of file names to be processed in sequence
+and printed as one job.
+.LI "\f3constant-width font\f1"
+.IX constant-width font
+A complete collection of alphanumeric and special
+characters sharing a single character width
+specifi\%cation (for example, \f(CWthis is printed in a constant-width font\fP).
+.LI \f3DWB\f1
+.IX DWB
+DOCUMENTER'S WORKBENCH\s-2\(tm\s0: a collection
+of UNIX system software used for the processing
+and printing of text and graphics.
+.LI "\f3fill mode\f1"
+.IX fill mode
+A type of text positioning in which input text is
+automatically positioned according to a specified
+line length and justification (cf. no-fill mode).
+.LI "\f3landscape orientation\f1"
+.IX landscape orientation
+A type of page orientation in which the shorter
+side of the page runs vertically and the longer side runs
+horizontally (cf. portrait orientation).
+.LI \f3macro\f1
+.IX macro
+A high-level formatting instruction consisting of other
+macros and/or low-level formatting instructions (cf. primitive).
+.LI "\f3master toc\f1"
+.IX master toc
+A table of contents appearing at the beginning of a book.
+.LI \f3MRD\f1
+.IX MRD
+Machine Readable Documentation: source text files
+collected and archived onto tape or into a single archive file
+for the purposes of storage or shipment to another location.
+.LI "\f3no-fill mode\f1"
+.IX no-fill mode
+A type of text positioning in which input text is copied line for
+line and printed without regard to text justification or
+line length (cf. fill mode).
+.LI "\f3portrait orientation\f1"
+.IX portrait orientation
+A type of page orientation in which the longer
+side of the page runs vertically and the shorter side runs
+horizontally (cf. landscape orientation).
+.LI \f3PostScript\f1
+.IX PostScript
+A printer resident page description language developed
+by Adobe Systems, Inc.
+.LI \f3primitive\f1
+.IX primitive
+A low-level formatting instruction controlling a single
+aspect of text formatting, such as line length or indentation (cf.
+macro).
+.LI \f3recto\f1
+.IX recto
+A right-hand, odd-numbered page (cf. verso).
+.LI "\f3scale indicator\f1"
+.IX scale indicator
+One of the following abbreviations used to specify the scale
+for page dimension measurements: \f3c\f1(centimeter), \f3n\f1(ens),
+\f3m\f1(ems), \f3i\f1(inch), \f3p\f1(point), \f3P\f1(pica),
+\f3u\f1(machine unit), \f3v\f1(vertical spacing).
+.LI \f3verso\f1
+.IX verso
+A left-hand, even-numbered page (cf. recto).
+.LE
+.\" EOF

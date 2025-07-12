@@ -1,0 +1,79 @@
+'\"macro stdmacro
+.if n .pH g1.iconv @(#)iconv	40.3.1.2 of 2/19/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} iconv 1 "" "\&"
+.if \nX=1 .ds x} iconv 1 ""
+.if \nX=2 .ds x} iconv 1 "" "\&"
+.if \nX=3 .ds x} iconv "" "" "\&"
+.TH \*(x}
+.SH "NAME"
+\f4iconv\f1 \- code set conversion utility
+.SH "SYNOPSIS"
+\f4iconv -f \f2fromcode\fP -t \f2tocode\fP \f4[\f2file\f4]\f1
+.SH "DESCRIPTION"
+\f4iconv\fP converts the characters or sequences of characters
+in \f2file\fP from one
+code set to another and writes the results to standard output. Should no
+conversion exist for a particular character then it is converted to the
+underscore '_' in the target codeset. 
+.P
+The required arguments \f2fromcode\fP and \f2tocode\fP
+identify the input and output code sets, respectively.
+If no \f2file\fP argument is specified on the command line, \f4iconv\fP
+reads the standard input.
+.P
+\f4iconv\fP will always convert to or from the ISO 8859-1 Latin alphabet No.1,
+from or to an ISO 646 ASCII variant codeset for a particular language.
+The ISO 8859-1 codeset will support the majority of 8 bit codesets. The
+conversions attempted by \f4iconv\fP accommodate the most commonly used
+languages.
+.P
+The following table lists the supported conversions.
+.TS
+center allbox tab(;);
+c s s s s
+c c c c c
+l l l l l.
+Code Set Conversions Supported
+Code;Symbol;Target Code;Symbol;comment
+ISO 646;646;ISO 8859-1;8859;US Ascii
+ISO 646de;646de;ISO 8859-1;8859;German
+ISO 646da;646da;ISO 8859-1;8859;Danish
+ISO 646en;646en;ISO 8859-1;8859;English Ascii
+ISO 646es;646es;ISO 8859-1;8859;Spanish
+ISO 646fr;646fr;ISO 8859-1;8859;French
+ISO 646it;646it;ISO 8859-1;8859;Italian
+ISO 646sv;646sv;ISO 8859-1;8859;Swedish
+ISO 8859-1;8859;ISO 646;646;7 bit Ascii
+ISO 8859-1;8859;ISO 646de;646de;German
+ISO 8859-1;8859;ISO 646da;646da;Danish
+ISO 8859-1;8859;ISO 646en;646en;English Ascii
+ISO 8859-1;8859;ISO 646es;646es;Spanish
+ISO 8859-1;8859;ISO 646fr;646fr;French
+ISO 8859-1;8859;ISO 646it;646it;Italian
+ISO 8859-1;8859;ISO 646sv;646sv;Swedish
+.TE
+.P
+The conversions are performed according to the tables found on the
+\f4iconv\fP(5) manual page.
+.SH EXAMPLES
+The following converts the contents of file \f4mail1\fP from
+code set \f48859\fP to \f4646fr\fP and stores the
+results in file \f4mail.local\fP.
+.P
+.nf
+.ft 4
+	iconv -f 8859 -t 646fr mail1 > mail.local
+.ft 1
+.fi
+.SH FILES
+.nf
+\f4/usr/lib/iconv/iconv_data\fP		lists the conversions supported
+\f4/usr/lib/iconv/*\fP			conversion tables
+.fi
+.SH SEE ALSO
+\f4iconv\fP(5) in the \f2System Administrator's Reference Manual\fP.
+.SH DIAGNOSTICS
+\f4iconv\fP returns 0 upon successful completion, 1 otherwise.

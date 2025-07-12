@@ -1,0 +1,48 @@
+'\"macro stdmacro
+.if n .pH gen.pollwakeup @(#)pollwakeup	40.2 of 1/7/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.nr X
+.if \nX=0 .ds x} pollwakeup D3DK "" "DDI/DKI" "\&"
+.if \nX=1 .ds x} pollwakeup D3DK "" "DDI/DKI"
+.if \nX=2 .ds x} pollwakeup D3DK "" "\&"
+.if \nX=3 .ds x} pollwakeup "" "" "\&"
+.TH \*(x}
+.IX "\f4pollwakeup\f1(D3DK)
+.SH NAME
+\f4pollwakeup\f1 \- inform polling processes that an event has occurred
+.SH SYNOPSIS
+.nf
+.na
+\f4#include <sys/poll.h>
+.sp 0.5
+void pollwakeup(struct pollhead *\f2php, \f4short \f2event\f4);\f1
+.ad
+.fi
+.SH ARGUMENTS
+.RS 0n
+.IP "\f2php\f1" 10n
+Pointer to a \f4pollhead\f1 structure.
+.IP "\f2event\f1" 10n
+Event to notify the process about.
+.RE
+.SH DESCRIPTION
+The \f4pollwakeup\f1 function provides non-STREAMS character drivers
+with a way to notify processes polling for the
+occurrence of an event.  \f4pollwakeup\f1 should be called from the driver for each
+occurrence of an event.  Events are described in \f4chpoll\fP(D2DK).
+.P
+The \f4pollhead\f1 structure will usually
+be associated with the driver's private data structure for
+the particular minor device where the event has occurred.
+.SH RETURN
+None.
+.SH LEVEL
+Base or Interrupt.
+.SH NOTES
+Does not sleep.
+.sp 0.5
+\f4pollwakeup\fP should only be called with one event at a time.
+.SH SEE ALSO
+\f4chpoll\f1(D2DK)
+.sp 0.5
+\f4poll\f1(2)

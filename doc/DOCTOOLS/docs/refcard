@@ -1,0 +1,613 @@
+'\"!  tbl | mmdoc
+.if n .pH doctools.refcard @(#)refcard	40.3
+.\" @(#) SCCS File: refcard; ID:1.10; DATED:1/5/90
+.\"
+.\"     Copyright (c) 1989 AT&T   
+.\"     All Rights Reserved       
+.\"
+.\"     THIS IS UNPUBLISHED PROPRIETARY SOURCE CODE OF AT&T   
+.\"     The copyright notice above does not evidence any     
+.\"     actual or intended publication of such source code.  
+.\"
+.\"     refcard: Documenter's Tool Set Quick Reference
+.\"
+.\"     Written by: J.R. Okin
+.\"                 AT&T Bell Laboratories
+.\"                 Department XT91124000
+.\"                 attunix!jro   201-522-5015
+.\"                   
+.\"
+.\"
+.PM DN "FINAL COPY"
+.BK "DOCTOOLS Quick Reference" "Release 1.0"
+.CH "DOCTOOLS Quick Reference" 
+.H 1 "The format Command"
+.H 2 "Synopsis"
+\f4format \f1[\f4\-c\f1] [\f4\-d \f2destination\f1] [\f4\-l\f1] [\f4\-m\f1] [\f4\-o \f2pages\f1] [\f4\-p \f2page\f1]
+.br
+.ti0.5i
+[\f4\-s \f2size\f1] [\f4\-v \f2version\f1] [\f4\-w\f1] [\f2files\f1]
+.H 2 "Command Options"
+.VL 1.2i "" UI
+.LI \-c
+save and print chapter/master table of contents for guide
+files, or table of contents and permuted index for manual
+page files.
+.LI "\-d \&\f2destination\f1"
+process job for specified \f2destination\f1.
+.LI \-l
+print job in landscape orientation.
+.LI \-m
+send mail when job has printed.
+.LI "\-o \&\f2pages\f1"
+process only specified \f2pages\f1.
+.LI "\-p \&\f2page\f1"
+begin page numbering with specified \f2page\f1.
+.LI "\-s \&\f2size\f1"
+process job in specified \f2size\f1, as follows:
+.TS
+tab(:);
+lf3 lf3
+lf4 l.
+T{
+.UL "Size"
+T}:T{
+.UL "Page Dimensions"
+T}
+.sp 0.4
+1:4" by 8.5"
+2:5.5" by 8.5"
+3:7" by 9"
+4:8.5" by 11"
+5:5.38" by 8.27"
+6:5.93" by 9.89"
+7:6.25" by 8.5" (Default)
+.TE
+.LI "\-v \&\f2version\f1"
+process job for specified \f2version\f1.
+Use
+.UI "\-v all"
+to process a job for all versions.
+.LI \-w
+withhold all screen messages, except errors; send messages via mail.
+.LE
+.H 1 "Manual Page Macros"
+.H 3 "Manual Page Title"
+.VL "" "" UI
+.LI "\&.TH \f2title\fP [\f2section\fP] [\f2page-comment\fP] [\f2book-note\fP]"
+title heading
+.LE
+.H 3 "Headings"
+.VL 1.4i "" UI
+.LI "\&.SH \f2heading"
+section heading 
+.LI "\&.SS \f2heading"
+sub-section heading
+.LE
+.H 3 "Paragraphs"
+.VL "1.4" "" UI
+.LI "\&.P"
+standard paragraph
+.LI "\&.TP [\f2indent\fP]"
+indented paragraph with hanging tag
+.LI "\&.IP [\f2tag\fP] [\f2indent\fP]"
+indented paragraph with hanging tag
+.LI "\&.HP [\f2indent\fP]"
+paragraph with handing indentation
+.LI "\&.PD [\f2lines\fP]"
+inter-paragraph spacing
+.LE
+.H 3 "Indentation"
+.VL 1.4i "" UI
+.LI "\&.RS [\f2indent\fP]"
+increase relative indentation
+.LI "\&.RE [\f2level\fP]"
+reduce relative indentation
+.LE
+.H 3 "Reduced Text Size"
+.VL 1.4i "" UI
+.LI "\&.SM [\f2text\fP]"
+reduce text size
+.LE
+.H 3 "Tab Distance"
+.VL 1.4i "" UI
+.LI "\&.DT"
+restore default tab stops
+.LE
+.H 3 "Proprietary Markings and Draft Notices"
+.VL "" "" UI
+.LI "\&.PM [P|RS|RG|CR|UW|CP|DN [\f2text\fP]]"
+print proprietary marking or draft notice
+.LE
+.H 3 "Fonts"
+.VL 1.7i "" UI
+.LI "\&.I [\f2text\fP]"
+make text italic
+.LI "\&.B [\f2text\fP]"
+make text bold
+.LI "\&.RI \f2roman-text italic-text\fP"
+alternate roman and italic text
+.LI "\&.RB \f2roman-text bold-text\fP"
+alternate roman and bold text
+.LI "\&.IR \f2italic-text roman-text\fP"
+alternate italic and roman text
+.LI "\&.IB \f2italic-text bold-text\fP"
+alternate italic and bold text
+.LI "\&.BR \f2bold-text roman-text\fP"
+alternate bold and roman text
+.LI "\&.BI \f2bold-text italic-text\fP"
+alternate bold and italic text
+.LE
+.H 3 "String Definitions"
+.VL 1.7i "" UI
+.LI "\&\e\(**R"
+print registered trademark indicator: \(rg with \f4troff\fP; (Reg.) with \f4nroff\f1
+.LI "\&\e\(**S"
+change to default type size
+.LI "\&\e\(**(Tm"
+print trademark indicator: \*(Tm
+.LE
+.H 1 "Guide Macros"
+.H 3 "Chapter Information"
+.VL "" "" UI
+.LI "\&.BK \f2title\fP [\f2release-info\fP] [\f2abbreviated-title\fP] [\f2book-acronym\fP]"
+book-specific information
+.LI "\&.CH \f2title\fP [\f2section\fP] [\f2abbreviated-title\fP]"
+chapter-specific information
+.LE
+.H 3 "Headings"
+.VL "" "" UI
+.LI "\&.H {1|2|3|4|5} \f2heading\fP [\f2abbreviated-heading\fP]"
+heading text
+.LE
+.H 3 "Admonitions"
+.VL "" "" UI
+.LI "\&.AB {N|C|W}"
+admonition begin
+.VL 0.3 "" UI
+.PD 0
+.LI N
+note admonition
+.LI C
+caution admonition
+.LI W
+warning admonition
+.LE
+.PD
+.LI "\&.AC"
+admonition close
+.LE
+.H 3 "Screens and Boxes"
+.VL "" "" UI
+.LI "\&.SS [UI|CO|PC]"
+screen start
+.VL 0.35 "" UI
+.PD 0
+.LI UI
+user input text
+.LI CO
+computer output text
+.LI PC
+program code text
+.LE
+.PD
+.LI "\&.SE(Se)"
+screen end
+.LI "\&.BB [\f2text\fP] [\f2punctuation\fP]
+box begin
+.LI "\&.BC"
+box close
+.LE
+.H 3 "Legends"
+.VL "" "" UI
+.LI "\&.FG \f2text\fP [\f2abbreviated-text\fP] [\f2reference\fP]"
+figure legend specification
+.LI "\&.TB \f2text\fP [\f2abbreviated-text\fP] [\f2reference\fP]"
+table legend specification
+.LE
+.H 3 "Displays"
+.VL "" "" UI
+.LI "\&.DS [\f2indent\fP|I] [UI|CO|PC] [F]"
+display start
+.VL 0.35 "" UI
+.PD 0
+.LI I
+indent default amount
+.LI UI
+user input text
+.LI CO
+computer output text
+.LI PC
+program code text
+.LI F
+fill mode
+.LE
+.PD
+.LI "\&.DE"
+display end
+.LE
+.H 3 "Lists"
+.VL "" "" UI
+.LI "\&.AL [a|A|i|I|1] [\f2indent\fP]"
+auto-incrementing list start
+.VL 0.3 "" UI
+.PD0
+.LI a
+a,b,c, .\ .\ . incremental markers
+.LI A
+A,B,C, .\ .\ . incremental markers
+.LI i
+i,ii,iii, .\ .\ . incremental markers
+.LI I
+I,II,III, .\ .\ . incremental markers
+.LI 1
+1,2,3, .\ .\ . incremental markers
+.LE
+.PD
+.LI "\&.BL [\f2indent\fP]"
+bullet list start
+.LI "\&.DL [\f2indent\fP]"
+dash list start
+.LI "\&.VL [\f2list-item-width\fP] [\f2indent\fP] [CN|SB|EV|UI|CO|PC]"
+variable list start
+.VL 0.4 "" UI
+.PD0
+.LI CN
+command name list items
+.LI SB
+substitutable element list items
+.LI EV
+environment variable list items
+.LI UI
+user input list items
+.LI CO
+computer output list items
+.LI PC
+program code list items
+.LE
+.PD
+.LI "\&.LI [\f2mark\fP] [CN|SB|EV|UI|CO|PC]"
+list item specification (argument #2 overrides argument #3
+to \&.VL macro)
+.LI "\&.LE"
+list end
+.LE
+.H 3 "Specialized Displays and Special Text Elements"
+.VL "1.75i" "" UI
+.LI "\&.CO [\f2text\fP] [\f2punctuation\fP]"
+computer output specification
+.LI "\&.UI [\f2text\fP] [\f2punctuation\fP]"
+user input specification
+.LI "\&.PC [\f2text\fP] [\f2punctuation\fP]"
+program code specification
+.LI "\&.SF"
+standard format (close \&.CO, \&.UI, \&.PC macros)
+.LI "\&.CN \f2text\fP [\f2punctuation\fP]"
+command name specification
+.LI "\&.SB \f2text\fP [\f2punctuation\fP]"
+substitutable element specification
+.LI "\&.EV \f2text\fP [\f2punctuation\fP]"
+environment variable specification
+.LI "\&.BT \f2text\fP [\f2punctuation\fP]"
+book title specification
+.LI "\&.CT \f2text\fP [\f2punctuation\fP]"
+chapter title specification
+.LI "\&.ST \f2text\fP [\f2punctuation\fP]"
+section title specification
+.LE
+.br
+.NE 14 
+.H 3 "Two-Column Formatting"
+.VL 1.4i "" UI
+.LI "\&.2C [B]"
+two-column format
+.VL 0.3 "" UI
+.PD 0
+.LI B
+balance columns
+.LE
+.PD
+.LI "\&.1C"
+one-column format
+.LI "\&.2S [\f2column1-width\fP] [\f2indent\fP]"
+two-column staggered format start
+.LI "\&.2E"
+two-column staggered format end
+.LI "\&.1B"
+first column begin
+.LI "\&.2B"
+second column begin
+.LE
+.H 3 "Paragraphs and Spacing"
+.VL 1.4i "" UI
+.LI "\&.P"
+standard paragraph
+.LI "\&.PD"
+list item spacing
+.LI "\&.SP [\f2distance\fP]"
+space down
+.LI "\&.NE [\f2distance\fP]"
+check for space
+.LI "\&.SK [\f2pages\fP]"
+skip pages
+.LE
+.H 3 "Preprocessing"
+.VL "1.4" "" UI
+.LI "\&.VS \f2version#\fP [\f2text\fP]"
+version specification start
+.LI "\&.VE(Ve)"
+version specification end
+.LI "\&.RP \f2mark\fP"
+reference current page number
+.LI "\&.SO \f2filename\fP [SYS]"
+include file
+.VL 0.4 "" UI
+.PD 0
+.LI SYS
+get file from system include directory
+.LE
+.PD
+.LE
+.H 3 "PostScript File Inclusion"
+.VL "" "" UI
+.LI "\&.BP\|\f2file\fP\|[\f2height\fP]\|[\f2width\fP]\|[l|c|r]\|[\f2offset\fP]\|[slrtbowa[\f2angle\fP]]"
+begin PostScript Picture
+.VL 0.3 "" UI
+.PD 0
+.LI s
+scale picture
+.LI l
+left adjust
+.LI r
+right adjust
+.LI t
+top adjust
+.LI b
+bottom adjust
+.LI o
+outline picture with box
+.LI w
+white out under picture first
+.LI a
+rotate picture
+.LE
+.PD
+.LI "\&.EP"
+end PostScript picture
+.LE
+.H 3 "Key Representations"
+.VL "" "" UI
+.LI "\&.HK {RA|LA|UA|DA|EK|\f2text\fP} [\f2punctuation\fP]
+hard key specification
+.VL 0.4 "" UI
+.PD 0
+.LI RA
+right arrow
+.LI LA
+left arrow
+.LI UA
+up arrow
+.LI DA
+down arrow
+.LI EK
+enter key
+.LE
+.PD
+.LE
+.H 3 "Folio Format"
+.VL "" "" UI
+.LI "\&.NF [i|1]"
+number(folio) format specification
+.VL 0.4 "" UI
+.PD 0
+.LI i
+roman folio format
+.LI 1
+arabic folio format
+.LE
+.PD
+.LE
+.H 3 "Indexing"
+.VL "" "" UI
+.LI "\&.IX \f2text\fP"
+index text
+.LE
+.H 3 "Reduced Text Size"
+.VL "" "" UI
+.LI "\&.SM [\f2text\fP]"
+reduce text size
+.LE
+.H 3 "Tab Distance"
+.VL "" "" UI
+.LI "\&.DT"
+restore default tab stops
+.LE
+.H 3 "Proprietary Markings and Draft Notices"
+.VL "" "" UI
+.LI "\&.PM [P|RS|RG|CR|UW|CP|DN [\f2text\fP]]"
+print proprietary marking or draft notice
+.LE
+.H 3 "Fonts"
+.VL "" "" UI
+.LI "\&.I [\f2text\fP]"
+make text italic
+.LI "\&.B [\f2text\fP]"
+make text bold
+.LI "\&.R"
+make text roman
+.LE
+.H 1 "File Type Macro"
+.VL "" "" UI
+.LI "\&.FT"
+file type specification
+.LE
+.H 1 "Alphabetical Index of Macros"
+.H 3 "Manual Page Macros"
+.VL "1.4" "" UI
+.PD 0
+.LI "\&.B [\f2text\fP]"
+make text bold
+.LI "\&.BI \f2bold-text italic-text\fP"
+alternate bold and italic text
+.LI "\&.BR \f2bold-text roman-text\fP"
+alternate bold and roman text
+.LI "\&.DT"
+restore default tab stops
+.LI "\&.HP [\f2indent\fP]"
+paragraph with handing indentation
+.LI "\&.I [\f2text\fP]"
+make text italic
+.LI "\&.IB \f2italic-text bold-text\fP"
+alternate italic and bold text
+.LI "\&.IP [\f2tag\fP] [\f2indent\fP]"
+indented paragraph with hanging tag
+.LI "\&.IR \f2italic-text roman-text\fP"
+alternate italic and roman text
+.LI "\&.P"
+standard paragraph
+.LI "\&.PD [\f2lines\fP]"
+inter-paragraph spacing
+.LI "\&.PM [P|RS|RG|CR|UW|CP|DN [\f2text\fP]]"
+print proprietary marking or draft notice
+.LI "\&.RB \f2roman-text bold-text\fP"
+alternate roman and bold text
+.LI "\&.RE [\f2level\fP]"
+reduce relative indentation
+.LI "\&.RI \f2roman-text italic-text\fP"
+alternate roman and italic text
+.LI "\&.RS [\f2indent\fP]"
+increase relative indentation
+.LI "\&.SH \f2heading"
+section heading 
+.LI "\&.SM [\f2text\fP]"
+reduce text size
+.LI "\&.SS \f2heading"
+sub-section heading
+.LI "\&.TH \f2title\fP [\f2section\fP] [\f2page-comment\fP] [\f2book-note\fP]"
+title heading
+.LI "\&.TP [\f2indent\fP]"
+indented paragraph with hanging tag
+.PD
+.LE
+.H 3 "Guide Macros"
+.VL "1.4" "" UI
+.PD 0
+.LI "\&.1B"
+first column begin
+.LI "\&.1C"
+one-column format
+.LI "\&.2B"
+second column begin
+.LI "\&.2C [B]"
+two-column format
+.LI "\&.2E"
+two-column staggered format end
+.LI "\&.2S [\f2column1-width\fP] [\f2indent\fP]"
+two-column staggered format start
+.LI "\&.AB {N|C|W}"
+admonition begin
+.LI "\&.AC"
+admonition close
+.LI "\&.AL [a|A|i|I|1] [\f2indent\fP]"
+auto-incrementing list start
+.LI "\&.B [\f2text\fP]"
+make text bold
+.LI "\&.BB [\f2text\fP] [\f2punctuation\fP]
+box begin
+.LI "\&.BC"
+box close
+.LI "\&.BK \f2title\fP [\f2release-info\fP] [\f2abbreviated-title\fP] [\f2book-acronym\fP]"
+book-specific information
+.LI "\&.BL [\f2indent\fP]"
+bullet list start
+.LI "\&.BP \f2file\fP [\f2height\fP] [\f2width\fP] [l|c|r] [\f2offset\fP] [slrtbowa[\f2angle\fP]]"
+begin PostScript Picture
+.LI "\&.BT \f2text\fP [\f2punctuation\fP]"
+book title specification
+.LI "\&.CH \f2title\fP [\f2section\fP] [\f2abbreviated-title\fP]"
+chapter-specific information
+.LI "\&.CN \f2text\fP [\f2punctuation\fP]"
+command name specification
+.LI "\&.CO [\f2text\fP] [\f2punctuation\fP]"
+computer output specification
+.LI "\&.CT \f2text\fP [\f2punctuation\fP]"
+chapter title specification
+.LI "\&.DE"
+display end
+.LI "\&.DL [\f2indent\fP]"
+dash list start
+.LI "\&.DS [\f2indent\fP|I] [UI|CO|PC] [F]"
+display start
+.LI "\&.DT"
+restore default tab stops
+.LI "\&.EP"
+end PostScript picture
+.LI "\&.EV \f2text\fP [\f2punctuation\fP]"
+environment variable specification
+.LI "\&.FG \f2text\fP [\f2abbreviated-text\fP] [\f2reference\fP]"
+figure legend specification
+.LI "\&.H {1|2|3|4|5} \f2heading\fP [\f2abbreviated-heading\fP]"
+heading text
+.LI "\&.HK {RA|LA|UA|DA|EK|\f2text\fP} [\f2punctuation\fP]
+hard key specification
+.LI "\&.I [\f2text\fP]"
+make text italic
+.LI "\&.IX \f2text\fP"
+index text
+.LI "\&.LI [\f2mark\fP] [CN|SB|EV|UI|CO|PC]"
+list item specification (argument #2 overrides argument #3
+to \&.VL macro)
+.LI "\&.LE"
+list end
+.LI "\&.NE [\f2distance\fP]"
+check for space
+.LI "\&.NF [i|1]"
+number(folio) format specification
+.LI "\&.P"
+standard paragraph
+.LI "\&.PC [\f2text\fP] [\f2punctuation\fP]"
+program code specification
+.LI "\&.PD"
+list item spacing
+.LI "\&.PM [P|RS|RG|CR|UW|CP|DN [\f2text\fP]]"
+print proprietary marking or draft notice
+.LI "\&.R"
+make text roman
+.LI "\&.RP \f2mark\fP"
+reference current page number
+.LI "\&.SB \f2text\fP [\f2punctuation\fP]"
+substitutable element specification
+.LI "\&.SE(Se)"
+screen end
+.LI "\&.SF"
+standard format (close \&.CO, \&.UI, \&.PC macros)
+.LI "\&.SK [\f2pages\fP]"
+skip pages
+.LI "\&.SM [\f2text\fP]"
+reduce text size
+.LI "\&.SO \f2filename\fP [SYS]"
+include file
+.LI "\&.SP [\f2distance\fP]"
+space down
+.LI "\&.SS [UI|CO|PC]"
+screen start
+.LI "\&.ST \f2text\fP [\f2punctuation\fP]"
+section title specification
+.LI "\&.TB \f2text\fP [\f2abbreviated-text\fP] [\f2reference\fP]"
+table legend specification
+.LI "\&.UI [\f2text\fP] [\f2punctuation\fP]"
+user input specification
+.LI "\&.VE(Ve)"
+version specification end
+.LI "\&.VL [\f2list-item-width\fP] [\f2indent\fP] [CN|SB|EV|UI|CO|PC]"
+variable list start
+.LI "\&.VS \f2version#\fP [\f2text\fP]"
+version specification start
+.PD
+.LE
+.H 3 "File Type Macro"
+.VL "1.4" "" UI
+.LI "\&.FT"
+file type specification
+.LE
+.\" EOF

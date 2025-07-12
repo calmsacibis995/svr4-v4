@@ -1,0 +1,137 @@
+'\"macro stdmacro
+.if n .pH g1a.idspace @(#)idspace	40.5 of 1/3/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+'\"macro stdmacro
+.if n .pH g1.idspace @(#)idspace	30.3 of 3/5/86
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.if \nX=0 .ds x} idspace 1M "Base System" "\&"
+.if \nX=1 .ds x} idspace 1M "Base System"
+.if \nX=2 .ds x} idspace 1M "" "\&"
+.if \nX=3 .ds x} idspace "" "" "\&"
+.nr X
+.TH \*(x} "" "386 Computer Only"
+.SH NAME
+\f4idspace\f1 \- investigates free space
+.SH SYNOPSIS
+\f4/etc/conf/bin/idspace\f1 [ \f4\-i\f1 \f2inodes\f1 ] [ \f4\-r\f1 \f2blocks\f1 ] [ \f4\-u\f1 \f2blocks\f1 ]
+.br
+\ \ \ [ \f4\-t\f1 \f2blocks\f1 ]
+.SH "DESCRIPTION"
+This command investigates free space in \f4/\f1, \f4/usr\f1,
+and \f4/tmp\f1 file systems to determine whether sufficient
+disk blocks and inodes exist in each of potentially 3 file systems.
+The default tests that
+\f4idspace\f1
+performs are as follows:
+.P
+.RS
+Verify that the \f4root\f1 file system
+(\f4/\f1)
+has 400 blocks more than the size of the current \f4/unix\f1\|.
+This verifies that a device driver being added to the current
+\f4/unix\f1
+can be built and placed in the \f4root\f1 directory.
+A check is also made to insure that 100 inodes exist
+in the \f4root\f1 directory.
+.sp .4v
+Determine whether a
+\f4/usr\f1
+file system exists.
+If it does exist, a test is made that 400 free blocks
+and 100 inodes are available in that file system.
+If the file system does not exist,
+\f4idspace\f1
+does not complain since files created in
+\f4/usr\f1
+by the reconfiguration process will be created in the \f4root\f1 file system
+and space requirements are covered by the test in (1.) above.
+.sp .4v
+Determine whether a
+\f4/tmp\f1
+file system exists.
+If it does exist, a test is made that 400 free blocks
+and 100 inodes are available in that file system.
+If the file system does not exist,
+\f4idspace\f1
+does not complain since files created in
+\f4/tmp\f1
+by the reconfiguration process will be created in the \f4root\f1 file system
+and space requirements are covered by the test in (1.) above.
+.RE
+.P
+The command line options are:
+.TP "\w'\-o\ inodes\ \ \ 'u"
+\f4\-i \f2inodes\f1
+This option overrides the default test for 100 inode in all of the
+\f4idspace\f1
+checks.
+.TP
+\f4\-r \f2blocks\f1
+This option overrides the default test for
+\f4/unix\f1
+size + 400 blocks when checking the \f4root\f1 (\f4/\f1)
+file system.
+When the
+\f4\-r\f1
+option is used, the
+\f4/usr\f1
+and
+\f4/tmp\f1
+file systems are not tested unless explicitly specified.
+.TP
+\f4\-u \f2blocks\f1
+This option overrides the default test for 400 blocks when checking the
+\f4/usr\f1
+file system.
+When the
+\f4\-u\f1
+option is used, the \f4root\f1 (\f4/\f1)
+and
+\f4/tmp\f1
+file systems are not tested unless explicitly specified.
+If
+\f4/usr\f1
+is not a separate file system, an error is reported.
+.TP
+\f4\-t \f2blocks\f1
+This option overrides the default test for 400 blocks when checking the
+\f4/tmp\f1
+file system.
+When the
+\f4\-t\f1
+option is used, the \f4root\f1 (\f4/\f1)
+and
+\f4/usr\f1
+file systems are not tested unless explicitly specified.
+If
+\f4/tmp\f1
+is not a separate file system, an error is reported.
+.bp
+.SH "ERROR MESSAGES"
+An exit value of zero indicates success.
+If insufficient space exists in a file system
+or an error was encountered due to a syntax or format error,
+\f4idspace\f1
+will report a message.
+All error messages are designed to be self-explanatory.
+The specific exit values are as follows:
+.TP "\w'0\ \ \ \ 'u"
+0
+success.
+.TP
+1
+command syntax error, or needed file does not exist.
+.TP
+2
+file system has insufficient space or inodes.
+.TP
+3
+requested file system does not exist
+( \f4\-u\f1
+and
+\f4\-t\f1
+options only).
+.SH "SEE ALSO"
+\f4idbuild\f1(1m),
+\f4idinstall\f1(1m).

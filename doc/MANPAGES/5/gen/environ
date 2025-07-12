@@ -1,0 +1,529 @@
+'\"macro stdmacro
+.if n .pH g5.environ @(#)environ	40.28.1.3 of 4/16/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} environ 5 "" "\&"
+.if \nX=1 .ds x} environ 5 ""
+.if \nX=2 .ds x} environ 5 "" "\&"
+.if \nX=3 .ds x} environ "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4environ\f1 \- user environment
+.SH DESCRIPTION
+When a process begins execution, 
+exec
+routines make available an array of strings called the
+environment [see \f4exec\f1(2)].
+By convention, these strings have the form \f2variable=value\f1,
+for example, \f(CWPATH=/sbin:/usr/sbin\f1.
+These environmental variables provide a way to make
+information about a program's environment available to programs.
+The following environmental variables can be used by
+applications and are expected to be set in the target run-time environment.
+.PP
+.TP 12
+\f4HOME\f1
+The name of the user's login directory, set by
+\f4login\fP(1)
+from the password file
+(see
+\f4passwd\fP(4)).
+.TP
+\f4LANG\f1
+The string used to specify localization information that
+allows users to work with different national conventions.
+The
+\f4setlocale\fP(3C)
+function looks for the
+\f4LANG\f1
+environment variable
+when it is called with \f4""\fP as the
+.I locale
+argument.
+\f4LANG\f1
+is used as the default locale if the corresponding
+environment variable for a particular category is unset.
+.sp .5
+For example, when
+\f4setlocale\fP(\^)
+is invoked as
+.sp .25
+	\f4setlocale(LC_CTYPE, "")\fP,
+.sp .25
+\f4setlocale\fP(\^)
+will query the
+\f4LC_CTYPE\f1
+environment variable first to see if it is set and non-null.
+If
+\f4LC_CTYPE\f1
+is not set or null,
+then
+\f4setlocale\fP(\^)
+will check the
+\f4LANG\f1
+environment variable to see if it is set and non-null.
+If both
+\f4LANG\f1
+and
+\f4LC_CTYPE\f1
+are unset or null,
+the default
+\f4C\f1
+locale will be used to set the
+\f4LC_CTYPE\f1
+category.
+.sp .5
+Most commands will invoke
+.sp .25
+	\f4setlocale(LC_ALL, "")\fP
+.sp .25
+prior to any other processing.
+This allows the command to be used with different national conventions
+by setting the appropriate environment variables.
+.sp .5
+The following environment variables are supported
+to correspond with each category of
+\f4setlocale\fP(3C):
+.RS
+.TP 15
+\f4LC_COLLATE\f1
+This category specifies the collation sequence being used.
+The information corresponding to this category is stored in a database 
+created by the
+\f4colltbl\fP(1M)
+command.
+This environment variable affects
+\f4strcoll\fP(3C)
+and
+\f4strxfrm\fP(3C).
+.TP
+\f4LC_CTYPE\f1
+This category specifies character classification, character conversion,
+and widths of multibyte characters.
+The information corresponding to this category is stored
+in a database created by the
+\f4chrtbl\fP(1M)
+command.
+The default
+\f4C\f1
+locale corresponds to the 7-bit
+.SM ASCII
+character set.
+This environment variable is used by
+\f4ctype\fP(3C),
+\f4mbchar\fP(3C),
+and many commands;
+for example:
+\f4cat\fP(1),
+\f4ed\fP(1),
+\f4ls\fP(1),
+and
+\f4vi\fP(1).
+.TP
+\f4LC_MESSAGES\f1
+This category specifies the language of the message database being used.
+For example, an application may have one message database
+with French messages, and another database with German messages.
+Message databases are created by the
+\f4mkmsgs\fP(1M)
+command.
+This environment variable is used by
+\f4exstr\fP(1),
+\f4gettxt\fP(1),
+\f4gettxt\fP(3C),
+and
+\f4srchtxt\fP(1).
+.TP
+\f4LC_MONETARY\f1
+This category specifies the monetary symbols and delimiters used for a particular
+locale.
+The information corresponding to this category is stored in a database created
+by the
+\f4montbl\fP(1M)
+command.
+This environment variable is used by
+\f4localeconv\fP(3C).
+.TP
+\f4LC_NUMERIC\f1
+This category specifies the decimal and thousands delimiters.
+The information corresponding to this category is stored in a database 
+created by the
+\f4chrtbl\fP(1M)
+command.
+The default
+\f4C\f1
+locale corresponds to \f4"."\fP as the decimal delimiter and no thousands delimiter.
+This environment variable is used by
+\f4localeconv\fP(3C), 
+\f4printf\fP(3C),
+and
+\f4strtod\fP(3C).
+.TP
+\f4LC_TIME\f1
+This category specifies date and time formats.
+The information corresponding to this category is stored in a database
+specified in
+\f4strftime\fP(4).
+The default
+\f4C\f1
+locale corresponds to U.S. date and time formats.
+This environment variable is used by
+many commands and functions;
+for example:
+\f4at\fP(1),
+\f4calendar\fP(1),
+\f4date\f1(1),
+\f4strftime\fP(3C),
+and
+\f4getdate\f1(3C).
+.RE
+.TP
+\f(CWMSGVERB\f1
+Controls which standard format message components
+\f4fmtmsg\f1 selects when messages are displayed to
+\f4stderr\f1 [see \f4fmtmsg\fP(1) and \f4fmtmsg\f1(3C)].
+.TP
+\f(CWSEV_LEVEL\f1
+Define severity levels and associate and print strings
+with them in standard format error messages
+[see \f4addseverity\fP(3C), \f4fmtmsg\fP(1), and \f4fmtmsg\f1(3C)].
+.TP 12
+\f4NETPATH\f1
+A colon-separated list of network identifiers.
+A network identifier is a character string used by the
+Network Selection
+component of the system to provide application-specific default
+network search paths.
+A network identifier must consist of non-\s-1NULL\s+1
+characters and must have a length of at least 1.
+No maximum length is specified.
+Network identifiers are normally chosen
+by the system administrator.
+A network identifier is also the first field in
+any
+\f4/etc/netconfig\f1
+file entry.
+\f4NETPATH\f1
+thus provides a link into the
+\f4/etc/netconfig\f1
+file and the information about a network contained in that network's entry.
+\f4/etc/netconfig\f1
+is maintained by the system administrator.
+The library routines described in
+\f4getnetpath\fP(3N)
+access the
+\f4NETPATH\f1
+environment variable.
+.TP
+\f(CWNLSPATH\fP
+Contains a sequence of templates which
+\f(CWcatopen\fP(3C)
+uses when attempting to locate message catalogs.
+Each template consists of
+an optional prefix,
+one or more substitution fields,
+a filename and an optional suffix.
+.sp0.5
+For example:
+.sp0.5
+.ft CW
+.nf
+	NLSPATH="/system/nlslib/%N.cat"
+.fi
+.ft 1
+.sp0.5
+.br
+.ne4
+defines that
+\f(CWcatopen\fP(\|)
+should look for all message catalogs in the
+directory
+\f(CW/system/nlslib\fP,
+where the catalog name should be constructed from the
+.I name
+parameter passed to
+\f(CWcatopen\fP(\|),
+\f(CW%N\fP,
+with the suffix \f(CW.cat\fP.
+.IP
+Substitution fields consist of a
+\f(CW%\fP
+symbol, followed by a single-letter keyword.
+The following keywords are currently defined:
+.sp .5
+.TS
+center, box;
+lfCW l.
+%N	T{
+The value of the \f2name\fP parameter passed to
+\f(CWcatopen\fP(\|).
+T}
+%L	The value of \f(CWLANG\fP.
+%l	The language element from \f(CWLANG\fP.
+%t	The territory element from \f(CWLANG\fP.
+%c	The codeset element from \f(CWLANG\fP.
+%%	A single \f(CW%\fP character.
+.TE
+.sp .5
+An empty string is substituted if the specified value is not
+currently defined.
+The separators ``\f(CW_\fP'' and ``\f(CW.\fP'' are not included in
+\f(CW%t\fP and \f(CW%c\fP
+substitutions.
+.IP
+Templates defined in
+\f(CWNLSPATH\fP
+are separated by colons (\f(CW:\fP).
+A leading colon or two adjacent colons (\f(CW::\fP) is equivalent to
+specifying \f(CW%N\fP.
+.sp0.5
+For example:
+.sp0.5
+.ft CW
+.nf
+	NLSPATH=":%N.cat:/nlslib/%L/%N.cat"
+.fi
+.ft 1
+.sp0.5
+indicates to
+\f(CWcatopen\fP(\|)
+that it should look for the requested message catalog in
+\f2name\fP,
+\f2name\f(CW.cat\f1
+and
+\f(CW/nlslib/$LANG/\f2name\fP.cat\f1.
+.TP
+\f4PATH\f1
+The sequence of directory prefixes that
+\f4sh\fP(1),
+\f4time\fP(1),
+\f4nice\fP(1),
+\f4nohup\fP(1),
+and so forth,
+apply in searching for a file known by an incomplete path name.
+The prefixes are separated by colons
+\f1(\f4\^:\^\f1).
+\f4login\fP(1)
+sets
+\f4PATH\*S=/usr/bin\f1.
+(For more detail, see \f4sh\fP(1).)
+.TP
+\f4SHELL\fP
+When the shell is invoked, it scans the environment 
+for this name.
+If it is found and \f4rsh\fP is 
+the filename part of its value, 
+the shell becomes a restricted shell.
+The value of this variable should be specified with an absolute pathname.
+The variable is used by \f4make\f1(1), \f4ksh\f1(1),
+\f4sh\f1(1), and \f4vi\f1(1), among other commands.
+.TP
+\f4TERM\f1
+The kind of terminal for which output is to be prepared.
+This information is used by commands, such as
+\f4mm\fP(1)
+or
+\f4vi\fP(1),
+which may exploit special capabilities of that terminal.
+.TP
+\f4TZ\f1
+Time zone information.
+The contents of the environment variable named \f(CWTZ\f1 are used by the
+functions
+\f(CWctime\f1(3C),
+\f(CWlocaltime\f1(\|) (see \f4ctime\fP(3C)),
+\f(CWstrftime\f1(3C)
+and
+\f(CWmktime\f1(3C)
+to override the default timezone.
+If the first character of \f(CWTZ\f1 is a colon (\f(CW:\f1), the behavior
+is implementation defined, otherwise \f(CWTZ\f1 has the form:
+.sp .5
+.ft2
+std\f4\|\fPoffset\fP\|[\|\fPdst\fP\|[\|\fPoffset\fP\|],\|[\|\fPstart\fP\|[\|/\fPtime\fP\|],\|\fPend\fP\|[\|/\fPtime\fP\|]\|]\|]
+.ft1
+.RS 12
+.TP
+\f2std\fP\ and\ \f2dst\fP
+Three or more bytes that are the designation for the standard
+(\f2std\f1)
+and daylight savings time
+(\f2dst\f1)
+timezones.
+Only
+.I std
+is required, if
+.I dst
+is missing, then daylight savings time does not apply in this locale.
+Upper- and lower-case letters are allowed.
+Any characters
+except a leading colon (\f(CW:\fP), digits, a comma (\f(CW,\fP), a minus 
+(\f(CW\-\fP)
+or a plus (\f(CW+\fP) are allowed.
+.TP
+\f2offset\fP
+Indicates the value one must add to the local time to arrive at
+Coordinated Universal Time.
+The offset has the form:
+.sp .5
+.ft2
+hh\f4\|[\|:\|\fPmm\fP\|[\|:\|\fPss\fP\|]\|]
+.ft
+.sp .5
+.IP
+The minutes
+.RI ( mm )
+and seconds
+.RI ( ss )
+are optional.
+The hour
+.RI ( hh )
+is required and may be a single digit.
+The
+.I offset
+following
+.I std
+is required.
+If no
+.I offset
+follows
+.I dst ,
+daylight savings time is assumed to be one hour ahead of standard time.
+One or more digits may be used; the value is always
+interpreted as a decimal number.
+The hour must be between 0
+and 24, and the minutes (and seconds) if present between 0 and 59.
+Out of range values may cause unpredictable behavior.
+If preceded
+by a ``\-'', the timezone is east of the Prime Meridian;
+otherwise it is west (which may be indicated by an optional
+preceding ``\f2+\fP'' sign).
+.TP
+\f2start\fP/\f2time\fP,\|\f2end\fP/\f2time\fP
+Indicates when to change to and back from daylight savings time, where
+.I start/time
+describes when the change from standard time to daylight savings time occurs, and
+.I end/time
+describes when the change back happens.
+Each
+.I time
+field describes when, in current local time, the change is made.
+.IP
+The formats of
+.I start
+and
+.I end
+are one of the following:
+.RS
+.TP
+\f4J\fP\f2n\fP
+The Julian day
+.I n
+(1 \(<=
+.I n
+\(<= 365).
+Leap days are not counted.
+That is, in all years, February 28 is
+day 59 and March 1 is day 60.
+It is impossible to refer to the occasional
+February 29.
+.TP
+\f2n\fP
+The zero-based Julian day
+(0 \(<=
+.I n
+\(<= 365).
+Leap days are counted,
+and it is possible to refer to
+February 29.
+.TP
+\f4M\fP\f2m.n.d\fP
+The
+.IR d \uth\d
+day,
+(0 \(<=
+.I d
+\(<= 6) of week
+.I n
+of month
+.I m
+of the year
+(1 \(<=
+.I n
+\(<= 5, 1 \(<=
+.I m
+\(<= 12), where week 5 means ``the last
+.IR d -day
+in month
+.IR m ''
+which may occur in either the fourth or the fifth week).
+Week 1 is the first week in which the 
+.IR d \uth\d
+day occurs.
+Day zero is Sunday.
+.RE
+.IP
+Implementation specific defaults are used for 
+.I start
+and
+.I end
+if these optional fields are not given.
+.IP
+The
+.I time
+has the same format as
+.I offset
+except that no leading sign (``\f2\-\fP'' or ``\f2+\fP'') is allowed.
+The default, if
+.I time
+is not given is 02:00:00.
+.RE
+.PP
+Further names may be placed in the environment by
+the
+\f4export\^\f1
+command and
+.IR name = value
+arguments in
+\f4sh\fP(1),
+or by
+\f4exec\fP(2).
+It is unwise to conflict with
+certain shell variables that are frequently exported by
+\f4\&.profile\f1
+files:
+\f4MAIL\f1\*S,
+\f4PS1\f1\*S,
+\f4PS2\f1\*S,
+\f4IFS\f1\*S
+(see
+\f4profile\fP(4)).
+.SH SEE ALSO
+.na
+\f4chrtbl\fP(1M), \f4colltbl\fP(1M), \f4mkmsgs\fP(1M), \f4montbl\fP(1M),
+\f4netconfig\f1(4),
+\f4strftime\fP(4), \f4passwd\fP(4), \f4profile\fP(4) in the
+\f2System Administrator's Reference Manual\f1
+.sp .2
+\f4exec\fP(2),
+\f4addseverity\fP(3C),
+\f4catopen\fP(3C),
+\f4ctime\fP(3C), \f4ctype\fP(3C), \f4fmtmsg\fP(3C), \f4getdate\fP(3C),
+\f4gettxt\fP(3C), \f4localeconv\fP(3C), \f4mbchar\fP(3C),
+\f4mktime\fP(3C), \f4printf\fP(3C),
+\f4strcoll\fP(3C), \f4strftime\fP(3C), \f4strtod\fP(3C), \f4strxfrm\fP(3C),
+\f4strftime\f1(4), \f4timezone\f1(4)
+.sp .2
+\f4cat\fP(1), \f4date\fP(1), \f4ed\fP(1),
+\f4fmtmsg\fP(1),  \f4ls\fP(1), \f4login\fP(1), \f4nice\fP(1), \f4nohup\fP(1),
+\f4sh\fP(1), \f4sort\fP(1), \f4time\fP(1), \f4vi\fP(1) in the
+\f2User's Reference Manual\f1
+.sp .2
+\f4getnetpath\fP(3N), in the
+\f2Programmer's Guide: Networking Interfaces\f1
+.sp .2
+\f4mm\fP(1) in the
+\f2DOCUMENTER'S WORKBENCH Software Technical Discussion and Reference Manual\f1
+.\"	@(#)environ.5	6.2 of 9/6/83
+.Ee

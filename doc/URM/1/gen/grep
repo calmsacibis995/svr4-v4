@@ -1,0 +1,110 @@
+'\"macro stdmacro
+.if n .pH g1.grep @(#)grep	40.5.1.4 of 6/26/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} grep 1 "Essential Utilities" "\&"
+.if \nX=1 .ds x} grep 1 "Essential Utilities"
+.if \nX=2 .ds x} grep 1 "" "\&"
+.if \nX=3 .ds x} grep "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4grep\f1 \- search a file for a pattern
+.SH SYNOPSIS
+\f4grep\f1
+[\f2options\f1] \f2limited_regular_expression\f1 [\f2file\f1 . . . ]
+.SH DESCRIPTION
+\f4grep\fP searches files for a pattern and prints all lines that contain
+that pattern.
+\f4grep\fP
+uses limited regular expressions (expressions that have string values
+that use a subset of the possible alphanumeric and special characters) like
+those used with
+\f4ed\fP(1)
+to match the patterns.
+It uses a compact non-deterministic algorithm.
+.PP
+Be careful using the characters
+\f4$\f1,
+\f4\(**\f1,
+\f4[\f1,
+\f4^\f1,
+\(bv,
+\f4(\f1,
+\f4)\f1,
+and \f4\e\f1
+in the \f2limited_regular_expression\f1 
+because they are also meaningful to the shell.
+It is safest to enclose 
+the entire \f2limited_regular_expression\f1
+in single quotes \f4\&\|\(fm\f1 . . . \f4\(fm\f1.
+.PP
+If no files are specified, \f4grep\fP assumes standard input.
+Normally, each line found is copied to standard output.
+The filename is printed before each line found if there is more than one input file.
+.PP
+Command line options are:
+.PP
+.PD 0
+.TP 6
+\f4\-b\f1
+Precede each line by the block number on which it was found.
+This can be useful in locating block numbers by context (first block is 0).
+.TP
+\f4\-c\f1
+Print only a count of the lines that contain the pattern.
+.TP
+\f4\-e\f2 special_expression\^\f1
+Search for a
+.I "special_expression\^"
+.RI ( "full_regular_expression\^"
+that begins with a
+\f4\-\f1).
+.TP
+\f4\-f\f2 file\^\f1
+Take the list of
+.I full_regular_expressions\^
+from 
+.IR file .
+.TP
+\f4\-i\f1
+Ignore uppercase/lowercase distinction during comparisons.
+.TP
+\f4\-h\f1
+Prevents the name of the file containing the matching line from being appended
+to that line.  Used when searching multiple files.
+.TP
+\f4\-l\f1
+Print the names of files with matching lines once,
+separated by newlines.
+Does not repeat the names of files when the pattern is found more than once.
+.TP
+\f4\-n\f1
+Precede each line by its line number in the file (first line is 1).
+.TP
+\f4\-s\f1
+Suppress error messages about nonexistent or unreadable files
+.TP
+\f4\-v\f1
+Print all lines except those that contain the pattern.
+.PD
+.SH SEE ALSO
+\f4ed\fP(1),
+\f4egrep\fP(1),
+\f4fgrep\fP(1),
+\f4sed\fP(1),
+\f4sh\fP(1).
+.SH DIAGNOSTICS
+Exit status is 0 if any matches are found,
+1 if none, 2 for syntax errors or inaccessible files
+(even if matches were found).
+.SH NOTES
+Lines are limited to \f4BUFSIZ\f1 characters;
+longer lines are truncated.
+\f4BUFSIZ\fP is defined in \f4/usr/include/stdio.h\f1.
+.br
+If there is a line with embedded nulls,
+\f4grep\fP will only match up to the first null;
+if it matches, it will print the entire line.
+.\"	@(#)grep.1	6.2 of 9/2/83
+.Ee

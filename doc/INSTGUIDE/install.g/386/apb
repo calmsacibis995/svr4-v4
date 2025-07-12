@@ -1,0 +1,221 @@
+'\"!  tbl | mmdoc
+.if n .pH 386.apb @(#)apb	40.1.1.1
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.BK "Installation Guide" "System V Release 4"
+.CH "Selecting Optional Slices" "B"
+.H 1 "Introduction"
+Once you decide to create optional slices, make note of the following before
+selecting the slices:
+.IX "optional slices, creating"
+.BL
+.LI
+When installing optional slices, the slices the system offers you depends on 
+the amount of space available on the partition.
+.LI
+If the UNIX partition size is smaller than 140 MB, the system offers
+\f4/usr\fP, \f4/home\fP, \f4/dev/dump\fP, and \f4/var\fP.
+If the partition is larger than 140 MB, the 
+system also offers \f4/home2\fP and \f4/tmp\fP.
+.IX "/usr"
+.IX "/var"
+.IX "/home"
+.IX "/dev/dump"
+.IX "/home2"
+.IX "/tmp"
+.LI
+All packages and user-added executables are usually placed in the \f4/\fP or 
+\f4/usr\fP directories. Do not create a separate \f4/usr\fP slice.
+It is no longer
+necessary, since most log files and spooling areas are now under the \f4/var\fP 
+directory, instead of the \f4/usr\fP directory.
+.LE
+.H 1 "Selecting Optional Slices"
+After telling the system that you want to create optional slices,
+the system asks:
+.SS CO
+Create a slice for/<slice> (y or n)?
+.SE
+.AL 1
+.LI
+Answer \f4y\fP or \f4n\fP, as desired. If you say \f4n\fP,
+the slice is installed as a directory
+in the root filesystem.
+.IX "filesystem, root"
+.IX "root filesystem"
+.AB N
+The root file system must be large enough to
+accommodate these directories.
+.sp
+The system may offer a slice for which there is no room. If so, you 
+are informed of the problem later in the installation.
+.AC
+.P
+When installing the \f4/usr\fP, \f4/home\fP, \f4/var\fP, \f4/home2\fP,
+or \f4/tmp\fP slices, the system 
+says: 
+.LI
+To specify the ufs filesystem type, press
+.IX "filesystem, ufs type"
+.IX "filesystem, s5 type"
+.IX "filesystem, s52k type"
+.HK EK .
+Otherwise, type \f4s5\fP or 
+\f4s52k\fP.
+.LI
+If you have two hard disk drives, you must answer the following question (If 
+you only have one disk drive, skip this step):
+.IX "hard disk, formatting two"
+.SS CO
+Please select the drive upon which you wish to install
+<filesystem> (0 or 1)?
+.SE
+Specify on which drive you want the slice installed.
+.LI
+When the system has offered all the slices it is going to, a summary of the 
+layout you selected displays. Return to Chapter 2, in the section 
+.ST "Selecting Optional Disk Slices" .
+.LE
+.H 2 "Determining if the Default Configuration is Correct"
+Before accepting the default disk configuration (displayed after you 
+create optional slices), do the following:
+.BL
+.LI
+Make sure each slice and filesystem has at least the minimum size recommended,
+as shown in Table B-1. If used, each slice must have as much space 
+as shown in the table.
+.IX "filesystem, minimum sizes"
+.sp
+.TB "Minimum File System Sizes"
+.DS
+.TS
+center, tab(*);
+lb lb
+lb lb
+l l.
+Filesystem*Minimum Size
+or Slice*
+.sp .5
+=
+/*31 MB
+/stand*5 MB
+/dev/swap*2 x the size of RAM
+/usr*54 MB
+/home*20 MB
+/dev/dump*The size of RAM
+/var*20 MB
+/tmp*5 MB
+.TE
+.DE
+.LI
+For each filesystem that you do not install (such as \f4var\fP and \f4tmp\fP),
+increase the size of root proportionately. For example, if you do not
+install \f4/tmp\fP, you 
+can increase root by the 5 MB of space which would have been allocated to 
+\f4/tmp\fP. Since the \f4/home2\fP filesystem has nothing installed in it,
+if you don't install the \f4/home2\fP filesystem, do not increase the size
+of root proportionately to the size of \f4/home2\fP.
+.IX "root filesystem"
+.IX "filesystem, root"
+.LI
+If \f4/dev/dump\fP is installed, it must be equal in size to the available
+memory in your system. It can be larger than available memory.
+For example, if you 
+know you are going to expand your system's memory in the future, you can 
+specify the size of \f4/dev/dump\fP to match the larger memory capacity.
+.IX "/dev/dump"
+.LI
+.IX "swap"
+The swap device is typically equal to twice the size of available memory 
+(unless large amounts of memory are present). Also, swap may be made larger,
+depending on your needs. 
+.LI
+If you are going to install many packages, consider configuring more than the 
+minimum required disk space for the \f4/usr\fP and \f4/var\fP file systems
+(if installed).
+.IX "/usr"
+.IX "/var"
+.LI
+If your hard disk is between 170 and 320 MB, \f4/ \fP(root) should be at least
+120 
+MB. If the drive is 760 MB, \f4root\fP should be about 200 MB.
+.IX "root filesystem"
+.IX "filesystem, root"
+.\" .LI
+.\" If you choose to install the graphics packages, and the packages in the
+.\" NETWORKING, and DEVELOPMENT package sets,
+.\" the \f4root\fP or \f4root\fP and \f4/usr\fP combination should be a minimum of
+.\" 100-120 MB.
+.AB N
+If the default configuration is acceptable, type \f4y\fP. Otherwise, go to 
+the next section for instructions. 
+.AC
+.sp
+.in + 1.5i
+.B "Troubleshooting"
+.IX "troubleshooting, disk space problems"
+.sp
+If you see the following warning message, it means the system does 
+not have enough room to configure all of the selected slices into the 
+partition:
+.IX "error messages"
+.SS CO
+Based on the default size recommendations, disk space 
+was not available for the following slices:
+The /home filesystem.
+The /var filesystem.
+
+Is this configuration acceptable? (y/n)
+.SE
+If you want to install the filesystems for which there was no room, 
+don't accept the configuration, and go to the next section for instructions. 
+.LE
+.in -1.5i
+.H 2 "Changing the Recommended Configuration"
+To change the recommended disk configuration, do the following:
+.IX "configuration, changing"
+.IX "disk, default configuration"
+.AL 1
+.LI
+Type \f4n\fP.
+.sp
+The system responds:
+.SS CO
+You will now specify the size in cylinders of each 
+slice. (One megabyte of disk space is approximately 
+<n> cylinders.) 
+
+The recommended size for the <slice> slice is <no.> 
+cylinders. How many of the remaining cylinders would 
+you like for <slice> <0 - xxx>? 
+.SE
+.LI
+Make note of how many megabytes per cylinder are shown in the above message.
+The ratio is different depending on the disk type. 
+.LI
+Use Table B-1 to decide how the disk space should be divided. Specify how 
+many cylinders you want for the slice in question. 
+.IX "disk space, allocating"
+.AB N
+The default cylinder size is 0, so if you press
+.HK EK
+without entering
+a number, a size of 0 cylinders is assumed and the slice is deleted 
+from the list. If you do this accidentally, when the configuration 
+summary is shown and you are asked the question shown below, answer \f4n\fP.
+You can then start over with Step 1.
+.AC
+.P
+After specifying the size of the slices, a summary of the disk layout
+displays again and you are asked,
+.SS CO
+Is this configuration acceptable (y or n)?
+.SE
+.LI
+When the configuration is acceptable, answer \f4y\fP, then continue.
+.IX "disk, accepting the default"
+.P
+After the configuration has been accepted, the system automatically creates 
+the filesystems on the hard disk. Return to the section
+.ST "Creating Filesystems" 
+in Chapter 2 to continue.
+.LE

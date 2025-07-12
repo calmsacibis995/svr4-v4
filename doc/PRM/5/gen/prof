@@ -1,0 +1,92 @@
+'\"macro stdmacro
+.if n .pH g5.prof @(#)prof	40.10 of 4/12/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} prof 5 "" "\&"
+.if \nX=1 .ds x} prof 5 ""
+.if \nX=2 .ds x} prof 5 "" "\&"
+.if \nX=3 .ds x} prof "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4prof\f1 \- profile within a function
+.SH SYNOPSIS
+\f4#define MARK\f1
+.br
+\f4#include <prof.h>\f1
+.PP
+\f4void MARK (name);\f1
+.SH DESCRIPTION
+\f4MARK\fP
+introduces a mark called 
+.I name\^
+that is treated
+the same as a function entry point.
+Execution of the
+mark adds to a counter for that mark, and
+program-counter time spent is accounted to the
+immediately preceding mark or to the function if
+there are no preceding marks within the active function.
+.PP
+.I name\^
+may be any combination of letters, numbers, or 
+underscores.
+Each 
+.I name\^
+in a single compilation must be unique, but may be the same as
+any ordinary program symbol.
+.PP
+For marks to be effective, the symbol
+\f4MARK\fP
+must be defined before the header file 
+\f4prof.h\fP
+is included, either by a 
+preprocessor directive as in the synopsis, or by a command
+line argument:
+.PP
+.RS
+.ft 4
+cc \-p \-DMARK foo.c
+.ft 1
+.RE
+.PP
+If \f4MARK\fP
+is not defined, the 
+\f4MARK(\f2name\f4)\f1
+statements may be left in the source files 
+containing them and are ignored.
+\f4prof \-g\f1 must be used to get
+information on all labels.
+.SH EXAMPLE
+In this example, marks
+can be used to determine how much time is spent in each loop.
+Unless this example is compiled with 
+\f4MARK\fP
+defined on the command line, the
+marks
+are ignored.
+.PP
+.RS
+.nf
+.ft 4
+#include <prof.h>
+foo( )
+{
+	int i, j;
+	. . .
+	MARK(loop1);
+	for (i = 0; i < 2000; i++) {
+		. . .
+	}
+	MARK(loop2);
+	for (j = 0; j < 2000; j++) {
+		. . .
+	}
+}
+.ft 1
+.fi
+.RE
+.SH SEE ALSO
+\f4prof\fP(1), \f4profil\fP(2), \f4monitor\fP(3C)
+.\"	@(#)prof.5	6.4 of 4/2/84
+.Ee

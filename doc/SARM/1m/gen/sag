@@ -1,0 +1,157 @@
+'\"macro stdmacro
+.if n .pH g1.sag @(#)sag	40.9 of 5/1/91
+.\" Copyright 1989 AT&T
+.nr X
+.if \nX=0 .ds x} sag 1M "System Performance Analysis Utilities" "\&"
+.if \nX=1 .ds x} sag 1M "System Performance Analysis Utilities"
+.if \nX=2 .ds x} sag 1M "" "\&"
+.if \nX=3 .ds x} sag "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4sag\fP \- system activity graph
+.SH SYNOPSIS
+\f4sag\fP [\f2options\f1]
+.SH DESCRIPTION
+\f4sag\fP
+graphically displays the system activity data
+stored in a binary data file by a previous
+\f4sar\fP(1M) run.
+Any of the \f4sar\fP data items
+may be plotted singly, 
+or in combination; as cross plots, or versus time.
+Simple arithmetic combinations of data may be specified.
+\f4sag\fP invokes \f4sar\fP
+and finds the desired data 
+by string-matching the data column header
+(run \f4sar\fP to see what is available).
+These \f2options\fP are passed through to \f4sar\fP:
+.TP 9
+\f4-s \f2time\f1
+Select data later than
+.I time
+in the form \f2hh\|\f1[\^\f4:\f2mm\^\f1]\^.
+The default is 08:00.
+.TP 9
+\f4-e \f2time\f1
+Select data up to
+.IR time .
+The default is 18:00.
+.TP 9
+\f4-i \f2sec\f1
+Select data at intervals as close as possible to \f2sec \f1seconds.
+.TP 9
+\f4-f \f2file\f1
+Use \f2file \f1as the data source for \f4sar\f1.
+The default value is the current daily data file 
+(\f4/usr/adm/sa/sa\f2dd\f1).
+.P
+Other \f2options\fP:
+.TP 9
+\f4-T \f2term\f1
+Produce output suitable for terminal \f2term\f1.
+The default value
+is \f4\s-1$TERM\s+1\f1.
+The following known terminals are available:
+.PP
+.PD 0
+.RS 12
+.TP
+300
+.SM DASI
+300.
+.TP
+300S
+.SM DASI
+300s.
+.TP
+450
+.SM DASI
+450.
+.TP
+4014
+Tektronix 4014.
+.PD
+.RE
+.TP 9
+\f4-x \f2spec\f1
+x axis specification with
+.I spec
+in the form:
+.RS
+\f4"\f2name\|\f1[\f2op \|name\f1]\0.\0.\0.\0[\f2lo\0hi\f1]\f4"
+.RE
+.TP 9
+\f4-y \f2spec\f1
+y axis specification with
+.I spec
+in the same form as above.
+.P
+\f2Name\f1 is either 
+a string that will match a column header 
+in the \f4sar\f1 report, 
+with an optional device name in square brackets,
+(such as \f4r+w/s\f1[\f4dsk\-1\f1], or an integer value.
+\f2Op\f1 is one of four characters
+(``\f4+\f1'', ``\f4-\f1'', ``\f4\(**\f1'', or ``\f4/\f1''),
+surrounded by blanks.
+(Parentheses are not recognized.)
+Up to five names may be specified.
+Contrary to custom,
+\f4\0+\0\f1 and \f4\0-\0\f1 have precedence over
+\f4\0\(**\0\f1 and \f4\0/"\f1.
+Evaluation is done from left to right.
+Thus
+\f2A\0\f4/\0\f2A\0\f4+\0\f2B\0\f4\(**\0100\f1
+is evaluated (\f2A\f4/(\f2A\f4+\f2B\f4))\(**100,
+and
+\f2A\f4\0+\0\f2B\0\f4/\f2\0C\0\f4+\0\f2D\f1
+is \f4(\f2A\f4+\f2B\f4)/(\f2C\f4+\f2D\f4)\f1.
+.IR "Lo " "and " "hi "
+are optional numeric scale limits.
+If unspecified, they are deduced from the data.
+.P
+A single
+.I spec
+is permitted for the x axis;
+if unspecified, \f2time\fP is used.
+For the \f4y\f1 axis,
+specify up to five \f2spec\f1s,
+separated by semi-colons (\f4;\f1).
+If you specify more than one argument to 
+\f4-x\f1 or \f4-y\f1,
+and leave one or more blank spaces between list items,
+enclose the list in double quotes (\f4"\&"\f1).
+The default value for the \f4-y\f1 option is
+.PP
+.RS 0
+\f4-y\0"%usr\00\0100;\0%usr\0+\0%sys\00\0100;\0%usr\0+\0%sys\0+\0%wio\00\0100"\f1
+.RE
+.SH EXAMPLES
+For a report on today's
+.SM CPU
+utilization:
+.IP
+\f4sag\f1
+.P
+For a report on the activity of all disk drives
+over a 15-minute period:
+.PP
+.RS
+\f4TS=\*`\f2date\f4\0+%\f2H\f4:%\f2M\f4\*`
+.br
+\f4sar\0-o\0\f2tempfile\f4\060\015
+.br
+\f4TE=\*`\f2date\f4\0+%\f2H\f4:%\f2M\f4\*`
+.br
+\f4sag\0-f\0\f2tempfile\f4\0-s\0$TS\0-e\0$TE\0-y\0"r+w/s\f1[\f2dsk\f1]\f4"
+.RE
+.br
+.ne 3
+.SH FILES
+.TP 22
+\f4/usr/adm/sa/sa\f2dd\f1
+daily data file for day \f2dd\f1
+.SH SEE ALSO
+\f4sar\fP(1M)
+.\"	@(#)sag.1g	6.2 of 9/2/83
+.Ee

@@ -1,0 +1,45 @@
+'\"macro stdmacro
+.if n .pH g1a.dname @(#)dname	40.9
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} dname 1M "Remote File Sharing Utilities" "\&"
+.if \nX=1 .ds x} dname 1M "Remote File Sharing Utilities"
+.if \nX=2 .ds x} dname 1M "" "\&"
+.if \nX=3 .ds x} dname "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4dname\f1 \- print Remote File Sharing domain and network names
+.SH SYNOPSIS
+\f4dname\f1
+[\-D \f2domain\f1] [\-N \f2netspeclist\f1] [\-dna]
+.SH DESCRIPTION
+.P
+\f4dname\f1 prints or defines a host's Remote File Sharing domain name
+or the network(s) used by Remote File Sharing as transport provider(s).
+When used with \f4d\f1, \f4n\f1, or \f4a\f1 options,
+\f4dname\f1 can be run by any user to
+print the domain name, transport provider name(s), or both.
+Only a user with root permission can
+use the \f4\-D \f2domain\f1 option to set the domain name for the host
+or \f4\-N \f2netspeclist\f1 to set the network specification used
+for Remote File Sharing.  \f2netspeclist\f1 is a comma-separated
+list of transport providers (\f2tp1,tp2,...\f1).  The value of each
+transport provider is the network device name, relative to the
+\f2/dev\f1 directory.  For example, the STARLAN NETWORK uses
+\f4starlan\f1.
+.P
+\f2domain\f1 must consist of no more than 14 characters, 
+consisting of any combination of letters (upper and lower case),
+digits, hyphens (\-), and underscores (_).
+.P
+When \f4dname\f1 is used to change a domain name, the host's
+password is removed.  The administrator will be prompted for a new
+password the next time Remote File Sharing is started [\f4rfstart\f1(1M)].
+.P
+If \f4dname\f1 is used with no options, it will default to \f4dname \-d\f1.
+.SH NOTES
+You cannot use the \f4\-N\f1 or \f4\-D\f1 options while Remote
+File Sharing is running.
+.SH "SEE ALSO"
+\f4rfstart\fP(1M).

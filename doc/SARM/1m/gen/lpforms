@@ -1,0 +1,524 @@
+'\"! eqn|mmdoc
+'\"macro stdmacro
+.if n .pH g1a.lpforms @(#)lpforms	40.15.1.3 of 7/11/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} lpforms 1M "" "" "\&"
+.if \nX=1 .ds x} lpforms 1M "" ""
+.if \nX=2 .ds x} lpforms 1M "" "" "\&"
+.if \nX=3 .ds x} lpforms 1M "" "" "\&"
+.TH \*(x}
+.SH NAME
+lpforms \- administer forms used with the LP print service
+.SH SYNOPSIS
+\f4lpforms \-f \f2form-name \f2options\f1
+.br
+\f4lpforms \-f \f2form-name\f4 \-A \f2alert-type\f1 
+[\f4\-Q\fP
+\f2minutes\f1]
+[\f4\-W\fP
+\f2requests\f1]
+.SH DESCRIPTION
+The \f4lpforms\f1 command is used to administer the
+use of preprinted forms, such as company
+letterhead paper, with the \s-1LP\s+1 print service.
+A form is specified by its \f2form-name\f1.
+Users may specify a form when
+submitting a print request [see \f4lp\f1(1)].
+The argument \f4all\f1 can be used instead of 
+\f2form-name\f1 with either of 
+the command lines shown above.
+The first command line allows
+the administrator to add, change, and delete forms,
+to list the attributes of an existing form, and to
+allow and deny users access to particular forms.
+The second command line is used to
+establish the method by which the administrator is
+alerted that the form \f2form-name\fP must be mounted on a printer.
+.P
+With the first \f4lpforms\f1 command line,
+one of the following options must be used:
+.TP 1.125i
+\f4\-F\f2\ pathname\f1
+To add or change form \f2form-name\fP,
+as specified by the information in \f2pathname\f1
+.TP
+\f4\-\f1
+To add or change form \f2form-name\fP, 
+as specified by the information from standard input
+.TP
+\f4\-x\f1
+To delete form \f2form-name\fP (this option must be used separately;
+it may not be used with any other option)
+.TP
+\f4\-l\f1
+To list the attributes of form \f2form-name\fP
+.SS "Adding or Changing a Form"
+The \f4\-F\f2 pathname\f1 option is used to 
+add a new form, \f2form-name\fP, to the LP print service, or to change
+the attributes of an existing form.
+The form description is taken from
+.I "pathname"
+if the \f4\-F\f1 option is given,
+or from the standard input if the \f4\-\f1 option is used.
+One of these two options must be used to define or change a form.
+\f2Pathname\f1 is the
+path name of a file that contains 
+all or any subset of 
+the following information about the form.
+.sp
+.nf
+\f4Page length\f1:  \f2scaled-decimal-number1\fP
+\f4Page width\f1:  \f2scaled-decimal-number2\fP
+\f4Number of pages\f1: \f2integer\f1
+\f4Line pitch\f1:  \f2scaled-decimal-number3\fP
+\f4Character pitch\f1:  \f2scaled-decimal-number4\fP
+\f4Character set choice\f1: \f2character-set/print-wheel\f1 [\f4mandatory\f1]
+\f4Ribbon color\f1: \f2ribbon-color\f1
+\f4Comment:\f1
+\f2comment\f1
+\f4Alignment pattern\f1: [\f2content-type\f1\f1]
+\f2content\f1
+.fi
+.sp
+The term ``scaled-decimal-number''
+refers to a non-negative number
+used to indicate a unit of size.
+The type of unit is shown 
+by a ``trailing'' letter attached to the number.
+Three types of scaled decimal numbers
+can be used with the \s-1LP\s+1 print service: numbers
+that show sizes in centimeters
+(marked with a trailing \f4c\fP);
+numbers that show sizes in inches
+(marked with a trailing \f4i\fP);
+and numbers that show sizes in units appropriate to use
+(without a trailing letter),
+that is, lines, characters, lines per inch, or characters per inch.
+.P
+Except for the last two lines, the above lines may appear
+in any order.
+The \f4Comment:\f1 and \f2comment\f1
+items must appear in consecutive order
+but may appear before the other items,
+and the \f4Alignment pattern:\f1
+and the \f2content\f1 items
+must appear in consecutive order at the end of the file.
+Also, the \f2comment\f1 item
+may not contain a line that begins with any of the key
+phrases above, unless the key phrase is
+preceded with a \f4>\f1 sign.
+Any leading > sign found in the
+\f2comment\f1
+will be removed when the comment is displayed.
+Case distinctions in the key phrases are ignored.
+.sp
+When this command is issued,
+the form specified by \f2form-name\f1
+is added to the list of forms.
+If the form already exists,
+its description is changed to reflect the new information.
+Once added,
+a form is available for use in a print request,
+except where access to the form has been restricted,
+as described under the \f4\-u\f1 option.
+A form may also be allowed to be used
+on certain printers only.
+.PP
+A description of each form attribute is below:
+.TP
+\f4Page length and Page Width\fP
+Before printing the content of a print request needing this form,
+the generic interface program provided with 
+the \s-1LP\s+1 print service will
+initialize the physical printer to handle pages
+\f2scaled-decimal-number1\fP
+long, and
+\f2scaled-decimal-number2\fP
+wide using the printer type as a key into the 
+\f4terminfo\f1 database.
+.P
+The page length and page width will also be passed,
+if possible,
+to each filter used in a request needing this form.
+.TP
+\f4Number of pages\fP
+Each time the alignment pattern is printed,
+the \s-1LP\s+1 print service will attempt to truncate the
+.I "content"
+to a single form by,
+if possible,
+passing to each filter the page subset of
+1\(hy\f2integer\f1.
+.TP 
+\f4Line pitch\fP and \f4Character pitch\fP
+Before printing the content of a print request needing this form,
+the interface programs provided with the 
+\s-1LP\s+1 print service will
+initialize the physical printer to handle these pitches,
+using the printer type as a key into the \f4terminfo\f1 database.
+Also, the pitches will be passed, if possible,
+to each filter used in a request needing this form.
+\f2scaled-decimal-number3\fP
+is in lines per centimeter if a \f4c\fP is appended,
+and lines per inch otherwise;
+similarly,
+\f2scaled-decimal-number4\fP
+is in characters per centimeter if a \f4c\fP is appended,
+and characters per inch otherwise.
+The character pitch can also be given as
+\f4elite\f1 (12 characters per inch),
+\f4pica\f1 (10 characters per inch),
+or \f4compressed\f1 (as many characters per inch as possible).
+.TP
+\f4Character set choice\fP
+When the \s-1LP\s+1 print service alerts an administrator to mount this form,
+it will also mention that the print wheel
+.I "print-wheel"
+should be used on those printers that take print wheels.
+If printing with this form is to be done on a printer that has
+selectable or loadable character sets instead of print wheels,
+the interface programs provided with the 
+\s-1LP\s+1 print service
+will automatically select or load the correct character set.
+If \f4mandatory\f1 is appended,
+a user is not allowed to select a different character set for
+use with the form;
+otherwise,
+the character set or print wheel named is a suggestion and
+a default only.
+.TP
+\f4Ribbon color\fP
+When the \s-1LP\s+1 print service alerts an administrator to mount this form,
+it will also mention that the color of the ribbon should be
+.IR "ribbon-color" .
+.TP
+\f4Comment\fP
+The \s-1LP\s+1 print service will display the
+.I "comment"
+unaltered when a user asks about this form 
+[see \f4lpstat\f1(1)].
+.TP
+\f4Alignment pattern\fP
+When mounting this form 
+an administrator can ask for the
+.I "content"
+to be printed repeatedly,
+as an aid in correctly positioning the preprinted form.
+The optional
+.I "content-type"
+defines the type of printer for which
+.I "content"
+had been generated.
+If
+.I "content-type"
+is not given, \f4simple\f1 is assumed.
+Note that the
+.I "content"
+is stored as given,
+and will be readable only by the user \f4lp\f1.
+.PP
+When an existing form is changed with this command,
+items missing in the new information are left as they were.
+When a new form is added with this command,
+missing items will get the following defaults:
+.sp
+Page Length: \f466\f1
+.br
+Page Width: \f480\f1
+.br
+Number of Pages: \f41\f1
+.br
+Line Pitch: \f46\f1
+.br
+Character Pitch: \f410\f1
+.br
+Character Set Choice: \f4any\f1
+.br
+Ribbon Color: \f4any\f1
+.SS "Deleting a Form"
+The \f4\-x\f1 option is used to 
+delete the form
+\f2form-name\f1 from the \s-1LP\s+1 
+print service.
+.SS "Listing Form Attributes"
+The \f4\-l\f1 option is used to 
+list the attributes of the existing form
+\f2form-name\f1.
+The attributes listed are those described under
+.B "Adding and Changing a Form,"
+above.
+Because of the potentially sensitive nature of the alignment pattern,
+only the administrator 
+can examine the form with this command.
+Other people may use the \f4lpstat\f1 command 
+to examine the non-sensitive part of the form description.
+.SS "Allowing and Denying Access to a Form"
+The 
+\f4\-u\fP option, followed by the argument
+\f4allow:\f2login-ID-list\f1
+or \f4\-u\ deny:\f2login-ID-list\f1
+lets you
+determine which users will be allowed
+to specify a particular form with a print request.
+This option can be used 
+with the \f4\-F\f1 or \f4\-\f1 option,
+each of which is described above under
+\f3\s-1Adding or Changing a Form\s+1\f1.
+.PP
+The \f2login-ID-list\f1 argument
+may include any or all of the following constructs: 
+.TP 1.4i
+\f2login-ID\f1
+A user on any system
+.TP
+\f2system_name\f4!\f2login-ID\f1
+A user on system \f2system_name\f1
+.TP
+\f2system_name\f4!all\f1
+All users on system \f2system_name\f1
+.TP
+\f4all!\f2login-ID\f1
+A user on all systems
+.TP
+\f4all\f1
+All users on all systems
+.PP
+The \s-1LP\s+1 print service keeps 
+two lists of users for each form:
+an ``allow-list'' of people allowed to use the form,
+and a ``deny-list'' of people that may not use the form.
+With the \f4\-u\ allow\fP option,
+the users listed are added to the allow-list and removed from
+the deny-list.
+With the \f4\-u\ deny\fP option,
+the users listed are 
+added to the deny-list and removed from the allow-list.
+(Both forms of the \f4\-u\f1 option can be run together 
+with the \f4\-F\f1 or the \f4\-\f1 option.)
+.PP
+If the allow-list is not empty, 
+only the users in the list are allowed access to the form,
+regardless of the contents of the deny-list.
+If the allow-list is empty but the deny-list is not,
+the users in the deny-list may not use the form,
+(but all others may use it).
+All users can be denied access to a form 
+by specifying \f4\-f deny:all\fP.
+All users can be allowed access to a form 
+by specifying \f4\-f allow:all\fP.
+(This is the default.)
+.SS "Setting an Alert to Mount a Form"
+The \f4\-f \f2form-name\f1 option
+is used with the
+\f4\-A \f2alert-type\f1 option
+to define an alert
+to mount the form when there are queued jobs which need it.
+If this option is not used to arrange alerting
+for a form, no alert will be sent for that form.
+.P
+The method by which the alert is sent
+depends on the value of 
+the \f2alert-type\f1 argument specified with the
+\f4\-A\f1 option.
+The \f2alert-types\f1 are:
+.RS 5
+.TP 8
+\f4mail\f1
+Send the alert message via the \f4mail\fP command
+to the administrator.
+.TP 8
+\f4write\f1
+Write the message,
+via the \f4write\fP command,
+to the terminal on which the
+administrator is logged in.
+If the administrator is logged in on several
+terminals, one is arbitrarily chosen. 
+.TP 8
+\f4quiet\f1
+Do not send messages for the current condition.
+An administrator can use this option to
+temporarily stop receiving further messages about
+a known problem.
+Once the form \f2form-name\f1 has been mounted
+and subsequently unmounted,
+messages will again be sent when the number of print requests
+reaches the threshold specified by the \f4\-Q\fP option.
+.TP 8
+\f4none\f1
+Do not send messages until the \f4\-A\f1 option
+is given again with a different \f2alert-type\f1
+(other than \f4quiet\f1).
+.TP
+.I shell-command
+Run the \f2shell-command\f1 each time the alert needs to
+be sent.
+The shell command should expect the message in
+standard input.
+If there are blanks embedded in the command,
+enclose the command in quotes.
+Note that the \f4mail\f1 and \f4write\f1 values for
+this option are equivalent to the values
+\f4mail\f1 \f2login-\s-1ID\s+1\f1 and \f4write\f1 
+\f2login-\s-1ID\s+1\f1 respectively, where \f2login-\s-1ID\s+1\f1
+is the current name for the administrator.
+This will be the login name of the person submitting this command
+unless he or she has used the \f4su\fP command
+to change to another login-\s-1ID\s+1.
+If the \f4su\fP command has been used 
+to change the user \s-1ID\s+1,
+then the \f2user-name\f1 
+for the new \s-1ID\s+1 is used.
+.TP
+\f4list\f1
+Display the type of the alert for the form
+on standard output.
+No change is made to the alert.
+.RE
+.PP
+The message sent appears as follows:
+.ftCW
+.sp
+.RS 3
+\f4The form \f2form-name\f4 needs to be mounted
+.br
+on the printer(s):
+.br
+\f2printer\f4 (\f2integer1\f4 requests)\f1.
+.br
+\f2integer2\fP print requests await this form.
+.br
+Use the \f2ribbon-color\f4 ribbon.
+.br
+Use the \f2print-wheel\f4 print wheel, if appropriate.
+.ft1
+.RE
+.P
+The printers listed are those that the administrator had
+earlier specified were candidates for this form.
+The number $integer sub 1$ listed next to each printer
+is the number of requests eligible for the printer.
+The number $integer sub 2$ shown after the list of printers
+is the total number of requests awaiting the form.
+It will be less than the sum of the other numbers if some requests can
+be handled by more than one printer.
+The
+.I "ribbon-color"
+and
+.I "print-wheel"
+are those specified in the form description.
+The last line in the message is always sent,
+even if none of the printers listed use print wheels,
+because the administrator may choose to mount the form on a
+printer that does use a print wheel.
+.P
+Where any color ribbon or any print wheel can be used,
+the statements above will read:
+.sp
+\f4Use any ribbon.
+.br
+Use any print-wheel.\f1
+.fi
+.PP
+If \f2form-name\fP is \f4any\fP,
+the alerting defined in this command
+applies to any form for which
+an alert has not yet been defined.
+If \f2form-name\fP is \f4all\fP,
+the alerting defined in this command
+applies to all forms.
+.PP
+If the \f4\-W\f1
+option is not given, 
+the default procedure is that 
+only one message will be sent
+per need to mount the form.
+Not specifying the \f4\-W\fP option
+is equivalent to specifying
+\f4\-W once\fP or \f4\-W 0\fP.
+If \f2minutes\fP is a number greater than 0,
+an alert will be sent at intervals
+specified by \f2minutes\fP.
+.P
+If the \f4\-Q\fP option is also given,
+the alert will be sent when a certain number
+(specified by the argument \f2requests\fP)
+of print requests that need the form are waiting.
+If the \f4\-Q\f1 option is not given,
+or the value of \f2requests\fP is \f41\fP or \f4any\fP
+(which are both the default),
+a message is sent as soon as 
+anyone submits a print request for the form
+when it is not mounted.
+.SS "Listing the Current Alert"
+The \f4\-f\fP option, followed by the \f4\-A\fP option
+and the argument \f4list\fP
+is used to list the type of alert that has been defined
+for the specified form \f2form-name\fP.
+No change is made to the alert.
+If
+.I "form-name"
+is recognized by the \s-1LP\s+1 print service,
+one of the following lines is sent to the standard output,
+depending on the type of alert for the form.
+.P
+.RS
+.TP 3
+\-
+\f4When \f2requests\fP requests are queued:
+.br
+\f4alert with \f2shell-command\f4 every 
+\f2minutes\fP \f4minutes\f1
+.TP
+\-
+\f4When 
+\f2requests\fP
+requests are queued:
+.br
+\f4write to \f2user-name\f4 every
+\f2minutes
+\f4minutes
+.TP
+\-
+\f4When
+\f2requests
+\f4requests are queued:
+.br
+\f4mail to \f2user-name\f4 every
+\f2minutes
+\f4minutes\f1
+.TP
+\-
+\f4No alert\f1
+.ft1
+.RE
+.PP
+The phrase \f4every\f1 \f2minutes\fP \f4minutes\fP is
+replaced with \f4once\f1 if
+\f2minutes\fP
+(\f4\-W\f2
+\f2minutes\fP)
+\f1is 0.
+.SS "Terminating an Active Alert"
+The \f4\-A quiet\f1 option is used to stop
+messages for the current condition.
+An administrator can use this option to temporarily stop
+receiving further messages about a known problem.
+Once the form has been mounted and then unmounted,
+messages will again be sent when the number of print requests reaches
+the threshold \f2requests\fP.
+.SS "Removing an Alert Definition"
+No messages will be sent after the \f4\-A none\f1 option is used
+until the \f4\-A \f1 option is given
+again with a different
+.IR "alert-type" .
+This can be used 
+to permanently stop further messages from being sent
+as any existing alert definition for the form will be removed.
+.SH "SEE ALSO"
+\f4lpadmin\f1(1M),
+\f4terminfo\f1(4).
+.br
+\f4lp\f1(1) in the \f2User's Reference Manual\f1.

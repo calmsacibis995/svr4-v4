@@ -1,0 +1,66 @@
+'\"macro stdmacro
+.if n .pH g1f.readfile @(#)readfile	40.12 of 4/12/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} readfile 1F "Form and Menu Language Interpreter Utilities" "\&"
+.if \nX=1 .ds x} readfile 1F "Form and Menu Language Interpreter Utilities"
+.if \nX=2 .ds x} readfile 1F "" "\&"
+.if \nX=3 .ds x} readfile "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4readfile\f1, \f4longline\f1 \- reads file, gets longest line
+.SH SYNOPSIS
+\f4readfile\f1
+\f2file\f1
+.sp .4v
+\f4longline\f1
+[\f2file\f1]
+.SH DESCRIPTION
+The \f4readfile\f1 function reads \f2file\f1 and copies it to \f2stdout\f1.
+No translation of NEWLINE is done.
+It keeps track of the longest line it reads
+and if there is a subsequent call to \f4longline\f1,
+the length of that line, including the NEWLINE character, is returned.
+.PP
+The \f4longline\f1 function returns the length, including the NEWLINE
+character, of the longest line in \f2file\f1.
+If \f2file\f1 is not specified, it uses the file named in the last call
+to \f4readfile\f1.
+.SH EXAMPLES
+Here is a typical use of \f4readfile\f1
+and \f4longline\f1 in a text frame definition file:
+.PP
+.RS
+.nf
+   \&.
+   \&.
+   \&.
+\f4text="\(gareadfile myfile\(ga"
+columns=\(galongline\(ga\f1
+   \&.
+   \&.
+   \&.
+.fi
+.RE
+.SH DIAGNOSTICS
+If \f2file\f1 does not exist, \f4readfile\f1 will return FALSE
+(that is, the expression will have an error return).
+.PP
+\f4longline\f1 returns 0 if a \f4readfile\f1 has not previously
+been issued.
+.SH NOTES
+More than one descriptor can call
+\f4readfile\f1 in the same frame definition file.
+In text frames, if one of those calls is made from the
+\f4text\f1 descriptor,
+then a subsequent use of \f4longline\f1
+will always get the longest line of the file read by the
+\f4readfile\f1 associated with the \f4text\f1 descriptor,
+even if it was not the most recent use of \f4readfile\f1.
+.SH "SEE ALSO"
+\f4cat\f1(1)
+.ig
+BUILT-IN FMLI
+..
+.Ee

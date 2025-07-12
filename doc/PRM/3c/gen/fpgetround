@@ -1,0 +1,99 @@
+'\"macro stdmacro
+.if n .pH g3.fp @(#)fpgetround	40.16 of 5/22/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} fpgetround 3C "C Development Set" "\&"
+.if \nX=1 .ds x} fpgetround 3C "C Development Set"
+.if \nX=2 .ds x} fpgetround 3C "" "\&"
+.if \nX=3 .ds x} fpgetround "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4fpgetround\f1, \f4fpsetround\f1, \f4fpgetmask\f1, \f4fpsetmask\f1, \f4fpgetsticky\f1, \f4fpsetsticky\f1 \- \s-1IEEE\s+1 floating-point environment control
+.SH SYNOPSIS
+\f4\#include <ieeefp.h>
+.PP
+\f4fp_rnd fpgetround (void);\f1
+.PP
+\f4fp_rnd fpsetround (fp_rnd rnd_dir);\f1
+.PP
+\f4fp_except fpgetmask (void);
+.PP
+\f4fp_except fpsetmask (fp_except mask);
+.PP
+\f4fp_except fpgetsticky (void);
+.PP
+\f4fp_except fpsetsticky (fp_except sticky);\f1
+.SH DESCRIPTION
+There are five floating-point exceptions: divide-by-zero,
+overflow, underflow,
+imprecise (inexact) result, and invalid operation.
+When a floating-point exception occurs, the corresponding sticky
+bit is set (1), and if the mask bit is enabled (1), the trap takes place.
+These routines let the user change the behavior on 
+occurrence of any of these
+exceptions, as well as change the rounding mode for 
+floating-point operations.
+.ta .5i 1.0i 1.5i 2.0i 2.5i 3.0i
+.PP
+.nf
+.ft4
+	FP_X_INV	/\(** invalid operation exception \(**/
+	FP_X_OFL	/\(** overflow exception \(**/
+	FP_X_UFL	/\(** underflow exception \(**/
+	FP_X_DZ   	/\(** divide-by-zero exception \(**/
+	FP_X_IMP	/\(** imprecise (loss of precision) \(**/
+	FP_RN   	/\(** round to nearest representative number \(**/
+	FP_RP   	/\(** round to plus infinity \(**/
+	FP_RM    	/\(** round to minus infinity \(**/
+	FP_RZ    	/\(** round to zero (truncate) \(**/\fP
+.ft1
+.fi
+.PP
+\f4fpgetround\fP
+returns the current rounding mode.
+.PP
+\f4fpsetround\fP
+sets the rounding mode and returns the previous rounding mode.
+.PP
+\f4fpgetmask\fP
+returns the current exception masks.
+.PP
+\f4fpsetmask\fP
+sets the exception masks and returns the previous setting.
+.PP
+\f4fpgetsticky\fP
+returns the current exception sticky flags.
+.PP
+\f4fpsetsticky\fP
+sets (clears) the exception sticky flags and 
+returns the previous setting.
+.PP
+The default environment is
+rounding mode set to nearest (\f4FP_RN\fP)
+and all traps disabled.
+.PP
+Individual bits may be examined
+using the constants defined in \f4ieeefp.h\f1.
+.SH "SEE ALSO"
+\f4isnan\fP(3C).
+.SH NOTES
+\f4fpsetsticky\fP
+modifies all sticky flags.
+\f4fpsetmask\fP
+changes all mask bits.
+\f4fpsetmask\fP
+clears the sticky bit corresponding
+to any exception being enabled.
+.PP
+C requires truncation (round to zero) for floating point
+to integral conversions.
+The current rounding 
+mode has no effect on these
+conversions.
+.P
+One must clear the sticky bit to recover from the trap 
+and to proceed.  If the sticky bit is not cleared before
+the next trap occurs, a wrong exception type may
+be signaled.  
+.Ee

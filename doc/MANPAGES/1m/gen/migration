@@ -1,0 +1,194 @@
+'\"macro stdmacro
+.if n .pH g1a.migration @(#)migration	40.10 of 4/30/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} migration 1M "System Administration Utilities" "\&"
+.if \nX=1 .ds x} migration 1M "System Administration Utilities"
+.if \nX=2 .ds x} migration 1M "" "\&"
+.if \nX=3 .ds x} migration "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4migration\f1 \- move an archive from one set of volumes to another
+.SH SYNOPSIS
+.nf
+\f4migration -B \f1[ \f4-dlmotuvAENS \f1] \f2bkjobid ofsname ofsdev ofslab descript\f1
+.fi
+.SH DESCRIPTION
+\f4migration\fP
+is invoked as a child process by
+\f4bkdaemon\f1(1M)
+to move an existing archive made by some other arbitrary
+method to a new set of volumes.
+The existing backup history log entry of the archive is updated
+to reflect the new volumes and destination information of
+the archive.
+.P
+.I bkjobid
+is the job id assigned by
+\f4backup\f1(1M).
+\f2ofsdev\f1
+is the name of the UNIX
+raw (character) device on which the archive resides.
+.I ofslab
+is the volume label on the archive [see \f4labelit\f1(1M)].
+.I descript
+is a description for a destination device in the form:
+.P
+.RS
+\f2dgroup:dname:dchar:dlabels\f1
+.RE
+.P
+.I dgroup 
+specifies a device group.
+\f4dname\fP
+specifies a device name.
+.I dchars
+specifies characteristics for the specified
+device and group (see \f4device.tab\f1(4)
+for a further description of device characteristics).
+.I dlabels
+specifies the media names for the media to be used
+for the archive.
+.SS Options
+.TP
+\f4d*\f1
+Do not update the backup history log entry for the archive.
+.TP
+\f4l*\f1
+Create a long form of the backup history log that includes a table-of-contents
+for the archive.
+This includes the data used to generate an
+.IR "ls -l" -like
+listing of each file in the archive.
+.TP
+\f4m*\f1
+Mount the originating filesystem read-only before starting the backup
+and remount it with its original permissions after completing the backup.
+.TP
+\f4o\f1
+Permit the user to override media insertion requests (see 
+\f4getvol\f1(1M) \f4-o\f1).
+.TP
+\f4t*\f1
+Create a table of contents for the backup on additional media instead
+of in the backup history log.
+.TP
+\f4u*\f1
+Unmount the originating filesystem before performing the backup
+and remount it with its original permissions after completing the backup.
+.TP
+\f4v*\f1
+Validate the archive as it is written.
+A checksum is computed as the archive is being written;
+as each medium is completed, it is re-read and the checksum recomputed
+to verify that each block is readable and correct.
+If either check fails, the medium is considered unreadable.
+If
+\f4-A \f1
+has been specified,
+the archiving operation fails;
+otherwise, the operator is prompted to replace the failed medium.
+.TP
+\f4A\f1
+Do not prompt the user for removable media operations (automated operation).
+.TP
+\f4E*\f1
+Report an estimate of media usage for the archive;
+then perform the backup.
+.TP
+\f4N*\f1
+Report an estimate of media usage for the archive;
+do not perform the backup.
+.TP
+\f4S*\f1
+Generate a period (.) for every 100 (512 byte) blocks read-from or
+written-to the archive on the destination device.
+.SS User Interactions
+The connection between an archiving method and
+\f4backup\f1(1M)
+is more complex than a simple fork/exec or pipe.
+\f4backup\f1(1M)
+is responsible for all interactions with the user, either directly,
+or through
+\f4bkoper\f1(1M).
+Therefore,
+\f4migration\f1
+neither reads from standard-input nor writes to standard-output or 
+standard-error.
+A method library must be used [see
+\f4libbrmeth\f1(3)]
+to communicate reports
+(estimates, periods, status, etc.) to
+\f4backup(1M)\f1.
+.SH DIAGNOSTICS
+If 
+\f4migration\f1
+successfully completes its task, it
+exits with a 0 status.
+If any of the parameters
+to
+\f4migration\f1
+are invalid,
+it exits with a 1 status.
+If any error occurs which causes
+\f4migration\f1
+to fail to complete
+.I all
+portions of its task,
+it exits with a 2 status.
+.P
+Errors are reported if any of the following occur:
+.\" autoincrement register for outline
+.TP
+\01.
+\f4-t\f1
+is specified together with \f4-A.\f1
+.TP
+\02.
+\f4-A\f1
+is specified together with \f4-o.\f1
+.TP
+\03.
+\f4-t\f1
+is specified and the destination device does not support removable media.
+.TP
+\04.
+\f4-A\f1
+is specified and more than one removable medium is required.
+.TP
+\05.
+Unrecoverable errors occurred in trying to read or write the destination device.
+.TP
+\06.
+\f4-m\f1
+is specified and the originating filesystem could not be mounted read-only.
+.TP
+\07.
+\f4-m\f1
+is specified and the originating filesystem could not be unmounted.
+.TP
+\08.
+\f4-o\f1
+is not specified and insufficient media names are supplied in
+.IR descript .
+.TP
+\09.
+\f4-u\f1
+is specified and the filesystem could not be unmounted.
+.TP
+10.
+\f4-u\f1
+is specified and the filesystem could not be remounted.
+.SH FILES
+.nf
+.ft 4
+/usr/oam/bkrs/tables/bkhist.tab
+$TMP/filelist$$
+.ft
+.fi
+.SH SEE ALSO
+.nf
+\f4awk\fP(1), \f4backup\fP(1M), \f4device.tab\fP(4), \f4getvol\fP(1M), \f4grep\fP(1), \f4labelit\fP(1M),
+\f4libbrmeth\fP(3), \f4ls\fP(1), \f4prtvtoc\fP(1M), \f4restore\fP(1M), \f4rsoper\fP(1M), \f4sed\fP(1),
+\f4time\fP(2), \f4urestore\fP(1M)

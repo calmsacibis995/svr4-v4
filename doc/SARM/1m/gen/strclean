@@ -1,0 +1,39 @@
+'\"macro stdmacro
+.if n .pH g1a.strclean @(#)strclean	40.8 of 4/29/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} strclean 1M "Networking Support Utilities" "\&"
+.if \nX=1 .ds x} strclean 1M "Networking Support Utilities"
+.if \nX=2 .ds x} strclean 1M "" "\&"
+.if \nX=3 .ds x} strclean "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4strclean\f1 \- \s-1STREAMS\s0 error logger cleanup program
+.SH SYNOPSIS
+\f4strclean\f1 [\f4\-d\f2 logdir\f1] [\f4\-a\f2 age\f1]
+.SH DESCRIPTION
+\f4strclean\fP is used to clean up the \s-1STREAMS\s0 error logger
+directory on a regular basis
+(for example, by using \f4cron\fP).
+By default, all files with names matching \f4error.\(**\f1 in 
+\f4/var/adm/streams\f1 that have not been modified in the last three
+days are removed.
+A directory other than \f4/var/adm/streams\f1
+can be specified using the \f4\-d\f1 option.
+The maximum age in days for a log file can be changed using
+the \f4\-a\f1 option.
+.SH EXAMPLE
+.IP
+\f4strclean \-d /var/adm/streams \-a 3\f1
+.P
+has the same result as running strclean with no arguments.
+.SH FILES
+\f4/var/adm/streams/error.\f1\(**
+.SH SEE ALSO
+\f4cron\fP(1M), \f4strerr\fP(1M)
+.br
+\f2Programmer's Guide: \s-1STREAMS\s0\f1
+.SH NOTES
+\f4strclean\fP is typically run from \f4cron\fP on a daily or weekly basis.
+.Ee

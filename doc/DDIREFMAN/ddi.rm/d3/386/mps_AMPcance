@@ -1,0 +1,45 @@
+'\"macro stdmacro
+.if n .pH 386.mps_AMPcance @(#)mps_AMPcance	40.4 of 7/1/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.nr X
+.if \nX=0 .ds x} mps_AMPcancel D3D "Multibus II" "DDI" "\&"
+.if \nX=1 .ds x} mps_AMPcancel D3D  "Multibus II" "DDI" "\&"
+.if \nX=2 .ds x} mps_AMPcancel D3D "" "\&"
+.if \nX=3 .ds x} mps_AMPcancel "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4mps_AMPcancel\f1 \- cancels an ongoing rsvp transaction
+.SH SYNOPSIS
+.nf
+\f4#include <sys/mps.h>
+long mps_AMPcancel(\f2chan\fP, \f2socid\fP, \f2tid\fP)
+long chan;
+mb2socid_t socid;
+unsigned char tid;\f1
+.fi
+.SH ARGUMENTS
+.PD 0
+.TP
+\f2chan\f1
+Channel number received from a previous \f4mps_open_chan\f1.
+.TP
+\f2socid\f1
+Identifies the socket id of the socket that initiated the transaction.
+.TP
+\f2tid\f1
+Identifies the transaction id for the transaction to be canceled.
+.SH DESCRIPTION
+\f4mps_AMPcancel\f1 is used to cancel an ongoing rsvp transaction.  This
+is an asynchronous operation.  \f4mps_AMPcancel\f1  can be used to cancel
+transactions initiated by another agent. 
+.PP
+\f4mps_AMPcancel\f1 can also be used to cancel transactions initiated by
+the local host.  In this case, the corresponding completion message of
+the locally initiated transaction is returned to the user. 
+.SH RETURN VALUE
+When \f4mps_AMPcancel\f1 is successful, 0 (zero) is returned.  If \f2chan\f1
+or \f2tid\f1 are invalid, \f4mps_AMPcancel\f1 fails and -1 is returned.
+.SH LEVEL
+Base or Interrupt
+.SH SEE ALSO
+\f4mps_open_chan\f1(D3D)

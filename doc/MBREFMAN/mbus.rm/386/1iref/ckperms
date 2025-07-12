@@ -1,0 +1,73 @@
+'\"macro stdmacro
+.if n .pH g1a.ckperms @(#)ckperms	40.6 of 5/17/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} ckperms 1iref "System Administration Utilities" "" "\&"
+.if \nX=1 .ds x} ckperms 1iref "System Administration Utilities" ""
+.if \nX=2 .ds x} ckperms 1iref "" "\&"
+.if \nX=3 .ds x} ckperms "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4ckperms\f1 \- set and/or verify permissions on files
+.SH SYNOPSIS
+\f4ckperms\f [\f4\-i \f2idlist\f1] [\f4\-c] [\f4\-g] [\f4\-v ] [\f4\-C]
+.br
+[\f4\-S] [\f4\-t \f2flist\f1] [\f4\-n \f2pathname\f1] [\f4\-l \f2logfile\f1]
+.br
+\f2perms.filename\f1
+.SH DESCRIPTION
+The \f4ckperms\f1 utility reads system file information from a product
+definition file, also called a perms file.   The capabilities of \f4ckperms\f1
+vary depending on which options are specified.
+.PP
+.TP
+\f4\-i\f1
+Processes only those files whose package identifier matches the list of
+idnames specified in \f2idlist\f1.  The \f2idlist\f1 is a list of idnames
+separated by commas with no spaces.  
+.TP
+\f4\-c\f1
+Specifies that the checksums are to be verified.  The checksum field of
+a block special or character special file represents the major and minor
+numbers, and is verified even when the \f4\-c\f1 option is not specified.
+.TP
+\f4\-g\f1
+Prints to standard output a list of pathnames being processed.  Files not
+included in this list of pathnames are: block special files, character special files, directory files, empty files, and pipe files.
+.TP
+\f4\-v\f1
+Prints to standard output a list of all pathnames being processed.
+.TP
+\f4\-C\f1
+Changes the characteristics of files in the system to match the
+specifications in the database, access and ownership permissions are
+set, and type `e' files, directories, special files, and links are created.
+.TP
+\f4\-S\f1
+Strips specified files.
+.TP
+\f4\-t\f1
+Processes files whose file type matches those specified in \f2flist\f1.
+The entries in \f2flist\f1 consist of file types separated by commas with
+no spaces.
+.TP
+\f2\-n\f1
+Provides a pathname to be added at the beginning of all relative pathnames
+in the database.  If this option is not specified, all relative pathnames
+start at the current working directory.
+.TP
+\f4\-l\f1
+Logs the characteristics of the files after the files have been processed.
+.SH FILES
+\f4/sbin/ckperms\f1
+.SH NOTES
+Exit Codes
+.IP 0 .25i
+Returned on successful completion
+.IP 1
+Returned if there are errors in the database
+.IP 2
+Returned in case of errors in command line syntax
+.IP 3
+Returned in case of mismatches between the database and the file processed

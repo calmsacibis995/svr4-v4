@@ -1,0 +1,59 @@
+'\"macro stdmacro
+.if n .pH g4.rpc @(#)rpc	40.7 of 1/3/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} rpc 4 "" "\&"
+.if \nX=1 .ds x} rpc 4 ""
+.if \nX=2 .ds x} rpc 4 "" "\&"
+.if \nX=3 .ds x} rpc "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4rpc\f1 \- rpc program number data base
+.SH SYNOPSIS
+.ft 4
+rpc
+.ft 1
+.SH DESCRIPTION
+The
+\f4rpc\f1 program number database
+contains user readable names that
+can be used in place of RPC program numbers.
+Each line has the following information:
+.RS
+.nf
+name of server for the RPC program
+RPC program number
+aliases
+.fi
+.RE
+.P
+Items are separated by any number of blanks and/or
+tab characters.
+A \f4#\f1 indicates the beginning of a comment;
+characters up to the end of the line are not interpreted
+by routines which search the file.
+.P
+Below is an example of an RPC database:
+.P
+.ft 4
+.nf
+.ta 1.0i +1.0i +.75i +.75i
+#
+#	rpc
+#
+
+rpcbind	100000	portmap sunrpc portmapper
+rusersd	100002	rusers
+nfs	100003	nfsprog
+mountd	100005	mount showmount
+walld	100008	rwall shutdown
+sprayd	100012	spray
+llockmgr	100020	
+nlockmgr	100021
+status	100024
+bootparam	100026
+keyserv	100029	keyserver
+.fi
+.ft 1
+.DT

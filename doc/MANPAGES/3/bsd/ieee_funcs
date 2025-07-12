@@ -1,0 +1,92 @@
+'\" macro stdmacro
+.if n .pH g3.ieee_functions @(#)ieee_funcs	40.15 of 4/24/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.\" Copyright (c) 1988 Sun Microsystems, Inc. - All Rights Reserved.
+.\"
+.nr X
+.if \nX=0 .ds x} ieee_functions 3M "BSD Compatibility Package" "\&"
+.if \nX=1 .ds x} ieee_functions 3M "BSD Compatibility Package"
+.if \nX=2 .ds x} ieee_functions 3M "" "\&"
+.if \nX=3 .ds x} ieee_functions "" "" "\&"
+.TH \*(x}
+.ds nn \f2NaN\f1
+.SH NAME
+\f4ieee_functions\f1, \f4fp_class\f1, \f4isnan\f1, \f4copysign\f1, \f4scalbn\f1 \- miscellaneous functions for IEEE arithmetic
+.SH SYNOPSIS
+.nf
+\f4cc \f1[ \f2flag\f1\. \. \. ] \f2file\f1 \. \. \. \f4\-lucb\f1
+.sp .5
+\f4#include <fp.h>\f1
+\f4#include <math.h>\f1
+\f4#include <stdio.h>\f1
+.P
+\f4enum fp_class_type fp_class(x)\f1
+\f4double x;\f1
+.P
+\f4int isnan(x)\f1
+\f4double x;\f1
+.P
+\f4double copysign(x,y)\f1
+\f4double x, y;\f1
+.P
+\f4double scalbn(x,n)\f1
+\f4double x; int n;\f1
+.fi
+.ne 13
+.SH DESCRIPTION
+.P
+Most of these functions provide capabilities required by
+.SM ANSI/IEEE
+Std 754-1985 or suggested in its appendix.
+.P
+\f4fp_class(\f2x\f4)\f1
+corresponds to the IEEE's class() and
+classifies \f2x\f1 as zero, subnormal, normal, \(if, or quiet or signaling \*(nn;
+\f4/usr/ucbinclude/sys/ieeefp.h\f1
+defines
+\f4enum fp_class_type\f1.
+The following function returns 0 if the indicated condition is not satisfied:
+.RS
+.TP 15
+\f4isnan(\f2x\f4)\f1
+returns 1 if
+.I x
+is \*(nn
+.RE
+.P
+\f4copysign(\f2x\f4,\f2y\f4)\f1
+returns
+.I x
+with
+.IR y 's
+sign bit.
+.P
+\f4scalbn(\f2x\f4,\f2n\f4)\f1
+returns
+\f2x\f4* 2**n\f1
+computed by exponent manipulation rather than by actually
+performing an exponentiation or a multiplication.
+Thus
+.IP
+\f41 \(<= scalbn(fabs(\f2x\f4),\-ilogb(\f2x\f4)) < 2\f1
+.P
+for every
+.I x
+except 0,
+.if n \
+infinity,
+.if t \
+\(if,
+and \*(nn.
+.SH FILES
+.PD 0
+.TP 20
+\f4/usr/ucbinclude/sys/ieeefp.h\f1
+.TP 
+\f4/usr/ucbinclude/math.h\f1
+.TP 
+\f4/usr/include/values.h\f1
+.PD
+.\" .SH "SEE ALSO"
+.\" \f4floatingpoint\fP(3)

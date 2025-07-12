@@ -1,0 +1,69 @@
+.if n .pH 386.Ckernel @(#)Ckernel	40.6
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.BK "Technology File Mapping Guide" "" "" ""   
+.\ACRONYM	                  
+.CH "Operating System Kernel" "" "Table of Contents" "3"
+.\CHAPTER	3
+.tC 1 "Virtual File Subsystem" 3-1  
+.tC 2 "Different Types of File Systems" 3-1  
+.tC 2 "Data Integrity in File Systems" 3-2  
+.tC 2 "Dynamic Bad Block Handling" 3-2  
+.tC 2 "Ordered Writes" 3-3  
+.tC 2 "Automatic Cache Flushing" 3-3  
+.tC 2 "Automatic Integrity Check" 3-3  
+.tC 2 "Synchronous Write Option" 3-4  
+.tC 2 "File and Record Locking" 3-4  
+.tC 2 "Symbolic Links" 3-5  
+.tC 2 "Virtual File Subsystem Modules" 3-5  
+.tC 2 "FF \(em File-descriptor Level" 3-5  
+.tC 2 "FV \(em File-system Independent v-node Level" 3-6  
+.tC 2 "FB \(em File Buffer Management" 3-7  
+.tC 2 "FS \(em File-System-Type (FSType) dependent level" 3-7  
+.tC 1 "STREAMS I/O Subsystem" 3-10  
+.tC 2 "Dynamic Buffer Allocation" 3-11  
+.tC 2 "Persistent PUSH" 3-11  
+.tC 2 "Pipes and Related Features" 3-11  
+.tC 2 "Named STREAMS" 3-12  
+.tC 2 "STREAMS TTY Subsystem" 3-12  
+.tC 2 "Driver-Kernel Interface/Device Driver Interface (DKI/DDI)" 3-13  
+.tC 2 "STREAMS I/O Subsystem Modules" 3-14  
+.tC 2 "SS \(em STREAMS I/O Services" 3-15  
+.tC 2 "ST \(em STREAMS TTY Subsystem" 3-15  
+.tC 2 "SM \(em STREAMS I/O Modules" 3-16  
+.tC 2 "SD \(em STREAMS Device Drivers" 3-17  
+.tC 2 "SR \(em STREAMS Support Routines" 3-17  
+.tC 1 "Memory Management Subsystem" 3-19  
+.tC 2 "Isolation of Hardware-Dependent Code" 3-19  
+.tC 2 "Flexible Use of Disk Space for Swapping" 3-19  
+.tC 2 "Portable Implementation" 3-20  
+.tC 2 "Mapped Files" 3-20  
+.tC 2 "Shared Memory" 3-21  
+.tC 2 "Memory Management Subsystem Modules" 3-21  
+.tC 2 "MM \(em Memory Management" 3-21  
+.tC 2 "MS \(em Memory Segmentation" 3-22  
+.tC 2 "MP \(em Memory Paging" 3-23  
+.tC 2 "MX \(em Memory Transfer" 3-23  
+.tC 1 "Process Management Subsystem" 3-25  
+.tC 2 "Switchable Schedulers" 3-25  
+.tC 2 "User-Controlled Process Scheduler" 3-25  
+.tC 2 "Kernel Preemption" 3-26  
+.tC 2 "Process Management Subsystem Modules" 3-27  
+.tC 2 "PP \(em Process Creation, Deletion and Related Functions" 3-27  
+.tC 2 "PS \(em Process Scheduling" 3-28  
+.tC 2 "PM \(em Process Memory Management" 3-29  
+.tC 2 "PI \(em Inter-process Communication" 3-29  
+.tC 1 "Kernel Management Subsystem" 3-31  
+.tC 2 "Swapping the User Area" 3-31  
+.tC 2 "Restructuring and Hashing System Tables" 3-31  
+.tC 2 "Dynamic Allocation of System Tables" 3-32  
+.tC 2 "\&\f4nfile\fP Tunability" 3-32  
+.tC 2 "Kernel Memory Management" 3-32  
+.tC 2 "Expanded Fundamental Types (EFT)" 3-33  
+.tC 2 "System Initialization" 3-33  
+.tC 2 "File-system Independent Booting" 3-33  
+.tC 2 "Auto-configuration" 3-34  
+.tC 2 "Kernel Management Subsystem Modules" 3-34  
+.tC 2 "KK \(em System Initialization/Termination" 3-34  
+.tC 2 "KU \(em Kernel/User interface (User Services and Assorted System-calls)" 3-35  
+.tC 2 "KT \(em Time Services" 3-36  
+.tC 2 "KS \(em Kernel Support Routines" 3-36  

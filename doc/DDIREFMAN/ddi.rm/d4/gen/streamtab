@@ -1,0 +1,62 @@
+'\"!  tbl | mmdoc
+'\"macro stdmacro
+.if n .pH gen.streamtab @(#)streamtab	40.3 of 6/24/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.nr X
+.if \nX=0 .ds x} streamtab D4DK "STREAMS" "DDI/DKI" "\&"
+.if \nX=1 .ds x} streamtab D4DK "STREAMS" "DDI/DKI"
+.if \nX=2 .ds x} streamtab D4DK "" "\&"
+.if \nX=3 .ds x} streamtab "" "" "\&"
+.TH \*(x}
+.IX "\f4streamtab\fP(D4DK)"
+.SH NAME
+\f4streamtab\fP \- STREAMS driver and module declaration structure
+.SH SYNOPSIS
+\f4#include <sys/stream.h>\fP
+.SH DESCRIPTION
+Each STREAMS driver or module must have a
+\f4streamtab\fP structure.
+The streamtab structure must be named
+\f2prefix\f4info\f1, where \f2prefix\fP is the driver
+prefix.
+.P
+The \f4streamtab\fP structure is made up of pointers to \f4qinit\fP
+structures for both the read and
+write queue portions of each module or driver.
+(Multiplexing drivers require both upper and lower
+\f4qinit\fP structures.)
+The \f4qinit\fP structure
+contains the entry points through
+which the module or driver routines are called.
+.SH STRUCTURE MEMBERS
+.TS
+lf4p8 2 lf4p8 2 lf4p8.
+struct qinit	*st_rdinit;	/* read queue */
+struct qinit	*st_wrinit;	/* write queue */
+struct qinit	*st_muxrinit;	/* lower read queue*/
+struct qinit	*st_muxwinit;	/* lower write queue*/
+.TE
+.P
+The \f4st_rdinit\fP field contains a pointer to the read-side \f4qinit\fP
+structure.
+For a multiplexing driver, this is the \f4qinit\fP structure
+for the upper read side.
+.P
+The \f4st_wrinit\fP field contains a pointer to the write-side \f4qinit\fP
+structure.
+For a multiplexing driver, this is the \f4qinit\fP structure
+for the upper write side.
+.P
+The \f4st_muxrinit\fP field contains a pointer to the lower read-side
+\f4qinit\fP structure for multiplexing drivers.
+For modules and
+non-multiplexing drivers, this field should be set to \f4NULL\fP.
+.P
+The \f4st_muxwinit\fP field contains a pointer to the lower write-side
+\f4qinit\fP structure for multiplexing drivers.
+For modules and
+non-multiplexing drivers, this field should be set to \f4NULL\fP.
+.SH SEE ALSO
+.na
+\f4qinit\fP(D4DK)
+.ad

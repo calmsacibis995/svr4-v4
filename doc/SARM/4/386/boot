@@ -1,0 +1,77 @@
+'\"macro stdmacro
+.if n .pH g4.boot @(#)boot	40.5 of 1/3/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+'\"macro stdmacro
+.if n .pH g1.boot @(#)boot 30.2 of 12/25/85
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.if \nX=0 .ds x} boot 4 "" "\&"
+.if \nX=1 .ds x} boot 4 ""
+.if \nX=2 .ds x} boot 4 "" "\&"
+.if \nX=3 .ds x} boot 4 "" "" "\&"
+.nr X
+.TH \*(x} "" "386 Computer Only"
+.SH NAME
+\f4boot\f1
+.SH DESCRIPTION
+Options for the boot program can be set or changed with keywords in
+\f4/etc/default/boot\f1.
+The following are recognized by \f2boot\f1.
+.TP 1.6i
+\f4AUTOBOOT=YES\fP or \f4NO\fP
+Indicates whether or not
+.I boot
+starts loading the kernel immediately
+or displays a boot prompt first.
+.TP
+\f4BOOTMSG\fP=\f2string\fP
+The default boot message is changed to \f2string\fP.
+.TP
+\f4BOOTPROMPT\fP=\f2string\fP
+The default boot prompt is changed to \f2string\fP.
+.TP
+\f4DEFBOOTSTR\fP=\f2bootstring\fP
+Sets default bootstring to \f2bootstring\fP.
+This is the string used by \f2boot\fP when the user presses \f4RETURN\f1
+only to the boot prompt or when \f2boot\fP\0times out.
+.TP
+\f4INITPROG\fP=\f2path\fP
+Specifies an initialization program to be loaded and run
+before \f2boot\fP\0sizes memory.
+.TP
+\f4MEMRANGE\fP=\f2range\fP[,\f2range\fP...]
+Tells \f2boot\fP where to look when sizing memory.
+A \f2range\fP is a pair of decimal addresses, separated by a
+dash (such as 1M\-4M), followed by a set of one-byte flags.
+This ses sf flags should be encoded as an integer in the range
+of 0\-55.
+Use a colon (:) to separate addresses from flags.
+Note that only two flags are currently defined:
+0 (indicates no special
+properties) and 1 (indicates memory for which DMA is not allowed).
+All other flags are currently undefined and reserved for future use.
+In addresses, use ``M'' to indicate the word
+``megabyte'' and ``K'' to indicate the word ``kilobyte.''
+Both upward (such as 15M\-16M) and downward (such as 16M\-15M)
+address ranges are supported.
+The first address in the pair is inclusive; the last address is exclusive.
+When sizing the base memory (0-640K usually) the boot code will check the
+CMOS for the current base memory setting.
+If this value is less than the
+current base memory value, the kernal will use this lower value instead
+of 640K.
+.TP
+\f4PANICBOOT=YES\fP or \f4NO\fP
+If this is set to \f4YES\f1, when the system panics, it will automatically do a soft
+reboot to bring the system back up.
+If this is set to \f4NO\f1, the system will just
+wait in panic until the system is manually rebooted by the user.
+.TP
+\f4TIMEOUT\fP=\f2number\fP
+If \f2boot\fP is waiting for a boot line from the user and
+\f4TIMEOUT\fP is set, \f2boot\fP will wait for \f2number\fP
+seconds, then use the default boot line defined
+by \f4DEFBOOTSTR\fP.
+.SH FILES
+\f4/etc/default/boot\f1
+.Ee

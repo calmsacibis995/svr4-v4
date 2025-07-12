@@ -1,0 +1,170 @@
+'\"macro stdmacro
+.if n .pH g1.shl @(#)shl	40.8.1.1 of 1/3/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} shl 1 "User Environment Utilities" "\&"
+.if \nX=1 .ds x} shl 1 "User Environment Utilities"
+.if \nX=2 .ds x} shl 1 "" "\&"
+.if \nX=3 .ds x} shl "" "" "\&"
+.TH \*(x}
+.if t .ds ' \h@.05m@\s+4\v@.333m@\'\v@-.333m@\s-4\h@.05m@
+.if n .ds ' '
+.if t .ds ` \h@.05m@\s+4\v@.333m@\`\v@-.333m@\s-4\h@.05m@
+.if n .ds ` `
+.ds OK [\|
+.ds CK \|]
+.SH NAME
+\f4shl\f1 \- shell layer manager
+.SH SYNOPSIS
+\f4shl\f1
+.SH DESCRIPTION
+\f4shl\fP
+allows a user to interact with more than one shell from a single terminal.
+The user controls these shells, 
+known as 
+\f4layers\fP,
+using the commands 
+described below.
+.P
+The
+.I current layer
+is the layer which can receive input from the keyboard.
+Other layers attempting to read from the keyboard are blocked.
+Output from multiple layers is multiplexed onto the terminal.
+To have the output of a layer blocked when it is not current, the 
+\f4stty\fP
+option
+\f4loblk\f1
+may be set within the layer.
+.P
+The
+\f4stty\fP
+character
+\f4swtch\^\f1
+(set to ^Z if \s-1NUL\s+1)
+is used to switch control to
+\f4shl\fP
+from a layer.
+\f4shl\fP
+has its own prompt, >>>, to help distinguish it from a layer.
+.P
+A
+.I layer\^ 
+is a shell
+which has been bound to a virtual tty device 
+\f1(\f4/dev/sxt???\f1).
+The virtual device can be manipulated like a real tty device using
+\f4stty\fP(1)
+and 
+\f4ioctl\fP(2).
+Each layer has its own process group id.
+.SS Definitions
+A
+.I name\^
+is a sequence of characters delimited by a blank, tab or new-line.
+Only the first eight characters are significant.
+The \f2name\fPs 
+\f4(1) \f1
+through
+\f4(7)\f1
+cannot be used when creating a layer.
+They are used by
+\f4shl\fP
+when no name is supplied.
+They may be abbreviated to just the digit.
+.SS Commands
+The following commands may be issued from the 
+\f4shl\fP
+prompt level.
+Any unique prefix is accepted.
+.PP
+.PD 0
+.TP
+\f4create\fP \*(OK \f2name\^\fP \*(CK
+Create a layer called 
+.I name\^ 
+and make it the current layer.
+If no argument is given, a layer will be created with a name of the form
+\f2(#)\fP where \f2#\fP is the last digit of the virtual device 
+bound to the layer.
+The shell prompt variable 
+\f4\s-1PS1\s+1\f1
+is set to the name of the layer followed by a space.
+A maximum of seven layers can be created.
+.TP
+\f4block\f2 name\f1 [ \f2name\f1 ... ]
+For each \f2name\f1, block the output of the corresponding
+layer when it is not the current layer.
+This is equivalent to setting the \f4stty\fP option \f4\-loblk\f1
+within the layer.
+.TP
+\f4delete\fP \f2name\^\fP \*(OK \f2name\^\fP .\|.\|. \*(CK
+For each \f2name\fP, delete the corresponding layer.
+All processes in the process group of the layer are sent the SIGHUP signal
+(see 
+\f4signal\fP(2)).
+.TP
+\f4help\f1 (or \f4?\f1)
+Print the syntax of the
+\f4shl\fP
+commands.
+.TP
+\f4layers\fP \*(OK \f4\-l\fP \*(CK \*(OK \f2name\^\fP .\|.\|. \*(CK
+For each \f2name\fP, list the layer name and its process group.
+The
+\f4\-l \f1
+option produces a 
+\f4ps\fP(1)-like
+listing.
+If no arguments are given, information is presented for all existing
+layers.
+.TP
+\f4resume\fP \*(OK \f2name\^\fP \*(CK
+Make the layer referenced by 
+.I name\^
+the current layer.
+If no argument is given, the last existing current layer 
+will be resumed.
+.TP
+\f4toggle\f1
+Resume the layer that was current before the last current layer.
+.TP
+\f4unblock\f2 name\f1  [ \f2name\f1 ... ]
+For each \f2name\f1, do not block the output of the
+corresponding layer when it is not the current layer.
+This is equivalent to setting the \f4stty\fP option \f4\(miloblk\f1
+within the layer.
+.TP
+\f4quit\f1
+Exit 
+\f4shl\fP.
+All layers are sent the SIGHUP signal.
+.TP
+\f2name\^\fP
+Make the layer referenced by 
+.I name\^
+the current layer.
+.PD
+.SH FILES
+.PD 0
+.TP 18
+/dev/sxt???
+Virtual tty devices
+.TP
+\s-1$SHELL\s+1
+Variable containing path name of the shell to use (default is 
+/bin/sh).
+.PD
+.SH SEE ALSO
+\f4sh\fP(1),
+\f4stty\fP(1).
+.br
+\f4ioctl\fP(2),
+\f4signal\fP(2) in the \f2Programmer's Reference Manual\f1.
+.br
+\f4sxt\fP(7) in the \f2System Administrator's Reference Manual\f1.
+.SH WARNING
+To avoid disabling the suspend character when in the job control
+environment, the \f2swtch\f1 character must be redefined.
+.Ee

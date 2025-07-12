@@ -1,0 +1,175 @@
+'\"macro stdmacro
+.if n .pH g1a.ypset @(#)ypset	40.6 of 5/16/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.\" @(#)ypset.8 1.8 89/09/28 SMI;
+.\" Copyright (c) 1988 Sun Microsystems, Inc. - All Rights Reserved.
+.nr X
+.if \nX=0 .ds x} ypset 1M "" "\&"
+.if \nX=1 .ds x} ypset 1M ""
+.if \nX=2 .ds x} ypset 1M "" "\&"
+.if \nX=3 .ds x} ypset "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4ypset\fP \- point ypbind at a particular server
+.SH SYNOPSIS
+\f4/usr/sbin/ypset\f1
+[
+\f4\-d\f1
+\f2ypdomain\f1
+]
+[
+\f4\-h\f1
+\f2host\f1
+]
+\f2server\f1
+.SH DESCRIPTION
+.P
+In order to run
+\f4ypset\f1,
+\f4ypbind\f1
+must be initiated with the
+\f4\-ypset\f1
+or 
+\f4\-ypsetme\f1
+options.
+See
+\f4ypserv\f1(1M).
+\f4ypset\f1
+tells
+\f4ypbind\f1
+to get
+\s-1NIS\s0
+services for the specified
+\f2ypdomain\f1
+from the
+\f4ypserv\f1
+process running on
+\f2server\f1.
+If
+\f2server\f1
+is down, or is not running
+\f4ypserv\f1,
+this is not discovered until the
+\s-1NIS\s0
+client process tries to
+get a binding for the domain.
+At this point, the binding set by
+\f4ypset\f1
+will be tested by
+\f4ypbind\f1.
+If
+the binding is invalid,
+\f4ypbind\f1
+will attempt to rebind for the same domain.
+.P
+\f4ypset\f1
+is useful for binding a client node which is not on a broadcast net,
+or is on a broadcast net which is not running the
+\s-1NIS\s0
+server host.
+It also is useful for debugging
+\s-1NIS\s0
+client applications, for instance where the
+\s-1NIS\s0
+map only exists at a single
+\s-1NIS\s0
+server host.
+.P
+In cases where several hosts on the local net are supplying
+\s-1NIS\s0
+services, it is possible for
+\f4ypbind\f1
+to rebind to another host even while you attempt to
+find out if the
+\f4ypset\f1
+operation succeeded. 
+For example, you can type:
+.P
+.RS
+.nf
+.ft 4
+# ypset host1
+# ypwhich
+host2
+.fi
+.ft 1
+.RE
+.P
+which can be confusing.
+This is a function of the
+\s-1NIS\s0
+subsystem's attempt to
+load-balance among the available
+\s-1NIS\s0
+servers, and occurs when
+\f2host1\f1
+does not respond to
+\f4ypbind\f1
+because it is not running
+\f4ypserv\f1
+(or is overloaded), and
+\f2host2\f1,
+running
+\f4ypserv\f1,
+gets the binding.
+.P
+\f2server\f1
+indicates the
+\s-1NIS\s0
+server to bind to, and
+must be specified as a name.
+This will work only if the node has a current
+valid binding for the domain in question,
+and
+\f4ypbind\f1
+has been set to allow use of
+\f4ypset\f1.
+In most cases,
+\f2server\f1
+should be specified as an
+\s-1IP\s0
+address.
+.P
+\f4ypset\f1
+tries to bind
+\f4ypbind\f1
+over a datagram transport first.
+Datagram Transports are recommended for higher
+performance.
+The
+\s-1NIS\s0
+library calls,
+\f4yp_enum(\|)\f1,
+\f4yp_all(\|)\f1,
+\f4yp_next(\|)\f1,
+and
+\f4yp_first(\|)\f1
+use circuit transports regardless of the \*(lqmain\*(rq
+transport being used.
+.P
+Refer to
+\f4ypfiles\f1(4)
+and
+\f4ypserv\f1(1M)
+for an overview of the NIS name service.
+.P
+The following options are available:
+.TP 16
+\f4\-h \f2host\f1
+Set
+\f4ypbind\f1's
+binding on
+\f2host\f1,
+instead of locally.
+\f2host\f1
+must be specified as a name.
+.TP
+\f4\-d \f2ypdomain\f1
+Use
+\f2ypdomain\f1,
+instead of the default domain.
+.SH "SEE ALSO"
+\f4ypserv\f1(1M),
+\f4ypwhich\f1(1),
+\f4ypfiles\f1(4)

@@ -1,0 +1,8 @@
+.if n .pH portguide.CFS @(#)Cfs	40.2
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.BK "Programmer's Guide: Porting the Kernel" "" "" ""   
+.\ACRONYM	                  
+.CH "Directory - FS" "" "Table of Contents" "6"
+.\CHAPTER	6
+.tC 2 "Directory - FS" 6-1  
+.Index: FS directory       	1

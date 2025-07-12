@@ -1,0 +1,326 @@
+.if n .pH 386.apd @(#)apd	40.1.1.1
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.BK "Installation Guide" "System V Release 4"
+.CH "Installing Packages" "D"
+.H 1 "Introduction"
+This appendix tells you how to use the \f4ADD.base.pkg\fP
+command to install packages from the UNIX Operating System tape after you have
+installed the system, and how to
+use the \f4pkgadd\fP command to install other packages
+from tape or diskette.
+.IX "ADD.base.pkg command"
+.IX "packages, installing"
+.IX "pkgadd command"
+.AB N
+To install optional or add-on packages, the base operating system 
+must already be installed.
+.sp
+System V Release 3.2 packages must be installed using the 
+\f4installpkg\fP command. 
+.IX "packages, SVR3.2"
+.sp
+If you are installing a new version of a package that is on your 
+system, you must use \f4pkgrm\fP to remove the old version of the package 
+first. See
+.ST "Removing Packages"
+.IX "pkgrm command"
+in Chapter 4 for instructions.
+.AC
+.H 1 "Installing UNIX System Packages From Tape"
+To install a UNIX System package from the tape, do the following:
+.IX "packages, UNIX System"
+.IX "UNIX System packages"
+.AL 1
+.LI
+Decide which packages you want to install. See Appendix A for a description of
+the packages that are on the UNIX System tape.
+.LI
+Look at Table A-1 in Appendix A to see how much disk space is required for 
+each package.
+.LI
+If your system does not have enough disk space for all the packages you 
+want to install, add a bigger hard disk or install fewer packages.
+.LI
+If selectively installing the packages, look at Table A-1 in Appendix A to 
+find out which packages depend on other packages. If a package depends on 
+another package, the package shown in the Dependencies column must be
+installed first. For example, if you are installing the \f4oam\fP package, also
+install the \f4fmli\fP package.
+.IX "packages, selecting"
+.IX "packages, dependencies"
+.LI
+Log in as root.
+.LI
+Type \f4pkginfo\fP to see which packages are already installed on your system.
+.IX "pkginfo command"
+.LI
+Insert the UNIX System tape cartridge into the tape drive.
+.LI
+Begin the install process by typing:
+.DS
+.ft 4
+/usr/lbin/ADD.base.pkg
+.ft 1
+.IX "ADD.base.pkg command"
+.DE
+.sp
+The system asks:
+.SS CO
+The BASIC Package Set contains the following packages:
+	(ed) Editing Package
+	(terminf) Remote Terminal Package
+	(termcap) AT&T Termcap Compatibility Package
+	(windowing) AT&T Windowing Utilities
+	(mouse)  Mouse Driver Package
+	(fmli)  AT&T Form and Menu Language Interpreter
+	(oam)  Operations, Administration, and Maintenance
+	(lp)  LP Print Service
+	(acp) Application Compatibility Package
+	(nsu) Network Support Utilities
+Do you wish to install any of these packages (default n):
+.SE
+.LI
+Select the desired package sets and the desired packages, as described in 
+the section
+.ST "Selecting Packages"
+in Chapter 2 or 3.
+.AB N
+Remember to specify any prerequisite packages that are required.
+.AC
+.LI
+When shown a summary of the packages you selected, accept the selection 
+shown, or type \f4n\fP and reselect the packages.
+.sp
+The system begins to ask you questions regarding the packages you
+selected. See Appendix C for a description of all the questions and any
+required answers.
+.LI
+Answer the questions. After you answer the questions,
+the packages begin to install.
+.LI
+If prompted to reboot the system after the packages have installed, make 
+sure the disk drive is empty, then press
+.HK Ctrl-Alt-Del .
+.sp
+The system shuts down and automatically reboots. When the login 
+prompt displays, you can use the system.
+.LE
+.\" .H 1 "Installing Add-on Packages from Tape"
+.\" To install add-on packages (such as the Multi-user Upgrade) from tape, do the
+.\" following:
+.\" .IX "packages, installing"
+.\" .AL 1
+.\" .LI
+.\" Look at the documentation that came with the add-on package to find out 
+.\" about any package dependencies, and to find out how much disk space is
+.\" required to install the package.
+.\" .LI
+.\" Make sure your system has enough disk space to install the desired package(s).
+.\" .LI
+.\" Log in as root. 
+.\" .LI
+.\" Insert the cartridge tape into the tape drive. 
+.\" .LI
+.\" Rewind the tape by typing:
+.\" .DS
+.\" .ft 4
+.\" /usr/sbin/tapecntl -w
+.\" .ft 1
+.\" .IX "tape, rewinding"
+.\" .DE
+.\" .LI
+.\" Invoke the \f4pkgadd\fP command by typing:
+.\" .IX "pkgadd command"
+.\" .DS
+.\" .ft 4
+.\" pkgadd -d Ntape1
+.\" .ft 1
+.\" .DE
+.\" The system responds:
+.\" .SS CO
+.\" Insert a cartridge tape into the tape drive.
+.\" Type [go] when ready,
+.\" or [q] to quit:
+.\" .SE
+.\" .LI
+.\" Type \f4go\fP.
+.\" .sp
+.\" The system responds:
+.\" .SS CO
+.\" Installation in progress. Do not remove the cartridge tape.
+.\" .SE
+.\" The tape is searched until the first package is found. The name of the
+.\" package displays, followed by the message:
+.\" .SS CO
+.\" Select package(s) you wish to process (or 'all' to 
+.\" process all packages). (default: all) [?,??,q]:
+.\" .SE
+.\" You can type one of the following:
+.\" .DL
+.\" .LI
+.\" \f4?\fP for a short help message
+.\" .LI
+.\" \f4??\fP to repeat the list of packages
+.\" .LI
+.\" \f4q\fP to exit the \f4pkgadd\fP interface
+.\" (select this if you don't want to install the package shown)
+.\" .LI
+.\" \f4all\fP or
+.\" .HK EK
+.\" to install the package shown.
+.\" .LE
+.\" .IX "packages, selecting"
+.\" .LI
+.\" To install the package shown, press
+.\" .HK EK .
+.\" Otherwise, type \f4q\fP.
+.\" .P
+.\" .in + .5i
+.\" .B "Troubleshooting"
+.\" .IX "troubleshooting, package install failure"
+.\" .P
+.\" If a package fails to install correctly, remove the package using \f4pkgrm\fP.
+.\" .IX "pkgrm command"
+.\" .IX "pkginfo command"
+.\" Use the \f4pkginfo\fP command to make sure the package is removed.
+.\" Try to install the package again. If it fails again, contact 
+.\" your service representative.
+.\" When the package has installed, or after typing \f4q\fP, the system prompt 
+.\" returns.
+.\" .in - .5i
+.\" .LI
+.\" To install another package, repeat Steps 4 through 6 until all the desired 
+.\" packages have been installed. When done installing packages, type \f4q\fP.
+.\" .P
+.\" If the kernel was rebuilt by any of the packages you installed, the following 
+.\" message displays:
+.\" .IX "kernel, rebuilding"
+.\" .SS CO
+.\" IMPORTANT NOTICE***
+.\" 
+.\" This machine now must be rebooted in order to ensure 
+.\" sane operation. Execute
+.\" shutdown -y -i6 -g0
+.\" and wait for the "Console Login:" prompt.
+.\" .SE
+.\" .LI
+.\" When the # prompt displays, shut down and reboot the system by typing:
+.\" .IX "rebooting the system"
+.\" .IX "shutdown"
+.\" .DS
+.\" .ft 4
+.\" shutdown -y -i6 -g0
+.\" .ft 1
+.\" .DE
+.\" .LE
+.H 1 "Installing Add-on Packages From Diskette"
+To install add-on packages from diskette, do the following:
+.IX "pkgadd command"
+.AL 1
+.LI
+Log in as root and enter the root password when prompted.
+.LI
+Insert the diskette containing the desired package into disk drive 0. 
+.LI
+Invoke the \f4pkgadd\fP command by typing:
+.DS
+.ft 4
+pkgadd -d diskette1
+.ft 1
+.DE
+.AB N
+If using disk drive 1, type \f4pkgadd -d diskette2\fP
+.AC
+The system responds:
+.SS CO
+Insert diskette into Floppy Drive 1.
+Type [go] when ready,
+or [q] to quit:
+.SE
+.LI
+Since the diskette is already in the drive, type \f4go\fP.
+.sp
+The diskette is searched for the package(s) that are on it. Do not remove 
+the diskette until prompted to remove it.
+.sp
+.IX "packages, selecting"
+A list of packages on the diskette displays. The first column of the list
+contains numbers. If you are selectively installing packages, use these numbers 
+to specify the packages you want to install and separate the numbers with a 
+comma and a space. The second column shows the abbreviation for the
+package name. The third column shows the full package name. The list also 
+shows the revision level of the package.
+.sp
+After the list displays, the system says to:
+.SS CO
+Select package(s) you wish to process (or 'all' to 
+process all packages). (default: all) [?,??,q]:
+.SE
+You can type one of the following:
+.DL
+.LI
+\f4?\fP for a short help message.
+.LI
+\f4??\fP to repeat the list of packages.
+.LI
+\f4q\fP to exit the pkgadd interface.
+.LI
+a list of numbers
+.LI
+\f4all\fP or
+.HK EK
+to install all packages.
+.LE
+.LI
+Enter your desired response.
+.AB N
+If you are selectively installing packages, be sure to specify any 
+packages that the packages you are installing rely on. A package 
+will not work properly without its prerequisite package installed. 
+Also, if selectively installing more than one package, separate the 
+entries with a comma and a space.
+.AC
+.P
+.in + .5i
+.B "Troubleshooting"
+.IX "troubleshooting, package install failure"
+.P
+If a package fails to install correctly, remove the package using 
+\f4pkgrm\fP. Use the \f4pkginfo\fP command to make sure the package is removed.
+Try to install the package again. If it fails again, contact 
+your service representative.
+.IX "pkgrm command"
+.IX "pkginfo command"
+.in - .5i
+.P
+When the packages on the diskette have been installed, the system says:
+.SS CO
+Insert diskette into Floppy Drive 1.
+Type [go] when ready,
+or [q] to quit:
+.SE
+.LI
+If you want to install packages on another diskette, remove the current
+diskette, insert the desired diskette and repeat Steps 4 and 5.
+.LI
+When you are done installing packages, type \f4q\fP.
+.sp
+The system responds:
+.SS CO
+IMPORTANT NOTICE***
+
+This machine now must be rebooted in order to ensure sane operation.
+Execute shutdown -y -i6 -g0
+and wait for the "Console Login:" prompt.
+.SE
+.LI
+When the # prompt displays, remove the diskette and type:
+.DS
+.ft 4
+shutdown -y -i6 -g0
+.ft 1
+.DE
+.IX "rebooting the system"
+.IX "shutdown"
+The system shuts down and automatically reboots.
+.LE

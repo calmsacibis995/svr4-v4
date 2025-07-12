@@ -1,0 +1,29 @@
+'\"macro stdmacro
+.if n .pH g4.fstypes @(#)fstypes	40.8 of 4/16/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} fstypes 4 "DFS" "\&"
+.if \nX=1 .ds x} fstypes 4 "DFS"
+.if \nX=2 .ds x} fstypes 4 "DFS" "\&"
+.if \nX=3 .ds x} fstypes 4 "DFS" "\&"
+.TH \*(x}
+.SH NAME
+\f4fstypes\f1 \- file that registers distributed file system packages 
+.SH DESCRIPTION
+\f4fstypes\f1 resides in directory \f4/etc/dfs\f1 and lists
+distributed file system utilities packages installed on 
+the system.
+The file system indicated in the first line of the file is the 
+default file system.
+When Distributed File System (DFS) 
+Administration commands are entered without the 
+option \f4-F \f2fstypes\f1,
+the system takes the file system type from the first line
+of the \f4fstypes\f1 file.
+.P
+The default package can be changed by editing the
+\f4fstypes\f1 file with any supported text editor.
+.SH "SEE ALSO"
+\f4dfmounts\f1(1M), \f4dfshares\f1(1M), \f4share\f1(1M),
+\f4shareall\f1(1M), \f4unshare\f1(1M)

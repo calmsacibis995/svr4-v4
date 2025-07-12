@@ -1,0 +1,54 @@
+'\"macro stdmacro
+.if n .pH g3s.puts @(#)puts	40.12 of 5/22/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+'\"macro stdmacro
+.if n .pH g3s.puts @(#)puts	40.1 of 4/24/88
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.nr X
+.if \nX=0 .ds x} puts 3S "C Development Set" "\&"
+.if \nX=1 .ds x} puts 3S "C Development Set"
+.if \nX=2 .ds x} puts 3S "" "\&"
+.if \nX=3 .ds x} puts "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4puts\f1, \f4fputs\f1 \- put a string on a stream
+.SH SYNOPSIS
+\f4#include <stdio.h>\f1
+.PP
+\f4int puts (const char \(**s);\f1
+.PP
+\f4int fputs (const char \(**s, FILE \(**stream);\f1
+.SH DESCRIPTION
+\f4puts\fP
+writes the string pointed to by
+.IR s ,
+followed by a new-line character,
+to the standard output stream
+\f4stdout\fP
+[see \f4intro\fP(3)].
+.PP
+\f4fputs\fP
+writes the null-terminated string pointed to by
+.I s\^
+to the named output
+.IR stream .
+.PP
+Neither function writes the terminating
+null character.
+.SH "SEE ALSO"
+\f4exit\fP(2), \f4lseek\fP(2), \f4write\fP(2),
+\f4abort\fP(3C), \f4fclose\fP(3S),
+\f4ferror\fP(3S), \f4fopen\fP(3S), \f4fread\fP(3S),
+\f4printf\fP(3S), \f4putc\fP(3S), \f4stdio\fP(3S).
+.SH DIAGNOSTICS
+On success both routines return the number of characters written; otherwise they
+return \f4EOF\f1.
+.SH NOTES
+\f4puts\fP
+appends a new-line character while
+\f4fputs\fP
+does not.
+.\"	@(#)puts.3s	6.2 of 10/20/83
+.Ee

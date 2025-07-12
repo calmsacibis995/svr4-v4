@@ -1,0 +1,464 @@
+.if n .pH urefman.intro1 @(#)intro1	40.4
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.if n .pH urefman.intro1 @(#)intro1	40.9
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.BK "User's Reference Manual"
+.CH "Introduction"
+.H 1 "Introduction"
+This \f2User's Reference Manual\f1 describes the commands
+that constitute the basic software running on
+a UNIX System V/386 system.
+.P
+Several closely-related documents contain other
+valuable information:
+.BL
+.LI
+The \f2User's Guide\f1 presents an overview
+of the \s-1UNIX\s+1 system and tutorials on how
+to use text editors,
+automate repetitive jobs, and send
+information to others.
+.LI
+The \f2Programmer's Guide\f1 presents an
+overview of the \s-1UNIX\s+1 system programming environment
+and tutorials on various programming tools.
+.LI
+The \f2Programmer's Reference Manual\f1
+describes the commands, system calls,
+subroutines, libraries, file formats, and miscellaneous information
+used by programmers.
+.LI
+The \f2System Administrator's Guide\f1
+provides procedures for and
+explanations of administrative tasks.
+.LI
+The \f2System Administrator's Reference Manual\f1
+describes commands, file formats, and miscellaneous information
+used by system administrators.
+.LE
+.P
+Although the commands are each part of a specific Utilities Package,
+they appear in alphabetical order in a single
+section of this document called ``Commands.''
+.\" .SP
+.\" .nf
+.\" .ta0.25i 0.5i
+.\" \01.	BSD Compatibility Guide
+.\" \02.	Basic Networking Utilities
+.\" \03.	C Programming Language Utilities
+.\" \04.	Directory and File Management Utilities
+.\" \05.	Editing Utilities
+.\" \06.	Encryption Utilities (CRYPT)
+.\" \07.	Essential Boot Utilities
+.\" \08.	Essential Utilities
+.\" \09.	Ethernet Media Driver Utilities
+.\" 10.	Extended Software Generation System Utilities
+.\" 11.	Framed Access Command Environment Utilities
+.\" 12.	Inter-Process Communications (IPC) Utilities
+.\" 13.	Internet Utilities
+.\" 14.	Line Printer Spooling Utilities
+.\" 15.	Network File System Utilities
+.\" 16.	Network Support Utilities
+.\" 17.	OPEN LOOK\(tm/Graphics Utilities
+.\" 18.	Remote File System Utilities
+.\" 19.	Remote Procedure Call Utilities
+.\" 20.	Spell Utilities
+.\" 21.	System Administration Utilities
+.\" 22.	System Header Files
+.\" 23.	System Performance Analysis Utilities (SPAU)
+.\" 24.	UFS Utilities
+.\" 25.	User Environment Utilities
+.\" 26.	Windowing Utilities
+.\" 27.	XENIX Compatibility Utilities
+.\" 28.	Terminal Information Utilities
+.\" 29.	Distributed File System Utilities
+.\" .fi
+.\" .P
+.\" Security Administration Utilities
+.\" are expressly provided for U. S. customers.
+.ta .5i 1i 1.5i 2i 2.5i 3i 3.5i 4i 4.5i 5i 5.5i 6i 6.5i
+.H 2 "Section (1):  Commands"
+The entries in Section (1) describe programs intended to be invoked directly by
+the user or by command language procedures, as opposed to subroutines, which
+are called by the user's programs.
+Commands generally reside in the directories
+\f4/usr/bin\fP and \f4/usr/sbin\fP.
+In addition, some commands reside in \f4/sbin\fP.
+These directories are searched automatically by the command interpreter
+called the \f2shell\^\fP.
+Also, \s-1UNIX\s+1 systems often have a directory called
+\f4/usr/lbin\fP, containing local commands.
+.P
+Throughout this manual, numbers following a command are intended
+for easy cross-reference.
+A command followed by a (1), (1C), or (1G)
+usually means that it is described in this manual.
+(Section (1) commands appropriate for use by programmers
+are located in the \f2Programmer's Reference Manual\f1.)
+A command with a (1M), (7), or (8)
+following it means that the command is in the corresponding section
+of the \f2System Administrator's Reference Manual\fP.
+A command with a (2) or (3)
+following it means that the command is in the corresponding section of the
+\f2Programmer's Reference Manual\fP.
+A command with a (4) or (5)
+following it usually means that the command is in the corresponding section of the
+\f2Programmer's Reference Manual\fP
+or the \f2System Administrator's Reference Manual\fP.
+However, manual pages used only for specialized applications
+are co-located with their appropriate Guides.
+See the Master Permuted Index in
+the \f2Product Overview and Master Index\f1.
+.P
+Each entry in the Commands section appears under a single name shown at
+the upper corners of its page(s).
+Entries are alphabetized, with the exception of the \f4intro\f1(1) entry,
+which is first.
+Some entries may describe several commands.
+In such cases, the entry appears only once, alphabetized under
+its ``primary'' name, the name that appears at the upper corners of the page.
+The ``secondary'' commands are listed directly below their associated primary
+command.
+To learn which manual page describes a secondary command,
+locate its name in the middle column of the ``Permuted Index''
+and follow across that line to the name of the manual page
+listed in the right column.
+.P
+All entries are presented using the following format
+(though some of these headings might not appear in every entry):
+.BL
+.LI
+\f3\s-1NAME\s+1\fP
+gives the primary name [and secondary name(s), as the case may be] and
+briefly states its purpose.
+.LI
+\f3\s-1SYNOPSIS\s+1\fP
+summarizes the usage of the program being described.
+A few explanatory conventions are used, particularly in
+the \f3\s-1SYNOPSIS\s+1\f1:
+.BL
+.LI
+\f4Constant Width\fP
+strings are literals and
+are to be typed just as they appear.
+.LI
+\f2Italic\^\fP strings usually represent
+substitutable argument
+and command names found elsewhere in the manual.
+.LI
+Square brackets \f4[\|]\fP around an argument
+indicate that the argument is optional.
+When an argument is given as \f2name\f1 or \f2file\f1,
+it always refers to a file name.
+.LI
+Ellipses \f4\^.\|.\|.\^\fP are used to show that the previous argument
+may be repeated.
+.br
+.ne 6
+.LI
+A final convention is used by the commands themselves.
+An argument beginning with a minus (\f4\-\fP),
+plus (\f4\(pl\fP),
+or an equal sign (\f4\(eq\fP)
+is often taken to be a flag argument,
+even if it appears in a position where a file name could appear.
+Therefore, it is unwise to have files whose names begin with \f4\-\fP,
+\f4\(pl\fP, or \f4\(eq\fP.
+.LE
+.LI
+\f3\s-1DESCRIPTION\s+1\fP
+discusses how to use these commands.
+.LI
+\f3\s-1EXAMPLES\s+1\fP
+gives examples of usage, where appropriate.
+.LI
+\f3\s-1FILES\s+1\fP
+contains the file names that are
+referenced by the program.
+.LI
+\f3\s-1EXIT CODES\s+1\fP
+discusses values set when the command terminates.
+The value set is available in the shell
+environment variable ``\f4?\f1'' (see \f4sh\f1(1)).
+.LI
+\f3\s-1NOTES\s+1\fP
+gives information that may be
+helpful under the particular circumstances described.
+.LI
+\f3\s-1SEE ALSO\s+1\fP
+offers pointers to related information.
+.LI
+\f3\s-1DIAGNOSTICS\s+1\fP
+discusses
+the error messages that may be produced.
+Messages that are intended to be self-explanatory
+are not listed.
+.LE
+.P
+Preceding Section\ 1 are a ``Table of Contents''
+(listing both primary and secondary command entries)
+and a ``Permuted Index.''
+Each line of the ``Table of Contents'' contains the name of a manual page
+(with secondary entries, if they exist) and an abstract of that page.
+Each line of the ``Permuted Index''
+represents a permutation (or sorting) of a line from the ``Table of Contents''
+into three columns.
+Each line is arranged so that a keyword or phrase begins the middle column.
+Use the ``Permuted Index'' by searching this middle column for a topic or command.
+When you have found the entry you want,
+the right column of that line lists the name of the manual page on which
+information corresponding to that keyword  may be found.
+The left column contains the remainder of the permutation that began
+in the middle column.
+.H 2 "How to Get Started"
+This discussion provides the basic information
+you need to get started on the \s-1UNIX\s+1 system:
+how to log in and log out, how to communicate through your terminal,
+and how to run a program.
+(See the \f2User's Guide\f1 for a more complete introduction to the system.)
+.H 3 "Logging In"
+You must connect to the \s-1UNIX\s+1 system from a
+full-duplex \s-1ASCII\s+1 terminal.
+You must also have a valid login ID, which may be obtained
+(together with how to access your \s-1UNIX\s+1 system)
+from the administrator of your system.
+Common terminal speeds are 30, 120, 240, 480, 960, 1920, and 3840
+characters per second
+(300, 1200, 2400, 4800, 9600, 19200, and 38400 baud).
+Some \s-1UNIX\s+1 systems have different ways of accessing
+each available terminal speed, while other
+systems offer several speeds through a common access method.
+In the latter case, there is one ``preferred'' speed;
+if you access it from a terminal set to a different speed, you will
+be greeted by a string of meaningless characters.
+Keep hitting the \s-1BREAK,\s+1 \s-1INTERRUPT\s+1,
+or \s-1ATTENTION\s+1 key until the \f4login:\fP prompt appears.
+.P
+Most terminals have a speed switch that should be set to the appropriate speed
+and a half-/full-duplex switch that should be set to full-duplex.
+When a connection has been established, the system types \f4login:\fP\^.
+You respond by typing your login ID followed by the \s-1RETURN\s+1 key.
+If you have a password, the system asks for it
+but will not print, or ``echo,'' it on the terminal.
+After you have logged in, the \s-1RETURN\s+1, \s-1NEW-LINE\s+1,
+and \s-1LINE-FEED\s+1 keys all have equivalent meanings.
+.P
+Make sure you type your login name in lowercase letters.
+Typing uppercase letters causes the \s-1UNIX\s+1 system
+to assume that your terminal can generate only uppercase letters,
+and it will treat all letters as uppercase for the remainder
+of your login session.
+The shell will print a \f4$\fP on your screen when you
+have logged in successfully.
+.P
+When you log in, a message-of-the-day may greet you
+before you receive your prompt.
+For more information, consult \f4login\^\fP(1),
+which discusses the login sequence in more
+detail, and \f4stty\^\fP(1), which tells you how to describe
+your terminal to the system.
+\f4profile\^\fP(4) (in the \f2System Administrator's Reference Manual\fP)
+explains how to accomplish this last task automatically every time you log in.
+.H 3 "Logging Out"
+There are two ways to log out:
+.BL
+.LI
+If you've dialed in, you can simply hang up the phone.
+.LI
+You can log out by typing an end-of-file indication
+(\s-1ASCII EOT\s+1 character,
+usually typed as \s-1CTRL-d\s+1) to the shell.
+The shell will terminate, and the \f4login:\fP message will appear again.
+.LE
+.H 3 "How to Communicate Through Your Terminal"
+When you type to the \s-1UNIX\s+1 system, your individual characters
+are being gathered and temporarily saved.
+Although they are echoed back to you,
+these characters will not be given to a program
+until you type a \s-1RETURN\s+1 (or \s-1NEW-LINE\s+1) as described above in
+``Logging In.''
+.P
+\s-1UNIX\s+1 system terminal input/output is full duplex.
+It has full read-ahead, which means that you can type at any time,
+even while a program is typing at you.
+Of course, if you type during output, your input characters
+will have output characters interspersed among them.
+In any case, whatever you type will be saved and
+interpreted in the correct sequence.
+There is a limit to the amount of read-ahead,
+but it is not likely to be exceeded.
+.P
+The character \f4@\fP cancels all the characters typed before it on a line,
+effectively deleting the line.
+(\f4@\f1 is called the ``line kill'' character.)
+The character \f4#\fP erases the last character typed.
+Successive uses of \f4#\fP will erase characters back to, but
+not beyond, the beginning of the line;
+\f4@\fP and \f4#\fP can be typed as themselves
+by preceding them with \f4\e\fP
+(thus, to erase a \f4\e\fP, you need two \f4#\fPs).
+These default erase and line kill characters can be changed; see \f4stty\fP(1).
+.P
+\s-1CTRL-s\s+1 (also known as the \s-1ASCII DC3\s+1 character)
+is typed by pressing the \s-1CONTROL\s+1 key and the alphabetic
+\f4s\f1 simultaneously;
+it is used to stop output temporarily.
+It is useful with \s-1CRT\s+1 terminals to prevent output from
+disappearing before it can be read.
+Output is resumed when a \s-1CTRL-q\s+1 (also known as \s-1DC1\s+1) is typed.
+Thus, if you had typed \f4cat \f2yourfile\f1 and the contents of \f2yourfile\f1
+were passing by on the screen more rapidly than you could read it,
+you would type \s-1CTRL-s\s+1 to freeze the output.
+Typing \s-1CTRL-q\s+1 would allow the output to resume.
+The \s-1CTRL-s\s+1 and \s-1CTRL-q\s+1
+characters are not passed to any other program when used in this manner.
+.P
+The \s-1ASCII\s+1 \s-1DEL\s+1 (also called ``rubout'')
+character is not passed to programs but instead generates an interrupt signal,
+just like the \s-1BREAK\s+1, \s-1INTERRUPT\s+1, or \s-1ATTENTION\s+1 signal.
+This signal generally causes whatever program you are running to terminate.
+It is typically used to stop a long printout that you do not want.
+Programs, however, can arrange either to ignore this signal altogether
+or to be notified and take a specific action when it happens (instead
+of being terminated).
+The editor \f4ed\^\fP(1), for example, catches interrupts and
+stops what \f2it\^\fP is doing,
+instead of terminating, so an interrupt can
+be used to halt an editor printout without losing the file being edited.
+.P
+Besides adapting to the speed of the terminal,
+the \s-1UNIX\s+1 system tries to be intelligent as to whether
+you have a terminal with the \s-1NEW-LINE\s+1 function,
+or whether it must be simulated with
+a \s-1CARRIAGE-RETURN\s+1 and \s-1LINE-FEED\s+1 pair.
+In the latter case, all \f2input\^\fP \s-1CARRIAGE-RETURN\s+1 characters
+are changed to \s-1LINE-FEED\s+1 characters (the standard line delimiter),
+and a \s-1CARRIAGE-RETURN\s+1 and \s-1LINE-FEED\s+1 pair
+is echoed to the terminal.
+If you get into the wrong mode, the \f4stty\^\fP(1) command will rescue you.
+.P
+Tab characters are used freely in \s-1UNIX\s+1 system source programs.
+If your terminal does not have the tab function,
+you can arrange to have tab characters changed into spaces
+during output, and echoed as spaces during input.
+Again, the \f4stty\^\fP(1) command will set or reset this mode.
+The system assumes that tabs are set every eight character positions.
+The \f4tabs\fP(1) command will set
+tab stops on your terminal, if that is possible.
+.H 2 "How to Run a Program"
+When you have successfully logged into the \s-1UNIX\s+1 system, a program
+called the shell is communicating with your terminal.
+The shell reads each line you type, splits the line
+into a command name and its arguments, and executes the command.
+A command is simply an executable program.
+Normally, the shell looks first in your current directory
+(see ``The Current Directory'' below) for the named program
+and, if none is there, then in system directories,
+such as \f4/usr/bin\f1 and \f4/usr/usr/bin\f1.
+There is nothing special about system-provided commands except that
+they are kept in directories where the shell can find them.
+You can also keep commands in your own directories and instruct the
+shell to find them there.
+See the manual entry for \f4sh\f1\^(1), under the sub-heading
+``Parameter Substitution,''
+for the discussion of the \s-1PATH\s+1 shell environmental variable.
+.P
+The command name is the first word on an input line to the shell;
+the command and its arguments are separated from one another by
+space or tab characters.
+.P
+When a program terminates, the shell will ordinarily regain control
+and give you back your prompt to indicate that it is ready for another command.
+The shell has many other capabilities, which are described in detail in
+\f4sh\fP(1).
+.H 2 "The Current Directory"
+The \s-1UNIX\s+1 system has a file system arranged in a hierarchy of directories.
+When you received your login ID,
+the system administrator also created a directory for you (ordinarily
+with the same name as your login ID, and known as your login or home directory).
+When you log in, that directory becomes your current or working directory, and
+any file name you type is, by default, assumed to be in that directory.
+Because you are the owner of this directory, you have
+full permissions to read, write, alter, or remove its contents.
+Permissions to enter or modify other directories
+and files will have been granted or denied to you
+by their respective owners or by the system administrator.
+To change the current directory, use \f4cd\fP(1).
+.H 2 "Pathnames"
+To refer to files or directories not in the current directory, you must
+use a pathname.
+Full pathnames begin with \f4/\fP, which is the name of the root
+directory of the whole file system.
+After the slash comes the name of each directory containing the next
+subdirectory (followed by a \f4/\fP), until finally the
+file or directory name is reached
+(for example, \f4/usr/ae/filex\fP refers to file \f4filex\fP in directory
+\f4ae\fP, while \f4ae\fP is itself a subdirectory of \f4usr\fP, and \f4usr\fP
+is a subdirectory of the root directory).
+Use \f4pwd\f1(1) to print the full pathname of the directory you are working in.
+See \f4intro\fP(2) in the \f2Programmer's Reference Manual\f1
+for a formal definition of \f2pathname\^\fP.
+.P
+If your current directory contains subdirectories,
+the pathnames of their respective files begin with
+the name of the corresponding subdirectory (without a prefixed \f4/\fP).
+A pathname may be used anywhere a file name is required.
+.P
+Important commands that affect files
+are \f4cp\fP(1), \f4mv\fP, and \f4rm\fP(1),
+which respectively copy, move (that is, rename), and remove files.
+To find out the status of files or directories, use \f4ls\fP(1).
+Use \f4mkdir\^\fP(1) for making directories and \f4rmdir\fP
+(see \f4rm\fP(1))
+for removing them.
+.H 2 "Text Entry and Display"
+Almost all text is entered through an editor.
+Common examples of \s-1UNIX\s+1 system editors are \f4ed\fP(1) and \f4vi\fP(1).
+The commands most often used to print text on a terminal are
+\f4cat\^\fP(1), \f4pr\^\fP(1), and \f4pg\^\fP(1).
+The \f4cat\^\fP command displays the contents of \s-1ASCII\s+1 text
+files on the terminal, with no processing at all.
+The \f4pr\^\fP command paginates the text, supplies headings,
+and has a facility for multi-column output.
+The \f4pg\^\fP command displays text in successive portions no larger
+than your terminal screen.
+.H 2 "Writing a Program"
+Once you have entered the text of your program into a file
+with an editor, you are ready to give the file to the appropriate
+language processor.
+The processor will accept only files observing the correct naming conventions:
+all C programs must end with the suffix \f4\&.c\f1,
+and Fortran programs must end with \f4\&.f\f1.
+The output of the language processor will be left in a file named \f4a.out\fP
+in the current directory,
+unless you have invoked an option to save it in another file.
+(Use \f4mv\^\fP to rename \f4a.out\f1.)
+If the program is written in assembly language, you will probably
+need to load library subroutines with it (see
+\f4ld\fP(1) in the \f2Programmer's Reference Manual\f1).
+.P
+When you have completed this process
+without provoking any diagnostics, you may run the program
+by giving its name to the shell in response to the \f4$\fP prompt.
+Your programs can receive arguments from the command line
+just as system programs do;
+see \f4exec\fP(2) in the \f2Programmer's Reference Manual\f1.
+For more information on writing and running programs,
+see the \f2Programmer's Guide\f1.
+.H 2 "Communicating with Others"
+Certain commands provide inter-user communication.
+Even if you do not plan to use them, it's helpful
+to learn something about them because someone else may try to contact you.
+\f4mail\fP(1) or \f4mailx\fP(1)
+will leave a message whose presence will be announced
+to another user when he or she next logs in
+and at periodic intervals during the session.
+To communicate with another user currently logged in, use \f4write\fP(1).
+The corresponding entries in this manual also suggest how to respond to
+these two commands if you are their target.
+.P
+See the tutorials in Chapters 11 and 12 of the \f2User's Guide\f1
+for more information on communicating with others.
+.\"	@(#)intro1	5.3 of 10/31/83

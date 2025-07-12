@@ -1,0 +1,67 @@
+'\"macro stdmacro
+.if n .pH g2.sdenter @(#)sdenter	40.10 of 6/18/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} sdenter 2 "Application Compatibility Package" "\&"
+.if \nX=1 .ds x} sdenter 2 "Application Compatibility Package"
+.if \nX=2 .ds x} sdenter 2 "" "\&"
+.if \nX=3 .ds x} sdenter "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4sdenter\f1, \f4sdleave\fP \- synchronize access to a shared data segment
+.SH SYNOPSIS
+\f4cc \f1[\f2flag \f1. . .] \f2file\f1 . . . \f4-lx\f1
+.PP
+\f4#include <sys/sd.h>\fP
+.PP
+\f4int sdenter(char *addr, int flags)\fP;
+.PP
+\f4int sdleave(char *addr)\fP;
+.SH DESCRIPTION
+\f4sdenter\fP is used to indicate that the current process is about to
+access the contents of a shared data segment.
+The actions performed
+depend on the value of \f2flags\f1.
+\f2flags\f1 values are formed by
+\s-1OR\s0-ing together entries from the following list:
+.TP 12
+\f4SD_NOWAIT\fP
+If another process has called \f4sdenter\fP but not \f4sdleave\fP for
+the indicated segment, and the segment was not created with the
+\f4SD_UNLOCK\fP flag set, return an \f4ENAVAIL\fP error instead
+of waiting for the segment to become free.
+.TP
+\f4SD_WRITE\fP
+Indicates that the process wants to write data to the shared data
+segment.
+A process that has attached to a shared data segment with
+the \f4SD_RDONLY\fP flag set will not be allowed to enter with the
+\f4SD_WRITE\fP flag set.
+.P
+\f4sdleave\fP is used to indicate that the current process is done
+modifying the contents of a shared data segment.
+.P
+Only changes made between invocations of \f4sdenter\fP and \f4sdleave\fP
+are guaranteed to be reflected in other processes.
+\f4sdenter\fP and
+\f4sdleave\fP are very fast; consequently, it is recommended that
+they be called frequently rather than leave \f4sdenter\fP in effect
+for any period of time.
+In particular, system calls should be
+avoided between \f4sdenter\fP and \f4sdleave\fP calls.
+.P
+The \f4fork\fP system call is forbidden between calls to \f4sdenter\fP
+and \f4sdleave\fP if the segment was created without the \f4SD_UNLOCK\fP
+flag.
+.SH DIAGNOSTICS
+Successful calls return 0.
+Unsuccessful calls return \-1 and set \f4errno\f1
+to indicate the error.
+\f4errno\f1 is set to \f4EINVAL\fP if
+a process does an \f4sdenter\fP with the \f4SD_WRITE\fP flag set and the
+segment is already attached with the \f4SD_RDONLY\fP flag set.
+\f4errno\f1 is set to \f4ENAVAIL\fP if the \f4SD_NOWAIT\fP flag is
+set for \f4sdenter\fP and the shared data segment is not free.
+.SH SEE ALSO
+\f4sdget\fP(2), \f4sdgetv\fP(2).

@@ -1,0 +1,45 @@
+'\"macro stdmacro
+.if n .pH g1.wc @(#)wc	40.4 of 1/3/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+'\"macro stdmacro
+.if n .pH g1.wc @(#)wc	40.2 of 5/19/89
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.nr X
+.if \nX=0 .ds x} wc 1 "Essential Utilities" "\&"
+.if \nX=1 .ds x} wc 1 "Essential Utilities"
+.if \nX=2 .ds x} wc 1 "" "\&"
+.if \nX=3 .ds x} wc "" "" "\&"
+.nr X
+.nr X
+.TH \*(x} "" "386 Computer Only"
+.SH NAME
+\f4wc\f1 \- word count
+.SH SYNOPSIS
+\f4wc\f1 [\f4\-lwc\f1] [\f2filenames\f1]
+.SH DESCRIPTION
+\f4wc\fP
+counts lines, words, and characters in the named files,
+or in the standard input if no
+.I filenames\^
+appear.
+It also keeps a total count for all named files.
+A word is a maximal string of characters
+delimited by spaces, tabs, or new-lines.
+.PP
+The options
+\f4l\f1,
+\f4w\f1,
+and
+\f4c\f1
+may be used in any combination to specify that a subset of
+lines, words, and characters are to be reported.
+The default is
+\f4\-lwc\f1.
+.PP
+When
+.I filenames\^
+are specified on the command line,
+they will be printed along with the counts.
+.\"	@(#)wc.1	6.2 of 9/2/83
+.Ee

@@ -1,0 +1,7 @@
+*ident	"@(#)at:uts/i386/master.d/asy/node	1.1"
+asy	tty00	c	0
+asy	term/00	c	0
+asy	tty00s	c	0
+asy	tty00h	c	128
+asy	term/00s	c	0
+asy	term/00h	c	128

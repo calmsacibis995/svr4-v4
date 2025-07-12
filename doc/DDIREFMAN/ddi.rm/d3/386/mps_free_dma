@@ -1,0 +1,31 @@
+'\"macro stdmacro
+.if n .pH 386.mps_free_dma @(#)mps_free_dma	40.5 of 7/1/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.nr X
+.if \nX=0 .ds x} mps_free_dmabuf D3D "Multibus II" "DDI" "\&"
+.if \nX=1 .ds x} mps_free_dmabuf D3D "Multibus II" "DDI" "\&"
+.if \nX=2 .ds x} mps_free_dmabuf D3D "" "\&"
+.if \nX=3 .ds x} mps_free_dmabuf "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4mps_free_dmabuf\f1 \- frees a list of data buffer descriptors.
+.SH SYNOPSIS
+.nf
+\f4#include <sys/mps.h>
+void mps_free_dmabuf(\f2dbp\fP)
+struct dma_buf *dbp;\f1
+.fi
+.SH ARGUMENTS
+.PD 0
+.TP
+\f2dbp\f1
+the head of the list to be freed.
+.SH DESCRIPTION
+The \f4mps_free_dmabuf\f1 function frees a list of data buffer descriptors
+allocated from a previous call to \f4mps_get_dmabuf\f1
+.SH RETURN VALUE
+None
+.SH LEVEL
+Base or Interrupt
+.SH SEE ALSO
+\f4mps_get_dmabuf\f1(D3D)

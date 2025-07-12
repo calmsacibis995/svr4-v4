@@ -1,0 +1,554 @@
+'\"!  tbl | mmdoc
+'\"macro stdmacro
+.if n .pH g1.vi @(#)vi	40.8.1.1 of 1/3/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} vi 1 "Editing Utilities" "\&"
+.if \nX=1 .ds x} vi 1 "Editing Utilities"
+.if \nX=2 .ds x} vi 1 "" "\&"
+.if \nX=3 .ds x} vi "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4vi\f1 \- screen-oriented (visual) display editor based on ex
+.SH SYNOPSIS
+\f4vi\f1
+\f1[\f4\-t\f1
+.IR tag ]
+\f1[\f4\-r\f1
+.IR file ]
+\f1[\f4\-l\f1]
+\f1[\f4\-L\f1]
+\f1[\f4\-w\f2n\fP\f1]
+\f1[\f4\-R\f1]
+\f1[\f4\-x\f1]
+\f1[\f4\-C\f1]
+\f1[\f4\-c\f1
+.IR command ]
+.IR file ".\|.\|."
+.br
+\f4view\f1
+\f1[\f4\-t\f1
+.IR tag ]
+\f1[\f4\-r\f1
+.IR file ]
+\f1[\f4\-l\f1]
+\f1[\f4\-L\f1]
+\f1[\f4\-w\f2n\fP\f1]
+\f1[\f4\-R\f1]
+\f1[\f4\-x\f1]
+\f1[\f4\-C\f1]
+\f1[\f4\-c\f1
+.IR command ]
+.IR file ".\|.\|."
+.br
+\f4vedit\f1
+\f1[\f4\-t\f1
+.IR tag ]
+\f1[\f4\-r\f1
+.IR file ]
+\f1[\f4\-l\f1]
+\f1[\f4\-L\f1]
+\f1[\f4\-w\f2n\fP\f1]
+\f1[\f4\-R\f1]
+\f1[\f4\-x\f1]
+\f1[\f4\-C\f1]
+\f1[\f4\-c\f1
+.IR command ]
+.IR file ".\|.\|."
+.SH DESCRIPTION
+\f4vi\fP
+(visual) is a display-oriented text editor based on
+an underlying line editor
+\f4ex\fP.
+It is possible to use
+the command mode of
+\f4ex\fP
+from within
+\f4vi\fP
+and vice-versa.
+The visual commands are described on this
+manual page;
+how to set options
+(like automatically numbering lines
+and automatically starting a new output line when you type carriage return)
+and all \f4ex\fP line editor
+commands are described on the \f4ex\fP(1)
+manual page.
+.PP
+When using 
+\f4vi\fP,
+changes you make to the file are reflected in what you see on your
+terminal screen.
+The position of the cursor on the screen indicates 
+the position within the file.
+.PP
+.SS Invocation Options
+The following invocation options are interpreted by
+\f4vi\fP
+(previously documented options are discussed in the
+.SM NOTES
+section of this manual page):
+.TP 14
+\f4\-t \f2tag\f1\^
+Edit the file containing the 
+.I tag\^
+and position the editor at its definition.
+.TP
+\f4\-r\f2 file\f1
+Edit
+.I file\^
+after an editor or system crash.
+(Recovers the version of
+.I file
+that was in the buffer when the crash occurred.)
+.TP
+\f4\-l\f1
+Set up for editing LISP programs.
+.TP
+\f4\-L\f1
+List the name of all files saved as the
+result of an editor or system crash.
+.TP
+\f4\-w\f2n\^\f1
+Set the default window size to
+.I n\^.
+This is useful when using the editor over a slow speed line.
+.TP
+\f4\-R\f1
+\f4Readonly\f1
+mode; the
+\f4readonly\f1
+flag is set, preventing accidental overwriting of the file.
+.TP
+\f4\-x\f1
+Encryption option; when used,
+\f4vi\fP
+simulates the
+\f4X\f1
+command of
+\f4ex\fP
+and prompts the user for a key.
+This key is used to encrypt and decrypt
+text using the algorithm of the
+\f4crypt\fP command.
+The
+\f4X\f1
+command
+makes an educated guess to determine whether text
+read in is encrypted or not.
+The temporary buffer file is encrypted also,
+using a transformed version of the key
+typed in for the
+\f4\-x\f1
+option.
+See
+\f4crypt\fP(1).
+Also, see the
+.SM WARNING
+section at the end
+of this manual page.
+.TP
+\f4\-C\f1
+Encryption option;
+same as the
+\f4\-x\f1
+option, except that
+\f4vi\fP
+simulates the
+\f4C\f1
+command of
+\f4ex\fP.
+The
+\f4C\f1
+command is like the
+\f4X\f1
+command of
+\f4ex\fP,
+except that
+all text read in is assumed to have been encrypted.
+.TP
+\f4\-c\f2  command\f1
+Begin editing by executing the specified editor
+.I command
+(usually a search or positioning command).
+.PP
+The 
+.I file\^
+argument indicates one or more files to be edited.
+.PP
+The
+.I view\^
+invocation is the same as
+\f4vi\fP
+except that the
+\f4readonly\f1
+flag is set.
+.PP
+The
+.I vedit\^
+invocation is intended for beginners.
+It is the same as \f4vi\fP except that the
+\f4report\f1
+flag is set to 1, the
+\f4showmode\f1
+and
+\f4novice\f1
+flags are set,
+and
+\f4magic\f1
+is turned off.
+These defaults make it easier to learn how to use \f4vi\fP.
+.SS vi Modes
+.TP 15 
+Command
+Normal and initial mode.  Other modes return to command mode
+upon completion.
+\s-1\f4ESC\f1\s0 (escape) is used to cancel a partial command.
+.TP
+Input
+Entered by setting any of the following options:
+\f4a A i I o O\f1
+\f4c C s S R .\f1
+Arbitrary text may then be entered. 
+Input mode is normally terminated with \s-1\f4ESC\f1\s0 character,
+or, abnormally, with an interrupt.
+.TP
+Last line
+Reading input for \f4: / ?\fP or \f4!\fP; terminate
+by typing a carriage return; an interrupt cancels
+termination.
+.br
+.ne 20
+.SH "COMMAND SUMMARY"
+In the descriptions,
+\f4CR\f1 stands for carriage return
+and \f4ESC\f1 stands for the escape key.
+.SS "Sample commands"
+.TS
+lw(1.5i)f4 lw(1.7i).
+\(<- \(da \(ua \(->	arrow keys move the cursor
+h j k l	same as arrow keys
+i\f2text\s-1\f4ESC\s0\fP	insert \f2text\f1
+cw\f2new\fP\s-1\f4ESC\f1\s0\fP	change word to \f2new\fP
+ea\f2s\fP\s-1\f4ESC\s0\fP	pluralize word (end of word; append \f4s\f1;
+	\0\0escape from input state)
+x	delete a character
+dw	delete a word
+dd	delete a line
+3dd	delete 3 lines
+u	undo previous change
+ZZ	exit \f4vi\fP, saving changes
+:q!\f4CR\fP	quit, discarding changes
+/\f2text\f4CR\f1	search for \f2text\fP
+^U ^D	scroll up or down
+:\f2cmd\f4CR\f1	any \f4ex\fP or \f4ed\fP command
+.TE
+.SS "Counts before vi commands"
+Numbers may be typed as a prefix to some commands.
+They are interpreted in one of these ways.
+.TS
+lw(1.5i) lw(1.7i)f4.
+line/column number	z  G  |	
+scroll amount	^D  ^U
+repeat effect	\f1most of the rest\fP
+.TE
+.SS "Interrupting, canceling"
+.TS
+aw(0.75i)f4 aw(1.6i).
+\f4ESC\f1	end insert or incomplete cmd
+DEL	(delete or rubout) interrupts
+.TE
+.SS "File manipulation"
+.TS
+aw(0.75i)f4 aw(1.6i).
+ZZ	if file modified, write and exit; otherwise, exit
+:wCR	write back changes
+:w\|!\|CR	forced write, if permission originally not valid
+:qCR	quit
+:q\|!\|CR	quit, discard changes
+:e \f2name\f4CR	edit file \f2name\fP
+:e\|!\|CR	reedit, discard changes
+:e + \f2name\f4CR	edit, starting at end
+:e +\f2n\f4CR	edit starting at line \f2n\f1
+:e #CR	edit alternate file
+:e\|! #CR	edit alternate file, discard changes
+:w \f2name\f4CR	write file \f2name\fP
+:w\|! \f2name\f4CR	overwrite file \f2name\fP
+:shCR	run shell, then return
+:\|!\|\f2cmd\f4CR	run \f2cmd\f1, then return
+:nCR	edit next file in arglist
+:n \f2args\f4CR	specify new arglist
+^G	show current file and line
+:ta \f2tag\f4CR	position cursor to \f2tag\fP
+.TE
+'\":ta \f2tag\f4CR	position cursor to \f2tag\fP (see \f4ctags\fP(1))	had to drop ctags for 3.1
+In general, any
+\f4ex\fP
+or
+\f4ed\fP
+command (such as
+.I substitute
+or
+.IR global )
+may be typed, preceded by a colon and followed by a carriage return.
+.SS "Positioning within file"
+.TS
+aw(0.75i)f4 aw(1.6i).
+^F	forward screen
+^B	backward screen
+^D	scroll down half screen
+^U	scroll up half screen
+\f2n\f4G	go to the beginning of the specified line
+	\0\0(end default), where \f2n\f1 is a line number
+/\f2pat\f1	next line matching \f2pat\f1
+?\f2pat\f1	previous line matching \f2pat\f1
+n	repeat last \f4/\f1 or \f4?\f1 command
+N	reverse last \f4/\f1 or \f4?\f1 command
+/\f2pat\fP/+\f2n\fP	nth line after \f2pat\f1
+?\f2pat\fP?\-\f2n\fP	nth line before \f2pat\f1
+]]	next section/function
+[[	previous section/function
+(	beginning of sentence
+)	end of sentence
+{	beginning of paragraph
+}	end of paragraph
+%	find matching \f4( ) {\fP or \f4}\fP
+.TE
+.SS "Adjusting the screen"
+.TS
+aw(0.75i)f4 aw(1.6i).
+^L	clear and redraw window
+^R	clear and redraw window if \f4^L\f1 is \(-> key
+z\f4CR\fP	redraw screen with current line at top of window
+z\-\f4CR\fP	redraw screen with current line at bottom of window
+z\|.\f4CR\fP	redraw screen with current line at center of window
+/\f2pat\fP/z\-\f4CR\fP	move \f2pat\fP line to bottom of window
+z\f2n\fP\|.\f4CR\fP	use \f2n\fP-line window
+^E	scroll window down 1 line
+^Y	scroll window up 1 line
+.TE
+.br
+.ne 7
+.SS "Marking and returning"
+.TS
+aw(0.5i)f4 aw(2.0i).
+\(ga\(ga	move cursor to previous context
+\(aa\(aa	move cursor to first non-white space in line
+m\f2x\fP	mark current position with the \s-1ASCII\s0 lower-case letter \f2x\fP
+\(ga\f2x\fP	move cursor to mark \f2x\fP
+\(aa\f2x\fP	move cursor to first non-white space in line marked by \f2x\fP
+.TE
+.br
+.ne 10
+.SS "Line positioning"
+.TS
+aw(0.5i)f4 aw(2.0i).
+H	top line on screen
+L	last line on screen
+M	middle line on screen
++	next line, at first non-white
+\-	previous line, at first non-white
+\f4CR\fP	return, same as +
+\(da \f1or\fP j	next line, same column
+\(ua \f1or\fP k	previous line, same column
+.TE
+.SS "Character positioning"
+.TS
+aw(0.5i)f4 aw(2.0i).
+^	first non white-space character
+0	beginning of line
+$	end of line
+h \f1or\fP \(->	forward
+l \f1or\fP \(<-	backward
+^H	same as \f4\(<-\fP (backspace)
+\f1space\fP	same as \f4\(->\fP (space bar)
+f\f2x\fP	find next \f2x\fP
+F\f2x\fP	find previous \f4x\f1
+t\f2x\fP	move to character prior to next \f2x\fP
+T\f2x\fP	move to character following previous \f2x\fP
+;	repeat last \f4f F t\fP or \f4T\fP
+,	repeat inverse of last \f4f F t\fP or \f4T\fP
+\f2n\fP|	move to column \f2n\fP
+%	find matching \f4( { )\fP or \f4}\f1
+.TE
+.SS "Words, sentences, paragraphs"
+.TS
+aw(0.5i)f4 aw(2.0i).
+w	forward a word 
+b	back a word
+e	end of word
+)	to next sentence
+}	to next paragraph
+(	back a sentence
+{	back a paragraph
+W	forward a blank-delimited word
+B	back a blank-delimited word
+E	end of a blank-delimited word
+.TE
+.ne 18
+.SS "Corrections during insert"
+.TS
+aw(.5i)f4 aw(2.0i).
+^H	erase last character (backspace)
+^W	erase last word
+\f1erase\fP	your erase character, same as \f4^H\fP (backspace)
+\f1kill\fP	your kill character, erase this line of input
+\e	quotes your erase and kill characters
+\s-1\f4ESC\f1\s0	ends insertion, back to command mode
+DEL	interrupt, terminates insert mode
+^D	backtab one character; reset left margin
+	\0\0of \f2autoindent\fP
+^^D	caret (^) followed by control-d (^D);
+	\0\0backtab to beginning of line;
+	\0\0do not reset left margin of \f2autoindent\f1
+0^D	backtab to beginning of line;
+	\0\0reset left margin of \f2autoindent\f1
+^V	quote non-printable character
+.TE
+.SS "Insert and replace"
+.TS
+aw(.5i)f4 aw(2.0i).
+a	append after cursor
+A	append at end of line
+i	insert before cursor
+I	insert before first non-blank
+o	open line below
+O	open above
+r\f2x\fP	replace single char with \f2x\fP
+R\f2text\s-1\f4ESC\f1\s0\f1	replace characters
+.TE
+.br
+.ne 5
+.SS "Operators"
+Operators are followed by a cursor motion, and affect
+all text that would have been moved over.
+For example, since
+\f4w\f1
+moves over a word,
+\f4dw\f1
+deletes the word that would be moved over.
+Double the operator, e.g.,
+\f4dd\f1
+to affect whole lines.
+.TS
+aw(0.5i)f4 aw(2.0i).
+d	delete
+c	change
+y	yank lines to buffer
+<	left shift
+>	right shift
+!	filter through command
+.TE
+.SS "Miscellaneous Operations"
+.TS
+aw(0.5i)f4 aw(2.0i).
+C	change rest of line (\f4c$\f1)
+D	delete rest of line (\f4d$\f1)
+s	substitute chars (\f4cl\f1)
+S	substitute lines (\f4cc\f1)
+J	join lines
+x	delete characters (\f4dl\f1)
+X	delete characters before cursor (\f4dh\f1)
+Y	yank lines (\f4yy\f1)
+.TE
+.ne 12
+.SS "Yank and Put"
+Put inserts the text most recently deleted or yanked;
+however, if a buffer is named
+(using the \s-1ASCII\s0 lower-case letters \f4a\fP - \f4z\fP),
+the text in that buffer is put instead.
+.TS
+aw(0.5i)f4 aw(2.0i).
+3yy	yank 3 lines
+3yl	yank 3 characters
+p	put back text after cursor
+P	put back text before cursor
+"\f2x\fPp	put from buffer \f2x\fP
+"\f2x\fPy	yank to buffer \f2x\fP
+"\f2x\fPd	delete into buffer \f2x\fP
+.TE
+.SS "Undo, Redo, Retrieve"
+.TS
+aw(0.5i)f4 aw(2.0i).
+u	undo last change
+U	restore current line
+\f4\&.\fP	repeat last change
+"\f2d\fP\|p	retrieve \f2d\fP'th last delete
+.TE
+.SH AUTHOR
+\f4vi\fP
+and
+\f4ex\fP
+were developed by 
+The University of California,
+Berkeley California,
+Computer Science Division,
+Department of Electrical Engineering and Computer Science.
+.SH FILES
+.PD 0
+.TP 25
+\f4/tmp\fP
+default directory where temporary work files are placed;
+it can be changed using the
+\f4directory\f1
+option
+[see the \f4ex\fP(1)
+\f4set\f1
+command]
+.TP
+\f4/usr/share/lib/terminfo/?/\(**\f1
+compiled terminal description database
+.TP
+\f4/usr/lib/.\s-1CORE\s0term/?/\(**\f1
+subset of compiled terminal description database
+.PD
+.SH NOTES
+Two options, although they continue to be supported,
+have been replaced in the documentation by options that follow
+the Command Syntax Standard [see
+\f4intro\fP(1)].
+A
+\f4-r\f1
+option that is not followed with an option-argument has been replaced by
+\f4\-L\f1
+and
+\f4+\f2command\f1
+has been replaced by
+\f4\-c\f1
+.IR command .
+.P
+The encryption options are provided with the
+Security Administration Utilities package, which
+is available only in the United States.
+.PP
+Tampering with entries in
+\f4/usr/share/lib/terminfo/?/\(**\fP
+or
+\f4/usr/share/lib/terminfo/?/\(**\fP
+(for example, changing or removing an entry) can affect
+programs such as
+\f4vi\fP
+that expect the entry to be present and correct.
+In particular,
+removing the "dumb" terminal may cause unexpected problems.
+.br
+.ne 3
+.PP
+Software tabs using \f4^T\f1 work only immediately after the
+.I autoindent.
+.PP
+Left and right shifts on intelligent terminals do not make use of
+insert and delete character operations in the terminal.
+.SH "SEE ALSO"
+'\"\f4ctags\fP(1), ed\^(1), edit\^(1), ex\^(1).	had to drop ctags for 3.1
+\f4ed\f1(1), \f4edit\f1(1), \f4ex\f1(1).
+.br
+.IR "User's Guide" .
+.br
+.IR "Editing Guide" .
+.br
+curses/terminfo chapter of the
+.IR "Programmer's Guide" .
+.\"	@(#)vi_x.1	6.2 of 9/2/83
+.Ee

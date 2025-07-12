@@ -1,0 +1,69 @@
+'\"macro stdmacro
+.if n .pH g3s.fread @(#)fread	40.17 of 5/22/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} fread 3S "C Development Set" "\&"
+.if \nX=1 .ds x} fread 3S "C Development Set"
+.if \nX=2 .ds x} fread 3S "" "\&"
+.if \nX=3 .ds x} fread "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4fread\f1, \f4fwrite\f1 \- binary input/output
+.SH SYNOPSIS
+.nf
+\f4#include <stdio.h>\f1
+.PP
+\f4size_t fread (void \(**ptr, size_t size, size_t nitems, FILE \(**stream);\f1
+.PP
+\f4size_t fwrite (const void \(**ptr, size_t size, size_t nitems, FILE
+    \(**stream);\f1
+.fi
+.SH DESCRIPTION
+\f4fread\f1 reads into an array pointed to by \f2ptr\f1 up
+to \f2nitems\f1 items of data from \f2stream\f1, where an item
+of data is a sequence of bytes (not necessarily terminated by a null byte) of
+length \f2size\f1.
+\f4fread\f1 stops reading bytes if an end-of-file or error
+condition is encountered while reading \f2stream\f1,
+or if \f2nitems\f1 items
+have been read.
+\f4fread\f1 increments the data pointer
+in \f2stream\f1 to point
+to the byte following the last byte read if there is one.
+\f4fread\f1 does not change the contents of \f2stream\f1.
+\f4fread\f1 returns the number of items read.
+.P
+\f4fwrite\f1 writes to the named output \f2stream\f1 at most
+\f2nitems\f1 items of data from the array pointed to by \f2ptr\f1, where an item
+of data is a sequence of bytes (not necessarily terminated by a null byte) of
+length \f2size\f1.
+\f4fwrite\f1 stops writing when it has written \f2nitems\f1
+items of data or if an error condition is encountered on \f2stream\f1.
+\f4fwrite\f1 does not change the contents of the array pointed
+to by \f2ptr\f1.
+\f4fwrite\f1 increments the data-pointer in
+\f2stream\f1 by the
+number of bytes written.
+\f4fwrite\f1 returns the number of items written.
+.P
+If \f2size\f1 or \f2nitems\f1 is zero, then \f4fread\fP and \f4fwrite\f1
+return a value of 0 and do not effect the state of \f2stream\f1.
+.P
+The \f4ferror\f1 or \f4feof\f1 routines must be used to distinguish between an
+error condition and end-of-file condition.
+.SH "SEE ALSO"
+\f4exit\fP(2),
+\f4lseek\fP(2),
+\f4read\fP(2), \f4write\fP(2),
+\f4abort\fP(3C),
+\f4fclose\fP(3S),
+\f4fopen\fP(3S),
+\f4getc\fP(3S), \f4gets\fP(3S),
+\f4printf\fP(3S),
+\f4putc\fP(3S), \f4puts\fP(3S),
+\f4scanf\fP(3S), \f4stdio\fP(3S).
+.SH DIAGNOSTICS
+If an error occurs, the error indicator for \f2stream\fP is set.
+.\"	@(#)fread.3s	6.2 of 10/20/83
+.Ee

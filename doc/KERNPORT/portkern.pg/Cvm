@@ -1,0 +1,9 @@
+.if n .pH portguide.CVM @(#)Cvm	40.2
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.BK "Programmer's Guide: Porting the Kernel" "" "" ""   
+.\ACRONYM	                  
+.CH "Directory - VM" "" "Table of Contents" "5"
+.\CHAPTER	5
+.tC 2 "Directory - VM" 5-1  
+.Index: VM directory       	1
+.Index: hardware address translation      	2

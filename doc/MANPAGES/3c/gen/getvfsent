@@ -1,0 +1,124 @@
+'\"macro stdmacro
+.if n .pH g3c.getvfsent @(#)getvfsent	40.7.1.4 of 5/21/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} getvfsent 3C "" "\&"
+.if \nX=1 .ds x} getvfsent 3C ""
+.if \nX=2 .ds x} getvfsent 3C "" "\&"
+.if \nX=3 .ds x} getvfsent "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4getvfsent\fP, \f4getvfsfile\fP, \f4getvfsspec\fP, \f4getvfsany\fP \- get \f4vfstab\fP file entry
+.SH SYNOPSIS
+\f4#include <stdio.h>\fP
+.br
+\f4#include <sys/vfstab.h>\fP
+.PP
+\f4int getvfsent (FILE \(**fp, struct vfstab \(**vp);
+.PP
+\f4int getvfsfile (FILE \(**fp, struct vfstab \(**vp, char \(**file);
+.PP
+\f4int getvfsspec (FILE \(**fp, struct vfstab \(**vp, char \(**spec);
+.PP
+\f4int getvfsany (FILE \(**fp, struct vfstab \(**vp, struct vfstab \(**vref);
+.SH DESCRIPTION
+\f4getvfsent\fP,
+\f4getvfsfile\fP,
+\f4getvfsspec\fP,
+and
+\f4getvfsany\fP
+each fill in the structure pointed to by \f2vp\f1 with
+the broken-out
+fields of a line in the file \f2fp\fP.
+Each line in the file
+contains a \f4vfstab\fP structure, declared in the
+\f4sys/vfstab.h\fP
+header file:
+.RS
+.PP
+.nf
+\f4
+	char	\(**vfs_special;
+	char	\(**vfs_fsckdev;
+	char	\(**vfs_mountp;
+	char	\(**vfs_fstype;
+	char	\(**vfs_fsckpass;
+	char	\(**vfs_automnt;
+	char	\(**vfs_mntopts;
+\fP
+.fi
+.RE
+.PP
+The fields have meanings described in
+\f4vfstab\fP(4).
+.PP
+\f4getvfsent\fP
+fills \f2vp\fP with the next \f4vfstab\fP structure in \f2fp\fP
+so successive calls can be used to search the entire file.
+\f4getvfsfile\fP
+searches the file referenced by
+\f2fp\fP
+until a mount point matching
+\f2file\fP
+is found and
+fills
+\f2vp\fP
+with the fields from the line in the file.
+\f4getvfsspec\fP
+searches the file referenced by
+\f2fp\fP
+until a special device matching
+\f2spec\fP
+is found and
+fills
+\f2vp\fP
+with the fields from the line in the file.
+\f2spec\fP
+will try to match on device type (block or character special)
+and major and minor device numbers.
+If it cannot match in this manner, then it compares the strings.
+\f4getvfsany\fP
+searches the file referenced by
+\f2fp\fP
+until a match is found between a line in the file and
+\f2vref\fP.
+\f2vref\fP
+matches the line if all
+non-null
+entries in
+\f2vref\fP
+match the corresponding fields in the file.
+.PP
+Note that these routines do not open, close, or rewind the file.
+.SH FILES
+\f4/etc/vfstab\fP
+.SH DIAGNOSTICS
+If the next entry is successfully read by
+\f4getvfsent\fP
+or a match is found with
+\f4getvfsfile\fP,
+\f4getvfsspec\fP,
+or
+\f4getvfsany\fP,
+0 is returned.
+If an end-of-file
+is encountered on reading, these functions return \-1.
+If an error is encountered, a value greater than 0 is returned.
+The possible error values are:
+.TP 20
+\f4VFS_TOOLONG\fP
+A line in the file exceeded the internal buffer size of
+\f4VFS_LINE_MAX\fP.
+.TP 20
+\f4VFS_TOOMANY\fP
+A line in the file contains too many fields.
+.TP 20
+\f4VFS_TOOFEW\fP
+A line in the file contains too few fields.
+.SH NOTES
+The members of the
+\f4vfstab\fP
+structure point to information contained in a static area,
+so it must be copied if it is
+to be saved.

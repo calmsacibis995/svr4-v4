@@ -1,0 +1,52 @@
+'\"macro stdmacro
+.if n .pH g1m.fastboot @(#)fastboot	40.6 of 4/18/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.\" @(#)fastboot.1M 1.5 89/09/01 SMI; from UCB 4.2
+'\" macro stdmacro
+.\" Copyright (c) 1988 Sun Microsystems, Inc. - All Rights Reserved.
+.\"
+.nr X
+.if \nX=0 .ds x} fastboot 1M "BSD Compatibility Package" "\&"
+.if \nX=1 .ds x} fastboot 1M "BSD Compatibility Package"
+.if \nX=2 .ds x} fastboot 1M "" "\&"
+.if \nX=3 .ds x} fastboot "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4fastboot\f1, \f4fasthalt\f1 \- reboot/halt the system without checking the disks
+.SH SYNOPSIS
+\f4/usr/ucb/fastboot\f1
+[
+.I boot-options
+]
+.P
+\f4/usr/ucb/fasthalt\f1
+[
+.I halt-options
+]
+.SH DESCRIPTION
+\f4fastboot\f1
+and
+\f4fasthalt\f1
+are shell scripts that invoke
+\f4reboot\f1
+and
+\f4halt\f1
+with the proper arguments.
+.P
+These commands are provided for compatibility only.
+.SH FILES
+.PD 0
+.TP 20
+\f4/etc/rc\f1
+.PD
+.SH "SEE ALSO"
+\f4halt\fP(1M),
+\f4reboot\fP(1M)
+.P
+\f4fsck\fP(1M),
+\f4init\fP(1M),
+\f4rc0\fP(1M),
+\f4rc2\fP(1M),
+\f4rc6\fP(1M)
+in the \f2System Administrator's Reference Manual\f1

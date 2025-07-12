@@ -1,0 +1,553 @@
+'\"macro stdmacro
+.if n .pH g1.sccs @(#)sccs	40.9 of 4/18/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} sccs 1 "BSD Compatibility Package" "\&"
+.if \nX=1 .ds x} sccs 1 "BSD Compatibility Package"
+.if \nX=2 .ds x} sccs 1 "" "\&"
+.if \nX=3 .ds x} sccs "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4sccs\f1 \- front end for the Source Code Control System (SCCS)
+.SH SYNOPSIS
+\f4/usr/ucb/sccs\f1 [ \f4\-r\f1 ] [ \f4\-d\f2prefixpath\f1 ] [ \f4\-p\f2finalpath\f1 ]
+.I command
+.br
+[\f2\s-1SCCS\s0-flags\f1 .\ .\ . ] [\f2filename\f1 .\ .\ . ]
+.SH DESCRIPTION
+The
+\f4sccs\f1
+command is a front end to the utility programs of the
+Source Code Control System (\s-1SCCS\s+1).
+.P
+\f4sccs\f1
+normally prefixes each
+.IR filename ,
+or the last component of each
+.IR filename ,
+with the string
+\f1`\f4SCCS\s0/s.\f1',
+because you normally keep your
+.SM SCCS
+database files in a directory called
+\f4SCCS\f1,
+and each database file starts with an
+\f1`\f4s.\f1'
+prefix.
+If the environment variable
+.SM PROJECTDIR
+is set, and is an absolute pathname
+(that is, begins with a slash)
+\f4sccs\f1
+will search for
+.SM SCCS
+files in the directory given by that variable.
+If it is a relative pathname
+(that is, does not begin with a slash),
+it is treated as the name of a user, and
+\f4sccs\f1
+will search in that user's home directory for a directory named
+\f4src\f1
+or
+\f4source\f1.
+If that directory is found,
+\f4sccs\f1
+will search for
+.SM SCCS
+files in the directory given by that variable.
+.P
+\f4sccs\f1
+program options must appear before the
+.I command
+argument.  Flags to be passed to the actual
+.SM SCCS
+command (utility program) must appear after the
+.I command
+argument.  These flags are specific to the
+.I command
+being used.
+.P
+\f4sccs\f1
+also includes the capability to run
+``set user \s-1ID\s0''
+to another user
+to provide additional protection.  Certain commands (such as
+\f4admin\f1(1))
+cannot be run
+``set user \s-1ID\s0''
+by all users, since this would allow anyone to
+change the authorizations.  Such commands are
+always run as the real user.
+.SH OPTIONS
+.TP
+\f4\-r\f1
+Run
+\f4sccs\f1
+as the real user rather than as whatever effective user
+\f4sccs\f1
+is
+``set user \s-1ID\s0''
+to.
+.TP
+\f4\-d\f2prefixpath\f1
+Define the prefix portion of the pathname for the
+.SM SCCS
+database files.  The default prefix portion of
+the pathname is the current directory.
+.I prefixpath
+is prefixed to the entire pathname.  See
+.SM EXAMPLE\s0.
+.IP
+This flag overrides any directory specified by the
+\f4PROJECTDIR\fP
+environment variable.
+.TP
+\f4\-p\f2finalpath\f1
+Define the name of a lower directory in which the
+.SM SCCS
+files will be found;
+.SM SCCS
+is the default.
+.I finalpath
+is appended before the final component of the
+pathname.  See
+.SM EXAMPLE\s0.
+.SH USAGE
+.SS "Additional sccs Commands"
+.P
+Several ``pseudo-commands'' are available in addition to the usual
+.SM SCCS
+commands.  These are:
+.TP 12
+\f4create\f1
+\f4create\f1
+is used when creating new
+\f4s.\f1
+files.  For example, given a C source language file called
+\f1`\f4obscure.c\f1',
+\f4create\f1
+would perform the following actions: (1) create the
+\f1`\f4s.\f1'
+file called
+\f1`\f4s.obscure.c\f1'
+in the
+.SM SCCS
+directory; (2) rename the original source file to
+\f1`\f4,obscure.c\f1';
+(3) do an
+\f1`\f4sccs get\f1'
+on
+\f1`\f4obscure.c\f1'.
+Compared to the
+.SM SCCS
+\f4admin\f1
+command,
+\f4create\f1
+does more of the startup work for you and
+should be used in preference to
+\f4admin\f1.
+.TP
+\f4enter\f1
+\f4enter\f1
+is just like
+\f4create\f1,
+except that it does not do the final
+\f1`\f4sccs get\f1'.
+It is usually used if an
+\f1`\f4sccs edit\f1'
+is to be performed immediately after the
+\f4enter\f1.
+.TP
+\f4edit\f1
+Get a file for editing.
+.TP
+\f4delget\f1
+Perform a
+\f4delta\f1
+on the named files and then
+\f4get\f1
+new versions.
+The new versions have
+.SM ID 
+keywords expanded, and so cannot be edited.
+.TP
+\f4deledit\f1
+Same as
+\f4delget\f1,
+but produces new versions suitable for editing.
+\f4deledit\f1
+is useful for making a ``checkpoint'' of your current editing
+phase.
+.TP
+\f4fix\f1
+Remove the named delta, but leaves you
+with a copy of the delta with the
+changes that were in it.
+\f4fix\f1
+must be followed by a
+\f4\-r\f1
+flag.
+\f4fix\f1
+is useful for fixing small compiler bugs, etc.  Since
+\f4fix\f1
+does not leave audit trails, use it carefully.
+.TP
+\f4clean\f1
+Remove everything from the current directory
+that can be recreated from
+.SM SCCS
+files.
+\f4clean\f1
+checks for and does not remove any files being
+edited.  If
+\f1`\f4clean \-b\f1'
+is used, branches are
+\f4not\f1
+checked to see if they are currently being edited.  Note: 
+\f4\-b\f1
+is dangerous if you are keeping the branches in the same directory.
+.TP
+\f4unedit\f1
+``Undo'' the last
+\f4edit\f1
+or
+`\f4get \-e\f1'
+and return a file to its
+previous condition.  If you
+\f4unedit\f1
+a file being edited, all
+changes made since the beginning of the editing session are lost.
+.\"This is the opposite of an
+.\".B edit
+.\"or a
+.\".RB ` "get \-e" '.
+.\"It should be used with extreme caution, since any changes you made since the get
+.\"will be irretrievably lost.
+.TP
+\f4info\f1
+Display a list of all files being edited.  If the
+\f4\-b\f1
+flag is given, branches (that is,
+.SM SID\s0's
+with two or fewer components) are ignored.  If the
+\f4\-u\f1
+flag is given (with an optional argument),
+only files being edited by you (or the named user) are listed.
+.TP
+\f4check\f1
+Check for files currently being edited, like
+\f4info\f1,
+but returns an exit code rather than a listing:
+nothing is printed if nothing is being
+edited, and a non-zero exit status is
+returned if anything is being edited.
+\f4check\f1
+may thus be included in an
+``install'' entry in a makefile, to ensure
+that everything is included in an
+.SM SCCS
+file before a version is installed.
+.TP
+\f4tell\f1
+Display a list of files being edited on the standard output.
+Filenames are separated by
+.SM NEWLINE
+characters.
+Take the
+\f4\-b\f1
+and
+\f4\-u\f1
+flags like
+\f4info\f1
+and
+\f4check\f1.
+.TP
+\f4diffs\f1
+Compare (in
+\f4diff\f1-like
+format) the current version of the program you
+have out for editing and the versions in
+.SM SCCS
+format.
+\f4diffs\f1
+accepts the same arguments as
+\f4diff\f1,
+except that the
+\f4\-c\f1
+flag must be specified as
+\f4\-C\f1
+instead, because the
+\f4\-c\f1
+flag is taken as a flag to
+\f4get\f1
+indicating which version
+is to be compared with the current version.
+.TP
+\f4print\f1
+Print verbose information about the named files.
+\f4print\f1
+does an
+\f1`\f4sccs\ prs\ \-e\f1'
+followed by an
+\f1`\f4sccs\ get\ \-p\ \-m\f1'
+on each file.
+.SH EXAMPLE
+The command:
+.IP
+\f4 sccs\ \ \-d/usr/include\ \ get sys/inode.h\f1
+.P
+converts to:
+.IP
+\f4get\ \ /usr/include/sys/SCCS/s.inode.h\f1
+.P
+The intent here is to create aliases such as:
+.IP
+\f4alias\ \ syssccs\ \ sccs\ \ \-d/usr/src\f1
+.P
+which will be used as:
+.IP
+\f4 syssccs\ \ get\ \ cmd/who.c\f1
+.P
+The command:
+.IP
+\f4 sccs\ \ \-pprivate\ \ get\ \ usr/include/stdio.h\f1
+.P
+converts to:
+.IP
+\f4get\ \ usr/include/private/s.stdio.h\f1
+.de BX
+.P
+.nf
+.ft 4
+..
+.de EX
+.ft 1
+.fi
+.P
+..
+.P
+To put a file called
+\f4myprogram.c\f1
+into
+.SM SCCS
+format for the first time, assuming also that there is no
+.SM SCCS
+directory already existing:
+.RS
+.BX
+\f5$\f4 mkdir SCCS
+\f5$\f4 sccs create myprogram.c
+\f5$\f4 myprogram.c:
+1.1
+14 lines
+.I
+after you have verified that everything is all right
+.I
+you remove the version of the file that starts with a comma:
+\f5$\f4 rm myprogram.c\f1
+\f5$\f4
+.EX
+.RE
+To get a copy of
+\f4myprogram.c\f1
+for editing, edit that file, then place it back in the
+.SM SCCS
+database:
+.RS
+.BX
+\f5$\f4 sccs edit myprogram.c
+1.1
+new delta 1.2
+14 lines
+\f5$\f4 vi myprogram.c
+\f2your editing session\fP
+.ft 4
+\f5$\f4 sccs delget myprogram.c
+comments? Added abusive responses for compatibility
+1.2
+7 inserted
+7 deleted
+7 unchanged
+1.2
+14 lines
+\f5$\f4
+.EX
+.RE
+To get a file from another directory:
+.RS
+.BX
+sccs \-p/usr/src/sccs/  get cc.c
+.EX
+.RE
+or:
+.RS
+.BX
+sccs get /usr/src/sccs/cc.c
+.EX
+.RE
+To make a delta of a large number of files in the current directory:
+.RS
+.BX
+sccs delta *.c
+.EX
+.RE
+To get a list of files being edited that are not on branches:
+.RS
+.BX
+sccs info \-b
+.EX
+.RE
+To delta everything that you are editing:
+.RS
+.BX
+\f5$\f4 sccs delta \`sccs tell \-u\`
+.EX
+.RE
+In a makefile, to get source files from an
+.SM SCCS
+file if it does not already exist:
+.RS
+.BX
+SRCS = <list of source files>
+$(SRCS):
+	sccs get $(REL) $@
+.EX
+.RE
+.SS "Regular sccs Commands"
+.P
+The ``regular''
+.SM SCCS
+commands are described very briefly below.
+It is unlikely that you ever
+need to use these commands because the user
+interface is so complicated, and the
+\f4sccs\f1
+front end command does 99.9% of the interesting tasks for you.
+.TP 12
+\f4admin\f1
+Create new
+.SM SCCS
+files and changes parameters of existing
+.SM SCCS
+files.  You can use
+\f1`\f4sccs create\f1'
+to create new
+.SM SCCS
+files, or use
+\f1`\f4sccs admin\f1'
+to do other things.
+.TP
+\f4cdc\f1
+Change the commentary material in an
+.SM SCCS
+delta.
+.TP
+\f4comb\f1
+Combine
+.SM SCCS
+deltas and reconstructs the
+.SM SCCS
+files.
+.TP
+\f4delta\f1
+Permanently introduces changes that were made to a file previously
+retrieved using
+\f1`\f4sccs get\f1'.
+You can use
+\f1`\f4sccs delget\f1'
+as the more useful version of this command since
+\f1`\f4sccs delget\f1'
+does all of the useful work and more.
+.TP
+\f4get\f1
+Extract a file from the
+.SM SCCS
+database, either for compilation, or for editing when the
+\f4\-e\f1
+option is used.  Use
+\f1`\f4sccs get\f1'
+if you really need it, but
+\f1`\f4sccs delget\f1'
+will normally have done this job for you.  Use
+\f4sccs edit\f1
+instead of
+\f4get\f1
+with the
+\f4\-e\f1
+option.
+.TP
+\f4help\f1
+Supposed to help you interpret
+.SM SCCS
+error messages.
+.TP
+\f4prs\f1
+Display information about what is happening in an
+.SM SCCS
+file.
+.TP
+\f4rmdel\f1
+Remove a delta from an
+.SM SCCS
+file.
+.\".TP
+.\".B sact
+.\"Displays information about editing activity in an
+.\".SM SCCS
+.\"file.  The
+.\".RB ` "sccs info" '
+.\"command is a lot more useful for the real life user.
+.TP
+\f4sccsdiff\f1
+Compare two versions of an
+.SM SCCS
+file and generates the differences between the two versions.
+.\".TP
+.\".B unget
+.\"Undoes the work of a previous
+.\".RB ` "get \-e" '
+.\"command or a
+.\".RB ` "sccs edit" '
+.\"command.  Use the
+.\".RB ` "sccs unedit" '
+.\"command as a useful alternative.
+.TP
+\f4val\f1
+Determine if a given
+.SM SCCS
+file meets specified criteria.  If you use the
+\f4sccs\f1
+command, you should not need to use
+\f4val\f1,
+because its user interface is unbelievable.
+.TP
+\f4what\f1
+Display
+.SM SCCS
+identification information.
+.SH FILES
+.PD 0
+.TP 20
+\f4/usr/sccs/*\f1
+.PD
+.SH "SEE ALSO"
+\f4admin\fP(1),
+\f4cdc\fP(1),
+\f4comb\fP(1),
+\f4delta\fP(1),
+\f4get\fP(1),
+\f4help\fP(1),
+\f4prs\fP(1),
+\f4rmdel\fP(1),
+\f4sact\fP(1),
+\f4sccsdiff\fP(1),
+\f4unget\fP(1),
+\f4val\fP(1),
+\f4what\fP(1),
+\f4sccsfile\fP(5)
+in the \f2Programmer's Reference Manual\f1
+.SH NOTES
+The \f4help\f1 command
+usually just parrots SCCS error messages and is generally
+not considered very helpful.

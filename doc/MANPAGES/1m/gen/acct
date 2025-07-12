@@ -1,0 +1,168 @@
+'\"macro stdmacro
+.if n .pH g1a.acct @(#)acct	40.11.1.1 of 1/3/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} acct 1M "Job Accounting Utilities" "\&"
+.if \nX=1 .ds x} acct 1M "Job Accounting Utilities"
+.if \nX=2 .ds x} acct 1M "" "\&"
+.if \nX=3 .ds x} acct "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4acct\f1:  \f4acctdisk\f1, \f4acctdusg\f1, \f4accton\f1, \f4acctwtmp\f1
+\f4closewtmp\f1, \f4utmp2wtmp\f1 \- overview of accounting 
+and miscellaneous accounting commands
+.SH SYNOPSIS
+\f4/usr/lib/acct/acctdisk\f1
+.PP
+\f4/usr/lib/acct/acctdusg\f1
+\f1[\|\f4\-u\f1 \f2file\fP\|]
+\f1[\|\f4\-p\f1 \f2file\fP\|]
+.PP
+\f4/usr/lib/acct/accton\f1
+[\|\f2file\fP\|]
+.PP
+\f4/usr/lib/acct/acctwtmp\f1
+"\f2reason\fP"
+.PP
+\f4/usr/lib/acct/closewtmp\f1
+.PP
+\f4/usr/lib/acct/utmp2wtmp\f1
+.SH DESCRIPTION
+Accounting software is structured as a set of tools
+(consisting of both C programs and shell procedures)
+that can be used
+to build accounting systems.
+\f4acctsh\fP(1M)
+describes the set of shell procedures built on top of
+the C programs.
+.PP
+Connect time accounting is handled by various programs that write
+records into
+\f4/var/adm/wtmp\fP,
+as described in
+\f4utmp\fP(4).
+The programs described in
+\f4acctcon\fP(1M)
+convert this file into session and charging records,
+which are then summarized by
+\f4acctmerg\fP(1M).
+.PP
+Process accounting is performed by the
+.SM UNIX
+system kernel.
+Upon termination of a process,
+one record per process is written to a file
+(normally
+\f4/var/adm/pacct\fP).
+The programs in
+\f4acctprc\fP(1M)
+summarize this data for charging purposes;
+\f4acctcms\fP(1M)
+is used to summarize command usage.
+Current process data may be examined using
+\f4acctcom\fP(1).
+.PP
+Process accounting and connect time accounting (or any accounting records
+in the \f4tacct\f1 format described in
+\f4acct\fP(4))
+can be merged and summarized into total accounting records by
+\f4acctmerg\fP
+(see \f4tacct\fP format in
+\f4acct\fP(4)).
+\f4prtacct\fP
+(see
+\f4acctsh\fP(1M))
+is used to format any or all accounting records.
+.PP
+\f4acctdisk\fP
+reads lines that contain user
+.SM ID\*S,
+login name, and number of
+disk blocks and converts them to total accounting
+records that can be merged with other accounting records.
+.PP
+\f4acctdusg\fP
+reads its standard input (usually from
+\f4find / \-print\f1)
+and computes disk resource consumption
+(including indirect blocks) by login.
+If \f4\-u\fP is given, records consisting of those filenames for which
+\f4acctdusg\fP
+charges no one are placed in
+.I file\^
+(a potential source for finding users trying to avoid disk charges).
+If \f4\-p\fP is given,
+.I file\^
+is the name of the password file.
+This option is not needed if the password file is
+\f4/etc/passwd\fP.
+(See \f4diskusg\fP(1M) for more details.)
+.PP
+\f4accton\fP
+alone turns process accounting off.
+If
+.I file\^
+is given,
+it must be the name of an existing file,
+to which the kernel appends process accounting records
+(see
+\f4acct\fP(2)
+and
+\f4acct\fP(4)).
+.PP
+\f4acctwtmp\fP
+writes a
+\f4utmp\fP(4)
+record to its standard output.
+The record contains the current time
+and
+a string of characters that describe the
+.IR reason .
+A record type of
+.SM ACCOUNTING
+is assigned (see
+\f4utmp\fP(4)).
+.I reason
+must be a string of 11 or fewer characters, numbers,
+\f4$\f1,
+or spaces.
+For example, the following are suggestions
+for use in reboot and shutdown procedures, respectively:
+.PP
+.RS
+\f4acctwtmp \|"acctg on" \|>> /var/adm/wtmp
+.br
+acctwtmp \|"acctg off" \|>> /var/adm/wtmp\f1
+.RE
+.PP
+For each user currently logged on, \f4closewtmp\f1 puts a false
+\f4DEAD_PROCESS\f1 record in the \f4/var/adm/wtmp\f1 file.
+\f4runacct\f1 (see \f4runacct(1M)\f1) uses this false \f4DEAD_PROCESS\f1
+record so that the connect accounting procedures can track the time
+used by users logged on before \f4runacct\f1 was invoked.
+.PP
+For each user currently logged on, \f4runacct\f1 uses \f4utmp2wtmp\f1
+to create an entry in the file \f4/var/adm/wtmp\f1, created by \f4runacct\f1.
+Entries in \f4/var/adm/wtmp\f1 enable subsequent invocations of
+\f4runacct\f1 to account for connect times of users currently logged in.
+.SH FILES
+.ta \w'/var/adm/pacct\ \ \ \ 'u +.5i
+.nf
+\f4/etc/passwd\fP	used for login name to user \s-1ID\s+1 conversions
+\f4/usr/lib/acct\fP	holds all accounting commands listed in
+	sub-class 1M of this manual
+\f4/var/adm/pacct\fP	current process accounting file
+\f4/var/adm/wtmp\fP	login/logoff history file
+.fi
+.SH SEE ALSO
+\f4acctcms\fP(1M), \f4acctcon\fP(1M), \f4acctmerg\fP(1M), \f4acctprc\fP(1M), \f4acctsh\fP(1M),
+\f4diskusg\fP(1M), \f4fwtmp\fP(1M), \f4runacct\fP(1M),
+\f4acct\fP(4), \f4utmp\fP(4)
+.br
+\f4acctcom\fP(1) in the \f2User's Reference Manual\f1
+.br
+\f4acct\fP(2)
+in the \f2Programmer's Reference
+Manual\f1
+.\"	@(#)acct.1m	6.2 of 9/2/83

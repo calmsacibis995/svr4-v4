@@ -1,0 +1,155 @@
+'\"macro stdmacro
+.if n .pH g1a.su @(#)su	40.15.1.2 of 1/3/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} su 1M "Essential Utilities" "\&"
+.if \nX=1 .ds x} su 1M "Essential Utilities"
+.if \nX=2 .ds x} su 1M "" "\&"
+.if \nX=3 .ds x} su 1M "" "\&"
+.TH \*(x}
+.SH NAME
+\f4su\f1 \- become super-user or another user
+.SH SYNOPSIS
+\f4su\f1
+[
+\f4\-\f1
+] [ \f2name\f1 [ \f2arg\f1 .\|.\|. ] ]
+.SH DESCRIPTION
+\f4su\fP
+allows one to become another user without logging off.
+The default user
+.I name\^
+is
+\f4root\f1
+(that is, super-user).
+.PP
+To use
+\f4su\fP,
+the appropriate password must be supplied
+(unless one is already \f4root\fP).
+If the password is correct,
+\f4su\fP
+will execute a new shell with the real and effective user and group IDs
+and supplementary group list set to that of the specified user.
+The new shell will be the optional program
+named in the shell field of the specified user's password
+file entry [see \f4passwd\fP(4)]
+or \f4/usr/bin/sh\f1 if none is specified 
+[see \f4sh\fP(1)].
+To restore normal user \s-1ID\s0 privileges,
+type an
+EOF
+character (\f4CTRL-d\f1) to the new shell.
+.PP
+Any additional arguments given on the command line are
+passed to the program invoked as the shell.
+When using programs such as
+\f4sh\fP,
+an
+.I arg\^
+of the form
+\f4\-c\f1
+.I string\^
+executes
+.I string\^
+via the shell and an arg of
+\f4\-r\f1
+gives the user a restricted shell.
+.PP
+The following statements are true only if the optional program named
+in the shell field of the specified user's password file entry is
+like \f4sh\fP.
+If the first argument to \f4su\fP is a \f4\-\f1,
+the environment will be changed
+to what would be expected if the user
+actually logged in as the specified user.
+This is done by invoking the program used as the shell with an
+.I arg0\^
+value whose first character is
+\f4\-\f1,
+thus causing first the system's profile (\f4/etc/profile\fP)
+and then the specified user's profile
+(\f4.profile\fP in the new \s-1HOME\s+1 directory)
+to be executed.
+Otherwise, the environment is passed along with the possible exception of
+\f4$PATH\f1,
+which is set to
+\f4/sbin:/usr/sbin:/usr/bin:/etc\fP
+for
+\f4root\f1.
+Note that if the optional program used as the shell is
+\f4/usr/bin/sh\f1,
+the user's \f4.profile\fP can check
+.I arg0\^
+for
+\f4\-sh\f1
+or
+\f4\-su\f1
+to determine if it was invoked by \f4login\fP or \f4su\fP,
+respectively.
+If the user's program is other than \f4/usr/bin/sh\fP, then \f4.profile\fP
+is invoked with an
+.I arg0\^
+of
+\f4\-\f2program\f1
+by both \f4login\fP and \f4su\fP.
+.PP
+All attempts to become another user
+using \f4su\fP are logged in the \f4log\f1 file
+\f4/var/adm/sulog\f1.
+.SH EXAMPLES
+.PP
+To become user \f4bin\fP while retaining your previously
+exported environment, execute:
+.RS
+\f4su bin\f1
+.RE
+.PP
+To become user \f4bin\fP but change the environment
+to what would be expected if \f4bin\fP had originally logged in,
+execute:
+.RS
+\f4su \- bin\f1
+.RE
+.PP
+To execute \f2command\fP with the temporary environment and permissions of
+user \f4bin\fP, type:
+.sp .5
+.in +.4i
+\f4su \- bin \-c "\f2command \f2args\fP"
+.in -.4i
+.SH FILES
+.nf
+.ta 1.2i
+\f4/etc/passwd\f1	system's password file
+\f4/etc/profile\f1	system's profile
+\f4$HOME/.profile\f1	user's profile
+\f4/var/adm/sulog\f1	log file
+\f4/etc/default/su\f1	the default parameters that live here are:
+.RS 1.2i
+.TP .6i
+\f4SULOG\fP:
+If defined, all attempts to \f4su\fP to
+another user are logged in the indicated file.
+.TP
+\f4CONSOLE\fP:
+If defined, all attempts to \f4suroot\fP
+are logged on the console.
+.TP
+\f4PATH\fP:
+Default path.
+.TP
+\f4SUPATH\fP:
+Default path for a user invoking \f4suroot\fP.
+.RE
+.fi
+.SH SEE ALSO
+\f4env\fP(1),
+\f4login\fP(1),
+\f4sh\fP(1) in the \f2User's Reference Manual\f1.
+.br
+\f4passwd\fP(4),
+\f4profile\fP(4), \f4environ\fP(5) in the \f2Programmer's Reference Manual\f1.
+.\"	@(#)su.1a	6.3 of 9/2/83
+.Ee

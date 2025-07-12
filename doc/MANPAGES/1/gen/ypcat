@@ -1,0 +1,55 @@
+'\"macro stdmacro
+.if n .pH g1.ypcat @(#)ypcat	40.6 of 5/16/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.\" @(#)ypcat.1 1.10 89/09/28 SMI
+.\" Copyright (c) 1988 Sun Microsystems, Inc. - All Rights Reserved.
+.nr X
+.if \nX=0 .ds x} ypcat 1 "" "\&"
+.if \nX=1 .ds x} ypcat 1 ""
+.if \nX=2 .ds x} ypcat 1 "" "\&"
+.if \nX=3 .ds x} ypcat "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4ypcat\f1 \- print values in a NIS data base
+.SH SYNOPSIS
+\f4ypcat\f1 [ \f4\-k\f1 ] [ \f4\-d\f1 \f2ypdomain\f1 ] \f2mname\f1
+.SH DESCRIPTION
+.P
+The
+\f4ypcat\f1
+command prints out values in the
+\s-1NIS\s0 name service map specified by
+\f2mname\f1,
+which may be either a map name or a map nickname.
+Since
+\f4ypcat\f1
+uses the
+\s-1NIS\s0
+network services, no
+\s-1NIS\s0
+server is specified.
+.P
+Refer to
+\f4ypfiles\f1(4)
+and
+\f4ypserv\f1(1M)
+for an overview of the NIS name service.
+.P
+The following options are available:
+.TP 16
+\f4\-d \f2ypdomain\f1
+Specify a domain other that the default domain.
+.TP
+\f4\-k\f1
+Display the keys for those maps in which the values
+are null or the key is not part of the value.
+None of the maps derived from files that have an
+\s-1ASCII\s0
+version in
+\f4/etc\f1
+fall into this class.
+.SH "SEE ALSO"
+\f4ypmatch\f1(1),
+\f4ypserv\f1(1M),
+\f4ypfiles\f1(4)

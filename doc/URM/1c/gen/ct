@@ -1,0 +1,125 @@
+'\"macro stdmacro
+.if n .pH g1c.ct @(#)ct	40.10 of 4/16/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} ct 1C "Basic Networking Utilities" "\&"
+.if \nX=1 .ds x} ct 1C "Basic Networking Utilities"
+.if \nX=2 .ds x} ct 1C "" "\&"
+.if \nX=3 .ds x} ct "" "" "\&"
+.TH \*(x}
+.tr ~
+.SH NAME
+\f4ct\f1 \- spawn login to a remote terminal
+.SH SYNOPSIS
+\f4ct\f1 [\f2options\f1] \f2telno\f1 . . .
+.SH DESCRIPTION
+\f4ct\fP
+dials the telephone number of a modem that is attached to a terminal and
+spawns a
+\f4login\fP
+process to that terminal.
+.I Telno\^
+is a telephone number,
+with equal signs for secondary dial tones and minus
+signs for delays at appropriate places.
+(The set of legal characters for \f2telno\f1 is
+\f40\fP through \f49\fP, \f4\-\fP, \f4=\fP, \f4\(***\fP,
+and \f4#\fP.
+The maximum length of
+.I telno
+is 31 characters).
+If more than one telephone number is specified,
+\f4ct\fP
+tries each in succession until one answers;
+this is useful for specifying alternate dialing paths.
+.PP
+\f4ct\fP
+tries each line listed in the file
+\f4/etc/uucp/Devices\f1
+until it finds an available line with appropriate
+attributes, or runs out of entries.
+.\"	Commented out for 3B 2-->Inapplicable.
+.\"If,
+.\"however,
+.\"the program is compiled with the
+.\".B \-DSMALL
+.\"option,
+.\"there will be little debugging output provided.
+\f4ct\fP uses the following options:
+.TP 12
+\&\f4\-h\f1
+Normally, \f4ct\fP hangs up the current line so 
+it can be used to answer the incoming call.
+The \f4\-h\f1 option prevents this action.
+The \f4\-h\f1 option also waits for 
+the termination of the specified \f4ct\f1 process 
+before returning control to the user's terminal.
+.TP
+\f4\-s \f2speed\f1
+The data rate may be set with the \f4\-s\f1 option.
+\f2speed\f1 is expressed in baud rates.
+The default baud rate is 1200.
+.TP
+\&\f4\-v\f1
+If the \f4\-v\f1 (verbose) option is used, 
+\f4ct\fP sends a running narrative 
+to the standard error output stream.
+.TP
+\f4\-w \f2n\f1
+If there are no free lines
+\f4ct\fP asks if it should wait for one, and
+if so, for how many minutes it should wait 
+before it gives up.
+\f4ct\fP continues to try to open the dialers 
+at one-minute intervals until the
+specified limit is exceeded.
+This dialogue may be overridden by specifying the 
+\f4\-w \f2n\f1 option where
+\f2n\f1 is the maximum number of minutes 
+that \f4ct\fP is to wait for a line.
+.TP
+\f4\-x\f2n\f1
+This option is used for debugging; 
+it produces a detailed output of the
+program execution on standard error.
+\f2n\f1 is a single number between \f40\fP and \f49\fP.
+As \f2n\f1 increases to \f49\fP,
+more detailed debugging information is given.
+.PP
+After the user on the destination terminal logs out,
+there are two things that could occur, depending on what
+type of port monitor is monitoring the port.
+In the case of no port monitor,
+\f4ct\fP
+prompts: \f4Reconnect?\f1~
+If the response begins with the letter \f4n\f1,
+the line is dropped; otherwise,
+\f4ttymon\fP is started again and the \f4login:\f1
+prompt is printed.
+In the second case, where a port monitor is monitoring
+the port, the port monitor reissues the \f4login:\f1 prompt.
+.PP
+The user should log out properly before disconnecting.
+.SH FILES
+\f4/etc/uucp/Devices
+.br
+/var/adm/ctlog\fP
+.SH "SEE ALSO"
+\f4cu\fP(1C),
+\f4login\fP(1),
+\f4uucp\fP(1C)
+.br
+\f4ttymon\fP(1M)
+in the \f2System Administrator's Reference Manual\f1
+.SH NOTES
+The \f4ct\fP program will not work with a DATAKIT Multiplex interface.
+.PP
+For a shared port, 
+one used for both dial-in and dial-out, 
+the \f4ttymon\fP program 
+running on the line must have 
+the \f4\-r\f1 and \f4\-b\f1
+options specified [see \f4ttymon\f1(1M)].
+.\"	@(#)ct.1c	1.3
+.Ee

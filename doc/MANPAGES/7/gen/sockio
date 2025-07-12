@@ -1,0 +1,77 @@
+'\"macro stdmacro
+.if n .pH g7.sockio @(#)sockio	40.6 of 1/3/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} sockio 7 "" "\&"
+.if \nX=1 .ds x} sockio 7 ""
+.if \nX=2 .ds x} sockio 7 "" "\&"
+.if \nX=3 .ds x} sockio "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4sockio\fP \- ioctls that operate directly on sockets
+.SH SYNOPSIS
+.nf
+\f4#include <sys/sockio.h>\fP
+.fi
+.SH DESCRIPTION
+.IX "socket I/O, see \fLsockio\fP(7)"
+.IX I/O "socket, see \fLsockio\fP(7)"
+.LP
+The
+.SM IOCTL\s0's
+listed in this manual page apply directly to sockets, independent of any
+underlying protocol.
+The
+\f4setsockopt\fP
+call (see
+\f4getsockopt\fP(3N))
+is the primary method for operating on sockets, rather
+than on the underlying protocol or network interface.
+\f4ioctl\fPs
+for a specific network interface or protocol are documented in the
+manual page for that interface or protocol.
+.TP 20
+\s-1SIOCSPGRP\s+1
+The argument is a pointer to an
+\f4int\fP.
+Set the process-group ID that will subsequently receive
+\f4SIGIO\fP
+or
+\f4SIGURG\fP
+signals for the socket referred to by the descriptor passed to
+\f4ioctl\fP
+to the value of that
+\f4int\fP.
+.TP 20
+\f4SIOCGPGRP\fP
+The argument is a pointer to an
+\f4int\fP.
+Set the value of that
+\f4int\fP
+to the process-group
+.SM ID
+that is receiving
+\f4SIGIO\fP
+or
+\f4SIGURG\fP
+signals for the socket referred to by the descriptor passed to
+\f4ioctl\fP.
+.TP 20
+\f4SIOCCATMARK\fP
+The argument is a pointer to an
+\f4int\fP.
+Set the value of that
+\f4int\fP
+to 1 if the read pointer for the socket referred to by the descriptor passed
+to
+\f4ioctl\fP
+points to a mark in the data stream for an out-of-band message.
+Set the value of that \f3int\fP to 0 if the read pointer for the socket
+referred to by the descriptor passed to \f3ioctl\fP 
+does not point to a mark in the data stream for an 
+out-of-band message.
+.SH SEE ALSO
+\f4ioctl\fP(2),
+\f4getsockopt\fP(2),
+\f4filio\fP(4)

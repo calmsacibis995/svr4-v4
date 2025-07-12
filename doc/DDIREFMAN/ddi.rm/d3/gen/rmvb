@@ -1,0 +1,82 @@
+'\"macro stdmacro
+.if n .pH gen.rmvb @(#)rmvb	40.2 of 1/7/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.nr X
+.if \nX=0 .ds x} rmvb D3DK "STREAMS" "DDI/DKI" "\&"
+.if \nX=1 .ds x} rmvb D3DK "STREAMS" "DDI/DKI"
+.if \nX=2 .ds x} rmvb D3DK "" "\&"
+.if \nX=3 .ds x} rmvb "" "" "\&"
+.TH \*(x}
+.IX "\f4rmvb\fP(D3DK)"
+.SH NAME
+\f4rmvb\f1 \- remove a message block from a message
+.SH SYNOPSIS
+.nf
+.na
+\f4#include <sys/stream.h>
+.sp 0.5
+mblk_t *rmvb(mblk_t *\f2mp\f4, mblk_t *\f2bp\f4);\f1
+.ad
+.fi
+.SH ARGUMENTS
+.RS 0n 10
+.IP "\f2mp\f1" 10n
+Message from which a message block is to be removed.
+.IP "\f2bp\f1" 10n
+Message block to be removed.
+.RE
+.SH DESCRIPTION
+\f4rmvb\f1 removes a message block (\f2bp\f1) from a message (\f2mp\f1), and
+returns a pointer to the altered message.
+The message block is not freed, merely removed from the message.
+It is the caller's responsibility to free the message block.
+.SH RETURN VALUE
+If successful, a pointer to the message (minus the removed block) is returned.
+If \f2bp\f1 was the only block in the message before \f4rmvb\f1 was called,
+\f4NULL\fP is returned.
+If the designated message block (\f2bp\f1) was not in the message, \-1 is
+returned.
+.SH LEVEL
+Base or Interrupt.
+.SH NOTES
+Does not sleep.
+.SH EXAMPLE
+This routine removes all zero-length \f4M_DATA\f1 message blocks
+from the given message.  For each message block in the message, we
+save the next message block (line 9).
+If the current message block is
+of type \f4M_DATA\f1 and has no data in its buffer (lines 10-11), then we remove
+the message block from the message (line 12) and free it (line 13).
+In either case, we continue with
+the next message block (line 15), until we have checked every message
+block in the message.
+.ne 4
+.P
+.nf
+.ft 4
+.ps 7
+.vs 9
+ 1  void
+ 2  xxclean(mp)
+ 3	mblk_t *mp;
+ 4  {
+ 5	mblk_t *tmp;
+ 6	mblk_t *nmp;
+
+ 7	tmp = mp;
+ 8	while (tmp) {
+ 9		nmp = tmp->b_next;
+10		if ((tmp->b_datap->db_type == M_DATA) &&
+11		   (tmp->b_rptr == tmp->b_wptr)) {
+12			mp = rmvb(mp, tmp);
+13			freeb(tmp);
+14		}
+15		tmp = nmp;
+16	}
+17  }
+.vs
+.ps
+.ft 1
+.fi
+.IX "\f4freeb\fP(D3DK), example"
+.IX "\f4rmvb\fP(D3DK), example"

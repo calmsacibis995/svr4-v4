@@ -1,0 +1,63 @@
+'\"macro stdmacro
+.if n .pH g1a.share @(#)share	40.9 of 1/3/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} share 1M "DFS" "\&"
+.if \nX=1 .ds x} share 1M "DFS"
+.if \nX=2 .ds x} share 1M "" "\&"
+.if \nX=3 .ds x} share "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4share\f1 \- make local resource available for mounting by remote systems
+.SH SYNOPSIS
+\f4share\f1
+[\f4\-F \f2fstype\f1]
+[\f4\-o \f2specific_options\f1]
+[\f4\-d \f2description\f1]
+[\f2pathname \f1[\f2resourcename\f1]]
+.br
+.SH DESCRIPTION
+The
+\f4share\f1
+command makes a resource available for mounting through a remote file
+system of type \f2fstype\f1.  If the option \f4\-F\f1 \f2fstype\f1 
+is omitted, the
+first file system type listed in file \f4/etc/dfs/fstypes\f1 will
+be used as the default.
+\f2Specific_options\f1 as well as the
+semantics of \f2resourcename\f1 are specific to particular distributed
+file systems.  When invoked with only a file system type, \f4share\f1
+displays all resources shared by the given file system to the local
+system.  When invoked with no arguments, \f4share\f1 displays
+all resources shared by the local system.
+.P
+The \f2access_spec\f1 is used to control access of the shared resource.
+It may be one of the following:
+.RS 5
+.IP \f4rw\f1 15
+\f2pathname\f1 is shared read/write to all clients.
+This is also the default behavior.
+.IP \f4rw=\f1\f2client\f1[\f2:client\f1]... 15
+\f2pathname\f1 is shared read/write only to the
+listed clients.
+No other systems can
+access \f2resourcename\f1.
+.IP \f4ro\f1 15
+\f2pathname\f1 is shared read-only to all clients.
+.IP \f4ro=\f1\f2client\f1[\f2:client\f1]... 15
+\f2pathname\f1 is shared read-only only to the
+listed clients.  
+No other systems can access \f2pathname\f1.
+.RE
+.P
+The \f4\-d\f1 flag may be used to provide a description of the
+resource being shared.
+.SH FILES
+\f4/etc/dfs/dfstab\f1
+.br
+\f4/etc/dfs/sharetab\f1
+.br
+\f4/etc/dfs/fstypes\f1
+.SH "SEE ALSO"
+\f4unshare\f1(1M)

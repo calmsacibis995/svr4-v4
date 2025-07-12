@@ -1,0 +1,68 @@
+'\"macro stdmacro
+.if n .pH g1.atq @(#)atq	40.11.1.1 of 1/3/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.\" @(#)atq.1 1.6 88/10/17 SMI; from UCB 6.2 5/10/86
+.\" Copyright (c) 1985 Regents of the University of California.
+.\" All rights reserved.  The Berkeley software License Agreement
+.\" specifies the terms and conditions for redistribution.
+.\" Copyright (c) 1988 Sun Microsystems, Inc - All Rights Reserved.
+.\"
+.nr X
+.if \nX=0 .ds x} atq 1 "User Environment Utilities" "\&"
+.if \nX=1 .ds x} atq 1 "User Environment Utilities"
+.if \nX=2 .ds x} atq 1 "" "\&"
+.if \nX=3 .ds x} atq "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4atq\f1 \- display the jobs queued to run at specified times
+.SH SYNOPSIS
+\f4atq\f1
+\f1[\f4 \-c \f1]
+\f1[\f4 \-n \f1]
+.RI [ username ".\|.\|. ]" 
+.SH DESCRIPTION
+\f4atq \f1
+displays the current user's queue of jobs submitted with
+\f4at\f1
+to be run at a later date.
+If invoked by the privileged user,
+\f4atq\f1
+will display all jobs in the queue.
+.PP
+If no options are given,
+the jobs are displayed in chronological order of execution.
+.PP
+When a privileged user invokes
+\f4atq\f1
+without specifying
+.IR username ,
+the entire queue is displayed;
+when a
+.I username
+is specified,
+only those jobs belonging to the named user are displayed.
+.PP
+The
+\f4atq\f1
+command can be used with the following options:
+.TP
+\f4\-c\f1
+Display the queued jobs in the order they were created
+(that is, the time that the
+\f4at\f1
+command was given).
+.TP
+\f4\-n\f1
+Display only the total number of jobs currently in the queue.
+.SH FILES
+.TP 20
+\f4/var/spool/cron\f1
+spool area
+.SH "SEE ALSO"
+\f4at\fP(1),
+\f4atrm\fP(1).
+.sp .2
+\f4cron\fP(1M)
+in the \f2System Administrator's Reference Manual\f1.
+.Ee

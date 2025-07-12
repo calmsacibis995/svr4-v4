@@ -1,0 +1,29 @@
+.if n .pH col.doctools @(#)COLFILE	41.1
+.# This book ("Documenter's Tool Set User's Guide" "Release 1.0")
+.# contains the following files,
+.# listed in the order in which they are printed.
+.# Next to each file name is its SCCS delta number.
+.FT
+titlepage	40.2
+copyright	40.3
+MasterToc	40.2
+Cchap1	40.2
+chap1	40.2
+Cchap2	40.2
+chap2	40.3
+Cchap3	40.2
+chap3	40.2
+Cchap4	40.2
+chap4	40.2
+Cchap5	40.2
+chap5	40.2
+Cchap6	40.2
+chap6	40.2
+Cindex	40.1
+index	40.2
+checkmacs.1	40.2
+deltamacs.1	40.1
+format.1	40.3
+index.1	40.2
+Crefcard	40.2
+refcard	40.3

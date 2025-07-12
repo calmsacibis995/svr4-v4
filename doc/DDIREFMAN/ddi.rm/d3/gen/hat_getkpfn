@@ -1,0 +1,48 @@
+'\"macro stdmacro
+.if n .pH gen.hat_getkpfn @(#)hat_getkpfn	40.2 of 1/7/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.nr X
+.if \nX=0 .ds x} hat_getkpfnum D3DK "" "DDI/DKI" "\&"
+.if \nX=1 .ds x} hat_getkpfnum D3DK "" "DDI/DKI"
+.if \nX=2 .ds x} hat_getkpfnum D3DK "" "\&"
+.if \nX=3 .ds x} hat_getkpfnum "" "" "\&"
+.TH \*(x}
+.IX "\f4hat_getkpfnum\fP(D3DK)"
+.SH NAME
+\f4hat_getkpfnum\fP \- get physical page ID for kernel virtual address
+.SH SYNOPSIS
+.nf
+.na
+\f4#include <sys/vm.h>
+#include <sys/types.h>
+.sp 0.5
+uint_t hat_getkpfnum(caddr_t \f2addr\fP);\f1
+.ad
+.fi
+.SH ARGUMENTS
+.RS 0n 10
+.IP "\f2addr\f1" 10n
+The kernel virtual address for which the physical page ID is
+to be returned.
+.RE
+.SH DESCRIPTION
+This routine can be used to obtain a physical page ID suitable to be used as the
+return value of the driver's \f4mmap\fP(D2DK) entry point.
+\f4hat_getkpfnum\fP returns the physical page ID corresponding to the
+virtual address \f2addr\fP.
+.P
+A physical page ID is a machine-specific token that uniquely identifies a page
+of physical memory in the system (either system memory or device memory.)
+No assumptions should be made about the format of a physical page ID.
+.SH RETURN VALUE
+If \f2addr\fP is valid, the corresponding physical page ID is returned.
+Otherwise, \f4NOPAGE\fP is returned.
+.SH LEVEL
+Base or interrupt.
+.SH NOTES
+Does not sleep.
+.SH SEE ALSO
+.na
+\f4mmap\fP(D2DK),
+\f4hat_getppfnum\fP(D3D)
+.ad

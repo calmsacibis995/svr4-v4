@@ -1,0 +1,6 @@
+#ident	"@(#)nadmin.dfs:Help.netserve	1.1"
+ABSTRACT:
+	The subcommands in the "netservices" menu provide functions for you
+	to manage network related services.  Using these commands you may
+	make network selections, manage distributed file systems, do name
+	to address translations and manage basic networking.

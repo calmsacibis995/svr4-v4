@@ -1,0 +1,51 @@
+'\"macro stdmacro
+.if n .pH g1a.setup @(#)setup	40.4.1.1 of 1/3/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} setup 1M "Essential Utilities" "\&"
+.if \nX=1 .ds x} setup 1M "Essential Utilities"
+.if \nX=2 .ds x} setup 1M "" "\&"
+.if \nX=3 .ds x} setup "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4setup\f1 \- initialize system for first user
+.SH SYNOPSIS
+\f4setup\f1
+.SH DESCRIPTION
+The \f4setup\f1 command, which is also accessible as a login by the same name,
+allows the first user to be established as the "owner" of the machine.
+.PP
+The user can then set the date, time and time zone of the machine.
+.PP
+The user can then set the node name of the machine.
+.PP
+The user can then protect the system from unauthorized modification
+of the machine configuration and software by giving passwords
+to the administrative and maintenance functions.
+Normally, the first user of the machine
+enters this command through the setup login,
+which initially has no password,
+and then gives passwords to the various functions
+in the system.
+Any that the user leaves without password protection can be
+exercised by anyone.
+.PP
+The user can then give passwords to system logins such as
+"root", "bin", etc.
+(\f2provided they do not already have passwords\f1).
+Once given a password,
+each login can only be changed by that login or "root".
+.PP
+Finally, the user is permitted to add the first logins to the system,
+usually starting with his or her own.
+.SH SEE ALSO
+\f4passwd\f1(1).
+.SH DIAGNOSTICS
+The \f4passwd\f1(1) command complains if the password provided does not meet its standards.
+.SH NOTES
+If the setup login is not under password control,
+anyone can put passwords on the other functions.
+.Ee
+
+

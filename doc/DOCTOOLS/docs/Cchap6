@@ -1,0 +1,43 @@
+.if n .pH doctools.Cchap6 @(#)Cchap6	40.2
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.PM "DN" "FINAL COPY"
+.BK "Documenter's Tool Set User's Guide" "Release 1.0" "" ""   
+.\ACRONYM	                  
+.CH "How to Produce an Index" "" "Table of Contents" "6"
+.\CHAPTER	6
+.tC 1 "Introduction" 6-1  
+.tC 1 "Deciding which Terms to Index" 6-2  
+.tC 1 "Marking the Terms to be Indexed" 6-3  
+.tC 2 "Short Form of the .IX Macro" 6-3  
+.tC 2 "Terms that the Short Form Cannot Handle" 6-3  
+.tC 3 "Multi-Character Escape Sequences" 6-3  
+.tC 3 "Terms Identical Except for Case" 6-4  
+.tC 2 "General Form of the .IX Macro" 6-4  
+.tC 2 "Special Effects" 6-6  
+.tC 3 "Subindexing" 6-6  
+.Index: istart subindexing       	6
+.Index: istart index, subindexing      	6
+.Index: iend subindexing       	6
+.Index: iend index, subindexing      	6
+.tC 3 "Cross References" 6-6  
+.Index: istart cross references (in an index)   	6
+.Index: istart index, cross references     	6
+.Index: iend cross references (in an index)   	7
+.Index: iend index, cross references     	7
+.tC 3 "Explicit Range of Pages" 6-7  
+.Index: istart range of pages (in an index)  	7
+.Index: istart index, range of pages    	7
+.Index: iend range of pages (in an index)  	7
+.Index: iend index, range of pages    	7
+.tC 3 "Master Index" 6-8  
+.Index: istart master index      	8
+.Index: istart index, master      	8
+.Index: iend master index      	8
+.Index: iend index, master      	8
+.tC 1 "Producing the File for the Index and Table of Contents" 6-9  
+.tC 1 "Producing the Index Source File" 6-10  
+.Index: istart index, index command     	10
+.Index: iend index, index command     	10
+.tC 1 "Printing the Index" 6-11  
+.tC 1 "Practical Pointers" 6-12  
+.tC 1 "Summary" 6-14  

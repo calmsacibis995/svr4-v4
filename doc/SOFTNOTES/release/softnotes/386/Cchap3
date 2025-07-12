@@ -1,0 +1,71 @@
+.if n .pH rn4.Cchap3 @(#)Cchap3	40.29
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.BK "Software Notes" "" "" ""   
+.\ACRONYM	                  
+.CH "File Systems" "" "Table of Contents" "3"
+.\CHAPTER	3
+.tC 1 "File System Notes" 3-1  
+.Index: istart UNIX System V/386 Release 4, file system notes	1
+.tC 2 "Virtual File System" 3-1  
+.tC 3 "Source Compatibility" 3-1  
+.Index: VFS, source compatibility      	1
+.tC 3 "Future Directions" 3-1  
+.Index: VFS, future directions      	1
+.tC 3 "File System Files" 3-1  
+.Index: VFS, \f4vfstab\fP files      	1
+.Index: VFS, \f4mnttab\fP file format     	1
+.Index: \f4mnttab\fP(4)        	1
+.Index: \f4vfstab\fP(4)        	1
+.tC 3 "Switchout" 3-1  
+.Index: VFS, switchout       	1
+.tC 2 "File System Commands" 3-1  
+.Index: istart file system commands     	1
+.Index: \f4clri\fP command, function subsumed by \f4fsdb\fP   	1
+.tC 3 "clri Command" 3-1  
+.Index: \f4fsdb\fP        	1
+.tC 3 "fsstat Command" 3-1  
+.Index: \f4fsstat\fP command, function subsumed by \f4fsck\fP   	1
+.Index: \f4fsck\fP        	1
+.tC 3 "fsck Command" 3-1  
+.Index: \f4fsck\f1 command       	1
+.Index: \f4mountall\f1 code       	1
+.tC 3 "Future Directions" 3-2  
+.Index: file system commands, future directions, \f4mount\f1 command  	2
+.Index: \f4ff\f1 command       	2
+.tC 3 "compress command" 3-2  
+.Index: iend file system commands     	2
+.tC 2 "File System Types" 3-2  
+.tC 3 "s5" 3-2  
+.Index: s5-FSTypes, size checking changes     	2
+.Index: \f4mount\f1 command, \f4-r\f1 option     	2
+.tC 3 "RFS" 3-2  
+.tC 3 "proc File System" 3-2  
+.Index: /proc file system, locking utilities    	2
+.tC 3 "UFS" 3-3  
+.Index: \f4ufs\fP-FSType, new \f4ff\fP and \f4fsdb\fP commands   	3
+.Index: \f4ufs\fP-FSType, unsupported BSD commands     	3
+.Index: \f4ufs\fP-FSType, istart source compatibility     	3
+.Index: istart new commands, SVR4 BDS, and SunOS  	3
+.Index: \f4ff\f1 command       	3
+.Index: \f4mount\f1 command       	3
+.Index: \f4mount\f1 command, \f4grpid\f1 option     	3
+.Index: \f4mount\f1 command, \f4quota\f1 option     	3
+.Index: \f4mount\f1 command, \f4noquota\f1 option     	3
+.Index: \f4mount\f1 command, \f4noauto\f1 option     	3
+.Index: \f4mount\f1 command, \f4suid\f1 option     	3
+.Index: \f4fsck\f1 command, \f4-p\f1 option     	3
+.Index: \f4errno\f1 messages, SunOS/BDS      	3
+.Index: \f4ufsdump\fP, problem       	3
+.Index: \f4mkfs\f1 and UFS      	4
+.Index: \f4proto\f1 file       	4
+.Index: \f4ncheck\f1 command, \f4-m\f1 option     	4
+.Index: \f4quota\f1 command       	4
+.Index: iend new commands, SVR4 BDS, and SunOS  	4
+.tC 2 "Symbolic Links-Compatibility SVR4/SunOS" 3-4  
+.Index: symbolic links, SVR4 and SunOS    	4
+.Index: SVR4, SunOS, \f4link\f1 system call    	4
+.Index: SVR4, SunOS, \f4chown\f1 system call    	4
+.Index: SVR4, SunOS, \f4lchown\f1 command     	4
+.Index: SVR4, SunOS, \f4file\f1 command     	5
+.Index: SVR4, SunOS, \f4find\f1 command     	5
+.Index: iend UNIX System V/386 Release 4, file system notes	5

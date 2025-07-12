@@ -1,0 +1,49 @@
+'\"macro stdmacro
+.if n .pH g1a.cci @(#)cci	40.6 of 5/17/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} cci 7iref "System Administration Utilities" "" "\&"
+.if \nX=1 .ds x} cci 7iref "System Administration Utilities" ""
+.if \nX=2 .ds x} cci 7iref "" "\&"
+.if \nX=3 .ds x} cci "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4cci\f1 \- communications controller interface device driver
+.SH DESCRIPTION
+The \f4cci\f1 device driver provides an interface to servers on serial
+port controller boards within a Multibus II system.  These servers
+manage the use of the serial ports on the controller boards.
+.PP
+The \f4cci\f1 device driver functions encapsulate the Communications
+Controller Interface (CCI) protocol for use by device drivers within
+the system which implement a terminal controller interface.  The
+Multibus II Transport message passing mechanism is used by the
+\f4cci\f1 device driver to communicate with a CCI server running on
+a serial controller board.  
+.PP
+A terminal controller interface driver such as the \f4atcs\f1 device driver
+relies on the \f4cci\f1 driver to provide management of serial ports
+on a serial controller board.  The  \f4cci\f1 driver handles the
+communication between the client host and the CCI server for serial
+port connection, dissolution, and switching.  The \f4atcs\f1 driver
+may request to attach, detach, or switch from, a channel to a serial
+port.  These requests are made via the \f4cci\f1 device driver.
+.SH FILES
+.TP 2.25i
+\f4/etc/conf/cf.d/mdevice\f1
+\f4mdevice\f1 entries
+.TP
+\f4/etc/conf/sdevice.d/cci\f1
+\f4sdevice\f1 entries
+.TP
+\f4/etc/conf/pack.d/cci/Driver.o\f1
+\f4cci\f1 device driver object module
+.TP 
+\f4/usr/include/sys/cci.h\f1
+\f4cci\f1 specific definitions
+.TP
+\f4/usr/include/sys/ccimp.h\f1
+\f4cci\f1 message passing protocol definitions
+.SH SEE ALSO
+\f4ioctl\f1(3), \f4atcs\f1(7iref), \f4termio\f1(7).

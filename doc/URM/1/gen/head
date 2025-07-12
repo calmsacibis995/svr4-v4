@@ -1,0 +1,48 @@
+'\"macro stdmacro
+.if n .pH g1.head @(#)head	40.10 of 4/12/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.\" @(#)head.1 1.18 88/08/25 SMI; from UCB 4.1
+.nr X
+.if \nX=0 .ds x} head 1 "Directory and File Management Utilities" "\&"
+.if \nX=1 .ds x} head 1 "Directory and File Management Utilities"
+.if \nX=2 .ds x} head 1 "" "\&"
+.if \nX=3 .ds x} head "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4head\f1 \- display first few lines of files
+.SH SYNOPSIS
+\f4head\f1 [ \f4\-\f2n\f1 ] [ \f2file\f1 .\ .\ . ]
+.SH DESCRIPTION
+\f4head\f1
+copies the first
+.I n
+lines of each
+.I file
+to the standard output.
+If no
+.I file
+is given,
+\f4head\f1
+copies lines from the standard input.
+The default value of
+.I n
+is 10 lines.
+.P
+When more than one file is specified,
+the start of each file will look like:
+.IP
+\f4==>\f2file\f4<==\f1
+.P
+Thus, a common way to display a set of short files, identifying each
+one, is:
+.P
+.RS
+\f4head\ \-9999\f1\ \f2file1 file2 .\|.\|.\f1
+.RE
+.SH "SEE ALSO"
+\f4cat\fP(1),
+\f4more\fP(1),
+\f4pg\fP(1),
+\f4tail\fP(1)
+.Ee

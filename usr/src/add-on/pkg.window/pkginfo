@@ -1,0 +1,12 @@
+#ident	"@(#)pkg.window:pkginfo	1.2.1.2"
+
+ARCH="i386"
+CATEGORY="system"
+CLASSES="none"
+MAXINST=1
+NAME="AT&T Windowing Utilities"
+PKG="windowing"
+VENDOR="USL"
+VERSION="1"
+RELEASE="4.0"
+PREDEPEND="windowing"

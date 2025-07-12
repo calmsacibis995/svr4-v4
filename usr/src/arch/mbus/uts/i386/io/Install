@@ -1,0 +1,6 @@
+#ident	"@(#)mbus:uts/i386/io/Install	1.2"
+
+cc -O -D_KERNEL -DMB2 -DSYS5 -c ics.c
+ld -r -o /etc/conf/pack.d/ics/Driver.o ics.o
+rm -f ics.o
+/etc/conf/bin/idbuild

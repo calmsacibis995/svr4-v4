@@ -1,0 +1,169 @@
+'\"macro stdmacro
+.if n .pH g1a.fsck_ufs @(#)fsck_ufs	40.10 of 1/3/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} fsck 1M "UFS" "\&"
+.if \nX=1 .ds x} fsck 1M "UFS"
+.if \nX=2 .ds x} fsck 1M "" "\&"
+.if \nX=3 .ds x} fsck "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4fsck\f1 (ufs) \- file system consistency check and interactive repair
+.SH SYNOPSIS
+\f4fsck\f1
+[
+\f4\-F ufs\f1
+]
+[\f2generic_options\f1]
+[\f2special ...\f1]
+.br
+\f4fsck\f1
+[
+\f4\-F ufs\f1
+]
+[\f2generic_options\f1]
+[\f4(-y|-Y)|(-n|-N)\fP]
+[
+\f4\-o\f1
+\f4p,b=#,w\f1
+]
+[
+.I special
+\& .\|.\|.\|.
+]
+.SH DESCRIPTION
+.I generic_options
+are options supported by the generic \f4fsck\f1 command.
+\f2current_options\f1
+are options supported by the \f4s5\f1-specific module of the \f4fsck\f1 command.
+.PP
+\f4fsck\f1
+audits and interactively repairs inconsistent conditions on
+file systems.
+In this case, it asks for confirmation before attempting
+any corrections.
+Inconsistencies other than those mentioned above
+can often result in some loss of data.
+The amount and severity of data
+lost can be determined from the diagnostic output.
+.LP
+\f4fsck\f1
+corrects innocuous inconsistencies such as: unreferenced inodes,
+too-large link counts in inodes, missing blocks in the
+free list, blocks appearing in the free list and also
+in files, or incorrect counts in the super block, automatically. 
+It displays a message for each inconsistency corrected that
+identifies the nature of, and file system on which, the correction
+is to take place.
+After successfully correcting a file system,
+\f4fsck\f1
+prints the number of files on that file system,
+the number of used and free blocks,
+and the percentage of fragmentation.
+.LP
+The default action for each correction is to wait for the operator to
+respond either
+\f4yes\f1
+or
+\f4no\f1.
+If the operator does not have write permission on the file system,
+\f4fsck\f1
+will default to a 
+\f4\-n\f1
+(no corrections) action.
+.LP
+Inconsistencies checked are as follows:
+.RS
+.TP
+.PD 0
+\(bu
+Blocks claimed by more than one inode or the free list.
+.TP
+\(bu
+Blocks claimed by an inode or the free list outside the range of the file system.
+.TP
+\(bu
+Incorrect link counts.
+.TP
+\(bu
+Incorrect directory sizes.
+.TP
+\(bu
+Bad inode format.
+.TP
+\(bu
+Blocks not accounted for anywhere.
+.TP
+\(bu
+Directory checks, file pointing to unallocated inode,
+inode number out of range, absence of 
+\f1`\f4.\f1'
+and
+\f1`\f4.\|.\f1'
+as the first two entries in each directory.
+.TP
+\(bu
+Super Block checks:
+more blocks for inodes than there are in the file system.
+.TP
+\(bu
+Bad free block list format.
+.TP
+\(bu
+Total free block and/or free inode count incorrect.
+.PD
+.RE
+.LP
+Orphaned files and directories (allocated but unreferenced) are,
+with the operator's concurrence, reconnected by
+placing them in the 
+\f4lost+found\f1
+directory.
+The name assigned is the inode number.  If the
+\f4lost+found\f1
+directory does not exist, it is created.
+If there is insufficient space its size is increased.
+.LP
+A file system may be specified by giving the name of the
+block or character special device
+on which it resides, or by giving the name of its mount point.
+.P
+The options are:
+.PP
+.TP
+\f4\-F ufs\f1
+Specifies the \f4ufs\f1-FSType.
+.TP
+\f4\-y | -Y\f1
+Assume a yes response to all questions asked by \f4fsck\fP.
+.TP
+\f4\-n | -N\f1
+Assume a no response to all questions asked by \f4fsck\fP;
+do not open the file system for writing.
+.TP
+\f4\-o\f1
+Specify
+\f4ufs\f1
+file system specific suboptions.
+These suboptions can be any combination of the
+following:
+.RS
+.TP
+\f4p\f1
+Check the filesystem non-interactively.
+Exit if there is a problem requiring intervention.
+.TP
+\f4b=\f2#\f1
+Use the block specified as
+the super block for the file system.
+Block 32 is always an alternate super block.
+.RE
+.SH NOTES
+Checking the character special device is almost always faster.
+.SH "SEE ALSO"
+\f4checkfsys\fP(1M),
+\f4crash\fP(1M),
+generic \f4fsck\fP(1M),
+\f4mkfs\fP(1M),
+\f4ufs\fP(4).

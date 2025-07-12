@@ -1,0 +1,66 @@
+'\"macro stdmacro
+.if n .pH g1a.dfmounts_nfs @(#)dfmounts_nfs	40.10 of 1/3/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} dfmounts 1M "NFS" "\&"
+.if \nX=1 .ds x} dfmounts 1M "NFS"
+.if \nX=2 .ds x} dfmounts 1M "" "\&"
+.if \nX=3 .ds x} dfmounts "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4dfmounts\f1 \- display mounted NFS resource information
+.SH SYNOPSIS
+\f4dfmounts\f1
+[\f4\-F nfs\f1]
+[\f4\-h\f1]
+[\f2server\f1 ...]
+.br
+.SH DESCRIPTION
+\f4dfmounts\f1
+shows the local resources shared through Network File System,
+along with a list of clients that have mounted the resource.
+The \f4\-F\f1 flag may be omitted if NFS is the only file system type
+listed in the file 
+\f4/etc/dfs/fstypes\f1.
+.P
+The
+\f2server\f1
+option 
+displays information about the resources mounted from each
+server, where 
+\f2server\f1
+can be any system on the network.
+If no server is specified, then \f2server\f1 is assumed to be
+the local system.
+.P
+\f4dfmounts\f1 without options displays all remote resources
+mounted on the local system, regardless of file system type.
+.P
+The output of \f4dfmounts\f1 consists of an optional header line
+(suppressed with the \f4\-h\f1 flag) followed by a list of lines
+containing whitespace-separated fields.  For each resource, the
+fields are:
+.LP
+.RS 8
+\f2resource server pathname clients ...\f1
+.RE
+where
+.RS 5
+.IP \f2resource\f1 15
+Specifies the resource name that must be given to the \f4mount\f1(1M)
+command.
+.IP \f2server\f1 15
+Specifies the system from which the resource was mounted.
+.IP \f2pathname\f1 15
+Specifies the pathname that must be given to the \f4share\f1(1M) command.
+.IP \f2clients\f1 15
+A comma-separated list of systems that have mounted the resource.
+.RE
+.P
+.SH "FILES"
+.PD 0
+.TP 20
+\f4/etc/dfs/fstypes\f1
+.SH "SEE ALSO"
+\f4mount\f1(1M), \f4share\f1(1M), \f4unshare\f1(1M).

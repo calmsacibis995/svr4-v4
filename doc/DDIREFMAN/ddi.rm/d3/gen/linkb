@@ -1,0 +1,78 @@
+'\"!  pic | mmdoc
+'\"macro stdmacro
+.if n .pH gen.linkb @(#)linkb	40.2 of 1/7/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.nr X
+.if \nX=0 .ds x} linkb D3DK "STREAMS" "DDI/DKI" "\&"
+.if \nX=1 .ds x} linkb D3DK "STREAMS" "DDI/DKI"
+.if \nX=2 .ds x} linkb D3DK "" "\&"
+.if \nX=3 .ds x} linkb "" "" "\&"
+.TH \*(x}
+.IX "\f4linkb\fP(D3DK)"
+.SH NAME
+\f4linkb\f1 \- concatenate two message blocks
+.SH SYNOPSIS
+.nf
+.na
+\f4#include <sys/stream.h>
+.sp 0.5
+void linkb(mblk_t *\f2mp1, \f4mblk_t *\f2mp2\f4);\f1
+.ad
+.fi
+.SH ARGUMENTS
+.RS 0n 10
+.IP "\f2mp1\f1" 10n
+Pointer to the message to which \f2mp2\f1 is to be added.
+.IP "\f2mp2\f1" 10n
+Pointer to the message to be added.
+.RE
+.SH DESCRIPTION
+\f4linkb\f1 appends the message
+\f2mp2\f1 to the tail of message \f2mp1\f1.
+The continuation pointer (\f4b_cont\f1) of the last message block in the
+first message is set to point to the second message:
+.nf
+.PS
+scale=120
+box invis ht 208 wid 488 with .sw at 0,0
+line  from 0,16 to 488,16 
+"\f(CW\s9\&linkb(mp1, mp2);\f1\s0" at 192,-3
+"\fR\s9\&Before\f1\s0" at 84,25
+"\fR\s9\&After\f1\s0" at 344,24
+line -> from 272,160 to 304,160 
+"\f(CW\s9\&mp1\f1\s0" at 244,189
+box ht 48 wid 72 with .nw at 208,176 
+"\f(CW\s9\&b_cont\f1\s0" at 244,161
+line -> from 368,160 to 400,160 
+"\f(CW\s9\&b_cont\f1\s0" at 340,161
+box ht 48 wid 72 with .nw at 304,176 
+"\f(CW\s9\&(0)\f1\s0" at 436,145
+box ht 48 wid 72 with .nw at 400,176 
+"\f(CW\s9\&b_cont\f1\s0" at 436,161
+"\f(CW\s9\&mp2\f1\s0" at 436,189
+"\f(CW\s9\&mp1\f1\s0" at 44,189
+"\f(CW\s9\&b_cont\f1\s0" at 140,161
+"\f(CW\s9\&(0)\f1\s0" at 136,145
+box ht 48 wid 72 with .nw at 104,176 
+line -> from 72,160 to 104,160 
+box ht 48 wid 72 with .nw at 8,176 
+"\f(CW\s9\&b_cont\f1\s0" at 44,161
+"\f(CW\s9\&b_cont\f1\s0" at 84,73
+"\f(CW\s9\&mp2\f1\s0" at 84,101
+"\f(CW\s9\&(0)\f1\s0" at 84,57
+box ht 48 wid 72 with .nw at 48,88 
+line  from 192,208 to 192,16 
+.PE
+.fi
+.FG "Concatenating two messages with linkb"
+.SH RETURN VALUE
+None.
+.SH LEVEL
+Base or Interrupt.
+.SH NOTES
+Does not sleep.
+.SH SEE ALSO
+.na
+\f4unlinkb\f1(D3DK),
+\f4msgb\fP(D4DK)
+.ad

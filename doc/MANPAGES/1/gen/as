@@ -1,0 +1,230 @@
+'\"macro stdmacro
+.if n .pH g1.as @(#)as	40.16 of 5/22/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} as 1 "C Development Set" "\&"
+.if \nX=1 .ds x} as 1 "C Development Set"
+.if \nX=2 .ds x} as 1 "" "\&"
+.if \nX=3 .ds x} as "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4as\f1 \- assembler
+.SH SYNOPSIS
+\f4as \f1[\f2options\f1] \f2file\f1
+.SH DESCRIPTION
+The 
+\f4as\fP
+command
+creates object files from assembly language source
+\f2files\f1.
+.if ''b16' \{\
+The output file is executable if no errors
+occurred during the assembly, transfer vectors were not used,
+and there are no unresolved external references.\}
+The following flags
+may be specified in any order:
+.if ''m32' \{\
+.TP 12
+\f4\-v\f2 type\f1
+type is either an 'x' indicating the original
+\f4\f1
+assembler or an 'a' indicating the
+\f4a\f1
+assembler.
+\}
+.TP 12
+\f4\-o\f2 objfile\f1
+Put the output of the assembly in
+\f2objfile\f1.
+By default, the output file name is formed by
+removing the 
+\f4\&.s\f1
+suffix, if there is one, from the input file name
+and appending a 
+\f4\&.o\f1
+suffix.
+.if ''x86' \{\
+.TP
+\f4\-x\f1
+This
+flag is
+\f2required\f1
+for all x86 files.
+\}
+.if ''3b' \{
+.TP
+\f4\-Q\f1
+Warn the user if a transfer vector operand is used
+in any context other than a "call" instruction.
+\}
+.TP
+\f4\-n\f1
+Turn off long/short address optimization.
+By default, address optimization takes place.
+.if ''vax' \{\
+.TP
+\f4\-j\f1
+Invoke the long-jump assembler
+(for the \s-1VAX\s+1 version of the common assembler only).
+The address optimization algorithm chooses between long and short
+address lengths, with short lengths chosen when possible.
+Often, three distinct lengths are allowed by the machine architecture;
+a choice must be made between two of those lengths.
+When the two choices given to the assembler exclude the largest length
+allowed, then some addresses might be unrepresentable.
+The long-jump assembler will always have the largest length as one of
+its allowable choices.
+If the assembler is invoked without this option, and the case arises
+where an address is unrepresentable by either of the two allowed choices,
+then the user will be informed of the error, and advised to try again
+using the
+\f4\-j\f1
+option.
+\}
+.TP
+\f4\-m\f1
+Run the 
+\f4m4\fP
+macro processor
+on the input to the assembler.
+.TP
+\f4\-R\f1
+Remove (unlink) the input file after assembly
+is completed.
+.if ''vax' \{\
+.TP
+\f4\-r\f1
+Place all assembled data
+(normally placed in the \f4.data\f1 section)
+into the \f4.text\f1 section
+(for the \s-1VAX\s+1 version of the common assembler only).
+This option effectively disables the
+\f4\&.data\f1
+pseudo operation.
+This option is off by default.
+\}
+.if ''vax' \{\
+.TP
+\f4\-[bwl]\f1
+Create byte
+\f1(\f4b\f1),
+halfword
+\f1(\f4w\f1)
+or long
+\f1(\f4l\f1)
+displacements for undefined symbols
+(for the \s-1VAX\s+1 version of the common assembler only).
+(An undefined symbol is a reference to a symbol
+whose definition is external to the input file or a forward reference.)
+The default value for this option is long 
+\f1(\f4l\f1)
+displacements.
+\}
+.TP
+\f4\-dl\f1
+Obsolete.
+Assembler issues a warning saying that it is ignoring the \f4\-dl\fP option.
+.TP
+\f4\-T\f1
+Accept obsolete assembler directives.
+.TP
+\f4\-V\f1
+Write the version number of the assembler being run
+on the standard error output.
+.TP
+\f4\-Q\f1{\f4y\f1\||\f4n\f1}
+If \f4\-Qy\f1 is specified, place the version number of the
+assembler being run in the object file.
+The default is
+\f4\-Qn\f1.
+.TP
+\f4\-Y\f1 [\f4md\f1],\f2dir\f1
+Find the 
+\f4m4\f1
+preprocessor
+\f1(\f4m\f1)
+and/or the file of predefined macros
+\f1(\f4d\f1)
+in directory
+\f2dir\f1
+instead of in the customary place.
+.SH "FILES"
+By default,
+\f4as\fP
+creates its temporary files in
+\f4/var/tmp\fP.
+This location can be changed by setting 
+the environment variable
+\f4TMPDIR\f1
+[see \f4tempnam\fP in \f4tmpnam\fP(3S)].
+.SH "SEE ALSO"
+\f4cc\fP(1),
+\f4ld\fP(1),
+\f4m4\fP(1),
+\f4nm\fP(1),
+\f4strip\fP(1),
+\f4tmpnam\fP(3S),
+\f4a.out\fP(4)
+.SH NOTES
+.if ''3b' \{
+.P
+If the input file does not contain a 
+\f4\&.file\f1
+assembler directive and the
+\f4\-m\f1
+flag was not specified,
+the file name given by the assembler when an
+error occurs is one of the temporary files
+\f1(\f4/var/tmp/as\f1\s-1XXXXXX\s+1)
+\}
+.P
+If the 
+\f4\-m\f1
+(\f4m4\fP
+macro processor invocation) option is used,
+keywords for
+\f4m4\fP
+[see \f4m4\fP(1)]
+cannot be used as symbols (variables, functions, labels)
+in the input file since
+\f4m4\fP
+cannot determine which keywords are assembler symbols and 
+which keywords are real 
+\f4m4\fP
+macros.
+.if ''vax' \{\
+.P
+Use the
+\f4\-b\f1
+or 
+\f4\-w\f1
+option only when undefined symbols are known to refer to locations
+representable by the specified default displacement.
+Use of either option when assembling a file containing a reference
+to a symbol that is to be resolved by the loader can lead to
+unpredictable results,
+since the loader may be unable to place the address of the symbol
+into the space provided.
+\}
+.P
+The
+.if ''b16' \f4\&.even\fP
+.if ''x86' \f4\&.even\fP
+.if ''3b' \f4\&.align\fP
+.if ''m32' \f4\&.through align\fP
+.if ''' \f4\&.align\fP
+assembler directive may not work
+in the
+\f4\&.text\f1
+section when long/short address
+optimization is performed.
+.P
+Arithmetic expressions may only have
+one forward referenced symbol per expression.
+.P
+Whenever possible, you should access the assembler through a
+compilation system interface program such as \f4cc\fP.
+'\" \%W\%
+.\"	@(#)as.1	6.2 of 9/2/83
+.Ee

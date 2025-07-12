@@ -1,0 +1,58 @@
+'\"macro stdmacro
+.if n .pH g3.timezone @(#)timezone	40.9 of 4/24/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.\" Copyright (c) 1988 Sun Microsystems, Inc. - All Rights Reserved.
+.\"
+.nr X
+.if \nX=0 .ds x} timezone 3C "BSD Compatibility Package" "\&"
+.if \nX=1 .ds x} timezone 3C "BSD Compatibility Package"
+.if \nX=2 .ds x} timezone 3C "" "\&"
+.if \nX=3 .ds x} timezone "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4timezone\f1 \- get time zone name given offset from GMT
+.SH SYNOPSIS
+\f4cc \f1[ \f2flag\f1\. \. \. ] \f2file\f1 \. \. \. \f4\-lucb\f1
+.P
+\f4char *timezone(zone, dst)\f1
+.P
+\f4int zone\f1
+.br
+\f4int dst\f1
+.SH DESCRIPTION
+\f4timezone\f1
+attempts to return the name of the time zone
+associated with its first argument, which is
+measured in minutes westward from Greenwich.
+If the second argument is 0, the standard name is used,
+otherwise the Daylight Savings Time version.
+If the required name does not appear in a table
+built into the routine, the difference from
+.SM GMT
+is produced; for instance, in Afghanistan
+\f4timezone(\-(60*4+30), 0)\f1
+is appropriate because it is 4:30 ahead of
+.SM GMT
+and the string
+\f4GMT+4:30\f1
+is produced.
+.SH SEE ALSO
+\f4ctime\fP(3)
+in the \f2Programmer's Reference Manual\f1
+.SH NOTES
+The offset westward from Greenwich and an
+indication of whether Daylight Savings Time
+is in effect may not be
+sufficient to determine the name of the time zone,
+as the name may differ between different locations
+in the same time zone.
+Instead of using
+\f4timezone\f1
+to determine the name of the time zone for
+a given time, that time should be converted to a
+\f4struct tm\f1 using \f4localtime\f1
+[see \f4ctime\f1(3)]
+and the \f4tm_zone\fP
+field of that structure should be used.
+\f4timezone\f1 is retained for compatibility with existing programs.

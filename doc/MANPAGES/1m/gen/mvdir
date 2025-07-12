@@ -1,0 +1,56 @@
+'\"macro stdmacro
+.if n .pH g1a.mvdir @(#)mvdir	40.6.1.1 of 1/3/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} mvdir 1M "System Administration Utilities" "\&"
+.if \nX=1 .ds x} mvdir 1M "System Administration Utilities"
+.if \nX=2 .ds x} mvdir 1M "" "\&"
+.if \nX=3 .ds x} mvdir "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4mvdir\f1 \- move a directory
+.SH SYNOPSIS
+\f4/usr/sbin/mvdir\f1
+\f2dirname  name\f1
+.SH DESCRIPTION
+\f4mvdir\fP
+moves directories within a file system.
+.I dirname\^
+must be a directory.
+If
+.I name\^
+does not exist,
+it will be created as a directory.
+If
+.I name\^
+does exist, and is a directory,
+\f2dirname\fP
+will be created as
+.I name/dirname.\^
+.I dirname\^
+and 
+.I name\^
+may not be on the same path; that is, one may not be subordinate to
+the other.
+For example:
+.sp
+.in +8
+\f4mvdir x/y x/z\fP
+.in -8
+.sp 
+is legal, but
+.sp 
+.in +8
+\f4mvdir x/y x/y/z\fP
+.in -8
+.sp
+is not.
+.SH "SEE ALSO"
+\f4mkdir\fP(1), \f4mv\fP(1) in the
+\f2User's Reference Manual\f1.
+.SH WARNINGS
+Only the super-user can use
+\f4mvdir\fP.
+.\"	@(#)mvdir.1m	6.2 of 9/2/83
+.Ee

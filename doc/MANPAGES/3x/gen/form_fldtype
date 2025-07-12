@@ -1,0 +1,80 @@
+'\"!  tbl | mmdoc
+'\"macro stdmacro
+.if n .pH g3x.form_fldtype @(#)form_fldtype	40.5 of 4/10/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.\" ident	"@(#)svid_ti:ti_lib/form_fldtype	1.2"
+.nr X
+.if \nX=0 .ds x} form_fieldtype 3X "" "\&"
+.if \nX=1 .ds x} form_fieldtype 3X ""
+.if \nX=2 .ds x} form_fieldtype 3X "" "\&"
+.if \nX=3 .ds x} form_fieldtype "" "" "\&"
+.TH \*(x}
+.SH NAME
+.na
+\f4form_fieldtype\f1: \f4 new_fieldtype\f1, \f4free_fieldtype\f1, \f4set_fieldtype_arg\f1, \f4set_fieldtype_choice\f1, \f4link_fieldtype\f1 \- \f4forms\fP fieldtype routines
+.ad
+.SH SYNOPSIS
+.nf
+.ft 4
+#include <form.h>
+.sp
+FIELDTYPE *new_fieldtype(int (* field_check)(FIELD *, char *),
+	int (* char_check)(int, char *));
+.sp 0.5
+int free_fieldtype(FIELDTYPE *fieldtype);
+.sp 0.5
+int set_fieldtype_arg(FIELDTYPE *fieldtype,
+	char *(* mak_arg)(va_list *),
+	char *(* copy_arg)(char *), void (* free_arg)(char *));
+.sp 0.5
+int set_fieldtype_choice(FIELDTYPE *fieldtype,
+	int (* next_choice)(FIELD *, char *),
+	int (* prev_choice)(FIELD *, char *));
+.sp 0.5
+FIELDTYPE *link_fieldtype(FIELDTYPE *type1, FIELDTYPE *type2);
+.ft 1
+.fi
+.SH DESCRIPTION
+\f4new_fieldtype\fP creates a new field type.
+The application programmer must write the function \f2field_check\f1, which
+validates the field value, and the function \f2char_check\f1, which
+validates each character.
+\f4free_fieldtype\fP frees the space allocated for the field type.
+.PP
+By associating function pointers with a field type, \f4set_fieldtype_arg\fP
+connects to the field type additional arguments necessary for a
+\f4set_field_type\f1 call.
+Function \f2mak_arg\f1 allocates a structure for the field specific
+parameters to \f4set_field_type\f1 and returns a pointer to the saved data.
+Function \f2copy_arg\f1 duplicates the structure created by \f2make_arg\f1.
+Function \f2free_arg\f1 frees any storage allocated by \f2make_arg\f1 or
+\f2copy_arg\f1.
+.PP
+The \f4form_driver\f1 requests \f4REQ_NEXT_CHOICE\f1 and
+\f4REQ_PREV_CHOICE\f1 let the user request the next or previous value of a
+field type comprising an ordered set of values.
+\f4set_fieldtype_choice\fP allows the application programmer to implement
+these requests for the given field type.
+It associates with the given field type those application-defined functions
+that return pointers to the next or previous choice for the field.
+.PP
+\f4link_fieldtype\fP returns a pointer to the field type built from the
+two given types.
+The constituent types may be any application-defined or pre-defined types.
+.SH RETURN VALUE
+Routines that return pointers always return \f4NULL\fP on error.
+Routines that return an integer return one of the following:
+.TS
+lfCWw(1.25i)1 c1 l .
+E_OK	\-	The function returned successfully.
+E_SYSTEM_ERROR	\-	System error.
+E_BAD_ARGUMENT	\-	An argument is incorrect.
+E_CONNECTED	\-	Type is connected to one or more fields.
+.TE
+.SH NOTES
+The header file \f4<form.h>\f1 automatically includes the header files
+\f4<eti.h>\fP and \f4<curses.h>\fP.
+.SH SEE ALSO
+\f4curses\fP(3X),
+\f4forms\fP(3X)

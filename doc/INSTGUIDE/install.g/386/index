@@ -1,0 +1,270 @@
+.\" @(#)index	40.7.1.1 /doccenter/unix_docs/src/doc/install.g/386/s.index 91/07/08 40.7.1.1 12:31:04
+.\" Copyright 1991 AT&T
+.BK "Installation Guide" "System V Release 4" "" ""   
+.\"  XX macro marks new index entry.
+.de XX
+.	br
+.	ti 0
+.	ne 2
+.	vs 12
+\s10\f1\\$1\0 \s8\fH\\$2\f1
+..
+.\"  header between letters of the alphabet
+.de YY
+.	sp 2
+.	ne 4
+\fH\s16\\$2\s0\f1
+.	sp 0.5
+..
+.\"  markup surrounding book acronym
+.ds B{
+.ds }B
+.\"  markup surrounding chapter number
+.ds C{ " 
+.ds }C :\ 
+.vs 12
+.ps 8
+.CH "Index" I 
+.H 1 "Index"
+.2C
+.in +2
+.\" SCCS path name:	/doc/DMG/Projects/Indexing/sccs/bin/s.index.head
+.\" SCCS version SID:	1.5
+.\" Date this version:	89/09/16
+.\" Time this version:	17:27:45
+.YY a A
+.XX "\&aborting installation" "\*(C{2\*(}C3, \*(C{3\*(}C3"
+.XX "\&acp package" "\*(C{2\*(}C5, \*(C{3\*(}C5, \*(C{A\*(}C3, \*(C{C\*(}C7"
+.XX "\&active partition" "\*(C{2\*(}C9"
+.XX "\&ADD.base.pkg command" "\*(C{D\*(}C1\-2"
+.XX "\&adding users" "\*(C{4\*(}C5"
+.XX "\&Add-On Sets" "\*(C{1\*(}C4"
+.XX "\&add-ons" "\*(C{1\*(}C4"
+.XX "\&application compatibility package" "\*(C{A\*(}C3"
+.YY b B
+.XX "\&backup" ""
+.XX "\&\0 Pre-Release 4 files" "\*(C{1\*(}C11"
+.XX "\&\0 Release 4 files" "\*(C{1\*(}C12"
+.XX "\&\0 system files" "\*(C{4\*(}C10"
+.XX "\&base operating system, installing" "\*(C{1\*(}C4"
+.XX "\&base system" "\*(C{1\*(}C4"
+.XX "\&Base System, copying files to disk" "\*(C{2\*(}C14\-16"
+.XX "\&BASIC Package Set" "\*(C{1\*(}C4"
+.XX "\&boot diskettes" "\*(C{1\*(}C4, \*(C{2\*(}C2, \*(C{3\*(}C2"
+.XX "\&\0 copying" "\*(C{E\*(}C1"
+.YY c C
+.XX "\&cartridge tape" "\*(C{1\*(}C5"
+.XX "\&compat package" "\*(C{2\*(}C5, \*(C{3\*(}C5, \*(C{A\*(}C3"
+.XX "\&configuration, changing" "\*(C{B\*(}C4"
+.XX "\&controller interrupts" ""
+.XX "\&\0 non-SCSI" "\*(C{1\*(}C9"
+.XX "\&\0 SCSI" "\*(C{1\*(}C8"
+.XX "\&cpio command" "\*(C{1\*(}C11\-12"
+.XX "\&\f4cpio\f1 command" "\*(C{4\*(}C6"
+.XX "\&cpio command, -Hodc options" "\*(C{4\*(}C6"
+.XX "\&crypt" "\*(C{A\*(}C4"
+.YY d D
+.XX "\&date, setting the" "\*(C{4\*(}C4"
+.XX "\&/dev/dump" "\*(C{2\*(}C11, \*(C{B\*(}C1, 3"
+.XX "\&DEVELOPMENT Package Set" "\*(C{1\*(}C5"
+.XX "\&device nodes, creating" "\*(C{2\*(}C14"
+.XX "\&dfs package" "\*(C{2\*(}C5, \*(C{3\*(}C5, \*(C{A\*(}C3"
+.XX "\&disk" ""
+.XX "\&\0 0" "\*(C{2\*(}C8"
+.XX "\&\0 1" "\*(C{2\*(}C8"
+.XX "\&\0 accepting the default" "\*(C{B\*(}C5"
+.XX "\&\0 default configuration" "\*(C{2\*(}C13, \*(C{B\*(}C4"
+.XX "\&disk space" ""
+.XX "\&\0 allocating" "\*(C{2\*(}C8, \*(C{B\*(}C4"
+.XX "\&\0 required" "\*(C{A\*(}C1, 5"
+.XX "\&diskadd command" "\*(C{2\*(}C8"
+.XX "\&diskette, base system" "\*(C{1\*(}C4, \*(C{2\*(}C3, \*(C{3\*(}C3"
+.XX "\&diskettes" ""
+.XX "\&\0 boot" "\*(C{1\*(}C4, 10, \*(C{2\*(}C2, \*(C{3\*(}C2"
+.XX "\&\0 copying boot" "\*(C{E\*(}C1"
+.XX "\&distribution media" ""
+.XX "\&\0 3 1/2 inch floppy diskettes" "\*(C{1\*(}C5"
+.XX "\&\0 5 1/4 inch floppy diskettes" "\*(C{1\*(}C5"
+.XX "\&\0 cartridge tape" "\*(C{1\*(}C5"
+.XX "\&DOS" ""
+.XX "\&\0 Merge" "\*(C{2\*(}C9"
+.XX "\&\0 partition" "\*(C{2\*(}C5, 9, \*(C{3\*(}C5"
+.YY e E
+.XX "\&ed package" "\*(C{2\*(}C5, \*(C{3\*(}C5, \*(C{A\*(}C2"
+.XX "\&error messages" "\*(C{2\*(}C3, 15, \*(C{3\*(}C3, \*(C{B\*(}C3"
+.XX "\&Ethernet" ""
+.XX "\&\0 boards" "\*(C{1\*(}C7"
+.XX "\&\0 controller interrupts" "\*(C{C\*(}C14\-15"
+.XX "\&\0 driver packages" "\*(C{2\*(}C5, \*(C{3\*(}C5"
+.XX "\&EXTENDED Package Set" "\*(C{1\*(}C5"
+.YY f F
+.XX "\&face package" "\*(C{2\*(}C5, \*(C{3\*(}C5"
+.XX "\&files, restoring archived" "\*(C{4\*(}C6"
+.XX "\&filesystem" "\*(C{2\*(}C8"
+.XX "\&\0 creating" "\*(C{2\*(}C13"
+.XX "\&\0 minimum sizes" "\*(C{B\*(}C2"
+.XX "\&\0 root" "\*(C{B\*(}C2\-3"
+.XX "\&\0 s5 type" "\*(C{2\*(}C10, \*(C{B\*(}C2"
+.XX "\&\0 s52k type" "\*(C{2\*(}C10, \*(C{B\*(}C2"
+.XX "\&\0 ufs type" "\*(C{2\*(}C10, \*(C{B\*(}C2"
+.XX "\&floppy diskettes (see distribution media)" ""
+.XX "\&fmli package" "\*(C{2\*(}C5, \*(C{3\*(}C5, \*(C{A\*(}C2"
+.XX "\&fsck" "\*(C{3\*(}C4"
+.YY g G
+.XX "\&group ID" "\*(C{4\*(}C5"
+.YY h H
+.XX "\&hard disk" ""
+.XX "\&\0 320 MB" "\*(C{2\*(}C5, \*(C{3\*(}C5"
+.XX "\&\0 80 MB" "\*(C{2\*(}C5, \*(C{3\*(}C5"
+.XX "\&\0 formatting two" "\*(C{B\*(}C2"
+.XX "\&\0 partitioning" "\*(C{2\*(}C8, \*(C{3\*(}C1"
+.XX "\&\0 planning layout" "\*(C{2\*(}C5, \*(C{3\*(}C5"
+.XX "\&\0 primary" "\*(C{2\*(}C8"
+.XX "\&\0 secondary" "\*(C{2\*(}C8"
+.XX "\&HARDWARE Package Set" "\*(C{1\*(}C5"
+.XX "\&/home" "\*(C{B\*(}C1"
+.XX "\&/home2" "\*(C{B\*(}C1"
+.YY i I
+.XX "\&ie6 package" "\*(C{2\*(}C5, \*(C{3\*(}C5, \*(C{A\*(}C4, \*(C{C\*(}C15"
+.XX "\&imx586 package" "\*(C{2\*(}C5, \*(C{3\*(}C5, \*(C{A\*(}C4, \*(C{C\*(}C12"
+.XX "\&inet package" "\*(C{2\*(}C5, \*(C{3\*(}C5, \*(C{A\*(}C3, \*(C{C\*(}C9"
+.XX "\&install password" "\*(C{2\*(}C16"
+.XX "\&installation" ""
+.XX "\&\0 aborting" "\*(C{2\*(}C3, \*(C{3\*(}C3\-4"
+.XX "\&\0 overview of" "\*(C{1\*(}C10"
+.XX "\&IP address" "\*(C{4\*(}C8, \*(C{C\*(}C9"
+.YY k K
+.XX "\&kdb package" "\*(C{A\*(}C4, \*(C{C\*(}C10"
+.XX "\&kdb-util package" "\*(C{A\*(}C4"
+.XX "\&kernel" "\*(C{1\*(}C4, \*(C{2\*(}C14"
+.YY l L
+.XX "\&Local Area Network, establishing" "\*(C{4\*(}C8"
+.XX "\&lp package" "\*(C{2\*(}C5, \*(C{3\*(}C5, \*(C{A\*(}C2, \*(C{C\*(}C7"
+.YY m M
+.XX "\&media (see distribution media)" ""
+.XX "\&memory" ""
+.XX "\&\0 100 MB" "\*(C{2\*(}C5, \*(C{3\*(}C5"
+.XX "\&\0 check" "\*(C{2\*(}C2, \*(C{3\*(}C2"
+.XX "\&\0 RAM support" "\*(C{2\*(}C2, \*(C{3\*(}C2"
+.XX "\&mouse package" "\*(C{2\*(}C5, \*(C{3\*(}C5, \*(C{A\*(}C2, \*(C{C\*(}C2"
+.XX "\&mouseadmin command" "\*(C{C\*(}C4"
+.XX "\&mv command" "\*(C{4\*(}C6"
+.YY n N
+.XX "\&network listener" "\*(C{C\*(}C10"
+.XX "\&NETWORK Package Set" "\*(C{1\*(}C4"
+.XX "\&nfs package" "\*(C{2\*(}C5, \*(C{3\*(}C5, \*(C{A\*(}C3, \*(C{C\*(}C10"
+.XX "\&nsu package" "\*(C{2\*(}C5, \*(C{3\*(}C5, \*(C{A\*(}C2, \*(C{C\*(}C8"
+.YY o O
+.XX "\&OA&M interface" "\*(C{4\*(}C1"
+.XX "\&\0 alternate displays" "\*(C{4\*(}C3"
+.XX "\&\0 exiting" "\*(C{4\*(}C3"
+.XX "\&\0 invoking" "\*(C{4\*(}C2"
+.XX "\&oam package" "\*(C{2\*(}C5, \*(C{3\*(}C5, \*(C{A\*(}C2, \*(C{C\*(}C6"
+.XX "\&optional packages, installing" "\*(C{1\*(}C2"
+.XX "\&optional slices" "\*(C{2\*(}C5, 11, \*(C{3\*(}C5"
+.XX "\&\0 creating" "\*(C{B\*(}C1"
+.XX "\&\0 selecting" "\*(C{1\*(}C2, \*(C{2\*(}C5, 10, \*(C{3\*(}C5"
+.YY p P
+.XX "\&packages" ""
+.XX "\&\0 BASIC" "\*(C{2\*(}C5, \*(C{3\*(}C5"
+.XX "\&\0 dependencies" "\*(C{A\*(}C1, 5, \*(C{D\*(}C2"
+.XX "\&\0 DEVELOPMENT" "\*(C{2\*(}C5, \*(C{3\*(}C5"
+.XX "\&\0 EXTENDED" "\*(C{2\*(}C5, \*(C{3\*(}C5"
+.XX "\&\0 HARDWARE" "\*(C{2\*(}C5, \*(C{3\*(}C5"
+.XX "\&\0 installation questions" "\*(C{2\*(}C18, \*(C{C\*(}C1"
+.XX "\&\0 installing" "\*(C{2\*(}C6, \*(C{3\*(}C6, \*(C{D\*(}C1"
+.XX "\&\0 NETWORK" "\*(C{2\*(}C5, \*(C{3\*(}C5"
+.XX "\&\0 optional" "\*(C{1\*(}C4"
+.XX "\&\0 removing" "\*(C{1\*(}C12, \*(C{4\*(}C11"
+.XX "\&\0 selecting" "\*(C{2\*(}C6, \*(C{3\*(}C6, \*(C{A\*(}C5, \*(C{D\*(}C2, 4"
+.XX "\&\0 SVR3.2" "\*(C{D\*(}C1"
+.XX "\&\0 UNIX System" "\*(C{D\*(}C2"
+.XX "\&partition" ""
+.XX "\&\0 active" "\*(C{2\*(}C9"
+.XX "\&\0 DOS" "\*(C{2\*(}C5, 9, \*(C{3\*(}C5"
+.XX "\&\0 UNIX" "\*(C{2\*(}C8"
+.XX "\&partitioning" ""
+.XX "\&\0 changing the default" "\*(C{2\*(}C9"
+.XX "\&\0 hard disk" "\*(C{3\*(}C1"
+.XX "\&passwd file, editing" "\*(C{4\*(}C1"
+.XX "\&password" ""
+.XX "\&\0 install" "\*(C{2\*(}C16\-17"
+.XX "\&\0 root" "\*(C{2\*(}C16\-17"
+.XX "\&permission, sysadm" "\*(C{4\*(}C5"
+.XX "\&pkgadd command" "\*(C{D\*(}C1, 4"
+.XX "\&pkginfo command" "\*(C{D\*(}C2, 5"
+.XX "\&pkgrm command" "\*(C{4\*(}C11, \*(C{D\*(}C1, 5"
+.XX "\&printer" ""
+.XX "\&\0 disabling" "\*(C{C\*(}C7"
+.XX "\&\0 enabling" "\*(C{C\*(}C7"
+.XX "\&pwconv command" "\*(C{4\*(}C1"
+.YY q Q
+.XX "\&qt package" "\*(C{2\*(}C5, \*(C{3\*(}C5, \*(C{A\*(}C4, \*(C{C\*(}C13"
+.YY r R
+.XX "\&rebooting the system" "\*(C{2\*(}C3\-4, 14, \*(C{3\*(}C3\-4, \*(C{D\*(}C5"
+.XX "\&remote systems" "\*(C{4\*(}C8"
+.XX "\&removing packages" ""
+.XX "\&\0 pkgrm command" "\*(C{4\*(}C11"
+.XX "\&\0 using OA&M" "\*(C{4\*(}C11"
+.XX "\&requirements" ""
+.XX "\&\0 disk format" "\*(C{1\*(}C7"
+.XX "\&\0 disk space" "\*(C{1\*(}C7"
+.XX "\&\0 diskette drive size" "\*(C{1\*(}C7"
+.XX "\&\0 display adapters" "\*(C{1\*(}C7"
+.XX "\&\0 memory" "\*(C{1\*(}C7"
+.XX "\&\0 multiple hard disks" "\*(C{1\*(}C7"
+.XX "\&\0 SCSI vs. non-SCSI" "\*(C{1\*(}C7"
+.XX "\&rfs package" "\*(C{2\*(}C5, \*(C{3\*(}C5, \*(C{A\*(}C3, \*(C{C\*(}C10"
+.XX "\&RM.base.pkg command" "\*(C{1\*(}C12"
+.XX "\&root filesystem" "\*(C{B\*(}C2\-3"
+.XX "\&root password" "\*(C{2\*(}C16"
+.XX "\&rpc package" "\*(C{2\*(}C5, \*(C{3\*(}C5, \*(C{A\*(}C3"
+.YY s S
+.XX "\&scde package" "\*(C{2\*(}C5, \*(C{3\*(}C5, \*(C{A\*(}C3"
+.XX "\&security administration package" "\*(C{A\*(}C4"
+.XX "\&shutdown" "\*(C{1\*(}C13, \*(C{2\*(}C16, \*(C{4\*(}C12, \*(C{D\*(}C5"
+.XX "\&slices, selecting optional" "\*(C{2\*(}C10"
+.XX "\&surface analysis" ""
+.XX "\&\0 non-SCSI" "\*(C{2\*(}C12"
+.XX "\&\0 SCSI" "\*(C{2\*(}C12"
+.XX "\&swap" "\*(C{B\*(}C3"
+.XX "\&symbolic links" "\*(C{4\*(}C6"
+.XX "\&sysadm" "\*(C{4\*(}C1\-2"
+.XX "\&sysadm (see OA&M interface)" ""
+.XX "\&sysadm" ""
+.XX "\&\0 basics of using" "\*(C{4\*(}C2"
+.XX "\&\0 permission" "\*(C{4\*(}C5"
+.XX "\&\0 primary menu" "\*(C{4\*(}C2"
+.XX "\&\0 setting up LAN" "\*(C{4\*(}C8"
+.XX "\&system" ""
+.XX "\&\0 backup" "\*(C{4\*(}C10"
+.XX "\&\0 name" "\*(C{2\*(}C17, \*(C{4\*(}C8"
+.XX "\&\0 non-SCSI" "\*(C{C\*(}C13"
+.YY t T
+.XX "\&tape controller, jumper" "\*(C{2\*(}C15"
+.XX "\&tape drive, cable" "\*(C{2\*(}C3, 15, \*(C{3\*(}C3"
+.XX "\&termcap package" "\*(C{2\*(}C5, \*(C{3\*(}C5, \*(C{A\*(}C2"
+.XX "\&terminf package" "\*(C{2\*(}C5, \*(C{A\*(}C2, \*(C{C\*(}C2"
+.XX "\&terminfo package" "\*(C{3\*(}C5"
+.XX "\&time, setting the" "\*(C{4\*(}C4"
+.XX "\&/tmp" "\*(C{B\*(}C1"
+.XX "\&troubleshooting" ""
+.XX "\&\0 boot problems" "\*(C{2\*(}C3, \*(C{3\*(}C3"
+.XX "\&\0 disk space problems" "\*(C{B\*(}C3"
+.XX "\&\0 overlay problems" "\*(C{3\*(}C4"
+.XX "\&\0 package install failure" "\*(C{D\*(}C5"
+.XX "\&\0 tape drive/controller problems" "\*(C{2\*(}C15"
+.YY u U
+.XX "\&UNIX System packages" "\*(C{D\*(}C2"
+.XX "\&unlimited user license package" "\*(C{A\*(}C4"
+.XX "\&user ID" "\*(C{4\*(}C5"
+.XX "\&users, adding" "\*(C{4\*(}C5"
+.XX "\&/usr" "\*(C{B\*(}C1, 3"
+.YY v V
+.XX "\&/var" "\*(C{B\*(}C1, 3"
+.YY w W
+.XX "\&wd package" "\*(C{2\*(}C5, \*(C{3\*(}C5, \*(C{A\*(}C4, \*(C{C\*(}C13"
+.XX "\&windowing package" "\*(C{2\*(}C5, \*(C{3\*(}C5, \*(C{A\*(}C2"
+.YY x X
+.XX "\&xcp package" "\*(C{A\*(}C3"
+.XX "\&xterms, increasing default" "\*(C{C\*(}C8"

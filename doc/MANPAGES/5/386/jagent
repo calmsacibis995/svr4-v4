@@ -1,0 +1,80 @@
+'\"macro stdmacro
+.if n .pH g5.jagent @(#)jagent	40.5 of 1/3/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+'\"macro stdmacro
+.if n .pH g5.jagent @(#)jagent	40.10 of 9/11/89
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.if \nX=0 .ds x} jagent 5 "AT&T Windowing Utilities" "\&"
+.if \nX=1 .ds x} jagent 5 "AT&T Windowing Utilities"
+.if \nX=2 .ds x} jagent 5 "" "\&"
+.if \nX=3 .ds x} jagent "" "" "\&"
+.nr X
+.TH \*(x} "" "386 Computer Only"
+.SH NAME
+\f4jagent\f1 \- host control of windowing terminal
+.XE "ioctl"
+.SH SYNOPSIS
+\f4#include <sys/jioctl.h>\f1
+.PP
+.nf
+\f4int ioctl (int cntlfd, JAGENT, &arg);\fP
+.SH DESCRIPTION
+The
+\f4ioctl\fP
+system call, when performed on an \f4xt\fP(7) device
+with the \f4JAGENT\fP request,
+allows a host program to send information to
+a windowing terminal.
+.P
+\f4ioctl\f1
+has three arguments:
+.TP 10
+\f2cntlfd\f1
+the \f4xt\fP(7) control channel file descriptor
+.TP
+\f4JAGENT\f1
+the \f4xt\fP \f4ioctl\fP request to invoke
+a windowing terminal agent routine.
+.TP
+\f4&\f2arg\f1
+the address of a \f4bagent\fP structure,
+defined in
+\f4<sys/jioctl.h>\f1 as follows:
+.nf
+.IP ""
+\f4struct  bagent {
+  long  size;  /* size of src in & dest out */
+  char  *src;  /* the source byte string */
+  char  *dest; /* the destination byte string */
+};\fP
+.fi
+.IP ""
+The
+\f4src\f1
+pointer must be initialized to
+point to a byte string that is sent to the windowing terminal. 
+See \f4layers\fP(5) for a list of \f4JAGENT\f1 strings
+recognized by windowing terminals.
+Likewise, the \f4dest\f1 pointer
+must be initialized to the address of a buffer to receive
+a byte string returned by the terminal.
+When \f4ioctl\fP is called, the
+\f4size\f1
+argument must be set to the length of the
+\f4src\f1
+string.
+Upon return,
+\f4size\f1
+is set by \f4ioctl\fP to
+the length of the destination byte string, \f4dest\f1.
+.SH SEE ALSO
+\f4ioctl\fP(2), \f4libwindows\fP(3X), \f4layers\fP(5).
+.br
+\f4xt\fP(7) in the \f2Programmer's Guide: STREAMS\f1.
+.SH DIAGNOSTICS
+Upon successful completion,
+a non-negative value,
+the size of the destination byte string, is returned.
+If an error occurs, \f4\-1\f1 is returned.
+.Ee

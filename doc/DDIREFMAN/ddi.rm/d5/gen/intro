@@ -1,0 +1,26 @@
+'\"macro stdmacro
+.if n .pH 386.intro5 @(#)intro	40.2 of 1/7/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.nr X
+.if \nX=0 .ds x} intro D5DK "" "DDI/DKI" "\&"
+.if \nX=1 .ds x} intro D5DK "" "DDI/DKI"
+.if \nX=2 .ds x} intro D5DK "" "\&"
+.if \nX=3 .ds x} intro "" "" "\&"
+.TH \*(x}
+.IX "\f4intro\fP(D5DK)"
+.SH NAME
+\f4intro\fP \- introduction to kernel \f4#define\fP's
+.SH SYNOPSIS
+.nf
+\f4#include <sys/types.h>
+#include <sys/ddi.h>
+.fi
+.SH DESCRIPTION
+This section describes the kernel \f4#define\fP's a developer may need to
+use in a device driver.  Most \f4#define\fP's are specified on the manual page
+in which they are used.  However, some \f4#define\fP's are too general or numerous
+to include in another manual page.  Instead, they have been given a separate page
+in this section.
+.ig
+	null section helps create MasterToc
+..

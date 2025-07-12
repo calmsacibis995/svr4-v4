@@ -1,0 +1,201 @@
+'\"macro stdmacro
+.if n .pH g1a.useradd @(#)useradd	40.6 of 4/17/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.if n .pH g1a.useradd @(#)useradd	40.13
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.if \nX=0 .ds x} useradd 1M "Essential Utilities" "\&"
+.if \nX=1 .ds x} useradd 1M "Essential Utilities"
+.if \nX=2 .ds x} useradd 1M "" "\&"
+.if \nX=3 .ds x} useradd "" "" "\&"
+.nr X
+.TH \*(x} "" "386 Computer Only"
+.SH NAME
+\f4useradd\f1 \- administer a new user login on the system
+.SH SYNOPSIS
+.nf
+\f4/usr/sbin/useradd\f1 [\f4\-u \f2uid\f1 [\f4\-o\f1] [\f4\-g\f2 group\f1] [\f4\-G\f2 group\f1[\f4,\f2group\f1...]] [\f4\-d\f2 dir\f1] [\f4\-s\f2 shell\f1]
+	[\f4\-c\f2 comment\f1] [\f4\-m\f1 [\f4\-k\f2 skel_dir\f1]] [\f4\-f \f2inactive\f1] [\f4\-e \f2expire\f1] \f2login\fP
+
+\f4/usr/sbin/useradd \-D\f1 [\f4\-g\f2 group\f1] [\f4\-b\f2 base_dir\f1] [\f4\-f \f2inactive\f1] [\f4\-e \f2expire\f1]
+.fi
+.SH DESCRIPTION
+Invoking \f4useradd\f1 without the \f4\-D\f1 option adds a new user entry
+to the \f4/etc/passwd\f1 and \f4/etc/shadow\f1 files.
+It also creates supplementary group memberships
+for the user (\f4-G\f1 option)
+and creates the home directory (\f4-m\f1 option)
+for the user if requested.
+The new login remains locked until the \f4passwd\f1(1M) command
+is executed.
+.P
+Invoking \f4useradd \-D\f1 with no additional options displays the
+default values for \f2group\fP, \f2base_dir\f1,
+\f2shel_dir\f1, \f2shell\f1, \f2inactive\f1, and \f2expire\f1.
+The values for \f2group\f1, \f2base_dir\f1,
+\f2inactive\f1, \f2expire\f1, and \f2shell\f1
+are used for invocations without the \f4\-D\f1 option.
+.P
+Invoking \f4useradd \-D\f1 with \f4\-g\f1, \f4\-b\f1,
+\f4\-f\f1, or \f4\-e\f1 (or any combination of these)
+sets the default values for the respective fields.
+[As installed,
+the default group is \f4other\f1 (group ID of \f41\f1)
+and the default value of \f2base_dir\f1 is \f4/home\f1].
+Subsequent invocations of \f4useradd\f1 without the \f4\-D\f1 option
+use these arguments.
+.P
+The system file entries created with this command have a limit of 512
+characters per line.
+Specifying long arguments to several options may exceed this limit.
+.P
+The following options are available:
+.TP .8i
+\f4\-u \f2uid\f1
+The 
+.SM UID 
+of the new user.
+This 
+.SM UID 
+must be a non-negative decimal integer below
+\f4MAXUID\f1
+as defined in 
+\f4<param.h>\f1.
+The UID defaults to the next available (unique) number above the
+highest number currently assigned.
+For example, if UIDs 100, 105, and 200 are assigned, the
+next default UID number will be 201.
+(UIDs from 0-99 are reserved.)
+.TP
+\f4\-o\f1
+This option allows a 
+UID 
+to be duplicated (non-unique).
+.TP
+\f4\-g \f2group\f1
+An existing group's integer 
+ID 
+or character-string name.
+Without the \f4\-D\f1 option, it defines the new user's primary
+group membership and defaults to the default group.
+You can reset this default value by invoking
+\f4useradd \-D \-g \f2group\f1.
+.TP
+\f4\-G \f2group\f1
+An existing group's integer 
+ID 
+or character-string name.
+It defines the new user's supplementary group membership.
+Duplicates between
+\f2group\fP with the \f4\-g\f1 and \f4\-G\f1 options are ignored.
+No more than \f4NGROUPS_MAX\f1
+groups may be specified.
+.TP
+\f4\-d \f2dir\f1
+The home directory of the new user.
+It defaults to \f2base_dir/login\f1, where \f2base_dir\f1 is
+the base directory for new login home directories
+and \f2login\fP is the new login.
+.TP
+\f4\-s \f2shell\f1
+Full pathname of the program used as the user's shell on login.
+It defaults to an empty field
+causing the system to use \f4/sbin/sh\f1 as the default.
+The value of \f2shell\f1 must be a valid executable file.
+.TP
+\f4\-c \f2comment\f1
+Any text string.
+It is generally a short description of the login, and
+is currently used as the field for the user's full name.
+This information
+is stored in the user's \f4/etc/passwd\f1 entry.
+.TP
+\f4\-m\f1
+Create the new user's home directory if it doesn't already exist.
+If the directory already exists,
+it must have read, write, and execute permissions
+by \f2group\fP, where \f2group\f1 is the user's primary group.
+.TP
+\f4\-k \f2skel_dir\f1
+A directory that contains skeleton information (such as \f4.profile\f1)
+that can be copied into a new user's home directory.
+This directory must exist.
+The system provides a ``skel'' directory
+(\f4/etc/skel\f1)
+that can be used for this purpose.
+.TP
+\f4\-e \f2expire\f1
+The date on which a login can no longer be used;
+after this date,
+no user will be able to access this login.
+(This option is useful for creating temporary logins.)
+You may type the value of the argument \f2expire\fP 
+(which is a date) in any format you like
+(except a Julian date).
+For example, you may enter
+\f410/6/90\fP or \f4October 8, 1990\f1.
+A value of \f4""\f1 defeats
+the status of the expired date.
+.TP 
+\f4\-f \f2inactive\f1
+The maximum number of days allowed 
+between uses of a login
+\f4ID\f1 before that login \f4ID\f1 is declared valid.
+Normal values are positive integers.
+A value of \f4\-1\f1 defeats the status.
+.TP
+\f2login\fP
+A string of printable characters that specifies the new login name
+of the user.
+It may not contain a colon (\f4:\f1) or a newline (\f4\\n\f1).
+.TP
+\f4\-b \f2base_dir\f1
+The default base directory for the system.
+If \f4\-d \f2dir\f1 is not specified.
+\f2base_dir\f1 is concatenated with the user's login to define
+the home directory.
+If the \f4-m\f1 option is used,
+\f4base_dir\f1 must exist.
+.SH FILES
+\f4/etc/passwd\f1, \f4/etc/shadow\f1, \f4/etc/group\f1, \f4/etc/skel\f1
+.SH SEE ALSO
+\f4groupadd\fP(1M),
+\f4groupdel\fP(1M),
+\f4groupmod\fP(1M),
+\f4logins\fP(1M),
+\f4passwd\fP(1),
+\f4passwd\fP(1M),
+\f4userdel\fP(1M),
+\f4usermod\fP(1M),
+\f4users\fP(1).
+.SH DIAGNOSTICS
+The \f4useradd\f1 command exits with one of the following values:
+.TP
+\f40\f1
+The command was executed successfully.
+.TP
+\f42\f1
+The command line syntax was invalid.
+A usage message for the \f4useradd\f1 command is displayed.
+.TP
+\f43\f1
+An invalid argument was provided with an option.
+.TP
+\f44\f1
+The \f2uid\f1 specified with the \f4\-u\f1 option is already in use.
+.TP
+\f46\f1
+The \f2group\fP specified with the \f4\-g\f1 option does not exist.
+.TP
+\f49\f1
+The specified \f2login\fP is not unique.
+.TP
+\f410\f1
+Cannot update \f4/etc/\f2group\f1.
+The login was added to the \f4/etc/passwd\f1 file 
+but not to the \f4/etc/group\f1 file.
+.TP
+\f412\f1
+Unable to create the home directory (with the \f4\-m\f1 option) or 
+unable to complete the copy
+of \f2skel_dir\f1 to the home directory.

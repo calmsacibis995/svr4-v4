@@ -1,0 +1,20 @@
+.if n .pH 386.Ccompat @(#)Ccompat	40.6
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.BK "Technology File Mapping Guide" "" "" ""   
+.\ACRONYM	                  
+.CH "System Compatibility Software" "" "Table of Contents" "7"
+.\CHAPTER	7
+.tC 1 "Application Compatibility Package" 7-1  
+.tC 2 "XENIX System Services" 7-1  
+.tC 2 "XENIX System FSType \(em \&\f4xnamfs\fP" 7-1  
+.tC 2 "XENIX System Libraries" 7-2  
+.tC 2 "SCO/XENIX Commands" 7-2  
+.tC 1 "BSD System Compatibility Package" 7-3  
+.tC 2 "BSD Header Files" 7-3  
+.tC 2 "BSD System Libraries" 7-3  
+.tC 2 "BSD System Commands" 7-3  
+.tC 2 "BSD System Text Processing Utilities" 7-5  
+.tC 1 "PC System Compatibility" 7-6  
+.tC 2 "VP/ix\v'-0.5m'\s-4TM\s+4\v'0.5m' System Services" 7-6  
+.tC 2 "386 Device Drivers" 7-6  
+.tC 2 "PC-Interface\v'-0.5m'\s-4TM\s+4\v'0.5m' Utilities" 7-8  

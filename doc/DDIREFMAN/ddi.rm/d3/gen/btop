@@ -1,0 +1,48 @@
+'\"macro stdmacro
+.if n .pH gen.btop @(#)btop	40.2 of 1/7/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.nr X
+.if \nX=0 .ds x} btop D3DK "" "DDI/DKI" "\&"
+.if \nX=1 .ds x} btop D3DK "" "DDI/DKI"
+.if \nX=2 .ds x} btop D3DK "" "\&"
+.if \nX=3 .ds x} btop "" "" "\&"
+.TH \*(x}
+.IX "\f4btop\fP(D3DK)"
+.SH NAME
+\f4btop\f1 \- convert size in bytes to size in pages (round down)
+.SH SYNOPSIS
+.nf
+.na
+\f4#include <sys/types.h>
+#include <sys/ddi.h>
+.sp 0.5
+ulong_t btop(\f4ulong_t \f2numbytes\f4);\f1
+.ad
+.fi
+.SH ARGUMENTS
+.RS 0n 15
+.IP "\f2numbytes\f1" 10n
+Size in bytes to convert to equivalent size in pages.
+.RE
+.SH DESCRIPTION
+\f4btop\f1 returns the number of pages that are contained
+in the specified number of bytes, with downward rounding if
+the byte count is not a page multiple.
+.P
+For example, if the
+page size is 2048, then \f4btop(4096)\f1 and \f4btop(4097)\f1 both
+return 2, and \f4btop(4095)\f1 returns 1.
+.P
+\f4btop(0)\f1 returns 0.
+.SH RETURN VALUE
+The return value is the number of pages.
+There are no invalid input values, and therefore no error return values.
+.SH LEVEL
+Base or Interrupt.
+.SH NOTES
+Does not sleep.
+.SH "SEE ALSO"
+.na
+\f4btopr\f1(D3DK),
+\f4ptob\f1(D3DK)
+.ad

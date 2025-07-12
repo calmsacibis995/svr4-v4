@@ -1,0 +1,104 @@
+'\"macro stdmacro
+.if n .pH d3i.sdi_translate @(#)sdi_trans	40.9 of 3/12/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} sdi_translate D3I SDI
+.if \nX=1 .ds x} sdi_translate D3I SDI
+.if \nX=2 .ds x} sdi_translate D3I "" "\&"
+.if \nX=3 .ds x} sdi_translate "" "" "\&"
+.TH \*(x}
+.SH NAME
+sdi_translate \- translate \f4scb\f1 virtual to physical address for SCSI host adapter
+.SH SYNOPSIS
+.nf
+.ft 4
+void
+sdi_translate(struct sb *\f2pt\f4, int \f2bflags\f4, proc_t \f2procp\f4);
+.ft 1
+.fi
+.SH ARGUMENTS
+.TP 8
+\f2pt\f1
+pointer to the \f4sb\f1 (SCSI block) structure
+.TP
+\f2bflags\f1
+the \f4b_flags\f1 member of the \f4buf_t\f1 (buffer header) structure
+.TP
+\f2procp\f1
+pointer to the \f4procp_t\f1 process pointer
+.IX "procp_t pointer"
+.IX "buf_t(D4P) structure"
+.SH DESCRIPTION
+\f4sdi_translate\f1 is called to allow the SDI to perform machine-specific base
+level 
+virtual to physical address translation for the host adapter.  This function is
+called each time an \f4scb\f1 is assembled for transmission before the
+\f4sdi_send\f1 or \f4sdi_icmd\f1 functions are called.
+.IX "Virtual to physical address translation"
+.IX "sb_type"
+.IX "sc_cmdpt"
+.IX "sc_cmdsz"
+.IX "sc_datapt"
+.IX "sc_datasz"
+.IX "sc_link"
+.PP
+The \f4sb_type, sc_cmdpt, sc_cmdsz, sc_datapt, sc_datasz,\f1 and \f4sc_link\f1
+fields 
+must be valid.  The \f2bflags\f1 argument is the same as the  \f4b_flags\f1
+member of the \f4buf_t\f1(D4P) structure.  The \f4B_READ\f1 and \f4B_PHYS\f1
+flags are used by \f4sdi_translate\f1.  The target driver must guarantee that
+the data area and command area are locked into memory and are accessible by the
+requester.  \f4sdi_translate\f1 should not be called if the data address is
+supplied by SDI. 
+.P
+In the case of a block read or write, the data area is locked automatically by
+the kernel.
+.P
+This function may
+sleep and must be called while executing as the requesting process.
+.SH RETURN VALUE
+None.
+.SH LEVEL
+Base Only
+.SH NOTES
+It is the CDB aspect of the \f4scb\f1 that requires translation; therefore,
+the \f4sfb\f1 must never be run through \f4sdi_translate\f1.  Another
+important consideration is that if the data area is not a contiguous segment of
+memory, the \f4B_PHYS\f1 flag must be set, especially when allocating more than
+2K (2048 bytes) of memory.  (This flag is defined in \f4ddi.h\f1.)  
+.SH "SEE ALSO"
+\f4sdi_icmd\fP(D3I),
+\f4sdi_send\fP(D3I),
+\f4sb\fP(D4I),
+\f4scb\fP(D4I)
+.SH EXAMPLE
+In this example, the values that must be initialized prior to the call to
+\f4sdi_translate\f1 are set in the \f4sb\f1 structure.
+.P
+.ne 1i
+.ft 4
+.nf
+   struct sb  *sb_ptr;     /* SCSI Block */
+   struct scb *scb;        /* SCSI control block */
+   struct scs *cmd;        /* SCSI command */
+   buf_t  *bp;             /* Buffer pointer */
+   char *buffer;           /* Buffer for data */
+   unsigned int size;      /* Size of the buffer */
+   unsigned short mode;    /* Direction of the transfer */
+   
+   ...
+
+   /* Set the command address and the command size */
+   scb->sc_cmdpt = SCS_AD(cmd);
+   scb->sc_cmdsz = SCS_SZ;
+
+   /* Set the data address and the data size */
+   scb->sc_datapt = buffer;
+   scb->sc_datasz = size;
+   
+   sdi_translate(sb_ptr, bp->b_flags, procp());
+   
+   ...
+.fi
+.ft 1

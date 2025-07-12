@@ -1,0 +1,148 @@
+'\"macro stdmacro
+.if n .pH g4.ttysrch @(#)ttysrch	40.3.1.1 of 1/3/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+'\"macro stdmacro
+.nr X
+.if \nX=0 .ds x} ttysrch 4 "" "\&"
+.if \nX=1 .ds x} ttysrch 4 ""
+.if \nX=2 .ds x} ttysrch 4 "" "\&"
+.if \nX=3 .ds x} ttysrch "" "" "\&"
+.TH \*(x}
+.SH NAME
+ttysrch \(em directory search list for ttyname
+.SH DESCRIPTION
+\f4ttysrch\f1
+is an optional file that is used by the
+\f4ttyname\fP
+library routine.
+This file contains the names of directories in
+\f4/dev\fP
+that contain terminal and terminal-related device files.
+The purpose of this file is to improve the performance of
+\f4ttyname\fP
+by indicating which subdirectories in
+\f4/dev\fP
+contain terminal-related device files and should be searched first.
+These subdirectory names must appear on separate lines and must
+begin with
+\f4/dev\fP.
+Those path names that do not begin with
+\f4/dev\fP
+will be ignored and a warning will be sent to the console.
+Blank lines (lines containing only white space) and lines beginning
+with the comment character "#" will be ignored.
+For each file listed (except for the special entry
+\f4/dev\fP),
+\f4ttyname\fP
+will recursively search through subdirectories looking for a match.
+If
+\f4/dev\fP
+appears in the
+\f4ttysrch\fP
+file, the
+\f4/dev\fP
+directory itself will be searched but there will not be a recursive search
+through its subdirectories.
+.PP
+When
+\f4ttyname\fP
+searches through the device files, it tries to find a file whose major/minor
+device number, file system identifier, and inode number match that of the
+file descriptor it was given as an argument.
+If a match is not found, it will settle for a match of just major/minor device
+and file system identifier, if one can be found.
+However, if the file descriptor is associated with a cloned device (see
+clone(7)),
+this algorithm does not work efficiently because the inode number of the device file
+associated with a clonable device
+will never match the inode number of the file descriptor that was returned by
+the open of that clonable device.
+To help with these situations,
+entries can be put into the
+\f4/etc/ttysrch\fP
+file to improve performance when cloned devices are used as terminals 
+on a system (e.g. for remote login).
+However, this is only useful if the minor devices related to a cloned device
+are put into a subdirectory.
+(It is important to note that device files need not exist for cloned devices
+and if that is
+the case,
+\f4ttyname\fP
+will eventually fail.)
+For example if
+\f4/dev/starlan\fP
+is a cloned device,
+there could be a subdirectory
+\f4/dev/slan\fP
+that contains files 
+\f40\fP,
+\f41\fP,
+\f42\fP,
+etc.
+that correspond to the minor devices of the starlan driver.
+An optional second field is used in the
+\f4/etc/ttysrch\fP
+file to indicate the matching criteria.
+This field is separated by white space (any combination
+of blanks or tabs).
+The letter
+\f4M\fP
+means major/minor device number,
+\f4F\fP
+means file system identifier,
+and
+\f4I\fP
+means inode number.
+If this field is not specified for an entry,
+the default is
+\f4MFI\fP
+which means try to match on all three.
+For cloned devices the field should be
+\f4MF\fP,
+which indicates that it is not necessary to match on the inode number.
+.PP
+Without the
+\f4/etc/ttysrch\fP
+file,
+\f4ttyname\fP
+will search the
+\f4/dev\fP
+directory by first looking in the directories
+\f4/dev/term\fP,
+\f4/dev/pts\fP,
+and
+\f4/dev/xt\fP.
+If a system has terminal devices installed in directories
+other than these,
+it may help performance if the
+\f4ttysrch\fP
+file is created and contains that list of directories.
+.SH EXAMPLE
+A sample
+\f4/etc/ttysrch\fP
+file follows:
+.sp
+.ft 4
+.nf
+/dev/term	MFI
+/dev/pts		MFI
+/dev/xt		MFI
+/dev/slan	MF
+.fi
+.ft 1
+.PP
+This file tells 
+\f4ttyname\fP
+that it should first search through those directories listed 
+and that when searching through the
+\f4/dev/slan\fP
+directory, if a file is encountered whose major/minor devices and file
+system identifier match that of the file descriptor argument to
+\f4ttyname\fP,
+this device name
+should be considered a match.
+.SH FILES
+\f4/etc/ttysrch\fP
+.SH "SEE ALSO"
+\f4ttyname\fP(3C), \f4clone\fP(7)

@@ -1,0 +1,8 @@
+.if n .pH portguide.CBOOT @(#)Cboot	40.2
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.BK "Programmer's Guide: Porting the Kernel" "" "" ""   
+.\ACRONYM	                  
+.CH "Boot" "" "Table of Contents" "3"
+.\CHAPTER	3
+.tC 1 "Boot" 3-1  
+.Index: booting        	1

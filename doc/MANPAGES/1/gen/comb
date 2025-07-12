@@ -1,0 +1,121 @@
+'\"macro stdmacro
+.if n .pH g1.comb @(#)comb	40.12 of 5/22/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.tr ~
+.nr X
+.if \nX=0 .ds x} comb 1 "Enhanced Programming Utilities" "\&"
+.if \nX=1 .ds x} comb 1 "Enhanced Programming Utilities"
+.if \nX=2 .ds x} comb 1 "" "\&"
+.if \nX=3 .ds x} comb "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4comb\f1 \- combine \s-1SCCS\s+1 deltas
+.SH SYNOPSIS
+\f4comb [\-o] [\-s] [\-p\f2\s-1SID\s0\f4] [\-c\f2list\f4] \f2files  \f1
+.SH DESCRIPTION
+\f4comb\fP
+generates a shell procedure [see
+\f4sh\fP(1)]
+that, when run, reconstructs the given \s-1SCCS\s+1 files.
+The reconstructed files are typically smaller than the original files.
+The arguments may be specified in any order,
+but all keyletter arguments apply to all named \s-1SCCS\s+1 files.
+If a directory is named,
+\f4comb\fP
+behaves as though each file in the directory were
+specified as a named file,
+except that non-\s-1SCCS\s+1 files
+(last component of the path name does not begin with \f4s.\f1)
+and unreadable files are silently ignored.
+If a name of \f4\-\f1 is given, the standard input is read;
+each line of the input is taken to be the name of an \s-1SCCS\s+1 file
+to be processed;
+non-\s-1SCCS\s+1 files and unreadable files are silently ignored.
+The generated shell procedure is written on the standard output.
+.PP
+The keyletter
+arguments are as follows.
+Each argument is explained as if only one named file
+is to be processed, but the effects of any keyletter argument
+apply independently to each named file.
+.TP
+\f4\-o\fP
+For each
+\f4get \-e\f1,
+this argument causes the reconstructed file to be accessed at
+the release of the delta to be created,
+otherwise the reconstructed file would be accessed at
+the most recent ancestor.
+Use of the
+\f4\-o\f1
+keyletter may decrease the size of the reconstructed \s-1SCCS\s+1 file.
+It may also alter the shape of the delta tree of the original file.
+.TP
+\f4\-s\fP
+This
+argument causes
+\f4comb\fP
+to generate a shell procedure that, when run,
+produces a report that gives
+for each file:
+the file name, size (in blocks) after combining,
+original size (also in blocks), and
+percentage change
+computed by:
+.IP
+	\%100~\f4\(**\f1~(\f2original\f1~\-~\f2combined\f1)~/~\f2original\f1
+.IP
+It is recommended that before any \s-1SCCS\s+1 files are actually combined,
+one should use this option to determine exactly how much space
+is saved by the combining process.
+.TP
+\f4\-p\f2\s-1SID\s+1\f1
+The
+.SM SCCS
+identification string (\s-1SID\s+1) of the oldest delta to be preserved.
+All older deltas are discarded in the reconstructed file.
+.TP
+\f4\-c\f2list\f1
+A
+\f2list\f1
+of deltas to be preserved.
+All other deltas are discarded.
+See
+\f4get\fP(1)
+for the syntax of a \f2list\f1.
+.PP
+If no keyletter arguments are specified,
+\f4comb\fP
+preserves only leaf deltas and the minimal number of ancestors
+needed to preserve the tree.
+.SH FILES
+.PD 0
+.TP 14
+\f4s.COMB\f1
+the reconstructed \s-1SCCS\s+1 file
+.TP 14
+\f4comb?????\fP
+temporary file
+.PD
+.SH "SEE ALSO"
+\f4admin\fP(1),
+\f4delta\fP(1),
+\f4get\fP(1),
+\f4help\fP(1),
+\f4prs\fP(1),
+\f4sccsfile\fP(4)
+.sp .2
+\f4sh\fP(1) in the \f2User's Reference Manual\f1
+.SH DIAGNOSTICS
+Use
+\f4help\fP(1)
+for explanations.
+.SH NOTES
+\f4comb\fP
+may rearrange the shape of the tree of deltas.
+.P
+\f4comb\fP may not save any space;
+in fact, it is possible for the reconstructed file to
+be larger than the original.
+.tr ~~

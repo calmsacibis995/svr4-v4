@@ -1,0 +1,43 @@
+'\"macro stdmacro
+.if n .pH g3c.fsetpos @(#)fsetpos	40.11 of 5/22/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} fsetpos 3C "C Development Set" "\&"
+.if \nX=1 .ds x} fsetpos 3C "C Development Set"
+.if \nX=2 .ds x} fsetpos 3C "" "\&"
+.if \nX=3 .ds x} fsetpos "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4fsetpos\f1, \f4fgetpos\f1 \- reposition a file pointer in a stream
+.SH SYNOPSIS
+.nf
+\f4\#include <stdio.h>\f1
+.PP
+\f4int fsetpos (FILE \(**stream, const fpos_t \(**pos);\f1
+.PP
+\f4int fgetpos (FILE \(**stream, fpos_t \(**pos);\f1
+.PP
+.SH DESCRIPTION
+.PP
+\f4fsetpos\fP sets the position of the next input or output operation on
+the \f2stream\f1 according to the value of the object pointed to by \f2pos\f1.
+The object pointed to by \f2pos\f1 must be a value returned by an earlier
+call to \f4fgetpos\fP on the same stream.
+.PP
+\f4fsetpos\fP clears the end-of-file indicator for the stream and undoes any
+effects of the \f4ungetc\fP function on the same stream. After
+\f4fsetpos\fP, the next operation on a file opened for update may be either 
+input or output.
+.PP
+\f4fgetpos\fP stores the current value of the file position indicator for
+\f2stream\f1 in the object pointed to by \f2pos\f1.  The value stored
+contains information usable by \f4fsetpos\fP for repositioning the stream
+to its position at the time of the call to \f4fgetpos\fP.
+.PP
+If successful, both \f4fsetpos\fP and \f4fgetpos\fP return zero. Otherwise,
+they both return nonzero.
+.SH "SEE ALSO"
+\f4fseek\fP(3S), \f4lseek\fP(2) \f4ungetc\fP(3S).
+.\"	@(#)fsetpos.3c	
+.Ee

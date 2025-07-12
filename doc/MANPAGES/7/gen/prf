@@ -1,0 +1,45 @@
+'\"macro stdmacro
+.if n .pH g7.prf @(#)prf	40.6 of 4/11/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} prf 7 "System Performance Analysis Utilities" "\&"
+.if \nX=1 .ds x} prf 7 "System Performance Analysis Utilities"
+.if \nX=2 .ds x} prf 7 "" "\&"
+.if \nX=3 .ds x} prf "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4prf\f1 \- operating system profiler
+.SH DESCRIPTION
+The special file
+\f4/dev/prf\fP
+provides access to activity information
+in the operating system.
+Writing the file
+loads the measurement facility with text addresses to be monitored.
+Reading the file returns these 
+addresses and a set of counters
+indicative of activity between adjacent text addresses.
+.PP
+The recording mechanism is driven by the system clock
+and samples the program counter at line frequency.
+Samples that catch the operating system
+are matched against the stored text addresses
+and increment corresponding counters for later processing.
+.PP
+The file
+\f4/dev/prf\fP
+is a pseudo-device
+with no associated hardware.
+.SH FILES
+\f4/dev/prf\fP
+.SH NOTES
+By default, the \f4prf\f1 device is not configured into the kernel for Intel
+processors.
+To turn it on, you must edit the \f4/etc/conf/sdevice.d/prf\f1 file,
+change the second field from \f4N\f1 to \f4Y\f1, and reconfigure
+the kernel.
+.SH "SEE ALSO"
+\f4profiler\fP(1M)
+.\"	@(#)prf.7	6.2 of 9/6/83
+.Ee

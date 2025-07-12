@@ -1,0 +1,29 @@
+'\"macro stdmacro
+.if n .pH g1a.ttyswitch @(#)ttyswitch	40.6 of 5/17/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} ttyswitch 1iref "System Administration Utilities" "" "\&"
+.if \nX=1 .ds x} ttyswitch 1iref "System Administration Utilities" ""
+.if \nX=2 .ds x} ttyswitch 1iref "" "\&"
+.if \nX=3 .ds x} ttyswitch "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4ttyswitch\f1 \- switches a line to a new host on the communications controller
+.SH SYNOPSIS
+\f4/sbin/ttyswitch\f1 \f2new_host_id\f1
+.SH DESCRIPTION
+\f4ttyswitch\f1 causes the issuing host to temporarily relinquish control
+of a line on the communications controller to another host.  This program
+sends a message to the \f4atcs\f1 server.  If at the time the message
+is received by the server, and the new host has not also enabled the
+line, an error response is returned immediately.
+.PP
+Command line options are:
+.PP
+.TP 11
+\f4new_host_ID\f1
+The host to which control is switched.  Specify this option by using
+its Multibus II iPSB slot-ID.
+.SH FILES
+\f4/sbin/ttyswitch\f1.

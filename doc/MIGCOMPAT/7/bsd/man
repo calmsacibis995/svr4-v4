@@ -1,0 +1,264 @@
+'\"macro stdmacro
+.if n .pH g7.man @(#)man	40.9 of 4/23/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.\" @(#)man.7 1.3 89/01/30 SMI; from UCB 4.2
+.nr X
+.if \nX=0 .ds x} man 7 "BSD Compatibility Package" "\&"
+.if \nX=1 .ds x} man 7 "BSD Compatibility Package"
+.if \nX=2 .ds x} man 7 "" "\&"
+.if \nX=3 .ds x} man "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4man\f1 \- macros to format Reference Manual pages
+.SH SYNOPSIS
+\f4nroff \-man\f1
+.IR filename .\|.\|.
+.P
+\f4troff \-man\f1
+.IR filename .\|.\|.
+.SH DESCRIPTION
+These macros are used to lay out the reference pages in this manual.
+Note: if
+.I filename
+contains format input for a preprocessor, the
+commands shown above must be piped through the
+appropriate preprocessor.
+This is handled automatically by
+\f4man\f1(1).
+See the
+``Conventions'' section.
+.P
+Any text argument
+.I t
+may be zero to six words.
+Quotes may be used to include
+.SM SPACE
+characters in a \(lqword\(rq.
+If
+.I text
+is empty, the special treatment is applied to the next input line with
+text to be printed.
+In this way
+\f4\&.I\f1
+may be used to italicize a whole line, or
+\f4\&.SB\f1
+may be used to make small bold letters.
+.P
+A prevailing indent distance is remembered between successive indented
+paragraphs, and is reset to default value upon reaching a non-indented
+paragraph.
+Default units for indents
+.I i
+are ens.
+.P
+Type font and size are reset to default values before each paragraph,
+and after processing font and size setting macros.
+.P
+These strings are predefined by
+\f4\-man\f1:
+.P
+.PD 0
+.RS
+.TP
+\f4\e*R\f1
+.if t `\(rg', `(Reg)' in
+.if t \f4nroff\fP.
+.if n `(Reg)', trademark symbol in
+.if n \f4troff\fP.
+.TP
+\f4\e*S\f1
+Change to default type size.
+.RE
+.PD
+.SS Requests
+* n.t.l. = next text line; p.i. = prevailing indent
+.TS
+l2 l2 l2 lw(2.5i).
+\f2Request	Cause	If no	Explanation
+	Break	Argument\f1
+.sp .25
+\f4\&.B \f2t\f1	no	\f2t\f1=n.t.l.*	Text is in bold font.
+\f4\&.BI \f2t\f1	no	\f2t\f1=n.t.l.	Join words, alternating bold and italic.
+\f4\&.BR \f2t\f1	no	\f2t\f1=n.t.l.	Join words, alternating bold and roman.
+\f4\&.DT\f1	no	.5i 1i...	Restore default tabs.
+\f4\&.HP \f2i\f1	yes	\f2i\f1=p.i.*	T{
+Begin paragraph with hanging indent.
+.br
+Set prevailing indent to \f2i\f1.
+T}
+\f4\&.I \f2t\f1	no	\f2t\f1=n.t.l.	Text is italic.
+\f4\&.IB \f2t\f1	no	\f2t\f1=n.t.l.	Join words, alternating italic and bold.
+\f4\&.IP \f2x i\f1	yes	\f2x\f1=""	Same as \f4.TP\f1 with tag \f2x\f1.
+\f4\&.IR \f2t\f1	no	\f2t\f1=n.t.l.	Join words, alternating italic and roman.
+\f4\&.IX \f2t\f1	no	-	Index macro, for Sun internal use.
+\f4\&.LP\f1	yes	-	T{
+Begin left-aligned paragraph.
+.br
+Set prevailing indent to .5i.
+T}
+\f4\&.PD \f2d\f1	no	\f2d\f1=.4v	Set vertical distance between paragraphs.
+\f4\&.PP\f1	yes	-	Same as \f4.LP\f1.
+.bp
+\f4\&.RE\f1	yes	-	T{
+End of relative indent.
+.br
+Restores prevailing indent.
+T}
+\f4\&.RB \f2t\f1	no	\f2t\f1=n.t.l.	Join words, alternating roman and bold.
+\f4\&.RI \f2t\f1	no	\f2t\f1=n.t.l.	Join words, alternating roman and italic.
+\f4\&.RS \f2i\f1	yes	\f2i\f1=p.i.	T{
+Start relative indent, increase indent by \f2i\f1.
+.br
+Sets prevailing indent to .5i for nested indents.
+T}
+\f4\&.SB \f2t\f1	no	-	Reduce size of text by 1 point, make text bold.
+\f4\&.SH \f2t\f1	yes	-	Section Heading.
+\f4\&.SM \f2t\f1	no	\f2t\f1=n.t.l.	Reduce size of text by 1 point.
+\f4\&.SS \f2t\f1	yes	\f2t\f1=n.t.l.	Section Subheading.
+\f4\&.TH \f2n s d f m\f1	yes	-	T{
+Begin reference page \f2n\f1, of of section \f2s\f1; \f2d\f1 is the date of the most
+recent change.  If present, \f2f\f1 is the left page footer; \f2m\f1 is the
+main page (center) header.  Sets prevailing indent and tabs to .5i.
+T}
+\f4\&.TP \f2i\f1	yes	\f2i\f1=p.i.	T{
+Begin indented paragraph, with the tag given on the next text line.
+.br
+Set prevailing indent to \f2i\f1.
+T}
+\f4\&.TX \f2t \f2p\f1	no	-	T{
+Resolve the title abbreviation \f2t\f1; join to punctuation mark (or text) \f2p.\f1
+T}
+.TE
+.\" End Requests
+.PD
+.br
+.ne 10
+.SS Conventions
+.P
+When formatting a manual page,
+\f4man\f1
+examines the first line to determine whether
+it requires special processing.
+For example a first line consisting of:
+.RS
+.sp .5v
+.ft 4
+\&'\e" t
+.ft 1
+.RE
+.P
+indicates that the manual page must be run through the
+\f4tbl\f1(1)
+preprocessor.
+.P
+A typical manual page for a command or function is laid out as
+follows:
+.TP
+\f4\&.TH\f2 title \f1[1-8]\f1
+The name of the command or function, which serves as
+the title of the manual page.
+This is followed by the number of
+the section in which it appears.
+.TP
+\f4\&.SH NAME\f1
+The name, or list of names, by which the command is called,
+followed by a dash and then a one-line summary of the action performed.
+All in roman font, this section contains no
+\f4troff\f1(1)
+commands or escapes, and no macro requests.
+It is used to generate the
+\f4whatis\f1(1)
+database.
+.TP
+\f4\&.SH SYNOPSIS\f1
+.RS
+.TP
+Commands:
+.IP
+The syntax of the command and its arguments, as typed on the command line.
+When in boldface, a word must be typed exactly as printed.
+When in italics, a word can be replaced with an argument that you supply.
+References to bold or italicized items are not capitalized
+in other sections, even when they begin a sentence.
+.IP
+.br
+.ne 1i
+Syntactic symbols appear in roman face:
+.RS
+.TP
+\f4[ ]\f1
+An argument, when surrounded by brackets
+is optional.
+.TP
+\f4|\f1
+Arguments separated by a vertical bar are exclusive.
+You can supply only one item from such a list.
+.TP
+\f4\&.\|.\|.\f1
+Arguments followed by an elipsis can be repeated.
+When an elipsis follows a bracketed set, the expression within the
+brackets can be repeated.
+.RE
+.TP
+Functions:
+.IP
+If required, the data declaration, or
+\f4#include\f1
+directive, is shown first, followed by the  function declaration.
+Otherwise, the function declaration is shown.
+.RE
+.TP
+\f4\&.SH DESCRIPTION\f1
+A narrative overview of the command or function's external behavior.
+This includes how it interacts with files or data, and how it
+handles the standard input, standard output and standard error.
+Internals and implementation details are normally omitted.
+This section attempts to provide a succinct overview in answer to the
+question, "what does it do?"
+.IP
+Literal text from the synopsis appears in constant width, as do literal
+filenames and references to items that appear elsewhere in the 
+reference manuals.
+Arguments are italicized.
+.IP
+If a command interprets either subcommands or an input grammar, its
+command interface or input grammar is normally described in a
+.SM USAGE
+section, which follows the
+.SM OPTIONS
+section.
+The 
+.SM DESCRIPTION
+section only describes the behavior of the command itself, not
+that of subcommands.
+.TP
+\f4\&.SH OPTIONS\f1
+The list of options along with a description of how each affects
+the command's operation.
+.TP
+\f4\&.SH FILES\f1
+A list of files associated with the command or function.
+.TP
+\f4\&.SH SEE ALSO\f1
+A comma-separated list of related manual pages, followed by
+references to other published materials.
+.TP
+\f4\&.SH DIAGNOSTICS\f1
+A list of diagnostic messages and an explanation of each.
+.TP
+\f4\&.SH NOTES\f1
+A description of limitations, known defects, and possible
+problems associated with the command or function.
+.SH FILES
+.PD 0
+.TP 20
+\f4/usr/ucblib/doctools/man\f1
+.PD
+.SH SEE ALSO
+\f4man\fP(1),
+\f4nroff\fP(1),
+\f4troff\fP(1),
+\f4whatis\fP(1)
+.P
+.TX DOCS .

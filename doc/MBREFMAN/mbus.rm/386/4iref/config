@@ -1,0 +1,242 @@
+.if n .pH g1a.config @(#)config	40.10 of 5/17/91
+.nr X
+.if \nX=0 .ds x} config 4iref "System Administration Utilities" "" "\&"
+.if \nX=1 .ds x} config 4iref "System Administration Utilities" ""
+.if \nX=2 .ds x} config 4iref "" "\&"
+.if \nX=3 .ds x} config "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4config\f1 \(em Multibus II configuration file format
+.SH DESCRIPTION
+\f4config\f1 is the \f4bootserver\f1's configuration file which gives the
+boot parameter string for hosts on Multibus II and also specifies the load
+image that is returned by the \f4bootserver\f1(1iref).
+.P
+The \f4config\f1 file contains server bootstrap parameters,
+client bootstrap parameters and global parameters.
+.SS Server Bootstrap Parameters
+Server bootstrap parameters identify which host a set of parameters applies to
+and the dependent second-stage bootstrap loader to use for that host. 
+Server parameters only exist in the \f4config\f1 file.
+They are not stored in the BPS Save Area of the host and cannot be set with
+the Master Test Handler (MTH).
+.P
+Note that the BPS Save Area is a location in RAM that stores the
+current parameter settings for the host.
+.P
+Square brackets designate server parameters.  For example,
+.P
+.RS
+.ft 4
+.nf
+[BL_Host_id=$unix_hosta];
+.ft 1
+.fi
+.RE
+.P
+If you list more than one parameter in a row, separate them with semicolons
+inside the brackets.
+.SS Client Bootstrap Parameters
+Client bootstrap parameters specify how to bootstrap load a particular host
+board.
+They specify such things as what bootable file to
+load and what device to load it from.
+Client parameters can be set in either the \f4config\f1 file or directly in
+the BPS Save Area.
+These parameters are passed to the client hosts and stored in the BPS Save Area.
+To specify client parameters in the config file, separate them with semicolons
+and do not put them in brackets.
+Use the MTH to specify client parameters in the BPS Save Area.
+.P
+An example of a client parameter is shown below:
+.P
+.RS
+.nf
+.ft 4
+BL_Target_file = /stand/unix;
+.ft 1
+.fi
+.RE
+.SS Global Parameters
+Global parameters apply to all hosts.  Global parameters are optional
+and, if used, must be defined at the beginning of the config file.
+The section describing global parameters begins with \f4BL_Host_id\f1 set to
+\f4GLOBAL\f1.
+The following example shows how global parameters are defined:
+.P
+.RS
+.nf
+.ft 4
+[BL_Host_id=GLOBAL];
+    pci_hosta = 0;
+    pci_hostb = 1;
+    unix_hosta = 2;
+         \&. . .
+[BL_Host_id=$pci_hosta];
+.ft 1
+.fi
+.RE
+.P
+The global definition section ends when the next setting
+of \f4BL_Host_id\f1 is encountered.
+.SS Parameter Syntax
+Use the following format when specifying parameters in the \f4config\f1 file:
+.P
+.RS
+.nf
+\f2parameter_name \f4=\f2 parameter_value\f4;\f1
+.fi
+.RE
+.P
+\f2parameter_name\f1 is a string of 1 to 31 alphanumeric characters or
+the underscore character.
+\f2parameter_name\f1 is not case sensitive;
+upper and lower case letters are equivalent. 
+White space delimits \f2parameter_name\f1.
+Comments are not allowed inside \f2parameter_name\f1.
+.P
+\f2parameter_value\f1 consists of 1 to 255 bytes,
+including the dollar sign ($), quotes (""), and the backslash (\)
+characters.
+White space and comments inside \f2parameter_value\f1 are ignored.
+Parameter values may include ASCII character strings,
+substitutions ($), quoted strings, and backslashed characters.
+Illegal characters include all characters between 80H and 0FFH.
+.P
+Shown below are the characters that have special meaning:
+.IP "#  (pound sign)" 1.0i
+Signifies a comment.
+Text following a pound sign (on the same line) is ignored.
+.IP "$  (dollar sign)" 1.0i
+Signifies a variable or substitution value. 
+The bootstrap parameter takes the value of the named parameter that
+follows the dollar sign.
+For example, suppose the config file contains the following entries:
+.P
+.RS 1.5i
+.nf
+.ft 4
+[BL_Host_id = GLOBAL];
+	  PCI_file = /stand/pci258;
+	      . . .
+[BL_Host_id = 0];
+	  BL_Target_file = $PCI_file
+.ft 1
+.fi
+.RE
+.IP
+\f4BL_Target_file\f1 is set to \f4$PCI_file\f1. 
+Earlier, in the global section of the file,
+\f4PCI_file\f1 is set to \f4/stand/pci258\f1. 
+Therefore, \f4BL_Target_file\f1 takes the value of \f4/stand/pci258\f1.
+.IP "[ ]  (brackets)" 1.0i
+Signifies server parameters.
+Server parameters are used by the bootserver to identify and store
+information about hosts.
+These parameters are not passed to booting hosts.
+.P
+See the
+\f2Multibus II System Architecture Bootstrap Specification\f1
+for more information about parameter syntax.
+.SH EXAMPLES
+The following pages show two examples of the \f4config\f1 file.
+Example 1 shows a \f4config\f1 file for a system using the iSBC 386/258 board
+as a peripheral controller.
+Example 2 shows a \f4config\f1 file for a system using an iSBC 486/133SE board.
+.P
+For an explanation of the BPS parameters see the
+\f2Multibus II System Architecture Bootstrap Specification\f1
+and the 'Bootstrap Topics' appendix of the
+\f2System V Release 4 Multibus II Installation and Configuration Guide\f1.
+.P
+Example 1:  Example of a \f4config\f1 file for a system that uses the iSBC 386/258
+peripheral controller board.
+.P
+.RS
+.nf
+.ft 4
+[BL_Host_id=GLOBAL];
+   pci_hosta = 0;
+   pci_hostb = 1;
+   unix_hosta = 2;
+   unix_hostb = 3;
+   unix_hostc = 4;
+
+# PCI Host
+
+[BL_Host_id=$pci_hosta];
+   BL_QI_Master = $unix_hosta;
+   BL_Target_file = /stand/pci258;
+   BL_mode = p;
+
+# PCI Host
+
+[BL_Host_id=$pci_hostb];
+   BL_QI_Master = $unix_hostb;
+   BL_Target_file = /stand/pci258;
+   BL_mode = p;
+
+# Unix Host  #1 or
+
+[BL_Host_id=$unix_hosta];
+   BL_Target_file = /stand/unix;
+   UNX_rootfs_type = "";
+
+# Unix Host #1
+
+[BL_Host_id=$unix_hostb];
+   BL_Target_file = /stand/unix;
+   UNX_rootfs_type = "";
+
+# Unix Host  #2
+
+[BL_Host_id=$unix_hostc];
+   BL_Target_file = /stand/unix;
+   UNX_rootfs_type = "";
+.ft 1
+.fi
+.RE
+.bp
+Example 2: Example of a \f4config\f1 file for a system that uses the iSBC 486/133SE
+board.
+This example file allows you to place the iSBC 486/133SE board in any slot.
+.P
+.RS
+.nf
+.ft 4
+[BL_Host_id=GLOBAL];
+    BL_Target_file = /stand/unix;
+    UNX_rootfs_type = "";
+[BL_Host_id=0];
+[BL_Host_id=1];
+[BL_Host_id=2];
+[BL_Host_id=3];
+[BL_Host_id=4];
+[BL_Host_id=5];
+[BL_Host_id=6];
+[BL_Host_id=7];
+[BL_Host_id=8];
+[BL_Host_id=9];
+[BL_Host_id=10];
+[BL_Host_id=11];
+[BL_Host_id=12];
+[BL_Host_id=13];
+[BL_Host_id=14];
+[BL_Host_id=15];
+[BL_Host_id=16];
+[BL_Host_id=17];
+[BL_Host_id=18];
+[BL_Host_id=19];
+.ft 1
+.fi
+.RE
+.SH FILES
+\f4/stand/config\f1
+.SH SEE ALSO
+\f4bootserver\f1(1iref), \f4bps\f1(7iref)
+.P
+\f2Multibus II System Architecture Bootstrap Specification\f1
+.P
+\f2System V Release 4 Multibus II Installation and Configuration\f1
+.SH NOTE
+Any user-supplied configuration files must reside in the \f4stand\f1 partition.

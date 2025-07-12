@@ -1,0 +1,59 @@
+'\"macro stdmacro
+.if n .pH gen.flushq @(#)flushq	40.2 of 1/7/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.nr X
+.if \nX=0 .ds x} flushq D3DK "STREAMS" "DDI/DKI" "\&"
+.if \nX=1 .ds x} flushq D3DK "STREAMS" "DDI/DKI"
+.if \nX=2 .ds x} flushq D3DK "" "\&"
+.if \nX=3 .ds x} flushq "" "" "\&"
+.TH \*(x}
+.IX "\f4flushq\fP(D3DK)"
+.IX "STREAMS messages"
+.SH NAME
+\f4flushq\f1 \- flush messages on a queue
+.SH SYNOPSIS
+.nf
+.na
+\f4#include <sys/stream.h>
+.sp 0.5
+void flushq(queue_t *\f2q, \f4int\f2 flag\f4);\f1
+.ad
+.fi
+.SH ARGUMENTS
+.RS 0n 10
+.IP "\f2q\f1" 10n
+Pointer to the queue to be flushed.
+.IP "\f2flag\f1" 10n
+Determines messages to flush.  Valid \f2flag\f1 values are:
+.P
+.RS 12
+.TP 12
+\f4FLUSHDATA\f1
+Flush only data messages (types \f4M_DATA, M_DELAY, M_PROTO, \f1and 
+\f4M_PCPROTO\f1).
+.TP
+\f4FLUSHALL\f1
+Flush all messages.
+.RE
+.RE
+.SH DESCRIPTION
+\f4flushq\f1 frees messages on a queue by calling
+\f4freemsg\f1(D3DK) for each message.
+If the queue's count falls below the low water mark and someone wants to write to the queue,
+the nearest upstream or downstream service procedure is enabled.
+.SH RETURN VALUE
+None.
+.SH LEVEL
+Base or Interrupt.
+.SH NOTES
+Does not sleep.
+.SH SEE ALSO
+.na
+\f4put\fP(D2DK),
+\f4flushband\fP(D3DK),
+\f4freemsg\f1(D3DK),
+\f4putq\f1(D3DK),
+\f4queue\fP(D4DK)
+.ad
+.SH EXAMPLE
+See \f4put\fP(D2DK) for an example of \f4flushq\fP.

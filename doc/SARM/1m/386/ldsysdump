@@ -1,0 +1,79 @@
+'\"macro stdmacro
+.if n .pH g1a.ldsysdump @(#)ldsysdump	40.4 of 1/3/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+'\"macro stdmacro
+.if n .pH g1a.ldsysdump @(#)ldsysdump	40.5 of 5/25/89
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.if \nX=0 .ds x} ldsysdump 1M "System Administration Utilities" "\&"
+.if \nX=1 .ds x} ldsysdump 1M "System Administration Utilities"
+.if \nX=2 .ds x} ldsysdump 1M "" "\&"
+.if \nX=3 .ds x} ldsysdump "" "" "\&"
+.nr X
+.TH \*(x} "" "386 Computer Only"
+.SH NAME
+\f4ldsysdump\f1 \- load system dump from floppy diskettes
+.SH SYNOPSIS
+\f4/usr/sbin/ldsysdump\f1 \f2destination_file\fP
+.SH DESCRIPTION
+The \f4ldsysdump\fP command loads the memory image files from
+the floppy diskettes used to take a system dump 
+and recombines them into a single
+file on the hard disk suitable for use by the \f4crash\fP command.
+The \f2destination_file\f1 is the name of the hard disk
+file into which the data from the diskettes will be loaded.
+.PP
+When invoked,
+\f4ldsysdump\fP
+begins an interactive procedure that prompts the user
+to insert the diskettes to be loaded.
+The user has the option of quitting the session at any time.
+This allows only the portion of the system image needed to be dumped.
+.SH EXAMPLES
+This example loads the three floppies produced via the \f4sysdump\f1 command
+on a machine equipped with 2 MB of memory.
+.RS 5
+.sp
+.nf
+\f4$ldsysdump /var/tmp/cdump
+.sp
+Insert first sysdump floppy.
+Enter 'c' to continue, 'q' to quit: c
+.sp
+Loading sysdump
+\&................................................................
+\&......................................
+.sp
+Insert next sysdump floppy.
+Enter 'c' to continue, 'q' to quit: c
+.sp
+Loading more sysdump
+\&................................................................
+\&......................................
+.sp
+Insert next sysdump floppy.
+Enter 'c' to continue, 'q' to quit: c
+.sp
+Loading more sysdump
+\&................................................................
+\&......................................
+.sp
+3 Sysdump files coalesced, 4096 (512 byte) blocks
+$\f1
+.RE
+.fi
+.SH FILES
+\f4/dev/dsk/c0d0s6\fP  device used for floppy access
+.SH SEE ALSO
+\f4crash\fP(1M), \f4sysdump\fP(8).
+.br
+\f4ulimit\fP(2) in the \f2Programmer's Reference Manual\f1.
+.SH DIAGNOSTICS
+If a floppy diskette is inserted out of sequence
+a message is printed.  The user is allowed to insert
+a new one and continue the session.
+.SH NOTES
+The file size limit must be set large enough 
+to hold
+the dump
+.Ee

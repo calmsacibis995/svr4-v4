@@ -1,0 +1,67 @@
+'\"macro stdmacro
+.if n .pH g3n.ypupdate @(#)ypupdate	40.4 of 5/24/91
+.\" Copyright 1989 AT&T
+.\" @(#)ypupdate.3n 1.7 89/09/28 SMI;
+.\" Copyright (c) 1988 Sun Microsystems, Inc. - All Rights Reserved.
+.nr X
+.if \nX=0 .ds x} ypupdate 3N "" "\&"
+.if \nX=1 .ds x} ypupdate 3N ""
+.if \nX=2 .ds x} ypupdate 3N "" "\&"
+.if \nX=3 .ds x} ypupdate "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4yp_update\fP \- change NIS information
+.SH SYNOPSIS
+.nf
+\f4#include <rpcsvc/ypclnt.h>\f1
+.P
+.ft 4
+yp_update(char *domain, char *map, unsigned ypop, char *key,
+	int keylen, char *data, int datalen);
+.fi
+.SH DESCRIPTION
+.P
+\f4yp_update\f1
+is used to make changes to the
+\s-1NIS\s0
+database.
+The syntax is the same as that of
+\f4yp_match\f1
+except for the extra parameter
+\f2ypop\f1,
+which may take on one of four values.
+If it is
+\f4YPOP_CHANGE\f1
+then the data associated with the key will
+be changed to the new value.
+If the key is not found in the database, then
+\f4yp_update\f1
+will return
+\f4YPERR_KEY\f1.
+If
+\f2ypop\f1
+has the value
+\f4YPOP_INSERT\f1
+then the key-value pair will be inserted
+into the database.
+The error
+\f4YPERR_KEY\f1
+is returned if the key already exists in the database.
+To store an item into the database without
+concern for whether it exists already or not, pass
+\f2ypop\f1
+as
+\f4YPOP_STORE\f1
+and no error will be returned if the key
+already or does not exist.
+To delete an entry, the value of
+\f2ypop\f1
+should be
+\f4YPOP_DELETE\f1.
+.P
+This routine depends upon secure
+\s-1RPC\s0,
+and will not work unless the network is running secure
+\s-1RPC\s0.
+.SH "SEE ALSO"
+\f4secure_rpc\f1(3N)

@@ -1,0 +1,96 @@
+'\"macro stdmacro
+.if n .pH g3.index @(#)index	40.10 of 4/24/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.\" @(#)index.3 1.4 88/12/15 SMI; from UCB 4.2 and S5
+.\" Copyright (c) 1988 Sun Microsystems, Inc. - All Rights Reserved.
+.\"
+.nr X
+.if \nX=0 .ds x} index 3 "BSD Compatibility Package" "\&"
+.if \nX=1 .ds x} index 3 "BSD Compatibility Package"
+.if \nX=2 .ds x} index 3 "" "\&"
+.if \nX=3 .ds x} index "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4index\f1, \f4rindex\f1 \- string operations
+.SH SYNOPSIS
+.P
+.nf
+\f4#include <string.h>\f1
+.P
+\f4char \(**index(s, c)\f1
+\f4char \(**s, c;\f1
+.P
+\f4char \(**rindex(s, c)\f1
+\f4char \(**s, c;\f1
+.fi
+.SH DESCRIPTION
+.P
+These functions operate on
+\f4NULL\fP-terminated
+strings.  They do not check for overflow of
+any receiving string.
+.P
+\f4index\f1
+and
+\f4rindex\f1
+returns a pointer to the first (last) occurrence of character
+.I c
+in string
+.IR s ,
+or a
+\f4NULL\fP
+pointer if
+.I c
+does not occur in the string.
+The
+\f4NULL\fP
+character terminating a string is considered to
+be part of the string.
+.SH SEE ALSO
+\f4bstring\fP(3),
+\f4strings\fP(3)\f1
+.P
+\f4malloc\fP(3C)
+in the \f2Programmer's Reference Manual\f1
+.SH NOTES
+For user convenience, these functions
+are declared in the optional
+\f4<strings.h>\f1
+header file. 
+.P
+On the Sun processor, as well as on many other machines, you can
+.I not
+use a
+\f4NULL\fP
+pointer to indicate a
+\f4NULL\fP
+string.  A
+\f4NULL\fP
+pointer is an error and results in an abort
+of the program.  If you wish to indicate a
+\f4NULL\fP
+string, you must have a pointer that
+points to an explicit
+\f4NULL\fP
+string.  On some implementations of the C
+language on some machines, a
+\f4NULL\fP
+pointer, if dereferenced, would yield a
+\f4NULL\fP
+string; this highly
+non-portable trick was used in some programs.
+Programmers using a
+\f4NULL\fP
+pointer to represent an empty string should be
+aware of this portability issue; even on
+machines where dereferencing a
+\f4NULL\fP
+pointer does not cause an abort of the
+program, it does not necessarily yield a
+\f4NULL\fP
+string.
+.P
+Character movement is performed differently
+in different implementations.
+Thus overlapping moves may yield surprises.

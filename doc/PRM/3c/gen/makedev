@@ -1,0 +1,62 @@
+'\"macro stdmacro
+.if n .pH g3c.makedev @(#)makedev	40.8 of 1/3/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} makedev 3C "" "\&"
+.if \nX=1 .ds x} makedev 3C ""
+.if \nX=2 .ds x} makedev 3C "" "\&"
+.if \nX=3 .ds x} makedev "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4makedev, major, minor\fP \- manage a device number 
+.SH SYNOPSIS
+\f4#include <sys/types.h>
+.br
+\f4#include <sys/mkdev.h>
+.PP
+\f4dev_t makedev(major_t maj, minor_t min);
+.PP
+\f4major_t major(dev_t device);
+.PP
+\f4minor_t minor(dev_t device);\f1
+.SH DESCRIPTION
+The \f4makedev\fP routine returns a formatted device number on
+success and \f4NODEV\fP on failure.
+.I maj\^
+is the major number. 
+.I min\^
+is the minor number. 
+\f4makedev\fP can be used to create a device number for input to \f4mknod\fP(2).
+.PP
+The \f4major\fP routine returns the major number component from \f2device\f1. 
+.PP
+The \f4minor\fP routine returns the minor number component  from \f2device\fR.
+.PP
+\f4makedev\fP will fail if one or more of the following are true:
+.TP 15
+\f4EINVAL\f1
+One or both of the arguments \f2maj\fP and \f2min\f1 is too large.
+.TP
+\f4EINVAL\f1
+The \f2device\f1 number created from \f2maj\f1 and \f2min\f1 is \f4NODEV\fP.
+.TP 0 
+\f4major\fP will fail if one or more of the following are true:
+.TP 15
+\f4EINVAL\f1
+The \f2device\fP argument is \f4NODEV\fP.
+.TP
+\f4EINVAL\f1
+The major number component of \f2device\fP is too large.
+.TP 0
+\f4minor\fP will fail if the following is true:
+.TP 15
+.SM
+\%EINVAL
+The \f2device\fP argument is \f4NODEV\fP.
+.SH "SEE ALSO"
+\f4stat\fP(2), \f4mknod\fP(2).
+.SH "DIAGNOSTICS"
+On failure,
+\f4NODEV\fP is returned and \f4errno\f1 is set
+to indicate the error.

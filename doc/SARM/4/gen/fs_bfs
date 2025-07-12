@@ -1,0 +1,55 @@
+'\"macro stdmacro
+.if n .pH g4.fs_bfs @(#)fs_bfs	40.9 of 4/11/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+'\"!tbl | mmdoc
+.nr X
+.if \nX=0 .ds x} fs 4 "bfs" "\&"
+.if \nX=1 .ds x} fs 4 "bfs"
+.if \nX=2 .ds x} fs 4 "" "\&"
+.if \nX=3 .ds x} fs "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4fs\f1 (bfs) \- format of the bfs file system volume
+.SH SYNOPSIS
+\f4#include <sys/types.h>
+.br
+#include <sys/fs/bfs.h>\fP
+.SH DESCRIPTION
+The bfs superblock is stored on sector 0. Its format is:
+.PP
+.ps -1
+.vs -1
+.nf
+.ft 4
+.ta .35i .7i 2.25i
+	struct bdsuper
+	{
+		long bdsup_bfsmagic;	/* Magic number */
+		off_t bdsup_start;	/* Filesystem data start offset */
+		off_t bdsup_end;	/* Filesystem data end offset */
+
+		/*
+		 * Sanity words
+		 */
+		daddr_t bdcp_fromblock;	/* "From" block of current transfer */
+		daddr_t bdcp_toblock;	/* "To" block of current transfer */
+		daddr_t bdcpb_fromblock;	/* Backup of "from" block */
+		daddr_t bdcpb_toblock;	/* Backup of "to" block */
+	};
+
+	#define BFS_MAGIC   0xBADFACE	/* bfs magic number */
+.ft 1
+.ps +1
+.vs +1
+.fi
+.PP
+The sanity words are  used to promote sanity during compaction.
+They are used by \f4fsck\fP(1M) to recover from a system
+crash at any point during compaction.
+See "Storage Blocks under \f4bfs\fP" in the "The \f4bfs\fP File System" section
+of chapter 5 in the \f2System Administratror's Guide\fP
+for a description
+of compaction.
+.SH SEE ALSO
+\f4bfs\fP-specific \f4inode\fP(4)

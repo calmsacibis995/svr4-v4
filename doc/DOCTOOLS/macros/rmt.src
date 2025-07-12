@@ -1,0 +1,189 @@
+'\"#ident  "@(#)doctools:macros/rmt.src	1.2"
+'\"
+'\"       Copyright (c) 1990, 1991 UNIX System Laboratories, Inc.
+'\"       Copyright (c) 1984, 1986, 1987, 1988, 1989, 1990 AT&T
+'\"         All Rights Reserved
+'\"
+'\"       THIS IS UNPUBLISHED PROPRIETARY SOURCE CODE OF
+'\"       UNIX System Laboratories, Inc.
+'\"       The copyright notice above does not evidence any
+'\"       actual or intended publication of such source code.
+'\"
+'\"     rmt: manual page macros; used with gen and macros.h files
+'\"
+'\"     Modified by: M. Shapiro
+'\"                 UNIX System Laboratories
+'\"                 attunix!mxs   201-522-5181
+'\"                   
+.deTH \" ============= Title Heading ======================
+.nr >r 0 1         \" Start counter for RS 
+.rm [1 [2 [3 [4    \" remove previous title string names, before setting
+.PD                \" force reset of default paragraph spacing
+'in \\n(?au        \" Set hanging indent
+.\" $1=page name;$2=section number;$3=section name;$4=book name-set strings
+.ds[1 \\$1
+.if\w\\$2 .ds[2 \|(\^\\$2\^)\|
+.if\w\\$3 .ds[3 (\^\\$3\^)
+.if\\ns=4 .ds[4 UNIX System V
+.ifn .ds[4 UNIX System V
+.if\w\\$4 .ds[4 \\$4
+.\" Set string for print date: if defined, use date in macros.h, else current
+.if \\*([5 .ds[5 \\n(mo/\\n(dy/\\n(yr
+.if\\n(nl \{.rs       \" ensure spacing is on
+.   if\\nC=1 .bp      \" C flag is on: continuous page numbering
+.   if!\\nC=1 .bp1 \} \" begin new page 1 for each subsequent .TH
+.if\\nC=1 .it1 "Z     \" swap file name string definitions after one line
+.ien \{'na            \" no adjust for nroff
+'   nh\}              \" no hypenation for nroff
+.el \{'ad b           \" both sides adjust for troff
+'   hy14\}            \" full hypenation for troff
+.DT                   \" reset tab stops
+..
+.deSH \" ================= Section Heading =================
+.PD                   \" force reset of default paragraph spacing
+.sp\\n(PDu            \" Space down for paragraph
+.nr ?i \\n(?au        \" Use pre-set indent 
+.ps\\n(PSp-1p         \" Set point size (-1 since in all caps)
+.\" Pass args to sub-macro: $1=ti amount, $2-$7=Heading Text
+."H 0 "\\$1" "\\$2" "\\$3" "\\$4" "\\$5" "\\$6"
+..
+.deSS \" ============== Sub Section Heading =================
+.PD                   \" force reset of default paragraph spacing
+.sp\\n(PDu            \" Space down for paragraph
+.nr ?i \\n(?au        \" Use pre-set indent
+.nr ?g \\n(?au/2u     \" indent 1/2 standard indent
+.ps\\n(PS             \" default point size
+.\" Pass args to sub-macro: $1=ti amount, $2-$7=Heading Text
+."H \\n(?gu "\\$1" "\\$2" "\\$3" "\\$4" "\\$5" "\\$6"
+..
+.dePP \"============== Paragraph Macro =======================
+.rr i\\n(>r           \" Cleanup indentation registers
+.sp\\n(PDu            \" Space down
+.in\\n(?iu            \" Reset indent to SH or SS setting
+.ft\\*(-1             \" force default font
+.ps\\n(PS             \" force default point size
+.vs\\n(VS             \" force default leading
+.ne3                  \" Check for space
+.ns                   \" turn spacing off
+..
+.deP \"=============== Synonym for .PP ========================
+.PP
+..
+.deLP \"============== Synonym for .PP ========================
+.PP
+..
+.deHP \" ========= Hanging Paragraph: $1=indent ===============
+.sp\\n(PDu                              \" Space down
+.ne4                                    \" Check for space
+.in\\n(?iu                              \" Specify current indent
+.ie\w\\$1 .nr i\\n(>r \\$1n         \" Convert $1 (indent) to ens
+.el.if\\n(i\\n(>r=0 .nr i\\n(>r \\n(?bu \" Use default indent, or i\\n(>r
+.in+\\n(i\\n(>ru                        \" Set indent for paragraph
+.ti-\\n(i\\n(>ru                        \" Set indent for 1st line
+.ns                                     \" no spacing allowed here
+..
+.deIP \" ========= Indented Paragraph: $1=tag, $2=indent =======
+.TP \\$2           \" Send indent info to .TP and put tag on next line
+\&\\$1
+..
+.deTP \" ========= Tagged Paragraph: $1=indent, first line=tag ===== 
+.if\\n(.z[[ \{.di                 \" force end to errant diversion
+.   rm [[ \}                            \" remove errant diversion
+.sp\\n(PDu                              \" Space down
+.ne2v                                   \" Check for space
+.ie\w\\$1 .nr i\\n(>r \\$1n         \" collect $1 indent
+.el.if\\n(i\\n(>r=0 .nr i\\n(>r \\n(?bu \" use default, if no previous indent
+.in0                                    \" Force zero indent
+.ns                                     \" turn spacing off
+.it1 "p                                 \" Invoke intermediate macro
+.di [[                                  \" Divert tag line into [[
+..
+.deRS \" ========= Relative Indent Start: $1=indent ==========
+.nr ?2 \\n(i\\n(>ru                    \" record current TP,HP,IP indent
+.nr >r +1                              \" Increment counter
+.nr h\\n(>r \\n(?iu                    \" Record indent
+.ie \w\\$1 .nr ?1 \\$1n            \" Record $1
+.el.if\\n(?1=0 \{.ie!\\n(?2=0 .nr?1 \\n(?2u \" Use HP,IP,TP indent amount
+.   el.nr?1 \\n(?bu \}                 \" Use default
+.nr s\\n(>r \\n(?1u+\\n(h\\n(>ru       \" Add $1 to current indent
+.in \\n(s\\n(>ru                       \" Set indent here
+.nr ?i \\n(.iu                         \" Allows Paragraphs to use this indent
+..
+.\" ============= Relative Indent End =======================
+.deRE \" $1 = indent level
+.ie \\n(>r>0 \{.ie \w\\$1 .in \\n(h\\$1u \" Return to specified indent
+.   el.in \\n(h\\n(>ru            \" Return to previous indent
+.   rr h\\n(>r i\\n(>r ?1 ?2      \" Cleanup
+.   ft1                           \" reset to default font
+.   nr ?i \\n(.iu                 \" Allows Paragraphs to use this indent
+.   ps\\n(PS                      \" reset original point size
+.   vs\\n(VS                      \" reset original leading
+.   nr >r -1 \}                   \" Decrement counter
+.el .)D ".RE: UNMATCHED .RS in Heading -- \\*([(" \" Non-fatal error
+..
+.deSM \" ============ Make text smaller ========================
+.ps\\n(PS-1             \" Set point size
+.ie\w\\$1 \{\\$1 \\$2 \\$3 \\$4 \\$5 \\$6
+.ps\\n(PS \}            \" Restore point size
+.el \{.it 1 "p          \" wait one line, the restore ps
+.   nr #S 1 \}          \" put up flag for "p to see
+..
+.\" HERE STARTS THE NON-USER LEVEL MACRO DEFS 
+.de"H \"========== SH and SS macro work ================
+.if \\n(>r>0 .)D "Missing .RE in Heading -- \\*([(" \" Non-fatal error
+.rr ?1 ?2 i\\n(>r       \" Cleanup indenting registers
+.nr >r 0 1              \" Start counter for RS 
+.rm [(                  \" remove last heading text
+.ne3                    \" Check for space
+.ft\\*(@e               \" Use heading font
+.in\\n(?iu              \" Set hanging indent
+.ti\\$1u                \" Set Heading indent
+.ll\\n(LLu              \" Set line length
+\&\\$2 \|\\$3 \|\\$4 \|\\$5 \|\\$6 \|\\$7
+.\" store heading text for some use somewhere
+.ds [( \\$2 \\$3 \\$4 \\$5 \\$6 \\$7
+.br                     \" Force cleanout
+.ps\\n(PS               \" Ensure correct point size
+.vs\\n(VS               \" reset original leading
+.ft\\*(-1               \" Use running text font
+.fi                     \" Force fill mode
+.ien \{.na              \" no adjust for nroff
+.   nh\}                \" no hypenation for nroff
+.el \{.ad b             \" both sides adjust for troff
+.   hy14\}              \" full hypenation for troff
+.ns                     \" Don't allow spacing
+..
+.de"Z \" ============ input trap for merged file ============
+.ds[E \\*([Y
+..
+.de"p \" ========= Input trap for SM and TP =================
+.ft1                          \" force return to default font
+.if \\n(#S=1 \{.ps\\n(PS      \" reset point size
+.   rr #S \}                  \" remove marker
+.if\\n(.z[[ \{.br       \" Force break in diversion
+.   di                        \" End diversion
+.   "t \}                     \" go to "t
+..
+.de"t \" ======== .TP/.IP work done here ==================
+.ne3                     \" check for space
+.ds[a \&\\*([[
+.if \\n(PDu>0 .sp\\n(PDu \" Ensure correct interparagraph spacing
+.in\\n(?iu               \" set indent
+.in+\\n(i\\n(>ru         \" Set indent
+.ti-\\n(i\\n(>ru         \" Set temporary indent
+.ie \\n(i\\n(>ru<(\w\\*([au+\w\0u) \{\\*([a
+.   br \}                \" Put tag on own line since too big
+.el \\*([a\h|\\n(i\\n(>ru\c
+.rm [[ [a                \" Cleanup
+.rs                      \" make sure spacing can occur!
+..
+.\"================== Version Control: VS/VE =====================
+.deVS
+.\" If -rv registers doesn't match $1, ignore everything till .VE
+.\" Note: VE is not defined: only name is needed
+.ie !\\$1\\nv .if !\w\\$2 .ig VE
+.el.if \w\\$2 \\$2    \" Include $2 in text
+..
+.nr MP 1                 \" Inform gen this is man page
+.em "M                   \" Name end macro
+.\" --------------------- EOF ---------------------------------

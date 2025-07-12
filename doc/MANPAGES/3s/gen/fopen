@@ -1,0 +1,188 @@
+'\"macro stdmacro
+.if n .pH g3s.fopen @(#)fopen	40.19 of 5/22/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} fopen 3S "C Development Set" "\&"
+.if \nX=1 .ds x} fopen 3S "C Development Set"
+.if \nX=2 .ds x} fopen 3S "" "\&"
+.if \nX=3 .ds x} fopen "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4fopen\f1, \f4freopen\f1, \f4fdopen\f1 \- open a stream
+.SH SYNOPSIS
+\f4#include <stdio.h>\f1
+.PP
+\f4FILE \(**fopen (const char \(**filename, const char \(**type);\f1
+.PP
+\f4FILE \(**freopen (const char \(**filename, const char \(**type, FILE 
+.br
+.nf
+    \(**stream);\f1
+.fi
+.PP
+\f4FILE \(**fdopen (int fildes, const char \(**type);\f1
+.SH DESCRIPTION
+\f4fopen\fP
+opens the file named by
+.I filename\^
+and associates a
+.I stream\^
+with it.
+\f4fopen\fP
+returns a pointer to the
+\f4FILE\fP
+structure associated with
+the
+.IR stream .
+.PP
+.I filename\^
+points to a character string that contains
+the name of the file to be opened.
+.PP
+.I type\^
+is a character string beginning with one of the following sequences:
+.RS .25i
+.TP .85i
+\f4"r" \f1or\fP "rb"\f1
+open for reading
+.ns
+.TP .85i
+\f4"w" \f1or\fP "wb"\f1
+truncate to zero length or create for writing
+.ns
+.TP .85i
+\f4"a" \f1or\fP "ab"\f1
+append; open for writing at end
+of file, or create for writing
+.ns
+.TP .85i
+\f4"r+"\f1,\f4 "r+b" \f1or\fP "rb+"\f1
+open for update (reading and writing)
+.ns
+.TP .85i
+\f4"w+"\f1,\f4 "w+b" \f1or\fP "wb+"\f1
+truncate or create for update
+.ns
+.TP .85i
+\f4"a+"\f1,\f4 "a+b" \f1or\fP "ab+"\f1
+append; open or create for
+update at end-of-file
+.RE
+.PP
+The ``\f4b\fP'' is ignored in the above \f2type\fPs. 
+The ``\f4b\fP'' exists to
+distinguish binary files from text files.  However, there is no
+distinction between these types of files on a \s-1UNIX\s+1 system.
+.PP
+\f4freopen\fP
+substitutes the named file in place
+of the open
+.IR stream .
+A flush is first attempted, and then the original
+.I stream\^
+is closed,
+regardless of whether the open
+ultimately succeeds.
+Failure to flush or close \f2stream\fP successfully is ignored.
+\f4freopen\fP
+returns a pointer to the
+\f4FILE\fP
+structure associated with
+.IR stream .
+.PP
+\f4freopen\fP
+is typically used to attach the preopened
+.I streams\^
+associated with
+\f4stdin\f1,
+\f4stdout\f1,
+and
+\f4stderr\f1
+to other files.
+\f4stderr\f1 is by default unbuffered, but the
+use of \f4freopen\f1 will cause it to become buffered or line-buffered.
+.PP
+\f4fdopen\fP
+associates a
+.I stream\^
+with a file descriptor.
+File descriptors are obtained from
+\f4open\fP,
+\f4dup\fP,
+\f4creat\fP,
+or
+\f4pipe\fP,
+which open files but do not return pointers to a
+\f4FILE\fP 
+structure 
+.I stream\^.
+Streams are necessary input for almost all of the Section 3S library routines.
+The
+.I type\^
+of
+.I stream\^
+must agree with the mode of the open file.
+The file position indicator associated with \f2stream\fP is set to the position
+indicated by the file offset associated with \f2fildes\fP.
+.PP
+When a file is opened for update, both input and output may be
+done on the resulting
+.IR stream .
+However, output may not be directly followed by input without an
+intervening
+\f4fflush\fP,
+\f4fseek\fP,
+\f4fsetpos\fP,
+or
+\f4rewind\fP,
+and input may not be directly followed by output without an
+intervening
+\f4fseek\fP,
+\f4fsetpos\fP,
+or
+\f4rewind\fP,
+or an input operation that encounters end-of-file.
+.PP
+When a file is opened for append (i.e., when
+.I type\^
+is \f4"a"\f1, \f4"ab"\f1, \f4"a+"\f1, or \f4"ab+"\f1), it is impossible to overwrite information
+already in the file.
+\f4fseek\fP
+may be used to reposition the file pointer to any position
+in the file, but when output is written
+to the file, the current file pointer is disregarded.
+All output is written at the end of the file and causes the file
+pointer to be repositioned at the end of the output.  If two separate
+processes open the same file for append, each process may write freely
+to the file without fear of destroying output being written by the
+other.  The output from the two processes will be intermixed in the
+file in the order in which it is written.
+.PP
+When opened, a \f2stream\fP is fully buffered if and only if it can
+be determined not to refer to an interactive device.
+The error and end-of-file indicators are cleared for the
+\f2stream\fP.
+.SH "SEE ALSO"
+\f4close\fP(2),
+\f4creat\fP(2), \f4dup\fP(2),
+\f4open\fP(2),
+\f4pipe\fP(2),
+\f4write\fP(2),
+\f4fclose\fP(3S),
+\f4fseek\fP(3S), \f4setbuf\fP(3S), \f4stdio\fP(3S).
+.SH DIAGNOSTICS
+The functions \f4fopen\f1 and \f4freopen\f1 return a null pointer if \f2path\fP
+cannot be accessed, or if \f2type\fP is invalid, or if the file
+cannot be opened.
+.PP
+The function \f4fdopen\f1 returns a null pointer if \f2fildes\fP is not an
+open file descriptor, or if \f2type\fP is invalid, or if the file
+cannot be opened.
+.PP
+The functions \f4fopen\f1 or \f4fdopen\f1 may fail and not set \f4errno\fP
+if there are no free \f4stdio\fP streams.
+.PP
+File descriptors used by \f4fdopen\f1 must be less than 255.
+.\"	@(#)fopen.3s	6.2 of 10/20/83
+.Ee

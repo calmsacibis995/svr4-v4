@@ -1,0 +1,308 @@
+'\"!  tbl | mmdoc
+.if n .pH 386.compat @(#)compat	40.14
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+'\"!  tbl | mmdoc
+.BK "Technology File Mapping Guide"
+.CH "System Compatibility Software" 7
+.H 1 "Application Compatibility Package"
+The Application Compatibility Package (previously referred to as the 
+XENIX System Compatibility Package) 
+contains commands,
+system-calls (in a library called \f4libx\fP\^) for SCO/XENIX
+shared-memory and semaphores as well as the SCO/XENIX File and Record
+Locking interface (\^\f4locking\fP\^).
+See the \f2Migration and Compatibility Guide\f1 for more information.
+.P
+.XS I N
+.DS
+\f4add-on/pkg.acp/*\fP
+.DE
+.XF
+.H 2 "XENIX System Services"
+.XS I N
+.S -1 -2
+.TS
+tab(	);
+l3f5w(3.00i) l3f1.
+uts/i386/exec/i286x/*	routines executing XENIX 286 executables
+uts/i386/exec/xout/*	routines executing XENIX 386 executables
+uts/i386/master.d/i286x/*	configuration files for \f4i286\fP boot module
+uts/i386/master.d/xout/*	configuration files for \f4xout\fP boot module
+uts/i386/os/cxenix.c	XENIX syscall dispatcher
+uts/i386/master.d/cxenix/*	configuration files for \f4cxenix\fP boot module
+uts/i386/os/local.c	\f4clocal\fP syscall interface
+uts/i386/os/xmmu.c	XENIX driver support routines
+uts/i386/os/xsys.c	XENIX compatibility syscalls
+uts/i386/sys/locking.h	XENIX \f4locking\fP syscall requests
+uts/i386/sys/proctl.h	XENIX \f4proctl\fP syscall requests
+uts/i386/sys/sd.h	structure and defines for XENIX shared data
+uts/i386/sys/timeb.h	structure (\f4timeb\fP) returned by the \f4ftime\fP syscall
+uts/i386/sys/sco.h	application compatibility headers
+.TE
+.S
+.XF
+.H 2 "XENIX System FSType \(em \f4xnamfs\fP"
+.XS I N
+.S -1 -2
+.TS
+tab(	);
+l3f5w(3.00i) l3f1.
+uts/i386/fs/xnamfs/*
+uts/i386/master.d/xnamfs/*	configuration files for \f4xnamfs\fP boot module
+uts/i386/sys/fs/xnamnode.h	XENIX shared data and semaphore structures
+.TE
+.S
+.XF
+.H 2 "XENIX System Libraries"
+.XS I N
+.DS
+\f4:mkxcplib
+xcplib/*\fP
+.DE
+.XF
+.H 2 "SCO/XENIX Commands" 
+.XS I N
+.S -1 -2
+.TS
+tab(	);
+l3f5w(3.00i) l3f1.
+\f4cmd/ar/*
+cmd/cvtomf/*			Intel Object Module Format (OMF) support
+cmd/cvtomflib/*\fP
+cmd/eac/mapchan/*
+cmd/eac/mapcmds/*
+cmd/eac/mapkey/*
+cmd/eac/maplocale/*
+cmd/eac/rename/*
+cmd/eac/vidi/*
+.TE
+.S
+.XF
+.H 1 "BSD System Compatibility Package"
+The BSD System Compatibility Package contains commands, libraries, and system-calls specific to the Berkeley Software Distribution (BSD) that were not merged with the UNIX System V base product.
+It also includes software support for \f4sendmail\fP and the BSD versions of \f4nroff\fP\^, \f4troff\fP, and \f4lp\fP\^.
+See the \f2Migration and Compatibility Guide\f1 for more information.
+.P
+.H 2 "BSD Header Files"
+.XS I N
+.DS
+\f4:mkucbhead
+ucbhead/*\fP
+.DE
+.XF
+.XK
+.H 2 "BSD System Libraries"
+.XS I N
+.CW
+.S -1 -2
+.TS
+tab(	);
+l3f5w(2.25i) l3f1.
+\f4:mkucblib
+ucblib/*
+lib/libmp/*\fP     lint library
+.TE
+.S
+.XF
+.XK
+.H 2 "BSD System Commands"
+.DS
+\f4:mkucb
+:mkucbcmd
+add-on/pkg.compat/*
+ucb.dirs
+ucbcmd/arch/*
+ucbcmd/basename/*
+ucbcmd/biff/*
+ucbcmd/cc/*
+ucbcmd/checkeq/*
+ucbcmd/checknr/*
+ucbcmd/chown/*
+ucbcmd/df/*
+ucbcmd/diffmk/*
+ucbcmd/du/*
+ucbcmd/echo/*
+ucbcmd/expand/*
+ucbcmd/fastboot/*
+ucbcmd/fasthalt/*
+ucbcmd/fsirand/*
+ucbcmd/groups/*
+ucbcmd/grpck/*
+ucbcmd/halt/*
+ucbcmd/hostid/*
+ucbcmd/hostname/*
+ucbcmd/install/*
+ucbcmd/lastcomm/*
+ucbcmd/ld/*
+ucbcmd/lint/*
+ucbcmd/ln/*
+ucbcmd/logger/*
+ucbcmd/look/*
+ucbcmd/ls/*
+ucbcmd/mach/*
+ucbcmd/mt/*
+ucbcmd/pagesize/*
+ucbcmd/plot/*
+ucbcmd/printenv/*
+ucbcmd/prt/*
+ucbcmd/ps/*
+ucbcmd/pwck/*
+ucbcmd/reboot/*
+ucbcmd/renice/*
+ucbcmd/sccscmd/*
+ucbcmd/sendmail/*
+ucbcmd/shutdown/*
+ucbcmd/stty/*
+ucbcmd/sum/*
+ucbcmd/tcopy/*
+ucbcmd/test/*
+ucbcmd/tr/*
+ucbcmd/tset/*
+ucbcmd/ul/*
+ucbcmd/unifdef/*
+ucbcmd/users/*
+ucbcmd/w/*
+ucbcmd/which/*
+ucbcmd/whoami/*
+ucbcmd/xstr/*\fP
+.DE
+.XK
+.H 2 "BSD System Text Processing Utilities"
+.XS I N
+.DS
+\f4ucbcmd/deroff/*
+ucbcmd/eqn/*
+ucbcmd/man/*
+ucbcmd/refer/*
+ucbcmd/soelim/*
+ucbcmd/tbl/*
+ucbcmd/troff/*\fP
+.DE
+.XF
+.H 1 "PC System Compatibility"
+.H 2 "VP/ix\*(Tm System Services"
+VP/ix is a UNIX system utility that provides a multitasking,
+multiuser MS-DOS environment.
+VP/ix offers features to install and use MS-DOS applications
+as well as UNIX System V programs.
+The VP/ix configuration file is used for custom tailoring the MS-DOS environment.
+.XS I N
+.CW
+.S -1 -2
+.TS
+tab(	);
+l3f5w(2.25i) l3f1.
+uts/i386/exec/dosx/*	routines executing MS-DOS executables
+uts/i386/master.d/merge/*	T{
+configuration files for \f4merge\fP boot module; merge of Locus and 386 MS-DOS
+T}
+uts/i386/master.d/dosx/*	configuration files for \f4dosx\fP boot module
+uts/i386/master.d/vx/*	configuration files for \f4vx\fP boot module
+uts/i386/ml/v86gptrap.s	VP/ix format handling
+uts/i386/sys/nami.h
+uts/i386/vm/seg_vpix.c	VP/ix segment handling routines
+uts/i386/vm/seg_vpix.h	VP/ix segment defines
+uts/i386/vx/*	
+.TE
+.H 2 "386 Device Drivers"
+In SVR4, UNIX System V/386 provides the device driver software for mouse,
+KD (Keyboard/Display), SCSI hard disk, tape driver, and
+floppy tape driver.
+.P
+.XS I N
+.CW
+.S -1 -2
+.TS
+tab(	);
+l3f5w(2.25i) l3f1.
+add-on/mouse/ID/*	scripts creating mouse configuration files
+add-on/mouse/io/*	mouse driver
+add-on/scsi/ID/*	files creating SCSI hard disk configuration files
+add-on/scsi/io/*	SCSI hard disk driver
+add-on/scsi/sys/*	SCSI hard disk driver sys headers
+add-on/scsi.in/ID/*	files creating Intel SCSI hard disk configuration files
+add-on/scsi.in/io/*	Intel SCSI specific hard disk driver
+add-on/scsi.in/sys/*	Intel SCSI specific hard disk driver sys headers
+add-on/qt/ID/*	scripts creating tape drive configuration files
+add-on/qt/io/*	tape driver
+add-on/xl/ID/*	scripts creating floppy tape configuration files
+add-on/xl/io/*	floppy tape driver
+add-on/xl/sys/*	floppy tape driver sys headers
+arch/at/uts/i386/*	PC AT bus specific device drivers and bootable modules	
+arch/eisa/add-on/scsi/io/*	EISA bus specific SCSI hard disk driver
+arch/eisa/add-on/scsi.in/ID/*	EISA bus specific Intel SCSI hard disk configuration file
+arch/eisa/add-on/scsi.in/io/*	EISA bus specific Intel SCSI hard disk driver
+arch/eisa/uts/i386/io/*	EISA bus specific kd driver
+arch/hiint/uts/i386/io/*	T{
+486/133se high integration processor board (hiint) specific device drivers
+T}
+arch/hiint/uts/i386/master.d/*	hiint specific configuration files for io boot modules
+arch/hiint/uts/i386/sys/*	hiint specific sys headers
+arch/mbus/uts/i386/io/*	MBUS-II specific device drivers
+arch/mbus/uts/i386/master.d/*	MBUS-II specific configuration files for io boot modules
+arch/mbus/uts/i386/sys/*	MBUS-II specific sys headers
+uts/i386/io/ansi.c	non-hardware specific kd driver
+uts/i386/io/char.c	IWE char module for kd driver
+uts/i386/io/ramd.c	\f4ram\fP disk driver
+uts/i386/io/sysmsg.c	T{
+driver to send messages to the console without going through the standard interface
+T}
+uts/i386/io/ws/*	kd driver utilities
+uts/i386/io/xque.c	kd driver handling event queues
+uts/i386/io/event.c 	kd driver handling event queues (application compatibility)
+uts/i386/master.d/ansi/*	configuration files for \f4ansi\fP boot module
+uts/i386/master.d/char/*	configuration files for \f4char\fP boot module
+uts/i386/master.d/intmap	T{
+configuration files for \f4intmap\fP
+(internationalization for channel driver) boot module
+T}
+uts/i386/master.d/ramd/*	configuration files for \f4ramd\fP boot module
+uts/i386/master.d/sysmsg/*	configuration files for \f4sysmsg\fP boot module
+uts/i386/master.d/ws/*	configuration files for \f4ws\fP boot module
+uts/i386/master.d/xque/*	configuration files for \f4xque\fP boot module
+uts/i386/master.d/event/*	configuration files for \f4event\fP boot module
+uts/i386/sys/ansi.h	defines for IWE ansi terminal control language parser
+uts/i386/sys/ascii.h	defines for ascii char sets for kd driver
+uts/i386/sys/at_ansi.h	defines for PC AT terminal emulator
+uts/i386/sys/chanmux.h	IWE channel multiplexor structures
+uts/i386/sys/char.h	IWE char module structures
+uts/i386/sys/eisa.h	EISA specific defines
+uts/i386/sys/genvid.h	defines for video driver structure and access
+uts/i386/sys/kb.h	kd driver access defines
+uts/i386/sys/kd.h	kd driver defines
+uts/i386/sys/mouse.h	mouse controller defines
+uts/i386/sys/ramd.h	\f4ram\fP disk device driver defines
+uts/i386/sys/sysmsg.h	defines for sysmsg
+uts/i386/sys/tape.h	defines for standard tape ioctl commands
+uts/i386/sys/vdc.h	\f4vdc\fP card defines
+uts/i386/sys/vid.h	defines for kd driver related mode info
+uts/i386/sys/vt.h	defines for PC AT virtual terminal driver
+uts/i386/sys/ws/*	IWE defines
+uts/i386/sys/xque.h	kd/mouse event queue entries
+uts/i386/sys/xtproto.h	BLIT packet protocol defines
+.TE
+.S
+.XF
+.XK
+.H 2 "PC-Interface\*(Tm Utilities"
+The PC-Interface service connects a PC and UNIX hosts
+via an RS-232 or a LAN connection. The connection enables 
+DOS applications running on a PC to use data residing on 
+the UNIX file system; store files and DOS applications on the
+UNIX host; and access remote files as if from a local fixed disk. The
+UNIX System V/386 PC-Interface packages provides services to integrate
+network hosts and personal computers. The packages also supplies a number
+of utilities to enhance the UNIX/DOS interface.
+.P
+.XS I N
+.CW
+.S -1 -2
+.TS
+tab(	);
+l3f5w(2.25i) l3f1.
+add-on/pkg.pci/*
+add-on/pkg.pcieth/*
+cmd/pcintf/*
+.TE
+.S
+.XF

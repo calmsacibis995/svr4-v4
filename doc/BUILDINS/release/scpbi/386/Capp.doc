@@ -1,0 +1,16 @@
+.if n .pH 386.Capp.doc @(#)Capp.doc	40.13
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.BK "Source Code Product Build Instructions" "" "" ""   
+.\ACRONYM	                  
+.CH "Appendix: Source Code Product Documentation" "" "Table of Contents" "A"
+.\CHAPTER	A
+.tC 1 "Introduction" A-1  
+.tC 2 "Prerequisites" A-1  
+.tC 1 "Copying Documentation Files from the Tape" A-2  
+.tC L "Table A-1:\0" "Directory Contents" A-3
+.tC 1 "Installing DOCTOOLS" A-5  
+.tC 2 "Memorandum Macros (MM)" A-6  
+.tC 2 "PostScript Language and DOCTOOLS Software" A-7  
+.tC 1 "Using DOCTOOLS to Print Documents" A-8  
+.tC 2 "Printing Documents from Collection Files" A-8  
+.tC 2 "Example" A-9  

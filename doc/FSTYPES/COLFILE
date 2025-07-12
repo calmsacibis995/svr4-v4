@@ -1,0 +1,15 @@
+.if n .pH fstypes.pg.386.COLFILE @(#)COLFILE	40.13
+.# This book ("Programmer's Guide: Writing File System Types")
+.# contains the following files,
+.# listed in the order in which they are printed.
+.# Next to each file name is its SCCS delta number.
+.FT
+fstypes.pg/386/titlepage	40.5
+fstypes.pg/gen/copyright	40.7
+fstypes.pg/386/MasterToc	40.3
+fstypes.pg/gen/Cfstwg	40.7
+fstypes.pg/gen/fstwg	40.4.1.12
+fstypes.pg/386/Capp1	40.3
+fstypes.pg/386/app1	40.3
+fstypes.pg/386/Cindex	40.4
+fstypes.pg/386/index	40.3

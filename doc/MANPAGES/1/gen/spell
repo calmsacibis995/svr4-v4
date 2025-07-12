@@ -1,0 +1,235 @@
+'\"macro stdmacro
+.if n .pH g1.spell @(#)spell	40.15.1.1 of 4/19/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} spell 1 "Spell Utilities" "\&"
+.if \nX=1 .ds x} spell 1 "Spell Utilities"
+.if \nX=2 .ds x} spell 1 "" "\&"
+.if \nX=3 .ds x} spell "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4spell\f1, \f4hashmake\f1, \f4spellin\f1, \f4hashcheck\f1, \f4compress\f1 \- find spelling errors
+.SH SYNOPSIS
+\f4spell\f1
+[
+\f4\-v\f1
+] [
+\f4\-b\f1
+] [
+\f4\-x\f1
+] [
+\f4\-l\f1
+] [
+\f4+\f2local_file\f1
+] [ \f2files\f1 ]
+.PP
+\f4/usr/lib/spell/hashmake\f1
+.PP
+\f4/usr/lib/spell/spellin\f1
+.I n
+.PP
+\f4/usr/lib/spell/hashcheck\f1
+.I spelling_list
+.PP
+\f4/usr/lib/spell/compress\f1
+.SH DESCRIPTION
+\f4spell\fP
+collects words from the named
+.I files
+and looks them up in a spelling list.
+Words that neither occur among nor are derivable
+(by applying certain inflections,
+prefixes, and/or suffixes) from words in the spelling list
+are printed on the standard output.
+If no
+.I files
+are named,
+words are collected from the standard input.
+.PP
+\f4spell\fP
+ignores most
+\f4troff\fP(1),
+\f4tbl\fP(1),
+and
+\f4eqn\fP(1)
+constructions.
+.PP
+.TP 12
+\f4\-v\f1
+All words not literally in the spelling list are printed,
+and plausible derivations from the words in the spelling list are indicated.
+.TP
+\f4\-b\f1
+British spelling is checked.
+Besides preferring
+\f4centre\fP,
+\f4colour\fP,\p
+.br
+\f4programme\fP,
+\f4speciality\fP,
+\f4travelled\fP,
+etc.,
+this option insists upon
+.I -ise
+in words like
+\f4standardise\fP,
+Fowler and the
+.SM OED
+(Oxford English Dictionary)
+to the contrary
+notwithstanding.
+.TP
+\f4\-x\f1
+Every plausible stem is displayed, one per line, with
+\f4=\f1
+preceding each word.
+.TP
+\f4\-l\f1
+Follow the chains of
+.I all
+included files.
+By default,
+\f4spell\fP
+(like
+\f4deroff\fP(1))
+follows chains of included files
+\f1(\f4.so\f1
+and
+\f4\&.nx\f1
+\f4troff\fP(1)
+requests),
+.I unless
+the names of such included files begin with
+\f4/usr/lib\f1.
+.TP
+\f4+\f2local_file\f1
+Words found in
+.I local_file
+are removed from
+\f4spell\fP's
+output.
+.I local_file
+is the name of a user-provided file that contains a sorted list of words,
+one per line.
+The list must be sorted with the ordering used by \f4sort\f1(1)
+(e.g. upper case preceding lower case).
+If this ordering is not followed, some entries in
+.I local_file
+may be ignored.
+With this option, the user can
+specify a set of words
+that are correct spellings (in addition to
+\f4spell\fP's
+own spelling list)
+for each job.
+.PP
+The spelling list is based on many sources,
+and while more haphazard than an ordinary
+dictionary, is also more effective with respect to
+proper names and popular technical words.
+Coverage of
+the specialized vocabularies of biology,
+medicine, and chemistry is light.
+.PP
+Alternate auxiliary files
+(spelling lists, stop list, history file)
+may be specified on the command line by using environment variables.
+These variables and their default settings are shown in the
+.SM FILES
+section.
+Copies of all misspellings and entries that specify the
+login, tty, and time of each invocation of \f4spell\f1 are
+accumulated in the \f2history\f1 file. 
+The \f2stop list\fP filters out misspellings (e.g., \f4thier=thy\-y+ier\fP)
+that would otherwise pass.
+.PP
+Three routines help maintain and check the hash lists used by
+\f4spell\fP:
+.TP "\w'\f4hashcheck\fP   'u"
+\f4hashmake\f1
+Reads a list of words from the standard input and
+writes the corresponding nine-digit hash code on the standard output.
+This is the first step in creating a new spelling list or adding words
+to an existing list; it must be used prior to using
+\f4spellin\fP.
+.TP
+\f4spellin\f1
+Reads
+.I n
+hash codes (created by
+\f4hashmake\fP)
+from the standard input and writes a compressed spelling list on the
+standard output.
+Use
+\f4spellin\fP
+to add words to an existing spelling list or create a new spelling list.
+.TP
+\f4hashcheck\f1
+Reads a compressed
+.I spelling_list
+and recreates the nine-digit hash codes for all the words in it;
+it writes these codes on the standard output.
+It takes as input an existing spelling list
+(\f4hlista\fP or \f4hlistb\fP)
+or a list created or modified by
+\f4spellin\fP.
+By using
+\f4hashcheck\fP
+on an existing compressed
+.IR spelling_list
+and
+\f4hashmake\fP
+on a file of selected words,
+you can compare the two output files to determine if the selected words
+are present in the existing
+.IR spelling_list .
+.TP
+\f4compress\f1
+When \f4spell\f1 is executed, the misspelled words are
+added to a file called \f4spellhist\f1.  This file may
+contain identical entries since the same word may be
+misspelled during different executions of \f4spell\f1.
+The \f4compress\f1 program deletes redundant misspelled
+words in the \f4spellhist\f1 file, thereby reducing the
+size of the file, making it easier to analyze.
+.br
+.ne 4v
+.SK
+.SH FILES
+.PD 0
+.TP 45
+\f4D_SPELL\*S=/usr/share/lib/spell/hlist[ab]\fP
+hashed spelling lists, American & British
+.TP
+\f4S_SPELL\*S=/usr/share/lib/spell/hstop\fP
+hashed stop list
+.TP
+\f4H_SPELL\*S=/var/adm/spellhist\fP
+history file
+.TP
+\f4/usr/lib/spell/spellprog\fP
+program
+.PD
+.SH SEE ALSO
+\f4deroff\fP(1),
+\f4sed\fP(1),
+\f4sort\fP(1),
+\f4tee\fP(1).
+.br
+\f4eqn\fP(1),
+\f4tbl\fP(1),
+\f4troff\fP(1) in the \f2\s-1DOCUMENTER'S WORKBENCH\s0 Software
+Technical Discussion and Reference Manual\f1.
+.SH NOTES
+The spelling list's coverage is uneven;
+new installations will probably wish to
+monitor the output for several months to gather
+local additions;
+typically, these are kept in a separate local file
+that is added to the hashed
+.I spelling_list
+via
+\f4\%\&spellin\fP.
+.\"	@(#)spell.1	5.2 of 5/18/82
+.Ee

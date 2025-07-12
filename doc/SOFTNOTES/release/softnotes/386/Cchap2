@@ -1,0 +1,113 @@
+.if n .pH rn4.Cchap2 @(#)Cchap2	40.29
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.BK "Software Notes" "" "" ""   
+.\ACRONYM	                  
+.CH "Operating System" "" "Table of Contents" "2"
+.\CHAPTER	2
+.tC 1 "General Operating System Notes" 2-1  
+.Index: istart UNIX System V/386 Release 4, operating system notes	1
+.tC 2 "Security" 2-1  
+.Index: security, per process resource limits    	1
+.Index: \f4exec\fP        	1
+.tC 2 "Application Compatibility" 2-1  
+.Index: applications        	1
+.Index: application compatibility        	1
+.tC 2 "Service Access Facility" 2-1  
+.Index: \f4/etc\fP, \f4ttydefs\fP       	1
+.Index: \f4/etc\fP, \f4gettydefs\fP       	1
+.Index: \f4/etc\fP, \f4inittab\fP       	1
+.Index: \f4ttymon\fP(1M)        	1
+.Index: \f4ttydefs\fP        	1
+.Index: \f4getty\fP(1M)        	1
+.tC 3 "nlsadmin command" 2-1  
+.tC 2 "Source Compatibility Issues" 2-2  
+.tC 3 "Header Files" 2-2  
+.Index: header files, pre-SVR4 source compatibility    	2
+.Index: POSIX conformance, header files     	2
+.Index: istart POSIX type definitions     	2
+.Index: \f4gid_t\f1        	2
+.Index: \f4mode_t\f1        	2
+.Index: \f4nlink_t\f1        	2
+.Index: \f4off_t\f1        	2
+.Index: \f4pid_t\f1        	2
+.Index: \f4uid_t\f1        	2
+.tC L "Table 2-1:\0" "New POSIX Type Definitions" 2-2
+.Index: iend POSIX type definitions     	2
+.tC 2 "Expanded Fundamental Types (EFT)" 2-2  
+.Index: istart EFT (Expanded Fundamental Types)    	2
+.Index: istart Expanded Fundamental Types (EFT)    	2
+.tC 3 "The EFT Feature" 2-3  
+.tC L "Table 2-2:\0" "Basic EFT Data Types" 2-3
+.Index: iend EFT (Expanded Fundamental Types)    	3
+.Index: iend Expanded Fundamental Types (EFT)    	3
+.tC 2 "Some General Pointers for Applications Development" 2-4  
+.Index: \f4cpio\fP(1)        	4
+.Index: \f4cpio\fP(1)        	4
+.tC 2 "STREAMS" 2-5  
+.Index: STREAMS, \f4st_size\fP return      	5
+.Index: \f4STRMSGSZ\fP parameter       	5
+.Index: flush handling, pre-SVR4 modules     	5
+.Index: RFS, STREAMS \f4ioctl\fP system call    	5
+.Index: \f4ioctl\fP, named streams over RFS    	5
+.Index: STREAMS, terminal subsystem      	5
+.Index: terminal line discipline      	5
+.Index: pseudo-tty subsystem       	5
+.tC 3 "Source Compatibility" 2-6  
+.Index: STREAMS, public and private pieces    	6
+.tC 2 "Virtual Memory" 2-6  
+.tC 3 "Swap Space Configuration" 2-6  
+.Index: swap space, requirements increased     	6
+.Index: memory management, swap space requirements    	6
+.tC 2 "File System Independent Booting" 2-6  
+.Index: boot, file system      	6
+.Index: \f4bfs\fP (boot file system), unsupported features   	6
+.tC 2 "Signals" 2-7  
+.Index: signals, source compatibility      	7
+.Index: signals, future directions      	7
+.tC 3 "Source Compatibility" 2-7  
+.tC L "Table 2-3:\0" "New Signals in System V Release 4" 2-7
+.tC 1 "Specific Operating System Notes" 2-8  
+.tC 2 "a.out Permissions" 2-8  
+.tC 2 "format.c" 2-8  
+.Index: format.c command, changes      	8
+.tC 2 "/stand" 2-8  
+.Index: \f4/stand\f1        	8
+.tC 2 "ksh Fails to Interrupt" 2-8  
+.tC 2 "ksh Behavior and MAXUP Process Limits" 2-9  
+.Index: \f4MAXUP\f1        	9
+.tC 2 "init Behavior When Executed Inside a vt" 2-9  
+.Index: \f4init\f1 behavior       	9
+.tC 2 "Debugging and vt Devices" 2-9  
+.Index: debugging and vt devices     	9
+.tC 2 "SCSI Devices" 2-9  
+.Index: SCSI Devices       	9
+.Index: cartridge tapes       	9
+.tC 2 "Non-rewind Tape Devices" 2-10  
+.tC 2 "Simultaneous Cartridge Tape and Floppy use" 2-11  
+.Index: Western Digital, controller      	11
+.tC 2 "Binary Compatibility of SVR3.2 Graphics Applications" 2-11  
+.Index: \f4ioctls\f1 for VGA and enhanced CGA/EGA   	11
+.tC 2 "Mouse Driver Support of Multiple Terminal Assignments" 2-11  
+.Index: mouse driver configuration      	11
+.tC 2 "csh Shell" 2-11  
+.tC 2 "Cannot Cross Layers in shl" 2-12  
+.Index: layers and \f4loblk\f1      	12
+.tC 2 "Scripts and Relative Symbolic Links" 2-12  
+.Index: scripts and multiple relative symbolic links   	12
+.tC 2 "/usr/ucb/mt Command" 2-12  
+.Index: \f4/usr/ucb/mt\f1        	12
+.tC 2 "setcolor Command" 2-12  
+.Index: setcolor(1)        	12
+.tC 2 "pr Command" 2-12  
+.Index: pr(1)        	12
+.tC 2 "cpio command" 2-13  
+.tC 2 "tail command" 2-13  
+.tC 2 "dosformat command" 2-13  
+.Index: dosformat(1)        	13
+.tC 2 "Functions Removed from DDI Interface" 2-14  
+.Index: functions removed DDI      	14
+.Index: \f4major\f1        	14
+.Index: \f4minor\f1        	14
+.Index: \f4makedev\f1        	14
+.tC 3 "compress Command" 2-14  
+.Index: iend UNIX System V/386 Release 4, operating system notes	14

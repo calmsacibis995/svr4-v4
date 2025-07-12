@@ -1,0 +1,34 @@
+'\"macro stdmacro
+.if n .pH g1a.mpi/450 @(#)mpi450	40.4 of 5/17/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} mpi/450 7iref "" "" "\&"
+.if \nX=1 .ds x} mpi/450 7iref "" ""
+.if \nX=2 .ds x} mpi/450 7iref "" "\&"
+.if \nX=3 .ds x} mpi/450 "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4mpi/450\f1 \- iSBC MPI/450 MPI-based terminal controller
+.SH DESCRIPTION
+The iSBC MPI/450 plugs into the Parallel System Bus and has no onboard CPU.  
+Its 12 serial ports are accessed via the \f4atcs\fP server running on an iSBC 
+186/450 asynchronous terminal controller or an iSBC MIX386/450 terminal 
+controller baseboard.  The \f4atcs\fP server on the iSBC 186/450 board can support 12 
+MPI/450 ports, in addition to its 12 onboard ports, for a total of 24 ports.  
+The \f4atcs\fP server on the MIX386/450 can support up to 3 MPI/450 boards.
+.P
+See \f4mix386/450\f1(7iref) and \f4186/450\f1(7iref) for configuration information.
+.P
+At boot time, each \f4atcs\fP server checks for iSBC MPI/450 boards in adjacent, 
+numberically higher, cardslots.  The server searches for MPI/450 boards until 
+its maximum port limit is reached (24 ports with the iSBC 186/450 and 36 with 
+the MIX386/450) or it finds a non-MPI/450 board.  
+.P
+The \f4atcs\fP server uses the string \f4MPI/450\fP in the interconnect space header
+record to detect an iSBC MPI/450 board.
+.SH SEE ALSO
+\f4186/450\f1(7iref),
+\f4atcs\f1(7iref),
+\f4cci\f1(7iref),
+\f4mix386/450\f1(7iref).

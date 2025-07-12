@@ -1,0 +1,2 @@
+clone	icmp		c	icmp
+clone	ineticmp	c	icmp

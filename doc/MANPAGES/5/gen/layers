@@ -1,0 +1,216 @@
+'\"macro stdmacro
+.if n .pH g5.layers @(#)layers	40.12 of 5/21/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} layers 5 "Layers Windowing Utilities" "\&"
+.if \nX=1 .ds x} layers 5 "Layers Windowing Utilities"
+.if \nX=2 .ds x} layers 5 "" "\&"
+.if \nX=3 .ds x} layers "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4layers\f1 \- protocol used between host and windowing terminal under
+\f4layers\fP(1)
+.SH DESCRIPTION
+Layers
+are asynchronous windows supported by the operating system
+in a windowing terminal.
+Communication between the UNIX System processes and terminal
+processes 
+under the \f4layers\fP command [see \f4layers\fP(1)] occurs via multiplexed
+channels managed by the respective
+operating systems
+using a protocol as specified in
+\f4xtproto\fP(5).
+.PP
+The contents of packets transferring data between
+a UNIX System process and
+a layer are asymmetric.
+Data sent from the UNIX System to a particular
+terminal process are undifferentiated
+and it is up to the terminal
+process to interpret the contents of packets.
+.PP
+Control information for terminal
+processes is sent via channel 0.
+Process 0 in the windowing terminal
+performs the designated functions on behalf
+of the process connected to the designated channel.
+These packets take the form:
+.PP
+.RS
+\f2command\fP, \f2channel\fP
+.RE
+.PP
+except for
+\f4JTIMOM\f1
+and
+\f4JAGENT\fP
+information, which takes the form
+.PP
+.RS
+\f2command\fP, \f2data\fP ...
+.RE
+.PP
+The commands are the bottom eight bits extracted from
+the following \f4ioctl\f1(2) codes:
+.TP 10
+\f4JBOOT\fP
+Prepare to load a new terminal program into the designated layer.
+.TP
+\f4JTERM\fP
+Kill the downloaded layer program, and restore the default window program.
+.TP
+\f4JTIMOM\fP
+Set the timeout parameters for the protocol.
+The data consist of four bytes in two groups:
+the value of the receive timeout in milliseconds
+(the low eight bits followed by the high eight bits) and
+the value of the transmit timeout (in the same format).
+.TP
+\f4JZOMBOOT\fP
+Like \f4JBOOT\fP, but do not execute the program after loading.
+.TP
+\f4JAGENT\fP
+Send a source byte string to the terminal agent routine and wait for a
+reply byte string to be returned.
+.IP ""
+The data are from a \f4bagent\f1
+structure [see \f4jagent\fP(5)] and consist of a
+one-byte size field followed by a two-byte agent
+command code and parameters.
+Two-byte integers transmitted as part of
+an agent command are sent with the high-order byte first.
+The response from the terminal is generally identical
+to the command packet, with the two command bytes replaced
+by the return code: \f40\f1 for success, \f4\-1\f1 for failure.
+Note that the routines in the
+\f4libwindows\fP(3X)
+library all
+send parameters in an \f4agentrect\fP structure.
+The agent command codes and their parameters are as follows:
+.RS 10
+.TP 16
+\f4A_NEWLAYER\fP
+followed by a two-byte channel number and a rectangle
+structure (four two-byte coordinates).
+.TP
+\f4A_CURRENT\fP
+followed by a two-byte channel number.
+.TP
+\f4A_DELETE\fP
+followed by a two-byte channel number.
+.TP
+\f4A_TOP\fP
+followed by a two-byte channel number.
+.TP
+\f4A_BOTTOM\fP
+followed by a two-byte channel number.
+.TP
+\f4A_MOVE\fP
+followed by a two-byte channel number and a point
+to move to (two two-byte coordinates).
+.TP
+\f4A_RESHAPE\fP
+followed by a two-byte channel number and the new
+rectangle (four two-byte coordinates).
+.TP
+\f4A_NEW\fP
+followed by a two-byte channel number and a rectangle
+structure (four two-byte coordinates).
+.TP
+\f4A_EXIT\fP
+no parameters needed.
+.TP
+\f4A_ROMVERSION\fP
+no parameters needed.
+The response packet
+contains the size byte, two-byte return code,
+two unused bytes, and the parameter part of
+the terminal
+.SM ID
+string (for example, \f48;7;3\f4).
+.RE
+.TP 10
+\f4JXTPROTO\f1
+Set \f4xt\fP protocol type [see \f4xtproto\fP(5)].
+The data consist of one byte specifying maximum size for the data part of
+regular \f4xt\fP packets sent from the host to the terminal.
+This number may be lower than the number returned by \f4A_XTPROTO\fP at lower
+baud rates or if the \f4-m\fP option was specified upon invocation of 
+\f4layers\fP(1).
+A size of 1 specifies network \f4xt\fP protocol.
+.PP
+Packets from the windowing terminal to the UNIX System all take the
+following form:
+.PP
+.RS
+\f2command\fP, \f2data\fP ...
+.RE
+.PP
+The single-byte commands are as follows:
+.RS 2
+.TP 20
+\f4C_SENDCHAR\fP
+Send the next byte to the UNIX System process.
+.TP
+\f4C_NEW\fP
+Create a new UNIX System process group for this layer.
+Remember the
+window size
+parameters for this layer.
+The data for this command is in the form described by the
+\f4jwinsize\f1
+structure.
+The size of the window is specified by two 2-byte integers, sent low byte first.
+.TP
+\f4C_UNBLK\fP
+Unblock transmission to this layer.
+There are no data for this command.
+.TP
+\f4C_DELETE\fP
+Delete the UNIX System process group attached to this layer.
+There are no data for this command.
+.TP
+\f4C_EXIT\fP
+Exit.
+Kill all UNIX System process groups 
+associated with this terminal and terminate the session.
+There are no data for this command.
+.TP
+\f4C_DEFUNCT\fP
+Layer program has died,
+send a terminate signal to the UNIX System process groups associated
+with this terminal.
+There are no data for this command.
+.TP
+\f4C_SENDNCHARS\fP
+The rest of the data are characters to be
+passed to the UNIX System process.
+.TP
+\f4C_RESHAPE\fP
+The layer has been reshaped.
+Change the window size
+parameters for this layer.
+The data take the same form as for the
+\f4C_NEW\fP command.
+A \f4SIGWINCH\fP signal is also sent to the process in the window, so
+that the process knows that the window has been reshaped and it
+can get the new window parameters.
+.TP
+\f4C_NOFLOW\fP
+Disable network \f4xt\fP flow control [see \f4xtproto\fP(5)].
+.TP
+\f4C_YESFLOW\fP
+Enable network \f4xt\fP flow control [see \f4xtproto\fP(5)].
+.RE
+.SH FILES
+.nf
+\f4/usr/include/windows.h
+/usr/include/sys/jioctl.h\fP
+.fi
+.SH SEE ALSO
+\f4layers\fP(1), \f4libwindows\fP(3X), \f4jagent\fP(5), \f4xtproto\fP(5)
+.br
+\f4xt\fP(7) in the \f2Programmer's Guide: STREAMS\f1
+.Ee

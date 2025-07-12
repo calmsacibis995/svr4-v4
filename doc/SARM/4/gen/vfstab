@@ -1,0 +1,66 @@
+'\"!tbl | mmdoc
+'\"macro stdmacro
+.if n .pH @(#)vfstab	40.4.1.6 of 4/16/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} vfstab 4 ""  "\&"
+.if \nX=1 .ds x} vfstab 4  ""
+.if \nX=2 .ds x} vfstab 4 "" "\&"
+.if \nX=3 .ds x} vfstab "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4vfstab\fP \- table of file system defaults
+.SH SYNOPSIS
+\f4#include <sys/fstyp.h>
+.br
+#include <sys/param.h>
+.br
+#include <sys/vfstab.h>\fP
+.SH DESCRIPTION
+The file
+\f4/etc/vfstab\fP
+describes defaults for each file system.
+The information is in the following structure, defined in
+\f4<sys/vfstab.h>\fP:
+.PP
+.RS
+.nf
+.ft 5
+struct vfstab {
+	char   *vfs_special;
+	char   *vfs_fsckdev;
+	char   *vfs_mountp;
+	char   *vfs_fstype;
+	char   *vfs_fsckpass;
+	char   *vfs_automnt;
+	char   *vfs_mntopts;
+};
+.ft 1
+.fi
+.RE
+.PP
+The fields in the table are space-separated
+and show the block special or resource name,
+the raw device to \f4fsck\fP, the default mount directory,
+the name of the file system type, the number used
+by \f4fsck\fP to decide whether to check the file system automatically,
+whether the file system should be mounted automatically by \f4mountall\fP,
+and the mount options.
+A '-' is used to indicate no entry in a field.
+.PP
+The
+\f4getvfsent\fP(3C)
+family of routines are used to read and write to
+\f4/etc/vfstab\fP.
+.SH NOTES
+Do not store information in the \f4vfstab\fP file other than
+the fields described above;  fields may be added to this file in
+future releases and are reserved for future use.
+.SH SEE ALSO
+\f4fsck\fP(1M), \f4mount\fP(1M), \f4setmnt\fP(1M).
+.br
+\f4getvfsent\fP(3C) in the \f2Programmer's Reference Manual\fP.
+.br
+See the chapter on file systems in the \f2System Administrator's Guide\fP.
+.Ee

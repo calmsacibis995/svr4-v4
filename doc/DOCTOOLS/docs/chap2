@@ -1,0 +1,1211 @@
+'\"!  tbl | mmdoc
+.if n .pH doctools.chap2 @(#)chap2	40.3
+.\" @(#) SCCS File: chap2; ID:1.6; DATED:1/5/90
+.\"
+.\"     Copyright (c) 1989 AT&T   
+.\"     All Rights Reserved       
+.\"
+.\"                  AT&T - PROPRIETARY
+.\"     THIS DOCUMENT CONTAINS PROPRIETARY INFORMATION OF
+.\"     AT&T AND IS NOT TO BE DISCLOSED OR USED EXCEPT IN
+.\"        ACCORDANCE WITH APPLICABLE AGREEMENTS.
+.\" 
+.\"
+.\"   Documenter's Tool Set User's Guide
+.\"   Written by: J.R. Okin SF E-308 attunix!jro 201-522-5105
+.\"
+.\"
+.PM DN "FINAL COPY"
+.BK "Documenter's Tool Set User's Guide" "Release 1.0"
+.CH "Formatting Files" 2
+.H 1 "Getting Started"
+.IX formatting files
+DOCTOOLS provides a single command to process
+and print all your documentation files.
+This command is called
+.UI format .
+.P
+The
+.UI format
+command accepts several options to control
+.IX format
+how you want your files processed.
+.IX format options
+These options allow you to do the following:
+.BL
+.LI
+Print and save a table of contents for a file being processed.
+.LI
+Specify a destination, such as a printer.
+.LI
+Choose to print in landscape, as opposed to portrait, orientation.
+.LI
+Have mail sent when your file has finished printing.
+.LI
+Process selected pages, as opposed to all pages, of a file.
+.LI
+Choose one of seven available page sizes.
+.LI
+Process a file for a specific version.
+.LI
+Process the job silently: no messages will be sent to your
+screen.
+.LE
+These options are described at
+length in the
+.ST "Command Mode"
+section below.
+.P
+You can also invoke
+.UI format
+without options.
+In response,
+.UI format
+displays its full syntax, presents
+a list of locally available destinations,
+and prompts you to choose formatting options.
+You can at this point choose to be prompted through
+selecting a destination, printing selected pages,
+and the other available options.
+This behavior is described at length in the
+.ST "Interactive Mode"
+section below.
+.P
+.UI format
+.IX file types
+recognizes four types of text files:
+.BL
+.LI
+Manual page files.
+.IX manual page files
+.LI
+Guide files.
+.IX guide files
+.LI
+Memoranda files.
+.IX memoranda files
+.LI
+Collection files.
+.IX collection files
+.LE
+Each of these four types of text files contains a macro
+that distinguishes it from the other file types.
+This allows
+.UI format
+to process each of the file types differently and,
+conversely, allows you to use
+.UI format
+to process several different file types.
+More detailed information about file types
+can be found in the
+.ST "File Types"
+section below.
+.H 1 "Command Mode"
+.IX command mode
+This section describes the command line syntax supported
+by
+.UI format .
+The following is a synopsis of the
+.UI format
+command line:
+.IX format command line
+.DS I UI
+format [\-c] [\-d \f2destination\fP] [\-l] [\-m] [\-o \f2pages\fP] [\-p \f2page\fP]
+	\|[\-s \f2size\fP] [\-v \f2version\fP] [\-w] [files]
+.DE
+where
+.VL 1.2i "" UI
+.IX options, format
+.IX format options
+.LI "\-c"
+.IX -c option
+.IX chapter tables of contents
+.IX master tables of contents
+.IX tables of contents
+saves and prints a chapter/master table of contents for guide
+files, or a table of contents and permuted index for manual page
+.IX permuted index
+files.
+.LI "\-d \&\f2destination"
+.IX -d option
+processes the job for the specified destination.
+.IX destinations
+.IX printers
+Execute
+.UI format
+without arguments to see a current list of valid destinations.
+.IX usage message
+.LI "\-l"
+.IX -l option
+prints the job in landscape orientation.
+.IX landscape orientation
+.LI "\-m"
+.IX -m option
+sends mail when the job has printed.
+.IX mail confirmation
+.LI "\-o \&\f2pages"
+.IX -o option
+processes the job for the specified
+.IX selected page processing
+.IX page processing, selected pages
+pages only.
+.LI "\-p \&\f2page"
+begins page numbering with the specified page.
+.IX page numbering
+.IX -p option
+.LI "\-s \&\f2size"
+.IX -s option
+.IX page sizes
+processes the job in the specified page size.
+.LI "\-v \&\f2version"
+.IX -v option
+.IX version control
+processes the job for the specified version.
+The
+.UI "\-v all"
+option processes job for all versions.
+.LI "\-w"
+.IX -w option
+.IX silent processing
+withholds all screen messages, except errors; sends messages via mail.
+.LE
+When you execute
+.UI format ,
+the following general rules apply:
+.IX format behavior
+.BL
+.LI
+Upon encountering an unsupported option,
+.UI format
+issues a warning and prints a synopsis of the command line options.
+.LI
+Any argument not beginning with "\-" is interpreted
+as an input file;
+.UI format
+issues a warning and ignores the input if this is not the case.
+.LI
+Formatting options apply uniformly to all files being processed.
+This means, for example, that if you choose
+to print in landscape as opposed to portrait page orientation,
+all the files specified on the command line will print in
+landscape orientation.
+.LE
+Each of the command mode options is described below.
+.H 2 "Table of Contents: The \-c Option"
+The
+.UI \-c
+.IX -c option
+.IX tables of contents
+option creates and prints a table of contents
+for the file(s) being processed.
+.UI format
+can generate and print three types of tables of contents:
+.BL
+.LI
+Chapter table of contents for a chapter of guide material.
+.IX chapter tables of contents
+.LI
+Master table of contents for a book of guide material.
+.IX master tables of contents
+.LI
+Reference manual table of contents (and permuted index)
+.IX permuted index
+for a book of manual pages.
+.LE
+The following sections describe each of these tables of contents.
+.H 3 "Chapter Table of Contents"
+.IX chapter tables of contents
+In most cases, you use the
+.UI \-c
+option to create and print a
+chapter table of contents file for
+a guide text file, for example, a chapter of a user's guide.
+If you have a guide text file called
+.UI chap1
+and you execute the command:
+.UI
+format -d printer1 -c chap1
+.SF
+.UI format
+will create a file called
+.UI Cchap1 ,
+that would contain the table of contents for the chapter;
+also,
+.UI format
+will print the table of contents on
+.UI printer1
+with
+.UI chap1 .
+.P
+The chapter table of contents file that
+.UI format
+creates is no different than any other guide text file;
+so it can be processed by
+.UI format
+just as you would process any text file.
+For example, if you wanted to print
+.UI Cchap1
+on its own,
+you would enter:
+.UI
+format -d printer1 Cchap1
+.SF
+A table of contents file contains the chapter and book titles specified
+in its associated guide text file; and it contains
+the headings, figure, and table legends found in
+the chapter along with their page numbers.
+.UI format
+also uses the chapter table of contents
+files to record the indexing entries and page numbers
+from the guide file.
+These are used by the indexing program when you
+prepare an index for the book, as is discussed in chapter 6.
+.P
+If you want to have
+.UI format
+create a chapter table of contents file
+every time you process a guide file, you can do
+so by setting an environment variable called
+.UI STOC
+.IX STOC variable
+.IX variables, STOC
+equal to
+.UI Y .
+You can set
+.UI STOC
+to
+.UI Y
+by including the following line in your
+.UI \&.profile :
+.IX \&.profile
+.UI
+STOC=Y; export STOC
+.SF
+This means you will not need to specify
+.UI \-c
+to save a table of contents file; however,
+you will still need to specify
+.UI \-c
+when you want to print
+a table of contents file while printing its associated guide file.
+.H 3 "Master Table of Contents"
+.IX master tables of contents
+A master table of contents is a
+table of contents that appears at the beginning of a
+book of guide material, as opposed to at the beginning of a chapter.
+.UI format
+generates a master table of contents file called
+.UI MasterToc
+.IX MasterToc file
+from a set of chapter table of contents files.
+You can specify on the command line the chapter table of contents
+file names to
+.UI format
+in their printing order, as shown here:
+.UI
+format -d printer1 -c Cchap1 Cchap2 Cchap3 CappA
+.SF
+Or, you can create a collection file with the chapter
+.IX collection files
+table of contents files listed in their printing
+order, one per line, as shown here:
+.UI
+\&.FT
+Cchap1
+Cchap2
+Cchap3
+CappA
+.SF
+This feature is especially useful when you have a lot
+of chapter table of contents files.
+You could then specify the collection file
+name to
+.UI format ,
+as shown here for a collection file named
+.UI master.col :
+.UI
+format -d printer1 -c master.col
+.SF
+For more information on
+collection files see the 
+.ST "File Types"
+section later in this chapter, or turn to chapter 5.
+.P
+A master table of contents file,
+like a chapter table of contents file,
+simply contains macros and text; it can, therefore, be printed
+like any other text file, as in the following example:
+.UI
+format -d printer1 MasterToc
+.SF
+A master table of contents will include the chapter titles
+and first-level headings from a book and a list of all
+the figure and table legends.
+.H 3 "Reference Manual Table of Contents and Permuted Index"
+.IX permuted index
+.IX reference manual table of contents
+If you create a collection file listing
+manual page files, you can use
+.UI "format \-c"
+to create and print a table of contents and permuted
+index for the manual pages.
+For example, if you have a reference manual called the
+.BT "Programmer's Reference Manual" ,
+and you created a collection file called
+.UI progman.col
+listing all the manual pages in the manual
+in their printing order,
+you could then execute:
+.UI
+format -d printer1 -c progman.col
+.SF
+.UI format
+would create two files:
+.UI TC.progman.col ,
+a table of contents file for the reference manual; and
+.UI PI.program.col ,
+a permuted index file for the reference manual.
+It would also print these files on
+.UI printer1 .
+.P
+The table of contents and permuted index files for a reference
+manual, unlike the table of contents files for a guide,
+contain each manual page name, along with a brief description,
+for all the manual page files listed in the collection file.
+Like the other table of contents files, however, they consist
+of macros and text and can be printed at any time without
+further processing.
+.H 2 "Destinations: The \-d Option"
+.IX destinations
+.IX -d option
+The
+.UI \-d
+.SB destination
+option specifies where you want your job printed, or
+if you want your job processed but not printed.
+Unlike
+.UI \-c ,
+you must specify an argument with
+.UI \-d
+to indicate the name of a valid destination.
+However, if you do not specify
+.UI \-d
+.SB destination
+when executing
+.UI format ,
+your file(s) will be processed for a default destination.
+This default destination is set by your system administrator;
+.IX default destination
+.IX destination, default
+you can, however, override the system default by setting
+the environment variable
+.UI DEFDEST
+.IX DEFDEST variable
+.IX variables, DEFDEST
+equal to one of the valid destination names.
+.P
+To display the list of valid destination names as well
+as the current default (which will be your default
+if you have set
+.UI DEFDEST ,
+otherwise the system default)
+execute
+.UI format
+without arguments, as shown in the following figure.
+.FG "Displaying Valid Destinations"
+.SS
+$ format
+
+format - format files for printing
+
+USAGE: format [-c] [-d destination] [-l] [-m] [-o pages] [-p page]
+        [-s size ] [-v version] [-w] [files]
+
+Available Destinations Are:
+        apple apple1 apple2 apple3 psjet5 psjet6 eps xerox
+        ruby lino proof null post archive
+        Default is: apple
+
+Choose Formatting Options? (y/n): 
+
+$
+.SE
+If you specify an invalid destination,
+.UI format
+will produce an error message and display the command syntax with the list
+of valid destinations.
+.P
+For the most part, the list of valid destinations is
+location dependent.
+The number, types, and names of printers varies tremendously
+from location to location.
+The following four destinations, however, are not printer
+destinations; they are, therefore, meant to be location independent.
+.VL "" "" UI
+.LI proof
+.IX proof destination
+prepares file(s) to be previewed on a bitmap (DMD) terminal.
+.P
+This destination invokes the program
+.UI proof ,
+enabling file(s) to appear in a window on your DMD terminal
+with the same line and page breaks as if you had printed
+the file(s) on your local laser printer.
+.UI format
+creates a
+.UI troff
+output file named
+.UI prf.\f2filename\fP .
+.LI null
+.IX null destination
+processes file(s) to
+.UI /dev/null ;
+the file(s) are processed through
+.UI troff ,
+but the output from
+.UI troff
+is thrown away.
+.P
+This destination is often used when you want to create
+a table of contents file but you do not want to print
+either it or the text file from which is was generated.
+.LI post
+.IX post destination
+creates a PostScript language file named
+.UI ps.\f2filename\fP .
+.P
+This destination is dependent on local PostScript
+postprocessing to translate the
+.UI troff
+output files into a PostScript output file.
+Its primary use is to create a file that can be
+included in a text file using the
+.UI \&.BP
+macro.
+See chapter 4 for a description of the
+.UI \&.BP
+macro.
+.AB N
+You can only specify a single filename when using
+the
+.UI post
+destination.
+Also, since you are using this option to generate
+a picture for inclusion in another file, you can not
+generate a picture greater than one page in length.
+.AC
+.LI archive
+.IX archive destination
+creates a
+.UI cpio
+file for storage or shipment.
+.P
+This destination allows you to create a
+.UI cpio
+.IX cpio
+.IX archive files
+archive file from a collection file.
+For example, if you have a collection file named
+.UI uguide.col ,
+you could specify the following to create a
+.UI cpio
+file that archives all the files listed in
+.UI uguide.col :
+.UI
+format -d archive uguide.col
+.SF
+The
+.UI cpio
+file created would be named
+.UI cpio.uguide.col .
+Also, you would be sent mail listing the contents
+of the
+.UI cpio
+file.
+.AB N
+The
+.UI archive
+destination can only be used with collection files.
+.AC
+.LE
+.H 2 "Page Orientation: The \-l Option"
+.IX page orientation
+.IX -l option
+The
+.UI \-l
+option allows you to print a job in landscape orientation (the
+page is turned 90 degrees).
+By default, jobs are printed in portrait orientation.
+.IX portrait orientation
+.IX landscape orientation
+This option will be ignored if the destination does
+not support printing in landscape orientation.
+.P
+Individual pages of a job can be printed in landscape orientation
+by combining this option with the
+.UI \-o
+option described below.
+A single job can not, however, print some pages in portrait orientation
+and some pages in landscape orientation.
+.H 2 "Confirmation Mail: The \-m Option"
+.IX confirmation mail
+.IX -m option
+The
+.UI \-m
+option informs
+.UI format
+to send you mail once your job has finished printing.
+This option will be ignored if the local job spooling
+program does not support an option to send mail.
+.H 2 "Selected Pages:  The \-o Option"
+.IX selected pages
+.IX -o option
+The
+.UI \-o
+.SB pages
+option allows you to process only specified pages of a job.
+.P
+Valid page number specifications are the same as
+those accepted by the
+.UI \-o
+flag to
+.UI troff .
+This includes comma-separated page numbers
+(for example, 2,4,8,9), dash-separated page ranges (for example, 2-4,6-10),
+the use of an initial dash to indicate all pages from
+the beginning-of-file to a specified page (for example, -10,13),
+and the use of a final dash to indicate all pages from
+a specified page to end-of-file (2,4,6-).
+.AB N
+Since the
+.UI \-o
+option causes
+.UI troff
+to process only part of a file,
+no table of contents file will be generated when using
+this option, even if you specify
+.UI \-c .
+.AC
+.H 2 "Starting Page Number: The \-p Option"
+.IX page numbering
+.IX -p option
+The
+.UI \-p
+.SB page
+option allows you
+to begin page numbering with any number you specify.
+.P
+By default, page numbering begins with page 1.
+This option allows any number to be specified
+as the starting point for a job's page numbering.
+.H 2 "Page Size: The \-s Option"
+.IX page size
+.IX -s option
+The
+.UI \-s
+.SB size
+option allows you to process a job for a specified page size.
+.P
+Seven page sizes are supported.
+The default size is 6.25 inches
+by 8.5 inches.
+All available printing sizes are shown in the following
+table with their corresponding
+.SB size
+argument.
+.TB "Available Page Sizes"
+.TS
+center,allbox,tab(:);
+lf2 lf3 lf3
+cf4 l l.
+size:Format Type:Dimensions (width by length, in inches)
+_
+1:Reference Card Format:4 by 8.5
+.IX page sizes
+2:PC Format:5.5 by 8.5
+3:Enlarged Summit Format:7 by 9
+4:U.S. Letter Format:8.5 by 11
+5:European A5 Format:5.38 by 8.27
+6:European B5 Format:5.93 by 9.89
+7:Default Summit Format:6.25 by 8.5
+.TE
+.H 2 "Version Control: The \-v Option"
+.IX version control
+.IX -v option
+The
+.UI \-v
+.SB version
+option allows you to process a job for a specified version.
+.P
+This option is used in conjunction with the version
+control macros:
+.UI \&.VS
+.IX \&.VS macro
+and
+.UI \&.VE .
+.IX \&.VE macro
+By default, version 1 of a job will be
+processed, if version control macros are present in the file(s).
+To process a job for another version,
+this option must be used and the version must
+be specified.
+Use
+.UI "\-v all"
+to process a job for all versions.
+.P
+See chapter 4 for information on the version control
+macros.
+.H 2 "Silent Processing: The \-w Option"
+.IX silent processing
+.IX -w option
+The
+.UI \-w
+option allows you to withhold all screen messages, except errors.
+.P
+Messages normally sent to the screen will instead be sent
+via mail.
+This allows a job to be processed in the background
+without messages from
+.UI format
+interfering with subsequent work.
+.H 2 "Less Visible Manual Page Parameters: The \-r Options"
+.IX manual page options
+.IX reference manual options
+The following options provide greater control
+over the processing of manual page files:
+.UI -rC1
+and
+.UI -rS\&\f2section\f1 .
+These options are not widely used, so they
+are not as well advertised as the options described above.
+.P
+If you specify
+.UI -rC1
+when processing a group of manual pages, they
+will print with continuous page numbering.
+.IX continuous page numbering
+.IX -rC1 option
+By default, manual pages reset the starting page number to 1.
+This option is valuable when printing groups of manual
+pages as chapters in a book.
+.P
+If you specify
+.UI -rS\&\f2section\f1 ,
+.IX -rS option
+when processing a manual page, the folio in the running
+.IX manual page section number
+footer will print as
+.SB section\-page ,
+for example, 8-1.
+By default, no section number is printed.
+.AB N
+You can only specify numbers for
+.SB section .
+.AC
+.H 1 "Interactive Mode"
+.IX interactive mode
+As shown in Figure 2-1,
+if you invoke
+.UI format
+without options
+.UI format
+displays a usage message,
+a list of available destinations,
+and the following prompt: 
+.UI
+Choose Formatting Options? (y/n):
+.SF
+If you want to be prompted through choosing your formatting options,
+such as choosing a destination and/or processing selected pages,
+enter
+.UI Y
+or
+.UI y
+in response to the prompt.
+Otherwise, enter
+.UI N
+or
+.UI n ,
+or simply press 
+.HK RETURN ,
+and you will exit
+.UI format
+and return to the shell.
+.P
+Before describing all the prompts in interactive mode,
+you should be aware of the following general behavior
+.IX interactive behavior
+regarding the prompts.
+.BL
+.LI
+An invalid response to any prompt in interactive mode
+will result in an error message,
+.IX error messages
+such as
+.CO "\(**\(**\(** Invalid Choice \(**\(**\(**" ,
+followed by the prompt and any associated
+information being re-displayed.
+.LI
+Most of the prompts have a default response.
+If you press
+.HK RETURN
+in response to a prompt, you are selecting
+the default.
+.LE
+The following list describes all the prompts and indicates
+the default response for each.
+.VL "" "" CO
+.LI "Choose Printing Options? (y/n):"
+.IX printing options
+This prompt asks if you want to enter interactive mode
+so that you can step through the available formatting options.
+.P
+The default is no, which means exit
+.UI format
+and return to the shell.
+.LI "Enter Destination Name:"
+.IX destinations
+This prompt asks you to select a destination.
+.P
+The default is the listed default destination.
+.LI "Select Other Formatting Options? (y/n):"
+.IX formatting options
+This prompt gives you a choice of going on to define
+further how you want your file(s) formatted, or going
+straight to entering your file name(s).
+.P
+The default is no, which means prompt now to enter
+file name(s).
+.LI "Create and Print Toc File? (y/n):"
+.IX table of contents
+This prompt asks you if
+.UI format
+should create and print a table of contents file.
+The type of table of contents created depends on
+the input file you are processing.
+See the
+description of the
+.UI \-c
+option in the
+.ST "Command Mode"
+section for more information.
+.P
+The default is no, which means no table of contents file will be
+created or printed.
+.LI "Format Selected Pages? (y/n):"
+.IX selected pages
+This prompt asks you if only some pages of
+your file(s) should be processed, as opposed to all pages.
+If you enter
+.UI Y
+or
+.UI y ,
+\%\f4format\f1
+will prompt you to enter the page numbers.
+See the description of the
+.UI \-o
+option in the
+.ST "Command Mode"
+section for a description of how to enter page numbers.
+.P
+The default is no, which means format all pages.
+.LI "Select Starting Page Number? (y/n):"
+.IX page numbering
+This prompt asks if you want to specify a page
+number with which to start numbering your file(s).
+If you enter
+.UI Y
+or
+.UI y ,
+\%\f4format\f1
+will prompt you to enter a page number.
+.P
+The default is no, which means page numbering will
+begin with 1.
+.LI "Print in Landscape Orientation? (y/n):"
+.IX page orientation
+.IX landscape orientation
+.IX portrait orientation
+This prompt asks if you want the pages of your file(s)
+printed in landscape orientation (turned 90 degrees).
+.P
+The default is no, which means print in portrait orientation.
+.LI "Process Job for Specific Version? (y/n):"
+.IX version control
+This prompt asks if want to use version control to
+process your file(s) for a specified version.
+.P
+The default is no, which means version 1 will be processed.
+.LI "Select Page Size? (y/n):"
+.IX page size
+This prompt asks you to choose a page size to be used
+in the printing of your file(s).
+If you enter
+.UI Y
+or
+.UI y ,
+.UI format
+will display a table showing available page sizes
+and you will be prompted to specify a size.
+See Table 2-1 for a list of available page sizes.
+.P
+The default is no, which means page size 7 (6.25 inches by
+8.5 inches) will be used.
+.LI "Send Mail upon Completion of Job? (y/n):"
+.IX mail confirmation
+This prompt asks you if you want
+.UI format
+to send you confirmation mail when your job has
+finished printing.
+.P
+The default is no, which means no mail will be sent.
+.LI "Enter File Name(s):"
+.IX entering file names
+This prompt asks you to enter the name(s) of your file(s).
+.P
+A file name is required, so there is no default.
+.LE
+After you enter your file name(s),
+.UI format
+displays all the formatting options for the job.
+The following figure shows an example of what this
+looks like.
+.FG "Confirming Your Formatting Selections"
+.SS
+
+Enter File Name(s): refcard
+
+
+     *******Confirm Following Choices ******
+     * Formatting File(s):    refcard 
+     * For Destination:       apple1
+     * For Pages:             all
+     * Printing Toc:          yes
+     * Starting Page:         1
+     * Orientation:           portrait
+     * Version:               1
+     * Page Size:             1
+     * Confirm with mail:     yes
+     ***************************************
+
+Format File(s)? (y, n, q):
+
+.SE 
+.IX formatting confirmation screen
+The bottom of the screen shows the final prompt.
+.VL "" "" CO
+.LI "Format File(s)? (y, n, q):"
+The following responses are valid:
+.VL "" "" CO
+.LI "Y or y"
+Format the file with the current set of options.
+.P
+.UI format
+will then display a message informing you that
+processing has begun.
+.LI "N or n"
+Do not format the file with the current set of options.
+.P
+This will erase all the selections you made and restart
+the prompting from choosing a destination.
+.LI "Q or q"
+Quit the current job.
+.P
+This will kill the job and return you to the shell.
+.LE
+The default is yes, which means processing will commence
+with the options you selected.
+.LE
+.H 1 "File Types"
+.IX file types
+This section describes the file types that
+.UI format
+recognizes.
+As described earlier,
+.UI format
+recognizes four types of text files:
+.BL
+.LI
+Manual page files.
+.IX manual page files
+.LI
+Guide files.
+.IX guide files
+.LI
+Memoranda files.
+.IX memoranda files
+.LI
+Collection files.
+.IX collection files
+.LE
+Each of the file types is described briefly below.
+.P
+File types are distinguished by the macros with which they
+are coded.
+Some macros are common to several file types;
+for instance, the
+.UI \&.P
+macro for specifying the start of
+a paragraph is common to manual page files, expository text files,
+and Memorandum Macros files.
+Other macros, however, are unique and allow
+.UI format
+to identify source text files and to process them according
+to their file type.
+.P
+In the absence of a unique identifier, 
+.IX unique file identifiers
+.UI format
+causes processing to default
+to that for a guide file.
+.H 2 "Manual Page Files"
+.IX manual page files
+A manual page file normally provides complete, but terse
+technical information about the form and functionality
+of an individual command, file format, special file, system
+call, subroutine, or the like.
+.P
+.UI format
+recognizes an input file coded with
+.UI man (5)
+.IX man (5) macros
+macros as a manual page text file.
+.UI format
+uses
+.UI \&.TH
+.IX \&.TH macro
+.SB manual-page-name
+as the identifier.
+.P
+See chapter 3 for a complete description of the manual page macros.
+.H 2 "Guide Files"
+.IX guide files
+A guide file might be a chapter in a user's guide,
+a primer, a reference card, or some other type of
+technical documentation that
+explains and illustrates the features of a product.
+.P
+.UI format
+recognizes
+an input file coded with expository text macros
+as a guide text file.
+.UI format
+uses
+.UI \&.CH
+.IX \&.CH macro
+.SB chapter-title
+as the identifier.
+.P
+See chapter 4 for a complete description of the guide macros.
+.H 2 "Memoranda Files"
+.IX memoranda files
+Business letters, as well as technical requirements documents
+and engineer's notes,
+are often written in the format of memoranda, using the
+Memoranda Macros.
+.P
+.UI format
+recognizes an input file
+coded with
+.UI mm (5)
+.IX mm (5) macros
+macros as a Memorandum Macros source text file.
+.UI format
+uses
+.UI \&.MT
+.IX \&.MT macro
+as the identifier.
+.P
+The
+.UI mm
+macros are not distributed with DOCTOOLS.
+Consult the
+.BT "DOCUMENTER'S WORKBENCH\s-2\(tm\s0 Software User's Guide"
+for more information on the Memoranda Macros.
+.H 2 "Collection Files" 
+.IX collection files
+Unlike a source text file, a collection file contains a list of 
+source text file names that the user wants to process together
+as one job.
+An example of a collection file is one that
+lists all of a book's source text files in their printing order;
+the collection file name could then be specified to
+.UI format
+enabling you to print the entire book in a single step.
+.P
+.UI format
+recognizes an input file
+coded with the
+.UI \&.FT
+.IX \&.FT macro
+macro as a collection file.
+.P
+See chapter 5 for more information on collection files.
+.H 1 "Source Code Controlled Files"
+Documenter's Tool Set can process files stored under
+the Source Code Control System (SCCS).
+Two environment variables locate your local SCCS
+file structure for DOCTOOLS:
+.UI SCCSSRC
+and
+.UI ARCSRC .
+.UI SCCSSRC
+is a path identifying where your active SCCS files
+are kept; and
+.UI ARCSRC
+is a path identifying where your inactive,
+or archived, SCCS files are kept.
+These variables
+should have been defined by your system administrator
+when the tools were installed.
+You can, however, set them yourself in your own environment and thereby override
+the system definition.
+.P
+.UI SCCSSRC
+and
+.UI ARCSRC
+are normally set to the root, or final common point,
+of a file system or directory structure
+before the directory structure for your SCCS files
+branches out.
+For instance,
+.UI SCCSSRC
+might be set to
+.UI /usr/local/sccs
+and under the
+.UI /usr/local/sccs
+directory there might be
+10 directories, each directory containing
+SCCS text files specific to a particular book or project.
+If one of the subdirectories were named
+.UI uguide
+and in
+.UI uguide
+there was a file called
+.UI s.chap1
+(SCCS source text files are prefixed with s.), you could
+use
+\%\f4format\f1
+to print this file by specifying:
+.UI
+format -dprinter1 uguide/chap1
+.SF
+.AB N
+Even though the SCCS file that
+.UI format
+will find and process is named
+.UI s.chap1 ,
+you only need to specify
+.UI chap1.
+The SCCS prefix,
+.UI s\&. ,
+is automatically prefixed to the filename you
+specify.
+.AC
+.UI format
+checks three locations for the filename(s) you specify;
+and it checks them in the following order:
+.AL
+.LI
+\f3Local Directory Structure\f1 \- The presence of a file in your
+local directory/file structure overrides its
+presence stored under SCCS.
+In this example,
+.UI format
+would look for a directory called
+.UI uguide
+and in it a file called
+.UI chap1.
+.LI
+\f3Active SCCS Directory Structure\f1 \- If
+.UI format
+fails to find the specified file locally,
+it searches for it in
+.UI $SCCSSRC .
+In most cases, you will need to precede the
+filename with a directory name, as in this example, since
+.UI $SCCSSRC
+will most likely contain subdirectories, not files.
+In this example,
+.UI format
+would look for a directory called
+.UI uguide
+under
+.UI $SCCSSRC ,
+and in it a file named
+.UI s.chap1 .
+If
+.UI s.chap1
+is found, the top delta (the most
+recent version of the file) will be retrieved
+and processed.
+.LI
+\f3Archive SCCS Directory Structure\f1 \- If
+.UI format
+fails to find the named file in the first two locations,
+it will then look in
+.UI $ARCSRC .
+Since books change from one release to another,
+it's common for filenames to change and/or disappear.
+To protect against your trying to reprint an old
+version of a book only to find that the SCCS
+files no longer match up or no longer exist, the
+files can be archived in
+.UI $ARCSRC
+and 
+.UI format
+will find them there after searching locally
+and in 
+.UI $SCCSRC
+first.
+.LE
+.H 1 "Error Messages"
+There are several different types of error
+messages generated by DOCTOOLS.
+Most of the error messages attempt to interpret
+which kind of error has occurred and supply you
+with some information to remedy the situation.
+For example, if
+.UI format
+fails to find the file you named
+or if the file you named is not readable,
+.UI format
+will send a message to your screen telling you:
+.CO
+Input file \(**\(**\(** \f2filename\fP \(**\(**\(** Not Found
+.SF
+or
+.CO
+Input file \(**\(**\(** \f2filename\fP \(**\(**\(** Not Readable 
+.SF
+.P
+Error messages related to the macros will fall into one of two
+categories:  fatal or non-fatal.
+A fatal error is one that terminates processing immediately.
+An example of a fatal error is:
+.DS "" CO
+****************************************************
+FATAL ERROR:(testfile1) troff line 8
+LIST ERROR: 1 UNENDED LIST(S) BEFORE HEADING - .H 2 Conventions 
+PROCESSING TERMINATED
+****************************************************
+.DE
+A non-fatal error is one that alerts you to a potential
+problem with your file.
+An example of a non-fatal error is:
+.DS "" CO
+****************************************************
+NON-FATAL ERROR:(testfile2) troff line 2
+BK: Missing Argument 1, Book Title
+PROCESSING WILL CONTINUE
+****************************************************
+.DE
+If you encounter a macro error with one of your files and
+you are not sure where or what the problem is, run
+.UI checkmacs
+on the file to help pinpoint the problem.
+.P
+In general, if an error message appears on your screen
+and you are not sure how to interpret it, ask
+your system administrator.
+.\" EOF

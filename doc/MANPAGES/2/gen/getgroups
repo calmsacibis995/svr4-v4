@@ -1,0 +1,88 @@
+'\"macro stdmacro
+.if n .pH g2.getgroups @(#)getgroups	40.14.1.1 of 1/3/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} getgroups 2 "" "\&"
+.if \nX=1 .ds x} getgroups 2 ""
+.if \nX=2 .ds x} getgroups 2 "" "\&"
+.if \nX=3 .ds x} getgroups "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4getgroups\f1, \f4setgroups\f1 \- get or set supplementary group access list \s-1ID\s0s
+.SH SYNOPSIS
+\f4#include <unistd.h>\f1
+.PP
+\f4int getgroups(int gidsetsize, gid_t \(**grouplist)\f1
+.PP
+\f4int setgroups(int ngroups, const gid_t \(**grouplist)\f1
+.SH DESCRIPTION
+\f4getgroups\fP
+gets the current supplemental group access list of the calling process
+and stores the result in the array of group \s-1ID\s0s
+specified by
+.IR grouplist .
+This array has
+.I gidsetsize
+entries
+and must be large enough to contain the entire list.
+This list cannot be greater than {\f4NGOUPS_MAX\fP}.
+If \f2gidsetsize\f1 equals 0,
+\f4getgroups\fP will return the number of groups to which the
+calling process belongs
+without modifying the array pointed to by \f2grouplist\f1.
+.PP
+\f4setgroups\fP
+sets the supplementary group access list of the calling process
+from the array of group \s-1ID\s0s
+specified by
+.IR grouplist .
+The number of entries is specified by
+.I ngroups
+and can not be greater than {\f4NGROUPS_MAX\f1}.
+This function may be invoked only by the super-user.
+.PP
+\f4getgroups\fP
+will fail if:
+.TP 15
+\f4EINVAL\fP
+The value of
+.I gidsetsize
+is non-zero and less than the number of supplementary group \s-1ID\s0s
+set for the calling process.
+.PP
+\f4setgroups\fP
+will fail if:
+.TP 15
+\f4EINVAL\fP
+The value of
+.I ngroups
+is greater than {\f4NGROUPS_MAX\f1}.
+.TP
+\f4EPERM\fP
+The effective user
+.SM ID
+is not super-user.
+.PP
+Either call will fail if:
+.TP 15
+\f4EFAULT\fP
+A referenced part of the array pointed to by
+.I grouplist
+is outside of the allocated address space of the process.
+.SH "SEE ALSO"
+\f4chown\fP(2), \f4getuid\fP(2), \f4setuid\fP(2), \f4initgroups\fP(3C).
+.br
+\f4groups\fP(1) in the \f2User's Reference Manual\f1. 
+.SH DIAGNOSTICS
+Upon successful completion,
+\f4getgroups\fP
+returns the number of supplementary group \s-1ID\s0s
+set for the calling process and
+\f4setgroups\fP
+returns the value 0.
+Otherwise, a value of \-1 is returned and
+\f4errno\fP
+is set to indicate the error.
+.\"	@(#)getgroups.2	1 of 9/30/88
+.Ee

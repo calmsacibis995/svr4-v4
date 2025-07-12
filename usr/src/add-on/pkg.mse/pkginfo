@@ -1,0 +1,14 @@
+#ident	"@(#)pkg.mse:pkginfo	1.1.1.3"
+
+# mouse pkginfo
+
+PKG="mouse"
+NAME="Mouse Driver Package"
+ARCH="i386"
+VERSION="3.0"
+VENDOR="USL"
+CATEGORY="system"
+CLASSES="none"
+BASEDIR=""
+MAXINST=1
+PREDEPEND="mouse"

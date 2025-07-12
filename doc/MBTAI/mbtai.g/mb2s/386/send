@@ -1,0 +1,104 @@
+'\"macro stdmacro
+.if n .pH mb2s.send @(#)send	40.6 of 1/9/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} mb2s_send 3tai "" "\&"
+.if \nX=1 .ds x} mb2s_send 3tai ""
+.if \nX=2 .ds x} mb2s_send 3tai "" "\&"
+.if \nX=3 .ds x} mb2s_send "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4mb2s_send\f1 \- Sends a transactionless message in synchronous mode.
+.SH SYNOPSIS
+.ft 4
+.nf
+#include <sys/types.h>
+#include <sys/mb2taiusr.h>
+int mb2s_send(fd, socketidptr, ctlbufptr, databufptr)
+int fd;
+mb2_socket *socketidptr;
+mb2_buf *ctlbufptr;
+mb2_buf *databufptr;
+.ft
+.fi
+.SH DESCRIPTION
+This routine sends transactionless messages in synchronous mode.
+Both
+\f4Multibus II\f1 transport clients and servers use this routine.
+.TP 15
+\f4fd\f1
+specifies a synchronous mode file descriptor referencing
+an open port.
+.TP
+\f4socketidptr\f1
+is a pointer to a structure that contains a socket
+ID of the destination of the message.
+.TP
+\f4ctlbufptr\f1
+is a pointer to a buffer describing the control
+portion of the message.
+.TP
+\f4databufptr\f1
+is a pointer to a buffer describing the data portion
+of the message.
+.P
+To send the data portion of a message, \f4databufptr\fP must be non-NULL and
+the \f4len\f1 field of \f4databufptr\f1 must have a value of 0 or greater.
+To send the
+control portion, the corresponding values must be set for \f4ctlbufptr\f1.
+A null
+message can be sent if both the \f4ctlbufptr\fP and \f4databufptr\fP are null or have
+their \f4len\f1 field set to 0.
+.P
+The maximum length of the control portion of a message is 20 bytes if
+there is no data portion present.
+The maximum is 16 bytes if the message has a
+non-NULL data portion.
+\f4mb2s_send\f1 blocks when the send side queue is full due
+to internal flow control conditions.
+Flow control parameters can be set at the
+time the port is opened.
+\f4mb2s_send\f1 also blocks when waiting for the
+availablility of internal buffers.
+When the routine returns, the message has
+been either sent out or has been queued to be sent.
+No completion or error
+indication will be returned to the user if the actual transfer fails.
+.P
+Upon successful completion of the routine, a value of 0 is returned.
+A
+value of -1 is returned and an \f4errno\fP is set if there were errors.
+The
+following is a list of applicable errors for this routine.
+.TP 10
+\f4EAGAIN\f1
+buffers could not be allocated for message to
+be sent.
+.TP
+\f4EBADF\f1
+\f4fd\fP is not a valid file descriptor.
+.TP
+\f4EFAULT\f1
+\f4ctlbufptr\fP, \f4databufptr\fP or \f4socketid\f1ptr points
+outside the allocated address space.
+.TP
+\f4EINTR\f1
+a signal was caught during the\f4mb2s_send\fP call.
+.TP
+\f4ENOSTR\f1
+\f4fd\fP is not a file descriptor to a \f4Multibus II\f1
+transport endpoint.
+.TP
+\f4ENXIO\f1
+a hardware error condition occurred while sending the
+message.
+.TP
+\f4EINVAL\f1
+invalid value specified in argument buffer.
+.TP
+\f4ERANGE\f1
+size of control or data part of the message is
+outside the range of the minimum/maximum allowable message size.
+.SH SEE ALSO
+\f4putmsg\f1(2), \f4getmsg\f1(2), \f4write\f1(2)

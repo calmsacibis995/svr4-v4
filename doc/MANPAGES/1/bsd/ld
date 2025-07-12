@@ -1,0 +1,81 @@
+'\"macro stdmacro
+.if n .pH g1.ld @(#)ld	40.8 of 4/18/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+'\" macro stdmacro
+.\" Copyright (c) 1988 Sun Microsystems, Inc. - All Rights Reserved.
+.\"
+.nr X
+.if \nX=0 .ds x} ld 1 "BSD Compatibility Package" "\&"
+.if \nX=1 .ds x} ld 1 "BSD Compatibility Package"
+.if \nX=2 .ds x} ld 1 "" "\&"
+.if \nX=3 .ds x} ld "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4ld\f1 \- link editor, dynamic link editor
+.SH SYNOPSIS
+.HP
+.na
+\f4/usr/ucb/ld\f1
+[
+\f2options\f1
+]
+.ad
+.SH DESCRIPTION
+.P
+\f4/usr/ucb/ld\f1
+is the link editor for the
+.SM BSD
+Compatibility Package.
+\f4/usr/ucb/ld\f1
+is identical to
+\f4/usr/bin/ld\f1
+[see
+\f4ld\f1(1)]
+except that
+.SM BSD
+libraries and routines are included
+.I before
+System V libraries and routines.
+.P
+\f4/usr/ucb/ld\f1
+accepts the same options as
+\f4/usr/bin/ld\f1,
+with the following exceptions:
+.TP
+\f4\-L \f2dir\f1
+Add
+.I dir
+to the list of directories searched for libraries by
+\f4/usr/bin/ld\f1.
+Directories specified with this option are searched
+before
+\f4/usr/ucblib\f1
+and
+\f4/usr/lib\f1.
+.TP
+\f4\-Y LU\f1, \f2dir\f1
+Change the default directory used for finding
+libraries.
+Warning: this option may have unexpected results,
+and should not be used.
+.SH FILES
+.PD 0
+.TP 20
+\f4/usr/ucblib\f1
+.TP
+\f4/usr/lib\f1
+.TP
+\f4/usr/ucblib/libx.a\f1
+.TP
+\f4/usr/lib/libx.a\f1
+.PD
+.SH SEE ALSO
+\f4ar\fP(1),
+\f4as\fP(1),
+\f4cc\fP(1),
+\f4ld\fP(1),
+\f4lorder\fP(1),
+\f4strip\fP(1),
+\f4tsort\fP(1)
+in the \f2Programmer's Reference Manual\f1

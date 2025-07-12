@@ -1,0 +1,326 @@
+'\"macro stdmacro
+.if n .pH g1.find @(#)find	40.14.1.2 of 1/3/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} find 1 "Directory and File Management Utilities" "\&"
+.if \nX=1 .ds x} find 1 "Directory and File Management Utilities"
+.if \nX=2 .ds x} find 1 "" "\&"
+.if \nX=3 .ds x} find "" "" "\&"
+.TH \*(x}
+.\" @(#)find.1 1.4 88/12/12 SMI; from UCB 4.3 BSD
+.\" Copyright (c) 1988 Sun Microsystems, Inc. - All Rights Reserved.
+.SH NAME
+\f4find\f1 \- find files
+.SH SYNOPSIS
+\f4find\f1
+\f2path-name-list expression\f1
+.SH DESCRIPTION
+\f4find\fP
+recursively descends
+the directory hierarchy for
+each path name in the
+.I path-name-list\^
+(that is, one or more path names)
+seeking files that match a boolean
+.I expression\^
+written in the primaries given below.
+In the descriptions, the argument
+.I n\^
+is used as a decimal integer
+where
+\f4+\f2n\^\f1
+means more than
+.IR n ,
+\f4\-\f2n\^\f1
+means less than
+.I n\^
+and
+.I n\^
+means exactly
+.IR n .
+Valid expressions are:
+.TP 16
+\f4\-name\f2 pattern\^\f1
+True if
+.I pattern\^
+matches the current file name.
+Normal shell
+file name generation characters
+(see
+\f4sh\f1(1))
+may be used.
+A backslash (\f4\|\e\|\fP) is used as an escape character within the pattern.
+The pattern should be escaped or quoted when
+\f4find\fP
+is invoked from the shell.
+.TP 16
+\f4\-perm \f1[\f4-\f1]\f2onum\^\f1
+True if the file permission flags
+exactly
+match the
+octal number
+.I onum\^
+(see
+\f4chmod\fP(1)).
+If
+.I onum\^
+is prefixed by a minus sign (\f(CW-\f1),
+only the bits that are set in
+.I onum\^
+are compared with the file permission flags,
+and the expression evaluates true if they match.
+.TP 16
+\f4\-size\f1 \f2n\fP[\f4c\f1]
+True if the file is
+.I n\^
+blocks long (512 bytes per block).
+If
+.I n
+is followed by a
+\f4c\f1,
+the size is in characters.
+.TP 16
+\f4\-atime\f2 n\^\f1
+True if the file was accessed
+.I n\^
+days ago.
+The access time of directories in 
+.I path-name-list\^
+is changed by 
+\f4find\fP
+itself.
+.TP 16
+\f4\-mtime\f2 n\^\f1
+True if the file's data was modified
+.I n\^
+days ago.
+.TP 16
+\f4\-ctime\f2 n\^\f1
+True if the file's status was changed
+.I n\^
+days ago.
+.TP 16
+\f4\-exec\f2 cmd\^\f1
+True if the executed
+.I cmd\^
+returns
+a zero value as exit status.
+The end of
+.I cmd\^
+must be punctuated by an escaped
+semicolon.
+A command argument
+\f4{}\f1
+is replaced by the
+current path name.
+.TP 16
+\f4\-ok\f2 cmd\^\f1
+Like
+\f4\-exec\f1
+except that the generated command line is printed
+with a question mark first,
+and is executed only if the user responds
+by typing
+\f4y\f1.
+.TP 16
+\f4\-print\f1
+Always true;
+causes the current path name to be printed.
+.TP 16
+\f4\-newer\f2 file\^\f1
+True if
+the current file has been modified more recently than the argument
+.IR file .
+.TP 16
+\f4\-depth\f1
+Always true;
+causes descent of the directory hierarchy to be done
+so that all entries in a directory are
+acted on 
+before the directory itself.
+This can be useful when 
+\f4find\fP
+is used with
+\f4cpio\fP(1)
+to transfer files
+that are contained in directories without 
+write permission.
+.TP 16
+\f4\-mount\f1
+Always true;
+restricts the search to the file system containing the directory specified.
+.TP 16
+\f4\-local\f1
+True if the file physically resides on the local system.
+.TP 16
+\f4(\f2 expression \f4)\f1
+True if the parenthesized expression is true
+(parentheses are special to the shell and must be escaped).
+.TP 16
+\f4\-type\f2 c\^\f1
+True if the type of the file
+is
+.IR c ,
+where
+.I c\^
+is
+\f4b\f1,
+\f4c\f1,
+\f4d\f1,
+\f4l\f1,
+\f4p\f1,
+or
+\f4f\f1
+for
+block special file, character special file,
+directory, symbolic link, fifo (named pipe), or plain file, respectively.
+.TP 16
+\f4\-follow\f1
+Always true; causes symbolic links to be followed.
+When following symbolic links, \f4find\fP keeps track
+of the directories visited so that it can detect infinite
+loops; for example, such a loop would occur if a symbolic link pointed
+to an ancestor.
+This expression should not be used with the \f4\-type l\f1 expression.
+.TP 16
+\f4\-links\f2 n\^\f1
+True if the file has
+.I n\^
+links.
+.TP 16
+\f4\-user\f2 uname\^\f1
+True if the file belongs to the user
+\f2uname\fP.
+If
+\f2uname\fP
+is numeric and does not appear as a login name in the
+\f4/etc/passwd\f1
+file, it is taken as a user \s-1ID\s0.
+.TP 16
+\f4\-nouser\f1
+True if the file belongs to a user not in the
+\f4/etc/passwd\f1
+file.
+.TP 16
+\f4\-group\f2 gname\^\f1
+True if the file belongs to the group
+.IR gname .
+If 
+.I gname\^
+is numeric and does not appear in the
+\f4/etc/group\f1
+file, it is taken as a group \s-1ID\s0.
+.TP 16
+\f4\-nogroup\f1
+True if the file belongs to a group not in the 
+\f4/etc/group\f1
+file.
+.TP 16
+\f4\-fstype \f2type\f1
+True if the filesystem to which the file belongs is of type
+.I type\fR.
+.TP 16
+\f4\-inum \f2n\f1
+True if the file has inode number
+.IR n .
+.TP 16
+\f4\-prune\f1
+Always yields true.
+Do not examine any directories or files
+in the directory structure below the \f2pattern\f1
+just matched.
+See the examples, below.
+.PP
+The primaries may be combined using the following operators
+(in order of decreasing precedence):
+.TP 4
+1)
+The negation of a primary
+\f1(\f4!\f1
+is the unary
+.I not\^
+operator).
+.TP 4
+2)
+Concatenation of primaries
+(the
+.I and\^
+operation
+is implied by the juxtaposition of two primaries).
+.TP 4
+3)
+Alternation of primaries
+\f1(\f4\-o\f1 is the
+.I or\^
+operator).
+.PP
+Note that when you use \f4find\fP in conjunction with \f4cpio\fP,
+if you use the \f4\-L\f1 option with \f4cpio\fP
+then you must use the \f4\-follow\f1 expression with \f4find\fP and vice versa.
+Otherwise there will be undesirable results.
+.SH EXAMPLES
+Remove all files in your home directory
+named \f4a.out\fP or \f4\(**.o\fP that
+have not been accessed for a week:
+.sp .5
+.ce
+\f4find $HOME \e\|( \-name a.out \-o \-name \(fm\(**.o\(fm \e\|) \-atime +7 \-exec rm {} \e\|;\f1
+.PP
+Recursively print all file names in the current directory and below,
+but skipping
+.SM SCCS
+directories:
+.ce
+.sp .5
+\f4find . \-name \s-1SCCS\s0 \-prune \-o \-print\f1
+.fi
+.PP
+Recursively print all file names in the current directory and below,
+skipping the contents of
+.SM SCCS
+directories, but printing out the
+.SM SCCS
+directory name:
+.sp .5
+.ce
+\f4find . \-print \-name \s-1SCCS\s0 \-prune\f1
+.fi
+.br
+.SH FILES
+/etc/passwd, /etc/group
+.SH "SEE ALSO"
+\f4chmod\fP(1),
+\f4sh\fP(1),
+\f4test\fP(1).
+.br
+\f4stat\fP(2),
+and \f4umask\fP(2)
+in the
+.IR "Programmer's Reference Manual" .
+.br
+\f4fs\fP(4)
+in the
+\f2System Administrator's Reference Manual\f1.
+.SH NOTE
+When using \f4find\fP
+to determine files modified within a range of time,
+one must use the
+\f4\?time\f1
+argument BEFORE the
+\f4\-print\f1
+argument otherwise \f4find\fP
+will give all files.
+.PP
+The following option is obsolete and will not be supported in
+future releases.
+.TP 16
+\f4\-cpio\f2 device\^\f1
+Always true;
+write the current file on
+.I device\^
+in
+\f4cpio\fP(1)
+format (5120-byte records).
+.\"	@(#)find.1	6.3 of 9/2/83
+.Ee

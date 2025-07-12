@@ -1,0 +1,119 @@
+.if n .pH portguide.CappA @(#)CappA	40.2
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.BK "Programmer's Guide: Porting the Kernel" "" "" ""   
+.\ACRONYM	                  
+.CH "Appendix A: Data Structures" "" "Table of Contents" "A"
+.\CHAPTER	A
+.tC 2 "Data Structures" A-1  
+.tC 3 "File Identifiers" A-1  
+.Index: file identifier       	1
+.tC 3 "cred Structure" A-2  
+.Index: \f4cred\fP structure       	2
+.tC 2 "Virtual File System" A-3  
+.tC 3 "statvfs Structure" A-3  
+.Index: \f4statvfs\f1, structure       	3
+.Index: \f4statvfs\f1, flags       	4
+.tC 3 "stat Structure" A-4  
+.Index: \f4stat\f1 structure       	4
+.tC 3 "pathname Structure" A-5  
+.Index: \f4pathname\f1, structure       	5
+.Index: \f4pathname\f1, operations       	6
+.tC 3 "dirent Structure" A-7  
+.Index: \f4dirent\f1 structure       	7
+.tC 3 "vnode Structure" A-7  
+.Index: \f4vnode\fP, structure       	7
+.Index: \f4vnode\fP, flags       	8
+.Index: \f4vnode\fP, modes       	8
+.Index: \f4vnode\fP, types       	8
+.Index: \f4vnode\fP, \f4vattr\f1 structure      	9
+.Index: \f4vattr\fP structure       	9
+.Index: istart \f4vnode\fP, operations      	9
+.Index: iend \f4vnode\fP, operations      	14
+.Index: \f4vfs\fP, structure       	15
+.Index: \f4vfs\fP, flags       	15
+.Index: \f4mounta\fP, structure       	16
+.Index: \f4mounta\fP, flags       	16
+.Index: \f4vfsops\fP, structure       	17
+.Index: \f4vfssw\fP structure       	17
+.Index: \f4vfs\fP operations       	18
+.tC 3 "User I/O Request Structures" A-19  
+.Index: \f4uio\f1 structure       	19
+.Index: \f4iovec\f1 structure       	19
+.tC 2 "namefs File System" A-20  
+.tC 3 "namefd Structure" A-20  
+.Index: \f4namefd\fP structure       	20
+.tC 3 "namenode Structure" A-20  
+.Index: \f4namenode\fP, structure       	20
+.Index: \f4namenode\fP, flags       	20
+.tC 2 "FIFO File System" A-21  
+.tC 3 "fifonode Structure" A-21  
+.Index: \f4fifonode\fP, structure       	21
+.Index: \f4fifonode\fP, flags       	21
+.tC 2 "specfs File System" A-22  
+.tC 3 "snode Structure" A-22  
+.Index: \f4snode\fP, structure       	22
+.tC 3 "snode Flags" A-23  
+.Index: \f4snode\fP, flags       	23
+.tC 2 "S5 File System" A-25  
+.tC 3 "inode Structure" A-25  
+.Index: \f4inode\fP, structure       	25
+.Index: \f4inode\fP, flags       	26
+.Index: \f4inode\fP, file types      	27
+.tC 3 "S5 Directory Format" A-27  
+.Index: S5 directory format      	27
+.tC 3 "S5 Super Block" A-28  
+.Index: super block, structure      	28
+.tC 2 "Process Scheduler" A-29  
+.Index: process scheduler       	29
+.Index: \f4priocntl\fP(2)        	29
+.Index: \f4priocntlset\fP(2)        	29
+.tC 3 "Process Scheduler Queue" A-30  
+.Index: process scheduler, queue      	30
+.Index: process class, system      	30
+.Index: process class, time-sharing      	31
+.Index: process class, real-time      	31
+.Index: process scheduler, global variables     	31
+.Index: process scheduler, global functions     	32
+.tC 3 "Context Switch" A-33  
+.Index: context switch       	33
+.tC 3 "Class" A-34  
+.Index: \f4class\fP, structures       	34
+.Index: \f4classfuncs\fP, functions       	34
+.tC 3 "Time-sharing" A-38  
+.Index: time-sharing, structures       	38
+.Index: timesharing, \f4priocntl\f1(2)       	41
+.tC 3 " Real-time" A-41  
+.Index: real-time, structures       	41
+.Index: real-time, \f4priocntl\f1(2)       	43
+.tC 3 "sched Process" A-43  
+.Index: \f4sched\fP process       	43
+.tC 3 "dispadmin Command" A-44  
+.Index: \f4dispadmin\f1        	44
+.tC 2 "Signals and Job Control" A-45  
+.Index: job control       	45
+.Index: job control, signals      	45
+.Index: \f4sigset\f1 operations       	45
+.Index: job control, \f4sigset\f1 operations     	45
+.Index: \f4sigaction\f1, structure       	46
+.Index: \f4sigaction\f1, flags       	46
+.Index: \f4sigaltstack\f1, structure       	46
+.Index: \f4sigaltstack\f1, flags       	47
+.Index: \f4siginfo\f1 structure       	47
+.Index: \f4ucontext\f1 structure       	49
+.Index: job control, system calls     	50
+.Index: \f4sess\f1, structure       	50
+.Index: \f4sess\f1, operations       	51
+.Index: \f4pid\f1, structure       	52
+.Index: \f4pid\f1, operations       	52
+.tC 2 "exec" A-53  
+.Index: \f4exec\f1, structures       	54
+.tC 2 "RFS File System" A-55  
+.tC 3 "RFS vnodes" A-55  
+.Index: \f4vnode\f1, RFS       	55
+.Index: RFS, send descriptor      	55
+.Index: RFS, receive descriptor      	56
+.Index: RFS, circuit manager      	56
+.tC 3 "Read/Write Protocol" A-56  
+.Index: RFS, read/write protocol      	56
+.tC 3 "Client Data Cache" A-57  
+.Index: RFS, data cache      	57

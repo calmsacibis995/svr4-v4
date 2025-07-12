@@ -1,0 +1,108 @@
+'\"macro stdmacro
+.if n .pH mb2a.send @(#)send	40.6 of 1/9/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} mb2a_send 3tai "" "\&"
+.if \nX=1 .ds x} mb2a_send 3tai ""
+.if \nX=2 .ds x} mb2a_send 3tai "" "\&"
+.if \nX=3 .ds x} mb2a_send "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4mb2a_send\f1 \- Sends a transactionless message in asynchronous mode.
+.SH SYNOPSIS
+.ft 4
+.nf
+#include <sys/types.h>
+#include <sys/mb2taiusr.h>
+int mb2a_send(fd, socketidptr, ctlbufptr, databufptr)
+int fd
+mb2_socket *socketidptr;
+mb2_buf *ctlbufptr;
+mb2_buf *databufptr;
+.fi
+.SH DESCRIPTION
+This routine is used to send transactionless messages in asynchronous
+mode.
+Both Multibus II transport servers and clients use this routine to send
+transactionless messages.
+.TP .9i
+\f4fd\f1
+specifies an asynchronous mode file descriptor referencing
+an open port.
+.TP
+\f4socketidptr\f1
+is pointer to a structure that contains socket ID
+of the destination of the message.
+.TP
+\f4ctlbufptr\f1
+is a pointer to a buffer describing the control
+portion of the message.
+.TP .9i
+\f4databufptr\f1
+is a pointer to a buffer describing the data portion
+of the message.
+.P
+To send the data portion of the message, \f4databufptr\fP must be
+non-NULL and the \f4len\fP field of \f4databufptr\fP must have
+a value of 0 or greater.
+To send the control portion, the corresponding values must be set
+for \f4ctlbufptr\fP.
+A NULL message can be sent if both the \f4ctlbufptr\fP and
+\f4databufptr\fP are null or have their \f4len\fP field set to 0.
+The maximum control
+portion of a message is 20 bytes if no data portion is present.
+The maximum
+is 16 bytes if the message has a non-NULL data portion.
+\f4mb2a_send\fP does not
+block and fails with \f4errno\fP set to \f4EAGAIN\f1 if the send
+side queue is full due to internal flow control conditions.
+The flow control parameters can be set at
+the time the port is opened.
+\f4mb2a_send\fP blocks when waiting for the
+availability of internal buffers if these buffers are unavailable.
+When the routine returns, the message has either been sent out
+or has been queued to be sent.
+No completion or error indication is returned to the user if the
+transfer fails.
+.P
+Upon successful completion of the routine, a value of 0 is returned.
+A value of -1 is returned and an \f4errno\fP is
+set if there were errors.  The
+following is a list of applicable errors for this routine.
+.TP .7i
+\f4EAGAIN\f1
+buffers could not be allocated for message to
+be sent.
+.TP .7i
+\f4EAGAIN\f1
+the message could not be sent due to flow
+control conditions.
+.TP .7i
+\f4EBADF\f1
+\f4fd\f1 is not a valid file descriptor.
+.TP .7i
+\f4EFAULT\f1
+\f4ctlbufptr\f1, \f4databufptr\f1, or \f4socketidptr\f1 are
+pointing outside the allocated address space.
+.TP .7i
+\f4EINTR\f1
+a signal was caught during the \f4mb2a_send\fP call.
+.TP .7i
+\f4ENOSTR\f1
+\f4fd\f1 is not a file descriptor to a Multibus II
+transport endpoint.
+.TP .7i
+\f4ENXIO\f1
+a hardware error condition was generated when sending
+the message.
+.TP .7i
+\f4EINVAL\f1
+an invalid value was specified in one of the
+argument buffers.
+.TP .7i
+\f4ERANGE\f1
+the size of the control or the data part of the message is
+outside the range of the minimum/ maximum allowable message size.
+.SH SEE ALSO
+\f4putmsg\f1(2), \f4getmsg\f1(2), \f4write\f1(2)

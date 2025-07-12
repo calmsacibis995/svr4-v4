@@ -1,0 +1,77 @@
+'\"macro stdmacro
+.if n .pH g3.nlist @(#)nlist	40.9 of 4/24/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.\" Copyright (c) 1988 Sun Microsystems, Inc. - All Rights Reserved.
+.\"
+.nr X
+.if \nX=0 .ds x} nlist 3 "BSD Compatibility Package" "\&"
+.if \nX=1 .ds x} nlist 3 "BSD Compatibility Package"
+.if \nX=2 .ds x} nlist 3 "" "\&"
+.if \nX=3 .ds x} nlist "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4nlist\f1 \- get entries from symbol table
+.SH SYNOPSIS
+.nf
+\f4cc \f1[ \f2flag\f1\. \. \. ] \f2file\f1 \. \. \. \f4\-lucb\f1
+.sp .5
+\f4#include <nlist.h>\f1
+.P
+\f4int nlist(filename, nl)\f1
+\f4char \(**filename;\f1
+\f4struct nlist \(**nl;\f1
+.fi
+.SH DESCRIPTION
+\f4nlist\f1
+examines the symbol table from the executable image whose name is pointed
+to by
+.IR filename ,
+and selectively extracts a list of values and puts them in the array of
+\f4nlist\f1
+structures pointed to by
+.IR nl .
+The name list pointed to by
+\f4nl\f1
+consists of an array of structures containing names,
+types and values.
+The
+\f4n_name\fP
+field of each such structure is taken to be a pointer to a
+character string representing a symbol name.
+The list is terminated
+by an entry with a
+\f4NULL\fP
+pointer (or a pointer to a
+\f4NULL\fP
+string) in the
+\f4n_name\fP
+field.
+For each entry in
+.IR nl ,
+if the named symbol is present in the executable image's symbol table,
+its value and type are placed in the
+\f4n_value\fP
+and
+\f4n_type\fP
+fields.
+If a symbol cannot be located, the corresponding
+\f4n_type\fP
+field of
+\f4nl\f1
+is set to zero.
+.SH "RETURN VALUE"
+Upon normal completion,
+\f4nlist\f1
+returns the number of symbols that were not
+located in the symbol table.
+If an error occurs,
+\f4nlist\f1
+returns \-1 and sets all of the
+\f4n_type\fP
+fields in members of the array pointed to by
+\f4nl\f1
+to zero.
+.SH "SEE ALSO"
+\f4a.out\fP(4)
+in the \f2Programmer's Reference Manual\f1

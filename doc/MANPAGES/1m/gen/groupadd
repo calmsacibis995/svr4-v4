@@ -1,0 +1,70 @@
+'\"macro stdmacro
+.if n .pH g1a.groupadd @(#)groupadd	40.13
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} groupadd 1M "Essential Utilities" "\&"
+.if \nX=1 .ds x} groupadd 1M "Essential Utilities"
+.if \nX=2 .ds x} groupadd 1M "" "\&"
+.if \nX=3 .ds x} groupadd "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4groupadd\fP \- add (create) a new group definition on the system
+.SH SYNOPSIS
+.nf
+\f4groupadd \f1[\f4-g\f2 gid\f1 [\f4-o\f1]] \f2group\f1
+.fi
+.SH DESCRIPTION
+The \f4groupadd\f1 command creates a new group definition on the system
+by adding the appropriate entry to the \f4/etc/group\fP file.
+.P
+The following options are available:
+.TP
+\f4-g \f2gid\f1
+The group ID for the new group.
+This group ID must be a
+non-negative decimal integer below MAXUID as defined in the <\f4param.h\f1> header file.
+By default, a unique group ID is allocated in the valid
+range.
+Group IDs from 0-99 are reserved.
+.TP
+\f4-o\f1
+This option allows the \f2gid\f1 to be duplicated (non-unique).
+.TP
+\f2group\f1
+A string of printable characters that specifies the name of the new
+group.
+It may not include a colon (:) or newline (\\\\n).
+.SH FILES
+\f4/etc/group\fP
+.SH SEE ALSO
+\f4groupdel\f1(1M),
+\f4groupmod\f1(1M),
+\f4logins\f1(1M),
+\f4useradd\f1(1M),
+\f4userdel\f1(1M),
+\f4usermod\f1(1M),
+\f4users\f1(1)
+.SH DIAGNOSTICS
+The \f4groupadd\f1 command exits with one of the following values:
+.TP
+\f40\f1
+Success.
+.TP
+\f42\f1
+Invalid command syntax;
+a usage message for the \f4groupadd\f1 command is displayed.
+.TP
+\f43\f1
+An invalid argument was provided to an option.
+.TP
+\f44\f1
+\f2gid\f1 is not unique (when the \f4-o\f1 option is not used).
+.TP
+\f49\f1
+\f2group\f1 is not unique.
+.TP
+\f410\f1
+Cannot update the \f4/etc/group\f1 file.
+
+

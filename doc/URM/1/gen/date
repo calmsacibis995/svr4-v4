@@ -1,0 +1,295 @@
+'\"macro stdmacro
+.if n .pH g1.date @(#)date	40.17.1.2 of 7/10/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} date 1 "Essential Utilities" "\&"
+.if \nX=1 .ds x} date 1 "Essential Utilities"
+.if \nX=2 .ds x} date 1 "" "\&"
+.if \nX=3 .ds x} date "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4date\f1 \- print and set the date
+.SH SYNOPSIS
+\f4date\f1 [
+\f4-u\fP
+]
+[
+\f4+\fP
+.I format
+]
+.br
+\f4date\f1
+[
+\f4-a\f1
+[
+\f4\-\f1
+]
+\f2sss\f4.\f2fff\f1
+]
+[
+\f4\-u\f1
+]
+[\|[
+.IR mmdd \|]\| HHMM
+|
+.IR mmddHHMM \|[\| cc \|]\| yy 
+]
+.SH DESCRIPTION
+If no argument is given,
+or if the argument begins with \f4+\f1,
+the current date and time are printed.
+Otherwise, the current date is set
+(only by super-user).
+.PP
+.TP 12
+\f4\-a\f1 [ \f4\-\f1 ] \f2sss\f4.\f2fff\f1
+Slowly adjust the time by
+.IR sss . fff
+seconds
+.RI ( fff
+represents fractions of a second).
+This adjustment can be positive or negative.
+The system's clock will be sped up or slowed down until it has drifted
+by the number of seconds specified.
+.TP
+\f4\-u\f1
+Display (or set) the date in Greenwich Mean Time
+(\s-1GMT\s0\(emuniversal time),
+bypassing the normal conversion to
+(or from) local time.
+.TP
+.I mm\^
+is the month number
+.TP
+.I dd\^
+is the day number in the month
+.TP
+.I HH\^
+is the hour number (24 hour system)
+.TP
+.I MM\^
+is the minute number
+.TP
+.I cc\^
+is the century minus one
+.TP
+.I yy\^
+is the last 2 digits of the year number
+.IP
+The month, day, year, and century may be omitted;
+the current values are supplied as defaults.
+For example:
+.IP
+.RS
+	\f4date\| 10080045\fP
+.RE
+.IP
+sets the date to Oct 8, 12:45 \s-1AM\s+1.
+The current year is the default because no year is supplied.
+The system operates in \s-1GMT\s0.
+\f4date\fP
+takes care of the conversion to and from
+local standard and daylight time.
+Only the super-user may change the date.
+After successfully setting the date and time,
+\f4date\fP
+displays the new date according
+to the default format.
+The \f4date\fP
+command uses
+\f4TZ\fP
+to determine the correct time zone information
+(see
+\f4environ\fP(5)).
+.TP
+\f4+\fP \f2format\fP
+If the argument begins with \f4+\fP,
+the output of
+\f4date\fP
+is under the control of the user.
+Each Field Descriptor, described below, is preceded by \f4%\fP
+and is replaced in the output by
+its corresponding value.
+A single \f4%\fP is encoded by \f4%%\fP.
+All other
+characters are copied to the output without change.
+The string is always terminated with a new-line character.
+If the argument contains embedded blanks
+it must be quoted (see the
+\s-1EXAMPLE\s0
+section).
+.PP
+Specifications of native language translations of
+month and weekday names are supported.
+The month and weekday names used for a language are based
+on the locale specified by the environment variables
+\f4LC_TIME\f1
+and
+\f4LANG\f1
+(see
+\f4environ\fP(5)).
+.PP
+The month and weekday names used for a language are taken
+from a file whose format is specified
+in
+\f4strftime\fP(4).
+This file also defines country-specific date and
+time formats such as \f4%c\fP,
+which specifies the default date format.
+The following form is the default for \f4%c\fP:
+.RS
+.nf
+	\f4%a %b %e %T %Z %Y\fP
+	e.g., Fri Dec 23 10:10:42 EST 1988
+.fi
+.RE
+.PP
+Field Descriptors (must be preceded by a \f4%\fP):
+.RS 3
+.PD 0
+.TP 5
+\f4 a\f1
+abbreviated weekday name
+.TP 5
+\f4 A\f1
+full weekday name
+.TP 5
+\f4 b\f1
+abbreviated month name
+.TP 5
+\f4 B\f1
+full month name
+.TP 5
+\f4 c\f1
+country-specific date and time format
+.TP 5
+\f4 d\f1
+day of month \- 01 to 31
+.TP 5
+\f4 D\f1
+date as \f4%m/%d/%y\f1
+.TP 5
+\f4 e\f1
+day of month \- 1 to 31 (single digits are preceded by a blank)
+.TP 5
+\f4 h\f1
+abbreviated month name (alias for \f4%b\fP)
+.TP 5
+\f4 H\f1
+hour \- 00 to 23
+.TP 5
+\f4 I\f1
+hour \- 01 to 12
+.TP 5
+\f4 j\f1
+day of year \- 001 to 366
+.TP 5
+\f4 m\f1
+month of year \- 01 to 12
+.TP 5
+\f4 M\f1
+minute \- 00 to 59
+.TP 5
+\f4 n\f1
+insert a new-line character
+.TP 5
+\f4 p\f1
+string containing ante-meridiem or post-meridiem
+indicator (by default, \s-1AM\s0 or \s-1PM\s0)
+.TP 5
+\f4 r\f1
+time as \f4%I:%M:%S %p\f1
+.TP 5
+\f4 R\f1
+time as \f4%H:%M\f1
+.TP 5
+\f4 S\f1
+second \- 00 to 61, allows for leap seconds
+.TP 5
+\f4 t\f1
+insert a tab character
+.TP 5
+\f4 T\f1
+time as \f4%H:%M:%S\f1
+.TP 5
+\f4 U\f1
+week number of year (Sunday as the first day of the week) \- 00 to 53
+.sp 0 
+.TP 5
+\f4 w\f1
+day of week \- Sunday = 0
+.TP 5
+\f4 W\f1
+week number of year (Monday as the first day of the week) \- 00 to 53
+.sp 0
+.TP 5
+\f4 x\f1
+Country-specific date format
+.TP 5
+\f4 X\f1
+Country-specific time format
+.TP 5
+\f4 y\f1
+year within century \- 00 to 99
+.TP 5
+\f4 Y\f1
+year as \f2ccyy\f1 (4 digits)
+.TP 5
+\f4 Z\f1
+timezone name 
+.RE
+.PD
+.ne 8
+.SH EXAMPLE
+The command
+.P
+.RS
+.ft 4
+.nf
+date '+DATE: %m/%d/%y%nTIME: %H:%M:%S'
+.ft 1
+.fi
+.RE
+.PP
+generates as output:
+.PP
+.RS
+.ft 4
+.nf
+DATE: 08/01/76
+TIME: 14:45:05
+.fi
+.ft 1
+.RE
+.br
+.ne 1.5i
+.SH DIAGNOSTICS
+.PD 0
+.TP 18
+\f5No permission\f1
+You are not the super-user and you try to change the date.
+.TP
+\f5bad conversion\f1
+The date set is syntactically incorrect.
+.PD
+.SH NOTES
+Should you need to change the date while the system is
+running multi-user, use the
+\f4datetime\f1
+command of
+\f4sysadm\f1(1M).
+.P
+If you attempt to set the current date to one of the dates that the standard and
+alternate time zones change
+(for example, the date that daylight time is starting or ending),
+and you attempt to set the time to a time in the interval
+between the end of standard time and the beginning of the alternate time
+(or the end of the alternate time and the beginning of standard time),
+the results are unpredictable.
+.SH SEE ALSO
+\f4sysadm\f1(1M),
+\f4strftime\f1(4),
+\f4environ\f1(5)
+in the \f2System Administrator's Reference Manual\f1.
+.Ee

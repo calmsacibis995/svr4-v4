@@ -1,0 +1,180 @@
+'\"macro stdmacro
+.if n .pH g1.ckpath @(#)ckpath	40.18 of 5/29/91
+.\" Copyright 1989 AT&T
+.nr X
+.if \nX=0 .ds x} ckpath 1 "Essential Utilities" "\&"
+.if \nX=1 .ds x} ckpath 1 "Essential Utilities"
+.if \nX=2 .ds x} ckpath 1 "Essential Utilities" "\&"
+.if \nX=3 .ds x} ckpath "Essential Utilities" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4ckpath\f1 \- display a prompt; verify and return a pathname
+.SH SYNOPSIS
+\f4ckpath\f1 [ \f4-Q\f1 ] [ \f4-W\f2 width\f1 ] [ \f4-a\f1| \f4l\f1 ] 
+[ \f2file_options\fP ] [ \f4-rtwx\f1 ] [ \f4-d\f2 default\f1 ]
+.br
+	[ \f4-h\f2 help\f1 ] [ \f4-e\f2 error\f1 ] [ \f4-p \f2prompt\f1 ] 
+[ \f4-k\f2 pid\f1 [ \f4-s\f2 signal\f1 ] ]
+.P
+\f4errpath\f1 [ \f4-W \f2width\f1 ] [ \f4-a\f1| \f4l\f1 ] 
+[ \f2file_options\fP ] [ \f4-rtwx\f1 ] [ \f4-e\f2 error\f1 ]
+.P
+\f4helppath\f1 [ \f4-W \f2width\f1 ] [ \f4-a\f1| \f4l\f1 ] 
+[ \f2file_options\fP ] [ \f4-rtwx\f1 ] [ \f4-h\f2 help\f1 ]
+.P
+\f4valpath\f1 [ \f4-a\f1| \f4l\f1 ] 
+[ \f2file_options\fP ] [ \f4-rtwx\f1 ] \f2input\f1
+.SH DESCRIPTION
+\f4ckpath\f1 prompts a user and validates the response.
+It defines, among other things,
+a prompt message whose response should be a pathname, text for help and
+error messages, and a default value
+(which is returned if the user responds with a RETURN).
+.P
+The pathname must obey the criteria specified by the first group of options.
+If no criteria are defined, the pathname must be for a normal file that does not
+yet exist.
+If neither \f4-a\f1 (absolute) or \f4\-l\f1 (relative) is given,
+then either is assumed to be valid.
+.P
+All messages are limited in length to 70 characters and
+are formatted automatically.
+Any white space used in the definition (including newline) is stripped.
+The \f4-W\f1 option cancels the automatic formatting.
+When a tilde is placed at the beginning or end of a message definition,
+the default text is
+inserted at that point, allowing both custom text and the default text
+to be displayed.
+.P
+If the prompt, help or error message is not defined, the default message
+(as defined under NOTES) is displayed.
+.P
+Three visual tool modules are linked to the \f4ckpath\f1 command.
+They are
+\f4errpath\f1 (which formats and displays an error message),
+\f4helppath\f1 (which
+formats and displays a help message), and \f4valpath\f1 (which validates a
+response).
+These modules should be used in conjunction with FACE objects.
+In this
+instance, the FACE object defines the prompt.
+.P
+The options and arguments for this command are:
+.TP
+\f4\-Q\f1
+Do not allow quit as a valid response.
+.TP
+\f4-W\f1
+Use \f2width\f1 as the line length for prompt, help, and error messages.
+.TP
+\f4-a\f1
+Pathname must be an absolute path.
+.TP
+\f4-l\f1
+Pathname must be a relative path.
+.TP
+\f4-r\f1
+Pathname must be readable.
+.TP
+\f4-t\f1
+Pathname must be creatable (touchable).
+Pathname is created if it does
+not already exist.
+.TP
+\f4-w\f1
+Pathname must be writable.
+.TP
+\f4-x\f1
+Pathname must be executable.
+.TP
+\f4\-d\f1
+The default value is \f2default\f1.
+The default is not validated and so does not have to meet any criteria.
+.TP
+\f4\-h\f1
+The help message is \f2help\fP.
+.TP
+\f4\-e\f1
+The error message is \f2error\f1.
+.TP
+\f4\-p\f1
+The prompt message is \f2prompt\f1.
+.TP
+\f4\-k\f1
+Send process ID \f2pid\f1 a signal if the user chooses
+to abort.
+.TP
+\f4\-s\f1
+When quit is chosen,
+send \f2signal\fP to the process whose \f2pid\fP is specified by the \f4\-k\fP option.
+If no signal is specified, use \f4SIGTERM\fP.
+.TP
+.I input
+Input to be verified against validation options.
+.P
+\f2file_options\fP are:
+.TP
+\f4-b\f1
+Pathname must be a block special file.
+.TP
+\f4-c\f1
+Pathname must be a character special file.
+.TP
+\f4-f\f1
+Pathname must be a regular file.
+.TP
+\f4-y\f1
+Pathname must be a directory.
+.TP
+\f4-n\f1
+Pathname must not exist (must be new).
+.TP
+\f4-o\f1
+Pathname must exist (must be old).
+.TP
+\f4-z\f1
+Pathname must be a file with the size greater than 0 bytes.
+.P
+The following \f2file_options\fP are mutually exclusive:
+\f4\-bcfy\fP, \f4\-no\fP, \f4\-nz\fP, \f4\-bz\fP, \f4\-cz\fP.
+.SH EXIT CODES
+.nf
+\f40\f1 = Successful execution
+\f41\f1 = EOF on input
+\f42\f1 = Usage error
+\f43\f1 = User termination (quit)
+\f44\f1 = Mutually exclusive options
+.fi
+.SH NOTES
+The text of the default messages for \f4ckpath\f1 depends upon 
+the criteria options that have been used.
+An example default prompt for \f4ckpath\f1
+(using the \f4-a\f1 option) is:
+.P
+.RS
+\f4Enter an absolute pathname [?,q]\f1
+.RE
+.P
+An example default error message  (using the \f4-a\f1 option) is:
+.P
+.RS
+\f4ERROR - Pathname must begin with a slash (/).\f1
+.RE
+.P
+An example default help message is:
+.P
+.RS
+\f4A pathname is a filename, optionally preceded by parent directories.
+The pathname you enter:
+.br
+\(em must contain 1 to \f2NAME_MAX\fP characters
+.br
+\(em must not contain a spaces or special characters\f1
+.RE
+.P
+\f2NAME_MAX\fP is a system variable is defined in \f4limits.h\f1.
+.P
+When the quit option is chosen (and allowed), \f4q\f1 is
+returned along with the return code \f43\f1.
+The \f4valpath\f1 module does not produce any output.
+It returns zero for success and non-zero for failure.

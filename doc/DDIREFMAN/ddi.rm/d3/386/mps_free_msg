@@ -1,0 +1,34 @@
+'\"macro stdmacro
+.if n .pH 386.mps_free_msg @(#)mps_free_msg	40.5 of 7/1/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.nr X
+.if \nX=0 .ds x} mps_free_msgbuf D3D "Multibus II" "DDI" "\&"
+.if \nX=1 .ds x} mps_free_msgbuf D3D "Multibus II" "DDI" "\&"
+.if \nX=2 .ds x} mps_free_msgbuf D3D "" "\&"
+.if \nX=3 .ds x} mps_free_msgbuf "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4mps_free_msgbuf\f1 \- puts a buffer back into the free memory pool
+.SH SYNOPSIS
+.nf
+\f4#include <sys/mps.h>
+void mps_free_msgbuf(\f2mbp\fP)
+mps_msgbuf_t *mbp;\f1
+.fi
+.SH ARGUMENTS
+.TP
+\f2mbp\f1
+the message buffer to be returned to the free memory pool.
+.SH DESCRIPTION
+In this function, \f2mbp\f1 points to a message buffer.
+The buffer is
+put back in the free memory pool.
+Note that \f4mps_free_msgbuf\f1
+accepts a pointer to a single message buffer, not a list of message buffers
+to be freed.
+.SH RETURN VALUE
+None
+.SH LEVEL
+Base or Interrupt
+.SH SEE ALSO
+\f4mps_get_msgbuf\f1(D3D)

@@ -1,0 +1,81 @@
+'\"macro stdmacro
+.if n .pH g1.uname @(#)uname	40.6.1.8 of 6/12/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} uname 1 "Essential Utilities" "\&"
+.if \nX=1 .ds x} uname 1 "Essential Utilities"
+.if \nX=2 .ds x} uname 1 "" "\&"
+.if \nX=3 .ds x} uname "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4uname\f1 \- print name of current \s-1UNIX\s+1 system
+.SH SYNOPSIS
+\f4uname\f1
+[
+\f4\-amnprsv\f1
+]
+.br
+\f4uname\f1
+[
+\f4\-S\f1
+\f2nodename\f1 ]
+.SH DESCRIPTION
+\f4uname\fP
+prints the current system name of the \s-1UNIX\s+1 system to standard output.
+It is mainly useful to determine which system one is using.
+The options cause selected information returned by
+\f4uname\fP(2) and/or \f4sysinfo\f1(2)
+to be printed:
+.TP
+\f4\-a\f1
+Print all information.
+Output will in the following order:
+.br
+.ft 2
+systemname\ \ \ nodename\ \ \ release\ \ \ version\ \ \ machine\ \ \ hostprocessor
+.ft 1
+.TP
+\f4\-m\f1
+Print the machine hardware name (\f2machine\fP).
+.TP
+\f4\-n\f1
+Print the \f2nodename\fP (the \f2nodename\fP is the name by
+which the system is known to a communications network).
+.TP
+\f4\-p\f1
+Print the current host's processor type (\f2hostprocessor\fP).
+.TP
+\f4\-r\f1
+Print the operating system release (\f2release\fP).
+.TP
+\f4\-s\f1
+Print the name of the operating system (\f2systemname\fP)
+(for example, UNIX System V).
+This is the default.
+.TP
+\f4\-v\f1
+Print the operating system version (\f2version\fP).
+.TP
+\f4-S\fP
+Change \f2nodename\fP (see \f4-n\fP option above).
+\f2nodename\fP is restricted to \f4SYS_NMLN\fP characters.
+\f4SYS_NMLN\fP is an implementation specific value defined in
+\f4sys/utsname.h\f1.
+Only a privileged user is allowed this capability.
+.IP
+For computers based on Intel microprocessors,
+using the \f4-S\fP option also changes the name of the operating system
+(\f2systemname\fP).
+.SH NOTES
+The output of \f4uname\fP is affected by the environment variable \f4SCOMPAT\fP.
+\f4SCOMPAT\fP is part of the application compatibility features provided to
+support UNIX applications other than UNIX System V Release 4.
+.SH "SEE ALSO"
+\f4sysinfo\fP(2),
+\f4uname\fP(2)
+in the \f2Programmer's Reference Manual\f1
+.P
+\f4scompat\fP(1) in the \f2Migration and Compatibility Guide\fP
+.P
+\f4setuname\fP(1M) in the \f2System Administrator's Reference Manual\fP

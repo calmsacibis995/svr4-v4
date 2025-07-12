@@ -1,0 +1,54 @@
+'\"macro stdmacro
+.if n .pH g1a.enetload @(#)enetload	40.6 of 5/17/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} enetload 1iref "System Administration Utilities" "" "\&"
+.if \nX=1 .ds x} enetload 1iref "System Administration Utilities" ""
+.if \nX=2 .ds x} enetload 1iref "" "\&"
+.if \nX=3 .ds x} enetload "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4enetload\f1 \- resets and reloads the ethernet controller
+.SH SYNOPSIS
+\f4/usr/sbin/enetload\f1 [\f4\-v \f2version\f1] [\f4\-b \f2bus_type\f1]
+.SH DESCRIPTION
+The \f4enetload\f1 utility resets and reloads the Ethernet controller.
+If enetload is invoked without any options, the system displays a
+dynamic menu of available iNA 961 downloadable files (based on input
+records from the file \f4/etc/ina961.data)\f1.  The user then selects
+the iNA 961 file to be downloaded. 
+.PP
+\f4enetload\f1 changes the network environment to use the specified
+version of iNA 961.  Both the current operating environment and the
+default environment invoked at system startup are updated.  
+.PP
+\f4enetload\f1 performs the following functions:
+.IP 1.
+Terminates all existing virtual circuits (VCs).
+.IP 2.
+Resets the Ethernet controller.
+.IP 3.
+Downloads the requested version of iNA 961 to the Ethernet controller.
+.PP
+Command line options are:
+.PP
+.TP 11
+\f4\-v \f2version\f1
+Specifies the version number of the iNA 961 file to be downloaded.
+This file is located in the \f4/etc\f1 directory and must have the
+following format:
+.nf
+
+\f4ina961.version\f1
+.fi
+.TP 11
+\f4\-b \f2bus_type\f1
+Specifies the type of system being used.  Only Multibus II (iSBC 186/530)
+is supported, so \f2bus_type\f1 must be \f4MB2\f1.  
+.SH FILES
+\f4/etc/ina961.data\f1
+.SH SEE ALSO
+\f4enetinfo\f1(1iref),
+\f4i530\f1(7iref),
+\f4edlina\f1(7iref).

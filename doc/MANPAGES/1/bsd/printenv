@@ -1,0 +1,41 @@
+'\"macro stdmacro
+.if n .pH g1.printenv @(#)printenv	40.8 of 4/18/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} printenv 1 "BSD Compatibility Package" "\&"
+.if \nX=1 .ds x} printenv 1 "BSD Compatibility Package"
+.if \nX=2 .ds x} printenv 1 "" "\&"
+.if \nX=3 .ds x} printenv "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4printenv\f1 \- display environment variables currently set
+.SH SYNOPSIS
+\f4/usr/ucb/printenv\f1
+[
+.I variable
+]
+.SH DESCRIPTION
+.P
+\f4printenv\f1
+prints out the values of the variables in the environment.
+If a
+.I variable
+is specified, only its value is printed.
+.SH SEE ALSO
+\f4tset\fP(1)
+.P
+\f4csh\fP(1),
+\f4echo\fP(1),
+\f4sh\fP(1),
+\f4stty\fP(1) in the \f2User's Reference Manual\f1
+.br
+\f4environ\fP(5)
+in the \f2System Administrator's Reference Manual\f1
+.SH DIAGNOSTICS
+If a
+.I variable
+is specified and it is not defined in the environment,
+\f4printenv\f1
+returns an exit status of
+\f41\f1.

@@ -1,0 +1,134 @@
+'\"macro stdmacro
+.if n .pH g7.icmp @(#)icmp	40.8 of 5/21/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} ICMP 7 "Internet Utilities" "\&"
+.if \nX=1 .ds x} ICMP 7 "Internet Utilities"
+.if \nX=2 .ds x} ICMP 7 "" "\&"
+.if \nX=3 .ds x} ICMP "" "" "\&"
+.TH \*(x}
+.SH NAME
+ICMP \- Internet Control Message Protocol
+.SH SYNOPSIS
+.nf
+\f4#include <sys/socket.h>\f1
+\f4#include <netinet/in.h>\f1
+\f4#include <netinet/ip_icmp.h>\f1
+.LP
+\f4s = socket(\s-1AF_INET\s0, \s-1SOCK_RAW\s0, proto);\f1
+.LP
+\f4t = t_open("/dev/icmp", O_RDWR);\f1
+.fi
+.SH DESCRIPTION
+.LP
+.SM ICMP
+is the error and control message protocol used
+by the Internet protocol family.
+It is used by the kernel to handle and report errors
+in protocol processing.
+It may also be accessed by programs using the socket interface
+or the Transport Level Interface
+(\s-1TLI\s0)
+for network monitoring
+and diagnostic functions.
+When used with the socket interface,
+a \(lqraw socket\(rq type is used.
+The protocol number for
+.SM ICMP\s0,
+used in the
+.I proto
+parameter to the socket call,
+can be obtained from
+\f4getprotobyname\f1(\|)
+[see
+\f4getprotoent\f1(3N)].
+.SM ICMP
+file descriptors and
+sockets are connectionless,
+and are normally used with the
+\f4t_sndudata\f1 / \f4t_rcvudata\f1 and the
+\f4sendto(\|)\f1 / \f4recvfrom(\|)\f1
+calls.
+.LP
+Outgoing packets automatically have an Internet Protocol (\s-1IP\s0)
+header prepended to them.
+Incoming packets are provided to the user with the
+.SM IP
+header and options intact.
+.LP
+.SM ICMP
+is an datagram protocol layered above
+.SM IP\s0.
+It is used internally by the protcol code
+for various purposes including routing,
+fault isolation,
+and congestion control.
+Receipt of an
+.SM ICMP
+\(lqredirect\(rq message will add a new entry in
+the routing table,
+or modify an existing one.
+.SM ICMP
+messages are routinely sent by the protocol code.
+Received
+.SM ICMP
+messages may be reflected back to users
+of higher-level protocols such as
+.SM TCP
+or
+.SM UDP
+as error returns from system calls.
+A copy of all
+.SM ICMP
+message received by the system
+is provided to every holder of an open
+.SM ICMP
+socket or
+.SM TLI
+descriptor.
+.SH SEE ALSO
+\f4send\f1(2),
+\f4getprotoent\f1(3N),
+\f4recvfrom\f1(3N),
+\f4t_rcvudata\f1(3N),
+\f4t_sndudata\f1(3N),
+\f4routing\f1(4),
+\f4inet\f1(7),
+\f4ip\f1(7)
+.LP
+Postel, Jon, .IR "Internet Control Message Protocol \(em \s-1DARPA\s0 Internet Program Protocol Specification" ,
+.SM RFC
+792, Network Information Center,
+.SM SRI
+International, Menlo Park, Calif.,
+September 1981
+.SH DIAGNOSTICS
+.LP
+A socket operation may fail with one of the following errors returned:
+.TP 20
+\f4EISCONN\f1
+An attempt was made to establish a connection on a socket
+which already has one, or when trying to send a datagram with the destination
+address specified and the socket is already connected.
+.TP
+\f4ENOTCONN\f1
+An attempt was made to send a datagram, but
+no destination address is specified, and the socket has
+not been connected.
+.TP
+\f4ENOBUFS\f1
+The system ran out of memory for
+an internal data structure.
+.TP
+\f4EADDRNOTAVAIL\f1
+An attempt was made to create a
+socket with a network address for which no network interface
+exists.
+.SH NOTES
+.LP
+Replies to
+.SM ICMP
+\(lqecho\(rq messages which are source routed
+are not sent back using inverted source routes,
+but rather go back through the normal routing mechanisms.

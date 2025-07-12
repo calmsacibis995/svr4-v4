@@ -1,0 +1,139 @@
+#ident	"@(#)pkg.pc586:postinstall	1.2.1.5"
+
+#	Copyright (c) 1990  Intel Corporation
+#	All Rights Rreserved
+#
+#	INTEL CORPORATION PROPRIETARY INFORMATION
+#
+#	This software is supplied to AT & T under the terms of a license 
+#	agreement with Intel Corporation and may not be copied nor 
+#	disclosed except in accordance with the terms of that agreement.
+#
+
+FAILURE=1	# fatal error
+
+BINDIR=/usr/bin
+CONFDIR=/etc/conf
+CONFBIN=${CONFDIR}/bin
+
+NOTOOLS="ERROR: The Installable Driver feature has been removed. \
+The ${NAME} cannot be installed."
+
+TMP=/tmp/imx586.err
+PACK=${CONFDIF}/pack.d
+ERROR1=" Errors have been written to the file $TMP."
+ESC=
+
+BASE1="ERROR: The ${NAME} is not compatible with this release \
+of the UNIX System V operating system \
+and can not be used with this system."
+
+rm -f $TMP > /dev/null 2>&1
+
+do_strcf() {
+if [ -f /etc/inet/strcf ]
+then 
+	cp /etc/inet/strcf /etc/inet/.strcf.old
+	ENTRY=`grep "# i386/$1" /etc/inet/.strcf.old`
+
+	if [ "$ENTRY" = "" ]
+	then
+		ed -s /etc/inet/.strcf.old << EOF > /dev/null
+/# i386\//
+a
+#	cenet ip /dev/imx586_ emd 0		# i386/imx586
+.
+w
+q
+EOF
+	fi
+
+	sed "/\# i386\/$1/s/^#//" < /etc/inet/.strcf.old > /etc/inet/strcf 
+fi
+}
+
+# determine that ID/TP tools are available
+
+if
+	[ -x ${CONFBIN}/idcheck -a -x ${CONFBIN}/idbuild -a -x ${CONFBIN}/idinstall ]
+then 
+	:
+else
+	message ${NOTOOLS}
+	exit $FAILURE
+fi
+
+cd /tmp/imx586
+
+OSVER=`uname -a | cut -d " " -f3`
+
+case ${OSVER} in
+
+	4.0*) ;;
+	4.1*) ;;
+	*) message ${BASE1};
+	   exit $FAILURE;;
+esac
+
+errflag=0
+
+if [ "${REQINTV}" = 2 ]
+then
+	INT=9
+else
+	INT=${REQINTV}
+fi
+
+sed -e "s/INT/${INT}/" < System > Sys.586
+sed -e "s/LADD/${REQLADD}/" < Sys.586 > imx586.System
+sed -e "s/HADD/${REQHADD}/" < imx586.System > Sys.586
+cat Sys.586 > imx586.System
+rm -f Sys.586
+
+sed -e "s/[	 ]N[	 ]/	Y	/" < imx586.System >System
+rm -rf imx586.System
+
+/etc/conf/bin/idinstall -a imx586 2>> $TMP
+if [ $? != 0 ]
+then
+	/etc/conf/bin/idinstall -u imx586 2>> $TMP
+	if [ $? != 0 ]
+	then
+        	message "The installation cannot be completed due to an error \
+in the driver installation. $ERROR1  Please try the installation again.  \
+If the error occurs again, contact your Service Representative."
+		exit $FAILURE
+	fi
+fi
+
+do_strcf $PKGINST
+
+/etc/conf/bin/idbuild 2>> $TMP
+if [ $? != 0 ]
+then
+        message "The installation cannot be completed due to an error in the \
+kernel reconfiguration. $ERROR1  Please try the installation again.  If the \
+error occurs again, contact your Service Representative." 
+	exit $FAILURE
+fi
+errflag=`expr ${errflag:=0} + 10`
+#installf $PKGINST /usr/options/$PKG.name
+
+#this is no longer needed - now being done in pkginfo 
+#echo $NAME > /usr/options/$PKG.name
+
+installf -f $PKGINST
+
+#
+# Now clean up
+#
+removef $PKGINST /tmp/imx586/* >/dev/null 2>&1
+for i in Driver.o Master Space.c System Node
+do
+	removef $PKGINST /tmp/imx586/$i >/dev/null 2>&1
+done
+removef $PKGINST /tmp/imx586 >/dev/null 2>&1
+removef -f $PKGINST >/dev/null 2>&1
+rm -f $TMP 1>/dev/null 2>&1
+exit ${errflag} 
+

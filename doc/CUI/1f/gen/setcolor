@@ -1,0 +1,36 @@
+'\"macro stdmacro
+.if n .pH g1f.setcolor @(#)setcolor	40.8 of 1/3/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} setcolor 1F "Form and Menu Language Interpreter Utilities" "\&"
+.if \nX=1 .ds x} setcolor 1F "Form and Menu Language Interpreter Utilities"
+.if \nX=2 .ds x} setcolor 1F "" "\&"
+.if \nX=3 .ds x} setcolor "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4setcolor\f1 \- redefine or create a color
+.SH SYNOPSIS
+\f4setcolor\f1
+\f2color\f1\0\f2red_level\f1\0\f2green_level\f1\0\f2blue_level\f1
+.SH DESCRIPTION
+The \f4setcolor\f1 command takes four arguments:
+\f2color\f1, which must be a string naming the color; and
+the arguments \f2red_level\f1, \f2green_level\f1, and \f2blue_level\f1,
+which must be integer values
+defining, respectively, the intensity of the red, green, and blue
+components of \f2color\f1.
+Intensities must be in the range of 0 to 1000.
+If you are redefining an existing color,
+you must use its current name
+(default color names are: \f4black\f1, \f4blue\f1,
+\f4green\f1, \f4cyan\f1, \f4red\f1, \f4magenta\f1, \f4yellow\f1, and \f4white\f1).
+\f4setcolor\f1 returns the color's name string.
+.SH EXAMPLE
+.RS
+\f4\(gasetcolor blue 100 24 300\(ga\f1
+.RE
+.ig
+BUILT-IN FMLI
+..
+.Ee

@@ -1,0 +1,31 @@
+#ident	"@(#)doctools:index/get.books	1.1"
+nawk ' # book.collapse - collect books and chapters for matching entries
+#             $1              $2             $3             $4             $5
+#   Input:  sort key (tab) index term (tab) numlist (tab) [chapter] (tab) [book]
+#   Output: sort key (tab) index term (tab) [book::[chap:numlist]+]+
+BEGIN		{ FS = OFS = "\t"
+		  acro_start = "\\\*\(B{"	# start book acronym
+		  acro_end   = "\\\*\(}B"	# end
+		  chap_start = "\\\*\(C{"	# start chapter number
+		  chap_end   = "\\\*\(}C"	# end
+		}
+($1 != key) ||
+($2 != term)	{ if (NR > 1) printf "\n"	# end old entry
+		  key = $1
+		  term = $2
+		  chap = book = "NULL"		# force book and chap to print
+		  printf "%s\t%s\t", $1, $2
+		}
+($5 != book)	{ if (NR > 1) printf ""		# end old book
+		  if (book != "NULL") printf "\;"
+		  chap =  "NULL"		# force chap to print
+		  book = $5
+		  if (book) printf "%s%s%s", acro_start, book, acro_end
+		}
+($4 != chap)	{ if (NR > 1) printf ""		 # end old chapter
+		  chap = $4
+		  if (chap !~ /^9[0-9][0-9][0-9] $/) printf "%s%s%s", chap_start, chap, chap_end
+		}
+		{ printf "%s ", $3 }
+END		{ if (NR > 1) printf "\n" }
+' $*

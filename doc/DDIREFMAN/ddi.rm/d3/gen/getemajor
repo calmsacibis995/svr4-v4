@@ -1,0 +1,57 @@
+'\"macro stdmacro
+.if n .pH gen.getemajor @(#)getemajor	40.2 of 1/7/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.nr X
+.if \nX=0 .ds x} getemajor D3DK "" "DDI/DKI" "\&"
+.if \nX=1 .ds x} getemajor D3DK "" "DDI/DKI"
+.if \nX=2 .ds x} getemajor D3DK "" "\&"
+.if \nX=3 .ds x} getemajor "" "" "\&"
+.TH \*(x}
+.IX "\f4getemajor\fP(D3DK)"
+.SH NAME
+\f4getemajor\f1 \- get external major device number
+.IX "major device number, external"
+.SH SYNOPSIS
+.nf
+.na
+\f4#include <sys/types.h>
+#include <sys/ddi.h>
+.sp 0.5
+major_t getemajor(dev_t \f2dev\f4);\f1
+.ad
+.fi
+.SH ARGUMENTS
+.RS 0n 10
+.IP "\f2dev\f1" 10n
+External device number.
+.RE
+.SH DESCRIPTION
+\f4getemajor\f1 returns the external major number given a device number,
+\f2dev\f1.  External major numbers are visible
+to the user.  Internal major numbers are only visible in the kernel.
+Since the range of major numbers may be large and sparsely populated,
+the kernel keeps a mapping between external and internal major numbers
+to save space.
+.P
+All driver entry points are passed device numbers
+using external major numbers.
+.P
+Usually, a driver with more than one external major number will
+have only one internal major number.  However, some system implementations
+map one-to-one between external and internal major numbers.  Here,
+the internal major number is the same as the external major number
+and the driver may have more than one internal major number.
+.SH RETURN VALUE
+The external major number.
+.SH LEVEL
+Base or Interrupt.
+.SH NOTES
+Does not sleep.
+.SH SEE ALSO
+.na
+\f4etoimajor\f1(D3DK),
+\f4geteminor\f1(D3DK),
+\f4getmajor\f1(D3DK),
+\f4getminor\f1(D3DK),
+\f4makedevice\f1(D3DK)
+.ad

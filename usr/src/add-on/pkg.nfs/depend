@@ -1,0 +1,4 @@
+#ident	"@(#)pkg.nfs:pkg.nfs/depend	1.1"
+
+P  nsu		Networking Support Utilities
+P  rpc		Remote Procedure Call Utilities

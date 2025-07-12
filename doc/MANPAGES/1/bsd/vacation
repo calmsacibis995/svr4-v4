@@ -1,0 +1,203 @@
+.\" @(#)vacation 40.4 91/04/19 SMI;
+'\" macro stdmacro
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.\" Copyright (c) 1988 Sun Microsystems, Inc. - All Rights Reserved.
+.\"
+.nr X
+.if \nX=0 .ds x} vacation 1 "BSD Compatibility Package" "\&"
+.if \nX=1 .ds x} vacation 1 "BSD Compatibility Package"
+.if \nX=2 .ds x} vacation 1 "" "\&"
+.if \nX=3 .ds x} vacation "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4vacation\f1 \- reply to mail automatically
+.SH SYNOPSIS
+\f4/usr/ucb/vacation\f1 [ \f4\-I\f1 ]
+.br
+\f4/usr/ucb/vacation\f1 [ \f4\-j\f1 ] [ \f4\-a\f2alias\f1 ] [ \f4\-t\f2N\f1 ] \f2username\f1
+.SH DESCRIPTION
+\f4vacation\f1
+automatically replies to incoming mail.
+The reply is contained in the file
+\f4\&.vacation.msg\f1,
+that you create in your home directory.
+.P
+This file should include a header with at least a
+`\f4Subject:\f1'
+line (it should not include a
+`\f4From:\f1'
+or a
+`\f4To:\f1'
+line).
+For example:
+.RS
+.sp .5
+.nf
+.ft 4
+Subject: I am on vacation
+I am on vacation until July 22.  If you have something urgent,
+please contact Joe Jones (jones@f40).
+	--John
+.ft 1
+.fi
+.RE
+.P
+If the string
+\f4$SUBJECT\f1
+appears in the
+\f4\&.vacation.msg\f1
+file,
+it is replaced with the subject of the original message when the
+reply is sent; thus, a
+\f4\&.vacation.msg\f1
+file such as
+.RS
+.sp .5
+.nf
+.ft 4
+Subject: I am on vacation
+I am on vacation until July 22.
+Your mail regarding "$\s-1SUBJECT\s0" will be read when I return.
+If you have something urgent, please contact
+Joe Jones (jones@f40).
+	--John
+.ft 1
+.fi
+.RE
+.P
+will include the subject of the message in the reply.
+.P
+No message is sent if the
+`\f4To:\f1'
+or the
+`\f4Cc:\f1'
+line does not list the user to whom the original message was sent or
+one of a number of aliases for them,
+if the initial
+\f4From\f1
+line includes the string
+\f4\-\s-1REQUEST\s0@\f1,
+or if a
+`\f4Precedence: bulk\f1'
+or
+`\f4Precedence: junk\f1'
+line is included in the header.
+.P
+The following options are available:
+.TP .5i
+\f4\-I\f1
+Initialize the
+\f4\&.vacation.pag\f1
+and
+\f4\&.vacation.dir\f1
+files and start
+\f4/usr/ucb/vacation\f1.
+.P
+If the
+\f4\-I\f1
+flag is not specified, and a
+\f2user\f1
+argument is given,
+\f4/usr/ucb/vacation\f1
+reads the first line from the standard input
+(for a
+`\f4From:\f1'
+line, no colon).
+If absent, it produces an error message.
+The following options may be
+specified:
+.TP .5i
+\f4\-a\f2alias\f1
+Indicate that
+\f2alias\f1
+is one of the valid aliases for the user running
+\f4/usr/ucb/vacation\f1,
+so that mail addressed to that alias generates a reply.
+.TP
+\f4\-j\f1
+Do not check whether the recipient appears in the
+`\f4To: '
+or the
+`\f4Cc:\f1'
+line.
+.TP
+\f4\-t\f2N\f1
+Change the interval between repeat replies to the same sender.
+The default is 1 week.
+A trailing
+\f4s\f1,
+\f4m\f1,
+\f4h\f1,
+\f4d\f1,
+or
+\f4w\f1
+scales
+\f2N\f1
+to seconds, minutes, hours, days, or weeks respectively.
+.SH USAGE
+To start
+\f4/usr/ucb/vacation\f1,
+create a
+\f4\&.forward\f1
+file in your home directory containing a line of the form:
+.IP
+\f4\e\f2username\f4, "|/usr/ucb/vacation \f2username\f4"\f1
+.P
+where
+\f2username\f1
+is your login name.
+.P
+Then type in the command:
+.IP
+\f4/usr/ucb/vacation \-I\f1
+.P
+To stop
+\f4/usr/ucb/vacation\f1,
+remove the
+\f4\&.forward\f1
+file, or move it to a new name.
+.P
+If
+\f4/usr/ucb/vacation\f1
+is run with no arguments, it will permit you to interactively turn
+\f4/usr/ucb/vacation\f1
+on or off.
+It will create a
+\f4\&.vacation.msg\f1
+file for you, or edit an existing one,
+using the editor specified by the
+\f4VISUAL\f1
+or
+\f4EDITOR\f1
+environment variable, or
+\f4vi\f1(1)
+if neither of those environment variables are set.
+If a
+\f4\&.forward\f1
+file is present in your home directory, it will ask whether you want
+to remove it and turn off
+\f4/usr/ucb/vacation\f1.
+If it is not present in your home directory, it creates
+it for you, and automatically performs a
+`\f4/usr/ucb/vacation \-I\f1'
+function, turning on
+\f4/usr/ucb/vacation\f1.
+.SH FILES
+.PD 0
+.TP 20
+\f4~/.forward\f1
+.TP
+\f4~/.vacation.mesg\f1
+.PD
+.P
+A list of senders is kept in the files
+\f4\&.vacation.pag\f1
+and
+\f4\&.vacation.dir\f1
+in your home directory.
+.SH SEE ALSO
+\f4sendmail\fP(1M)
+.P
+\f4vi\fP(1)
+in the \f2User's Reference Manual\f1

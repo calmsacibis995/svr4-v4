@@ -1,0 +1,51 @@
+'\"macro stdmacro
+.if n .pH g2.syscall @(#)syscall	40.11 of 4/24/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+'\" macro stdmacro
+.\" Copyright (c) 1988 Sun Microsystems, Inc. - All Rights Reserved.
+.\"
+.\" Copyright (c) 1980 Regents of the University of California.
+.\" All rights reserved.  The Berkeley software License Agreement
+.\" specifies the terms and conditions for redistribution.
+.\"
+.nr X
+.if \nX=0 .ds x} syscall 3 "BSD Compatibility Package" "\&"
+.if \nX=1 .ds x} syscall 3 "BSD Compatibility Package"
+.if \nX=2 .ds x} syscall 3 "" "\&"
+.if \nX=3 .ds x} syscall "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4syscall\f1 \- indirect system call
+.SH SYNOPSIS
+.nf
+\f4cc \f1[ \f2flag\f1\. \. \. ] \f2file\f1 \. \. \. \f4\-lucb\f1
+.P
+.ft 4
+#include <sys/syscall.h>
+.P
+\f4int syscall(number, arg, .\|.\|.)\f1
+.fi
+.SH DESCRIPTION
+.P
+\f4syscall\f1
+performs the system call whose assembly language
+interface has the specified
+.IR number ,
+and arguments
+.IR "arg \&.\|.\|." \&.
+Symbolic constants for system calls can be found in the header file
+\f4/usr/include/sys/syscall.h\f1.
+.SH "RETURN VALUE"
+.P
+When the C-bit is set,
+\f4syscall\f1
+returns \-1 and sets the
+external variable
+\f4errno\f1
+(see
+\f4intro\f1(2)).
+.SH SEE ALSO
+\f4intro\fP(2),
+\f4pipe\fP(2)
+in the \f2Programmer's Reference Manual\f1

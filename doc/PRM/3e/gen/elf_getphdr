@@ -1,0 +1,111 @@
+'\"macro stdmacro
+.if n .pH g3e.elf_getphdr @(#)elf_getphdr	40.12 of 1/3/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.\"#ident	"@(#)ci5-doc:req/libelf/getphdr.man	1.3"
+.nr X
+.if \nX=0 .ds x} elf_getphdr 3E "ELF Library" "\&"
+.if \nX=1 .ds x} elf_getphdr 3E "ELF Library"
+.if \nX=2 .ds x} elf_getphdr 3E "" "\&"
+.if \nX=3 .ds x} elf_getphdr "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4elf_getphdr\f1: \f4elf32_getphdr\f1, \f4elf32_newphdr\f1 \- retrieve class-dependent program header table
+.SH SYNOPSIS
+\f4cc\f1
+[\f2flag\fP \|.\|.\|.] \f2file\fP \|.\|.\|.
+\f4\-lelf\f1
+[\f2library\fP \|.\|.\|.]
+.PP
+.nf
+.na
+.ft 4
+#include <libelf.h>
+.sp 0.5
+Elf32_Phdr \(**elf32_getphdr(Elf \(**elf);
+.sp 0.5
+Elf32_Phdr \(**elf32_newphdr(Elf \(**elf, size_t count);
+.ft 1
+.ad
+.fi
+.SH DESCRIPTION
+For a 32-bit class file,
+\f4elf32_getphdr\fP
+returns a pointer to the program execution header table,
+if one is available for the
+.SM ELF
+descriptor
+.IR elf .
+.P
+\f4elf32_newphdr\fP
+allocates a new table with
+.I count
+entries, regardless of whether one existed previously,
+and sets the
+\f4ELF_F_DIRTY\f1
+bit for the table [see
+\f4elf_flag\fP(3E)].
+Specifying a zero
+.I count
+deletes an existing table.
+Note this behavior differs from that of
+\f4elf32_newehdr\fP
+[see
+\f4elf32_getehdr\fP(3E)],
+allowing a program to replace or delete the program header table,
+changing its size if necessary.
+.P
+If no program header table exists,
+the file is not a 32-bit class file,
+an error occurs, or
+.I elf
+is null,
+both functions return a null pointer.
+Additionally,
+\f4elf32_newphdr\fP
+returns a null pointer if
+.I count
+is zero.
+.P
+The table is an array of
+\f4Elf32_Phdr\f1
+structures, each of which includes the following members.
+.P
+.RS .5i
+.DT
+.nf
+.ft 4
+.ta 8u*\w' 'u +8u*\w' 'u +8u*\w' 'u +8u*\w' 'u +8u*\w' 'u +8u*\w' 'u
+.ne 10
+	Elf32_Word	p_type;
+	Elf32_Off	p_offset;
+	Elf32_Addr	p_vaddr;
+	Elf32_Addr	p_paddr;
+	Elf32_Word	p_filesz;
+	Elf32_Word	p_memsz;
+	Elf32_Word	p_flags;
+	Elf32_Word	p_align;
+.fi
+.RE
+.P
+The
+.SM ELF
+header's \f4e_phnum\fP member tells how many entries
+the program header table has [see
+\f4elf_getehdr\fP(3E)].
+A program may inspect this value to determine the size
+of an existing table;
+\f4elf32_newphdr\fP
+automatically sets the member's value to
+.IR count .
+If the program is building a new file, it is responsible
+for creating the file's
+.SM ELF
+header
+before creating the program header table.
+.SH "SEE ALSO"
+.na
+\f4elf\fP(3E),
+\f4elf_begin\fP(3E),
+\f4elf_flag\fP(3E),
+\f4elf_getehdr\fP(3E).

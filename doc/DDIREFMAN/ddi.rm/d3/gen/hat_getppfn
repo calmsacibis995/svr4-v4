@@ -1,0 +1,53 @@
+'\"macro stdmacro
+.if n .pH 386.hat_getppfn @(#)hat_getppfn	40.2 of 1/7/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.nr X
+.if \nX=0 .ds x} hat_getppfnum D3D "" "DDI" "\&"
+.if \nX=1 .ds x} hat_getppfnum D3D "" "DDI"
+.if \nX=2 .ds x} hat_getppfnum D3D "" "\&"
+.if \nX=3 .ds x} hat_getppfnum "" "" "\&"
+.TH \*(x}
+.IX "\f4hat_getppfnum\fP(D3D)"
+.SH NAME
+\f4hat_getppfnum\fP \- get physical page ID for physical address
+.SH SYNOPSIS
+.nf
+.na
+\f4#include <sys/types.h>
+#include <sys/vm.h>
+.sp 0.5
+uint_t hat_getppfnum(paddr_t \f2addr\fP, uint_t \f2pspace\fP);\f1
+.ad
+.fi
+.SH ARGUMENTS
+.RS 0n 10
+.IP "\f2addr\fP" 10n
+The physical address for which the physical page ID is
+to be returned.
+.IP "\f2pspace\fP" 10n
+The physical address space to which \f2addr\fP belongs.
+.RE
+.SH DESCRIPTION
+This routine can be used to obtain a physical page ID suitable to be used as the
+return value of the driver's \f4mmap\fP(D2DK) entry point.
+\f4hat_getppfnum\fP returns the physical page ID corresponding to the physical address
+\f2addr\fP.  Some systems have multiple physical address spaces (different buses, etc.)
+For these systems, \f2pspace\fP indicates the address space to which \f2addr\fP belongs.
+For all systems, \f4PSPACE_MAINSTORE\fP is defined as the address space that includes
+mainstore system memory.  Other values are implementation-defined.
+.P
+A physical page ID is a machine-specific token that uniquely identifies a page
+of physical memory in the system (either system memory or device memory.)
+No assumptions should be made about the format of a physical page ID.
+.SH RETURN VALUE
+If \f2addr\fP and \f2pspace\fP are valid, the corresponding physical page ID is returned.
+Otherwise, \f4NOPAGE\fP is returned.
+.SH LEVEL
+Base or interrupt.
+.SH NOTES
+Does not sleep.
+.SH SEE ALSO
+.na
+\f4mmap\fP(D2DK),
+\f4hat_getkpfnum\fP(D3DK)
+.ad

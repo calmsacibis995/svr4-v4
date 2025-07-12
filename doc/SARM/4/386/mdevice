@@ -1,0 +1,189 @@
+'\"macro stdmacro
+.if n .pH g4.mdevice @(#)mdevice	40.11 of 1/3/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.if \nX=0 .ds x} mdevice 4 "" "\&"
+.if \nX=1 .ds x} mdevice 4 ""
+.if \nX=2 .ds x} mdevice 4 "" "\&"
+.if \nX=3 .ds x} mdevice "" "" "\&"
+.nr X
+.TH \*(x} "" "386 Computer Only"
+.SH NAME
+\f4mdevice\f1  \-  file format.
+.SH SYNOPSIS
+\f4mdevice\f1
+.SH "DESCRIPTION"
+The \f4mdevice\f1 file is included in the directory \f4/etc/conf/cf.d\f1.
+It includes a one-line description of each device driver and configurable
+software module in the system to be built
+[except for file system types, see \f4mfsys\f1(4)].
+Each line in \f4mdevice\f1 represents the \f2Master\f1 file component
+from a Driver Software Package (DSP) either delivered with
+the base system or installed later via \f4idinstall\f1.
+.P
+Each line contains several white space-separated fields; they are
+described below.
+Each field must be supplied with a value or a '\-' (dash).
+See the individual driver manual pages for information on the values for
+specific fields.
+.TP 1i
+\f2Device name\f1:
+This field is the internal name of the device or module,
+and may be up to 8 characters long.
+The first character of the name must be an alphabetic character;
+the others may be letters, digits, or underscores.
+.TP 1i
+\f2Function list\f1:
+This field is a string of characters that identify
+driver functions that are present.
+Using one of the characters below requires the driver
+to have an entry point (function) of the type indicated.
+If no functions in the following list are supplied,
+the field should contain a dash.
+.RS 1.25i
+.TP 4
+\f4o\f1 \- open routine
+.TP
+\f4c\f1 \- close routine
+.TP
+\f4r\f1 \- read routine
+.TP
+\f4w\f1 \- write routine
+.TP
+\f4i\f1 \- ioctl routine
+.TP
+\f4s\f1 \- startup routine
+.TP
+\f4x\f1 \- exit routine
+.TP
+\f4f\f1 \- fork routine
+.TP
+\f4e\f1 \- exec routine
+.TP
+\f4I\f1 \- init routine
+.TP
+\f4h\f1 \- halt routine
+.TP
+\f4p\f1 \- poll routine
+.Tp
+\f4E\f1 \- kenter routine
+.TP
+\f4X\f1 \- kexit routine
+.RE
+.TP 1i
+\0
+Note that if the device is a 'block' type device (see field\ 3. below),
+a \f2strategy\f1 routine and a \f2print\f1 routine
+are required by default.
+.TP 1i
+\f2Characteristics of driver\f1:
+This field contains a set of characters
+that indicate the characteristics of the driver.
+If none of the characters below apply, the field should contain a dash.
+The legal characters for this field are:
+.RS 1.25i
+.TP \w'O\ \-\ \ 'u
+\f4i\f1 \-
+The device driver is installable.
+.TP
+\f4c\f1 \- The device is a 'character' device.
+.TP
+\f4b\f1 \- The device is a 'block' device.
+.TP
+\f4[b/c]\f1 \- For indicating which device nodes belong to
+which major.  See \f4idmknod\f1.
+.TP
+\f4f\f1 \- The device is DDI/DKI conformant.
+.TP
+\f4t\f1 \- The device is a tty.
+.TP
+\f4o\f1 \- This device may have only one \f2sdevice\f1 entry.
+.TP
+\f4r\f1 \- This device is required in all configurations of the Kernel.
+This option is intended for drivers delivered with the base system only.
+Device nodes (special files in the \f4/dev\f1 directory),
+once made for this device, are never removed.
+See \f4idmknod\f1.
+.TP
+\f4u\f1 \- This letter accompanying an 'M' would ensure that the
+driver will get major numbers starting at the same number for
+both block and character "multiple majors".
+.TP
+\f4S\f1 \- This device driver is a STREAMS module.
+.TP
+\f4H\f1 \- This device driver controls hardware.
+This option distinguishes drivers that support hardware
+from those that are entirely software (pseudo-devices).
+.TP
+\f4G\f1 \- This device does not use an interrupt though an interrupt
+is specified in the \f4sdevice\f1 entry.
+This is used when you wish to associate a device
+to a specific device group.
+.TP
+\f4D\f1 \- This option indicates that the device driver can share its 
+DMA channel.
+.TP
+\f4M\f1 \- This option indicates that the device requires
+multiple major numbers.
+.TP
+\f4O\f1 \- This option indicates that the IOA range of this device may
+overlap that of another device.
+.RE
+.TP 1i
+\f2Handler prefix\f1:
+This field contains the character string prepended to all
+the externally-known handler routines associated with this driver.
+The string may be up to 4 characters long.
+.TP 1i
+.IR "Block Major number" :
+This field should be set to zero in a DSP \f2Master\f1 file.
+If the device is a 'block' type device,
+a value will be assigned by \f4idinstall\f1 during installation.
+For devices having multiple major numbers this field is used
+to specify the "range" of major numbers.  (e.g., range 3-6 is
+interpreted as four major numbers between 3-6 inclusive).
+.TP 1i
+.IR "Character Major number" :
+This field should be set to zero in a DSP \f2Master\f1 file.
+If the device is a 'character' type device (or 'STREAMS' type),
+a value will be assigned by \f4idinstall\f1 during installation.
+For devices having multiple major numbers this field is used
+to specify the "range" of major numbers.  (e.g., range 3-6 is
+interpreted as four major numbers between 3-6 inclusive).
+.TP 1i
+\f2Minimum units\f1:
+This field is an integer specifying the minimum number
+of these devices that can be specified in the \f4sdevice\f1 file.
+.TP 1i
+\f2Maximum units\f1:
+This field specifies the maximum number of these
+devices that may be specified in the \f4sdevice\f1 file.
+It contains an integer.
+.TP 1i
+\f2DMA channel\f1:
+This field contains  an integer that specifies
+the DMA channel to be used by this device.
+If the device does not use DMA, place a '\-1' in this field.
+Note that more than one device can share a DMA channel 
+(previously disallowed).
+.SH "SPECIFYING STREAMS DEVICES AND MODULES"
+STREAMS modules and drivers are treated in a slightly different way
+from other drivers in all UNIX Systems, and their configuration
+reflects this difference.
+To specify a STREAMS device driver, its \f4mdevice\f1 entry should
+contain both an 'S' and a 'c' in the \f2characteristics\f1 field (see 3. above).
+This indicates that it is a STREAMS driver and that it requires an
+entry in the UNIX kernel's \f2cdevsw\f1 table, where STREAMS drivers
+are normally configured into the system.
+.P
+A STREAMS module that is not a device driver, such as a line discipline
+module, requires an 'S' in the \f2characteristics\f1 field of its
+\f4mdevice\f1 file entry, but should not include a 'c', as a device
+driver does.
+.SH "SEE ALSO"
+\f4mfsys\f1(4),
+\f4sdevice\f1(4).
+.br
+\f4idinstall\f1(1m)
+in the \f2System Administrator's Reference Manual\f1.
+.Ee

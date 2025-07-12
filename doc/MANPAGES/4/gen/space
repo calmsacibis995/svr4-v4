@@ -1,0 +1,56 @@
+'\"macro stdmacro
+.if n .pH g4.space @(#)space	40.11 of 1/3/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} space 4 "Essential Utilities" "\&"
+.if \nX=1 .ds x} space 4 "Essential Utilities"
+.if \nX=2 .ds x} space 4 "Essential Utilities" "\&"
+.if \nX=3 .ds x} space 4 "Essential Utilities" "\&"
+.TH \*(x}
+.SH NAME
+\f4space\f1 \- disk space requirement file
+.SH DESCRIPTION
+\f4space\fP
+is an
+.SM ASCII
+file that gives information about disk space requirements for the
+target environment.
+It defines space needed beyond that which is used by objects defined in
+the \f4prototype\f1 file\(emfor example, files which will
+be installed with the \f4installf\f1 command.
+It should define the maximum
+amount of additional space which a package will require.
+.P
+The generic format of a line in this file is:
+.P
+.RS
+\f2pathname  blocks  inodes\f1
+.RE
+.P
+Definitions for the fields are as follows:
+.TP 10
+\f2pathname\f1
+Specifies a directory name which may or may not be the mount 
+point for a filesystem.  Names that do not begin with a slash 
+(\f4/\fP) indicate relocatable directories.
+.TP 10
+\f2blocks\f1
+Defines the number of disk blocks required for installation of the files and
+directory entries contained in the pathname (using a 512-byte block size).
+.TP 10
+\f2inodes\f1
+Defines the number of inodes required for installation of the files and
+directory entries contained in the pathname.
+.SH EXAMPLE
+.ft 4
+.nf
+# extra space required by config data which is
+# dynamically loaded onto the system
+data	500	1\f1
+.fi
+.ft 1
+.SH "SEE ALSO"
+\f4installf\fP(1M), \f4prototype\fP(4)
+.\"	@(#)space.4	5.2 of 6/16/87
+.Ee

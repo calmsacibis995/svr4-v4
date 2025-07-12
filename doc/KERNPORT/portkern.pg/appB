@@ -1,0 +1,43 @@
+.if n .pH portguide.appB @(#)appB	40.2
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.BK "Programmer's Guide: Porting the Kernel"
+.CH "Appendix B: Porting Tips" B
+If these \f2Porting Notes\f1 are updated for future UNIX System V releases,
+we hope to include in this appendix miscellaneous porting tips and items that a
+porter should know about.
+.H 2 "Backup Configuration"
+There are machine-specific data files that are used by
+system administration and maintenance utilities.
+While these files are often administered for each
+specific installation, it is generally appropriate to
+deliver these files with information that
+conforms to the default configuration of a particular
+machine model.
+.P
+As an example, more sophisticated sites may tailor the allocation of
+file systems such as \f3/usr\f1 to disk drives and partitions.
+Less sophisticated owners of smaller systems may accept the default
+disk file partitioning on a particular integrated model of a computer
+system. 
+In these cases, it is useful to have the defaults work correctly
+in device management and backup/restore services.
+.P
+For each model or "standard" configuration
+that is offered, the \f2device management file\f1 should contain
+complete descriptions of the standard or integrated devices configured
+for use by administrative utilities (e.g., backup/restore,
+software package installation, system administration interface).
+.P
+Another file that should be checked is the \f2backup register table\f1.
+For example, this table might contain a default for full file system
+backups of the \f3/home\f1 file system in demand mode for a small system.
+For large systems, it might contain a full file system backup in demand
+mode for Sundays and daily incremental file system backups in demand mode
+for other days of the week.
+.P
+The
+.BT "System Administrator's Guide"
+should be consulted for the 
+specifics on how to access and change these files.
+

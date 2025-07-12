@@ -1,0 +1,128 @@
+'\"macro stdmacro
+.if n .pH g1a.ff_ufs @(#)ff_ufs	40.11 of 5/16/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} ff 1M "UFS" "\&"
+.if \nX=1 .ds x} ff 1M "UFS"
+.if \nX=2 .ds x} ff 1M "" "\&"
+.if \nX=3 .ds x} ff "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4ff\f1 (ufs) \- list file names and statistics for a \f4ufs\fP file system
+.SH SYNOPSIS
+\f4ff [-F ufs] [\f2generic_options\f4] [-I] [-l] [-p\f2prefix\f4] [-s] [-u] [-a\f2n\f4] [-m\f2n\f4] [-c\f2n\f4] [-n\f2file\f4] [-i\f2i-node-list\f4] [-o a,m,s] \f2special\f4...\f1
+.SH DESCRIPTION
+.I generic_options
+are options supported by the generic \f4ff\f1 command.
+.PP
+\f4ff\f1
+reads the i-list and directories of the 
+.I special 
+file, assuming it is a file system.
+Inode data is saved for files which match
+the selection criteria.
+Output consists of the pathname for each saved inode,
+plus other file information requested using the
+options below.
+Output fields are positional.
+The output is produced in inode order;
+fields are separated by
+.SM TAB
+characters.
+The default line produced by
+\f4ff\f1
+is:
+.PP
+.RS
+.I pathname \|i-number
+.RE
+.P
+The options are:
+.PP
+.TP 0.75i
+\f4\-F ufs\f1
+Specifies the \f4ufs\f1-FSType.
+.TP 0.75i
+\f4\-I\f1
+Do not print the i-node number after each pathname.
+.TP 0.75i
+\f4\-l\f1
+Generate a supplementary list of all pathnames for multiply-linked
+files.
+.TP 0.75i
+\f4\-p\f2prefix\^\f1
+The specified
+.I prefix\^
+will be added to each generated pathname.
+The default is
+\f4\&.\f1
+(dot).
+.TP 0.75i
+\f4\-s\f1
+Print the file size, in bytes, after each pathname.
+.TP 0.75i
+\f4\-u\f1
+Print the owner's login name after each pathname.
+.TP 0.75i
+\f4\-a\f2n\f1
+Select if the i-node has been accessed in
+.I n\^
+days.
+.TP 0.75i
+\f4\-m\f2n\^\f1
+Select if the i-node has been modified in
+.I n\^
+days.
+.TP 0.75i
+\f4\-c\f2n\^\f1
+Select if the i-node has been changed in 
+.I n\^
+days.
+.TP 0.75i
+\f4\-n\f2file\^\f1
+Select if the i-node has been modified more recently than the argument
+.IR file .
+.TP 0.75i
+\f4\-i\f2i-node-list\f1
+Generate names for only those i-nodes specified in \f2i-node-list\f1.
+\%\f2i-node-list\f1 is a list of numbers separated by commas and 
+without spaces.
+.br
+.ne 1i
+.TP 0.75i
+\f4\-o\f1
+Specify \f4ufs\f1 file system specific options.
+The options available are:
+.RS
+.TP 0.75i
+\f5a\f1
+Print the
+\f1`\f4.\f1'
+and
+\f1`\f4.\|.\f1'
+directory entries.
+.TP 0.75i
+\f4m\f1
+Print mode information.
+.TP 0.75i
+\f4s\f1
+Print only special files and files with set-user-ID mode.
+.RE
+.SH NOTE
+.LP
+If the
+\f4\-l\f1
+option is not specified,
+only a single pathname out of all possible ones is generated for a
+multiply-linked inode.
+If
+\f4\-l\f1
+is specified, 
+all possible names for every linked file on the file system are included
+in the output.
+However, no selection criteria apply to the names generated.
+.SH "SEE ALSO"
+\f4find\fP(1),
+generic \f4ff\fP(1M),
+\f4ncheck\fP(1M)

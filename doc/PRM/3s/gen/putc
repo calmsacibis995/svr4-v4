@@ -1,0 +1,110 @@
+'\"macro stdmacro
+.if n .pH g3s.putc @(#)putc	40.12 of 5/22/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} putc 3S "C Development Set" "\&"
+.if \nX=1 .ds x} putc 3S "C Development Set"
+.if \nX=2 .ds x} putc 3S "" "\&"
+.if \nX=3 .ds x} putc "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4putc\f1, \f4putchar\f1, \f4fputc\f1, \f4putw\f1 \- put character or word on a stream
+.SH SYNOPSIS
+\f4#include <stdio.h>\f1
+.PP
+\f4int putc (int c, FILE \(**stream);\f1
+.PP
+\f4int putchar (int c);\f1
+.PP
+\f4int fputc (int c, FILE \(**stream);\f1
+.PP
+\f4int putw (int w, FILE\*S \(**stream);\f1
+.SH DESCRIPTION
+\f4putc\fP
+writes \f2c\fP
+(converted to an \f4unsigned char\fP)
+onto the output
+.I stream\^
+[see \f4intro\fP(3)]
+at the position where the file pointer (if defined)
+is pointing, and advances the file pointer appropriately.
+If the file cannot support positioning requests, or \f2stream\fP
+was opened with append mode, the character is appended to the
+output \f2stream\fP.
+\f4putchar(c)\fP
+is defined as
+\f4putc(c, stdout)\fP.
+\f4putc\fP
+and
+\f4putchar\fP
+are macros.
+.PP
+\f4fputc\fP
+behaves like
+\f4putc\fP,
+but is a function rather than a macro.
+\f4fputc\fP
+runs more slowly than
+\f4putc\fP,
+but it takes less space per invocation and its name can be
+passed as an argument to a function.
+.PP
+\f4putw\fP
+writes the word (i.e., integer)
+.I w\^
+to the output
+.I stream\^
+(where the file pointer, if defined, is pointing).
+The size of a word is the size of an integer and
+varies from machine to machine.
+\f4putw\fP
+neither assumes nor causes special alignment in the file.
+.SH SEE ALSO
+\f4exit\fP(2),
+\f4lseek\fP(2),
+\f4write\fP(2),
+\f4abort\fP(3C),
+\f4fclose\fP(3S),
+\f4ferror\fP(3S),
+\f4fopen\fP(3S),
+\f4fread\fP(3S),
+\f4printf\fP(3S),
+\f4puts\fP(3S),
+\f4setbuf\fP(3S), \f4stdio\fP(3S).
+.SH DIAGNOSTICS
+On success, these functions (with the exception of \f4putw\fP)
+each return the value they have written.
+\f4putw\fP returns \f4ferror (\f2stream\f4)\f1.
+On failure, they return the constant
+\f4EOF\f1.
+This result will occur, for example, if the file
+.I stream\^
+is not open for writing
+or if the output file cannot grow.
+.SH NOTES
+Because it is implemented as a macro,
+\f4putc\fP
+evaluates a
+.I stream\^
+argument more than once.
+In particular,
+\f4putc(c, \(**f++);\f1
+doesn't work sensibly.
+\f4fputc\fP
+should be used instead.
+.P
+Because of possible differences in word length and byte ordering,
+files written using
+\f4putw\fP
+are machine-dependent,
+and may not be read using
+\f4getw\fP
+on a different processor.
+.PP
+Functions exist for all the above defined macros.
+To get the function form, the macro name
+must be undefined
+(e.g., \f4#undef putc\f1).
+.\"	@(#)putc.3s	6.3 of 10/20/83
+.Ee

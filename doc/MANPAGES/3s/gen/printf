@@ -1,0 +1,351 @@
+'\"macro stdmacro
+.if n .pH g3s.printf @(#)printf	40.22.1.1 of 1/3/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+'\" ident	"@(#)svid_ba:ba_lib/printf	1.19"
+.nr X
+.if \nX=0 .ds x} printf 3S "" "\&"
+.if \nX=1 .ds x} printf 3S ""
+.if \nX=2 .ds x} printf 3S "" "\&"
+.if \nX=3 .ds x} printf "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4printf\f1, \f4fprintf\f1, \f4sprintf\f1 \- print formatted output
+.SH SYNOPSIS
+.nf
+.ft 4
+#include <stdio.h>
+.sp .5
+int printf(const char \(**format, .../\(** args \(**/);
+.sp .5
+int fprintf(FILE \(**strm, const char \(**format, .../\(** args \(**/);
+.sp .5
+int sprintf(char \(**s, const char \(**format, .../\(** args \(**/);
+.ft 1
+.fi
+.SH DESCRIPTION
+.br
+\f4printf\f1 places output on the standard output stream \f4stdout\f1.
+.P
+\f4fprintf\f1 places output on \f2strm\f1.
+.P
+\f4sprintf\f1 places output,
+followed by the null character (\f4\e0\f1), in consecutive bytes
+starting at \f2s\f1.
+It is the user's responsibility to ensure that enough storage is available.
+Each function returns the number of characters transmitted
+(not including the \f4\e0\f1 in the case of \f4sprintf\f1) or a negative value if an output error was encountered.
+.P
+Each of these functions converts, formats, and prints its \f2args\f1 under control of the \f2format\f1.
+The \f2format\f1 is a character string that contains three types of objects defined below:
+.RS 5
+.TP 4
+1.
+plain characters that are simply copied to the output stream;
+.TP 4
+2.
+escape sequences that represent non-graphic characters;
+.TP 4
+3.
+conversion specifications.
+.RE
+.P
+The following escape sequences produce the associated action on display devices capable of the action:
+.TP
+\f4\ea\f1
+Alert.
+Ring the bell.
+.TP
+\f4\eb\f1
+Backspace.
+Move the printing position to one character before the current position, unless the current position is the start of a line.
+.TP
+\f4\ef\f1
+Form feed.
+Move the printing position to the initial printing position of the next logical page.
+.TP
+\f4\en\f1
+Newline.
+Move the printing position to the start of the next line.
+.TP
+\f4\er\f1
+Carriage return.
+Move the printing position to the start of the current line.
+.TP
+\f4\et\f1
+Horizontal tab.
+Move the printing position to the next implementation-defined horizontal tab position on the current line.
+.TP
+\f4\ev\f1
+Vertical tab.
+Move the printing position to the start of the next
+implementation-defined vertical tab position.
+.P
+All forms of the \f4printf\f1 functions allow for the insertion of a
+language-dependent decimal-point character.
+The decimal-point character is
+defined by the program's locale (category
+\f4LC_NUMERIC\f1).
+In the \f4C\f1 locale, or in a locale where the
+decimal-point character is not defined, the decimal-point character defaults
+to a period (\f4.\f1).
+.P
+Each conversion specification is introduced by the character \f4%\f1.
+After the character \f4%\f1, the following appear in sequence:
+.P
+.RS
+An optional field, consisting of a decimal digit string followed by a
+\f4$\f1, specifying the next \f2args\f1 to be converted.
+If this field is
+not provided, the \f2args\f1 following the last \f2args\f1 converted will
+be used.
+.P
+Zero or more \f2flags\f1, which modify the meaning of the conversion specification.
+.P
+An optional string of decimal digits to specify a minimum \f2field width\f1.
+If the converted value has fewer characters than the field width, it will be
+padded on the left (or right, if the left-adjustment flag (\f4\-\f1),
+described below, has been given) to the field width.
+.P
+An optional precision that gives the minimum number of digits to
+appear for the \f4d\f1, \f4i\f1, \f4o\f1, \f4u\f1, \f4x\f1\^, or \f4X\f1
+conversions (the field is padded with leading zeros), the
+number of digits to appear after the decimal-point character for
+the \f4e\f1, \f4E\f1, and \f4f\f1 conversions, the maximum
+number of significant digits for the \f4g\f1 and \f4G\f1 conversions,
+or the maximum number of characters to be printed from a string in
+\f4s\f1 conversion.
+The precision takes the form of a period (\f4.\f1) followed by a decimal digit string; a null digit string is treated as zero.
+Padding specified by the precision overrides the padding
+specified by the field width.
+.P
+An optional \f4h\f1 specifies that a following \f4d\f1, \f4i\f1,
+\f4o\f1, \f4u\f1, \f4x\f1\^, or \f4X\f1 conversion specifier
+applies to a \f4short int\f1 or \f4unsigned short int\f1 argument
+(the argument will be promoted according to the integral promotions and
+its value converted to \f4short int\f1 or \f4unsigned short int\f1
+before printing);
+an optional \f4h\f1 specifies that a following \f4n\f1 conversion
+specifier applies to a pointer to a \f4short int\f1 argument.
+An optional \f4l\f1 (ell) specifies that a following \f4d\f1, \f4i\f1,
+\f4o\f1, \f4u\f1, \f4x\f1\^, or \f4X\f1
+conversion specifier applies to a \f4long int\f1 or \f4unsigned long
+int\f1 argument;
+an optional \f4l\f1 (ell) specifies that a following \f4n\f1
+conversion specifier applies to a pointer to \f4long int\f1 argument.
+An optional \f4L\f1 specifies that a following \f4e\f1,
+\f4E\f1, \f4f\f1, \f4g\f1, or \f4G\f1 conversion specifier
+applies to a \f4long double\f1 argument.
+If an \f4h\f1, \f4l\f1, or \f4L\f1 appears before any other
+conversion specifier, the behavior is undefined.
+.P
+A conversion character (see below) that
+indicates the type of conversion to be applied.
+.RE
+.P
+A field width or precision may be indicated by an
+asterisk (\f4\(**\f1) instead of a digit string.
+In this case, an integer \f2args\f1 supplies the field width or precision.
+The \f2args\f1 that is actually converted is not fetched until the conversion
+letter is seen, so the \f2args\f1 specifying field width or precision must
+appear before the \f2args\f1 (if any) to be converted.
+If the \f2precision\f1 argument is negative, it will be changed to zero.
+A negative field width argument is taken as a \f4\-\f1 flag, followed
+by a positive field width.
+.PP
+In format strings containing the \f4\(**\f2digits\f4$\f1 form of a
+conversion specification, a field width
+or precision may also be indicated by the sequence
+\f4\(**\f2digits\f4$\f1, giving the position in the argument list of
+an integer \f2args\f1 containing the field width or precision.
+.P
+When numbered argument specifications are used, specifying
+the \f2N\f1th argument requires that all the leading arguments, from the first to
+the (\f2N\f1\-1)th, be specified in the format string.
+.P
+The \f2flag\f1 characters and their meanings are:
+.TP
+\f4\-\f1
+The result of the conversion will be left-justified within the field.
+(It will be right-justified if this flag is not specified.)
+.TP
+\f4\(pl\f1
+The result of a signed conversion will always begin with a
+sign (\f2\(pl\f1 or \f2\-\f1).
+(It will begin with a sign only when a
+negative value is converted if this flag
+is not specified.)
+.TP
+space
+If the first character of a signed conversion is not a sign,
+a space will be placed before the result.
+This means that if the space and \f2\(pl\f1 flags both appear,
+the space flag will be ignored.
+.TP
+\f4#\f1
+The value is to be converted to an alternate form.
+For \f4c\f1, \f4d\f1, \f4i\f1, \f4s\f1, and \f4u\f1 conversions,
+the flag has no effect.
+For an \f4o\f1 conversion,
+it increases the precision to force the first digit of the result to be a zero.
+For \f4x\f1 (or \f4X\f1) conversion,
+a non-zero result will have \f40x\f1 (or \f40X\f1) prepended to it.
+For \f4e\f1, \f4E\f1, \f4f\f1, \f4g\f1, and \f4G\f1 conversions, the result will always contain a decimal-point character, even if no digits follow the point (normally, a decimal point appears in the result of these conversions only if a digit follows it).
+For \f4g\f1 and \f4G\f1 conversions, trailing zeros will not be removed from the result as they normally are.
+.TP
+\f40\f1
+For \f4d\f1, \f4i\f1, \f4o\f1, \f4u\f1, \f4x\f1\^, \f4X\f1\^,
+\f4e\f1, \f4E\f1, \f4f\f1, \f4g\f1, and \f4G\f1
+conversions, leading zeros (following any indication of sign or base)
+are used to pad to the field width; no space padding is performed.
+If the \f40\f1 and \f4\(en\f1 flags both appear, the \f40\f1 flag
+will be ignored.
+For \f4d\f1, \f4i\f1, \f4o\f1, \f4u\f1, \f4x\f1\^, and \f4X\f1
+conversions, if a precision is specified, the \f40\f1 flag will be
+ignored.
+For other conversions, the behavior is undefined.
+.P
+Each conversion character results in fetching zero or more \f2args\f1.
+The results are undefined if there are insufficient \f2args\f1 for the format.
+If the format is exhausted while \f2args\f1 remain, the excess \f2args\f1 are ignored.
+.P
+The conversion characters and their meanings are:
+.TP 15
+\f4d\f1,\f4i\f1,\f4o\f1,\f4u\f1,\f4x\f1\^,\f4X\f1
+The integer \f2arg\f1 is converted to signed decimal (\f4d\f1 or \f4i\f1), 
+(unsigned octal (\f4o\f1), unsigned decimal (\f4u\f1), or unsigned hexadecimal notation (\f4x\f1 and \f4X\f1).
+The \f4x\f1 conversion uses the letters \f4abcdef\f1 and the \f4X\f1 conversion uses the letters \f4ABCDEF\f1.
+The precision specifies the minimum number of digits to appear.
+If the value being converted can be represented in fewer digits than the specified minimum, it will be expanded with leading zeros.
+The default precision is 1.
+The result of converting a zero value with a precision of zero
+is no characters.
+.TP
+\f4f\f1
+The double \f2args\f1 is converted to decimal notation in the
+style \f4[\-]\f2ddd\f4.\f2ddd\f1, where the number of digits after the decimal-point
+character [see \f4setlocale\fP(3C)] is equal to the precision specification.
+If the precision is omitted from \f2arg\f1, six digits are output; if the  precision is explicitly zero and the \f4#\f1 flag is
+not specified, no decimal-point character appears.
+If a decimal-point character appears, at least 1 digit appears before it.
+The value is rounded to the appropriate number of digits.
+.TP
+\f4e\f1,\f4E\f1
+The double \f2args\f1 is converted to the style
+\f4[\-]\f2d\f4.\f2ddd\f4e\f2\(+-dd\f1, where there is one digit
+before the decimal-point character
+(which is non-zero if the argument is non-zero)
+and the number of digits after it is equal to the precision.
+When the precision is missing, six digits are produced; if the precision is zero
+and the \f4#\f1 flag is not specified,
+no decimal-point character appears.
+The \f4E\f1 conversion character will produce a number with \f4E\f1 instead of \f4e\f1 introducing the exponent.
+The exponent always contains at least two digits.
+The
+value is rounded to the appropriate number of digits.
+.TP
+\f4g\f1,\f4G\f1
+The double \f2args\f1 is printed in style \f4f\f1 or \f4e\f1 (or in style \f4E\f1 in the case of a \f4G\f1 conversion character),
+with the precision specifying the number of significant digits.
+If the precision is zero, it is taken as one.
+The style used depends on the value converted: style \f4e\f1 (or \f4E\f1)
+will be used only
+if the exponent resulting from the conversion is less than \-4 or
+greater than or equal to the precision.
+Trailing zeros are removed from the fractional part of the result.
+A decimal-point character appears only if it is followed by a digit.
+.TP
+\f4c\f1
+The \f4int\f1 \f2args\f1 is converted to an \f4unsigned char\f1, and the
+resulting character is printed.
+.TP
+\f4s\f1
+The \f2args\f1 is taken to be a string (character pointer)
+and characters from the string are
+written up to (but not including)
+a terminating null character;
+if the precision is specified,
+no more than that many characters are written.
+If the precision is not specified,
+it is taken to be infinite, so all characters up to the
+first null character are printed.
+A \f4NULL\f1 value for \f2args\f1 will yield undefined results.
+.TP
+\f4p\f1
+The \f2args\f1 should be a pointer to \f4void\f1.
+The value of the pointer is
+converted to an implementation-defined set of sequences of printable characters,
+which should be the same as the set of sequences that are matched by the
+\f4%p\f1 conversion of the \f4scanf\f1 function.
+.TP
+\f4n\f1
+The argument should be a pointer to an integer into which is written the
+number of characters written to the output standard \s-1I/O\s+1 stream so far by this
+call to \f4printf\f1, \f4fprintf\f1, or \f4sprintf\f1.
+No argument is converted.
+.TP
+\f4%\f1
+Print a \f4%\f1; no argument is converted.
+.P
+If the character after the \f4%\f1 or \f4%\f2digits\f4$\f1 sequence is not
+a valid conversion character, the results of the conversion are undefined.
+.PP
+If a floating-point value is the internal representation for infinity,
+the output is [\f4\(+-\f1]\f2inf\f1, where \f2inf\f1 is either
+\f4inf\f1 or \f4INF\f1, depending on the conversion character.
+Printing of the sign follows the rules described above.
+.PP
+If a floating-point value is the internal representation for
+``not-a-number,'' the output is [\f4\(+-\f1]\f2nan\f40\f2xm\f1.
+Depending on the conversion character, \f2nan\f1 is either
+\f4nan\f1 or \f4NAN\f1.
+Additionally, \f40\f2xm\f1 represents the most
+significant part of the mantissa.
+Again depending on the conversion character, \f2x\f1
+will be \f4x\f1 or \f4X\f1, and \f2m\f1 will use the letters
+\f4abcdef\f1 or \f4ABCDEF\f1.
+Printing of the sign follows the rules described above.
+.PP
+In no case does a non-existent or small field width cause truncation of a field; if the result of a conversion is wider than the field width, the field is simply expanded to contain the conversion result.
+Characters generated by \f4printf\f1 and \f4fprintf\f1 are printed as if the 
+.ft 4
+putc 
+.ft
+routine had been called.
+.SH EXAMPLE
+To print a date and time in the form \f4Sunday, July 3, 10:02\f1, where \f4weekday\f1 and \f4month\f1 are pointers to null-terminated strings:
+.P
+.RS
+.nf
+.ft 4
+printf("%s,\ %s\ %i,\ %d:%.2d",\ 
+\ \ \ \ \ \ \ \ weekday,\ month,\ day,\ hour,\ min);
+.ft 1
+.fi
+.RE
+.P
+To print \(*p to 5 decimal places:
+.P
+.RS
+.nf
+.ft 4
+printf("pi\ \(eq\ %.5f",\ 4\ *\ atan(1.0));
+.ft 1
+.fi
+.RE
+.SH "SEE ALSO"
+\f4exit\fP(2),
+\f4lseek\fP(2),
+\f4write\fP(2),
+\f4abort\fP(3C),
+\f4ecvt\fP(3C),
+\f4putc\fP(3S),
+\f4scanf\fP(3S), 
+\f4setlocale\fP(3C),
+\f4stdio\fP(3S).
+.SH "DIAGNOSTICS"
+.br
+\f4printf\f1, \f4fprintf\f1, and \f4sprintf\f1
+return the number of characters transmitted, or return a negative value
+if an error was encountered.
+.br

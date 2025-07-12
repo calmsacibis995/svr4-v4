@@ -1,0 +1,192 @@
+'\"macro stdmacro
+.if n .pH g2.mknod @(#)mknod	40.12 of 6/18/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} mknod 2 "Application Compatibility Package" "\&"
+.if \nX=1 .ds x} mknod 2 "Application Compatibility Package"
+.if \nX=2 .ds x} mknod 2 "" "\&"
+.if \nX=3 .ds x} mknod "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4mknod\f1 \- make a directory, or a special or ordinary file
+.SH SYNOPSIS
+\f4#include <sys/types.h>\f1
+.br
+\f4#include <osfcn.h>\f1
+.br
+\f4#include <sys/stat.h>\f1
+.PP
+\f4int mknod (const char \(**path, mode_t mode, dev_t dev);\f1
+.SH DESCRIPTION
+\f4mknod\fP
+creates a new file named by the path name pointed to by
+.IR path .
+The file type and permissions of the new file are initialized from
+.IR mode .
+.PP
+The file type is specified in
+.I mode
+by the
+\f4S_IFMT\fP bits, which must be set to one of the following values:
+.PP
+.TS
+l lf4 l .
+	S_IFIFO	fifo special
+	S_IFCHR	character special
+	S_IFDIR	directory
+	S_IFBLK	block special
+	S_IFREG	ordinary file
+	S_IFNAM	name special file
+.TE
+.PP
+The file access permissions are specified in
+.I mode
+by the
+0007777 bits, and may be constructed by an OR of the following values:
+.TS
+center, tab(:);
+lf4 l l.
+S_ISUID:04000:Set user \s-1ID\s0 on execution.
+S_ISGID:020#0:Set group \s-1ID\s0 on execution if # is \f47\f1, \f45\f1, \f43\f1, or \f41\f1
+::Enable mandatory file/record locking if # is \f46\f1, \f44\f1, \f42\f1, or \f40\f1
+S_ISVTX:01000:Save text image  after execution.
+S_IRUSR:00400:Read by owner.
+S_IWUSR:00200:Write by owner.
+S_IXUSR:00100:Execute (search if a directory) by owner.
+S_IRWXG:00070:Read, write, execute by group.
+S_IRGRP:00040:Read by group.
+S_IWGRP:00020:Write by group.
+S_IXGRP:00010:Execute by group.
+S_IRWXO:00007:Read, write, execute  (search) by others.
+S_IROTH:00004:Read by others.
+S_IWOTH:00002:Write by others
+S_IXOTH:00001:Execute by others.
+.TE
+.PP
+The owner
+.SM ID
+of the file
+is set to the effective
+user
+.SM ID\*S
+of the process.
+The group
+.SM ID
+of the file
+is set to the effective group
+.SM ID\*S
+of the process.
+However, if the \f4S_ISGID\fP bit is set in the parent directory,
+then the group
+.SM ID
+of the file is inherited from the parent.
+If the group
+.SM ID
+of the new file does not match the effective group
+.SM ID
+or one of
+the supplementary group IDs, the \f4S_ISGID\fP bit is cleared.
+.PP
+Values of
+.I mode
+other than those above are undefined
+and should not be used.
+The access permission bits of
+.I mode
+are modified by
+the process's file mode creation mask:
+all bits set in the process's file mode creation mask are cleared
+[see
+\f4umask\fP(2)].
+For block and character special files, \f2dev\f1 is the
+special file's device number.
+For name special files,
+\f2dev\f1 is the file type of the name file, either a XENIX shared
+data file or a XENIX semaphore.
+Otherwise,
+.I dev\^
+is ignored.
+See \f4mkdev\f1(3C).
+.PP
+\f4mknod\fP
+may be invoked only by the privileged user for file types other than
+.SM FIFO
+special.
+.PP
+\f4mknod\fP
+fails and creates no new file
+if one or more of the following are true:
+.TP 20
+\f4EEXIST\fP
+The named file exists.
+.TP 20
+\f4EINVAL\fP
+Invalid \f2arg\f1 value.
+.TP
+\f4EFAULT\fP
+.I path\^
+points outside the allocated address space of the process.
+.TP
+\f4ELOOP\fP
+Too many symbolic links were encountered in translating \f2path\f1.
+.TP
+\f4EMULTIHOP\fP
+Components of \f2path\f1 require hopping to multiple
+remote machines.
+.TP 20
+\f4ENAMETOOLONG\fP
+The length of the \f2path\f1 argument exceeds {\f4PATH_MAX\fP}, or the
+length of a \f2path\f1 component exceeds {\f4NAME_MAX\fP} while
+(_\f4POSIX_NO_TRUNC\fP) is in effect.
+.TP
+\f4ENOTDIR\fP
+A component of the
+path prefix
+is not a directory.
+.TP
+\f4ENOENT\fP
+A component of the
+path prefix
+does not exist or is a null pathname.
+.TP 20
+\f4EPERM\fP
+The effective user
+.SM ID
+of the process
+is not super-user.
+.TP
+\f4EROFS\fP
+The directory in which the file is to be created
+is located on a read-only file system.
+.TP
+\f4ENOSPC\fP
+No space is available.
+.TP
+\f4EINTR\fP
+A signal was caught during the \f4mknod\fP system call.
+.TP
+\f4ENOLINK\fP
+\f2path\f1 points to a remote machine and the link
+to that machine is no longer active.
+.SH "SEE ALSO"
+\f4creatsem\fP(2), \f4sdget\fP(2)
+.br
+\f4chmod\fP(2), \f4exec\fP(2), \f4umask\fP(2), \f4mkfifo\fP(3C), \f4stat\fP(5) in the \f2Programmer's Reference Manual\fP
+.br
+\f4fs\fP(4) in the \f2System Administrator's Reference Manual\f1
+.br
+\f4mkdir\fP(1) in the \f2User's Reference Manual\f1
+.SH "DIAGNOSTICS"
+Upon successful completion a value of 0 is returned.
+Otherwise, a value of \-1 is returned and
+\f4errno\fP
+is set to indicate the error.
+.SH "NOTES"
+If \f4mknod\fP creates a device in a remote directory
+using Remote File Sharing, the major and minor device numbers
+are interpreted by the server.
+.PP
+Semaphore files should be created with the \f4creatsem\fP system call.
+Shared data files should be created with
+the \f4sdget\fP system call.

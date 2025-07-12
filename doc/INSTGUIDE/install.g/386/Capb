@@ -1,0 +1,39 @@
+.if n .pH 386.Capb @(#)Capb	40.1.1.1
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.BK "Installation Guide" "System V Release 4" "" ""   
+.\ACRONYM	                  
+.CH "Selecting Optional Slices" "" "Table of Contents" "B"
+.\CHAPTER	B
+.tC 1 "Introduction" B-1  
+.Index: optional slices, creating        	1
+.Index: /usr        	1
+.Index: /var        	1
+.Index: /home        	1
+.Index: /dev/dump        	1
+.Index: /home2        	1
+.Index: /tmp        	1
+.tC 1 "Selecting Optional Slices" B-2  
+.Index: filesystem, root        	2
+.Index: root filesystem        	2
+.Index: filesystem, ufs type        	2
+.Index: filesystem, s5 type        	2
+.Index: filesystem, s52k type        	2
+.Index: hard disk, formatting two        	2
+.tC 2 "Determining if the Default Configuration is Correct" B-2  
+.Index: filesystem, minimum sizes        	2
+.tC L "Table B-1:\0" "Minimum File System Sizes" B-2
+.Index: root filesystem        	3
+.Index: filesystem, root        	3
+.Index: /dev/dump        	3
+.Index: swap        	3
+.Index: /usr        	3
+.Index: /var        	3
+.Index: root filesystem        	3
+.Index: filesystem, root        	3
+.Index: troubleshooting, disk space problems        	3
+.Index: error messages        	3
+.tC 2 "Changing the Recommended Configuration" B-4  
+.Index: configuration, changing        	4
+.Index: disk, default configuration        	4
+.Index: disk space, allocating        	4
+.Index: disk, accepting the default        	5

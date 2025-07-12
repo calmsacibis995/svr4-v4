@@ -1,0 +1,41 @@
+#ident	"@(#)hiint:proto/i386/mbus/cmd/PKG_INFO	1.2"
+#
+#	Copyright (c) 1990  Intel Corporation
+#	All Rights Reserved
+#
+#	INTEL CORPORATION PROPRIETARY INFORMATION
+#
+#	This software is supplied to AT & T under the terms of a license 
+#	agreement with Intel Corporation and may not be copied nor 
+#	disclosed except in accordance with the terms of that agreement.
+#
+
+# Basic variables.
+
+RELEASE="4.0"
+VERSION="4"
+SIZE="2360"
+SPOOL="/var/spool/pkg"
+TITLE=\
+"UNIX System V Release $RELEASE Version $VERSION"
+
+# This defines the basic packaging groups.
+
+PKG_GROUPS="BASIC NETWORK DEVELOPMENT EXTENDED HARDWARE"
+
+# These are the contents of the basic package groups.
+# Note that these groups are traversed in order, and must be
+# listed in dependency order.
+
+BASIC="ed terminf termcap fmli oam lp acp nsu geus"
+
+NETWORK="dfs rpc inet nfs rfs"
+
+EXTENDED="compat gcontrib face"
+
+DEVELOPMENT="kdb-util kdb scde gpp"
+
+HARDWARE="ots enetdrv i596"
+
+export PKG_GROUPS SPOOL TITLE RELEASE VERSION
+export BASIC HARDWARE NETWORK EXTENDED DEVELOPMENT

@@ -1,0 +1,63 @@
+'\"! tbl | mmdoc
+'\"macro stdmacro
+.if n .pH g4.inode_s5 @(#)inode_s5	40.7 of 5/1/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} inode 4 "s5" "\&"
+.if \nX=1 .ds x} inode 4 "s5"
+.if \nX=2 .ds x} inode 4 "" "\&"
+.if \nX=3 .ds x} inode "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4inode\f1 (s5) \- format of an \f4s5\fP i-node
+.SH SYNOPSIS
+\f4#include <sys/types.h>\f1
+.br
+\f4#include <sys/fs/s5ino.h>\f1
+.SH DESCRIPTION
+An i-node for a plain file or directory in an \f4s4\fP file
+system has the following structure
+defined by
+\f4sys/fs/s5ino.h\f1.
+.PP
+.ft 4
+.nf
+/\(** Inode structure as it appears on a disk block. \(**/
+.TS
+l1f4 l1f4 l1f4 l.
+struct	dinode
+{
+	o_mode_t	di_mode;	/\(** mode and type of file \(**/
+	o_nlink_t	di_nlink;	/\(** number of links to file \(**/
+	o_uid_t	di_uid;	/\(** owner's user id \(**/
+	o_gid_t	di_gid;	/\(** owner's group id \(**/
+	off_t	di_size;	/\(** number of bytes in file \(**/
+	char	di_addr[39];	/\(** disk block addresses \(**/
+	unsigned char	di_gen;	/\(** file generation number \(**/
+	time_t	di_atime;	/\(** time last accessed \(**/
+	time_t	di_mtime;	/\(** time last modified \(**/
+	time_t	di_ctime;	/\(** time status last changed \(**/
+};
+.TE
+/\(**
+ \(** Of the 40 address bytes:
+ \(**	39 are used as disk addresses
+ \(**	13 addresses of 3 bytes each
+ \(**	and the 40th is used as a
+ \(**   file generation number
+ \(**/
+.ft 1
+.fi
+.PP
+For the meaning of the defined types
+\f4off_t\fP
+and
+\f4time_t\fP
+see
+\f4types\fP(5).
+.SH SEE ALSO
+\f4stat\fP(2),
+s5 \f4fs\fP(4)
+.br
+\f4l3tol\fP(3C), \f4types\fP(5) in the \f2Programmer's Reference Manual\fP

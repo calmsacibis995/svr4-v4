@@ -1,0 +1,75 @@
+'\"macro stdmacro
+.if n .pH g1a.userdel @(#)userdel	40.5 of 1/3/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+'\"macro stdmacro
+.if n .pH g1a.userdel @(#)userdel @(#)userdel	40.7
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.if \nX=0 .ds x} userdel 1M "Essential Utilities" "\&"
+.if \nX=1 .ds x} userdel 1M "Essential Utilities"
+.if \nX=2 .ds x} userdel 1M "" "\&"
+.if \nX=3 .ds x} userdel "" "" "\&"
+.nr X
+.TH \*(x} "" "386 Computer Only"
+.SH NAME
+\f4userdel\f1 \- delete a user's login from the system
+.SH SYNOPSIS
+.nf
+\f4/usr/sbin/userdel [\-r]\f2 login\f1
+.fi
+.SH DESCRIPTION
+The \f4userdel\f1 command deletes a user's login definition
+from the system.
+It removes the definition of the specified login and makes the
+appropriate login-related system file and file system changes.
+.P
+The following options are available:
+.TP
+\f4\-r\f1
+Remove the user's home directory from the system.
+The files and directories under the home directory will no longer be
+accessible following successful execution of the command.
+.TP
+\f4login\fP
+A string of printable characters that specifies an existing login on the
+system.
+It may not contain a colon (:), or a newline (\\n).
+.SH FILES
+\f4/etc/passwd, /etc/shadow, /etc/group\f1
+.SH SEE ALSO
+\f4groupadd\fP(1M),
+\f4groupdel\fP(1M),
+\f4groupmod\fP(1M),
+\f4logins\fP(1M),
+\f4passwd\fP(1),
+\f4passwd\fP(1M),
+\f4useradd\fP(1M),
+\f4usermod\fP(1M),
+\f4users\fP(1).
+.SH DIAGNOSTICS
+The \f4userdel\f1 command exits with one of the following values:
+.TP
+\f40\f1
+Success.
+.TP
+\f42\f1
+Invalid command syntax.
+A usage message for the \f4userdel\f1 command
+is displayed.
+.TP
+\f46\f1
+The login to be removed does not exist.
+.TP
+\f48\f1
+The login to be removed is in use.
+.TP
+\f410\f1
+Cannot update the \f4/etc/group\f1 file but
+the login is removed from the \f4/etc/passwd\f1 file.
+.TP
+\f412\f1
+Cannot remove or otherwise modify the home directory.
+
+
+
+

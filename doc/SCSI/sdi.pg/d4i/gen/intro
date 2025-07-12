@@ -1,0 +1,33 @@
+'\"macro stdmacro
+.if n .pH gen.intro @(#)intro	40.1 of 2/22/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.nr X
+.if \nX=0 .ds x} intro D4I SDI "\&"
+.if \nX=1 .ds x} intro D4I SDI
+.if \nX=2 .ds x} intro D4I "" "\&"
+.if \nX=3 .ds x} intro "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4intro\fP \- introduction to SCSI data structures
+.SH DESCRIPTION
+This section describes the structures that are
+accessed in SCSI target drivers.
+Five data structures are used by SDI to handle data transmission between the
+target drivers and the SCSI host adapter.  Additional structures, the
+\f4scm\f1 and the \f4scs\f1 structures, are used to
+send a command from a user program to a SCSI device 
+using the pass-through interface.
+.P
+The structures discussed in this section are:
+.IP
+\f4sb\f1 SCSI block structure
+.IP
+\f4scb\f1 SCSI control block structure
+.IP
+\f4scm\f1 and \f4scs\f1 SCSI command structures
+.IP
+\f4scsi_ad\f1 SCSI device address structure
+.IP
+\f4sfb\f1 SCSI function block structure
+.IP
+\f4ver_no\f1 SCSI version number structure

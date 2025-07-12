@@ -1,0 +1,8 @@
+#ident	"@(#)pkg.xx:preinstall	1.1.2.1"
+
+cmp /usr/bin/x286 /usr/bin/x286emul > /dev/null 2>&1
+if [ $? = 0 ]
+then rm /usr/bin/x286emul > /dev/null 2>&1
+fi
+#add the group dos to /etc/group for the dos commands
+groupadd dos

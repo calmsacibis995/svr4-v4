@@ -1,0 +1,34 @@
+'\"macro stdmacro
+.if n .pH 386.intro4x @(#)intro4x	40.3 of 6/24/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.nr X
+.if \nX=0 .ds x} intro D4X "" "DDI" "\&"
+.if \nX=1 .ds x} intro D4X "" "DDI"
+.if \nX=2 .ds x} intro D4X "" "\&"
+.if \nX=3 .ds x} intro "" "" "\&"
+.TH \*(x}
+.IX "\f4intro\fP(D4X)"
+.SH NAME
+\f4intro\fP \- introduction to DMA data structures
+.SH SYNOPSIS
+.nf
+\f4#include <sys/types.h>
+#include <sys/dma.h>
+#include <sys/ddi.h>\fP
+.fi
+.SH DESCRIPTION
+This section describes the data structures available for use by device drivers
+that directly program DMA controllers.
+Intel 80x86-based implementations that support
+DMA by having drivers directly program DMA controllers define these structures
+in \f4sys/dma.h\fP.
+.P
+Driver developers should not declare arrays
+of these structures, as the size of any structure might change between releases.
+Drivers can only reference those structure members described on the manual
+page.
+The actual data structures may have additional structure members beyond those described,
+but drivers must not reference them.
+.ig
+	null section helps create MasterToc
+..

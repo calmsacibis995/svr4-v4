@@ -1,0 +1,68 @@
+'\"macro stdmacro
+.if n .pH g1a.accept @(#)accept	40.9.1.1 of 1/3/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} accept 1M "Line Printer Spooling Utilities" "\&"
+.if \nX=1 .ds x} accept 1M "Line Printer Spooling Utilities"
+.if \nX=2 .ds x} accept 1M "" "\&"
+.if \nX=3 .ds x} accept "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4accept\f1, \f4reject\f1 \- accept or reject print requests
+.SH SYNOPSIS
+\f4accept\f1 \f2destinations\f1
+.br
+\f4reject\f1 [\|\f4\-r\f1\|\f2reason\f1\|] \f2destinations\f1
+.SH DESCRIPTION
+\f4accept\fP allows the queueing of print
+requests for the named
+.IR destinations .
+A
+.I destination
+can be either a printer or a class of printers.
+Run \f4lpstat \-a\fP 
+to find the status of
+.IR destinations .
+.PP
+\f4reject\f1 prevents queueing of print
+requests for the named
+.IR destinations .
+A
+.I destination
+can be either
+a printer
+or a class of printers.
+(Run \f4lpstat \-a\fP 
+to find the status of
+.IR destinations .)
+The following option is useful with
+\f4reject\fP.
+.TP "\w'\-r\|reason\|\ \ \ \ 'u"
+\f4\-r\f1 \f2reason\fP
+Assign a
+.I reason
+for rejection of requests.
+This
+.I reason
+applies to all \f2destinations\fP specified.
+.I Reason
+is reported by
+\f4lpstat \-a\fP.
+It must be enclosed in quotes if it contains blanks.
+The default reason is \f4unknown reason\fP for
+existing destinations, and \f4new destination\fP for
+destinations just added to the system but not yet accepting
+requests.
+.SH FILES
+\f4/var/spool/lp/*\fP
+.SH SEE ALSO
+\f4lpadmin\fP(1M),
+\f4lpsched\fP(1M).
+.br
+\f4enable\fP(1),
+\f4lp\fP(1),
+\f4lpstat\fP(1) in the
+\f2User's Reference Manual\f1.
+.\"	@(#)accept.1m	6.2 of 9/2/83
+.Ee

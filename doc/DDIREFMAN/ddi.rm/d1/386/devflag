@@ -1,0 +1,34 @@
+'\"macro stdmacro
+.if n .pH 386.devflag @(#)devflag	40.2 of 1/7/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.nr X
+.if \nX=0 .ds x} devflag D1D "" "DDI" "\&"
+.if \nX=1 .ds x} devflag D1D "" "DDI"
+.if \nX=2 .ds x} devflag D1D "" "\&"
+.if \nX=3 .ds x} devflag "" "" "\&"
+.TH \*(x}
+.IX "\f4devflag\fP(D1D)"
+.SH NAME
+\f4devflag\fP \- driver flags
+.SH SYNOPSIS
+.nf
+\f4#include <sys/conf.h>
+.sp 0.5
+int \f2prefix\fPdevflag = 0;\f1
+.ad
+.fi
+.SH DESCRIPTION
+Every driver must define a global integer containing a bitmask of flags that
+indicate its characteristics to the system.  The valid flags that may be
+set are:
+.IP \f4D_DMA\fP 12n
+The driver does DMA (Direct Memory Access).
+.IP \f4D_TAPE\fP
+The driver controls a tape device (mount read-only).
+.IP \f4D_NOBRKUP\fP
+The driver understands page lists (the I/O job is not broken up along page boundaries into
+multiple jobs by the kernel.)
+.P
+If no flags are set for the driver, then \f2prefix\f4devflag\f1 should be set to 0.
+.SH SEE ALSO
+\f2UNIX System V/386 Release 4 Integrated Software Development Guide.\fP

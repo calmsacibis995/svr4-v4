@@ -1,0 +1,66 @@
+'\"macro stdmacro
+.if n .pH gen.putbq @(#)putbq	40.2 of 1/7/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.nr X
+.if \nX=0 .ds x} putbq D3DK "STREAMS" "DDI/DKI" "\&"
+.if \nX=1 .ds x} putbq D3DK "STREAMS" "DDI/DKI"
+.if \nX=2 .ds x} putbq D3DK "" "\&"
+.if \nX=3 .ds x} putbq "" "" "\&"
+.TH \*(x}
+.IX "\f4putbq\fP(D3DK)"
+.SH NAME
+\f4putbq\f1 \- place a message at the head of a queue
+.SH SYNOPSIS
+.nf
+.na
+\f4#include <sys/stream.h>
+.sp 0.5
+int putbq(queue_t *\f2q, \f4mblk_t *\f2bp\f4);\f1
+.ad
+.fi
+.SH ARGUMENTS
+.RS 0n 10
+.IP "\f2q\f1" 10n
+Pointer to the queue.
+.IP "\f2bp\f1" 10n
+Pointer to the message.
+.RE
+.SH DESCRIPTION
+\f4putbq\f1 puts a message back at the head of a queue.
+If messages of a higher priority are on the queue, then
+\f2bp\fP is placed at the head of its corresponding priority
+band.  See \f4srv\fP(D2DK) for more information about message
+priorities.
+.P
+All flow control parameters are updated.
+The queue's service routine is scheduled if it has not been disabled by a previous call to
+\f4noenable\fP(D3DK).
+.P
+\f4putbq\f1 is usually 
+called when \f4bcanput\f1(D3DK) or \f4canput\f1(D3DK) determines that the
+message cannot be passed on to the next stream component.
+.SH RETURN VALUE
+\f4putbq\f1 returns 1 on success and 0 on failure.
+.SH LEVEL
+Base or Interrupt.
+.SH NOTES
+Does not sleep.
+.sp 0.5
+\f4putbq\fP can fail if there is not enough memory to allocate the accounting data
+structures used with messages whose priority bands are greater than zero.
+.sp 0.5
+High priority messages should never be put back on a queue from within a service routine.
+.SH SEE ALSO
+.na
+\f4srv\fP(D2DK),
+\f4bcanput\f1(D3DK),
+\f4canput\f1(D3DK),
+\f4getq\f1(D3DK),
+\f4insq\fP(D3DK),
+\f4putq\f1(D3DK),
+\f4rmvq\fP(D3DK),
+\f4msgb\fP(D4DK),
+\f4queue\fP(D4DK)
+.ad
+.SH EXAMPLE
+See \f4bufcall\f1(D3DK) for an example of \f4putbq\f1.

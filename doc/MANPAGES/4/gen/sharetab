@@ -1,0 +1,42 @@
+'\"macro stdmacro
+.if n .pH g4.sharetab @(#)sharetab	40.7 of 4/11/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} sharetab 4 "DFS" "\&"
+.if \nX=1 .ds x} sharetab 4 "DFS"
+.if \nX=2 .ds x} sharetab 4 "DFS" "\&"
+.if \nX=3 .ds x} sharetab 4 "DFS" "\&"
+.TH \*(x}
+.SH NAME
+\f4sharetab\f1 \- shared file system table
+.SH DESCRIPTION
+\f4sharetab\f1 resides in directory \f4/etc/dfs\f1
+and contains a table of local resources shared by the
+\f4share\f1 command.
+.P
+Each line of the file consists of the following fields:
+.P
+.RS 5
+\f2pathname resource fstype specific_options description\f1
+.RE
+.sp .5
+where
+.RS 5
+.IP \f2pathname\f1 15 
+Indicates the pathname of the shared resource.
+.IP \f2resource\f1 15 
+Indicates the symbolic name by which remote systems can 
+access the resource.
+.IP \f2fstype\f1 15 
+Indicates the file system type of the shared resource.
+.IP \f2specific_options\f1 15 
+Indicates file-system-type-specific options
+that were given
+to the \f4share\f1 command when the resource was shared.
+.IP \f2description\f1 
+Is a description of the shared resource
+provided by the system administrator when the resource was shared.
+.RE
+.SH "SEE ALSO"
+\f4share\fP(1M)

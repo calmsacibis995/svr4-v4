@@ -1,0 +1,43 @@
+'\"macro stdmacro
+.if n .pH g3c.mktemp @(#)mktemp	40.15 of 5/22/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} mktemp 3C "C Development Set" "\&"
+.if \nX=1 .ds x} mktemp 3C "C Development Set"
+.if \nX=2 .ds x} mktemp 3C "" "\&"
+.if \nX=3 .ds x} mktemp "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4mktemp\f1 \- make a unique file name
+.SH SYNOPSIS
+\f4#include <stdlib.h>\f1
+.PP
+\f4char \(**mktemp(char \(**template);\f1
+.SH DESCRIPTION
+\f4mktemp\fP
+replaces the contents of the string pointed to by
+.I template\^
+with a unique file name, and returns
+.IR template .
+The string in
+.I template\^
+should look like a file name with six trailing
+\f4X\f1s;
+\f4mktemp\fP
+will replace the
+\f4X\f1s
+with a character string
+that can be used to create a unique file name.
+.SH SEE ALSO
+\f4tmpfile\fP(3S), \f4tmpnam\fP(3S).
+.SH DIAGNOSTIC
+\f4mktemp\fP
+will assign to \f2template\f1 the empty string if it 
+cannot create a unique name.
+.SH NOTES
+\f4mktemp\fP
+can create only 26 unique file names per process
+for each unique \f2template\fP.
+.\"	@(#)mktemp.3c	6.2 of 10/20/83
+.Ee

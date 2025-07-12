@@ -1,0 +1,182 @@
+'\"macro stdmacro
+.if n .pH g1.dis  @(#)dis	40.17 of 5/22/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.if '\*p'' \{\
+.ds N 3B20 computer
+.ds p 
+.ds P 
+.ds l libc.a\}
+.nr X
+.if \nX=0 .ds x} \*pdis 1 "C Development Set" "\&"
+.if \nX=1 .ds x} \*pdis 1 "C Development Set"
+.if \nX=2 .ds x} \*pdis 1 "" "\&"
+.if \nX=3 .ds x} \*pdis "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4dis\f1 \- object code disassembler
+.SH SYNOPSIS
+\f4dis\f1
+\f1[\f4\-o\f1]
+\f1[\f4\-V\f1]
+\f1[\f4\-L\f1]
+\f1[\f4\-s\f1]
+\f1[\f4\-d\f2 sec\f1]
+\f1[\f4\-D\f2 sec\f1]
+\f1[\f4\-F\f2 function\f1]
+\f1[\f4\-t\f2 sec\f1]
+\f1[\f4\-l\f2 string\f1]
+\f2file\f1 .\ .\ .
+.SH DESCRIPTION
+The 
+\f4dis\f1
+command
+produces an assembly language listing
+of
+.IR file ,
+which may be an object file or an archive of object files.
+The listing includes
+assembly
+statements
+and
+an octal or hexadecimal representation of the binary
+that produced those statements.
+.PP
+The following \f2options\fP are
+interpreted by the disassembler and may be specified in any order.
+.PP
+.TP 12
+\f4\-d\f2 sec\f1
+Disassemble the 
+named section as data,
+printing the offset of
+the data from the
+beginning of the section.
+.PP
+.TP 12
+\f4\-D\f2 sec\f1
+Disassemble the 
+named section as data,
+printing the actual 
+address of the data.
+.PP
+.TP 12
+\f4\-F\f2 function\f1
+Disassemble only the named function in each object file
+specified on the command line.
+The
+\f4\-F\f1
+option may be specified multiple times on the command line.
+.PP
+.PP
+.TP 12
+\f4\-L\f1
+Lookup source labels for
+subsequent printing.
+This option works only if the file was compiled with
+additional debugging information [e.g., the 
+\f4\-g\f1
+option of
+\f4cc\f1].
+.PP
+.TP 12
+\f4\-l\f2 string\f1
+Disassemble the
+archive file specified
+by
+.IR string .
+For example,
+one would issue the
+command
+\f4\*pdis \-l x \-l z\f1
+to disassemble
+\f4libx.a\f1
+and
+\f4libz.a\f1,
+which are assumed to be in 
+.IR LIBDIR .
+.TP 12
+\f4\-o\f1
+Print numbers in octal.
+The default is hexadecimal.
+.PP
+.TP 12
+\f4\-s\f1
+Perform symbolic disassembly where possible.
+Symbolic disassembly output will appear on the line 
+following the instruction.
+Symbol names will be printed using C syntax.
+.PP
+.TP 12
+\f4\-t\f2 sec\f1
+Disassemble the
+named section as text.
+.PP
+.TP 12
+\f4\-V\f1
+Print, on standard error, the
+version number of the disassembler
+being executed.
+.DT
+.br
+.PP
+If the
+\f4\-d\f1,
+\f4\-D\f1
+or
+\f4\-t\f1
+options are specified,
+only those named
+sections from each
+user-supplied file name
+will be disassembled.
+Otherwise, all sections
+containing text will
+be disassembled.
+.PP
+On output, a number enclosed in brackets
+at the beginning of a line,
+such as 
+\f4[5]\f1,
+indicates that the break-pointable line number
+starts with the following instruction.
+These line numbers will be printed only if the file was compiled with
+additional debugging information [for example, 
+the
+\f4\-g\f1
+option of
+\f4cc\f1].
+An expression such as
+\f4<40>\f1
+in the operand field or in the symbolic disassembly,
+following a relative displacement
+for control transfer instructions,
+is the computed address
+within the section to which
+control will be transferred.
+A function name
+will appear in the first column,
+followed by
+\f4(\|)\f1
+if the object file contains a symbol table.
+.SH "FILES"
+.TP 15
+\f2LIBDIR\f1
+usually \f4/usr/ccs/lib\fP
+.SH "SEE ALSO"
+\f4as\fP(1),
+\f4cc\fP(1),
+\f4ld\fP(1),
+\f4a.out\fP(4)
+.SH DIAGNOSTICS
+The self-explanatory diagnostics
+indicate errors in
+the command line or problems
+encountered with the
+specified files.
+.SH NOTES
+Since the \f4\-da\f1 option did not adhere to the command syntax rules,
+it has been replaced by \f4\-D\f1.
+.PP
+At this time, symbolic disassembly does not take advantage of additional
+information available if the file is compiled with the \f4\-g\f1 option.

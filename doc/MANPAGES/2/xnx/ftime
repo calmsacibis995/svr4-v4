@@ -1,0 +1,60 @@
+'\"macro stdmacro
+.if n .pH g2.ftime @(#)ftime	40.10 of 6/18/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} ftime 2 "Application Compatibility Package" "\&"
+.if \nX=1 .ds x} ftime 2 "Application Compatibility Package"
+.if \nX=2 .ds x} ftime 2 "" "\&"
+.if \nX=3 .ds x} ftime "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4ftime\f1 \- get time and date
+.SH SYNOPSIS
+\f4cc \f1[\f2flag \f1. . .] \f2file\f1 . . . \f4-lx \f1[\f2library . . .\f1]
+.PP
+\f4#include <sys/times.h>\fP
+.PP
+\f4ftime(struct timeb *tp);\fP
+.SH DESCRIPTION
+\f4ftime\fP returns the time in a structure (see
+.SM DIAGNOSTICS
+below).
+\f4ftime\f1 will fail if \f2tp\f1 points to an illegal
+address [\f4EFAULT\f1].
+.SH DIAGNOSTICS
+The \f4ftime\f1 entry fills in a structure pointed to by its
+argument, as defined by \f4<sys/timeb.h>\f1:
+.RS
+.ft 4
+.nf
+/* Structure returned by ftime system call */
+.sp .5
+struct timeb {
+     long time;
+     unsigned short millitm;
+     short  timezone;
+     short  dstflag;
+};
+.fi
+.ft
+.RE
+.P
+Note that the timezone value is a system default timezone
+and not the value of the \f4TZ\fP environment variable.
+.P
+The structure contains the time since the 00:00:00
+.SM GMT\s0,
+January 1, 1970 up to 1000 milliseconds of more-precise interval,
+the local time zone (measured in minutes of time westward
+from Greenwich), and a flag that, if nonzero, indicates
+that Daylight Saving time applies locally during the
+appropriate part of the year.
+.SH SEE ALSO
+\f4cc\f1(1),
+\f4stime\f1(2),
+\f4ctime\f1(3C)
+.SH NOTES
+Since \f4ftime\f1 does not return the correct
+timezone value, its use is not recommended.
+See \f4ctime\f1(3C) for accurate use of the \f4TZ\fP variable.

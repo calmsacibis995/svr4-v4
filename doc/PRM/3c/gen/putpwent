@@ -1,0 +1,41 @@
+'\"macro stdmacro
+.if n .pH g3c.putpwent @(#)putpwent	40.10 of 5/22/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} putpwent 3C "C Development Set" "\&"
+.if \nX=1 .ds x} putpwent 3C "C Development Set"
+.if \nX=2 .ds x} putpwent 3C "" "\&"
+.if \nX=3 .ds x} putpwent "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4putpwent\f1 \- write password file entry
+.SH SYNOPSIS
+\f4#include <pwd.h>\f1
+.PP
+\f4int putpwent (const struct passwd \(**p, \s-1FILE\s+1 \(**f);\f1
+.SH DESCRIPTION
+\f4putpwent\fP
+is the inverse of
+\f4getpwent\fP(3C).
+Given a pointer to a
+\f4passwd\fP
+structure created by
+\f4getpwent\fP
+(or
+\f4getpwuid\fP
+or
+\f4getpwnam\fP), 
+\f4putpwent\fP
+writes a line on the stream
+.IR f ,
+which matches the format of
+\f4/etc/passwd\f1.
+.SH "SEE ALSO"
+\f4getpwent\fP(3C).
+.SH DIAGNOSTICS
+\f4putpwent\fP
+returns non-zero if an error was detected during its operation,
+otherwise zero.
+.\"	@(#)putpwent.3c	6.3 of 10/20/83
+.Ee

@@ -1,0 +1,66 @@
+'\"macro stdmacro
+.if n .pH g1a.labelit @(#)labelit	40.5 of 1/3/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+'\"macro stdmacro
+.if n .pH g1a.labelit @(#)labelit	40.5 of 7/17/89
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.if \nX=0 .ds x} labelit 1M "" "\&"
+.if \nX=1 .ds x} labelit 1M ""
+.if \nX=2 .ds x} labelit 1M "" "\&"
+.if \nX=3 .ds x} labelit "" "" "\&"
+.nr X
+.TH \*(x} "" "386 Computer Only"
+.SH NAME
+\f4labelit\f1 (generic) \- provide labels for file systems
+.SH SYNOPSIS
+\f4labelit\f1 [\f4\-F\f2 FSType\f1] [\f4\-V\f1] [\f2current_options\f1] [\f4\-o\f2 specific_options\f1] \f2special\f1 [\f2operands\f1]
+.SH DESCRIPTION
+.PP
+\f4labelit\f1
+can be used to provide labels for unmounted disk
+file systems or file systems being copied to tape.
+.PP
+The
+.I special\^
+name should be the disk partition (e.g.,
+\f4/dev/rdsk/0s3\f1),
+or the cartridge tape (e.g.,
+\f4/dev/rmt/c0s0\f1).
+The device may not be on a remote machine. \f2operands\f1 are
+\f2FSType\f1-specific and the manual page of the \f2FSType\f1-specific
+\f4labelit\f1 command should be consulted for a detailed description.
+.PP
+\f2current_options\f1
+are options supported by the \f4s5\f1-specific module of \f4labelit\f1.
+Other \f2FSTypes\f1 do not necessarily support these options.
+\f2specific_options\f1 indicate suboptions specified in a comma-separated 
+list of suboptions and/or keyword-attribute pairs for interpretation by 
+the \f2FSType\f1-specific module of the command. 
+.PP
+The options are:
+.TP 10 
+\f4\-F\f1
+specify the \f2FSType\f1 on which to operate.
+The \f2FSType\f1 should either be
+specified here or be determinable from \f4/etc/vfstab\f1 by
+matching \f2special\f1 with an entry in the table.
+.TP 10
+\f4\-V\f1
+echo complete command line. This 
+option is used to verify and validate the command line. 
+Additional information obtained via a \f4/etc/vfstab\f1 lookup
+is included in the output. The command is not executed.
+.TP 10
+\f4\-o\f1
+Specify \f2FSType\f1-specific options.
+.SH NOTE
+This command may not be supported for all FSTypes.
+.SH FILES
+.TP 10
+\f4/etc/vfstab\f1 	list of default parameters for each file system
+.SH "SEE ALSO"
+\f4makefsys\fP(1M),
+\f4vfstab\f1(4).
+.br
+Manual pages for the FSType-specific modules of \f4labelit\f1.

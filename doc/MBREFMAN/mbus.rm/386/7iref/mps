@@ -1,0 +1,46 @@
+'\"macro stdmacro
+.if n .pH g1a.mps @(#)mps	40.9 of 5/20/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} mps 7iref "System Administration Utilities" "" "\&"
+.if \nX=1 .ds x} mps 7iref "System Administration Utilities" ""
+.if \nX=2 .ds x} mps 7iref "" "\&"
+.if \nX=3 .ds x} mps "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4mps\f1 \- Message Passing Space device driver
+.SH DESCRIPTION
+The \f4mps\f1 driver handles the interface between Multibus II device drivers
+or applications and Multibus II message passing space as implemented by the
+MPC component.
+.PP
+To configure the \f4mps\f1 driver, modify the following variables in the
+\f4/etc/conf/pack.d/mps/space.c\f1 file:
+.PP
+.TP 15
+\f2mps_max_tran\f1
+The maximum number of outstanding transactions to be allowed. This number
+must correspond to the number of entries in the \f4mps_tinfo\f1 and
+\f4mps_t_ids\f1 arrays declared in the \f4space.c\f1 file.
+.TP
+\f2mps_max_port\f1
+The maximum number of open ports to be allowed. This number must correspond
+to the number of entries in the \f4mps_port_defs\f1 and \f4mps_port_ids\f1
+arrays declared in the \f4space.c\f1 file.
+.PP
+The \f4mps\f1 driver does not support any \f4ioctl\f1 calls for use by
+applications.  Instead, it supports the Message Passing interface required by
+the
+\f2Device Driver Interface/Driver-Kernel Interface (DDI/DKI)
+Reference Manual\f1, which is used by other device drivers.
+.SH FILES
+\f4/etc/conf/pack.d/mps/space.c\f1  configuration information
+.SH SEE ALSO
+\f2Multibus II Message Passing Coprocessor External Product Specification\f1
+.br
+\f2MPS User's Manual\f1.
+.br
+\f2Device Driver Interface/Driver-Kernel Interface (DDI/DKI)
+Reference Manual.
+.br

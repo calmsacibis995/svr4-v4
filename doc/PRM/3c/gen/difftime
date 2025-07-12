@@ -1,0 +1,30 @@
+'\"macro stdmacro
+.if n .pH g3c.difftime @(#)difftime	40.13 of 5/22/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+'\"macro stdmacro
+.if n .pH g3c.difftime 'ident	"@(#)ccsman:g3c/difftime	1.1"'
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.nr X
+.if \nX=0 .ds x} difftime 3C "C Development Set" "\&"
+.if \nX=1 .ds x} difftime 3C "C Development Set"
+.if \nX=2 .ds x} difftime 3C "" "\&"
+.if \nX=3 .ds x} difftime "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4difftime\f1 \- computes the difference between two calendar times
+.SH SYNOPSIS
+\f4#include <time.h>\f1
+.PP
+\f4double difftime (time_t time1, time_t time0);\f1
+.SH DESCRIPTION
+.PP
+\f4difftime\fP computes the difference between two 
+calendar times. \f4difftime\fP returns
+the difference \f2(time1-time0)\f1 expressed in seconds as a \f4double\f1.
+This function is provided because there are
+no general arithmetic properties defined for type \f4time_t\f1.
+.SH "SEE ALSO"
+\f4ctime\fP(3C).
+.\"	@(#)difftime.3c	
+.Ee

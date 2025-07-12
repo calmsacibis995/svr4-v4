@@ -1,0 +1,33 @@
+.if n .pH doctools.Cchap5 @(#)Cchap5	40.2
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.PM "DN" "FINAL COPY"
+.BK "Documenter's Tool Set User's Guide" "Release 1.0" "" ""   
+.\ACRONYM	                  
+.CH "File Type Macro: Collection Files" "" "Table of Contents" "5"
+.\CHAPTER	5
+.tC 1 "Introduction" 5-1  
+.Index: collection files       	1
+.Index: files types       	1
+.tC 1 "Collection File Structure" 5-2  
+.Index: collection file structure      	2
+.Index: \&.FT macro       	2
+.Index: collection file macro, \&.FT     	2
+.Index: master table of contents file    	2
+.Index: book collection file      	2
+.tC L "Figure 5-1:\0" "A Collection File for a Book" 5-2
+.tC 2 "The \&.FT Macro" 5-3  
+.tC 2 "Delta Numbers" 5-3  
+.Index: delta numbers       	3
+.Index: SCCS files       	3
+.tC L "Figure 5-2:\0" "A Collection File with Delta Numbers" 5-3
+.Index: SCCSSRC environment variable      	4
+.Index: environment variable, SCCSSRC      	4
+.tC 1 "Collection File Types" 5-5  
+.Index: collection file types      	5
+.tC 2 "Manual Page Collection Files" 5-5  
+.Index: manual page collection files     	5
+.Index: permuted index       	5
+.Index: reference manual table of contents    	5
+.tC 2 "Master Table of Contents Collection Files" 5-6  
+.tC L "Figure 5-3:\0" "A Sample Master Table of Contents Collection File" 5-6
+.Index: master table of contents     	6

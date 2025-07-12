@@ -1,0 +1,466 @@
+.if n .pH 386.appa @(#)appa	40.11 of 5/30/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.BK "Multibus Reference Manual"
+.CH "Appendix A" "A"
+.H 1 "Window Interface"
+The iSBX 279 module provides the user with:
+.BL
+.LI
+A windowed environment
+.LI
+A mouse to manipulate the windows
+.LI
+A PC style keyboard for entering data
+.LE
+.P
+The following sections describe what the windows are and how to manipulate
+them with the mouse.
+.H 2 "Windows, What are They?"
+The windows provided by the 279 module are ways of viewing many operations
+simultaneously on one screen.  They can be thought of as many terminals
+contained in one; each window representing a terminal.  For example, the
+SYP 520 initializes with three windows: one for console input, one for
+displaying kernel messages and for using the debugger, and one for
+displaying messages from the Master Test Handler (MTH) (see Figure A-1).
+What would have required three terminals to view now requires one.
+.P
+The windows can be manipulated with the mouse (moved, resized, and relayered)
+so that all or some of the windows can be viewed at once.
+.FG "An Example of Windows Displayed on the SYP 520"
+.DS
+.BP window1.ps "5.5i"
+.DE
+.H 3 "Using The Mouse"
+The mouse can be used to move, resize, and relayer the windows.  It can also
+be used to determine which window the keyboard will function with.  All of
+these actions are provided in one of two pop-up menus, basic or expanded.
+.P
+The basic menu appears before the UNIX System V/386 operating system is
+installed or initialized.  Once installed, the operating system invokes the
+expanded menu during the boot up procedure.  The expanded menu offers
+more options and provides a fast method of selecting windows (just point
+at the desired window and press any of the mouse buttons).
+.P
+To select an option from either pop-up menu, do the following:
+.AL
+.LI
+Move the mouse so that the pointer is outside any window.
+.LI
+Press and hold any one of the mouse buttons.  The menu will appear on
+the screen.
+.LI
+Move the mouse up or down to select an option.  Each option is
+highlighted as the pointer passes over it.
+.LI
+Release the mouse button when the desired option is selected.
+.LE
+.AB N
+The mouse cannot be used to select anything inside of a window
+(a file for instance).
+.AC
+.bp
+.H 3 "Basic Menu"
+This section explains how to use the selections provided by the basic menu.
+.P
+The basic menu is shown in Figure A-2.  This menu appears before the
+UNIX System V/386 operating system is installed or initialized.  Once
+installed, the operating system invokes the expanded menu (explained later).
+.FG "Basic Menu Selections"
+.TS
+center,box;
+c.
+\f3Intel System Menu\f1
+=
+.sp .03i
+Pop
+.sp .03i
+_
+.sp .03i
+Push
+.sp .03i
+_
+.sp .03i
+Pan
+.sp .03i
+_
+.sp .03i
+Move
+.sp .03i
+_
+.sp .03i
+Resize
+.sp .03i
+_
+.sp .03i
+Keyboard Focus
+.sp .03i
+_
+.sp .03i
+Pop/Focus
+.sp .03i
+_
+.sp .03i
+Pop/Focus/Resize
+.sp .03i
+_
+.sp .03i
+Exit
+.sp .03i
+.TE
+.H 4 \f3Pop\f1:
+This causes the selected window to appear on top of all other windows.  
+The keyboard may not be "attached" to the window that has been popped.
+Use the \f4Keyboard Focus\f1 selection to attach the keyboard to the
+popped window.
+.AL
+.LI
+Select \f4Pop\f1 from the menu with the mouse.  The pointer will 
+change to an up arrow.
+.LI
+Place the pointer within the desired window and press any of 
+the mouse buttons.
+.LI
+The window selected will appear on top of all other windows.
+.LE
+.H 4 \f3Push\f1:
+This causes the selected window to be placed behind all other windows.
+.AL
+.LI
+Select \f4Push\f1 from the menu with the mouse.  The pointer will 
+change to a down arrow.
+.LI
+Place the pointer within the desired window and press any of 
+the mouse buttons.
+.LI
+The window selected will be placed behind all other windows.
+.LE
+.H 4 \f3Pan\f1:
+This allows the contents of a window to be moved.  This selection is 
+useful for viewing the contents of a window that has been reduced in size. 
+.AL
+.LI
+Select \f4Pan\f1 from the menu with the mouse.  The pointer will 
+appear as a square with four arrows pointing out from each side
+of the square.
+.LI
+Place the pointer within the desired window.  Press and hold 
+down any of the mouse buttons.
+.LI
+Moving the mouse will cause the contents of the window to move.
+.LI
+Release the mouse button when the desired contents are displayed.
+.LE
+.H 4 \f3Move\f1:
+This allows a window to be moved around the screen.  
+.AL
+.LI
+Select \f4Move\f1 from the menu with the mouse.  The pointer will 
+appear as two crossed (up/down left/right) bidirectional arrows.
+.LI
+Position the pointer within the desired window.  Press and hold 
+down any of the mouse buttons.
+.LI
+Moving the mouse will cause the entire window to move.
+.LI
+Release the mouse button when the window is in the desired location.
+.LE
+.H 4 \f3Resize\f1:
+This selection causes the size of the window to be changed.
+.AL
+.LI
+Select \f4Resize\f1 from the menu with the mouse.  The pointer will 
+appear as two crossed bidirectional arrows, slightly tilted.
+.LI
+Position the pointer within the desired window.  The pointer 
+should be near one of the four corners of the window.  The corner
+selected will be the part of the window that moves.  Press and hold
+down any of the mouse buttons.
+.LI
+Move the mouse.  This causes the size of the window to change.
+.LI
+Release the mouse button when the window is at the desired size.
+.LE
+.PP
+.AB N
+Window contents are not rescaled when the window is resized.  The
+maximum size of a window is either the size of the bitmap in which
+it is drawn or the size of the screen.
+.AC
+.H 4 "\f3Keyboard Focus\f1:"
+This selection allows keyboard input to be directed to a window.
+.AL
+.LI
+Select \f4Keyboard Focus\f1 from the menu with the mouse.
+The pointer will appear as a shaded box.
+.LI
+Position the pointer within the desired window and press any of 
+the mouse buttons.  
+.LI
+Keyboard input is now directed to the selected window.
+.LE
+.H 4 "\f3Pop/Focus\f1:"
+This causes the selected window to appear on top of all the other
+windows.  It also "attaches" the keyboard to the selected window.
+This is the same as using \f4Pop\f1 followed by \f4Keyboard Focus\fP. 
+.AL
+.LI
+Select \f4Pop/Focus\fP from the menu with the mouse.  The pointer 
+will appear as a shaded five-sided figure.
+.LI
+Position the pointer within the desired window and press any of 
+the mouse buttons.  
+.LI
+The window selected will appear on top of all other windows.  
+Keyboard input will also be directed to the selected window.
+.LE
+.H 4 "\f3 Pop/Focus/Resize\f1:"
+This causes the selected window to appear on the top of the 
+other windows, have the keyboard "attached" to it, and expand in
+size (to full width and approximately three-quarter height).
+.AL
+.LI
+Select \f4Pop/Focus/Resize\f1 from the menu with the mouse.
+The pointer will appear as an up arrow enclosed by four triangles.
+.LI
+Position the pointer within the desired window and press any of 
+the mouse buttons.  
+.LI
+The window selected will:
+.BL
+.LI
+appear on top of all the other windows
+.LI
+have the keyboard "attached" to it
+.LI
+expand in size
+.LE
+.LE
+.H 4 \f3Exit\f1:
+Use this selection to leave the menu list without effecting the windows.
+.H 3 "Expanded Menu"
+This section explains how to use the selections provided by the expanded
+menu (See Figure A-3).  This menu is invoked by the UNIX System V/386
+operating system.
+(see the \f2iSBX\*(Tm 279 Display Subsystem Installation Guide\f1).
+.FG "Expanded Menu Selections"
+.DS
+.TS
+center,box;
+c.
+\f3Window Operations\f1
+=
+.sp .03i
+Pan
+.sp .03i
+_
+.sp .03i
+Attach Keyboard
+.sp .03i
+_
+.sp .03i
+Pop to Foreground
+.sp .03i
+_
+.sp .03i
+Push to Background
+.sp .03i
+_
+.sp .03i
+Pop and Set Focus
+.sp .03i
+_
+.sp .03i
+Move Window
+.sp .03i
+_
+.sp .03i
+Resize Window
+.sp .03i
+_
+.sp .03i
+Expand Window
+.sp .03i
+_
+.sp .03i
+Reduce Window
+.sp .03i
+_
+.sp .03i
+Map Window
+.sp .03i
+.TE
+.DE
+.H 4 \f3Pan\f1:
+This allows the contents of a window to be moved.  This selection is 
+useful for viewing the contents of a window that has been reduced in size. 
+.AL
+.LI
+Select \f4Pan\f1 from the menu with the mouse.  The pointer will 
+appear as a square with four arrows pointing out from each side
+of the square.
+.LI
+Place the pointer within the desired window.  Press and hold 
+down any of the mouse buttons.
+.LI
+Moving the mouse will cause the contents of the window to move.
+.LI
+Release the mouse button when the desired contents are displayed.
+.LE
+.H 4 "\f3Attach Keyboard\f1:"
+This selection allows keyboard input to be directed to a window.
+.AL
+.LI
+Select \f4Attach Keyboard\f1 from the menu with the mouse.  The 
+pointer will appear as a shaded box.
+.LI
+Position the pointer within the desired window and press any of 
+the mouse buttons.  
+.LI
+Keyboard input will also be directed to the selected window.
+.LE
+.H 4 "\f3Pop To Foreground\f1:"
+This causes the selected window to appear on top of all 
+other windows.  The keyboard may not be "attached " to the window that
+has been popped.  Use the \f4Attach Keyboard\f1 selection to attach
+the keyboard to the popped window.
+.AL
+.LI
+Select \f4Pop To Foreground\f1 from the menu with the mouse.
+The pointer will change to an up arrow.
+.LI
+Place the pointer within the desired window and press any of 
+the mouse buttons.
+.LI
+The window selected will appear on top off all other windows.
+.LE
+.NE 2i
+.H 4 "\f3Push To Background\f1:"
+This causes the selected window to be placed behind all other windows.
+.AL
+.LI
+Select \f4Push To Background\f1 from the menu with the mouse.
+The pointer will change to a down arrow.
+.LI
+Place the pointer within the desired window and press any of 
+the mouse buttons.
+.LI
+The window selected will be placed behind all other windows.
+.LE
+.H 4 "\f3Pop and Set Focus\f1:"
+This causes the selected window to appear on top of all the 
+other windows.  It also "attaches" the keyboard to the selected window.
+A quick way of doing this is to position the pointer within the desired
+window and press any of the mouse buttons.
+.AL
+.LI
+Select \f4Pop and Set Focus\f1 from the menu with the mouse.
+The pointer will appear as a shaded five-sided figure.
+.LI
+Position the pointer within the desired window and press any of 
+the mouse buttons.  
+.LI
+The window selected will appear on top of all other windows.  
+Keyboard input will also be directed to the selected window.
+.LE
+.H 4 "\f3Move Window\f1:"
+This allows a window to be moved around the screen.  
+.AL
+.LI
+Select \f4Move Window\f1 from the menu with the mouse.
+The pointer will appear as two crossed (up/down left/right)
+bidirectional arrows.
+.LI
+Position the pointer within the desired window.
+Press and hold down any of the mouse buttons.
+.LI
+Moving the mouse will cause the entire window to move.
+.LI
+Release the mouse button when the window is in the desired location.
+.LE
+.H 4 "\f3Resize Window\f1:"
+This selection causes the size of the window to be changed.
+.AL
+.LI
+Select \f4Resize Window\f1 from the menu with the mouse.
+The pointer will appear as two crossed bidirectional
+arrows, slightly tilted.
+.LI
+Position the pointer within the desired window.
+The pointer should be near one of the four corners of the window.
+The corner selected will be the part of the window that moves.
+Press and hold down any of the mouse buttons.
+.LI
+Move the mouse.  This causes the size of the window to change.
+.LI
+Release the mouse button when the window is at the desired size.
+.LE
+.PP
+.AB N
+Window contents are not rescaled when the window is resized.
+The maximum size of a window is either the size of the bitmap in
+which it is drawn or the size of the screen.
+.AC
+.H 4 "\f3Expand Window\f1:"
+This causes the selected window to appear on the top of the 
+other windows, have the keyboard "attached" to it, and expand in
+size (to full width and approximately three-quarter height).
+.AL
+.LI
+Select \f4Expand Window\f1 from the menu with the mouse.
+The pointer will appear as an up arrow enclosed by four triangles.
+.LI
+Position the pointer within the desired window and press any of 
+the mouse buttons.  
+.LI
+The window selected will:
+.BL
+.LI
+appear on top of all the other windows
+.LI
+have the keyboard "attached" to it
+.LI
+expand in size
+.LE
+.LE
+.H 4 "\f3Reduce Window\f1:"
+This selection allows you to shrink the size of a window 
+quickly and move it out of the way of other windows.
+.AL
+Select \f4Reduce Window\f1 from the menu with the mouse.
+The pointer will appear as a shaded square with an unshaded middle.
+.LI
+Position the pointer within the desired window next to one of 
+the four corners.  Press and hold down any one of the mouse buttons.
+.LI
+Move the mouse.  The window will shrink at a very fast rate.
+.LI
+Release the mouse button when the window reaches the desired 
+size and position on the screen.
+.LE
+.H 4 "\f3Map Window\f1:"
+This selection allows a function key (\f4F1 \- F10\f1) to be assigned
+to each window.  When the function key is pressed (\f4ALT \- Fx\f1),
+the corresponding window will appear on top of the other windows and
+keyboard input will be directed to the window.
+.AL
+.LI
+Select \f4Map Window\f1 from the menu with the mouse.
+The pointer will appear as a rectangle inside a grid.
+.LI
+Position the pointer within the desired window and press any 
+one of the mouse buttons.
+.LI
+The pointer will change.
+.LI
+On the keyboard, hold down the \f4ALT\f1 key and press the function 
+key you want assigned to the window.
+.LI
+To use the function keys to select a window, hold down the \f4ALT\f1
+key and press the corresponding function key.  The window assigned
+to that key will appear on top of the other windows and the keyboard
+will be attached to it.
+.LE
+.AB N
+See the \f2iSBX\*(Tm 279 Display Subsystem Installation Guide\f1.
+.AC

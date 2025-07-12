@@ -1,0 +1,69 @@
+'\"macro stdmacro
+.if n .pH g1a.rmountall @(#)rmountall	40.6.1.3 or 2/28/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} rmountall 1M "RFS" "\&"
+.if \nX=1 .ds x} rmountall 1M "RFS"
+.if \nX=2 .ds x} rmountall 1M "" "\&"
+.if \nX=3 .ds x} rmountall "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4rmountall\f1, \f4rumountall\f1 \- mount, unmount Remote File Sharing resources
+.SH SYNOPSIS
+\f4/usr/sbin/rmountall\f1 [\-] " \f2file-system-table\f1 " [...]
+.br
+\f4/usr/sbin/rumountall [ \-k ]
+.SH DESCRIPTION
+\f4rmountall\f1 is a Remote File Sharing command used to mount 
+remote resources according to a \f2file-system-table\f1.
+(\f4/etc/vfstab\f1 is the recommended \f2file-system-table\f1.)
+\f4rmountall\f1 also invokes the \f4rmnttry\f1 command,
+which attempts to mount queued resources.
+The special file name ``\f4\-\f1'' reads from the standard input.
+.PP
+\f4rumountall\f1 causes all mounted remote resources to be unmounted
+and deletes all resources that were queued from
+\f4rmount\f1.
+The \f4\-k\f1 option sends a \f4SIGKILL\f1 signal, 
+via \f4fuser\f1, to processes that have files open.
+.PP
+Only a privileged user can execute these commands.
+.PP
+The format of the \f2file-system-table\f1 is as follows:
+.IP "column 1" 12
+block special file name of file system
+.IP "column 2"
+file system name for \f4fsck\f1 (ignored)
+.IP "column 3"
+mount-point directory
+.IP "column 4"
+file system type (must be \f4rfs\f1)
+.IP "column 5"
+file system check option (ignored)
+.IP "column 6"
+automount option (must be \f4yes\f1)
+.IP "column 7"
+mount flags (\f4ro\f1 for read-only, \f4rw\f1 for read-write,
+\f4\-\f1 for read-write)
+.PP
+Columns are separated by white space.
+Lines beginning with a pound sign (\f4#\f1) are comments.
+Empty lines are ignored.
+.RE
+.SH SEE ALSO
+\f4fuser\fP(1M),
+\f4mount\fP(1M),
+\f4rfstart\fP(1M),
+\f4rmnttry\fP(1M),
+\f4rmount\fP(1M),
+.br
+\f4sysadm\fP(1) in the
+\f2User's Reference Manual\f1.
+.br
+\f4signal\fP(2) in the \f2Programmer's Reference Manual\f1.
+.SH DIAGNOSTICS
+No messages are printed if the remote resources are mounted successfully.
+.PP
+Error and warning messages come from \f4mount\fP(1M).
+.Ee

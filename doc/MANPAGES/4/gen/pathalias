@@ -1,0 +1,46 @@
+'\"macro stdmacro
+.if n .pH g4.pathalias @(#)pathalias	40.7 of 5/1/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} pathalias 4 "Framed Access Command Environment Utilities" "\&"
+.if \nX=1 .ds x} pathalias 4 "Framed Access Command Environment Utilities"
+.if \nX=2 .ds x} pathalias 4 "" "\&"
+.if \nX=3 .ds x} pathalias "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4pathalias\f1 \- alias file for \s-1FACE\s+1
+.SH DESCRIPTION
+The \f4pathalias\f1 files contain lines of the form 
+\f4alias=\f2path\f1 where \f2path\f1 can be one or more colon-separated directories.
+Whenever a
+.SM FACE
+user references a path not beginning with a ``\f4/\fP'', this file is checked.
+If the first component of the pathname matches the left-hand side of the equals sign,
+the right-hand side is searched much like \f4$PATH\f1 variable in the
+.SM UNIX
+System.
+This allows users to reference the folder \f4$HOME/FILECABINET\f1 by typing \f4filecabinet\f1.
+.P
+There is a system-wide \f4pathalias\f1 file called \f4$VMSYS/pathalias\f1,
+and each user can also have local alias file called \f4$HOME/pref/pathalias\f1.
+Settings in the user alias file override settings in the system-wide file.
+The system-wide file
+is shipped with several standard
+.SM FACE
+aliases, such as \f4filecabinet\f1,
+\f4wastebasket\f1, \f4preferences\f1, \f4other_users\f1, and so on.
+.SH NOTES
+Unlike command keywords, partial matching of a path alias is not permitted,
+however, path aliases are case insensitive.
+The name of an alias should be
+alphabetic, and in no case can it contain special characters like
+``\f4/\fP'', ``\f4\e\fP'', or ``\f4=\fP''.
+There is no particular limit on the number of aliases allowed.
+Alias files are read once, at login, and are held in core until logout.
+Thus, if an alias file is modified during a session, the change will
+not take effect until the next session.
+.SH FILES
+\f4$HOME/pref/pathalias\f1
+.br
+\f4$VMSYS/pathalias\f1

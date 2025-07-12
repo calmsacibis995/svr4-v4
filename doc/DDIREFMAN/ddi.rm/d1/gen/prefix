@@ -1,0 +1,55 @@
+'\"macro stdmacro
+.if n .pH gen.prefix @(#)prefix	40.4 of 6/24/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.nr X
+.if \nX=0 .ds x} prefix D1DK "" "DDI/DKI" "\&"
+.if \nX=1 .ds x} prefix D1DK "" "DDI/DKI"
+.if \nX=2 .ds x} prefix D1DK "" "\&"
+.if \nX=3 .ds x} prefix "" "" "\&"
+.TH \*(x}
+.IX "\f4prefix\fP(D1DK)"
+.SH NAME
+\f4prefix\fP \- driver prefix
+.SH SYNOPSIS
+.nf
+\f4int \f2prefix\fPclose();
+int \f2prefix\fPopen();
+  ...\f1
+.fi
+.SH DESCRIPTION
+Every driver must define a unique prefix, whose maximum length is implementation-defined.
+The prefix is usually specified in a configuration file.
+Driver entry points names are
+created by concatenating the driver prefix with the name for the entry point.
+This enables driver entry points
+to be identified by configuration software and decreases the possibility of global symbol
+collisions in the kernel.
+.SH SEE ALSO
+.\"  Put this in for 386 product.
+.\"\f2UNIX System V/386 Release 4 Integrated Software Development Guide\fP.
+.na
+\f4devflag\fP(D1D),
+\f4info\fP(D1D),
+\f4chpoll\fP(D2DK),
+\f4close\fP(D2DK),
+\f4halt\fP(D2D),
+\f4init\fP(D2D),
+\f4intr\fP(D2D),
+\f4ioctl\fP(D2DK),
+\f4mmap\fP(D2DK),
+\f4open\fP(D2DK),
+\f4print\fP(D2DK),
+\f4put\fP(D2DK),
+\f4read\fP(D2DK),
+\f4size\fP(D2DK),
+\f4srv\fP(D2DK),
+\f4start\fP(D2DK),
+\f4strategy\fP(D2DK),
+\f4write\fP(D2DK)
+.ad
+.SH EXAMPLE
+An ETHERNET driver might use a driver prefix of ``\f4en\fP.''  It would define the
+following entry points:
+\f4enclose\fP,\f4 eninit\fP,\f4 enintr\fP,\f4 enopen\fP,\f4 enwput\fP,\f4 enrsrv\fP, and\f4 enwsrv\fP.
+It would also define the data symbols
+\f4endevflag\fP and \f4eninfo\fP.

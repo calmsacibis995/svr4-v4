@@ -1,0 +1,82 @@
+.if n .pH portguide.BOOT @(#)boot	40.2
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+..
+.BK "Programmer's Guide: Porting the Kernel"
+.CH "Boot" 3
+.H 1 "Boot"
+.IX booting
+The boot program is designed to load ELF or COFF executables on a Boot 
+File System (BFS) from an integral device (hard disk or floppy) on a
+3B2.
+The BFS file system is a flat file system with contiguous files.
+.P
+The process of booting on a 3B2 is started by the firmware loading in the
+first block (\f3mboot\f1) of the selected device and transferring control to it.
+The \f3mboot\f1 program then loads in the boot program and control is passed
+to \f3main()\f1.
+All stand alone programs like the boot program run in physical mode and have
+access to the firmware routines (see \f3sys/firmware.h\f1).
+.P
+The boot program itself is not portable since it has many dependencies 
+on the 3B2 firmware routines, the firmwares auto configuration process,
+and the ST506 controller.
+The rest of this section will discuss the routines that access the BFS file system
+which would be of interest to porters.
+.BL
+.LI
+\f3getfs\f1
+.br 
+\f3getfs\f1 saves the start of all BFS file systems on the selected disk and 
+returns the start of the first one found.
+\f3getfs\f1 accesses the machine dependent data structure \f4MYVTOC\f1,
+which contains the Volume Table of Contents (VTOC) for the selected device.
+The variable \f2xedtstect\f1 is the start of configuration information for an
+extended bus devices and is applicable only to the 3B2.
+.LI
+\f3open\f1 
+.br
+\f3open\f1 returns a file handle and attributes for a BFS file.
+\f3open\f1 depends on the \f4read_onesect\f1 routine for I/O.
+.LI
+\f3read\f1
+.br
+The \f3read\f1 function transfers \fInumbytes\f1 bytes into \fIbuf\f1 from
+file \fIfd\f1 at offset \fIfoffset\f1.
+The read function depends on \f4read_onesect\f1 and \f4big_read\f1 to do I/O.
+.LI
+\f3gethead\f1
+.br
+The \f3gethead\f1 function gets generic header information from the absolute
+(\f2fd\f1).
+To support auto configuration the UNIX operating system has
+an EDT section which contains data describing the configuration of the
+machine when the operating system was built.
+.LI
+\f3getsect\f1
+.br
+\f3getsect\f1 returns generic section/segment information for the \f4sectnum\f1
+entry.
+The EDT section is handled specially.
+.LI
+\f3load\f1
+.br
+This loads a file into memory.
+If auto configuration is being done then the data in the EDT section is used
+to check that the configuration of the file being loaded matches the current
+machine configuration.
+.LI
+\f3nextfso\f1
+.br
+This switches the boot partition to another BFS file system on this device.
+.LI
+\f3list_dir\f1
+.br
+This lists all BFS files in the file system.
+.LI
+\f33b2_io.c  -  MD\f1
+.br
+This file contains all the I/O routines that the above routines depend on.
+This code is dependent on firmware routines, specifics of the DMA unit and
+the specifics of the 3B2's ST506 controller.
+.LE

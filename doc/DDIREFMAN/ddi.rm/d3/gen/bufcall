@@ -1,0 +1,184 @@
+'\"macro stdmacro
+.if n .pH gen.bufcall @(#)bufcall	40.2 of 1/7/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.nr X
+.if \nX=0 .ds x} bufcall D3DK "STREAMS" "DDI/DKI" "\&"
+.if \nX=1 .ds x} bufcall D3DK "STREAMS" "DDI/DKI"
+.if \nX=2 .ds x} bufcall D3DK "" "\&"
+.if \nX=3 .ds x} bufcall "" "" "\&"
+.TH \*(x}
+.IX "\f4bufcall\fP(D3DK)"
+.SH NAME
+\f4bufcall\f1 \- call a function when a buffer becomes available 
+.SH SYNOPSIS
+.nf
+.na
+\f4#include <sys/types.h>
+#include <sys/stream.h>
+.sp 0.5
+int bufcall(\f4uint_t \f2size, \f4int \f2pri, \f4void (*\f2func\f4)(), long \f2arg\f4);\f1
+.ad
+.fi
+.SH ARGUMENTS
+.PD .25
+.TP .35i
+\f2size\f1
+Number of bytes in the buffer to be allocated (from the failed \f4allocb\fP(D3DK) request).
+.TP
+\f2pri\f1
+Priority of the \f4allocb\f1 allocation request (\f4BPRI_LO\fP, \f4BPRI_MED\fP,
+or \f4BPRI_HI\fP).
+.TP
+\f2func\f1
+Function or driver routine to be called when a buffer becomes available.
+.TP
+\f2arg\f1
+Argument to the function to be called when a buffer becomes available.
+.PD
+.SH DESCRIPTION
+\f4bufcall\f1 serves as a \f4timeout\f1(D3DK) call of indeterminate length.
+When a buffer allocation request 
+fails, \f4bufcall\f1 can
+be used to schedule the routine, \f2func\f1,
+to be called with the argument, \f2arg\f1, when a buffer of at least
+\f2size\fP bytes becomes available.
+.P
+When \f2func\fP runs, all interrupts from STREAMS devices will be blocked.
+\f2func\fP will have no user context and may not call any function that sleeps.
+.SH RETURN VALUE
+If successful, \f4bufcall\f1 returns a non-zero integer that identifies
+the scheduling request.
+This non-zero identifier may be passed to \f4unbufcall\f1(D3DK) to cancel
+the request.
+If any failure occurs, \f4bufcall\f1 returns 0.
+.SH LEVEL
+Base or Interrupt.
+.SH NOTES
+Does not sleep.
+.sp 0.5
+Even when \f2func\f1 is called,
+\f4allocb\f1 can still fail if another module or driver 
+had allocated the
+memory before \f2func\f1 was able to call \f4allocb\f1.
+.SH SEE ALSO
+.na
+\f4allocb\f1(D3DK),
+\f4esballoc\f1(D3DK),
+\f4esbbcall\f1(D3DK),
+\f4timeout\f1(D3DK),
+\f4unbufcall\f1(D3DK)
+.ad
+.SH EXAMPLE
+.P
+The purpose of this service routine [see \f4srv\f1(D2DK)]
+is to add a header to all
+\f4M_DATA\f1 messages.  We assume only \f4M_DATA\fP messages
+are added to its queue.
+Service routines must process all messages on their queues before
+returning, or arrange to be rescheduled.
+.P
+While there are messages to be processed (line 19), we check to see if
+we can send the message on in the stream.
+If not, we put the message back
+on the queue (line 21) and return.  The STREAMS flow control mechanism
+will re-enable us later when messages can be sent.
+If \f4canput\f1(D3DK) succeeded,
+we try to allocate a buffer large enough to
+hold the header (line 24).
+If no buffer is available, the service routine must be
+rescheduled later, when a buffer is available.
+We put the original message back on the queue (line 26) and use
+\f4bufcall\f1 to attempt the rescheduling (lines 27 and 28).
+If \f4bufcall\fP succeeds, we set the \f4m_type\fP field in the module's
+private data structure to \f4BUFCALL\fP.  If \f4bufcall\fP failed,
+we use \f4timeout\fP(D3DK) to reschedule us instead (line 30).  \f4modcall\fP will be
+called in about a half second [\f4drv_usectohz(500000)\f1].
+When the rescheduling has been done, we return.
+.P
+When \f4modcall\fP runs, it will set the \f4m_type\fP field to zero, indicating
+that there is no outstanding request.  Then the queue's service routine is scheduled to run
+by calling \f4qenable\fP(D3DK).
+.P
+If the buffer allocation is successful, we initialize the header
+(lines 37\-39), make the message type \f4M_PROTO\f1 (line 41), link the
+\f4M_DATA\f1 message to it (line 42), and pass it on (line 43).
+.P
+See \f4unbufcall\fP(D3DK) for the other half of this example.
+.ne 4
+.P
+.nf
+.ft 4
+.ps 7
+.vs 9
+ 1  struct hdr {
+ 2	uint_t	h_size;
+ 3	int	h_version;
+ 4  };
+ 5  struct mod {
+ 6	long	m_id;
+ 7	char	m_type;
+	...
+ 8  };
+ 9  #define TIMEOUT	1
+10  #define BUFCALL	2
+    ...
+11  modsrv(q)	/* assume only M_DATA messages enqueued here */
+12        queue_t *q;
+13  {
+14	mblk_t *bp;
+15	mblk_t *mp;
+16	struct hdr *hp;
+17	struct mod *modp;
+
+18	modp = (struct mod *)q->q_ptr;
+19	while ((mp = getq(q)) != NULL) {
+20		if (!canput(q->q_next)) {
+21			putbq(q, mp);
+22			return;
+23		}
+24		bp = allocb(sizeof(struct hdr), BPRI_MED);
+25		if (bp == NULL) {
+26			putbq(q, mp);
+27			modp->m_id = bufcall(sizeof(struct hdr), BPRI_MED, modcall,
+28			   (long)q);
+29			if (modp->m_id == 0) {
+30			   modp->m_id = timeout(modcall, (long)q, drv_usectohz(500000));
+31			   modp->m_type = TIMEOUT;
+32			} else {
+33			   modp->m_type = BUFCALL;
+34			}
+35			return;
+36		}
+37		hp = (struct hdr *)bp->b_wptr;  
+38		hp->h_size = msgdsize(mp);
+39		hp->h_version = 1;
+40		bp->b_wptr += sizeof(struct hdr);
+41		bp->b_datap->db_type = M_PROTO;
+42		bp->b_cont = mp;
+43		putnext(q, bp);
+44	}
+45  }
+
+46  modcall(q)
+47	queue_t *q;
+48  {
+49	struct mod *modp;
+
+50	modp = (struct mod *)q->q_ptr;
+51	modp->m_type = 0;
+52	qenable(q);
+53  }
+.vs
+.ps
+.ft 1
+.fi
+.IX "\f4canput\fP(D3DK), example"
+.IX "\f4putnext\fP(D3DK), example"
+.IX "\f4putbq\fP(D3DK), example"
+.IX "\f4allocb\fP(D3DK), example"
+.IX "\f4qenable\fP(D3DK), example"
+.IX "\f4timeout\fP(D3DK), example"
+.IX "\f4getq\fP(D3DK), example"
+.IX "\f4msgdsize\fP(D3DK), example"
+.IX "\f4bufcall\fP(D3DK), example"
+.IX "\f4qenable\fP(D3DK), example"

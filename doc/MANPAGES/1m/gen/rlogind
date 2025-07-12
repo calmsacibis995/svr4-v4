@@ -1,0 +1,105 @@
+'\"macro stdmacro
+.if n .pH g1a.rlogind @(#)rlogind	40.8.1.1 of 4/16/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} rlogind 1M "TCP/IP" "\&"
+.if \nX=1 .ds x} rlogind 1M "TCP/IP"
+.if \nX=2 .ds x} rlogind 1M "" "\&"
+.if \nX=3 .ds x} rlogind "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4rlogind\f1 \- remote login server
+.SH SYNOPSIS
+\f4in.rlogind\f1
+.SH DESCRIPTION
+\f4rlogind\f1
+is the server for the
+\f4rlogin\f1(1)
+program.  The server provides a remote login facility
+with authentication based on privileged port numbers.
+.LP
+\f4rlogind\f1
+is invoked by
+\f4inetd\f1(1M)
+when a remote login connection is established,
+and executes the following protocol:
+.TP
+1)
+The server checks the remote client's source port.
+If the port is not in the range 0-1023, the server
+aborts the connection.
+.TP
+2)
+The server checks the remote client's source address.
+If an entry for the client exists in both
+\f4/etc/hosts\f1 and \f4/etc/hosts.equiv\f1, a user logging
+in from the client is not prompted for a password.
+If the address is associated with a host for which no
+corresponding entry exists in \f4/etc/hosts\f1,
+the user is prompted for a password, regardless of 
+whether or not an entry for the remote client is present in 
+\f4/etc/hosts.equiv\f1 [see \f4hosts\f1(4) and \f4hosts.equiv\f1(4)].
+.LP
+Once the source port and address have been checked,
+\f4rlogind\f1
+allocates a pseudo-terminal
+and manipulates file descriptors so that the slave
+half of the pseudo-terminal becomes the
+\f4stdin\f1,
+\f4stdout\f1,
+and
+\f4stderr\f1
+for a login process.
+.P
+The login process is an instance of the
+\f4in.login\fP program, which is based on \f4login\fP(1).
+The login process is invoked with the \f4\-r\f1 option to indicate
+that it is originated by \f4rlogind\fP.
+The login process proceeds with the authentication
+process as described in
+\f4rshd\f1(1M),
+but if automatic authentication fails, it reprompts the user
+to login as one finds on a standard terminal line.
+.LP
+\f4rlogind\fP manipulates the master side of
+the pseudo-terminal, operating as an intermediary
+between the login process and the remote client's 
+\f4rlogin\f1
+program.  In normal operation, a packet protocol
+is invoked to provide
+\f4Ctrl-S\f1 / \f4Ctrl-Q\f1
+type facilities and propagate
+interrupt signals to the remote programs.  The login process
+propagates the client terminal's baud rate and terminal type,
+as found in the environment variable,
+\f4TERM\s0\fR;\f1
+see
+\f4environ\f1(4).
+.SH "SEE ALSO"
+\f4inetd\f1(1M), \f4hosts\f1(4), \f4hosts.equiv\f1(4)
+.SH DIAGNOSTICS
+All diagnostic messages are returned on the connection
+associated with the
+\f4stderr\f1,
+after which any network connections are closed.
+An error is indicated by a leading byte with a value of 1.
+.TP
+\f4Hostname for your address unknown.\f1
+No entry in the host name database existed for
+the client's machine.
+.TP
+\f4Try again.\f1
+A
+.I fork
+by the server failed.
+.TP
+\f4/usr/bin/sh:\f1 .\|.\|.
+The user's login shell could not be started.
+.SH NOTES
+The authentication procedure used here assumes the integrity
+of each client machine and the connecting medium.  This is
+insecure, but is useful in an ``open'' environment.
+.LP
+A facility to allow all data exchanges to be encrypted should be
+present.

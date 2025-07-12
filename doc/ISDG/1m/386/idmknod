@@ -1,0 +1,182 @@
+.if n .pH g1a.idmknod @(#)idmknod	40.10 of 1/3/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+'\"macro stdmacro
+.\" Copyright 1990 AT&T
+.if n .pH g1.idmknod @(#)idmknod	30.3 of 3/5/86
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.if \nX=0 .ds x} idmknod 1M "Base System" "\&"
+.if \nX=1 .ds x} idmknod 1M "Base System"
+.if \nX=2 .ds x} idmknod 1M "" "\&"
+.if \nX=3 .ds x} idmknod "" "" "\&"
+.nr X
+.TH \*(x} "" "386 Computer Only"
+.SH NAME
+\f4idmknod\f1 \- removes nodes and reads specifications of nodes
+.SH SYNOPSIS
+\f4idmknod\f1 [\f2options\fP]
+.SH "DESCRIPTION"
+This command performs the following functions:
+.P
+.RS
+Removes the nodes for non-required devices
+(those that do not have an \f4r\f1 in field 3 of the the device's
+\f4mdevice\f1 entry) from \f4/dev\f1\|.
+Ordinary files will not be removed.
+If the
+\f4/dev\f1
+directory contains subdirectories,
+those subdirectories will be traversed
+and nodes found for non-required devices will be removed as well.
+If empty subdirectories result due to the removal of nodes,
+the subdirectories are then removed.
+.sp .4v
+Reads the specifications of nodes given in the files contained in
+\f4/etc/conf/node.d\f1
+and installs these nodes in
+\f4/dev\f1\|.
+If the node \%specification defines a path containing subdirectories,
+the subdirectories will be made automatically.
+.sp .4v
+Returns 0 on success and a positive number on error.
+.RE
+.P
+The
+\f4idmknod\f1
+command is run automatically upon entering init state 2
+on the next system reboot after a kernel reconfiguration to establish
+the correct representation of device nodes in the
+\f4/dev\f1
+directory for the running
+\f4/unix\f1
+kernel.
+\f4idmknod\f1
+can be called as a user level command to test modification of the
+\f4/dev\f1
+directory before a Driver Software Package (DSP) is actually built.
+It is also useful in in\%stallation scripts
+that do not reconfigure the kernel, but need to create
+\f4/dev\f1
+entries.
+.P
+The files in
+\f4/etc/conf/node.d\f1
+are copies of the
+I. Node
+modules installed by device DSPs.
+There is at most one file per DSP.
+Each file contains one line for each node that is to be installed.
+The format of each line is:
+.TP .25i
+Name of device entry (field 1) in the \f4mdevice\f1 file.
+(The \f4mdevice\f1 entry will be the line installed by the DSP from
+its \f2Master\fP module.)
+This field must be from 1 to 8 characters in length.
+The first character must be a letter.
+The others may be letters, digits, or underscores.
+.TP .25i
+Name of node to be inserted in \f4/dev\f1.
+The first character must be a letter.
+The others may be letters, digits, or underscores.
+This field can be a path relative to
+\f4/dev\f1 ,
+and
+\f4idmknod\f1
+will create subdirectories as needed.
+.TP .25i
+The character \f4b\f1 or \f4c\f1.
+A \f4b\f1 indicates that the node is a 'block'
+type device and \f4c\f1 indicates 'character' type device.
+.sp .5
+For devices having multiple major numbers, the following
+scheme is used to specify which device nodes belong to which
+major.  The third field is expanded to specify a major number
+offset as follows:
+.sp .5
+"[b/c]: maj_off", where [b/c] refers to either block or
+character major and maj_off refers to an offset number within
+the major number range in the \f4mdevice\f1 file.  For example
+a specification "C:2" refers to a character major offset 2,
+which for a major range of "15-18" would translate to
+character major 17.
+.TP
+Minor device number.
+If this field is a non-numeric, it is assumed to
+be a request for a streams clone device node, and
+\f4idmknod\f1
+will set the minor number to the value of the major number
+of the device specified
+[see mknod(2) in the \f2Programmer's Reference Manual\fP for information
+on minor device number values].
+.TP
+User id.
+The integer value in this field describes the ownership
+of the node to be made.
+.TP
+Group id.
+The integer value in this field describes the group
+ownership of the node to be created.
+.TP
+Permission.
+The value expected must be in octal form,
+in the manner in which permissions are described to the \f4chmod\f1(1) command
+(i.e. 0777).
+.P
+Some example node file entries are as follows:
+.TP 1.35i
+\f4asy  tty00  c  1\f1
+makes \f4/dev/tty00\f1 for device \f4asy\f1 using minor device 1.
+.TP 1.35i
+\f4qt  rmt/c0s0  c  4\f1
+makes \f4/dev/rmt/c0s0\f1 for device \f4qt\f1 using minor device 4.
+.TP 1.35i
+\f4clone  net/nau/clone  c  nau\f1
+makes \f4/dev/net/nau/clone\f1 for device \f4clone\f1.
+The minor device number is set to the major device number
+of device \f4nau\f1.
+.TP 1.35i
+\f4scsi	tty1  C:0  5
+makes \f4tty1\f1 for device \f4scsi\f1 using minor device 1
+major_number offset 0.
+.P
+The command line options are:
+.TP "\w'\-o\ directory\ \ \ 'u"
+\f4\-o \f2directory\f1
+ Nodes will be installed in the directory specified rather than
+\f4/dev\f1.
+.TP
+\f4\-i \f2directory\f1
+The file \f4mdevice\f1 which normally resides in
+\f4/etc/conf/cf.d\f1 ,
+can be found in the directory specified.
+.TP
+\f4\-e \f2directory\f1
+The
+.I Node
+modules that normally reside in
+\f4/etc/conf/node.d\f1
+can be found in the directory specified.
+.TP
+\f4\-s\f1
+Suppress removing nodes (just add new nodes).
+.SH "ERROR MESSAGES"
+An exit value of zero indicates success.
+If an error was encountered
+due to a syntax or format error in a
+.I node
+entry, an advisory message will be printed to
+.I stdout
+and the command will continue.
+If a serious error is encountered
+(i.e., a required\p
+.br
+.ne 2
+ file cannot be found),
+\f4idmknod\f1
+will exit with a non-zero value and report an error message.
+All error messages are designed to be self-explanatory.
+.SH "SEE ALSO"
+\f4idinstall\f1(1m),
+\f4idmkinit\f1(1m).
+.br
+\f4mdevice\f1(4), \f4mknod\fP(2),
+\f4sdevice\f1(4) in the \f2Programmer's Reference Manual\f1.

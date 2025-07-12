@@ -1,0 +1,90 @@
+'\"macro stdmacro
+.if n .pH mb2s.sendcancel @(#)sendcancel	40.5 of 1/9/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} mb2s_sendcancel 3tai "" "\&"
+.if \nX=1 .ds x} mb2s_sendcancel 3tai ""
+.if \nX=2 .ds x} mb2s_sendcancel 3tai "" "\&"
+.if \nX=3 .ds x} mb2s_sendcancel "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4mb2s_sendcancel\f1 \- Sends a cancel message in synchronous
+mode.
+.SH SYNOPSIS
+.ft 4
+.nf
+#include <sys/types.h>
+#include <sys/mb2taiusr.h>
+int mb2s_sendcancel(fd, socketidptr, tid)
+int fd;
+mb2_socket *socketidptr;
+unsigned char tid;
+.fi
+.ft
+.SH DESCRIPTION
+This routine is used to send a cancel message for a transaction.
+Only
+\f4Multibus II\f1 transport servers use this routine.
+.TP 15
+\f4fd\f1
+specifies a synchronous mode file descriptor referencing an
+open port.
+.TP
+\f4socketidptr\f1
+points to a structure containing the socket ID of
+the destination of the message (the socket ID of the client where the
+transaction was initiated).
+.TP
+\f4tid\f1
+is the transaction ID identifying the transaction to be
+canceled.
+The \f4tid\f1
+must have been obtained from a previously received active
+transaction request message such as \f4MB2_REQ_MSG\f1 or \f4MB2_REQFRAG_MSG\f1.
+.P
+\f4mb2s_sendcancel\f1 blocks when the send side queue is full due to
+internal flow control conditions.
+The flow control parameters can be set at
+the time when the port is opened.
+(Flow control is discussed in Appendix A.)
+\f4mb2s_sendcancel\f1 also blocks when waiting for the availability of internal
+buffers if these buffers are unavailable.
+When this routine returns, the
+message has been sent out.
+No completion or error conditions are returned to
+the user if the transfer fails.
+.P
+Upon successful completion of the routine, a value of 0 is returned.
+A
+value of -1 is returned and an \f4errno\fP is set if there were errors.
+The following is a list of applicable errors for this routine.
+.TP 10
+\f4EAGAIN\f1
+buffers could not be allocated for the message
+to be sent.
+.TP
+\f4EBADF\f1
+\f4fd\fP is not a valid file descriptor.
+.TP
+\f4EFAULT\f1
+\f4socketidptr\f1 points outside the allocated
+address space.
+.TP
+\f4EINTR\f1
+a signal was caught during the call.
+.TP
+\f4EINVAL\f1
+an invalid value was specified by one of the
+arguments.
+.TP
+\f4ENXIO\f1
+a hardware error condition was generated when sending
+the message.
+.TP
+\f4ENOSTR\f1
+\f4fd\fP is not a file descriptor to a \f4Multibus II\f1
+transport endpoint.
+.SH SEE ALSO
+\f4putmsg\f1(2), \f4getmsg\f1(2),
+\f4mb2s_openport\f1(3tai), \f4mb2s_closeport\f1(3tai)

@@ -1,0 +1,98 @@
+.if n .pH g1a.scsi @(#)scsi	40.1 of 5/17/91
+.nr X
+.if \nX=0 .ds x} scsi 7iref "System Administration Utilities" "" "\&"
+.if \nX=1 .ds x} scsi 7iref "System Administration Utilities" ""
+.if \nX=2 .ds x} scsi 7iref "" "\&"
+.if \nX=3 .ds x} scsi "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4scsi\f1 \- Multibus II iSBC 486/133SE SCSI Subsystem
+.SH DESCRIPTION
+The iSBC 486/133SE board uses the Fujitsu SPC 87033 chip to access the SCSI bus.
+The \f4scsi\f1 driver implements the SCSI Driver Interface (SDI) for the SCSI 
+target drivers (such as \f4sf01\f1 and \f4sd01\f1).
+.P
+There are three groups of \f4ioctl\f1(2) commands supported by SCSI.  The first group contains the \f4ioctl\f1 commands used by the \f4scsi\f1 driver itself.  
+These commands are:
+.TP 1i
+\f4SDI_SEND\f1
+Sends a pass through command to a target controller; bypassing the associated 
+target driver.
+.TP 1i
+\f4B_RESET\f1
+Resets the SCSI bus.
+.TP 1i
+\f4B_REDT\f1
+Reads the extended EDT data structure that is stored in the scsi driver's 
+internal data structure.
+.TP 1i
+\f4B_HA_CNT\f1
+Gets the value of the number of controllers the \f4scsi\f1 driver is configured for.
+.P
+The second group of commands are used by the \f4scsi\f1 driver and all target 
+drivers that use the SCSI Driver Interface protocol to communicate with their 
+associated target controllers.  These commands are:
+.IP "\f4B_GETTYPE\f1" 1i
+Return the bus name (SCSI) and device driver name of a specific
+device.
+.IP 
+The third group should be used by all target drivers that use the SCSI 
+Driver Interface protocol to communicate with their associated target 
+controllers. This \f4ioctl\f1 is not supported by the \f4scsi\f1 driver.
+.IP "\f4B_GETDEV\f1"
+Returns the pass through major and minor number to the calling utility 
+to allow creation of a pass through special device file.
+.SS Configuration
+The \f4scsi\f1 driver configuration file (see FILES below) contains the 
+following configurable variables:
+.IP "\f4SCSI_BLKS\f1" 1i
+Specifies the total number of SCSI Request Blocks the scsi driver will 
+allocate.  Note: All SCSI Target drivers utilize this resource.
+.IP "\f4sc_conf\f1" 
+Determines which SCSI Bus, single-ended or differential, the driver will
+control.  The identification is accomplished by specifying the appropriate 
+SCSI Bus hardware interface structure, \f4spc_conf\f1.
+.IP "\f4spc_se_conf\f1"
+Contains the SCSI bus hardware interface structure (\f4spc_conf\f1) 
+for the single-ended SCSI bus.
+.IP "\f4spc_df_conf\f1"
+Contains the SCSI bus hardware interface structure (\f4spc_conf\f1) 
+for the differential SCSI bus.
+.IP "\f4bus_flags\f1"
+Setting \f4bus_flags\f1 to \f4CFG_RESET_BUS\f1 causes the SCSI bus to 
+be reset at boot time.  \f4bus_flags\f1 is a member of the \f4spc_conf\f1
+structure.
+.IP "\f4scsi_id_shift\f1"
+Specifies the bit position (0-based) of the 3-bit SCSI ID (least
+significant bit).  The SCSI ID resides in the SCSI ID register.   The I/O port
+address for the SCSI ID register is specified by the \f4brd_scsi_id\f1 member 
+of the \f4spc_conf\f1 structure.
+.IP 
+\f4scsi_id_shift\f1 is a member the \f4spc_conf\f1 structure.
+.IP \f4cfg_sanity\f1
+Specifies the sanity word used to validate the configuration data structure.
+.IP
+\f4cfg_sanity\f1 is a member of the \f4spc_conf\f1 structure.
+.P
+Each SCSI Bus configuration structure, \f4spc_conf\f1, describes several 
+characteristics of a particular SCSI Bus interface.  The configuration data 
+usually includes information obtained from the driver's \f4mdevice\f1(4) 
+entry and \f4sdevice\f1(4) file located under \f4/etc/conf\f1.
+.P
+By default, the first \f4sdevice\f1(4) entry is bound to the configuration 
+structure for the single-ended SCSI bus ('\f4spc_se_conf\f1') and the 
+second entry is bound to the configuration structure for the differential 
+SCSI bus ('\f4spc_df_conf\f1').
+.SH FILES
+.IP "\f4/usr/include/sys/f87033.h\f1" 2.25i
+Definitions for data structures.
+.IP "\f4/usr/include/sys/spc.h\f1" 
+Implementation dependent constants for the Fujitsu SPC 87033 chip and 
+the board.
+.IP "\f4/etc/conf/pack.d/scsi/space.c\f1"
+SCSI driver configuration file.
+.SH SEE ALSO
+\f2Programmer's Guide: SCSI Driver Interface (SDI)\f1
+.br
+\f4ioctl\f1(2) in the \f2Programmer's Reference Manual\f1
+

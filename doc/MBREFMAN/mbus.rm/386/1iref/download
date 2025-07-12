@@ -1,0 +1,68 @@
+'\"macro stdmacro
+.if n .pH g1a.download @(#)download	40.8 of 5/30/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} download 1iref "System Administration Utilities" "" "\&"
+.if \nX=1 .ds x} download 1iref "System Administration Utilities" ""
+.if \nX=2 .ds x} download 1iref "" "\&"
+.if \nX=3 .ds x} download "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4download\f1 \- loads 8086 absolute library and object module formats
+.SH SYNOPSIS
+\f4/usr/lib/cci/download\f1 [\f4\-b \f2buffer size\f1] [\f4\-t \f2time delay\f1]
+.br
+[\f4\-p \f2portid\f1] [\f4\-lrv] \f2file-name  slot-ID\f1
+.SH DESCRIPTION
+\f4download\f1 loads Absolute OMF86 and LIB86 format files onto a target
+board having the Download Protocol Routine resident in firmware (such as
+the iSBC\(rg 186/410 and the iSBC 186/530).  An executable memory image of
+the file is constructed in the local memory of the target.  After
+loading, control on the target is transferred to the start address
+specified within the file (unless the \f4\-l\f1 option is specified).
+.PP
+The program opens and reads the specified file and interprets the OMF.
+The image is transferred to the target using Multibus II Transport.
+.PP
+Command line options are:
+.PP
+.TP
+\f4\-b\f2n\f1
+Set the temporary buffer size to \f2n\f1 bytes instead of the default
+32,000 bytes.  
+.TP
+\f4\-t\f2n\f1
+Set the number of milliseconds to wait between transport messages used to
+transfer the image to the target.  The default is 10.
+.TP
+\f4\-p\f2n\f1
+Set the Multibus II Transport portID for this host to \f2n\f1 instead of
+the default 36864.  
+.TP
+\f4-l\f1
+Load only.  Loads the specified file onto the target, but does not 
+transfer control or begin execution.
+.TP
+\f4\-r\f1
+Reset.  Performs a local reset to the target board before loading begins.
+.TP
+\f4-v\f1
+Verbose.  Normally, download does its work silently.  This option causes
+each module name to be printed as it is loaded.
+.PP
+The file must be in  Absolute OMF86 or LIB86 format.  Overlays are not
+supported.  The target board is selected by specifying its
+Multibus II iPSB slot-ID.
+.SH FILES
+.nf
+\f4/usr/lib/cci/download\f1
+\f4/etc/default/download\f1    contains the default time delay
+.fi
+.SH SEE ALSO
+For a definition of the Download Protocol Routine required in firmware
+(to work with download), see one of the following manuals.
+.br
+\f2iSBC\(rg 186/410 Hardware Reference Manual\f1.
+.br
+\f2iSBC\(rg 186/530 Hardware Reference Manual\f1.

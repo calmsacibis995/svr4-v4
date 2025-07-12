@@ -1,0 +1,91 @@
+'\"macro stdmacro
+.if n .pH g1.indxbib @(#)indxbib	40.8 of 4/18/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} indxbib 1 "BSD Compatibility Package" "\&"
+.if \nX=1 .ds x} indxbib 1 "BSD Compatibility Package"
+.if \nX=2 .ds x} indxbib 1 "" "\&"
+.if \nX=3 .ds x} indxbib "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4indxbib\f1 \- create an inverted index to a bibliographic database
+.SH SYNOPSIS
+\f4/usr/ucb/indxbib\f1
+\f2database-file\f1 .\ .\ .
+.SH DESCRIPTION
+\f4indxbib\f1
+makes an inverted index to the named
+.I database-file
+(which must reside within the current directory),
+typically for use by
+\f4lookbib\f1
+and
+\f4refer\f1.
+A
+.I database
+contains bibliographic references
+(or other kinds of information) separated by blank lines.
+.P
+A bibliographic reference is a set of lines,
+constituting fields of bibliographic information. 
+Each field starts on a line beginning with a
+\f1`\f4%\f1',
+followed by a key-letter, then a blank, and finally the
+contents of the field, which may continue
+until the next line starting with
+\f1`\f4%\f1'
+(see \f4addbib\f1).
+.P
+\f4indxbib\f1
+is a shell script that calls two programs:
+\f4mkey\f1
+and
+\f4inv\f1.
+\f4mkey\f1
+truncates words to 6 characters,
+and maps upper case to lower case.
+It also discards words shorter than 3 characters,
+words among the 100 most
+common English words, and numbers (dates) < 1900 or > 2000. 
+These parameters can be changed.
+.P
+\f4indxbib\f1
+creates an entry file (with a \f4.ia\f1
+suffix), a posting file
+(\f4.ib\f1),
+and a tag file
+(\f4.ic\f1),
+in the working directory.
+.SH FILES
+.PD 0
+.TP 20
+\f4/usr/ucblib/reftools/mkey\f1
+.TP
+\f4/usr/ucblib/reftools/inv\f1
+.TP
+\f4*.ia\f1
+entry file
+.TP
+\f4*.ib\f1
+posting file
+.TP
+\f4*.ic\f1
+tag file
+.TP
+\f4*.ig\f1
+reference file
+.PD
+.SH SEE ALSO
+\f4addbib\fP(1),
+\f4lookbib\fP(1),
+\f4refer\fP(1),
+\f4roffbib\fP(1),
+\f4sortbib\fP(1)
+.SH NOTES
+All dates should probably be indexed,
+since many disciplines refer to literature
+written in the 1800s or earlier.
+.P
+\f4indxbib\f1
+does not recognize pathnames.

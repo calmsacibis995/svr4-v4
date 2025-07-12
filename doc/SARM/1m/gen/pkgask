@@ -1,0 +1,91 @@
+'\"macro stdmacro
+.if n .pH g1a.pkgask @(#)pkgask	40.7 of 5/16/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+'\"macro stdmacro
+.if n .pH g1a.pkgask @(#)pkgask	40.9 of 5/25/89
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.if \nX=0 .ds x} pkgask 1M "Essential Utilities" "\&"
+.if \nX=1 .ds x} pkgask 1M "Essential Utilities"
+.if \nX=2 .ds x} pkgask 1M "Essential Utilities" "\&"
+.if \nX=3 .ds x} pkgask "Essential Utilities" "\&"
+.nr X
+.TH \*(x} "" "386 Computer Only"
+.SH NAME
+\f4pkgask\f1 \- stores answers to a request script
+.SH SYNOPSIS
+\f4/usr/sbin/pkgask \f1[\f4\-d \f2device\f1] \f4\-r \f2response
+[pkginst\f1 [\f2pkginst\f1 [. . .\|]\|]
+.SH DESCRIPTION
+\f4pkgask\f1
+allows the administrator to store answers to an interactive package
+(one with a request script).
+Invoking this command generates a \f2response\f1 file that is
+then used as input
+at installation time.
+The use of
+this \f2response\f1 file prevents any interaction
+from occurring during installation since the file already contains all
+of the information the package needs.
+.PP
+.PD 0
+.TP 10
+\f4\-d\f1
+Runs the request script for a package on \f2device\f1.
+\f2device\f1 can be
+a full pathname to a directory or the identifiers for tape, floppy disk or removable disk
+(for example, \f4/var/tmp\f1, 
+\f4/dev/dsk/0s2\f1, and
+\f4/dev/dsk/f0t\f1).
+The default device is the installation spool directory.
+.sp
+.TP 10
+\f4\-r\f1
+Identifies a file or directory,
+which should be created to contain the responses 
+to interaction with the package.
+The name must be a full pathname.
+The file,
+or directory of files,
+can later be used as input to the \f4pkgadd\f1 command.
+.sp
+.TP 10
+\f2pkginst\f1
+Specifies the package instance or list of instances for which request
+scripts will be created.
+The token \f4all\f1 may be used
+to refer to all packages available on the source medium.
+The format \f2pkginst\f4.\(**\f1 can be used
+to indicate all instances of a package.
+When using this format, enclose the command line
+in single quotes to prevent the shell from
+interpreting the \(** character.
+.SH NOTES
+The \f4\-r\f1 option can be used to indicate a
+directory name as well as a
+filename.
+The directory name is used to create
+numerous \f2response\f1 files,
+each sharing the name of the package with which
+it should be associated.
+This would be used, for example,
+when you will be adding multiple interactive packages
+with one invocation of \f4pkgadd\f1.
+Each package would need a \f2response\f1 file.
+To create multiple response files
+with the same name as the package instance,
+name the directory in which the files should be created and supply multiple
+instance names with the \f4pkgask\f1 command.
+When installing the packages, you will be able to identify this directory to
+the \f4pkgadd\f1 command.
+.SH SEE ALSO
+\f4installf\fP(1M),
+\f4pkgadd\fP(1M),
+\f4pkgchk\fP(1),
+\f4pkgmk\fP(1),
+\f4pkginfo\fP(1),
+\f4pkgparam\fP(1),
+\f4pkgproto\fP(1),
+\f4pkgtrans\fP(1),
+\f4pkgrm\fP(1M),
+\f4removef\fP(1M)

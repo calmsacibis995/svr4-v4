@@ -1,0 +1,45 @@
+.if n .pH doctools.Crefcard @(#)Crefcard	40.2
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.PM "DN" "FINAL COPY"
+.BK "DOCTOOLS Quick Reference" "Release 1.0" "" ""   
+.\ACRONYM	                  
+.CH "DOCTOOLS Quick Reference" "" "Table of Contents" ""
+.\CHAPTER	
+.tC 1 "The format Command" 1  
+.tC 2 "Synopsis" 1  
+.tC 2 "Command Options" 1  
+.tC 1 "Manual Page Macros" 2  
+.tC 3 "Manual Page Title" 2  
+.tC 3 "Headings" 2  
+.tC 3 "Paragraphs" 2  
+.tC 3 "Indentation" 2  
+.tC 3 "Reduced Text Size" 2  
+.tC 3 "Tab Distance" 2  
+.tC 3 "Proprietary Markings and Draft Notices" 3  
+.tC 3 "Fonts" 3  
+.tC 3 "String Definitions" 3  
+.tC 1 "Guide Macros" 4  
+.tC 3 "Chapter Information" 4  
+.tC 3 "Headings" 4  
+.tC 3 "Admonitions" 4  
+.tC 3 "Screens and Boxes" 4  
+.tC 3 "Legends" 5  
+.tC 3 "Displays" 5  
+.tC 3 "Lists" 5  
+.tC 3 "Specialized Displays and Special Text Elements" 6  
+.tC 3 "Two-Column Formatting" 7  
+.tC 3 "Paragraphs and Spacing" 7  
+.tC 3 "Preprocessing" 7  
+.tC 3 "PostScript File Inclusion" 8  
+.tC 3 "Key Representations" 8  
+.tC 3 "Folio Format" 8  
+.tC 3 "Indexing" 9  
+.tC 3 "Reduced Text Size" 9  
+.tC 3 "Tab Distance" 9  
+.tC 3 "Proprietary Markings and Draft Notices" 9  
+.tC 3 "Fonts" 9  
+.tC 1 "File Type Macro" 10  
+.tC 1 "Alphabetical Index of Macros" 11  
+.tC 3 "Manual Page Macros" 11  
+.tC 3 "Guide Macros" 11  
+.tC 3 "File Type Macro" 14  

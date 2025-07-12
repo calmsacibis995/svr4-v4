@@ -1,0 +1,53 @@
+'\"macro stdmacro
+.if n .pH g1a.xinstall @(#)xinstall	40.6 of 1/3/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+'\"macro stdmacro
+.if n .pH g1.tar @(#)tar	30.8 of 1/15/88
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.if \nX=0 .ds x} xinstall 1M "Base System" "\&"
+.if \nX=1 .ds x} xinstall 1M "Base System"
+.if \nX=2 .ds x} xinstall 1M "" "\&"
+.if \nX=3 .ds x} xinstall"" "" "\&"
+.nr X
+.TH \*(x} "" "386 Computer Only"
+.SH NAME
+\f4xinstall\f1 \- XENIX installation shell script
+.SH SYNOPSIS
+\f4\&/etc/xinstall\f1  [  \f2device\f1  ]
+.SH DESCRIPTION
+\f4/etc/xinstall\f1
+is the
+\f4sh\f1 (1)
+script used to install XENIX distribution (or application program) floppies.
+It performs the following tasks:
+.sp .5
+.nf
+.in +.2i
+prompts for insertion of floppies
+.sp .5
+extracts files using the \f4tar\f1(1) utility
+.sp .5
+executes \f4/once/init.*\f1 programs on each floppy after they have been extracted
+.sp .5
+removes any \f4/once/init.*\f1 programs when the installation is finished
+.in -.2i
+.fi
+.PP
+The optional argument to the command specifies the device used.
+The default device is
+\f4/dev/rfd0\f1.
+.SH FILES
+\f4/etc/xinstall\f1
+.br
+\f4/once/init\f1.*
+.SH SEE ALSO
+\f4custom\f1(1M), \f4fixperm\f1(1M), \f4installpkg\f1(1).
+.SH NOTES
+\f4xinstall\f1
+is provided for use with any existing XENIX packages
+you may have that you wish to install on the UNIX operating system. 
+\f4xinstall\f1 
+does not work with UNIX system applications [use 
+\f4installpkg\f1(1) 
+to install UNIX system applications].

@@ -1,0 +1,415 @@
+'\"!  tbl | mmdoc
+.if n .pH 386.network @(#)network	40.10
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+'\"!  tbl | mmdoc
+.BK "Technology File Mapping Guide"
+.CH "Networking Software Technology" 9
+.H 1 "Basic Networking Facilities"
+.H 2 "Transport Layer Interface (TLI) Library"
+The Transport Layer Interface (TLI) defines a set of functions for a protocol-independent programming interface to networking services based on the service definitions of the Open Systems Interconnection (OSI) Reference
+Model (see ISO 7498, \f2Information Processing Systems \(em Open
+Systems Interconnection \(em Reference Model\f1, 1983 and
+CCITT Recommendation X.200, \f2Reference Model of Open Systems
+Interconnection for CCITT Applications\f1, 1984).
+.P
+TLI functions provide end-to-end data transmission using the services of an underlying network to support both the connection-oriented and connectionless transport-services of the OSI Transport Layer Service Definition
+(see ISO 8072, \f2Information Processing Systems \(em Open Systems Interconnection \(em Transport Service Definition\f1, 1984).
+.P
+These transport-services enable two user-processes to transfer data between them without concern for the protocol implementation providing those services.
+Programs using the transport-interface work independently of the underlying protocols.
+By providing media and protocol independence, the Transport Layer Interface gives networking applications the flexibility to use a wide variety of transmission facilities.
+.P
+The Network Support Library contains the Transport Interface Library and the Kernel Transport Layer Interface (\^\f4ktli\fP\^).
+.P
+.XS I N
+.S -1 -2
+.TS
+tab(	);
+l3f4w(2.25i) l3f1.
+uts/i386/io/ticlts.c	transport interface loopback driver:  datagram service
+uts/i386/io/ticots.c	transport interface loopback driver:  virtual circuit
+uts/i386/io/ticotsord.c	transport interface connection-oriented transport service with orderly-release
+uts/i386/io/timod.c	transport interface library co-operating module
+uts/i386/io/tirdwr.c	transport interface library read/write module
+uts/i386/ktli/*
+uts/i386/master.d/ktli/*	configuration files for \f4ktli\fP boot module
+uts/i386/master.d/nfa/*	configuration files for \f4Intel OpenNet\fP boot module
+uts/i386/master.d/ticlts/*	configuration files for \f4ticlts\fP boot module
+uts/i386/master.d/ticots/*	configuration files for \f4ticots\fP boot module
+uts/i386/master.d/ticotsor/*	configuration files for \f4ticotsord\fP boot module
+uts/i386/master.d/timod/*	configuration files for \f4timod\fP boot module
+uts/i386/master.d/tirdwr/*	configuration files for \f4tirdwr\fP boot module
+uts/i386/sys/gdpstr.h	virtual circuit defines
+uts/i386/sys/t_kuser.h	transport services kernel data structures
+uts/i386/sys/ticlts.h	transport interface connectionless structures
+uts/i386/sys/ticots.h	transport interface virtual circuit structures
+uts/i386/sys/ticotsord.h	transport interface virtual circuit with orderly release structures
+uts/i386/sys/tihdr.h	transport services user-level interface
+uts/i386/sys/timod.h	transport interface user level structures and defines
+uts/i386/sys/tirdwr.h	defines for structure \f4trw_trw\fP
+uts/i386/sys/tiuser.h	user-level transport interface structures and defines
+lib/libnsl/nsl/*
+.TE
+.S
+.XF
+.H 2 "Basic Networking Utilities"
+The Basic Networking Utilities package enables a UNIX system to communicate with other systems.
+With the utilities and commands provided by the package, users can:
+.BL
+.LI
+transfer files to other UNIX systems (\f4uucp\fP)
+.LI
+communicate interactively with others using UNIX systems or non-UNIX systems
+.LI
+execute a restricted set of commands on a remote system without directly logging in on the remote system (\f4uux\fP)
+.LI
+call and log in to a remote system (\f4cu\fP)
+.LI
+call a remote terminal and allow the user of the terminal to log in on a UNIX system (\f4ct\fP)
+.LE
+For information about using this package, see the \*(U4 \f2User's Guide\f1.
+For information about administering this package, see the \f2System Administrator's Guide\f1 and the Basic Networking Utilities manual pages in the \f2System Administrator's Reference Manual\f1.
+.P
+.XS I N
+.DS
+\f4lib/libnsl/dial/*
+cmd/bnu.admin/*
+cmd/bnu/*\fP
+.DE
+.XF
+.H 1 "Electronic Mail Facilities"
+.H 2 "Basic Mail Utilities"
+.XS I N
+.DS
+\f4cmd/mail/*\fP
+.DE
+.XF
+.XK
+.H 2 "Advanced Mail Utilities"
+.XS I N
+.DS
+\f4cmd/mailx/*\fP
+.DE
+.XF
+.H 1 "Network Service Facilities"
+The Network Services Utilities (NSU) work with Network Selection and Service Access Facility (SAF) utilities, including the network
+daemon \f4listen\fP\^ and the associated commands for administering it.
+.ig
+.P
+The Networking Support Utilities package must be installed to take advantage of services provided by the Remote File Sharing Utilities package and Network File System Utilities package.
+..
+.H 2 "Network Listener Library"
+.XS I N
+.DS
+\f4lib/libnls/*\fP
+.DE
+.XF
+.H 2 "Network Service Utilities"
+.XS I N
+.DS
+\f4cmd/dbfconv/*
+cmd/listen/*
+cmd/netsel.adm/*
+cmd/nlsadmin/*\fP
+.DE
+.XF
+.H 1 "Network Administration Facilities"
+.H 2 "Network Selection Library"
+SVR4 introduces a feature to UNIX System V called Network Selection.
+Network Selection allows network applications to choose the network over which they will communicate.
+An application can select a network from a directory of networks that are available to the system.
+If an application fails to connect with its first choice, it can select different networks until it finds one that meets its service requirements and allows the connection.
+.P
+Network Selection frees an application from requiring a network
+selection to be embedded in its code.
+This allows the application to run without modification on different systems that support different networks.
+.P
+Name-to-Address Mapping is a mechanism that allows network clients to determine the addresses of servers on a network in a network-independent manner.
+The mechanism makes it possible for clients to reach a server, even if the address on which the server is listening should change.
+Name-to-Address Mapping also allows a client to reach a server over different networks.
+.P
+For more information about Network Selection and Name-to-Address Mapping, see the \f2System Administrator's Guide\f1 and the \f2Programmer's Guide: Networking Interfaces\f1.
+.P
+.XS I N
+.DS
+\f4lib/libnsl/libnsl.mk
+lib/libnsl/netdir/*
+lib/libnsl/netselect/*
+lib/libnsl/saf/*
+lib/nametoaddr/*\fP
+.DE
+.XF
+.H 2 "Distributed File System (DFS) Administration"
+The Distributed File System Administration Utilities (DFS) package provides a common administrative interface to Remote File Sharing (RFS) and Network File System (NFS).
+Commands installed by the DFS Administration Utilities package allow an administrator to share and mount both RFS and NFS resources.
+DFS utilities must be installed to run RFS and NFS.
+.P
+See the \f2Network User's and Administrator's Guide\f1 for more information.
+.P
+.XS I N
+.DS
+\f4cmd/dfs.cmds/*
+cmd/nadmin.dfs/*\fP
+.DE
+.XF
+.H 1 "YP Name Server Facilities"
+.H 2 "YP Name Server Library"
+.XS I N
+.DS
+\f4lib/libnsl/yp/*\fP
+.DE
+.XF
+.H 2 "YP Name Server Utilities"
+.XS I N
+.DS
+\f4cmd/ypcmd/*\fP
+.DE
+.XF
+.H 1 "Resource Sharing Facilities"
+.H 2 "Remote File Sharing (RFS)"
+The Remote File Sharing Utilities package provides the facilities needed to share resources transparently among computers running UNIX System V.
+It requires the Networking Support Utilities package, the Distributed File System Administration Utilities, and a transport provider that conforms to the AT&T Transport Provider Interface (TPI), such as the StarLAN network or TCP/IP (provided in the Internet Utilities package).
+.P
+For more information about Remote File Sharing, see the \f2Network User's and Administrator's Guide\f1.
+.P
+.XS I N
+.S -1 -2
+.TS
+tab(	);
+l3f5w(2.25i) l3f1.
+uts/i386/fs/rfs/*
+uts/i386/master.d/RFS/*	configuration files for RFS boot module
+uts/i386/sys/adv.h	defines for RFS advertise structure for compatibility
+uts/i386/sys/fs/rf_acct.h	RFS accounting data structures
+uts/i386/sys/fs/rf_vfs.h	RFS filesystem data structures
+uts/i386/sys/hetero.h	defines for RFS heterogeneity
+uts/i386/sys/nserve.h	RFS name server string definitions and error numbers
+uts/i386/sys/recover.h	structures and defines for RFS for compatibility
+uts/i386/sys/rf_adv.h	structures and defines for RFS
+uts/i386/sys/rf_cirmgr.h	structures and defines for RFS
+uts/i386/sys/rf_comm.h	structures and defines for RFS
+uts/i386/sys/rf_debug.h	structures and defines for RFS
+uts/i386/sys/rf_messg.h	structures and defines for RFS
+uts/i386/sys/rf_sys.h	structures and defines for RFS
+lib/libc/i386/sys/rfsys.s
+lib/libns/*
+cmd/adv/*
+cmd/dname/*
+cmd/fs.d/rfs/*
+cmd/fumount/*
+cmd/fusage/*
+cmd/idload/*
+cmd/nadmin.rfs/*
+cmd/nserve/*
+cmd/nsquery/*
+cmd/rfadmin/*
+cmd/rfpasswd/*
+cmd/rfsetup/*
+cmd/rfstart/*
+cmd/rfstop/*
+cmd/rfuadmin/*
+cmd/rfudaemon/*
+cmd/rmntstat/*
+cmd/rmount/*
+cmd/unadv/*
+.TE
+.S
+.XF
+.H 2 "Network File System (NFS)"
+The Network File System (NFS) provides the facilities for sharing resources and files in a distributed environment of heterogeneous computer system hardware, operating system software, and network architectures.
+NFS shares resources and files by mounting a remote file system then reading or writing files in place.
+Users can directly access files they want without knowing the network address of the data.
+To the user, all NFS-mounted file systems look like private disks.
+There are no apparent differences between reading or writing a file on
+a local disk and reading or writing a file on a disk in another location.
+.P
+NFS requires the Networking Support Utilities, UDP/IP (transport protocols provided by the TCP/IP package) and the Distributed File System (DFS) Administration Utilities package.
+.P
+See the \f2Network User's and Administrator's Guide\f1 for more information about NFS.
+.P
+.XS I N
+.S -1 -2
+.TS
+tab(	);
+l3f5w(2.25i) l3f1.
+uts/i386/fs/nfs/*
+uts/i386/klm/*
+uts/i386/master.d/klm/*	configuration files for KLM boot module
+uts/i386/master.d/nfs/*	configuration files for NFS boot module
+uts/i386/nfs/*
+lib/libc/i386/sys/_nfssys.s
+lib/libc/port/sys/nfssys.c
+cmd/fs.d/nfs/*
+cmd/nadmin.nfs/*
+.TE
+.S
+.XF
+.H 2 "Remote Procedure Call (RPC)"
+SVR4 includes Remote Procedure Call (RPC) which supports client/server operations using a protocol that allows a process to call a procedure on a remote machine of a different architecture, using the syntax and semantics of a local procedure call
+(see DARPA RFC-1050, RPC specification).
+.P
+RPC enables a client process executing on a local system to invoke a server-process executing on a remote system, using a syntax based on ordinary
+(local) procedure calls in a high-level language (as opposed to a message-based send/receive syntax).
+RPC allows a server program to use procedures on remote machines like building blocks in complex applications.
+RPC features a globally administered name-space and a versioning mechanism.
+For client and server processes on different types of computer systems to exchange data, RPC uses eXternal Data Representation (XDR), a machine-independent transfer-syntax with encoding rules
+(see DARPA RFC-1014, XDR specification).
+.P
+XDR lets programs on different computer systems (possibly with different operating systems) transfer data by hiding implementation-dependent details
+(such as word byte-order and alignment, for example).
+The \f4rpcgen\fP command runs an RPC protocol compiler that accepts a special RPC/XDR language used to develop RPC applications.
+RPC and its related facilities operate over any STREAMS I/O-based and TLI-conforming transport-provider.
+.P
+RPC uses eXternal Data Representation (XDR) to encode data passed between machines.
+XDR represents data in a standard way so that a local process can call a procedure residing on a machine of different architecture that is running the same or a different operating system.
+.P
+See the \f2Programmer's Guide: Networking Interfaces\f1 for more information about RPC and XDR.
+.P
+.XS I N
+.S -1 -2
+.TS
+tab(	);
+l3f5w(2.25i) l3f1.
+head/ctype.h
+head/errno.h
+head/fcntl.h
+head/grp.h
+head/memory.h
+head/netconfig.h
+head/netdir.h
+head/nsaddr.h
+head/poll.h
+head/pwd.h
+head/rpc/*
+head/rpcsvc/*
+head/signal.h
+head/stdio.h
+head/string.h
+head/time.h
+head/tiuser.h
+uts/i386/des/*
+uts/i386/master.d/des/*	configuration files for DES boot module
+uts/i386/master.d/krpc/*	configuration files for KRPC boot module
+uts/i386/rpc/*
+uts/i386/sys/netcspace.h	RPC kernel structures defines
+lib/libnsl/des/*
+lib/libnsl/rpc/*
+lib/librpcsvc/*
+cmd/keyserv/*
+cmd/rpcbind/*
+cmd/rpcgen/*
+cmd/rpcinfo/*
+cmd/rpcsvc/*
+.TE
+.S
+.XF
+.H 1 "STREAMS Networking Facilities"
+The STREAMS I/O-based networking facilities provide SVR4
+with a range of solutions.
+The networking software is designed to increase the orthogonality of different components, encouraging protocol-independent applications and services, supporting transport-independent protocols, and allowing SVR4 applications to run in a wide variety of network environments.
+The STREAMS I/O structure increases the quality, orthogonality, and portability of network applications and protocol implementations.
+.H 2 "TCP/IP Modules"
+In SVR4, UNIX System V supports the Transmission Control Protocol/Internet Protocol (TCP/IP), a family of network protocols frequently identified as the DARPA Internet Protocol Suite.
+TCP/IP is a comprehensive set of protocols and commands that support networking among systems of different types.
+.P
+For more information about TCP/IP, see the \f2Network User's and Administrator's Guide\f1.
+.P
+.XS I N
+.S -1 -2
+.TS
+tab(	);
+l3f5w(2.25i) l3f1.
+uts/i386/master.d/app/*	configuration files for APP protocol boot module
+uts/i386/master.d/arp/*	configuration files for ARP protocol boot module
+uts/i386/master.d/icmp/*	configuration files for ICMP protocol boot module
+uts/i386/master.d/ip/*	configuration files for IP protocol boot module
+uts/i386/master.d/llcloop/*	configuration files for LLCLOOP protocol boot module
+uts/i386/master.d/rawip/*	configuration files for RAWIP protocol boot module
+uts/i386/master.d/tcp/*	configuration files for TCP protocol boot module
+uts/i386/master.d/udp/*	configuration files for UDP protocol boot module
+uts/i386/net/*
+uts/i386/netinet/*
+.TE
+.S
+.XF
+.H 2 "ETHERNET\*(Tm Media Driver"
+The ETHERNET Media Driver Utilities package provides the software to drive an ETHERNET board on an AT&T 386 computer.
+.P
+.XS I N
+.CW
+.S -1 -2
+.TS
+tab(	);
+l3f5w(2.25i) l3f1.
+add-on/imx586/ID/*	\f4imx586\fP configuration files
+add-on/imx586/io/*	\f4imx586\fP Ethernet Driver
+add-on/imx586/imx586.mk
+add-on/imx586/sys/*	\f4imx586\fP Ethernet Driver headers
+add-on/wd/README.wd
+add-on/wd/wd.mk
+add-on/wd/ID/*	\f4wd\fP configuration files
+add-on/wd/io/*	\f4WD8003\fP Ethernet Driver
+add-on/wd/sys/*	\f4WD8003\fP Ethernet Driver headers
+arch/mbus/cmd/enet/*	MBUS-II specific i530 Ethernet driver commands
+.TE
+.S
+.XF
+.H 2 "OSI Transport Service Driver"
+The OSI Transport Service Driver Utilities package provides the software for MBUS-II configured computer.
+.P
+.XS I N
+.CW
+.S -1 -2
+.TS
+tab(	);
+l3f5w(2.25i) l3f1.
+arch/mbus/cmd/ots/*	
+.TE
+.S
+.XF
+.H 1 "Internet Networking Facilities"
+SVR4 adds support for the TCP/IP suite of networking protocols together with the set of associated utilities (\f4telnet\fP\^, \f4smtp\fP\^,
+\f4ftp\fP\^, for example) that are normally used with this protocol suite.
+Because all UNIX System V networking services are implemented to the TLI interface, including the TCP/IP implementation, all existing programs can use this set of networking protocols without being modified or recompiled.
+.H 2 "Sockets Compatibility Library"
+Sockets is a networking interface widely used in BSD versions of the UNIX system.
+Functionally similar to UNIX System V's Transport Level Interface (TLI), sockets define how a process accesses a transport-service based on TCP/IP.
+SVR4 provides sockets compatibility through a library so that BSD applications that use sockets can migrate easily to UNIX System V.
+.P
+For more information on sockets, see the \f2Programmer's Guide: Networking Interfaces\f1.
+.P
+.XS I N
+.S -1 -2
+.TS
+tab(	);
+l3f5w(2.25i) l3f1.
+uts/i386/io/sockmod.c	socket interface module
+uts/i386/master.d/sockmod/*	configuration files for SOCKMOD boot module
+uts/i386/sys/byteorder.h	macros for conversion between host and (internet) network byte order
+uts/i386/sys/socket.h	various socket defines:  types, address families, options
+uts/i386/sys/socketvar.h	struct \f4socket\fP and related defines
+uts/i386/sys/sockio.h	socket \f4ioctl\fP commands
+uts/i386/sys/sockmod.h	socket interface structures
+uts/i386/sys/un.h	socket IPC domain; struct \f4sockaddr_un\fP
+lib/libsocket/*
+.TE
+.S
+.XF
+.XK
+.H 2 "Internet Networking Utilities"
+Internet Networking Utilities include the DARPA commands that allow users to login to remote systems, execute commands on remote systems, and copy files from  remote systems.
+These utilities work in conjunction with the TCP/IP
+network protocols, also known as the DARPA
+Internet Protocol Suite, and are listed under ``STREAMS
+Networking Facilities'' in the \f2Technology File Mapping Guide\fP.
+.ig
+.P
+For more information about the Internet Service Utilities, see the \f2Network User's and Administrator's Guide\f1.
+..
+.P
+.XS I N
+.DS
+\f4cmd/cmd-inet/*
+cmd/mail/smtp/*\fP
+.DE
+.XF

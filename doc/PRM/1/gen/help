@@ -1,0 +1,44 @@
+'\"macro stdmacro
+.if n .pH g1.help @(#)help	40.9 of 5/22/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} help 1 "Enhanced Programming Utilities" "\&"
+.if \nX=1 .ds x} help 1 "Enhanced Programming Utilities"
+.if \nX=2 .ds x} help 1 "" "\&"
+.if \nX=3 .ds x} help "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4help\f1 \- ask for help with message numbers or SCCS commands
+.SH SYNOPSIS
+\f4help\f4
+[\^\f2args\^\f4]  \f1
+.SH DESCRIPTION
+\f4help\f1
+finds information to explain a message from a command or explain the use of
+a SCCS command.
+Zero or more arguments may be supplied.
+If no arguments are given,
+\f4help\fP
+will prompt for one.
+.PP
+The arguments may be either
+information within the parentheses following
+a message or SCCS command names.
+.PP
+The response of the program will be the explanatory information related
+to the argument, if there is any.
+.PP
+When all else fails, try ``help stuck''.
+.SH FILES
+.TP 25
+\f2LIBDIR\f4/help\f1
+directory containing files of message text.
+.TP
+\f2LIBDIR\f4/help/helploc\f1
+file containing locations of help files not in \f2LIBDIR\f4/help\f1.
+.TP
+\f2LIBDIR\f1
+usually \f4/usr/ccs/lib\f1
+.\"	@(#)help.1	6.2 of 9/2/83
+.Ee

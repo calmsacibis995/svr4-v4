@@ -1,0 +1,152 @@
+'\"macro stdmacro
+.if n .pH g1.fmli @(#)fmli	40.15 of 6/4/91
+.\" Copyright 1989 AT&T
+.nr X
+.if \nX=0 .ds x} fmli 1 "Essential Utilities" "\&"
+.if \nX=1 .ds x} fmli 1 "Essential Utilities"
+.if \nX=2 .ds x} fmli 1 "" "\&"
+.if \nX=3 .ds x} fmli 1 "" "\&"
+.TH \*(x}
+.SH NAME
+\f4fmli\f1 \- invoke FMLI
+.SH SYNOPSIS
+\f4fmli\f1
+\f1[\f4\-a\f1
+\f2alias_file\f1]
+\f1[\f4\-c\f1
+\f2command_file ]
+\f1[\f4\-i\f1
+\f2initialization_file\f1]
+\f2file .\|.\|.\f1
+.SH DESCRIPTION
+The \f4fmli\f1 command invokes the Form and Menu Language Interpreter
+and opens the frame(s)
+specified by the \f2file\f1 argument.
+The \f2file\f1 argument is the pathname
+of the initial frame definition file(s), and
+must follow the naming convention \f4Menu.\f2xxx\f1, \f4Form.\f2xxx\f1 or
+\f4Text.\f2xxx\f1 for a menu, form or text frame respectively, where \f2xxx\f1 is any string
+that conforms to UNIX system file naming conventions.
+The FMLI descriptor
+\f4lifetime\f1 will be ignored for all frames opened by argument to
+\f4fmli\f1.
+These frames have a lifetime of \f4immortal\f1 by default.
+.P
+The available options are as follows:
+.TP .5i
+\f4-a\f1
+If \f4\-a\f1 is specified, \f2alias_file\f1
+is the name of a file which contains lines of the form
+\f2alias\f4=\f2pathname\f1.
+Thereafter, \f4$\f2alias\f1 can be used in definition files to simplify
+references to objects or devices with lengthy 
+pathnames, or to define a search path (similar to \f4$PATH\f1 in the
+UNIX system shell).
+.TP
+\f4-c\f1
+If \f4\-c\f1 is specified, \f2command_file\f1 is the name of
+a file in which default FMLI commands can be disabled,
+and new application-specific commands can be defined.
+The contents of \f2command_file\f1 are reflected in
+the FMLI Command Menu.
+.TP
+\f4-i\f1
+If \f4\-i\f1 is specified, \f2initialization_file\f1 is
+the name of a file in which the following characteristics of
+the application as a whole can be specified:
+.RS .75i
+.TP 3
+\-
+A transient introductory frame displaying product information
+.TP
+\-
+A banner, its position, and other elements of the banner line
+.TP
+\-
+Color attributes for all elements of the screen
+.TP
+\-
+Screen Labeled Keys (SLKs) and their layout on the screen.
+.RE
+.SS "Environment Variables"
+\f4LOADPFK\fP
+.br
+When this variable is set to \f4yes\f1, \f4true\f1,
+or the null string, it directs FMLI to download
+alternative keystroke sequences into the function
+keys of terminals (such as the AT&T 5620 and 630)
+that do not have fixed, preset values for them.
+See the appendix titled
+``Keyboard and Mouse Support''
+of the \f2Programmer's Guide:
+Character User Interface (FMLI and ETI)\fP
+for more information on automatic function key downloading.
+.PP
+\f4COLUMNS\fP
+.br
+Can be used to override the width of the logical
+screen defined for the terminal set in \f4TERM\fP.
+For terminals with a 132-column mode, for example,
+invoking FMLI with the line
+.PP
+\0\0\0\0\f4COLUMNS=132 fmli \fP\f2frame-file\fP
+.PP
+will allow this wider screen width to be used.
+.PP
+\f4LINES\fP
+.br
+Can be used to override the length of the logical
+screen defined for the terminal set in \f4TERM\fP.
+.LE
+.SH EXAMPLES
+To invoke \f4fmli\f1:
+.P
+.RS
+\f4fmli Menu.start\f1
+.RE
+.PP
+where \f4Menu.start\f1 is an example of \f2file\f1 named according to
+the file name conventions for menu definition files explained above.
+.PP
+To invoke \f4fmli\f1 and name an initialization file:
+.P
+.RS
+\f4fmli -i init.myapp Menu.start\f1
+.RE
+.PP
+where \f4init.myapp\f1 is an example of \f2initialization_file\f1.
+.SH DIAGNOSTICS
+If \f2file\f1 is not supplied to the \f4fmli\f1
+command, \f4fmli\f1 returns
+the message:
+.P
+.RS
+\f4Initial object must be specified.\f1
+.RE
+.P
+If \f2file\f1 does not exist or is not readable,
+\f4fmli\f1 returns
+an error message and exits.
+The example command line above returns the following message and exits:
+.P
+.RS
+\f4Can't open object "Menu.start"\f1
+.RE
+.P
+If \f2file\f1 exists, but does not
+start with one of the three correct object names
+(\f4Menu.\f1, \f4Form.\f1, or \f4Text.\f1)
+or if it is named correctly but does not
+contain the proper data, \f4fmli\f1 starts to build the screen by putting out
+the screen labels for function keys, after which it flashes the
+message:
+.P
+.RS
+\f4I do not recognize that kind of object\f1
+.RE
+.P
+and then exits.
+.SH FILES
+\f4/usr/bin/fmli\f1
+.SH "SEE ALSO"
+\f4vsig\f1(1F).

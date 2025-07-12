@@ -1,0 +1,50 @@
+'\"macro stdmacro
+.if n .pH gen.getq @(#)getq	40.2 of 1/7/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.nr X
+.if \nX=0 .ds x} getq D3DK "STREAMS" "DDI/DKI" "\&"
+.if \nX=1 .ds x} getq D3DK "STREAMS" "DDI/DKI"
+.if \nX=2 .ds x} getq D3DK "" "\&"
+.if \nX=3 .ds x} getq "" "" "\&"
+.TH \*(x}
+.IX "\f4getq\fP(D3DK)"
+.SH NAME
+\f4getq\f1 \- get the next message from a queue
+.SH SYNOPSIS 
+.nf
+.na
+\f4#include <sys/stream.h>
+.sp 0.5
+mblk_t *getq(queue_t *\f2q\f4);\f1
+.ad
+.fi
+.SH ARGUMENTS 
+.RS 0n 10
+.IP "\f2q\f1" 10n
+Pointer to the queue from which the message is to be retrieved.
+.RE
+.SH DESCRIPTION 
+\f4getq\f1 is used by service [see \f4srv\f1(D2DK)] routines to
+retrieve queued messages.
+It gets the next available message from
+the top of the queue pointed to by \f2q\f1.
+\f4getq\f1 handles flow control, restarting I/O that was blocked as needed.
+.SH "RETURN VALUE" 
+If there is a message to retrieve, \f4getq\f1 returns a pointer to it.
+If no message is queued, \f4getq\f1 returns a \f4NULL\f1 pointer.
+.SH "LEVEL" 
+Base or Interrupt.
+.SH NOTES
+Does not sleep.
+.SH "SEE ALSO" 
+.na
+\f4srv\f1(D2DK),
+\f4bcanput\f1(D3DK),
+\f4canput\f1(D3DK),
+\f4putbq\f1(D3DK),
+\f4putq\f1(D3DK),
+\f4qenable\f1(D3DK),
+\f4rmvq\fP(D3DK)
+.ad
+.SH "EXAMPLE" 
+See \f4srv\f1(D2DK) for an example of \f4getq\f1.

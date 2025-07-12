@@ -1,0 +1,63 @@
+'\"macro stdmacro
+.if n .pH g1a.d258 @(#)d258	40.8 of 5/20/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} d258 7iref "System Administration Utilities" "" "\&"
+.if \nX=1 .ds x} d258 7iref "System Administration Utilities" ""
+.if \nX=2 .ds x} d258 7iref "" "\&"
+.if \nX=3 .ds x} d258 "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4d258\f1 \- i82258 ADMA device driver
+.SH DESCRIPTION
+The \f4d258\f1 driver handles the internal low level interface between
+the \f4dma\f1(7iref) interface and the actual DMA hardware of a
+Multibus II board.
+.PP
+To configure the \f4d258\f1 driver, modify the following variables in
+the  \f4/etc/conf/pack.d/d258/space.c\f1 file:
+.PP
+.RS
+.TP 1i
+\f2d258_base\f1
+The base I/O port address for the i82258 chip.
+.TP 1i
+\f2d258_gmr\f1
+The bit mask to be loaded into the mode register of the i82258 chip.
+Do not modify this variable.
+.TP 1i
+\f2d258_gbr\f1
+The maximum number of contiguous bus cycles to be used for DMA.  A zero
+is used to indicate unlimited length transfers are permitted.
+.TP 1i
+\f2d258_gdr\f1
+The number of bus cycles to wait between DMA bursts.
+.TP 1i
+\f2d258_sbx_base\f1
+The base address for DMA to/from the iSBX module.
+.TP 1i
+\f2d258_sbx_sw_chan0_swconf\f1
+A flag indicating that dma has been configured for iSBX channel 0. 
+.TP 1i
+\f2d258_sbx_sw_chan1_swconf\f1
+A flag indicating that dma has been configured for iSBX channel 1.
+.RE
+.PP
+There are no ioctls for the \f4d258\f1 driver.  The \f4d258\f1 driver is
+used to support the DMA interface required by the
+\f2Device Driver Interface/Driver-Kernel Interface (DDI/DKI)
+Reference Manual\f1, which is used in turn to implement other
+drivers which do have ioctl interfaces.
+.SH FILES
+.nf
+\f4/etc/conf/pack.d/d258/space.c     \f1Configuration information
+\f4/etc/conf/pack.d/d258/Driver.o    \f1Driver object module
+.fi
+.SH SEE ALSO
+\f4dma\f1(7iref).
+.br
+\f2Driver Interface/Driver-Kernel Interface (DDI/DKI)
+Reference Manual\f1.
+.SH NOTES
+DMA to or from iSBX connectors is not yet supported.

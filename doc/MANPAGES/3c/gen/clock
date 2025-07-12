@@ -1,0 +1,51 @@
+'\"macro stdmacro
+.if n .pH g3c.clock @(#)clock	40.16 of 5/22/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} clock 3C "C Development Set" "\&"
+.if \nX=1 .ds x} clock 3C "C Development Set"
+.if \nX=2 .ds x} clock 3C "" "\&"
+.if \nX=3 .ds x} clock "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4clock\f1 \- report \s-1CPU\s+1 time used
+.SH SYNOPSIS
+\f4#include <time.h>\f1
+.PP
+\f4clock_t clock (void);\f1
+.SH DESCRIPTION
+\f4clock\fP
+returns the amount of \s-1CPU\s+1 time (in microseconds) used since the
+first call to
+\f4clock\fP
+in the calling process.
+The time reported is the sum of the user and system times of the
+calling process and its terminated child processes for which it has executed
+the \f4wait\fP system call, the
+\f4pclose\fP function,
+or the
+\f4system\fP function.
+.PP
+Dividing the value returned by
+\f4clock\fP
+by the constant \f4CLOCKS_PER_SEC\fP,
+defined in the
+\f4time.h\f1 header file,
+will give the time in seconds. 
+.PP
+The resolution of the clock is 10 milliseconds on \s-1AT&T 3B\s+1 computers.
+.SH SEE ALSO
+\f4times\fP(2), \f4wait\fP(2), \f4popen\fP(3S), \f4system\fP(3S)
+.SH NOTES
+The value returned by
+\f4clock\fP
+is defined in microseconds for compatibility with systems that have
+\s-1CPU\s+1 clocks with much higher resolution.
+Because of this, the value returned
+will wrap around after accumulating
+only 2147 seconds of \s-1CPU\s+1 time (about 36 minutes).
+If the process time used is not available or cannot be 
+represented, clock returns the value \f4(clock_t)\-1\fP.
+.\"	@(#)clock.3c	6.2 of 10/20/83
+.Ee

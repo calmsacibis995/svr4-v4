@@ -1,0 +1,15 @@
+#ident	"@(#)pkg.nfs:pkg.nfs/pkginfo	1.1.1.2"
+
+# NFS pkginfo
+
+PKG="nfs"
+NAME="Network File System Utilities"
+ARCH="i386"
+RELEASE="4.0"
+VERSION="1"
+VENDOR="USL"
+CATEGORY="system,utilities"
+CLASSES=""
+BASEDIR=""
+MAXINST="1"
+PREDEPEND="nfs"

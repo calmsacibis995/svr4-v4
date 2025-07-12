@@ -1,0 +1,22 @@
+.if n .pH 386.titlepage @(#)titlepage	40.3.1.1
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.if n .pH ddi_dki.titlepage @(#)titlepage	40.7
+.nrNF 1
+
+.rs
+.ft\*(@e
+.ps24
+.vs24
+.nf
+.sp|4.2i
+.in3i
+UNIX\v'-0.1i'\s-8\(rg\s0\v'0.1i' System V/386
+Release 4 Version 4
+.ft\*(@d
+.sp0.35
+.ps16
+.vs16
+Device Driver Interface/
+Driver\-Kernel Interface (DDI/DKI)
+Reference Manual
+.\" EOF

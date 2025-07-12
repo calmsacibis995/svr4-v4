@@ -1,0 +1,316 @@
+'\"macro stdmacro
+.if n .pH g1a.mkpart @(#)mkpart	40.7
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.if \nX=0 .ds x} mkpart 1M "Base System" "\&"
+.if \nX=1 .ds x} mkpart 1M "Base System"
+.if \nX=2 .ds x} mkpart 1M "" "\&"
+.if \nX=3 .ds x} mkpart "" "" "\&"
+.TH \*(x} "" "386 Computer Only"
+.SH NAME
+\f4mkpart\f1 \- disk maintenance utility
+.SH SYNOPSIS
+\f4/etc/mkpart\f1
+[
+\f4\-f\f1
+\f2filename\f1
+] [
+\f4\-p\f1
+\f2partition\f1 ] .\|.\|. [
+\f4\-P\f1
+\f2partition\f1 ] .\|.\|. [
+\f4\-b\f1
+]
+.br
+[
+\f4\-B\f1
+\f2filename\f1 ] [
+\f4\-A\f1
+\f2sector\f1 ] ... [
+\f4\-V\f1
+] [
+\f4\-v\f1
+] [
+\f4\-i\f1
+] [
+\f4\-x\f1
+\f2file\f1 ]
+.br
+[
+\f4\-t\f1
+[ \f4vpa\f1 ] ] \f2device\f1
+.P
+\f4/etc/mkpart\f1
+\f4\-F\f1 \f2interleave raw_device\f1
+.SH DESCRIPTION
+\f4mkpart\fP will not be supported in a future release.
+See ``NOTES'' below.
+.P
+This program allows the system administrator to display and modify the
+data structures that the disk driver uses to access disks.
+These structures describe
+the number, size, and type of the partitions, as well as the physical
+characteristics of the disk drive itself.
+.PP
+The user maintains a file of stanzas,
+each of which contains comments and
+parameters.
+The stanzas are of two varieties:
+those that describe disk partitions and disk devices.
+Stanzas may refer to other stanzas of the same
+type so that common device or partition types may be customized.
+By default, the stanza file
+is named \f4/etc/partitions\f1.
+The required parameter,
+.I device,
+specifies the device stanza for the disk to be used.
+.PP
+The following options may be used with \f4mkpart\f1:
+.TP .8i
+\f4\-f\f1  \f2filename\f1
+specifies the partition and device specification stanza file.
+If not present, \f4/etc/partitions\f1 is assumed.
+.TP
+\f4\-p\f1  \f2partition\f1
+removes a partition from the vtoc on the specified device.
+The \%\f2partition\f1
+is a stanza that indicates the partition to be removed by
+its partition number parameter; no comparisons are made
+by attribute.
+.br
+Note: Alternate partitions cannot be removed.
+.TP
+\f4-P\f1  \f2partition\f1
+adds a partition to the vtoc on the specified device.  
+.I partition
+is
+a stanza which contains and/or refers to other stanzas that
+contain all of the necessary parameters for a vtoc partition.
+.TP
+\f4\-b\f1
+causes only the boot program to be updated, unless other options
+are specified.
+.TP
+\f4\-B\f1  \f2filename\f1
+specifies a different boot program than the one given by the
+device stanza.
+.TP
+\f4\-A\f1  \f2sector\f1
+marks the specified sector as bad and assigns it an alternate if possible.
+.I
+sector
+is a zero-based absolute sector number from the beginning of the drive.
+To compute a sector number given cylinder, head, and (0-based) sector in
+track, the formula is cylinder * (sectors-per-track * heads-per-cylinder) +
+head * (sectors-per-track) + sector.
+.TP
+\f4\-V\f1
+causes a complete surface-analysis pass to be run.  This first writes a
+data pattern (currently 0xe5 in every byte) to each sector of the disk,
+then reads each sector.  Any errors are noted and the bad sectors found
+are added to the alternates table if possible.
+.TP
+\f4\-v\f1
+causes a non-destructive surface-analysis pass to be run.  This just reads
+every sector of the disk, noting bad sectors as above.
+.TP
+\f4\-i\f1
+initializes the VTOC on the drive to default values, clearing any
+existing partition and bad-sector information which may have existed.  This
+is the only way to remove an alternate partition and can be used to
+re-initialize a drive which may have obsolete or incorrect VTOC data on it.
+.TP
+\f4\-x\f1 \f2file\f1
+writes a complete \f2device\f1 and partition stanza list for the
+specified \f2device\f1 to file.
+.br
+Note:
+The tags in the file are pseudo names used to identify the slice.
+.TP
+\f4\-t\f1 [\f2vpa\f1]
+creates a listing of the current vtoc.  The sub-parameters
+specify pieces to be printed: a - alternate sectors,
+\f4p\f1 - \f2partitions\f1, and \f4v\f1 - \f2vtoc\f1 and related structures.
+.PP
+The \f2partitions\f1 file is composed of blank-line-separated stanzas.  (Blank lines
+have only tabs and spaces between new-lines).  Commentary consists of all
+text between a '#' and a \f2new-line\f1.  Stanzas begin with an identifier followed
+by a ':', and are followed by a comma-separated list of parameters.  Each
+parameter has a keyword followed by an '=' followed by a value.  The value
+may be a number, another stanza's name, a double quoted string, or a
+parenthesis-surrounded, comma-separated list of numbers or ranges of numbers, as
+appropriate for the keyword.  Numbers may be written as decimal, octal, or
+hexadecimal constants in the form familiar to C programmers.
+.PP
+Device specification stanzas may contain the following parameters:
+.TP 1.4i
+\f4usedevice = \f2name\f1
+causes the named stanza's parameters to be included in the device definition.
+.TP
+\f4boot = \f2string\f1
+indicates that the string is the filename of a bootstrap
+program to install on the disk.
+.TP
+\f4device = \f2string\f1
+gives the filename of the character special device for
+the disk.
+.TP
+\f4heads = \f2number\f1
+specifies the number of tracks per cylinder on the device.
+.TP
+\f4cyls = \f2number\f1
+is the number of cylinders on the disk.
+.TP
+\f4sectors = \f2number\f1
+is the number of sectors per track.
+.TP
+\f4bpsec = \f2number\f1
+is the number of bytes per sector.
+.TP
+\f4dserial = \f2string\f1
+is an arbitrary string which is recorded in the volume label.
+(Multibus systems only)
+.TP
+\f4vtocsec = \f2number\f1
+gives the sector number to use for the volume table of contents.
+.br
+Note: for AT386 systems, this number MUST be 17.
+.TP
+\f4altsec = \f2number\f1
+is the sector to use for the alternate block table.
+.TP
+\f4badsec = \f2number-list\f1
+lists the known bad sectors.  These are appended to any specified in the
+command line or found during surface analysis.
+.PP
+Partition stanzas may have the following parameters:
+.TP 1.3i
+\f4usepart = \f2name\f1
+refers to another partition stanza.
+.TP
+\f4partition = \f2number\f1
+gives this partition's entry number in the vtoc.
+.TP
+\f4tag = \f2tagname\f1
+A partition tag specifies the purpose of the partition.  The
+.I tagnames
+are reserved words which are presently used for identification purposes only:
+.br
+\f4BACKUP\f1
+means the entire disk.
+.br
+\f4ROOT\f1
+is a root file system partition.
+.br
+\f4BOOT\f1
+is a bootstrap partition.
+.br
+\f4SWAP\f1
+is a partition that does not contain a file system.
+.br
+\f4USR\f1
+is a partition that does contain a file system.
+.br
+\f4ALTS\f1
+contains alternate sectors to which the driver re-maps bad sectors.
+Currently a maximum of 62 alternate sectors is supported.
+.br
+\f4OTHER\f1
+is a partition that the UNIX system does not know how to handle, such as MS-DOS space.
+.TP
+\f4perm = \f2permname\f1
+specifies a permission type for the partition.  Permissions are not
+mutually exclusive.
+.br
+\f4RO\f1
+indicates that the partition cannot be written upon.  Normally, write
+access is granted (standard UNIX system file permissions notwithstanding).
+.br
+\f4NOMOUNT\f1
+disallows the driver from mounting the file system that may be contained
+in the partition.
+.br
+\f4VALID\f1
+indicates that the partition contains valid data.
+Any partition added with the
+\f4\-A\f1
+flag will be marked VALID.
+.TP
+\f4start = \f2number\f1
+is the starting sector number for the partition.
+.br
+Note: For AT386 systems,
+the root file system should start at the
+.I second
+track of the cylinder which is the beginning of the
+active UNIX system '\f4fdisk\f1' partition.
+This allows space for the writing of the boot code.
+.TP
+\f4size = \f2number\f
+is the size, in sectors, of the partition.
+.PP
+When \f4mkpart\f1 is run,
+it first attempts to read the volume label (for multibus systems)
+or the '\f4fdisk\f1' table (for AT386 systems),
+the VTOC block, and the alternate sector table.
+If any of the structures is invalid or cannot be read, or
+if the
+\f4\-i\f1
+flag is specified, the internal tables are initialized to default values
+for the device specified (taken from the device stanza in the partition file).
+If the
+\f4\-F\f1
+flag is specified, the device is formatted.  If either the
+\f4\-V\f1
+or
+\f4\-v\f1
+flag is specified, the appropriate surface analysis is performed.
+After these steps, partitions are deleted or added as required.
+Next, any bad sectors specified in the partition file, found during surface
+analysis, or specified in the command line with
+\f4\-A\f1
+flags are merged into the alternate sectors table.
+Note that
+an alternate partition must exist for any bad-sector marking to occur,
+as bad sectors are assigned good alternates at this point.
+Finally, the boot program is written to track 0 of cylinder 0
+(Multibus systems) or the cylinder where the active UNIX system '\f4fdisk\f1' partition
+starts (AT386 systems).
+If
+\f4\-b\f1
+was not the only parameter specified,  the updated VTOC and alternates tables
+are written, and
+the disk driver is instructed to re-read the tables when the drive is
+opened the next time.
+When only
+\f4\-t\f1
+is specified, only a listing is created and no updating occurs.
+.TP .9i
+\f4\-F \f2interleave\f1
+causes the entire device to be hardware formatted.  This process re-writes
+all the sector headers on each track of the disk, enabling subsequent
+access using normal reads and writes.
+.I
+interleave
+is the distance in physical sectors between each successive logical sector.
+Normal values are 1 for track-cache controllers, 3\-4 for standard controllers.
+The device for this option must be a raw UNIX system device.
+The \f4\-F\f1 option precludes all other options,
+thus should be used alone.
+.SH FILES
+\f4/etc/partitions\f1
+\f4/etc/boot\f1
+\f4/dev/rdsk/*s0\f1
+.SH NOTES
+The \f4mkpart\fP command will not be supported in a future release.
+Use \f4prtvtoc\fP and \f4edvtoc\fP instead [see \f4prtvtoc\fP(1M)
+and \f4edvtoc\fP(1M)].
+.P
+Currently, very little consistency checking is done.
+No checks are made to ensure that the '\f4fdisk\f1' partition table
+is consistent with the UNIX system partitions placed in the VTOC.
+If a DOS '\f4fdisk\f1' partition is started at cylinder\ 0,
+DOS will happily overwrite the UNIX system VTOC.
+.SH "SEE ALSO"
+\f4edvtoc\fP(1M),
+\f4prtvtoc\fP(1M)

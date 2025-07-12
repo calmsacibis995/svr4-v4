@@ -1,0 +1,83 @@
+'\"macro stdmacro
+.if n .pH g1.unget @(#)unget	40.14 of 5/22/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} unget 1 "Enhanced Programming Utilities" "\&"
+.if \nX=1 .ds x} unget 1 "Enhanced Programming Utilities"
+.if \nX=2 .ds x} unget 1 "" "\&"
+.if \nX=3 .ds x} unget "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4unget\f1 \- undo a previous \f4get\fP of an \s-1SCCS\s+1 file
+.SH SYNOPSIS
+\f4unget [\-r\f2SID\fP] [\-s] [\-n] \f2files\f1
+.SH DESCRIPTION
+\f4unget\fP undoes the effect of a
+\f4get \-e\f1
+done prior to creating the intended new delta.
+If a directory is named,
+\f4unget\fP
+behaves as though each file in the directory were
+specified as a named file, except that
+non-\s-1SCCS\s+1
+files and unreadable files are silently ignored.
+If a name of
+\f4\-\f1
+is given, the standard input is read with each line
+being taken as the name of an
+.SM SCCS
+file to be processed.
+.P
+Keyletter arguments apply independently to each
+named file.
+.RS 5
+.TP 12
+\f4\-r\f2\s-1SID\s+1\^\f1
+Uniquely identifies which delta is no longer intended.
+(This would have been specified by
+\f4get\fP
+as the ``new delta'').
+The use of this keyletter is necessary only if two or
+more outstanding
+\f4get\fPs
+for editing on the same
+.SM SCCS
+file were done by the same person (login name).
+A diagnostic results if the specified
+.I \s-1SID\s+1\^
+is ambiguous, or if it is necessary and omitted
+on the command line.
+.TP 12
+\f4\-s\f1
+Suppresses the printout, on the standard output,
+of the intended delta's
+.IR \s-1SID\s+1 .
+.TP 12
+\f4\-n\f1
+Causes the retention of the gotten file,
+which would normally be removed from
+the current directory.
+.RE
+.PP
+\f4unget\fP
+must be performed by the same user who performed the original \f4get \-e\f1.
+.SH FILES
+.TP 14
+p-file
+[see \f4delta\f1(1)]
+.TP
+q-file
+[see \f4delta\f1(1)]
+.TP
+z-file
+[see \f4delta\f1(1)]
+.SH "SEE ALSO"
+\f4delta\fP(1),
+\f4get\fP(1),
+\f4help\fP(1),
+\f4sact\fP(1)
+.SH DIAGNOSTICS
+Use
+\f4help\fP(1)
+for explanations.

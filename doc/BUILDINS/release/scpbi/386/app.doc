@@ -1,0 +1,516 @@
+'\"!  tbl | mmdoc
+'\"macro stdmacro
+.if n .pH scrn.chap2 @(#)app.doc	40.15 of 6/25/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.BK "Source Code Product Build Instructions"
+.CH "Appendix: Source Code Product Documentation" A
+.H 1 "Introduction"
+The UNIX\(rg System V/386 Release 4 Version 4 Source Code Product
+Machine Readable Documentation tape (the SCP MRD tape) is part of your SCP product.
+The tape contains a subset of the full UNIX System V/386
+Release 4 Version 4 documentation set.
+It contains manual pages and porting documents, but
+does not contain guide material, i.e., procedures or tutorials.
+See \*(gb for a list of the titles on the tape.
+(If you are interested in obtaining a full set of the
+UNIX documentation, see the
+.BT "Technology-File Mapping Guide"
+for a description of the Documentation Reproduction
+Provision (DRP) tape, which contains the full
+document set (except for the proprietary documents).
+.P
+This chapter explains how to produce hard-copy documents from the
+MRD tape, which is either a 6250 bpi nine-track tape,
+or a 60 MB cartridge tape.
+Creating hard copy involves the following steps:
+.BL
+.LI
+copying the documentation source files from tape to hard disk
+.LI
+installing DOCTOOLS, a tool kit for formatting the documents
+.LI
+formatting and printing the documents
+.LE
+.H 2 "Prerequisites"
+In order to format documents, you must have already installed the
+DOCUMENTER'S WORKBENCH \*(Tm (DWB), Release 2, or higher.
+This software is not part of the source code product, but it is
+available from UNIX System Laboratories or AT&T.
+.P
+If you require PostScript\(rg language support,
+it is available from either of the following sources:
+.BL
+.LI
+DWB Version 3.0 (or higher) \(em with DWB Version 3.0 (or higher), you can
+run UNIX System V/386 Release 3.2 (or higher) and have PostScript support.
+.LI
+UNIX System V Release 4 \(em with UNIX System V/386
+Release 4, you can run DWB Release 2 (or higher) and have PostScript support.
+.LE
+.H 1 "Copying Documentation Files from the Tape"
+You will need approximately 25 MB of disk space to
+install the documentation on tape.
+To copy the files from the documentation tape to the hard disk:
+.AL
+.LI
+Enter
+.DS UI
+\f4mkdir\fP \f2newdirectory\fP
+.DE
+to create a directory for the documentation set.
+.LI
+Enter
+.DS UI
+\f4cd\fP \f2newdirectory\fP
+.DE
+to change directory to the directory just created.
+.LI
+Mount the tape on the tape drive.
+.LI
+Enter
+.DS UI
+\f4su\fP \f2login\fP
+.DE
+where \f2login\fP is the login of the person
+owning the directory for the documentation set.
+(This ensures that the person owning the directory where the documentation is
+loaded will own the files, and therefore be able to change permisions as needed.)
+.LI
+Enter
+.DS UI
+\f4cpio -icvmBd < \f26250 bpi or cartridge tape device name\f1
+.DE
+For example, the actual command might be something like:
+.DS UI
+\f4cpio -icvmBd < \(sldev\(slrmt\(slc0s0\f1
+.DE
+When \f4cpio\f1 has completed, you will find
+a \f4readme\f1 file and the directories
+\f4BUILDINS\f1,
+\f4CUI\f1,
+\f4DDIREFMAN\f1,
+\f4DOCNOTES\f1,
+\f4DOCTOOLS\f1,
+\f4FMGUIDE\f1,
+\f4FSTYPES\f1,
+\f4INSTGUIDE\f1,
+\f4ISDG\fP,
+\f4KERNPORT\f1,
+\f4MBREFMAN\f1,
+\f4MBTAI\f1,
+\f4MIGCOMPAT\fP,
+\f4NI\f1,
+\f4NUAG\f1,
+\f4PRM\f1,
+\f4PRODOVR\f1,
+\f4RMF\fP,
+\f4SARM\f1,
+\f4SCSI\f1,
+\f4SOFTNOTES\f1,
+\f4STRM\f1,
+\f4STYLE\fP
+and
+\f4URM\f1,
+in your current directory.
+.LE
+.br
+.NE 3
+.SK
+A list of all file names on the Source Code Product MRD tape
+is provided in a file named \f4tape.contents\f1.
+This file is installed in the top directory into which you
+copied the documentation source files.
+.P
+\*(gb lists the directory names and
+the documents that are in each directory.
+The notation \f2``(Manual Pages)\f1'' to the right of the title
+indicates that the directory contains only
+manual pages and that the guide material, permuted
+indexes, and tables of contents for the document
+have been deliberately omitted from the tape.
+These sections plus the manual pages can be found in their entirety on the
+Documentation Reproduction Provision (DRP) tape, which is available separately.
+.P
+.TB "Directory Contents" "" gb
+.TS H
+lf3 lf3
+lf4w(.75i) lf2w(5i).
+Directory	Document
+_	_
+.sp .5
+.TH
+* BUILDINS	T{
+Source Code Product Build Instructions
+T}
+.sp .5
+  CUI	T{
+Programmer's Guide:  Character User Interface (Manual Pages)
+T}
+.sp .5
+  DDIREFMAN	T{
+Device Driver Interface/Driver-Kernel Interface (DDI/DKI) Reference Manual
+T}
+.sp .5
+* DOCNOTES	T{
+Source Code Product Machine Readable Documentation Release Notes
+T}
+.sp .5
+  DOCTOOLS	T{
+\f1Source files for documentation tools and \f2Documenter's Toolset User's
+Guide\f1
+T}
+.sp .5
+* FMGUIDE	T{
+Technology File Mapping Guide
+T}
+.sp .5
+  FSTYPES	T{
+Programmer's Guide:  Writing File System Types
+T}
+.sp .5
+* INSTGUIDE	T{
+Installation Guide
+T}
+.sp .5
+\(dg*ISDG	T{
+Integrated Software Development Guide
+(Manual Pages)
+T}
+.sp .5
+  KERNPORT	T{
+Programmer's Guide:  Porting the Kernel
+T}
+.sp .5
+* MBREFMAN	T{
+Multibus Reference Manual
+T}
+.sp .5
+* MBTAI	T{
+Multibus Transport Application Interface Guide
+(Manual Pages)
+T}
+.sp .5
+\(dg*MIGCOMPAT	T{
+Migration and Compatibility Guide (Manual Pages)
+T}
+.sp .5
+  NI	T{
+Programmer's Guide:  Networking Interfaces
+(Manual Pages)
+T}
+.sp .5
+  NUAG	T{
+Network User's and Administrator's Guide
+(Manual Pages)
+T}
+.sp .5
+* PRM	T{
+Programmer's Reference Manual
+T}
+.sp .5
+* PRODOVR	T{
+Product Overview and Master Index
+T}
+.sp .5
+* SARM	T{
+System Administrator's Reference Manual
+T}
+.sp .5
+* SCSI	T{
+Programmer's Guide:  SCSI Driver Interface (Manual Pages)
+T}
+.sp .5
+* RMF	T{
+Read Me First
+T}
+.sp .5
+* SOFTNOTES	T{
+Software Notes
+T}
+.sp .5
+  STRM	T{
+Programmer's Guide:  STREAMS
+(Manual Pages)
+T}
+.sp .5
+  STYLE	T{
+USL Style Guide
+T}
+.sp .5
+* URM	T{
+User's Reference Manual
+T}
+.TE
+\s-1* Document changed between Version 3 and Version 4 of
+UNIX System V/386 Release 4.
+.br
+\(dg Document re-structured for Version 4.
+See the
+\f2Source Code Product Machine Readable Documentation Release Notes\fP
+for details.\s+1
+.H 1 "Installing DOCTOOLS"
+DOCTOOLS is a tool kit for formatting the SCP documents.
+This section describes and defines the environment required
+to modify and change Release 4 documentation using DOCTOOLS and PostScript.
+For additional information on DOCTOOLS, consult the
+.BT "Documenter's Toolset User's Guide,"
+which is
+found in the \f4DOCTOOLS\f1 directory.
+The \f4DOCTOOLS\f1 directory contains both the documentation
+and software for DOCTOOLS.
+.P
+.AB N
+If, during a previous release of UNIX System V/386 Release 4
+you have already installed DOCTOOLS Release 1,
+you do not need to reinstall it now.
+Skip forward to the section
+.ST "Using DOCTOOLS to Print Documents."
+.AC
+.P
+To install DOCTOOLS, follow the steps outlined below.
+.AL
+.LI
+Edit the
+.UI shells/defs.h.src
+file to tell DOCTOOLS about your
+local printers and other destinations.
+Follow the examples in the file.
+You will need to know how to send jobs to the printers
+on your system to define the variables.
+If you know the command line syntax, such as:
+.DS "" UI
+tbl \f2file\fP | troff -Tpost -mm | dpost | lp -opost -dprinter1
+.DE
+you can edit
+.UI defs.h.src.
+If you do not know this information,
+get the information from your system administrator.
+.P
+If you have a pre-1.0 release of DOCTOOLS, you can copy
+your existing
+.UI defs.h
+to
+.UI shells/defs.h.src.
+Change any occurrences of
+.UI MACH
+to
+.UI MACHINE .
+Note, however, that some destinations included in
+.UI defs.h.src
+are meant to be location independent.
+These are:
+.VL 0.75i 0.5i
+.LI proof UI
+Proof files on a DMD terminal.
+.LI null UI
+Process files to check for errors or to generate tables of contents.
+.LI post UI
+Create PostScript language files.
+.LI archive UI
+Archive files with
+.UI cpio .
+.LE
+You may need to make some minor adjustments to these
+definitions to accommodate your local environment.
+.LI
+You may need to edit
+.UI macros/macros.h.src .
+This file contains the font specific information
+and other tunable variables, like the print date that
+appears at the bottom of manual pages.
+.AB N
+Unlike
+.UI defs.h.src ,
+the
+.UI macros.h.src
+file is not compatible with
+previous versions of DOCTOOLS.
+.AC
+The
+.UI macros.h.src
+file holds definitions, in the form
+of
+.UI troff
+defined strings, for much of the typography
+produced by DOCTOOLS.
+You can change the definitions
+to change the style created by the markup in the text
+files, such as the fonts used for user input text,
+computer output text, and program code text (see
+the macros for
+.UI \&.UI ,
+.UI \&.CO ,
+and
+.UI \&.PC
+in the 
+\f2Documenter's Toolset User's Guide\fP).
+Try using it as is.
+If you have font related
+errors, then edit
+.UI macros.h.src
+and reinstall.
+.P
+Follow the comments in the
+.UI macros.h.src
+file and make changes carefully.
+.LI
+You will need to set the variables described in
+.UI Makefile .
+.UI Makefile
+contains the variables that set where the tools
+are installed as well as set necessary variables
+within some of the files themselves.
+At a minimum, you need to name a bin directory
+.UI (BINDIR)
+where you want the executables kept, and a library directory
+.UI (LIBDIR)
+where you want the support files kept, such as the macro
+files.
+Follow the comments in
+.UI Makefile .
+.P
+Once you have made these changes, type
+.UI
+make install
+.SF
+in this directory and watch for any error messages.
+.LE
+.H 2 "Memorandum Macros (MM)"
+If you plan to print memoranda with DOCTOOLS,
+copy or link your local memorandum macro file to
+a file called
+.UI mmt
+in
+.UI LIBDIR
+(defined in
+.UI Makefile ).
+Make sure any sourced (\f4.so\f1) files in
+.UI mmt
+are also
+in
+.UI LIBDIR ,
+or make sure that they can be successfully read
+in from where they are kept.
+.H 2 "PostScript Language and DOCTOOLS Software"
+The Release 4 software tape includes a set of PostScript language tools
+designed to work with DOCUMENTER'S WORKBENCH, including a
+.UI troff
+postprocessor called
+.UI dpost.
+\f4dpost\f1 translates \f4troff\f1 output into PostScript.
+This software allows you to use the
+.UI \&.BP/.EP
+macros described in the
+``Documenter's Toolset User's Guide.''
+The 
+.UI \&.BP
+(Begin PostScript) and
+.UI \&.EP
+(End PostScript) macros
+enable you to integrate PostScript language graphics files
+into your source text files.
+\f4dpost\f1 also allows DOCTOOLS to write PostScript language code to shade
+the icons, screens, and hardkeys in your guide files.
+.P
+The PostScript language software is on your Release 4
+software tape in the
+.UI /usr/src/cmd/lp/postscript
+directory.
+You will see references in some of the entries in the
+.UI defs.h.src
+file to
+.UI \-Tpost
+and
+.UI dpost .
+These entries
+are designed to work with this PostScript language software.
+.H 1 "Using DOCTOOLS to Print Documents"
+Once you have installed DOCTOOLS, you can print individual files by entering
+.DS I UI
+\f4format -d\f2printer\fP \f2file1\fP \f2file2\f1 . . .
+.DE
+To generate table-of-contents files, use the \f4-c\f1 option to \f4format\f1,
+for example:
+.DS I UI
+\f4format -c -d\f2printer\fP \f2file1\fP \f2file2\f1 . . .
+.DE
+The \f4-c\f1 option creates files in the form of
+\f4C\f2file\f1.
+These files include
+table-of-contents information as well as indexing information.
+.AB N
+If you have already installed an earlier version of Release 4 SCP
+documents, you do not need to reprint the entire set of SCP
+documents, but only those documents that have changed since Version 3.
+An asterisk in the left column of Table 2-1
+indicates that a document has changed since Version 3 of Release 4.
+.AC
+.P
+.H 2 "Printing Documents from Collection Files"
+Once you have verified that the tools for printing are functioning, you can
+print an entire document in a single step.
+This is done by using a collection file.
+A collection file is a list of all the files that make up a
+single document in printing order.
+.AB C
+Before you attempt to use a collection file, make sure you can
+process more than a single file at a time, and that you really want to print
+all the files listed in the provided collection file.
+Where appropriate, collection files include table-of-contents and indexes,
+which list page numbers that may not be correct when you
+format the files locally.
+For page numbers to be accurate in your printing environment, you may need
+to generate the table-of-contents files and index files locally.
+This can be done as described above with the \f4-c\f1 option.
+See the
+.BT "Documenter's Toolset User's Guide"
+for a complete description
+of collection files and how to use them, as well as more information
+on how to create table-of-contents files and index files.
+.AC
+.H 2 "Example"
+Here is the collection file for the
+.BT "Documenter's Toolset User's Guide."
+.DS I UI
+\&.# This document ("Documenter's Toolset User's Guide)"
+\&.# contains the following files,
+\&.# listed in the order in which they are printed.
+\&.# Next to each file name is its SCCS delta number.
+\&.FT
+Titlepage	1.2
+copyright	1.1
+MasterToc	1.2
+Cchap1		1.2
+chap1		1.6
+Cchap2		1.2
+chap2		1.6
+Cchap3		1.2
+chap3		1.6
+Cchap4		1.2
+chap4		1.6
+Cchap5		1.2
+chap5		1.6
+Cchap6		1.2
+chap6		1.2
+Cindex		1.1
+index		1.1
+checkmacs.1	1.4
+deltamacs.1	1.4
+format.1	1.6
+index.1	1.2
+Crefcard	1.3
+refcard	1.10
+.DE
+To use this collection file to print the entire
+.BT "Documenter's Toolset User's Guide,"
+enter
+.DS I UI
+\f4cd DOCTOOLS/docs
+format -d\f2printer\fP COLFILE
+.DE
+You may print individual files listed in \f4COLFILE\fP
+by entering:
+.DS I UI
+format -d\f2printer file
+.DE

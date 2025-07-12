@@ -1,0 +1,159 @@
+.if n .pH g1a.fdisk @(#)fdisk	40.4 of 1/3/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1990 AT&T
+'\"macro stdmacro
+.nr X 2
+.if \nX=0 .ds x} fdisk 1M "Base System" "\&"
+.if \nX=1 .ds x} fdisk 1M "Base System"
+.if \nX=2 .ds x} fdisk 1M "Base System" "\&"
+.if \nX=3 .ds x} fdisk "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4fdisk\f1 \- create or modify hard disk partition table
+.SH SYNOPSIS
+\f4fdisk\f1
+[\|\f2argument\f1\|]
+.SH DESCRIPTION
+This command is used to create and modify the partition
+table that is put in the first sector of the hard disk.
+This table is used by DOS and by the
+first-stage bootstrap to identify parts of the disk
+reserved for different operating systems,
+and to identify the partition containing the second-stage
+bootstrap (the active partition). 
+The optional argument can be used to specify the raw device
+associated with the hard disk; the default value is
+\f4/dev/rdsk/0s0\f1
+for integral disks.
+For SCSI disks,
+there is no default value.
+However if the default on your system is set to \f40s0\f1,
+then it is linked to \f4/dev/rdsk/c0t0d0s0\f1.
+If the default is set to \f41s0\f1,
+then it is linked to \f4/dev/rdsk/c0t1d0s0\f1.
+.PP
+The program displays the partition table as it exists on the disk,
+and then presents a menu allowing the user to modify the table.
+The menu, questions, warnings,
+and error messages are intended to be self-explanatory.
+.PP
+If there is no partition table on the disk,
+the user is given the option of creating a
+default partitioning or specifying the initial table values.
+The default partitioning allows
+10% of the disk for MS-DOS and 90%
+for the UNIX System, and makes the UNIX System partition active.
+In either case, when the initial table is created,
+\f4fdisk\f1
+also writes out the first-stage bootstrap code [see
+\f4hd\f1(7)]
+along with the partition table.
+After the initial table is created, only the table is changed;
+the bootstrap is not modified.
+.SS Menu Options
+.PP
+The following are the menu options given by the
+\f4fdisk\f1
+program:
+.TP .5i
+\f4Create a partition\f1
+This option allows the user to create a new partition.
+The maximum number of partitions is 4.
+The program will ask for the type of the partition
+(MS-DOS, UNIX System, or other).
+It will then ask for the size of the partition
+as a percentage of the disk.
+The user may also enter the letter \f4c\f1 at this point,
+in which case the program will ask for the starting cylinder number
+and size of the partition in cylinders.
+If a \f4c\f1 is not entered,
+the program will determine the starting cylinder number
+where the partition will fit.
+In either case, if the partition would overlap an existing partition,
+or will not fit,
+a message is displayed and the program returns to the original menu.
+.TP .5i
+\f4Change Active (Boot from) partition\f1
+This option allows the user to specify the partition where the
+first-stage bootstrap will look for the second-stage bootstrap,
+otherwise known as the active partition.
+.TP .5i
+\f4Delete a partition\f1
+This option allows the user to delete a previously created partition.
+Note that this will destroy all data in that partition.
+.TP .5i
+\f4Exit\f1
+This option writes the new version of the table created during
+this session with
+\f4fdisk\f1
+out to the hard disk, and exits the program.
+.TP .5i
+\f4Cancel\f1
+This option exits without modifying the partition table.
+.SH DIAGNOSTICS
+Most messages will be self-explanatory.
+The following may appear
+immediately after starting the program:
+.TP
+\f4fdisk: cannot open <device>\f1
+This indicates that the device name argument is not valid.
+.TP
+\f4fdisk: unable to get device parameters for device <device>\f1
+This indicates a problem with the configuration of the hard disk,
+or an error in the hard disk driver.
+.TP
+\f4fdisk: error reading partition table\f1
+This indicates that some error occurred when trying initially
+to read the hard disk.
+This could be a problem with the hard disk controller or driver,
+or with the configuration of the hard disk.
+.PP
+This message may appear after selecting the
+\f4Exit\f1
+option from the menu.
+.TP
+\f4fdisk: error writing boot record\f1
+This indicates that some error occurred when trying to
+write the new partition table out to the hard disk. 
+This could be a problem with the hard
+disk controller, the disk itself, the driver,
+or the configuration of the hard disk.
+.SH FILES
+\f4/dev/rdsk/0s0\f1 for integral disks
+.br
+\f4/dev/rdsk/c\f2?\f4t\f2?\f4d\f2?\f4s0\f1 for SCSI disks
+.SH "SEE ALSO"
+\f4mkpart\f1(1M), \f4disk\f1(7), \f4hd\f1(7).
+.SH NOTES 
+Compatible with MS-DOS Versions 3.2, 3.3, and 4.0.
+Partitions set up using the MS-DOS 4.0 \f4fdisk\f1
+command that are greater than 32 MB will appear
+in the UNIX System display as "other".
+Partitions created with MS-DOS that are
+less than 32 MB will appear correctly
+as DOS partitions.
+.P 
+The DOS 4.01 \f4fdisk\f1 program assumes it can store
+diagnostic information in cylinder 1020 on the hard disk.
+If a UNIX System partition is created that uses
+cylinder 1020,
+DOS 4.01 \f4fdisk\f1 will be unable to create a 
+DOS partition.
+Therefore, the user must either create the UNIX System
+partition at the front of the disk so that
+cylinder 1020 is not used,
+or create the DOS partition using the
+UNIX System \f4fdisk\f1 (not DOS \f4fdisk\f1)
+and never delete it.
+.P
+When setting up a DOS 4.01 partition on the
+hard disk to co-reside with a UNIX partition
+that has already been set up, DO NOT allow
+\f4fdisk\f1 to create the largest possible
+partition and make it active (as the \f4fdisk\f1
+prompt requests).
+Instead, the user should manually set it up
+to line up against the UNIX partition.
+Note that this applies to when the user
+boots DOS 4.01 from floppy disk 
+(not from within UNIX) and runs \f4fdisk\f1.

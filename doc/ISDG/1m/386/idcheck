@@ -1,0 +1,137 @@
+'\"macro stdmacro
+.if n .pH g1a.idcheck @(#)idcheck	40.5 of 1/3/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+'\"macro stdmacro
+.if n .pH g1.idcheck @(#)idcheck	30.3 of 3/5/86
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.if \nX=0 .ds x} idcheck 1M "Base System" "\&"
+.if \nX=1 .ds x} idcheck 1M "Base System"
+.if \nX=2 .ds x} idcheck 1M "" "\&"
+.if \nX=3 .ds x} idcheck "" "" "\&"
+.nr X
+.TH \*(x} "" "386 Computer Only"
+.SH NAME
+\f4idcheck\f1 \- returns selected information
+.SH SYNOPSIS
+\f4/etc/conf/bin/idcheck\f1
+.SH "DESCRIPTION"
+This command
+returns selected information about the system configuration.
+It is useful in add-on device Driver Software Package (DSP)
+installation scripts to determine if a
+particular device driver has already been installed,
+or to verify that a particular interrupt vector,
+I/O address or other selectable parameter is in fact available for use.
+The various forms are:
+.P
+.RS
+\f4idcheck\f1\|\f4\-p\f1\|\f2device-name\f1\|[\f4\-i dir] [\-r\f1]
+.sp .4v
+\f4idcheck\f1\f4\-v\f1\|\f2vector\f1\|[\f4\-i dir] [\-r\f1]
+.sp .4v
+\f4idcheck\f1\f4\-d\f1\|\f2dma-channel\f1[\f4\-i dir] [\-r\f1]
+.sp .4v
+\f4idcheck\f1\f4\-a\|\-l\f1\|\f2lower_address\f1\|\f4\-u\f1\|\f2upper_address\f1\|[\f4\-i dir] [\-r\f1]
+.sp .4v
+\f4idcheck\f1\|\f4\-c\|\-l\f1\|\f2lower_address\f1\|\f4\-u\f1\|\f2upper_address\f1\|[\f4\-i dir] [\-r\f1]
+.RE
+.P
+This command scans the System and Master modules and returns:
+.IP
+100 if an error occurs.
+.IP
+0 if no conflict exists.
+.IP
+a positive number greater than 0 and less than 100 if a conflict exists.
+.P
+The command line options are:
+.TP "\w'\-p\ device-name\ \ \ 'u"
+\f4\-r\f1
+Report device name of any conflicting device on stdout.
+.TP
+\f4\-p \f2device-name\f1
+This option checks for the existence of four different components of the DSP.
+The exit code is the addition of the return codes from the four checks.
+.sp .4v
+Add 1 to the exit code if the DSP directory under
+\f4/etc/conf/pack.d\f1
+exists.
+.sp .4v
+Add 2 to the exit code if the Master module has been installed.
+.sp .4v
+Add 4 to the exit code if the System module has been installed.
+.sp .4v
+Add 8 to the exit code if the Kernel was built with the System module.
+.sp .4v
+Add 16 to the exit code if a Driver.o is part of the DSP
+(vs. a \f4stubs.c\f1 file).
+.TP
+\f4\-v \f2vector\f1
+Returns 'type' field of device that is using the vector specified
+(i.e., another DSP is already using the vector).
+.TP
+\f4\-d \f2dma-channel\f1
+Returns 1 if the dma channel specified is being used.
+.TP
+\f4\-a\f1
+This option checks whether the IOA region bounded by "\f2lower\f1"
+and "\f2upper\f1" conflict
+with another DSP
+("\f2lower\f1" and "\f2upper\f1" are specified with the \f4\-l\f1
+and \f4\-u\f1 options).
+The exit code is the addition of two different return codes.
+.br
+.ne 3
+.sp .4v
+Add 1 to the exit code if the IOA region overlaps with another device.
+.sp .4v
+Add 2 to the exit code if the IOA region overlaps with another device
+and that device has the 'O' option specified in the
+.I type
+field of the Master module.
+The 'O' option permits a driver to overlap the IOA region of another driver.
+.TP
+\f4\-c\f1
+Returns 1 if the CMA region bounded by "\f2lower\f1" and "\f2upper\f1" conflict
+with another DSP
+("\f2lower\f1" and "\f2upper\f1" are specified with the \f4\-l\f1
+and \f4\-u\f1 options).
+.TP
+\f4\-l \f2address\f1
+Lower bound of address range specified in hex.
+The leading 0x is unnecessary.
+.TP
+\f4\-u \f2address\f1
+Upper bound of address range specified in hex.
+The leading 0x is unnecessary.
+.TP
+\f4\-i \f2dir\f1
+Specifies the directory in which the ID files
+\f4sdevice\f1
+and
+\%\f4mdevice\f1
+reside.
+The default directory is
+\f4/etc/conf/cf.d\f1 .
+.SH "ERROR MESSAGES"
+There are no error messages or checks for valid arguments to options.
+\f4idcheck\f1
+interprets these arguments using the rules of
+\f4scanf\f1(3)
+and queries the
+\f4sdevice\f1
+and
+\f4mdevice\f1
+files.
+For example, if a letter is used in the place of a digit,\p
+.br
+\f4scanf\f1 (3)
+will translate the letter to 0.
+\f4idcheck\f1
+will then use this value in its query.
+.SH "SEE ALSO"
+\f4idinstall\f1(1m).
+.sp .4v
+\f4mdevice\f1(4),
+\f4sdevice\f1(4) in the \f2Programmer's Reference Manual\f1.

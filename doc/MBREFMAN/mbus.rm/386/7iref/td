@@ -1,0 +1,80 @@
+'\"macro stdmacro
+.if n .pH g1a.td @(#)td	40.9 of 5/17/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} td 7iref "" "" "\&"
+.if \nX=1 .ds x} td 7iref "" ""
+.if \nX=2 .ds x} td 7iref "" "\&"
+.if \nX=3 .ds x} td "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4td\f1 \- Multibus tape device drivers
+.SH DESCRIPTION
+The formats for tape files are:
+.PP
+.nf
+\f4/dev/rmt/c0s0n\f1	no rewind on close, no retension on open
+\f4dev/rmt/c0s0\f1	rewind on close, no retension on open
+.fi
+.PP
+These files refer to the QIC-24/QIC-02 basic cartridge tape streamer.  Only
+raw character interface files are provided.  
+.PP
+A standard tape consists of several 512-byte records, terminated by an
+end-of-file (EOF).  To the extent possible, the system treats the tape
+like any other file.  As in other raw devices, seeks are ignored.  An
+EOF is returned as a zero-length read, with the tape positioned after the
+EOF so that the next read will return the next record.
+.PP
+A tape  opened for reading or writing is assumed to be positioned as
+desired; that is, reading or writing occurs at the current position.
+It is possible to read and write multifile tapes by using the non-rewinding
+tape file.
+.PP
+When a rewind-on-close file (c0s0) is closed, the tape is rewound.  Also, if
+the file was opened for writing and data was written, a double EOF
+(a double tape mark) is written when the file is closed.
+.PP
+When a no-rewind-on-close file that was opened for writing is closed, if
+data was written, one EOF is written, and the tape is positioned after the EOF.
+When a no-rewind-on-close file is closed after being opened for
+read-only, the tape is positioned after the EOF following the just-read data.
+.PP
+The following ioctls are supported:
+.PP
+.TP 1i
+\f4T_RETENSION\f1
+retension the tape
+.TP
+\f4T_RWD\f1
+rewind the tape to Beginning of Tape (BOT)
+.TP
+\f4T_LOAD\f1
+rewind the tape to BOT
+.TP
+\f4T_UNLOAD\f1
+rewind the tape to BOT
+.TP
+\f4T_ERASE\f1
+erase the tape and leave it at BOT
+.TP
+\f4T_WRFILEM\f1
+write an EOF (tape mark)
+.TP
+\f4T_RST\f1
+reset the tape device
+.TP
+\f4T_SFF\f1
+skip forward arg files
+.PP
+When a \f4T_RWD\f1, \f4T_RETENSION\f1, \f4T_LOAD\f1, or \f4T_UNLOAD\f1
+\f4ioctl\f1 is requested after a write operation, a double EOF (double
+tape mark) is written before the \f4ioctl\f1 is executed.  
+.bp
+.SH FILES
+\f4/dev/rmt/c0s0n\f1
+.br
+\f4/dev/rmt/c0s0\f1
+.SH SEE ALSO
+\f4i258tp\f1(7iref).

@@ -1,0 +1,127 @@
+#ident	"@(#)hiint:proto/i386/Plists/Plist.MB2.dev	1.1"
+#
+# the console
+#
+600	root	sys	dev/console	c	1	0
+600	root	sys	dev/sysmsg	c	19	0
+600	root	sys	dev/syscon	c	1	0
+600	root	sys	dev/systty	l	dev/syscon
+#
+# real time clock
+#
+600	root	sys	dev/rtc	c	23	0
+600	root	sys	dev/clock	l	dev/rtc
+#
+# interconnect space
+#
+622	root	sys	dev/ics	c	22	0
+#
+# bps device
+#
+666	root	sys	dev/bps	c	30	0
+#
+# tape devices - created by idmknod
+#
+#
+# disk devices block
+#
+666	root	sys	dev/dsk/c0t0d0s0	b	41	0
+666	root	sys	dev/dsk/c0t0d0s1	b	41	1
+666	root	sys	dev/dsk/c0t0d0s2	b	41	2
+666	root	sys	dev/dsk/c0t0d0s3	b	41	3
+666	root	sys	dev/dsk/c0t0d0s4	b	41	4
+666	root	sys	dev/dsk/c0t0d0s5	b	41	5
+666	root	sys	dev/dsk/c0t0d0s6	b	41	6
+666	root	sys	dev/dsk/c0t0d0sa	b	41	10
+666	root	sys	dev/dsk/c0t0d0sb	b	41	11
+666	root	sys	dev/dsk/c0t0d0sc	b	41	12
+666	root	sys	dev/dsk/c0t0d0sd	b	41	13
+666	root	sys	dev/dsk/0s0	l	dev/dsk/c0t0d0s0
+666	root	sys	dev/dsk/0s1	l	dev/dsk/c0t0d0s1
+666	root	sys	dev/dsk/0s2	l	dev/dsk/c0t0d0s2
+666	root	sys	dev/dsk/0s3	l	dev/dsk/c0t0d0s3
+666	root	sys	dev/dsk/0s4	l	dev/dsk/c0t0d0s4
+666	root	sys	dev/dsk/0s5	l	dev/dsk/c0t0d0s5
+666	root	sys	dev/dsk/0s6	l	dev/dsk/c0t0d0s6
+666	root	sys	dev/dsk/0s10	l	dev/dsk/c0t0d0sa
+666	root	sys	dev/dsk/0s11	l	dev/dsk/c0t0d0sb
+666	root	sys	dev/dsk/0s12	l	dev/dsk/c0t0d0sc
+666	root	sys	dev/dsk/0s13	l	dev/dsk/c0t0d0sd
+666	root	sys	dev/dsk/c0t1d0s0	b	41	16
+666	root	sys	dev/dsk/c0t1d0s1	b	41	17
+666	root	sys	dev/dsk/c0t1d0s2	b	41	18
+666	root	sys	dev/dsk/c0t1d0s3	b	41	19
+666	root	sys	dev/dsk/c0t1d0s4	b	41	20
+666	root	sys	dev/dsk/c0t1d0s5	b	41	21
+666	root	sys	dev/dsk/c0t1d0s6	b	41	22
+666	root	sys	dev/dsk/c0t1d0sa	b	41	26
+666	root	sys	dev/dsk/c0t1d0sb	b	41	27
+666	root	sys	dev/dsk/c0t1d0sc	b	41	28
+666	root	sys	dev/dsk/c0t1d0sd	b	41	29
+666	root	sys	dev/dsk/1s0	l	dev/dsk/c0t1d0s0
+666	root	sys	dev/dsk/1s1	l	dev/dsk/c0t1d0s1
+666	root	sys	dev/dsk/1s2	l	dev/dsk/c0t1d0s2
+666	root	sys	dev/dsk/1s3	l	dev/dsk/c0t1d0s3
+666	root	sys	dev/dsk/1s4	l	dev/dsk/c0t1d0s4
+666	root	sys	dev/dsk/1s5	l	dev/dsk/c0t1d0s5
+666	root	sys	dev/dsk/1s6	l	dev/dsk/c0t1d0s6
+666	root	sys	dev/dsk/1s10	l	dev/dsk/c0t1d0sa
+666	root	sys	dev/dsk/1s11	l	dev/dsk/c0t1d0sb
+666	root	sys	dev/dsk/1s12	l	dev/dsk/c0t1d0sc
+666	root	sys	dev/dsk/1s13	l	dev/dsk/c0t1d0sd
+#
+# disk devices character
+#
+666	root	sys	dev/rdsk/c0t0d0s0	c	41	0
+666	root	sys	dev/rdsk/c0t0d0s1	c	41	1
+666	root	sys	dev/rdsk/c0t0d0s2	c	41	2
+666	root	sys	dev/rdsk/c0t0d0s3	c	41	3
+666	root	sys	dev/rdsk/c0t0d0s4	c	41	4
+666	root	sys	dev/rdsk/c0t0d0s5	c	41	5
+666	root	sys	dev/rdsk/c0t0d0s6	c	41	6
+666	root	sys	dev/rdsk/c0t0d0sa	c	41	10
+666	root	sys	dev/rdsk/c0t0d0sb	c	41	11
+666	root	sys	dev/rdsk/c0t0d0sc	c	41	12
+666	root	sys	dev/rdsk/c0t0d0sd	c	41	13
+666	root	sys	dev/rdsk/0s0	l	dev/rdsk/c0t0d0s0
+666	root	sys	dev/rdsk/0s1	l	dev/rdsk/c0t0d0s1
+666	root	sys	dev/rdsk/0s2	l	dev/rdsk/c0t0d0s2
+666	root	sys	dev/rdsk/0s3	l	dev/rdsk/c0t0d0s3
+666	root	sys	dev/rdsk/0s4	l	dev/rdsk/c0t0d0s4
+666	root	sys	dev/rdsk/0s5	l	dev/rdsk/c0t0d0s5
+666	root	sys	dev/rdsk/0s6	l	dev/rdsk/c0t0d0s6
+666	root	sys	dev/rdsk/0s10	l	dev/rdsk/c0t0d0sa
+666	root	sys	dev/rdsk/0s11	l	dev/rdsk/c0t0d0sb
+666	root	sys	dev/rdsk/0s12	l	dev/rdsk/c0t0d0sc
+666	root	sys	dev/rdsk/0s13	l	dev/rdsk/c0t0d0sd
+666	root	sys	dev/rdsk/c0t1d0s0	c	41	16
+666	root	sys	dev/rdsk/c0t1d0s1	c	41	17
+666	root	sys	dev/rdsk/c0t1d0s2	c	41	18
+666	root	sys	dev/rdsk/c0t1d0s3	c	41	19
+666	root	sys	dev/rdsk/c0t1d0s4	c	41	20
+666	root	sys	dev/rdsk/c0t1d0s5	c	41	21
+666	root	sys	dev/rdsk/c0t1d0s6	c	41	22
+666	root	sys	dev/rdsk/c0t1d0sa	c	41	26
+666	root	sys	dev/rdsk/c0t1d0sb	c	41	27
+666	root	sys	dev/rdsk/c0t1d0sc	c	41	28
+666	root	sys	dev/rdsk/c0t1d0sd	c	41	29
+666	root	sys	dev/rdsk/1s0	l	dev/rdsk/c0t1d0s0
+666	root	sys	dev/rdsk/1s1	l	dev/rdsk/c0t1d0s1
+666	root	sys	dev/rdsk/1s2	l	dev/rdsk/c0t1d0s2
+666	root	sys	dev/rdsk/1s3	l	dev/rdsk/c0t1d0s3
+666	root	sys	dev/rdsk/1s4	l	dev/rdsk/c0t1d0s4
+666	root	sys	dev/rdsk/1s5	l	dev/rdsk/c0t1d0s5
+666	root	sys	dev/rdsk/1s6	l	dev/rdsk/c0t1d0s6
+666	root	sys	dev/rdsk/1s10	l	dev/rdsk/c0t1d0sa
+666	root	sys	dev/rdsk/1s11	l	dev/rdsk/c0t1d0sb
+666	root	sys	dev/rdsk/1s12	l	dev/rdsk/c0t1d0sc
+666	root	sys	dev/rdsk/1s13	l	dev/rdsk/c0t1d0sd
+#
+# floppy devices block - created by idmknod
+#
+#
+# floppy devices character - created by idmknod
+#
+#
+# tty's are done via setup and rc init functions
+#

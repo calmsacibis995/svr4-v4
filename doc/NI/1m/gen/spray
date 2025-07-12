@@ -1,0 +1,89 @@
+'\"macro stdmacro
+.if n .pH g1a.spray @(#)spray	40.5 of 5/21/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.\" @(#)spray.1M 1.3 89/09/09 SMI;
+'\" macro stdmacro
+.\" Copyright (c) 1988 Sun Microsystems, Inc. - All Rights Reserved.
+.\"
+.nr X
+.if \nX=0 .ds x} spray 1M "Remote Procedure Call Utilities" "\&"
+.if \nX=1 .ds x} spray 1M "Remote Procedure Call Utilities"
+.if \nX=2 .ds x} spray 1M "" "\&"
+.if \nX=3 .ds x} spray "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4spray\f1 \- spray packets
+.SH SYNOPSIS
+\f4/usr/sbin/spray\f1 [ \f4\-c\f1 \f2count\f1 ] [ \f4\-d\f1 \f2delay\f1 ] [ \f4\-l\f1 \f2length\f1 ] [ \f4\-t\f1 \f2 nettype\f1 \f2host\f1 ]
+.SH DESCRIPTION
+.P
+\f4spray\f1
+sends a one-way stream of packets to
+\f2host\f1
+using
+\s-1RPC\s0,
+and reports how many were received, as
+well as the the transfer rate.
+The
+\f2host\f1
+argument can be either a name or an Internet address.
+.P
+The following options are available:
+.TP 15
+\f4\-c \f2count\f1
+Specify how many packets to send.
+The default value of
+\f2count\f1
+is the number of packets required
+to make the total stream size 100000 bytes.
+.TP
+\f4\-d \f2delay\f1
+Specify how many microseconds to pause between
+sending each packet.
+The default is 0.
+.TP
+\f4\-l \f2length\f1
+The
+\f2length\f1
+parameter is the numbers of bytes in the
+Ethernet packet that holds the
+\s-1RPC\s0
+call message.
+Since the data is encoded using
+\s-1XDR\s0,
+and
+\s-1XDR\s0
+only deals with 32 bit quantities,
+not all values of
+\f2length\f1
+are possible, and
+\f4spray\f1
+rounds up to the nearest possible value.
+When
+\f2length\f1
+is greater than 1514, then the
+\s-1RPC\s0
+call can no longer be
+encapsulated in one Ethernet packet, so the
+\f2length\f1
+field
+no longer has a simple correspondence to Ethernet packet size.
+The default value of
+\f2length\f1
+is 86 bytes (the size of the
+\s-1RPC\s0
+and
+\s-1UDP\s0
+headers).
+.TP
+\f4\-t \f2nettype\f1
+Specify clas of transports.
+Defaults to 
+\f4netpath\f1.
+See
+\f4rpc\f1(3N)
+for a description of supported classes.
+.SH "SEE ALSO"
+\f4sprayd\fP(1M),
+\f4rpc\fP(3N)

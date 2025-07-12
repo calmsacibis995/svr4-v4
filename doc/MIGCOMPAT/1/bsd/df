@@ -1,0 +1,94 @@
+'\"macro stdmacro
+.if n .pH g1.df @(#)df	40.7 of 4/18/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.\" @(#)df.1 1.18 88/03/02 SMI;
+'\"macro stdmacro
+.\" Copyright (c) 1988 Sun Microsystems, Inc. - All Rights Reserved
+.nr X
+.if \nX=0 .ds x} df 1 "BSD Compatibility Package" "\&"
+.if \nX=1 .ds x} df 1 "BSD Compatibility Package"
+.if \nX=2 .ds x} df 1 "" "\&"
+.if \nX=3 .ds x} df "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4df\f1 \- report free disk space on file systems
+.SH SYNOPSIS
+\f4df\f1 [\f4\-a\f1] [\f4\-i\f1] [\f4\-t \f2type\f1] [\f2filesystem\f1 .\ .\ . ]
+[\f2filename\f1 .\ .\ . ]
+.SH DESCRIPTION
+.IX "df command"  ""  "\fLdf\fP \(em display free space"
+.IX "file system"  "free space display"
+.IX "file system"  "display free space"
+.IX display  "free space in file system"
+\f4df\f1
+displays the amount of disk space occupied by currently mounted file systems,
+the amount of used and available space,
+and how much of the file system's total capacity has been used.
+Used without arguments,
+\f4df\f1
+reports on all mounted file systems, 
+producing something like:
+.sp .5v
+.RS
+.nf
+.ft 4
+.ta \w'Filesystem'u+2n +\w'kbytes'u+2n +\w'used'u+2n +\w'avail'u+2n +\w'capacity'u+2n
+Filesystem	kbytes	used	avail	capacity	Mounted on
+/dev/root	 7445	4714	1986	  70%		/
+/dev/0s10	 5148	3279	1868	  64%		/stand
+.fi
+.ft 1
+.RE
+.sp .5v
+.P
+Note that \f4used\fP+\f4avail\fP is less than the
+amount of space in the file system
+(kbytes); this is because the system
+reserves a fraction of the space
+in the file system to allow its file
+system allocation routines to work well.
+The amount reserved is typically about 10%;
+this may be adjusted using
+\f4tunefs\f1(1M).
+When all the space on a file system except for this reserve is
+in use, only the super-user can allocate new files and data blocks
+to existing files.  When a file system is overallocated in this way,
+\f4df\f1 may report that the file system is more than 100% utilized.
+.P
+If arguments to
+\f4df\f1
+are disk partitions (for example,
+\f4/dev/root\f1
+or
+\f2pathnames\f1,
+\f4df\f1
+produces a report on the
+file system containing the named file.
+Thus \f4df .\f1
+shows the amount of space on the file system containing the current
+directory.
+.SS Options
+The options for \f4df\fP are as follows:
+.TP .6i
+\f4\-a\f1
+Reports on all filesystems including the uninteresting
+ones which have zero total blocks.
+(For example, \f2automounter\f1)
+.TP
+\f4\-i\f1
+Report the number of used and free inodes.
+.TP
+\f4\-t \ \f2type\f1
+Report on filesystems of a given
+\f2type\f1 (for example, \f4nfs\f1 or \f44.2\f1).
+.SH FILES
+.TP 1i
+\f4/etc/mtab\f1
+List of filesystems currently mounted.
+.SH "SEE ALSO"
+\f4du\f1(1M),
+\f4quot\f1(1M),
+and
+\f4tunefs\f1(1M) in the
+\f2System Administrator's Reference Manual\fP

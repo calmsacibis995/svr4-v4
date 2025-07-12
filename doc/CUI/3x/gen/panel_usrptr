@@ -1,0 +1,45 @@
+'\"macro stdmacro
+.if n .pH g3x.panel_usrptr @(#)panel_usrptr	40.5 of 4/11/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.\" ident	"@(#)svid_ti:ti_lib/panel_usrptr	1.4"
+.nr X
+.if \nX=0 .ds x} panel_userptr 3X "" "\&"
+.if \nX=1 .ds x} panel_userptr 3X ""
+.if \nX=2 .ds x} panel_userptr 3X "" "\&"
+.if \nX=3 .ds x} panel_userptr "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4panel_userptr\f1: \f4 set_panel_userptr\f1, \f4panel_userptr\f1 \- associate application data with a \f4panels\fP panel
+.SH SYNOPSIS
+.nf
+.ft 4
+#include <panel.h>
+.sp
+int set_panel_userptr(PANEL *panel, char *ptr);
+.sp 0.5
+char * panel_userptr(PANEL *panel);
+.ft 1
+.fi
+.SH DESCRIPTION
+Each panel has a user pointer available for maintaining
+relevant information.
+.PP
+\f4set_panel_userptr\fP sets the user pointer of \f2panel\fP to
+\f2ptr\fP.
+.PP
+\f4panel_userptr\fP returns the user pointer of \f2panel\fP.
+.SH RETURN VALUE
+\f4set_panel_userptr\fP returns \f4OK\fP if successful, \f4ERR\fP
+otherwise.
+.PP
+\f4panel_userptr\fP returns \f4NULL\fP if there is no user
+pointer assigned to \f2panel\fP.
+.SH NOTES
+The header file \f4<panel.h>\f1 automatically includes the header file
+\f4<curses.h>\f1.
+.SH SEE ALSO
+.na
+\f4curses\fP(3X),
+\f4panels\fP(3X)
+.ad

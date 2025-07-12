@@ -1,0 +1,482 @@
+'\"macro stdmacro
+.if n .pH g3n.ypclnt @(#)ypclnt	40.4 of 5/24/91
+.\" Copyright 1989 AT&T
+.\" @(#)ypclnt.3n 1.10 89/09/28 SMI;
+.\" Copyright (c) 1988 Sun Microsystems, Inc. - All Rights Reserved.
+.nr X
+.if \nX=0 .ds x} ypclnt 3N "" "\&"
+.if \nX=1 .ds x} ypclnt 3N ""
+.if \nX=2 .ds x} ypclnt 3N "" "\&"
+.if \nX=3 .ds x} ypclnt "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4ypclnt\f1, \f4yp_get_default_domain\f1, \f4yp_bind\f1, \f4yp_unbind\f1, \f4yp_match\f1, \f4yp_first\f1, \f4yp_next\f1, \f4yp_all\f1, \f4yp_order\f1, \f4yp_master\f1, \f4yperr_string\f1, \f4ypprot_err\f1 \- NIS client interface
+.SH SYNOPSIS
+.P
+.ft 4
+.nf
+#include <rpcsvc/ypclnt.h>
+#include <rpcsvc/yp_prot.h>
+.fi
+.ft 1
+.SH DESCRIPTION
+.P
+This package of functions provides an interface to the
+\s-1NIS\s0
+network lookup service.
+The package can be loaded from the standard library,
+\f4/usr/lib/libnsl.{so,a}\f1.
+Refer to
+\f4ypfiles\f1(4)
+and
+\f4ypserv\f1(1M)
+for an overview of the \s-1NIS\s0 name
+services, including the definitions of
+\f2map\f1
+and
+\f2domain\f1,
+and a description of the various servers, databases,
+and commands that comprise the
+\s-1NIS\s0 name service.
+.P
+All input parameters names begin with
+\f2in\f1.
+Output parameters begin with
+\f2out\f1.
+Output parameters of type
+\f4char **\f1
+should be addresses of uninitialized character pointers.
+Memory is allocated by the
+\s-1NIS\s0
+client package using
+\f4malloc\f1(3),
+and may be freed if the user code has no continuing need for it.
+For each
+\f2outkey\f1
+and
+\f2outval\f1,
+two extra bytes of memory are allocated at the end that contain
+newline
+and
+\f4NULL\f1,
+respectively, but these two bytes are not reflected in
+\f2outkeylen\f1
+or
+\f2outvallen\f1.
+\f2indomain\f1
+and
+\f2inmap\f1
+strings must be non-\f4NULL\f1 and
+\f4NULL\f1-terminated.
+String parameters which are accompanied by a count parameter may
+not be
+\f4NULL\f1,
+but may point to
+\f4NULL\f1
+strings, with the count parameter indicating this.
+Counted strings need not be
+\f4NULL\f1-terminated.
+.P
+All functions in this package of type
+\f2int\f1
+return 0 if they succeed, and a failure code
+(\f4ERR\s0_\f2xxxx\f1)\f1
+otherwise.
+Failure codes are described under
+\s-1DIAGNOSTICS\s0
+below.
+.SS Routines
+.P
+.ft 4
+.nf
+.sp .5
+int yp_bind (char *indomain);
+.fi
+.ft 1
+.IP
+To use the
+\s-1NIS\s0
+name services, the client process must be \*(lqbound\*(rq to a
+\s-1NIS\s0
+server that serves the appropriate domain using
+\f4yp_bind\f1.
+Binding need not be done explicitly by user code; this
+is done automatically whenever a
+\s-1NIS\s0
+lookup function is called.
+\f4yp_bind\f1
+can be called directly for processes
+that make use of a backup strategy (for example,
+a local file) in cases when
+\s-1NIS\s0
+services are not available.
+.P
+.ft 4
+.nf
+.sp .5
+void yp_unbind (char *indomain);
+.fi
+.ft 1
+.IP
+Each binding allocates (uses up) one client process
+socket descriptor;
+each bound domain costs one socket descriptor.  However,
+multiple
+requests to the same domain use that same descriptor.
+\f4yp_unbind\f1
+is available at the client interface for processes that
+explicitly manage their socket descriptors while accessing
+multiple domains.
+The call to
+\f4yp_unbind\f1
+make the domain
+\f2unbound\f1,
+and free all per-process and per-node resources used to bind
+it.
+.IP
+If an
+\s-1RPC\s0
+failure results upon use of a binding, that domain will be
+unbound automatically.  At that point, the
+\f4ypclnt\f1
+layer will retry
+forever or until the operation succeeds, provided that
+\f4ypbind\f1
+is running, and either
+the client process cannot bind a server for the proper domain
+or
+\s-1RPC\s0
+requests to the server fail.
+.IP
+If an error is not
+\s-1RPC\s0-related,
+or if
+\f4ypbind\f1
+is not running, or if a bound
+\f4ypserv\f1
+process returns any answer (success or failure),
+the
+\f4ypclnt\f1
+layer will return control to the user code,
+either with an error code,
+or a success code and any results.
+.br
+.if t .ne 9
+.P
+.ft 4
+.nf
+.sp .5
+int yp_get_default_domain (char **outdomain);
+.fi
+.ft 1
+.IP
+The
+\s-1NIS\s0
+lookup calls require a map name and a domain name, at minimum.
+It is assumed that the client process knows the
+name of the map of interest. 
+Client processes
+should fetch the node's default domain by calling
+\f4yp_get_default_domain\f1,
+and use the returned
+\f2outdomain\f1
+as the
+\f2indomain\f1
+parameter to successive
+\s-1NIS\s0
+name service calls.
+.P
+.ft 4
+.nf
+.sp .5
+int yp_match(char *indomain, char *inmap, char *inkey,
+		int inkeylen, char **outval, int *outvallen);
+.fi
+.ft 1
+.IP
+\f4yp_match\f1
+returns the value associated with a passed key.  This key
+must be exact; no pattern matching is available.
+.P
+.ft 4
+.nf
+.sp .5
+int yp_first(char *indomain, char *inmap, char **outkey,
+		int *outkeylen, char **outval, int *outvallen);
+.fi
+.ft 1
+.IP
+\f4yp_first\f1
+returns the first key-value pair from the named map
+in the named domain.
+.P
+.ft 4
+.nf
+.sp .5
+int yp_next(char *indomain, char *inmap, char *inkey,
+		int inkeylen, char **outkey, int *outkeylen,
+		char **outval, int *outvallen);
+.fi
+.ft 1
+.IP
+\f4yp_next\f1
+returns the next key-value pair in a named map.  The
+\f2inkey\f1
+parameter should be the
+\f2outkey\f1
+returned from an initial call to
+\f4yp_first\f1
+(to get the second key-value pair) or the one returned from the
+\f2n\f1th
+call to
+\f4yp_next\f1
+(to get the
+\f2n\f1th
++ second key-value pair).
+.IP
+The concept of first (and, for that matter, of next) is particular
+to the structure of the
+\s-1NIS\s0
+map being processing; there is no relation in
+retrieval order to either the lexical order within
+any original (non-\s-1NIS\s0 name service)
+data base, or to any obvious numerical sorting order on the keys,
+values, or key-value pairs.  The only ordering guarantee made is
+that if the
+\f4yp_first\f1
+function is called on a particular map, and then the
+\f4yp_next\f1
+function is repeatedly called on the same map at the same server
+until the call fails with a reason of
+\f4YPERR_NOMORE\f1,
+every entry in the data base will be seen exactly once.
+Further, if the same sequence of operations is performed on the same
+map at the same server, the entries will be seen in the same order.
+.br
+.if t .ne 7
+.IP
+Under conditions of heavy server load or server failure, it
+is possible for the domain to become unbound, then bound
+once again (perhaps to a different server)
+while a client is running.
+This can cause a break in one of the enumeration rules;
+specific entries may be seen twice by the client, or not at all.
+This approach protects the client from error messages that would
+otherwise be returned in the midst of the enumeration.
+The next paragraph describes a better solution to enumerating all
+entries in a map.
+.P
+.ft 4
+.nf
+.sp .5
+int yp_all(char *indomain, char *inmap,
+		struct ypall_callback *incallback);
+.fi
+.ft 1
+.IP
+\f4yp_all\f1
+provides a way to transfer an entire map
+from server to client in a single request using
+\s-1TCP\s0
+(rather than
+\s-1UDP\s0
+as with other functions in this package).
+The entire transaction take place as a single
+\s-1RPC\s0
+request and response. 
+\f4yp_all\f1
+can be used just like any other
+\s-1NIS\s0
+name service procedure,
+identify the map in the normal manner, and supply the name of a
+function which will be called to process each key-value pair
+within the map.  The call to
+\f4yp_all\f1
+returns only when the transaction is completed
+(successfully or unsuccessfully), or the
+\f4foreach\f1
+function decides that it does not want to see
+any more key-value pairs.
+.IP
+The third parameter to
+\f4yp_all\f1
+is
+.RS 1i
+.ft 4
+.nf
+struct ypall_callback *incallback {
+int (*foreach);
+char *data;
+};
+.fi
+.ft 1
+.RE
+.IP
+The function
+\f4foreach\f1
+is called
+.RS 1i
+.ft 4
+.nf
+int foreach(int instatus, char *inkey, int inkeylen,
+	char *inval, int invallen, char *indata);
+.fi
+.ft 1
+.RE
+.IP
+The
+\f2instatus\f1
+parameter will hold one of the return status values defined in
+\f4rpcsvc/yp_prot.h\f1\(emeither
+\f4YP_TRUE\f1
+or an error code. (See
+\f4ypprot_err\f1,
+below, for a function which converts a
+\s-1NIS\s0
+name service
+protocol error code to a
+\f4ypclnt\f1
+layer error code.)
+.IP
+The key and value parameters are somewhat different
+than defined in the
+synopsis section above. First, the memory pointed to by the
+\f2inkey\f1
+and
+\f2inval\f1
+parameters is private to the
+\f4yp_all\f1
+function, and is overwritten with the arrival
+of each new key-value pair.
+It is the responsibility of the
+\f4foreach\f1
+function to do something useful with the contents
+of that memory, but it
+does not own the memory itself.  Key and value objects
+presented to the
+\f4foreach\f1
+function look exactly as they do in the server's map\(emif they
+were not
+newline-terminated
+or
+\f4NULL\f1-terminated
+in the map, they will not be here either.
+.IP
+The
+\f2indata\f1
+parameter is the contents of the
+\f4incallback->data\f1
+element passed to
+\f4yp_all\f1.
+The
+\f4data\f1
+element of the callback structure may be used to share
+state information between the
+\f4foreach\f1
+function and the mainline code.  Its use is optional,
+and no part of the
+\s-1NIS\s0
+client package inspects its contents\(emcast it to something useful, or ignore it.
+.IP
+The
+\f4foreach\f1
+function is a Boolean.
+It should return zero to
+indicate that it wants to be called again for
+further received key-value pairs, or non-zero to stop
+the flow of key-value pairs. 
+If
+\f4foreach\f1
+returns a non-zero value, it is not called again; the functional
+value of
+\f4yp_all\f1
+is then 0.
+.br
+.if t .ne 8
+.P
+.ft 4
+.nf
+.sp .5
+int yp_order(char *indomain, char *inmap, int *outorder);
+.fi
+.ft 1
+.IP
+\f4yp_order\f1
+returns the order number for a map.
+.br
+.if t .ne 7
+.P
+.ft 4
+.nf
+.sp .5
+int yp_master(char *indomain, char *inmap, char **outname);
+.fi
+.ft 1
+.IP
+\f4yp_master\f1
+returns the machine name of the master
+\s-1NIS\s0
+server for a map.
+.P
+.ft 4
+.nf
+.sp .5
+char *yperr_string(int incode);
+.fi
+.ft 1
+.IP
+\f4yperr_string\f1
+returns a pointer to an error message string that is
+\f4NULL\f1-terminated
+but contains no period or
+newline.
+.P
+.ft 4
+.nf
+.sp .5
+int ypprot_err (unsigned int incode);
+.fi
+.ft 1
+.IP
+\f4ypprot_err\f1
+takes a
+\s-1NIS\s0
+name service
+protocol error code as input, and returns a ypclnt layer error
+code, which may be used in turn as an input to
+\f4yperr_string\f1.
+.SH FILES
+.PD 0
+.TP 20
+\f4/usr/lib/libyp.a\f1
+.PD
+.SH "SEE ALSO"
+\f4ypserv\f1(1M),
+\f4malloc\f1(3),
+\f4ypupdate\f1(3N),
+\f4ypfiles\f1(4)
+.SH DIAGNOSTICS
+.P
+All integer functions return 0 if the
+requested operation is successful,
+or one of the following errors if the operation fails.
+.TS
+center ;
+n lf4 l.
+1	YPERR_BADARGS	args to function are bad
+2	YPERR_RPC	RPC failure \- domain has been unbound
+3	YPERR_DOMAIN	can't bind to server on this domain
+4	YPERR_MAP	no such map in server's domain
+5	YPERR_KEY	no such key in map
+6	YPERR_YPERR	internal \s-1NIS\s0 server or client error
+7	YPERR_RESRC	resource allocation failure
+8	YPERR_NOMORE	no more records in map database
+9	YPERR_PMAP	can't communicate with \s-1RPC\s0 binder
+10	YPERR_YPBIND	can't communicate with \f4ypbind\fP
+11	YPERR_YPSERV	can't communicate with \f4ypserv\fP
+12	YPERR_NODOM	local domain name not set
+13	YPERR_BADDB	\s-1NIS\s0 database is bad
+14	YPERR_VERS	\s-1NIS\s0 version mismatch
+15	YPERR_ACCESS	access violation
+16	YPERR_BUSY	database busy
+.TE

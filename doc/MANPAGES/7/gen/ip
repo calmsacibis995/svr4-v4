@@ -1,0 +1,385 @@
+'\"macro stdmacro
+.if n .pH g7.ip @(#)ip	40.9 of 5/21/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} IP 7 "Internet Utilities" "\&"
+.if \nX=1 .ds x} IP 7 "Internet Utilities"
+.if \nX=2 .ds x} IP 7 "" "\&"
+.if \nX=3 .ds x} IP "" "" "\&"
+.TH \*(x}
+.SH NAME
+IP \- Internet Protocol
+.SH SYNOPSIS
+.nf
+\f4#include <sys/socket.h>\f1
+\f4#include <netinet/in.h>\f1
+.LP
+\f4s = socket(\s-1AF_INET\s0, \s-1SOCK_RAW\s0, proto);\f1
+.LP
+\f4t = t_open ("/dev/rawip", \s-1O_RDWR\s0);\f1
+.LP
+\f4d = open ("/dev/ip", \s-1O_RDWR\s0);\f1
+.fi
+.SH DESCRIPTION
+.LP
+.SM IP
+is the internetwork datagram delivery protocol that is central
+to the Internet protocol family.
+Programs may use
+.SM IP
+through higher-level protocols
+such as the Transmission Control Protocol (\s-1TCP\s0) or the User Datagram
+Protocol (\s-1UDP\s0),
+or may interface directly to IP.
+See
+\f4tcp\f1(7)
+and
+\f4udp\f1(7).
+Direct access may be via the socket interface
+(using a \(lqraw socket\(rq) or
+the Transport Level Interface
+(\s-1TLI\s0).
+The protocol options defined in the
+.SM IP
+specification may be set
+in outgoing datagrams.
+.LP
+The
+.SM STREAMS
+driver
+\f4/dev/rawip\f1
+is the
+.SM TLI
+transport provider that provides
+raw access to
+.SM IP\s0.
+The device
+\f4/dev/ip\f1
+is the multiplexing
+.SM STREAMS
+driver that implements
+the protocol processing of
+.SM IP\s0.
+The latter connects below to datalink providers [interface drivers, see 
+\f4if\f1(3N)],
+and above to transport providers such as
+.SM TCP
+and
+.SM UDP\s0.
+.LP
+Raw
+.SM IP
+sockets are connectionless and are normally used
+with the
+\f4sendto(\|)\f1
+and
+\f4recvfrom(\|)\f1
+calls,
+[(see
+\f4send\f1(2)
+and
+\f4recv\f1(2)]
+although the
+\f4connect\f1(2)
+call may also be used to fix the destination for future datagrams
+[in which case the
+\f4read\f1(2)
+or
+\f4recv\f1(2)
+and
+\f4write\f1(2)
+or
+\f4send\f1(2)
+calls may be used].
+If
+\f4proto\f1
+is zero, the default protocol,
+\f4IPPROTO_RAW\f1,
+is used.  If
+\f4proto\f1
+is non-zero, that protocol number will be set in outgoing datagrams
+and will be used to filter incoming datagrams.
+An
+.SM IP
+header will be generated and prepended to each outgoing datagram;
+received datagrams are returned with the
+.SM IP
+header and options intact.
+.LP
+A single socket option,
+\f4IP_OPTIONS\f1,
+is supported at the
+.SM IP
+level.  This socket option may be used to set
+.SM IP
+options to be included in each outgoing datagram.
+.SM IP
+options to be sent are set with
+\f4setsockopt(\|)\f1
+[see
+\f4getsockopt\f1(2)].
+The
+\f4getsockopt\f1(2)
+call returns the
+.SM IP
+options set in the last
+\f4setsockopt(\|)\f1
+call.
+.SM IP
+options on received datagrams are visible to user programs only
+using raw
+.SM IP
+sockets.  The format of
+.SM IP
+options given in
+\f4setsockopt(\|)\f1
+matches those defined in the
+.SM IP
+specification with one exception:
+the list of addresses for the source routing options
+must include the first-hop gateway at the beginning of the
+list of gateways.
+The first-hop gateway address will be extracted from the option
+list and the size adjusted accordingly before use.
+.SM IP
+options may be used with any socket type in the Internet family.
+.LP
+At the socket level, the socket option
+\f4SO_DONTROUTE\f1
+may be applied.
+This option forces datagrams being sent to bypass the routing step
+in output.
+Normally,
+.SM IP
+selects a network interface to send the datagram,
+and possibly an intermediate gateway,
+based on an entry in the routing table.
+See
+\f4routing\f1(4).
+When
+.SM
+\f4SO_DONTROUTE\f1
+is set, the datagram will be sent using the interface
+whose network number or full
+.SM IP
+address matches the destination address.
+If no interface matches, the error
+\f4ENETUNRCH\fP
+will be returned.
+.LP
+Raw
+.SM IP
+datagrams can also be sent and received 
+using the
+.SM TLI
+connectionless primitives.
+.LP
+Datagrams flow through the
+.SM IP
+layer in two directions:
+from the network 
+.I up
+to user processes and from user
+processes
+.I down
+to the network.
+Using this orientation,
+.SM IP
+is layered
+.I above
+the network interface drivers and
+.I below
+the transport protocols such as
+.SM UDP
+and
+.SM TCP\s0.
+The Internet Control Message Protocol (\s-1ICMP\s0) is logically
+a part of
+.SM IP\s0.  See
+\f4icmp\f1(7).
+.LP
+IP provides for a checksum of the header part, but not the data
+part of the datagram.
+The checksum value is computed and set in the process of sending
+datagrams and checked when receiving datagrams.
+.SM IP
+header checksumming may be disabled for debugging purposes
+by patching the kernel variable
+\f4ipcksum\f1
+to have the value
+zero.
+.LP
+.SM IP
+options in received datagrams are processed in the
+.SM IP
+layer
+according to the protocol specification.
+Currently recognized
+.SM IP
+options include:
+security,
+loose source and record route (\s-1LSRR\s0),
+strict source and record route (\s-1SSRR\s0),
+record route,
+stream identifier, and
+internet timestamp.
+.LP
+The
+.SM IP
+layer will normally forward received datagrams that are not addressed
+to it.
+Forwarding is under the control of the kernel variable
+.IR ipforwarding :
+if
+.I ipforwarding
+is zero,
+.SM IP
+datagrams will not be forwarded;  if
+.I ipforwarding
+is one,
+.SM IP
+datagrams will be forwarded.
+.I ipforwarding
+is usually set to one only in machines with more than one
+network interface (internetwork routers).
+This kernel variable can be patched to enable or disable forwarding.
+.LP
+The
+.SM IP
+layer will send an
+.SM ICMP
+message back to the source host in many
+cases when it receives a datagram that can not be handled.
+A \(lqtime exceeded\(rq
+.SM ICMP
+message will be sent if the \(lqtime to live\(rq
+field in the
+.SM IP
+header drops to zero in the process of forwarding a datagram.
+A \(lqdestination unreachable\(rq message will be sent if a datagram can not
+be forwarded because there is no route to the final destination,
+or if it can not be fragmented.
+If the datagram is addressed to the local host
+but is destined for a protocol that is not supported or a port
+that is not in use,
+a destination unreachable message will also be sent.
+The
+.SM IP
+layer may send an
+.SM ICMP
+\(lqsource quench\(rq message if it is
+receiving datagrams too quickly.
+.SM ICMP
+messages are only sent for the first fragment of a fragmented
+datagram and are never returned in response to errors in other
+.SM ICMP
+messages.
+.LP
+The
+.SM IP
+layer supports fragmentation and reassembly.
+Datagrams are fragmented on output if the datagram is larger than the
+maximum transmission unit (\s-1MTU\s0) of the network interface.
+Fragments of received datagrams are dropped from the reassembly queues
+if the complete datagram is not reconstructed within a short time period.
+.LP
+Errors in sending discovered at the network interface driver layer
+are passed by
+.SM IP
+back up to the user process.
+.SH SEE ALSO
+\f4read\f1(2),
+\f4write\f1(2),
+\f4connect\f1(3N),
+\f4getsockopt\f1(3N),
+\f4recv\f1(3N),
+\f4send\f1(3N),
+.br
+\f4routing\f1(4),
+\f4icmp\f1(7),
+\f4inet\f1(7)
+\f4tcp\f1(7),
+\f4udp\f1(7)
+.LP
+Postel, Jon,
+\f2Internet Protocol - \s-1DARPA\s0 Internet Program Protocol 
+Specification\f1,
+.SM RFC
+791, Network Information Center,
+.SM SRI
+International, Menlo Park, Calif.,
+September 1981
+.br
+.ne 8
+.SH DIAGNOSTICS
+A socket operation may fail with one of the following errors returned:
+.TP 20
+\f4EACCESS\f1
+A 
+.SM IP
+broadcast destination address was specified 
+and the caller was not the privileged user.
+.TP
+\f4EISCONN\f1
+An attempt was made to establish a connection on a socket which
+already had one, or to send a datagram with the destination
+address specified and the socket was already connected.
+.TP
+\f4EMSGSIZE\f1
+An attempt was made to send a datagram that was
+too large for an interface,
+but was not allowed to be fragmented (such as broadcasts).
+.TP
+\f4ENETUNREACH\f1
+An attempt was made to establish a connection or send a datagram,
+where there was no matching entry in the routing table,
+or if an
+.SM ICMP
+\(lqdestination unreachable\(rq message was received.
+.TP
+\f4ENOTCONN\f1
+A datagram was sent, but no destination address was specified,
+and the socket had not been connected.
+.TP
+\f4ENOBUFS\f1
+The system ran out of memory for
+fragmentation buffers or other internal data structure.
+.TP
+\f4EADDRNOTAVAIL\f1
+An attempt was made to create a
+socket with a local address that did not match any network interface,
+or an
+.SM IP
+broadcast destination address was specified
+and the network interface does not support broadcast.
+.LP
+The following errors
+may occur when setting or getting
+.SM IP
+options:
+.TP 20
+\f4EINVAL\f1
+An unknown socket option name was given.
+.TP
+\f4EINVAL\f1
+The
+.SM IP
+option field was improperly formed;
+an option field was shorter than the minimum value
+or longer than the option buffer provided.
+.SH NOTES
+.LP
+Raw sockets should receive
+.SM ICMP
+error packets relating to the protocol;
+currently such packets are simply discarded.
+.LP
+Users of higher-level protocols such as
+.SM TCP
+and
+.SM UDP
+should be able to
+see received
+.SM IP
+options.

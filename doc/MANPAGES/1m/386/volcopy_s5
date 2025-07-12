@@ -1,0 +1,122 @@
+'\"macro stdmacro
+.if n .pH g1a.volcopy_s5 @(#)volcopy_s5	40.8 of 2/1/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} volcopy 1M "s5" "\&"
+.if \nX=1 .ds x} volcopy 1M "s5"
+.if \nX=2 .ds x} volcopy 1M "" "\&"
+.if \nX=3 .ds x} volcopy "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4volcopy\f1 (s5) \- make a literal copy of an \f4s5\f1 file system
+.SH SYNOPSIS
+.nf
+\f4volcopy\f1 [\f4\-F s5\f1] [\f2generic_options\f1] [\f2current_options\f1] \f2fsname srcdevice volname1 
+destdevice volname2\f1
+.fi
+.SH DESCRIPTION
+.I generic_options
+are options supported by the generic \f4volcopy\f1 command.
+.PP
+\f4volcopy\f1
+makes a literal copy of the \f4s5\f1 file system
+using
+a blocksize matched to the device.
+.PP
+The options are:
+.TP 0.50i
+\f4\-F s5\f1
+Specify the \f4s5\f1-FSType.
+.TP 
+\&\f(CW\-a\f1
+Invoke a verification sequence
+requiring a positive operator response instead of the
+standard 10-second delay before the copy is made.
+.TP
+\f4-y\fR
+Assume a \f4yes\fR response to all questions.
+.P
+Other \f2options\f1 are used only with 9-track magnetic tapes:
+.TP .75i
+\&\f(CW\-bpi\f2density\f1
+bits per inch
+.TP
+\&\f(CW\-feet\f2size\f1
+size of reel in feet
+.TP .75i
+\&\f(CW\-reel\f2num\f1
+beginning reel number for a restarted copy 
+.TP
+\&\f(CW\-buf\f1
+use double buffered I/O
+.TP
+\f4-e\fR
+process until the end of tape, then ask for the next tape in
+sequence. 
+.sp 0.5
+.P
+If the \f4-e\fP option is not selected, the program
+requests length and density
+information if this is not given on the
+command line, or if it is not recorded on an input tape label.
+If the file system is too large to fit on one reel,
+\f(CWvolcopy\f1
+prompts for additional reels.
+Labels of all reels are checked.
+Tapes may be mounted alternately on two or more drives.
+If \f(CWvolcopy\f1 is interrupted, it asks 
+if the user wants to quit 
+or escape to the command interpreter.
+In the latter case,
+the user can perform other operations 
+(such as \f(CWlabelit\f1)
+and return to \f(CWvolcopy\f1
+by exiting the command interpreter.
+Note that the \f4-e\fR and \f4-feet\fR options are mutually exclusive.
+.PP
+The
+.I fsname\^
+argument represents the mounted name (e.g., \f4root\f1, \f4usr\f1,
+etc.) of the file system being copied.
+.PP
+The
+.I srcdevice\^
+or \f2destdevice\f1
+should be the disk partition or tape (e.g., \f4/dev/rdsk/1s5\f1,
+\f4/dev/rmt/c0s0\f1, etc.).
+.PP
+The
+.I volname\^
+is the physical volume name.
+Such label names contain up to six characters.
+.I volname
+may be ``\f4\-\f1'' to use the existing volume name.
+.PP
+.I srcdevice\^
+and
+.I volname1\^
+are the device and volume from which the copy of the file system is
+being extracted.
+.I destdevice\^
+and
+.I volname2\^
+are the target device and volume.
+.PP
+.I fsname\^
+and
+.I volname\^
+are recorded in the
+superblock.
+.SH NOTE
+\f4volcopy\f1 does not support tape-to-tape copying.  Use
+\f4dd\f1(1M) for tape-to-tape copying.
+.SH FILES
+.TP 2.0i
+\f4/var/adm/filesave.log\f1
+a record of file systems/volumes copied
+.SH "SEE ALSO"
+\f4dd\f1(1M), \f4labelit\f1(1M), generic \f4volcopy\f1(1M);
+\f4cpio\f1(1) and \f4sh\f1(1) in the \f2User's Reference Manual\f1;
+and \f4cpio\f1(4) and \f4fs\f1(4), in the \f2Programmer's Reference
+Manual\fR

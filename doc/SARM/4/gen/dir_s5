@@ -1,0 +1,50 @@
+'\"macro stdmacro
+.if n .pH g4.dir_s5 @(#)dir_s5	40.5 of 1/3/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} dir 4 "s5" "\&"
+.if \nX=1 .ds x} dir 4 "s5"
+.if \nX=2 .ds x} dir 4 "" "\&"
+.if \nX=3 .ds x} dir "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4dir\f1 (s5) \- format of \f4s5\fP directories
+.SH SYNOPSIS
+\f4#include <sys/types.h>\f1
+.br
+\f4#include <sys/fs/s5dir.h>\f1
+.SH DESCRIPTION
+A directory
+behaves exactly like an ordinary file, save that no
+user may write into a directory.
+The fact that a file is a directory is indicated by
+a bit in the mode word of its i-node entry
+[see the \f4s5\fP-specific
+\f4inode\fP(4)].
+The structure of a directory entry as given in the
+include file is:
+.PP
+.RS
+.ft 4
+.nf
+#ifndef  DIRSIZ
+#define  DIRSIZ  14
+#endif
+struct direct
+{
+     o_ino_t    d_ino;	/* s5 inode type */
+     char       d_name[DIRSIZ];
+};
+.fi
+.ft 1
+.RE
+.PP
+By convention, the first two entries in each directory
+are \f4.\f1 for the entry itself and \f4..\f1 for the parent directory.
+The meaning of \f4..\f1 is modified for the root directory
+of the master file system;
+there is no parent, so \f4.\|.\f1 has the
+same meaning as \f4.\f1 has.
+.SH "SEE ALSO"
+\f4s5\fP_specific \f4inode\fP(4)

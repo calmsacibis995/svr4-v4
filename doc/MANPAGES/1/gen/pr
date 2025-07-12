@@ -1,0 +1,297 @@
+'\"macro stdmacro
+.if n .pH g1.pr @(#)pr	40.9.1.1 of 1/3/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} pr 1 "Essential Utilities" "\&"
+.if \nX=1 .ds x} pr 1 "Essential Utilities"
+.if \nX=2 .ds x} pr 1 "" "\&"
+.if \nX=3 .ds x} pr "" "" "\&"
+.TH \*(x}
+.\" Copyright (c) 1988 Sun Microsystems, Inc - All Rights Reserved.
+.SH NAME
+\f4pr\f1 \- print files
+.SH SYNOPSIS
+.HP
+.na
+\f4pr\f1
+\f1[[\f4\-\f2columns\fP\f1]
+\f1[\f4\-w\f1\f2width\fP]
+\f1[\f4\-a\f1]]
+\f1[\f4\-e\f1\f2ck\fP]
+\f1[\f4\-i\f1\f2ck\fP]
+\f1[\f4\-drtfp\f1]
+\f1[\f4\+\f1\f4page\fP]
+\f1[\f4\-n\f1\f2ck\fP]
+\f1[\f4\-o\f1\f2offset\fP]
+\f1[\f4\-l\f1\f2length\fP]
+\f1[\f4\-s\f1\f2separator\fP]
+\f1[\f4\-h\f1\f2header\fP]
+\f1[\f4\-F\f1]
+[\f2file\f1 .\|.\|.\|]
+.HP
+.na
+\f4pr\f1
+\f1[[\f4\-m\f1]
+\f1[\f4\-w\f1\f2width\fP]]
+\f1[\f4\-e\f1\f2ck\fP]
+\f1[\f4\-i\f1\f2ck\fP]
+\f1[\f4\-drtfp\f1]
+\f1[\f4\+\f1\f4page\fP]
+\f1[\f4\-n\f1\f2ck\fP]
+\f1[\f4\-o\f1\f2offset\fP]
+\f1[\f4\-l\f1\f2length\fP]
+\f1[\f4\-s\f1\f2separator\fP]
+\f1[\f4\-h\f1\f2header\fP]
+\f1[\f4\-F\f1]
+[\f2file1  file2\f1 .\|.\|.\|]
+.ad
+.SH DESCRIPTION
+The
+\f4pr\fP
+command formats and prints the contents of a file.
+If
+.I file\^
+is
+\f4\-\f1, or if no files are specified, 
+\f4pr\fP
+assumes standard input.
+\f4pr\fP
+prints the named files on standard output.
+.PP
+By default, the listing is separated into pages,
+each headed by the page number, the date and time that the file was last modified, and the name of the file.
+Page length is 66 lines which includes 10 lines of header and trailer output.
+The header is composed of 2 blank lines, 1 line of text ( can be altered with
+\f4\-h\f1), and 2 blank lines;  the trailer is 5 blank lines.
+For single column output, line width may not be set and is unlimited.
+For multicolumn output, line width may be set and the default is 72 columns.
+Diagnostic reports (failed options) are reported at the end of standard output
+associated with a terminal, rather than interspersed in the output.
+Pages are separated by series of line feeds rather than form feed characters.
+.PP
+By default, columns are of equal width, separated
+by at least one space; lines which do not fit are
+truncated. If the
+\f4\-s\f1
+option is used, lines are not truncated
+and columns are separated by the \f2separator\f1 character.
+.PP
+Either \f2\-columns\f1 or 
+\f4\-m\f1
+should be used to produce multi-column output.
+\f4\-a\f1
+should only be used with \f2\-columns\f1 and not \f4\-m\f1.
+.PP
+Command line options are
+.TP 10
+\f4+\f2page\f1
+Begin printing with page numbered \f2page\fP (default is 1).
+.TP
+\f4\-\f2columns\f1
+Print \f2columns\f1 columns of output (default is 1).
+Output appears as if
+\f4\-e\f1
+and
+\f4\-i\f1
+are on for multi-column output.
+May not use with \f4\-m\f1.
+.TP
+\f4\-a\f1
+Print multi-column output across the page one line per column.
+.I columns
+must be greater than one.
+If a line is too long to fit in a column, it is truncated.
+.TP
+\f4\-m\f1
+Merge and print all files simultaneously, one per column.
+The maximum number of files that may be specified is eight.
+If a line is too long to fit in a column, it is truncated.
+May not use with \f2\-column\f1.
+.TP
+\f4\-d\f1
+Double-space the output.
+Blank lines that result from double-spacing are dropped when they occur at the top
+of a page.
+.TP
+\f4\-e\f2ck\^\f1
+Expand input tabs to character positions
+.IR k "+1, 2\(**" k "+1, 3\(**" k +1,
+etc.
+If
+.I k\^
+is 0 or is omitted, default tab settings at every eighth position are assumed.
+Tab characters in the input are expanded into the appropriate number of spaces.
+If
+.I c\^
+(any non-digit character) is given, it is treated as the input tab character
+(default for
+.I c\^
+is the tab character).
+.TP
+\f4\-i\f2ck\^\f1
+In output, replace white space wherever possible by inserting tabs
+to character positions
+.IR k "+1, 2\(**" k "+1, 3\(**" k +1,
+etc.
+If
+.I k\^
+is 0 or is omitted, default tab settings at every eighth position are assumed.
+If
+.I c\^
+(any non-digit character) is given, it is treated as the output tab character
+(default for
+.I c\^
+is the tab character).
+.TP
+\f4\-n\f2ck\^\f1
+Provide
+.IR k -digit
+line numbering (default for
+.I k\^
+is 5).
+The number occupies the first
+.IR k +1
+character positions of each column of single column output
+or each line of
+\f4\-m\f1
+output.
+If
+.I c\^
+(any non-digit character) is given, it is appended to the line number to separate
+it from whatever follows (default for
+.I c\^
+is a tab).
+.TP
+\f4\-w\f2width\f1
+Set the width of a line to
+.I width
+character positions (default is 72).
+This is effective only for multi-column output
+(\f4\-\f2column\f1 and \f4\-m\f1).
+There is no line limit for single column output.
+.TP
+\f4\-o\f2offset\f1
+Offset each line by
+.I offset
+character positions (default is 0).
+The number of character positions per line is the sum of the width and offset.
+.TP
+\f4\-l\f2length\f1
+Set the length of a page to
+.I length
+lines (default is 66).
+A
+.I length
+of 0 specifies the default length.
+By default, output contains 5 lines of header and 5 lines of trailer
+leaving 56 lines for user-supplied text.
+When \f4\-l\f2length\f1 is used and \f2length\f1 exceeds 10,
+then \f2length\f1\-10 lines
+are left per page for user supplied text.
+When \f2length\f1 is 10 or less, header and trailer output is omitted to make
+room for user supplied text; see the \f4\-t\fP option.
+.TP
+\f4\-h\f2\ header\f1
+Use \f2header\f1 as the text line of the header to be printed instead of
+the file name.
+\f4\-h\f1
+is ignored when
+\f4\-t\f1
+is specified or \f4\-l\f2length\f1 is specified and the value of \f2length\f1
+is 10 or less.
+(\f4\-h\f1 is the only \f4pr\fP option requiring space between the option
+and argument.)
+.TP
+\f4\-p\f1
+Pause before beginning each page if the output device is a terminal.
+\f4pr\fP
+rings the terminal bell and
+waits for a carriage return.
+.TP
+\f4\-f\f1
+Use a single form-feed character for new pages
+(default is to use a sequence of line feeds).
+Pause before beginning the first page if
+the standard output is associated with a terminal.
+.TP
+\f4\-r\f1
+Print no diagnostic reports on files that cannot be opened.
+.TP
+\f4\-t\f1
+Print neither the five-line identifying header nor the five-line trailer normally
+supplied for each page.
+Quit printing after the last line of each file
+without spacing to the end of the page.
+Use of
+\f4\-t\f1
+overrides the
+\f4\-h\f1
+option.
+.TP
+\f4\-s\f2separator\f1
+Separate columns by the single character
+.I separator
+instead of by the appropriate number of spaces (default for
+.I separator
+is a tab).
+Prevents truncation of lines on multicolumn output unless \f4\-w\f1
+is specified.
+.TP
+\f4\-F\f1
+Fold the lines of the input file.
+When used in multi-column mode (with the 
+\f4\-a\f1
+or
+\f4\-m\f1
+options) lines will be folded to fit the current column's
+width, otherwise they will be folded to fit the
+current line width (80 columns).
+.SH EXAMPLES
+Print
+\f4file1\f1
+and
+\f4file2\f1
+as a double-spaced, three-column listing
+headed by ``\f5file list\fP'':
+.PP
+.RS
+\f4pr \-3dh "file list" file1 file2\f1
+.RE
+.PP
+Copy
+\f4file1\f1
+to
+\f4file2\f1,
+expanding tabs to columns 10, 19, 28, 37, .\|.\|. :
+.PP
+.RS
+\f4pr \-e9 \-t < file1 > file2\f1
+.RE
+.PP
+Print
+\f4file1\f1
+and
+\f4file2 \f1
+simultaneously in a two-column listing with no header or trailer where both
+columns have line numbers:
+.PP
+.RS
+\f4pr \|\-t \|\-n \|file1 \|| pr \|\-t \|\-m \|\-n \|file2 \-\f1
+.RE
+.SH FILES
+.TP 14
+\f4/dev/tty\(**\fP
+If standard output is directed to one of the special files
+\f4/dev/tty\(**\f1,
+then other output directed to this terminal is delayed until
+standard output is completed.
+This prevents error messages from being interspersed
+throughout the output.
+.SH SEE ALSO
+\f4cat\fP(1),
+\f4fold\fP(1),
+\f4more\fP(1),
+\f4pg\fP(1),
+\f4page\fP(1).
+.Ee

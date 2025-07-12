@@ -1,0 +1,546 @@
+'\"macro stdmacro
+.if n .pH g1a.crash @(#)crash	40.6 of 6/7/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+'\"macro stdmacro
+.if n .pH g1a.crash @(#)crash	40.21 of 9/26/89
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.if \nX=0 .ds x} crash 1M "System Administration Utilities" "\&"
+.if \nX=1 .ds x} crash 1M "System Administration Utilities"
+.if \nX=2 .ds x} crash 1M \& "\&"
+.if \nX=3 .ds x} crash \& "" "\&"
+.nr X
+.TH \*(x} "" "386 Computer Only"
+.SH NAME
+\f4crash\f1 \- examine system images
+.SH SYNOPSIS
+\f4/usr/sbin/crash\f1
+[
+\f4\-d\f1 \f2dumpfile\f1
+]
+[
+\f4\-n\f1 \f2namelist\f1
+]
+[
+\f4\-w\f1 \f2outputfile\f1
+]
+.SH DESCRIPTION
+The \f4crash\f1 command is used to examine the system memory image
+of a running or a crashed 
+system by formatting and printing 
+control structures, tables, and other
+information.
+Command line arguments to \f4crash\f1 are \f2dumpfile, namelist\f1,
+and \f2outputfile\f1.
+.PP
+\f2dumpfile\f1 is the file containing the system memory image.
+The default \f2dumpfile\f1 is \f4\/dev\/mem\f1.
+.PP
+The text file \f2namelist\f1 
+contains the symbol table
+information needed for symbolic access to the system memory image
+to be examined. 
+The default \f2namelist\f1 is \f4/stand/unix\f1.
+If a system image from another machine is to be
+examined, the corresponding text file must be copied from that
+machine.
+.PP
+When the \f4crash\f1 command is invoked, a session is initiated. 
+The output from a \f4crash\f1 session is directed to \f2outputfile\f1.
+The default \f2outputfile\f1
+is the standard output.
+.PP
+Input during a \f4crash\f1 session is of the form:
+.PP
+.in +5
+.I function
+[
+.IR argument "..."
+]
+.in -5
+.PP
+where \f2function\f1 is one of the \f4crash\f1 functions described in the
+``\s-1FUNCTIONS\s+1'' subsection of this manual page, and
+\f2arguments\f1 are qualifying data
+that indicate which items of the system image are
+to be printed.  
+.PP
+The default for process-related items is
+the current process for a running system or
+the process that was running at the time of the crash for a crashed system.
+If the contents of a table are being dumped, the default is all active
+table entries.
+.PP
+The following function options are available
+to \f4crash\f1 functions wherever they are semantically valid.
+.TP 1i
+\f4\-e\f1
+Display every entry in a table.
+.TP
+\f4\-f\f1
+Display the full structure.
+.TP
+\f4\-p\f1
+Interpret all address arguments in the command line as physical addresses.
+If they are not physical addresses, results are inconsistent.
+.TP
+\f4\-s\f2 process\f1
+Specify a process slot other than the default.
+.TP
+\f4\-w\f2 file\f1
+Redirect the output of a function 
+to \f2file\f1.
+.PP
+The functions \f4mode\f1, \f4defproc\f1, and \f4redirect\f1
+correspond to the function options \f4\-p\f1, \f4\-s\f1,
+and \f4\-w\f1.
+The \f4mode\f1 function may be used to set the address
+translation mode to physical or
+virtual for all subsequently entered functions; 
+\f4defproc\f1 sets the value of the process slot argument
+for subsequent functions; and 
+\f4redirect\f1 redirects all subsequent output.
+.PP
+Output from \f4crash\f1 functions may be piped to another program
+in the following way:
+.PP
+.in +5
+.I function
+[
+.IR argument "..."
+]
+\f4!\f1
+.I shell_command
+.in -5
+.PP
+For example,
+.PP
+.in +5
+\f4mount ! grep rw\f1
+.in -5
+.PP
+writes all mount table entries with an \f4rw\f1 flag to the 
+standard output.
+The redirection option (\f4\-w\f1) cannot be used with
+this feature.
+.PP
+Depending on the context of the function, numeric arguments are
+assumed to be in a specific radix.
+Counts are assumed to be
+decimal.
+Addresses are always hexadecimal.
+Table slot arguments larger than the size of the function will 
+not be interpreted correctly.  Use the \f2findslot\f1 command to
+translate from an address to a table slot number.
+Default bases on all arguments may be overridden.
+The C conventions for designating the bases of numbers are recognized.
+A number that is usually interpreted as decimal is interpreted
+as hexadecimal if it
+is preceded by \f40x\f1 and as octal if it is preceded by \f40\f1.
+Decimal override is designated by
+\f40d\f1, and binary
+by \f40b\f1.
+.PP
+Aliases for functions may be any uniquely identifiable initial substring of the
+function name.  Traditional aliases of one letter, such as \f4p\f1 for
+\f4proc\f1, remain valid.
+.PP
+Many functions accept different forms of entry for the same argument.
+Requests for table information will accept a table entry number or
+a range.
+A range of slot numbers may be specified in the form \f2a\-b\f1 where
+\f2a\f1 and \f2b\f1 are decimal numbers.
+An expression consists of two operands
+and an operator.
+An operand may be an address, a symbol, or a number; the operator
+may be +, \-, *, /, &, or | .
+An operand that is a number should be preceded by a radix prefix
+if it is not a decimal number (\f40\f1 for octal, \f40x\f1 for hexadecimal,
+\f40b\f1 for binary).
+The expression must be enclosed in parentheses.
+Other functions accept any of these argument forms
+that are meaningful.
+.PP
+Two abbreviated arguments to \f4crash\f1 functions are used throughout.
+Both accept data entered in several forms.
+They may be expanded into the following:
+.PP
+.in +5
+\f2table_entry = address | slot | range\f1
+.in -5
+.PP
+.in +5
+\f2start_addr = address | symbol | expression\f1
+.in -5
+.SS FUNCTIONS
+.TP
+\f4?\f1 [\|\f4\-w\f2 file\f1\|]
+List available functions.
+.TP
+\f4!\f2command\f1
+Escape to the shell and execute
+.IR command .
+.TP
+\f4as\f1 [\|\f4\-e\f1\|]\0[\|\f4\-f\f1\|]\0[\|\f4\-w\f2 file\f1\|]\0[\|\f2proc\f1\|...\|]
+Print information on process segments.
+.TP
+\f4base\f1 [\|\f4\-w\f2 file\f1\|] \f2number\f1 ...
+Print \f2number\f1 in binary, octal, decimal, and
+hexadecimal.  
+A number in a radix other than decimal should be preceded by a prefix that
+indicates its radix as
+follows:
+\f40x\f1, hexadecimal;
+\f40\f1, octal; and \f40b\f1, binary.
+.TP
+\f4buffer\f1 [\|\f4\-w\f2 file\f1\|]\0[\|\-\f2format\f1\|] \f2bufferslot\f1
+.TP
+\f4buffer\f1 [\|\f4\-w\f2 file\f1\|]\0[\|\-\f2format\f1\|]\0[\|\f4\-p\f1\|]\|\f2start_addr\f1
+Alias: \f4b\f1.
+.br
+Print the contents of a buffer in the designated format.  
+The following format designations are recognized: \f4\-b\f1,
+byte: \f4\-c\f1, character; \f4\-d\f1, decimal; \f4\-x\f1, hexadecimal;
+\f4\-o\f1, octal; and, \f4\-i\f1, inode.
+If no format is given, the previous format is used.
+The default format at the beginning of a \f4crash\f1 session is hexadecimal.
+.TP
+\f4bufhdr\f1 [\|\f4\-f\f1\|]\0[\|\f4\-w\f2 file\f1\|]\0[\|[\|\f4\-p\f1\|]\|\f2table_entry\f1\|...\|]
+Alias: \f4buf\f1.
+.br
+Print system buffer headers.
+The \f4\-f\f1 option produces different output depending on
+whether the buffer is local or remote (contains RFS data).
+.TP
+\f4callout\f1 [\|\f4\-w\f2 file\f1\|]
+Alias: \f4c\f1.
+.br
+Print the callout table.
+.TP
+\f4class\f1 [\|\f4\-w\f2 file\f1\|]\0[\|\f2table_entry\f1\|...\|]
+Print information about process scheduler classes.
+.TP
+\f4dbfree\f1  [\|\f4\-w\f2 file\f1\|]\0[\|\f2class\f1 ... \|]
+Print free streams data block headers.
+If a class is entered,
+only data block headers for the class specified is printed.
+.TP
+\f4dblock\f1 [\|\f4\-e\f1\|]\0[\|\f4\-w\f2 file\f1\|]\0[\|\f4\-c\f1 \f2class\f1\|...\|]
+.TP
+\f4dblock\f1 [\|\f4\-e\f1\|]\0[\|\f4\-w\f2 file\f1\|]\0[\|[\|\f4\-p\f1\|]\0\f2table_entry\f1\|...\|]
+Print allocated streams data block headers.
+If the class option (\f4\-c\f1) is used, only data
+block headers for the class specified is printed.
+.TP
+\f4defproc\f1 [\|\f4\-w\f2 file\f1\|]\0[\|\f4\-c\f1\|]
+.TP
+\f4defproc\f1 [\|\f4\-w\f2 file\f1\|]\0[\|\f2slot\f1\|]
+Set the value of the default process slot argument.
+The default process slot argument may be set to the current slot number (\f4\-c\f1) or
+the slot number may be specified.
+If no argument
+is entered, the value of the previously set slot number is printed.
+At the start of a \f4crash\f1 session, the process slot is set to
+the current process.
+.TP
+\f4dis\f1 [\|\f4\-w\f2 file\f1\|]\0[\|\f4\-a\f1\|]\0\f2start_addr\f1\0[\|\f2count\f1\|]
+.TP
+\f4dis\f1 [\|\f4\-w\f2 file\f1\|]\0[\|\f4\-a\f1\|]\0\f4\-c\f1\0[\|\f2count\f1\|]
+Disassemble \f2count\f1 instructions starting at \f2start_addr\f1.  
+The default count is 1.  The absolute option (\f4\-a\f1) specifies a
+non-symbolic disassembly.
+The \f4\-c\fP option can be used in place of \f2start_addr\fP to
+continue disassembly at the address at which a previous disassembly ended.
+.TP
+\f4dispq\f1 [\|\f4\-w\f2 file\f1\|]\0[\|\f2table_entry\f1\|...\|]
+Print the dispatcher (scheduler) queues.
+.TP
+\f4ds\f1 [\|\f4\-w\f2 file\f1\|] \f2virtual_address\f1 ...
+Print the data symbol whose address is closest to, but not
+greater than, the address entered.
+.TP
+\f4file\f1 [\|\f4\-e\f1\|]\0[\|\f4\-w\f2 file\f1\|]\0[\|[\|\f4\-p\f1\|]\|\f2table_entry\f1\|...\|]
+Alias: \f4f\f1.
+.br
+Print the file table.
+.TP
+\f4findaddr\f1 [\|\f4\-w\f2 file\f1\|] \f2table slot\f1
+Print the address of \f2slot\f1 in \f2table\f1.
+Only tables available to the \f4size\f1 function
+are available to \f4findaddr\f1.
+.TP
+\f4findslot\f1 [\|\f4\-w\f2 file\f1\|] \f2virtual_address\f1 ...
+Print the table, entry slot number, and offset for the
+address entered.
+Only tables available to the \f4size\f1 function are available to
+\f4findslot\f1.
+.TP
+\f4fs\f1 [\|\f4\-w\f2 file\f1\|]\0[\|[\|\f4\-p\f1\|]\|\f2table_entry\f1\|...\|]
+Print the file system information table.
+.TP
+\f4gdp\f1 [\|\f4\-e\f1\|]\0[\|\f4\-f\f1\|]\0[\|\f4\-w\f2 file\f1\|]\0[\|[\|\f4\-p\f1\|]\|\f2table_entry\f1\|...\|]
+Print the gift descriptor protocol table.
+.TP
+\f4gdt\f1 [\|\f4\-e\f1\|] [\|\f4\-w\f2 file\f1\|] [\|\f2slot\f1\|[\f2count\f1\|]\|]\|\f2
+table_entry\f1\|...\|]
+Print the global descriptor table.
+.TP
+\f4help\f1 [\|\f4\-w\f2 file\f1\|] \f2function\f1 ...
+Print a description of the named function, including syntax and aliases.
+.TP
+\f4idt\f1 [\|\f4\-e\f1\|] [\|\f4\-w\f2 file\f1\|] [\|\f2slot\f1\|[\f2count\f1\|]\|]\|\f2
+Print the interrupt descriptor table.
+.TP
+\f4inode\f1 [\|\f4\-e\f1\|]\0[\|\f4\-f\f1\|]\0[\|\f4\-w\f2 file\f1\|]\0[\|[\|\f4\-p\f1\|]\|\f2table_entry\f1\|...\|]
+Alias: \f4i\f1.
+.br
+Print the inode table, including file system switch information.
+.TP
+\f4kfp\f1 [\|\f4\-w\f2 file\f1\|] [\|\f2value\f1\|...]
+Print the kernel frame pointer (kfp) for the start of a kernel stack trace.  
+If the value argument is supplied, the \f4\kfp\f1 is set to that value.
+If no argument is entered, the current value of the kfp is printed. 
+.TP
+\f4kmastat\f1 [\|\f4\-w\f2 file\f1\|]
+Print kernel memory allocator statistics.
+.TP
+\f4lck\f1 [\|\f4\-e\f1\|]\0[\|\f4\-w\f2 file\f1\|]\0[\|[\|\f4\-p\f1\|]\|\f2table_entry\f1\|...\|]
+Alias: \f4l\f1.
+.br
+Print record locking information.  
+If the \f4\-e\f1 option is used or 
+table address arguments are given, the record lock list is printed.
+If no argument is
+entered, information on locks relative to inodes is printed.  
+.TP
+\f4ldt\f1 [\|\f4\-e\f1\|]\0[\|\f4\-w\f2 file\f1\|]\0[\|\f2process\f1\|[\|\f2slot\f1\|[\|\f2count\f1\|]\|]\|]
+Print the local descriptor table for the given process,
+for the current process if none is given.
+.TP
+\f4linkblk\f1 [\|\f4\-e\f1\|]\0[\|\f4\-w\f2 file\f1\|]\0[\|[\|\f4\-p\f1\|]\|\f2table_entry\f1\|...\|]
+Print the linkblk table.
+.TP
+\f4map\f1 [\|\f4\-w\f2 file\f1\|] \f2mapname\f1 ... 
+Print the map structure of the given mapname.
+.TP
+\f4mbfree\f1 [\|\f4\-w\f2 file\f1\|]
+Print free streams message block headers.
+.TP
+\f4mblock\f1 [\|\f4\-e\f1\|]\0[\|\f4\-w \f2file\f1]\0[\|[\|\f4\-p\f1\|]\|\f2table_entry\f1\|...\|]
+Print allocated streams message block headers.
+.TP
+\f4mode\f1 [\|\f4\-w\f2 file\f1\|]\0[\|\f2mode\f1\|]
+Set address translation of arguments to virtual (\f4v\f1) or physical (\f4p\f1) mode.
+If no
+mode argument is given, the current mode is printed.  At the start
+of a \f4crash\f1 session, the mode is virtual.
+.TP
+\f4mount\f1 [\|\f4\-e\f1\|]\0[\|\f4\-w\f2 file\f1\|]\0[\|[\|\f4\-p\f1\|]\|\f2table_entry\f1\|...\|]
+Alias: \f4m\f1, \f4vfs\f1.
+.br
+Print information about mounted file systems.
+.TP
+\f4nm\f1 [\|\f4\-w\f2 file\f1\|] \f2symbol\f1 ... 
+Print value and type for the given symbol.
+.TP
+\f4od\f1 [\|\f4\-p\f1\|]\0[\|\f4\-w\f2 file\f1\|]\0[\|\f4\-\f2format\f1\|]\0[\|\f4\-\f2mode\f1\|]\0[\|\f4\-s\f2 process\f1\|] \f2start_addr\f1 [\|\f2count\f1\|]
+Alias: \f4rd\f1.
+.br
+Print \f2count\f1 values starting at \f2start_addr\f1 in one of the following
+formats:  character (\f4\-c\f1), decimal (\f4\-d\f1), hexadecimal (\f4\-x\f1),
+octal (\f4\-o\f1), ASCII (\f4\-a\f1), or hexadecimal\/character (\f4\-h\f1),
+and one of the following modes: long (\f4\-l\f1), short (\f4\-t\f1), or byte
+(\f4\-b\f1).
+The default mode for character and ASCII formats is byte;
+the default mode for decimal, hexadecimal, and octal formats is long.
+The format \f4\-h\f1 prints both hexadecimal and character
+representations of the addresses dumped;
+no mode needs to be specified.
+When format or mode is omitted, the previous value is used.
+At the start of a
+\f4crash\f1 session, the format is hexadecimal and the mode 
+is long.
+If no count is entered, 1 is assumed.
+.TP
+\f4panic\f1 
+Print the latest system notices, warnings, and panic messages
+from the limited circular buffer kept in memory.
+.TP
+\f4page\f1 [\|\f4-e\f1\|] [\|\f4-w\f2file\f1\|] [\|[\|\f4-p\f1\|] \f2table_entry\f1 ...]
+Print information about pages.
+.TP
+\f4pcb\f1 [\|\f4\-w\f2 file\f1\|]\0[\|\f2process\f1]
+Print the process control block
+(TSS).
+If no arguments are given,
+the active
+TSS
+for the current process is printed.
+.TP
+\f4prnode\f1 [\f4\-e\f1]\0[\|\f4\-w\f2 file\f1\|]\0[\|[\|\f4\-p\f1\|] \f2table_entry\f1\|...\|]
+Print information about the private data of processes being traced.
+.TP
+\f4proc\f1 [\f4\-e\f1] [\|\f4\-f\f1\|]\0[\|\f4\-w\f2 file\f1\|]\0[\|[\|\f4\-p\f1\|] \f2table_entry\f1 ...\|\f4\0#\f2procid\f1 ...\|]
+.TP
+\f4proc\f1 [\f4\-f\f1\|]\0[\|\f4\-w\f2 file\f1\|]\0[\|\f4\-r\f1\|]
+Alias: \f4p\f1.
+.br
+Print the process table.  
+Process table information may be specified in two ways.
+First, any mixture of table entries and process \s-1ID\s+1s may be entered.  
+Each process \s-1ID\s+1 must be preceded by a \f4#\f1.
+Alternatively, process table information 
+for runnable processes may be specified with
+the runnable option (\f4\-r\f1).
+The full option (\f4-f\f1) details most of the information in the
+process table as well as the region for that process.
+.TP
+\f4ptbl\f1 [\|\f4\-e\f2\|]\0[\|\f4\-w\f2 file\f1\|]\0[\|\f4\-s\f2process\f1\|]\0\f1 [[\|\f4\-p\f1\|]  \f2addr\f1 [\|\f2count\f1\|]\0]
+Print information on page descriptor tables.
+.TP
+\f4pty\f1 [\f4\-f\f1\|]\0[\f4-e\f1\|]\0[\|\f4\-w\f2 file\f1\|]\0[\|\f4\-s\f1\|]\0[\|\f4\-h\f1\|]\0[\|\f4\-l\f1\|]
+Print the pseudo ttys presently configured.
+The \f4\-l\f1, \f4\-h\f1 and \f4\-h\f1 options give information about the STREAMS
+modules \f4ldterm\f1, \f4ptem\f1 and \f4pckt\f1, respectively. 
+.TP
+\f4qrun\f1 [\|\f4\-w\f2 file\f1\|]
+Print the list of scheduled streams queues.
+.TP
+\f4queue\f1 [\|\f4\-e\f1\|]\0[\|\f4\-w\f2 file\f1\|]\0[\|[\|\f4\-p\f1\|]\|\f2table_entry\f1\|...\|]
+Print streams queues.
+.TP
+\f4quit\f1 
+Alias: \f4q\f1.
+.br
+Terminate the \f4crash\f1 session.
+.TP
+\f4rcvd\f1 [\|\f4\-e\f1\|]\0[\|\f4\-f\f1\|]\0[\|\f4\-w\f2 file\f1\|]\0[\|[\|\f4\-p\f1\|]\|\f2table_entry\f1\|...\|]
+Print the receive descriptor table.
+.TP
+\f4rduser\f1 [\|\f4\-e\f1\|]\0[\|\f4\-f\f1\|]\0[\|\f4\-w\f2 file\f1\|]\0[\|[\|\f4\-p\f1\|]\|\f2table_entry\f1\|...\|]
+Print the receive descriptor user table.
+.TP
+\f4redirect\f1 [\|\f4\-w\f2 file\f1\|]\0[\|\f4\-c\f1\|]
+.TP
+\f4redirect\f1 [\|\f4\-w\f2 file\f1\|]\0[\|\f2newfile\f1\|]
+Used with a file name, redirects output
+of a \f4crash\f1 session to \f2newfile\f1.  If no argument
+is given, the file name to which output is being redirected
+is printed.
+Alternatively, the close option (\f4\-c\f1) closes the previously set file
+and redirects output to the standard output.
+.TP
+\f4resource\f1 [\|\f4\-e\f1\|]\0[\|\f4\-w\f2 file\f1\|]\0[\|[\|\f4\-p\f1\|]\|\f2table_entry\f1\|...\|]
+Print the advertise table.
+.TP
+\f4rtdptbl\f1 [\|\f4\-w\f2 file\f1\|]\0[\|\f2table_entry\f1\|...\|]
+Print the real-time scheduler parameter table.
+See
+\f4rt_dptbl\fP(4).
+.TP
+\f4rtproc\f1 [\|\f4\-w\f2 file\f1\|]
+Print information about processes in the real-time scheduler class.
+.TP
+\f4search\f1 [\|\f4\-p\f1\|]\0[\|\f4\-w\f2 file\f1\|]\0[\|\f4\-m\f2 mask\f1\|]\0[\|\f4\-s\f1 \f2process\f1\|] \f2pattern  start_addr  length\f1
+Print the
+long
+words in memory that match
+\f2pattern\f1,
+beginning at the \f2start_addr\f1 for
+\f2length\f1 long
+words.
+The mask is ANDed (&) with each memory word and the result
+compared against the pattern.  The mask defaults to
+\f40xffffffff\f1.
+.TP
+\f4size\f1 [\|\f4\-w\f2 file\f1\|]\0[\|\f4\-x\f1\|]\0[\|\f2structure_name\f1 ... \|]
+Print the size of the designated structure.  The 
+(\f4\-x\f1) option prints the size in hexadecimal.  If no argument is
+given, a list of the structure names for which sizes are available is printed.
+.TP
+\f4sndd\f1 [\|\f4\-e\f1\|]\0[\|\f4\-f\f1\|]\0[\|\f4\-w\f2 file\f1\|]\0[\|[\|\f4\-p\f1\|]\|\f2table_entry\f1\|...\|]
+Print the send descriptor table.
+.TP
+\f4snode\f1 [\|\f4\-e\f1\|]\0[\|\f4\-f\f1\|]\0[\|\f4\-w\f2 file\f1\|]\0[\|[\|\f4\-p\f1\|]\|\f2table_entry\f1\|...\|]
+Print information about open special files.
+.TP
+\f4srmount\f1 [\|\f4\-e\f1\|]\0[\|\f4\-w\f2 file\f1\|]\0[\|[\|\f4\-p\f1\|]\|\f2table_entry\f1\|...\|]
+Print the server mount table.
+.TP
+\f4stack\f1 [\|\f4\-w\f2 file\f1\|]\0[\|\f2process\f1\|]
+Alias: \f4s\f1.
+.br
+Dump the stack.
+If no arguments are entered, the kernel stack 
+for the current process is printed.
+The interrupt stack and the stack for the current process are not
+available on a running system.
+.TP
+\f4stat\f1 [\|\f4\-w\f2 file\f1\|]
+Print system statistics.
+.TP
+\f4stream\f1 [\|\f4\-e\f1\|]\0[\|\f4\-f\f1\|]\0[\|\f4\-w\f2 file\f1\|]\0[\|[\|\f4\-p\f1\|]\|\f2table_entry\f1\|...\|]
+Print the streams table.
+.TP
+\f4strstat\f1 [\|\f4\-w\f2 file\f1\|]
+Print streams statistics.
+.TP
+\f4trace\f1 [\|\f4\-w\f2 file\f1\|]\0[\|\f4\-r\f1\|]\0[\|\f2process\f1\|]
+Alias: \f4t\f1.
+.br
+Print stack trace.
+The kfp value is used with the \f4\-r\f1 option;
+the \f4kfp\f1 function prints or sets the kfp (kernel frame pointer) value.
+.TP
+\f4ts\f1 [\f4\-w\f2 file\f1\|] \f2virtual_address\f1 ...
+Print text symbol closest to the designated address.
+.TP
+\f4tsdptbl\f1 [\|\f4\-w\f2 file\f1\|]\0[\|\f2table_entry\f1\|...\|]
+Print the time-sharing scheduler parameter table.
+See
+\f4ts_dptbl\fP(4).
+.TP
+\f4tsproc\f1 [\|\f4\-w\f2 file\f1\|]
+Print information about processes in the time-sharing scheduler class.
+.TP
+\f4tty\f1 [\|\f4\-e\f1\|]\0[\|\f4\-f\f1\|]\0[\|\f4\-l\f1\|]\0[\|\f4\-w\f2 file\f1\|]\0[\|\f4\-t\f1\|\f2type\f1\|[\|[\|\f4\-p\f1\|]\|\f2table_entry\f1\|...\|]\0\f4|\f1\0[\|\f4\-p\f1\|]\0 \f2start addr\f1\|]
+Valid types:  \f4kd, asy, console, comports\f1.
+.br
+Print the tty table. 
+If no arguments are given, the tty table for both
+tty types is printed.
+If the \f4\-t\f1 option is used, the table for the single tty type
+specified is printed.
+If no argument follows the type
+option, all entries in the table are printed.
+A single tty entry may be specified using \f2start_addr\f1.
+The \f4\-l\fP option prints the line discipline information.
+.TP
+\f4uinode\f1 [\|\f4\-e\f1\|]\0[\|\f4\-f\f1\|]\0[\|\f4\-w\f2 file\f1\|]\0[\|[\|\f4\-p\f1\|]\|\f2table_entry\f1\|...\|]
+Alias: \f4ui\f1.
+.br
+Print the ufs inode table.
+.TP
+\f4user\f1 [\|\f4\-f\f1\|]\0[\|\f4\-w\f2 file\f1\|]\0[\|\f2process\f1\|]
+Alias: \f4u\f1.
+.br
+Print the ublock for the designated process.
+.TP
+\f4var\f1 [\|\f4\-w\f2 file\f1\|]
+Alias: \f4v\f1.
+.br
+Print the tunable system parameters.
+.TP
+\f4vfs\f1 [\|\f4\-e\f1\|]\0[\|\f4\-w\f2 file\f1\|]\0[\|[\|\f4\-p\f1\|]\|\f2table_entry\f1\|...\|]
+Alias: \f4mount\f1, \f4m\f1.
+.br
+Print information about mounted file systems.
+.TP
+\f4vfssw\f1 [\|\f4\-w\f2 file\f1\|]\0[\|[\|\f4\-p\f1\|]\|\f2table_entry\f1\|...\|]
+Print information about configured file system types.
+.TP
+\f4vnode\f1 [\|\f4\-w\f2 file\f1\|]\0[\|[\|\f4\-p\f1\|]\|\f2vnode_addr\f1\|...\|]
+Print information about vnodes.
+.TP
+\f4vtop\f1 [\|\f4\-w\f2 file\f1\|]\0[\|\f4\-s\f1 \f2process\f1\|] \f2start_addr\f1\|...
+Print the physical address translation of the virtual address \f2start_addr\f1.

@@ -1,0 +1,47 @@
+'\"macro stdmacro
+.if n .pH mb2a.getinfo @(#)getinfo	40.9 of 5/15/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} mb2a_getinfo 3tai "" "\&"
+.if \nX=1 .ds x} mb2a_getinfo 3tai ""
+.if \nX=2 .ds x} mb2a_getinfo 3tai "" "\&"
+.if \nX=3 .ds x} mb2a_getinfo "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4mb2a_getinfo\f1 \-  Gets specific asynchronous endpoint information.
+.SH SYNOPSIS
+.ft 4
+.nf
+#include <sys/types.h>
+#include <sys/mb2taiusr.h>
+int mb2a_getinfo (fd, mb2infoptr)
+int fd;
+mb2_info *mb2infoptr;
+.fi
+.SH DESCRIPTION
+This routine returns the current characteristics of an asynchronous
+mode \%Multibus II transport endpoint associated with the file descriptor.
+Note
+that actual default values are returned if the endpoint characteristics have
+been set to default values.
+.P
+Upon successful completion of the routine, a value of 0 is returned.
+A value of\p
+.br
+-1 is returned and an \f4errno\fP is set if there were errors.
+The following is a list of applicable errors for this routine.
+.TP .7i
+\f4EBADFD\f1
+the specified file descriptor does not refer to
+an asynchronous mode MB II endpoint.
+.TP .7i
+\f4EFAULT\f1
+\f4mb2infoptr\f1 points outside the allocated address
+space.
+.TP
+\f4EIO\f1
+an error occurred on the stream.
+.SH SEE ALSO
+\f4getmsg\f1(2), \f4putmsg\f1(2), \f4mb2a_openport\f1(3tai),
+\f4mb2a_getreqfrag\f1(3tai)

@@ -1,0 +1,87 @@
+'\"macro stdmacro
+.if n .pH g1a.pwconv @(#)pwconv	40.6 of 5/21/91
+.\" Copyright 1989 AT&T
+.nr X
+.if \nX=0 .ds x} pwconv 1M "" "\&"
+.if \nX=1 .ds x} pwconv 1M ""
+.if \nX=2 .ds x} pwconv 1M "" "\&"
+.if \nX=3 .ds x} pwconv "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4pwconv\f1 \- install and update \f4/etc/shadow\f1 with information from \f4/etc/passwd\f1
+.SH SYNOPSIS
+\f4pwconv\f1
+.SH DESCRIPTION
+The \f4pwconv\fP command
+creates and updates 
+\f4/etc/shadow\f1
+with information from 
+\f4/etc/passwd\f1.
+.PP
+If the
+\f4/etc/shadow\f1
+file does not exist,
+\f4pwconv\fP creates 
+\f4/etc/shadow\f1
+with information from
+\f4/etc/passwd\f1.
+The command populates 
+\f4/etc/shadow\f1
+with the user's login name, password, and password aging information.
+If 
+password aging information does not exist in 
+\f4/etc/passwd\f1
+for a given user, none is added to 
+\f4/etc/shadow\f1.
+However, the last changed information is
+always updated.
+.PP
+If the 
+\f4/etc/shadow\f1
+file does exist, the following tasks are performed:
+.IP
+Entries that are in the 
+\f4/etc/passwd\f1
+file and not in the
+\f4/etc/shadow\f1
+file are added to the \f4/etc/shadow\f1 file.
+.IP
+Entries that are in the 
+\f4/etc/shadow\f1
+file and not in the
+\f4/etc/passwd\f1
+file are removed from \f4/etc/shadow\f1.
+.IP
+Password attributes (for example, password and aging information) 
+in an
+\f4/etc/passwd\f1
+entry are moved to the corresponding entry in 
+\f4/etc/shadow.\f1
+.PP
+The \f4pwconv\fP program
+is a privileged system command that cannot be executed by ordinary users.
+.SH FILES
+\f4/etc/passwd\f1, \f4/etc/shadow\f1, \f4/etc/opasswd\f1, \f4/etc/oshadow\f1
+.SH "SEE ALSO"
+\f4passwd\fP(1), \f4passmgmt\fP(1M)
+.SH DIAGNOSTICS
+The
+\f4pwconv\f1
+command exits with one of the following values:
+.P
+.RS
+.PD 0
+.IP 0 5
+Success.
+.IP 1 5
+Permission denied.
+.IP 2 5
+Invalid command syntax.
+.IP 3 5
+Unexpected failure.  Conversion not done.
+.IP 4 5
+Unexpected failure.  Password file(s) missing.
+.IP 5 5
+Password file(s) busy.  Try again later.
+.PD
+.RE

@@ -1,0 +1,154 @@
+'\"!  tbl | mmdoc
+'\"macro stdmacro
+.if n .pH 386.dma_cb @(#)dma_cb	40.3 of 6/24/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.nr X
+.if \nX=0 .ds x} dma_cb D4X "" "DDI" "\&"
+.if \nX=1 .ds x} dma_cb D4X "" "DDI"
+.if \nX=2 .ds x} dma_cb D4X "" "\&"
+.if \nX=3 .ds x} dma_cb "" "" "\&"
+.TH \*(x}
+.IX "\f4dma_cb\fP(D4X)"
+.IX "block I/O, \f4dma_cb\fP(D4X)"
+.SH NAME
+\f4dma_cb\fP \- DMA command block structure
+.SH SYNOPSIS
+.nf
+\f4#include <sys/types.h>
+#include <sys/dma.h>\fP
+.fi
+.ad
+.SH DESCRIPTION
+The DMA command block structure is used to
+control a DMA operation.
+Each DMA operation requested by a driver
+is controlled by a command block structure
+whose fields specify the operation to occur.
+.P
+A number of fields of the DMA control block
+come in pairs: one for the requestor and
+one for the target.
+The requestor is the hardware device
+that is requesting the DMA operation,
+while the target is the target of the operation.
+The typical case is one in which the
+requestor is an I/O device and the target is memory.
+.P
+DMA command block structures should only be allocated
+via \f4dma_get_cb\fP(D3X).
+Although drivers may access the structure members listed below,
+they should not make any assumptions about the size of the
+structure or the contents of other fields in the structure.
+.SH STRUCTURE MEMBERS
+.TS
+lf4p8 2 lf4p8 2 lf4p8.
+struct dma_buf	*targbufs;	/* list of target data buffers */
+struct dma_buf	*reqrbufs;	/* list of requestor data buffers */
+uchar_t	command;	/* Read/Write/Translate/Verify */
+uchar_t	targ_type;	/* Memory/IO */
+uchar_t	reqr_type;	/* Memory/IO  */
+uchar_t	targ_step;	/* Inc/Dec/Hold  */
+uchar_t	reqr_step;	/* Inc/Dec/Hold  */
+uchar_t	trans_type;	/* Single/Demand/Block/Cascade */
+uchar_t	targ_path;	/* 8/16/32 */
+uchar_t	reqr_path;	/* 8/16/32 */
+uchar_t	cycles;	/* 1 or 2 */
+uchar_t	bufprocess;	/* Single/Chain/Auto-Init */
+char	*procparam;	/* parameter buffer for appl call */
+int	(*proc)();	/* address of application call routines */
+.TE
+.P
+The members of the \f4dma_cb\fP structure are:
+.P
+\f4targbufs\fP is a pointer to a list of DMA buffer
+structures [see \f4dma_buf\fP(D3X)] that describes
+the target of the DMA operation.
+.P
+\f4reqrbufs\fP is a pointer to a list of DMA buffer
+structures [see \f4dma_buf\fP(D3X)] that describes
+the requestor of the DMA operation.
+.P
+\f4command\fP specifies the command for the DMA operation.
+It may be one of the following:
+.IP \f4DMA_CMD_READ\fP 18n
+Specifies a DMA read from the target to the requestor.
+.IP \f4DMA_CMD_WRITE\fP 18n
+Specifies a DMA write from the requestor to the target.
+.P
+\f4targ_type\fP and \f4reqr_type\fP specify the type of the
+target and requestor, respectively.
+They each may have one of the following values:
+.IP \f4DMA_TYPE_MEM\fP 18n
+Specifies that the target (or requestor) is memory.
+.IP \f4DMA_TYPE_IO\fP 18n
+Specifies that the target (or requestor) is an I/O device.
+.P
+\f4targ_step\fP and \f4reqr_step\fP specify how the target
+and requestor addresses are to be modified after each transfer.
+They each may have one of the following values:
+.IP \f4DMA_STEP_INC\fP 18n
+Specifies that the target (or requestor) address is to be incremented
+following each data transfer.
+.IP \f4DMA_STEP_DEC\fP 18n
+Specifies that the target (or requestor) address is to be decremented
+following each data transfer
+.IP \f4DMA_STEP_HOLD\fP 18n
+Specifies that the target (or requestor) address is to remain the same
+following each data transfer.
+.P
+\f4trans_type\fP specifies the transfer type of the operation.
+It can have one of the following values:
+.IP \f4DMA_TRANS_SNGL\fP 18n
+Specifies that a single transfer is to occur.
+.IP \f4DMA_TRANS_BLCK\fP 18n
+Specifies that a block transfer is to occur.
+This is the only acceptable value for software-initiated transfers.
+.IP \f4DMA_TRANS_DMND\fP 18n
+Specifies demand transfer mode, which is a varation on block transfer
+in which the requestor may provide additional control flow on the transfer.
+.P
+\f4targ_path\fP and \f4reqr_path\fP specify the size of the data path
+for the target and requestor, respectively.
+They each may have one of the following values:
+.IP \f4DMA_PATH_8\fP 18n
+Specifies that the target (or requestor) uses an eight-bit data path.
+.IP \f4DMA_PATH_16\fP 18n
+Specifies that the target (or requestor) uses a 16-bit data path.
+.IP \f4DMA_PATH_32\fP 18n
+Specifies that the target (or requestor) uses a 32-bit data path.
+.IP \f4DMA_PATH_64\fP 18n
+Specifies that the target (or requestor) uses a 64-bit data path.
+.P
+\f4cycles\fP is an integer that specifies the
+number of cycles required for each transfer.
+Its value should be taken from the result of
+\f4dma_get_best_mode\fP(D3X).
+.P
+\f4bufprocess\fP specifies how the DMA target buffer
+structures are to be processed.
+It may have the following values:
+.IP \f4DMA_BUF_SNGL\fP 18n
+Specifies that the target consists of a single DMA Buffer.
+.IP \f4DMA_BUF_CHAIN\fP 18n
+Specifies that the target consists of a chain of DMA Buffers.
+.P
+\f4procparam\fP is the parameter to be passed to the
+subroutine specified by the \f4proc\fP field.
+.P
+\f4proc\fP specifies the address of a routine to be
+called when a DMA operation is successfully set up
+by \f4dma_swsetup\fP(D3X).
+The value in the \f4procparam\fP field is
+passed as an argument to this routine.
+This field may be set to \f4NULL\fP
+if no procedure is to be called.
+.SH SEE ALSO
+.na
+\f4dma_free_cb\fP(D3X),
+\f4dma_get_best_mode\fP(D3X),
+\f4dma_get_cb\fP(D3X),
+\f4dma_prog\fP(D3X),
+\f4dma_swsetup\fP(D3X),
+\f4dma_swstart\fP(D3X),
+\f4dma_buf\fP(D4X)
+.ad

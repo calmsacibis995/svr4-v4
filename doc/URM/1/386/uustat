@@ -1,0 +1,263 @@
+'\"macro stdmacro
+.if n .pH g1.uustat @(#)uustat	40.4 of 1/3/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+'\"macro stdmacro
+.if n .pH g1c.uustat @(#)uustat	40.6 of 6/5/89
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.nr X
+.if \nX=0 .ds x} uustat 1C "Basic Networking Utilities" "\&"
+.if \nX=1 .ds x} uustat 1C "Basic Networking Utilities"
+.if \nX=2 .ds x} uustat 1C "" "\&"
+.if \nX=3 .ds x} uustat "" "" "\&"
+.nr X
+.nr X
+.TH \*(x} "" "386 Computer Only"
+.SH NAME
+\f4uustat\f1 \- uucp status inquiry and job control
+.SH SYNOPSIS
+\f4uustat\f1
+[\f4\-q\f1] or [\f4\-m\f1] or [\f4\-k\f2jobid\f1 [\f4\-n\f1]] or [\f4\-r\f2jobid\f1 [\f4\-n\f1]] or [\f4\-p\f1]
+.br
+\f4uustat\f1
+[\f4\-a\f1] [\f4\-s\f2system\f1 [\f4\-j\f1]] [\f4\-u\f2user\f1] [\f4\-S\f2qric\f1]
+.br
+\f4uustat\f1
+\f4\-t\f2system\f1 [\f4\-d\f2number\f1] [\f4\-c\f1]
+.SH DESCRIPTION
+\f4uustat\fP
+functions in the following three areas:
+displays the general status of, or cancels, previously specified
+\f4uucp\fP
+commands; provides remote system performance information, in terms
+of average transfer rates or average queue times;
+provides general remote system-specific and user-specific status of
+\f4uucp\fP
+connections to other systems.
+.PP
+Here are the options that obtain general status of, or
+cancel, previously specified \f4uucp\fP commands; \f4uustat\fP allows
+only one of these options to appear on each \f4uustat\fP command line
+execution:
+.TP 10
+\f4\-a\^\f1
+List all jobs in queue.
+.TP
+\f4\-j\^\f1
+List the total number of jobs displayed.  The \f4\-j\f1 option must be used
+in conjunction with the \f4\-a\f1 or the \f4\-s\f1 option.
+.TP
+\f4\-k\f2jobid\^\f1
+Kill the
+\f4uucp\fP
+request whose job identification is
+.IR jobid .
+The killed
+\f4uucp\fP
+request must belong to the person
+issuing the
+\f4uustat\fP
+command
+unless one is the super-user or uucp administrator.
+If the job is killed by the super-user or uucp administrator, electronic
+mail is sent to the user.
+.TP
+\f4\-m\^\f1
+Report the status of accessibility of all machines.
+.TP
+\f4\-n\f1
+Suppress all standard out output, but not standard error.  The \f4\-n\f1
+option is used in conjunction with the \f4\-k\f1 and \f4\-r\f1 options.
+.TP
+\f4\-p\^\f1
+Execute the command \f(CWps \-flp\f1 for all the process-ids that are in
+the lock files.
+.TP
+\f4\-q\^\f1
+List the jobs queued for each machine.
+If a status file exists for the machine, its date, time and
+status information are reported.
+In addition, if a number appears in parentheses next to the number of \f4C\f1 or \f4X\f1
+files, it is the age in days of the oldest \f4C.\f1/\f4X.\f1 file for that system.
+The \f5Retry\f1 field represents the number of hours until the next possible call.
+The \f5Count\f1 is the number of failure attempts.
+NOTE: for systems with a moderate number of outstanding jobs, this
+could take 30 seconds or more of real-time to execute.
+Here is an example of the output produced by the
+\f4\-q\f1
+option:
+.nf
+.IP "" 12
+.ta .75i 1.15i 2.0i
+.ft 5
+eagle	3C	04/07-11:07   NO DEVICES AVAILABLE
+mh3bs3	2C	07/07-10:42   SUCCESSFUL
+.ft 1
+.fi
+.IP "" 10
+The above output tells how many command files are waiting for each system.
+Each command file may have zero or more files to be sent (zero means to call
+the system and see if work is to be done).
+The date and time refer to the previous interaction
+with the system followed by the status of the interaction.
+.TP
+\f4\-r\f2jobid\^\f1
+Rejuvenate
+.IR jobid\^ .
+The files associated with
+.I jobid\^
+are touched so that 
+their modification time is set to the current time.
+This prevents the cleanup daemon
+from deleting the job until the jobs' modification
+time reaches the limit imposed by the daemon.
+.PP
+Here are the options that provide remote system performance
+information, in terms of average transfer rates or average queue times;
+the \f4\-c\f1 and \f4\-d\f1 options can only be used in conjunction with
+the \f4\-t\f1 option:
+.PP
+.TP 10
+\f4\-t\f2system\^\f1
+Report the average transfer rate or average queue time for the past
+60 minutes for the remote
+.IR system .
+The following parameters can only be used with this option:
+.TP
+\f4\-d\f2number\f1
+.I number
+is specified in minutes.
+Used to override the 60 minute default used for calculations.
+These calculations are based on information contained in the
+optional performance log and therefore may not be available.
+Calculations can only be made from the time that the performance 
+log was last cleaned up.
+.TP
+\f4\-c\f1
+Average queue time is calculated when the \f4\-c\f1 parameter is specified
+and average transfer rate when \f4\-c\f1 is not specified.
+For example, the command
+.IP "" 12
+\f4uustat \-teagle \-d50 \-c\f1
+.IP "" 10
+produces output in the following format:
+.IP "" 12
+.ft 5
+.ps -1
+average queue time to eagle for last 50 minutes: 5 seconds
+.ps
+.ft 1
+.IP "" 10
+The same command without the \f4\-c\f1 parameter
+produces output in the following format:
+.IP "" 12
+.ft 5
+.ps -1
+average transfer rate with eagle for last 50 minutes: 2000.88 bytes/sec
+.ps
+.ft 1
+.PP
+Here are the options that provide general remote system-specific and
+user-specific status of
+\f4uucp\fP
+connections to other systems.  Either or both of the following options
+can be specified with
+.IR uustat.
+The \f4\-j\f1 option can be used in conjunction with the \f4\-s\f1
+option to list the total number of jobs displayed:
+.PP
+.TP 10
+\f4\-s\f2system\^\f1
+Report the status of all
+\f4uucp\fP
+requests for remote system \f2system.\f1
+.TP
+\f4\-u\f2user\^\f1
+Report the status of all
+\f4uucp\fP
+requests issued by
+.IR user .
+.PP
+Output for both the
+\f4\-s\f1
+and
+\f4\-u\f1
+options has the following format:
+.PP
+.ft 5
+.nf
+eagleN1bd7  4/07-11:07  S  eagle  dan  522    /home/dan/A 
+eagleC1bd8  4/07-11:07  S  eagle  dan   59    D.3b2al2ce4924
+            4/07-11:07  S  eagle  dan  rmail  mike
+.fi
+.ft 1
+.PP
+With the above two options,
+the first field
+is the
+.I jobid
+of the job.
+This is followed by the date/time.
+The next field is an \f5S\f1 if the job is sending a file
+or an \f5R\f1 if the job is requesting a file.
+The next field is the machine where the file is to be transferred.
+This is followed by the user-id of the user who queued the job.
+The next field contains the size of the file,
+or in the case of a remote execution
+(\f4rmail\fP is the command used for remote mail),
+the name of the command.
+When the size appears in this field,
+the file name is also given.
+This can either be the name given by the user or an
+internal name (e.g., \f5D.3b2alce4924\f1)
+that is created for data files associated with remote executions
+(\f5rmail\f1
+in this example).
+.TP 10
+\f4\-S\f2qric\^\f1
+Report the job state: \f5q\f1 for queued jobs, \f5r\f1 for running jobs, \f5i\f1 for
+interrupted jobs, and \f5c\f1 for completed jobs.
+.IP ""
+A job is queued if the transfer has not started.
+A job is running when the transfer has begun.  A job is interrupted
+if the transfer began but was terminated before the file was completely 
+transferred.
+A completed job, of course, is a job that successfully transferred.
+The completed state information is maintained in the accounting log, 
+which is optional and therefore may be unavailable.
+The parameters can be used in any combination, but at least one parameter
+must be specified.
+The \f4\-S\f1 option can also be used with \f4\-s\f1 and \f4\-u\f1 options.
+The output for this option is exactly like the output for \f4\-s\f1 and
+\f4\-u\f1 except that the job states are appended as the last output word.
+Output for a completed job has the following format:
+.IP "" 12
+.ft 5
+eagleC1bd3 completed
+.ft 1
+.PP
+When no options are given,
+\f4uustat\fP
+outputs the status of all
+\f4uucp\fP
+requests issued by the current user.
+.SH FILES
+.nf
+\f4/var/spool/uucp/*           \f1spool directories
+\f4/var/uucp/.Admin/account    \f1accounting log
+\f4/var/uucp/.Admin/perflog    \f1performance log
+.fi
+.SH SEE ALSO
+\f4uucp\fP(1C).
+.SH DIAGNOSTICS
+The \f4\-t\f1 option produces no message when the data needed for the
+calculations is not being recorded.
+.SH NOTES
+After the user has issued the \f4uucp\f1 request, if the file to be transferred
+is moved or deleted or was not copied to the spool directory with the
+\f4\-C\f1 option when the \f4uucp\f1 request was made ,\f4uustat\f1 reports a file
+size of \-99999.
+This job will eventually fail because the file(s) to be transferred can
+not be found.
+.\"	@(#)uustat.1c	?.?
+.Ee

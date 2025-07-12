@@ -1,0 +1,82 @@
+'\"!  tbl | mmdoc
+'\"macro stdmacro
+.if n .pH gen.module_info @(#)module_info	40.4 of 6/24/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.nr X
+.if \nX=0 .ds x} module_info D4DK "STREAMS" "DDI/DKI" "\&"
+.if \nX=1 .ds x} module_info D4DK "STREAMS" "DDI/DKI"
+.if \nX=2 .ds x} module_info D4DK "" "\&"
+.if \nX=3 .ds x} module_info "" "" "\&"
+.TH \*(x}
+.IX "\f4module_info\fP(D4DK)"
+.SH NAME
+\f4module_info\fP \- STREAMS driver and module information structure
+.SH SYNOPSIS
+.nf
+\f4#include <sys/types.h>
+#include <sys/conf.h>
+#include <sys/stream.h>\fP
+.ad
+.fi
+.SH DESCRIPTION
+When a module or driver is declared, several identification
+and limit values can be set.
+These values are stored in the
+\f4module_info\fP structure.
+These values are used to initialize
+the module's or driver's queues when they are created.
+.P
+After the initial declaration,
+the \f4module_info\fP structure is intended to be read-only.
+However, the flow control limits (\f4mi_hiwat\fP and \f4mi_lowat\fP)
+and the packet size limits (\f4mi_minpsz\fP and \f4mi_maxpsz\fP) are
+copied to the \f4queue\fP(D4DK) structure, where they may be modified.
+.SH STRUCTURE MEMBERS
+.TS
+lf4p8 2 lf4p8 2 lf4p8.
+ushort_t	mi_idnum;	/* module ID number */
+char	*mi_idname;	/* module name */
+long	mi_minpsz;	/* minimum packet size */
+long	mi_maxpsz;	/* maximum packet size */
+ulong_t	mi_hiwat;	/* high water mark */
+ulong_t	mi_lowat;	/* low water mark */
+.TE
+.P
+The \f4mi_idnum\fP field is a unique identifier for the driver or
+module that distinguishes the driver or module from the other
+drivers and modules in the system.
+.P
+The \f4mi_idname\fP field points to the driver or module name.
+The constant \f4FMNAMESZ\fP limits the length of the name, not including
+the terminating \f4NULL\fP.
+It is currently set to eight characters.
+.P
+The \f4mi_minpsz\fP field is the default minimum packet size for
+the driver or module queues.
+This is an advisory limit specifying
+the smallest message that can be accepted by the driver or module.
+.P
+The \f4mi_maxpsz\fP field is the default maximum packet size for
+the driver or module queues.
+This is an advisory limit specifying
+the largest message that can be accepted by the driver or module.
+.P
+The \f4mi_hiwat\fP field is the default high water mark for the
+driver or module queues.
+This specifies the number of bytes of
+data contained in messages on the queue such that the queue is
+considered full and hence flow-controlled.
+.P
+The \f4mi_lowat\fP field is the default low water mark for the
+driver or module queues.
+This specifies the number of bytes of
+data contained in messages on the queue such that the queue is
+no longer flow-controlled.
+.SH NOTES
+There may be one \f4module_info\fP structure per read and write queue,
+or the driver or module may use the same \fPmodule_info\fP structure
+for both the read and write queues.
+.SH SEE ALSO
+.na
+\f4queue\fP(D4DK)
+.ad

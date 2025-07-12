@@ -1,0 +1,175 @@
+'\"macro stdmacro
+.if n .pH g1a.ttyadm @(#)ttyadm	40.7.1.2 of 1/3/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.\".if \nX=0 .ds x} ttyadm 1M "Networking Services Architecture" "\&"
+.\".if \nX=1 .ds x} ttyadm 1M "Networking Services Architecture"
+.if \nX=0 .ds x} ttyadm 1M "Essential Utilities" "\&"
+.if \nX=1 .ds x} ttyadm 1M "Essential Utilities"
+.if \nX=2 .ds x} ttyadm 1M "" "\&"
+.if \nX=3 .ds x} ttyadm "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4ttyadm\f1 \- format and output port monitor-specific information
+.SH SYNOPSIS
+\f4/usr/sbin/ttyadm\fP [ \f4\-b\fP ] [ \f4\-c\fP ] [ \f4\-r \f2count\f1 ] [ \f4\-h\fP ] [ \f4\-i \f2msg\f1 ] [\f4\-m \f2modules\f1 ]
+.br
+                  \f4\-p \f2prompt\f1 ] [ \f4\-t \f2timeout\f1 ] \f4\-d\fP \f2device\fP \f4\-l\fP \f2ttylabel\fP \f4\-s\fP \f2service\fP
+.sp .5
+\f4/usr/sbin/ttyadm \-V\fP
+.sp .5
+.\"\f2options\fP may be any combination of:
+.\".sp .5
+.\".in +.5i
+.\".nf
+.\"	\f4\-b\fP [ \f4\-r\fP \f2count\f4 ]
+.\"	\f4\-c\fP
+.\"	\f4\-h\fP
+.\"	\f4\-i\fP \f2msg\fP
+.\"	\f4\-m\fP \f2modules\fP
+.\"	\f4\-p\fP \f2prompt\fP
+.\"	\f4\-t\fP \f2timeout\fP
+.\".fi
+.\".in -.5i
+.\".sp .5
+.SH DESCRIPTION
+The \f4ttyadm\f1 command is an administrative command that formats
+\f4ttymon\f1-specific information and writes it to the standard
+output.
+The Service Access Facility (SAF) requires
+each port monitor to provide such a
+command.
+Note that the port monitor administrative file is updated by the Service Access
+Controller's administrative commands,
+\f4sacadm\fP and \f4pmadm\fP.
+\f4ttyadm\fP provides a means of presenting formatted
+port monitor-specific (i.e., \f4ttymon\f1-specific) data to these commands.
+.P
+.sp .5
+.TP 14
+\f4\-b\fP
+Sets the ``bidirectional port'' flag.
+When this flag is set, the line can be used in both directions.
+\f4ttymon\fP will allow users to connect to the service associated with the
+port, but if the port is free, \f4uucico\fP, \f4cu\fP, or \f4ct\fP
+can use it for dialing out.
+.TP
+\f4\-c\fP
+Sets the connect-on-carrier flag for the port.
+If the \f4\-c\fP flag is set, \f4ttymon\fP will invoke the port's associated
+service immediately when a connect indication is received (i.e., no
+prompt is printed and no baud-rate searching is done).
+.TP
+\f4\-d\fP \f2device\fP
+\f2device\f1 is the full pathname of the device file for the TTY port.
+.TP
+\f4\-h\fP
+Sets the hangup flag for the port.
+If the \f4\-h\fP flag is not set, \f4ttymon\fP will force a hangup on the
+line by setting the speed to zero before setting the speed to the default
+or specified value.
+.TP
+\f4\-i\fP \f2message\fP
+Specifies the inactive (disabled) response message.
+This message will be sent to the TTY port if the port is disabled or the
+\f4ttymon\fP monitoring the port is disabled.
+.TP
+\f4\-l\fP \f2ttylabel\fP
+Specifies which \f2ttylabel\fP in the \f4/etc/ttydefs\fP file to use
+as the starting point when searching for the proper baud rate.
+.TP
+\f4\-m\fP \f2modules\fP
+Specifies a list of pushable \s-1STREAMS\s+1 modules.
+The modules will be pushed, in the order in which they are specified, before the
+service is invoked.
+\f2modules\fP must be a comma-separated list of modules, with no white
+space included.
+Any modules currently on the stream will be popped before these 
+modules are pushed.
+.TP
+\f4\-r \f2count\fP
+.\"The \f4\-r\f1 option is valid only when used in conjunction with the
+.\"\f4\-b\f1 option.
+When the \f4\-r\f1 option is invoked, \f4ttymon\f1 will wait until it receives
+data from the port before it displays a prompt.
+If \f2count\fP is equal to zero, \f4ttymon\fP will wait until it
+receives any character.
+If \f2count\fP is greater than zero, \f4ttymon\fP will wait until
+\f2count\fP newlines have been received.
+.TP
+\f4\-p\fP \f2prompt\fP
+Specifies the prompt message, e.g., ``\f4login:\fP.''
+.\"If this option is not given, then \f4ttyadm\fP uses the default value
+.\"``\f4login:\fP''for \f2prompt\fP.
+.\".sp .5
+.\"\f4ttyadm\fP also allows the explicit specification of a null
+.\"prompt.
+.\"To specify a null prompt,
+.\"the \f4\-p\fP option is given with a null-string argument (e.g., \f4''\fP).
+.TP
+\f4\-s\fP \f2service\fP
+\f2service\f1 is
+the full pathname of the service to be invoked when a connection request
+is received.
+If arguments are required, the command and its arguments must
+be enclosed in double quotes.
+.TP
+\f4\-t\fP \f2timeout\fP
+Specifies that \f4ttymon\fP should close a port if the open on
+the port succeeds and no input data is received in 
+\f2timeout\fP seconds.
+.TP
+\f4\-V\fP
+Displays the version number of the current \f4/usr/lib/saf/ttymon\fP command. 
+.SH OUTPUT
+If successful, \f4ttyadm\f1 will generate the requested information,
+write it on
+the standard output, and exit with a status of \f40\f1.
+If \f4ttyadm\f1 is invoked with an
+invalid number of arguments or invalid arguments,
+.\"or the \f4\-r\fP option is specified without the \f4\-b\fP option,
+or if an incomplete option is specified, an error message will be
+written to the standard error and \f4ttymon\fP will exit
+with a non-zero status.
+.\".SH EXAMPLES
+.\"The first example shows how \f4ttyadm\fP can be used to
+.\"add a TTY port to the system.
+.\"\f4/dev/term/tty11\fP is the TTY port to be added.
+.\"It invokes \f4login\fP as its service
+.\"when a connection request is made.
+.\"It is monitored by the \f4ttymon\fP invocation used for
+.\"dialup lines (\f(CWDIALUP\fP).
+.\"\f4root\fP is its identity.
+.\"It is identified by the system as \f(CWTTY11\fP.
+.\"The command adds the TTY to the system by adding a record
+.\"to \f4/etc/saf/DIALUP/_pmtab\fP:
+.\".P
+.\".ft B
+.\"pmadm -a -p \s-1DIALUP\s+1 -s \s-1TTY\s+111 -i root -m \e
+.\".br
+.\"	\(gattyadm -d /dev/term/tty11 -s /bin/login\(ga \e
+.\".br
+.\"	-v \(gattyadm -V\(ga
+.\".ft P
+.\".P
+.\"The next example shows how \f4ttyadm\fP can be used to
+.\"The example shows how \f4ttyadm\fP can be used to
+.\"add an instance of \f4ttymon\fP to the system.
+.\"In this case we want to add an invocation of \f4ttymon\fP to the system that
+.\"will be responsible for dialup lines.
+.\"\s-1DIALUP\s+1 is 
+.\"the unique port-monitor tag for this invocation of \f4ttymon\f1.
+.\"\f4ttymon\f1 is the port-monitor type.
+.\".P
+.\".ft B
+.\"sacadm -a -p \s-1DIALUP\s+1 -t ttymon -c /usr/lib/saf/ttymon -v \(gattyadm -V\(ga
+.\".ft P
+.SH FILES
+\f4/etc/ttydefs\f1
+.SH SEE ALSO
+\f4pmadm\fP(1M),
+\f4sacadm\fP(1M),
+\f4ttymon\fP(1M).
+.br
+\f2System Administrator's Guide\f1, ``The Port Monitor \f4ttymon\fP.''

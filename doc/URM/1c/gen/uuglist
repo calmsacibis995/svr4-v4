@@ -1,0 +1,39 @@
+'\"macro stdmacro
+.if n .pH g1c.uuglist @(#)uuglist	40.5 of 5/29/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.if \nX=0 .ds x} uuglist 1C "Basic Networking Utilities" "\&"
+.if \nX=1 .ds x} uuglist 1C "Basic Networking Utilities"
+.if \nX=2 .ds x} uuglist 1C "" "\&"
+.if \nX=3 .ds x} uuglist "" "" "\&"
+.nr X
+.TH \*(x}
+.SH NAME
+\f4uuglist\fP \- list service grades available on this \s-1UNIX\s+1 system
+.SH SYNOPSIS
+\f4uuglist\fP [ \f4\-u\fP ] [ \f4-x\fP \f2debug_level\fP ]
+.SH DESCRIPTION
+\f4uuglist\fP
+prints the list of service grades that are available
+on the system to use with the \f4\-g\fP option of
+\f4uucp\fP(1C) and
+\f4uux\fP(1C).
+The following options are available:
+.TP 16n
+\f4\-u\fP
+List the names of the service grades that the user is allowed
+to use with the \-g option of 
+the \f4uucp\fP and \f4uux\fP commands.
+.TP
+\f4-x\fP \f2debug_level\fP
+Produce debugging output.
+\f4debug_level\fP is a single digit between 0 and 9; higher numbers give more
+detailed debugging information.
+.SH FILES
+.ta1.5i
+.nf
+\f4/usr/lib/uucp/Grades\fP   list of service grades
+.fi
+.SH SEE ALSO
+\f4uucp\fP(1C),
+\f4uux\fP(1C)

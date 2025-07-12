@@ -1,0 +1,105 @@
+.if n .pH rn4.copyright @(#)copyright	40.14
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.nr NF 1
+.tr~
+~~
+.sp 1P
+.po 5P
+.ps 8
+.vs 10
+.fp 3 HB
+.fp 1 H
+.nf
+.ft 3
+Copyright \(co 1991 UNIX System Laboratories, Inc.
+Copyright \(co 1990, 1989, 1988, 1987, 1986, 1985, 1984 AT&T
+All Rights Reserved
+Printed in USA
+.ft 1
+.fi
+.sp
+No part of this publication may be reproduced or transmitted in
+any form
+or by any means\(emgraphic, electronic, electrical, mechanical, or
+chemical, including photocopying, recording in any medium, taping,
+by any computer or information storage and retrieval systems, etc.,
+without prior permissions in writing from UNIX System
+Laboratories, Inc.
+(USL).
+.sp
+.ft 3
+IMPORTANT NOTE TO USERS
+.ft 1
+.sp .5
+While every effort has been made to ensure the accuracy and
+completeness of all
+information in this document, USL assumes no liability to any
+party for any loss or
+damage caused by errors or omissions or by statements of any kind
+in this
+document, its updates, supplements, or special editions, whether
+such errors,
+omissions, or statements result from negligence, accident, or any
+other cause.  USL further assumes no liability arising out of the
+application or use of any product or system described herein; nor any
+liability for incidental or consequential damages arising from the
+use of this
+document.  \f3USL disclaims all warranties regarding the information
+contained herein, whether expressed, implied or statutory, including
+implied warranties of merchantability or fitness for a particular
+purpose\f1.
+.P
+USL makes no representation that the interconnection of products
+in the
+manner described herein will not infringe on existing or future
+patent rights, nor do the descriptions contained herein imply the
+granting of any license
+to make, use or sell equipment constructed in accordance with this
+description.
+.P
+USL reserves the right to make changes
+to any products herein
+without further notice.
+.sp
+.ft 3
+TRADEMARKS
+.ft 1
+.nf
+.sp .5
+.nf
+.\"Adaptec is a registered trademark of , Inc.
+.\"Archive is a registered trademark of , Inc.
+.\"ATI VGA Wonder is a trademark of , Inc.
+AT&T VDC 600 is a trademark of AT&T, Inc.
+AutoCAD is a registered trademark of AutoDESK, Inc.
+.\"BSD is a registered trademark of the University of California, Berkeley, CA.
+Dell VGA is a trademark of Dell Computer Corporation, Inc.
+Everex is a trademark of Everex Systems, Inc.
+.\"Genoa is a registered trademark of , Inc.
+386 is a registered trademark of Intel Corporation, Inc.
+MS-DOS is a registered trademark of Microsoft Corporation, Inc.
+NFS is a registered trademark of Sun Microsystems, Inc.
+.\"Orchid Pro Designer VGA is a trademark of , Inc.
+.\"Paradise is a registered trademark of , Inc.
+.\"PC586 is a registered trademark of , Inc.
+PostScript is a registered trademark of Adobe Systems, Inc.
+.\"Sigma is a registered trademark of , Inc.
+.\"STB VGA Extra/EM 16 is a trademark of , Inc.
+SunOS is a trademark of Sun Microsystems, Inc.
+.\"Techmar is a registered trademark of , Inc.
+.\"Video7 Fastwrite VGA is a registered trademark of , Inc.
+.\"Video7 Vram VGA is a registered trademark of , Inc.
+UNIX is a registered trademark of UNIX System Laboratories, Inc. 
+.\"Wangtek is a registered trademark of , Inc.
+.\"XENIX is a registered trademark of , Inc.
+Framemaker is a registered trademark of Frame Technology Corporation.
+ACCELL and UNIFY are registered trademarks of Unify Corporation.
+SQL is a trademark of International Business Machines Corporation.
+20/20 is a registered Canadian trademark of MKS Products, Inc.
+Informix is a registered trademark of Informix software, Inc.
+Uniplex II Plus is a trademark of Uniplex Limited.
+C-ISAM is a trademark of Relational Database Systems, Inc.
+COBOL/2 and VS COBOL are trademarks of Microfocus Ltd.
+SYBASE is a registered trademark of Sybase, Inc.
+Microsoft is a registered trademark of Microsoft Corporation.
+.fi

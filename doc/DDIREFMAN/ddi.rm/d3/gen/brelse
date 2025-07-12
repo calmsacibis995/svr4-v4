@@ -1,0 +1,50 @@
+'\"macro stdmacro
+.if n .pH gen.brelse @(#)brelse	40.2 of 1/7/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.nr X
+.if \nX=0 .ds x} brelse D3DK "" "DDI/DKI" "\&"
+.if \nX=1 .ds x} brelse D3DK "" "DDI/DKI"
+.if \nX=2 .ds x} brelse D3DK "" "\&"
+.if \nX=3 .ds x} brelse "" "" "\&"
+.TH \*(x}
+.IX "\f4brelse\fP(D3DK)"
+.SH NAME
+\f4brelse\fP \- return a buffer to the system's free list
+.SH SYNOPSIS
+.nf
+.na
+\f4#include <sys/types.h>
+#include <sys/buf.h>
+.sp 0.5
+void brelse(struct buf *\f2bp\fP);\f1
+.ad
+.fi
+.SH ARGUMENTS
+.RS 0n 10
+.IP "\f2bp\fP" 10n
+Pointer to the buffer header.
+.RE
+.SH DESCRIPTION
+The \f4brelse\fP function returns the buffer specified by \f2bp\fP
+to the system's buffer free list and wakes up any sleeping
+processes that are waiting either for this specific buffer to become free,
+or for any buffer to become available on the free list.
+The buffer specified by \f2bp\fP must have been previously allocated
+by a call to \f4geteblk\fP(D3DK) or \f4ngeteblk\fP(D3DK).
+\f4brelse\fP may not be called to release a buffer which has been allocated
+by any other means.
+.SH "RETURN VALUE"
+None.
+.SH LEVEL
+Base or Interrupt.
+.SH NOTES
+Does not sleep.
+.SH SEE ALSO
+.na
+\f4clrbuf\fP(D3DK),
+\f4biodone\fP(D3DK),
+\f4biowait\fP(D3DK),
+\f4geteblk\fP(D3DK),
+\f4ngeteblk\fP(D3DK),
+\f4buf\fP(D4DK)
+.ad

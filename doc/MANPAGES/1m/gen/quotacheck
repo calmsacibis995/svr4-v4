@@ -1,0 +1,77 @@
+'\"macro stdmacro
+.if n .pH g1a.quotacheck @(#)quotacheck	40.10 of 4/16/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} quotacheck 1M "UFS" "\&"
+.if \nX=1 .ds x} quotacheck 1M "UFS"
+.if \nX=2 .ds x} quotacheck 1M "" "\&"
+.if \nX=3 .ds x} quotacheck "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4quotacheck\f1 \- file system quota consistency checker
+.SH SYNOPSIS
+\f4quotacheck\f1
+[\f4\-v\f1]
+[\f4\-p\f1]
+\f2filesystem\f1 .\ .\ .
+.br
+\f4quotacheck\f1
+[\f4\-apv\f1]
+.SH DESCRIPTION
+.LP
+\f4quotacheck\f1
+examines each file system, builds a table of current
+disk usage, and compares this table against that stored
+in the disk quota file for the file system.
+If any inconsistencies are detected, both the quota file
+and the current system copy of the incorrect quotas are
+updated (the latter only occurs if an active file system
+is checked).
+.LP
+\f4quotacheck\f1
+expects each file system to be checked to have a quota
+file named
+\f4quotas\fP
+in the root directory.
+If none is present,
+\f4quotacheck\f1
+will ignore the file system.
+.LP
+\f4quotacheck\f1
+accesses the character special device in calculating the actual disk
+usage for each user.
+Thus, the file systems checked should be quiescent while
+\f4quotacheck\f1
+is running.
+.P
+The options are:
+.TP
+\f4\-v\f1
+Indicate the calculated disk quotas
+for each user on a particular file system.
+\f4quotacheck\f1
+normally reports only those quotas modified.
+.TP
+\f4\-a\f1
+Check the file systems indicated in
+\f4/etc/mnttab\f1
+to be read-write with disk quotas.
+Only those file systems that have "rq"
+in the \f4mntopts\fP field of the \f4/etc/vfstab\fP
+file are checked.
+.TP
+\f4\-p\f1
+Run parallel passes on the required file systems.
+.SH FILES
+.PD 0
+.TP 20
+\f4/etc/mnttab\f1
+mounted file systems
+.br
+.TP 20
+\f4/etc/vfstab\f1
+list of default parameters for each file system
+.PD
+.SH "SEE ALSO"
+\f4quotaon\fP(1M)

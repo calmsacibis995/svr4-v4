@@ -1,0 +1,228 @@
+'\"macro stdmacro
+.if n .pH g1a.ufsdump @(#)ufsdump	40.7 of 6/12/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+'\"macro stdmacro
+.if n .pH g1a.ufsdump @(#)ufsdump	40.7 of 8/1/89
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.if \nX=0 .ds x} ufsdump 1M "UFS" "\&"
+.if \nX=1 .ds x} ufsdump 1M "UFS"
+.if \nX=2 .ds x} ufsdump 1M "" "\&"
+.if \nX=3 .ds x} ufsdump "" "" "\&"
+.nr X
+.TH \*(x} "" "386 Computer Only"
+.SH NAME
+\f4ufsdump\f1 \- incremental file system dump
+.SH SYNOPSIS
+\f4/usr/sbin/ufsdump\f1
+[\f2options\f1]
+.I filesystem
+.SH DESCRIPTION
+.LP
+\f4ufsdump\f1
+backs up all files in
+.IR filesystem ,
+where \f2filesystem\fP represents a special device,
+or files changed after a certain date,
+to magnetic tape;
+.I options
+is a string that specifies
+\f4ufsdump\f1
+options, as shown below.
+.LP
+If no
+.I options
+are given, the default is
+\f49u\f1.
+.LP
+The options are:
+.TP .75i
+\f4 0\-9\f1
+The \(lqdump level.\(rq
+All files in the
+.I filesystem
+that have been modified since the last
+\f4ufsdump\f1
+at a lower dump level are copied to the volume.
+For instance,
+if you did a 
+\(lqlevel 
+\f42\f1\(rq
+dump on Monday,
+followed by a 
+\(lqlevel 
+\f44\f1\(rq
+dump on Tuesday,
+a subsequent
+\(lqlevel 
+\f43\f1\(rq
+dump on Wednesday would contain
+all files modified or added
+since the \(lqlevel 
+\f42\f1\(rq
+(Monday) backup.
+A \(lqlevel 
+\f40\f1\(rq
+dump copies the entire filesystem to the dump volume.
+.TP
+\f4\-b\f2 factor\f1
+Blocking factor.
+Specify the blocking factor for tape writes.
+The default is 20 blocks per write.
+Note:
+the blocking factor is
+specified in terms of 512 bytes blocks,
+for compatibility with
+\f4tar\f1.
+The default blocking factor for tapes of
+density 6250\s-1BPI\s0 and greater is 64.
+The default blocking factor for cartridge tapes
+\f1(\f4\-c\f1
+option specified) is 126.
+The highest blocking
+factor available with most tape drives is 126.
+.TP
+\f4c\f1
+Cartridge.
+Use a cartridge instead of the standard
+half-inch reel.
+This sets the density to 1000\s-1BPI\s0
+and the blocking factor to 126.
+The length is set to 425 feet.
+This option is incompatible with the
+\f4\-d\f1
+option, unless you specify a density of
+1000\s-1BPI\s0 with that option.
+.TP
+\f4\-d\f2 bpi\f1
+Tape density.
+The density of the tape, expressed in
+.SM BPI\s0,
+is taken from
+.IR bpi .
+This is used to keep a running tab on
+the amount of tape used per reel.
+The default density is 1600 except for
+cartridge tape.
+Unless a higher density is specified explicitly,
+\f4ufsdump\f1
+uses its default density \(em even if the tape drive
+is capable of higher-density operation (for instance,
+6250\s-1BPI\s0).
+Note:
+the density specified should correspond to the
+density of the tape device being used, or
+\f4ufsdump\f1
+will not be able to handle end-of-tape properly. 
+.TP
+\f4\-f\f2 dump-file\f1
+Dump file. 
+Use
+.I dump-file
+as the file to dump to, instead of
+\f4/dev/rmt8.\f1
+If
+.I dump-file
+is specified as
+\f1\f4\-\f1,
+dump to the standard output.
+.TP
+\f4\-n\f1
+Notify all operators in the operator group
+that \f4ufsdump\f1
+requires attention by sending messages to their terminals,
+in a manner similar to that used by the \f4wall\f1 command.
+.br 
+.ne 10
+.TP
+\f4\-s\f2 size\f1
+Specify the
+.I size
+of the volume being dumped to.
+When the specified size is reached,
+\f4ufsdump\f1
+waits for you to change the volume.
+\f4ufsdump\f1
+interprets the specified size as the length in
+feet for tapes and cartridges, and 
+as the number of 1024-byte blocks for diskettes.
+The following are defaults:
+.RS
+.RS
+.TP 12
+cartridge 
+.PD 0
+425 feet
+.TP
+diskette
+1422 blocks (Corresponds
+to a 1.44 Mb diskette, with one cylinder reserved
+for bad block information.)
+.PD
+.RE
+.RE
+.TP
+\f4\-t\f2 tracks\f1
+Specify the number of tracks for a cartridge tape.
+The default is 9 tracks.  
+The \f4\-t\f1 option 
+is not compatible with 
+the \f4\-D\f1 option.
+.TP
+\f4\-u\f1
+Update the dump record.
+Add an entry to the file
+\f4/etc/dumpdates,\f1
+for each filesystem successfully dumped that
+includes the filesystem name, date, and dump level.
+This file can be edited by the super-user.
+.TP
+\f4\-w\f1
+List the file systems that need backing up.
+This information is gleaned from the files
+\f4/etc/dumpdates\f1 and \f4/etc/vfstab\f1.
+When the \f4\-w\f1 option is used,
+all other options are ignored.
+After reporting,
+\f4ufsdump\f1 exits immediately.
+.TP
+\f4W\f1
+Similar to the
+\f4\-w\f1 option,
+except that the \f4\-W\f1 option
+includes all file systems that appear in
+\f4/etc/dumpdates,\f1
+along with information about their most recent dump
+dates and levels.
+Filesystems that need backing up are highlighted.
+.SH NOTES
+.LP
+Fewer than 32 read errors on the filesystem are
+ignored.
+.LP
+Each reel requires a new process, so parent
+processes for reels already written just hang around
+until the entire tape is written.
+.LP
+It is recommended that incremental dumps also be
+performed with
+the system running in single-user mode.
+.SH FILES
+.PD 0
+.TP 20
+\f4/dev/dump\f1
+default unit to dump to
+.TP
+\f4/etc/dumpdates\f1
+dump date record
+.TP
+\f4/etc/group\f1
+to find group operator
+.TP
+\f4/etc/hosts\f1
+.PD
+.SH "SEE ALSO"
+\f4tar\fP(1),
+\f4wall\fP(1),
+\f4shutdown\fP(1M),
+\f4ufsrestore\fP(1M).

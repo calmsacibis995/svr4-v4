@@ -1,0 +1,56 @@
+'\"macro stdmacro
+.if n .pH g1a.Uutry @(#)Uutry	40.10 of 4/15/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} Uutry 1M "Basic Networking Utilities" "\&"
+.if \nX=1 .ds x} Uutry 1M "Basic Networking Utilities"
+.if \nX=2 .ds x} Uutry 1M "" "\&"
+.if \nX=3 .ds x} Uutry "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4Uutry\f1 \- try to contact remote system with debugging on
+.SH SYNOPSIS
+\f4/usr/lib/uucp/Uutry\f1 [\f2options\fP] \f2system_name\fP
+.SH DESCRIPTION
+\f4Uutry\fP
+is a shell that is used to invoke
+\f4uucico\fP
+to call a remote site.
+Debugging is initially turned on and is set to the default value of 5.
+The debugging output is put in file \f4/tmp/\f2system_name\f1.
+Here are the options:
+.TP 5P
+\f4\-c\f2type\^\f1
+The first field in the \f4Devices\f1 file is the "Type" field.
+The \f4\-c\f1
+option forces \f4uucico\fP to only use entries in the "Type" field that match the
+user specified \f2type\f1.
+The specified \f2type\f1 is usually the name of a local area network.
+.TP
+\f4\-r\^\f1
+This option overrides the retry time that is set in file
+\f4/var/uucp/.status/\f2system_name\f1.
+.TP
+\f4\-x\f2debug_level\^\f1
+\f2debug_level\f1 is a number from 0 to 9.  Higher numbers give more detailed
+debugging information.
+..
+.SH FILES
+.nf
+\f4/etc/uucp/Systems
+/etc/uucp/Permissions
+/etc/uucp/Devices
+/etc/uucp/Limits
+/var/spool/uucp/*
+/var/spool/locks/*
+/var/spool/uucppublic/*
+/tmp/system_name\f1
+.fi
+.SH "SEE ALSO"
+\f4uucico\fP(1M)
+.br
+\f4uucp\fP(1C),
+\f4uux\fP(1C) in the
+\f2User's Reference Manual\f1
+.Ee

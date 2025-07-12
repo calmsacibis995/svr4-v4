@@ -1,0 +1,11 @@
+#ident	"@(#)pkg.dfs:preremove	1.1"
+#
+# Issue a warning message if RFS is running.
+#
+rfadmin >/dev/null 2>&1
+if [ $? -eq 0 ]
+then
+	echo "WARNING: RFS is still running."
+fi
+
+exit 0

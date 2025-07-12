@@ -1,0 +1,248 @@
+'\"!  tbl | mmdoc
+.if n .pH prod_ovr.permuse @(#)permuse	40.9
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1990 AT&T
+.\" Copyright 1989, 1990 AT&T
+.tr ~
+.BK "Product Overview and Master Index"
+.CH "Permuted Index" "2"
+.H 1 "Using the Permuted Index"
+The comprehensive permuted index directs you to
+manual pages located throughout the
+UNIX System Documentation Set
+with the exception of the graphics books.
+Manual pages are concise reference pages that assume
+some familiarity with the information.
+Detailed discussions and procedures on select topics are covered in the guide
+volumes and can be found using the subject index.
+.H 2 "How the Permuted Index Is Created"
+Many users find that understanding a few things about how the
+permuted index is created helps them to read it more
+effectively and clarifies what kind of information can and cannot
+be obtained from it.
+.P
+The basic building block for the index is the one-line
+description given in the NAME
+line on the top of each manual page.
+For example, this is what the top of
+the \f4mountall\f1(1M) manual
+page looks like:
+.TS
+center expand ;
+l c r .
+_
+.SP
+\s-2\f(HBmountall(1M)	(Essential Utilities)	mountall(1M)\fP\s0
+.TE
+.DS
+\s-1\f(HBNAME\fP
+	\f4mountall, umountall\f1 \-  mount, unmount multiple file systems\s0
+.DE
+.TS
+center expand ;
+l r.
+_
+ 	 
+.TE
+Each NAME line includes:
+.BL
+.LI
+the command, file format, system call
+or other utility for which the manual page
+is named (this is the primary utility; \f4mountall\fP
+is the primary utility in the example)
+.LI
+secondary utilities, which are also described on that
+manual page and do not have a separate manual page of
+their own (\f4umountall\fP is a secondary utility in the example)
+.LI
+a brief description of the utility function(s)
+.LE
+.P
+For each manual page \s-2NAME\s+2 line, the indexing software
+generates several index entries, generally one entry for each
+keyword in the phrase.
+The middle column of the index is alphabetized on these keywords.
+.P
+For:
+.DS I
+\s-1\f(HBNAME\fP
+	\f4mountall, umountall\f1 \-  mount, unmount multiple file systems\s0
+.DE
+.P
+This is generated:
+.DS
+.Px
+.xx "" "mount, unmount multiple" "file systems." "/umountall:" mountall(1M)\0\s-1\fHSARM\fP\s0
+.xx "systems." "mountall, umountall:" "mount, unmount multiple file" "" mountall(1M)\0\s-1\fHSARM\fP\s0
+.xx "unmount multiple file systems." "" "mountall, umountall: mount," "" mountall(1M)\0\s-1\fHSARM\fP\s0
+.xx "" "/umountall: mount, unmount" "multiple file systems." "" mountall(1M)\0\s-1\fHSARM\fP\s0
+.xx "" "mount, unmount multiple file" "systems." "mountall, umountall:" mountall(1M)\0\s-1\fHSARM\fP\s0
+.xx "multiple file/" "mountall," "umountall: mount, unmount" "" mountall(1M)\0\s-1\fHSARM\fP\s0
+.xx "" "mountall, umountall: mount," "unmount multiple file systems." "" mountall(1M)\0\s-1\fHSARM\fP\s0
+.DE
+.H 2 "How to Use the Index"
+Look in the middle column of the index for the word of interest.
+Then read the complete phrase by starting with the utility
+name, which may appear in the left or middle column.
+Utility names are followed by a colon.
+A period marks the end of the description from the NAME line. 
+.P
+The NAME line phrase is contained in the two columns, with
+long phrases wrapping around to the beginning of the left column.
+The right column of the index provides the manual page name, section number,
+and acronym for the book where it is located.
+.P
+A slash (\f4/\fP) sometimes
+appears in the index entry to indicate that space limitations were
+exceeded and one or more words from the phrase were deleted.
+.H 2 "Book Acronyms Used in the Permuted Index"
+.VL
+.LI "ACG"
+Programmer's Guide: Application Compatibility
+.LI "BSD"
+Programmer's Guide: BSD System Compatibility
+.LI "CHAR"
+Programmer's Guide: Character User Interface
+.LI "DDRM"
+Device Driver Interface\/Driver-Kernel Interface (DDI\/DKI) Reference Manual
+.LI "ISDG"
+Integrated Software Development Guide
+.LI "MBRMAN"
+MULTIBUS Reference Manual
+.LI "MBTAI"
+Transport Application Interface Guide
+.LI "NI"
+Programmer's Guide: Networking Interfaces
+.LI "NUAG"
+Network User's and Administrator's Guide
+.LI "PRM"
+Programmer's Reference Manual
+.LI "SARM"
+System Administrator's Reference Manual
+.LI "SCSI"
+Programmer's Guide: SCSI Driver Interface
+.LI "STRM"
+Programmer's Guide: STREAMS
+.LI "URM"
+User's Reference Manual
+.LE
+Note that the ACG and BSD acronyms refer to sections within the
+.BT "Migration and Compatibility Guide" .
+.H 2 "Quick Reference to Manual Page Section Numbers"
+.vs +2
+.TS
+center;
+c lw(3.5i) .
+Section Number	Type of Utility
+_
+(1)	T{
+User Commands
+T}
+(1C)	T{
+Basic Networking Commands
+T}
+(1F)	T{
+FMLI Commands
+T}
+(1M)	T{
+Administration Commands
+T}
+(2)	T{
+System Calls
+T}
+(3)	T{
+BSD Routines
+T}
+(3C)	T{
+C Library Functions
+T}
+(3E)	T{
+\f4libelf\fP Functions
+T}
+(3G)	T{
+\f4libgen\fP Functions
+T}
+(3M)	T{
+Math Library Functions
+T}
+(3N)	T{
+Network Services Functions
+T}
+(3S)	T{
+Standard I\/O Functions
+T}
+(3X)	T{
+Specialized Libraries
+T}
+(4)	T{
+File Formats
+T}
+(5)	T{
+Miscellaneous
+T}
+(7)	T{
+Special Files
+T}
+(8)	T{
+System Maintenance Procedures
+T}
+(D1D)	T{
+DDI Driver Data Definitions
+T}
+(D1DK)	T{
+DDI\/DKI Driver Data Definitions
+T}
+(D2D)	T{
+DDI Driver Entry Points
+T}
+(D2DK)	T{
+DDI\/DKI Driver Entry Points
+T}
+(D3D)	T{
+DDI Kernel Functions
+T}
+(D3DK)	T{
+DDI\/DKI Kernel Functions
+T}
+(D3I)	T{
+SCSI Kernel Functions
+T}
+(D3K)	T{
+DKI Kernel Functions
+T}
+(D3X)	T{
+DDI DMA Functions
+T}
+(D4D)	T{
+DDI Data Structures
+T}
+(D4DK)	T{
+DDI\/DKI Data Structures
+T}
+(D4X)	T{
+DDI DMA Data Structures
+T}
+(D5DK)	T{
+DDI\/DKI Kernel \f4#define\fPs
+T}
+(1iref)	T{
+Multibus Commands
+T}
+(3iref)	T{
+Multibus Functions
+T}
+(4iref)	T{
+Multibus File Formats
+T}
+(7iref)	T{
+Multibus Special Files
+T}
+(8iref)	T{
+Multibus Maintenance Commands
+T}
+(3tai)	T{
+Multibus Transport Application Interface Functions
+T}
+.TE
+.vs -2

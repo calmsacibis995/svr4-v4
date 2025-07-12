@@ -1,0 +1,163 @@
+.\" @(#)mp 40.7 91/04/24 SMI; from UCB 4.2
+'\" macro stdmacro
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.\" Copyright (c) 1988 Sun Microsystems, Inc. - All Rights Reserved.
+.\"
+.nr X
+.if \nX=0 .ds x} mp 3X "BSD Compatibility Package" "\&"
+.if \nX=1 .ds x} mp 3X "BSD Compatibility Package"
+.if \nX=2 .ds x} mp 3X "" "\&"
+.if \nX=3 .ds x} mp "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4mp\f1:  \f4madd\f1, \f4msub\f1, \f4mult\f1, \f4mdiv\f1, \f4mcmp\f1, \f4min\f1, \f4mout\f1, \f4pow\f1, \f4gcd\f1, \f4rpow\f1, \f4msqrt\f1, \f4sdiv\f1, \f4itom\f1, \f4xtom\f1, \f4mtox\f1, \f4mfree\f1 \- multiple precision integer arithmetic
+.SH SYNOPSIS
+\f4cc \f1[ \f2flag\f1\. \. \. ] \f2file\f1 \. \. \.  \f4\-lmp\f1
+.P
+.ft 4
+.nf
+#include <mp.h>
+.sp .5
+madd(a, b, c)
+\s-1MINT\s0 *a, *b, *c;
+.sp .5
+msub(a, b, c)
+\s-1MINT\s0 *a, *b, *c;
+.sp .5
+mult(a, b, c)
+\s-1MINT\s0 *a, *b, *c;
+.sp .5
+mdiv(a, b, q, r)
+\s-1MINT\s0 *a, *b, *q, *r;
+.sp .5
+mcmp(a,b)
+\s-1MINT\s0 *a, *b;
+.sp .5
+min(a)
+\s-1MINT\s0 *a;
+.sp .5
+mout(a)
+\s-1MINT\s0 *a;
+.sp .5
+pow(a, b, c, d)
+\s-1MINT\s0 *a, *b, *c, *d;
+.sp .5
+gcd(a, b, c)
+\s-1MINT\s0 *a, *b, *c;
+.sp .5
+rpow(a, n, b)
+\s-1MINT\s0 *a, *b;
+short n;
+.sp .5
+msqrt(a, b, r)
+\s-1MINT\s0 *a, *b, *r;
+.sp .5
+sdiv(a, n, q, r)
+\s-1MINT\s0 *a, *q;
+short n, *r;
+.sp .5
+\s-1MINT\s0 *itom(n)
+short n;
+.sp .5
+\s-1MINT\s0 *xtom(s)
+char *s;
+.sp .5
+char *mtox(a)
+\s-1MINT\s0 *a;
+.sp .5
+void mfree(a)
+\s-1MINT\s0 *a;
+.ft 1
+.fi
+.SH DESCRIPTION
+.P
+These routines perform arithmetic on integers of arbitrary length.
+The integers are stored using the defined type
+\s-1MINT\s0.
+Pointers to a
+\s-1MINT\s0
+should be initialized using the function
+\f4itom\f1,
+which sets the initial value to
+\f2n\f1.
+Alternatively,
+\f4xtom\f1
+may be used to initialize a
+\s-1MINT\s0
+from a string of hexadecimal digits.
+\f4mfree\f1
+may be used to release the storage allocated
+by the
+\f4itom \f1
+and
+\f4xtom\f1
+routines.
+.P
+\f4madd\f1,
+\f4msub\f1
+and
+\f4mult\f1
+assign to their third arguments the sum,
+difference, and product,
+respectively, of their first two arguments.
+\f4mdiv\f1
+assigns the quotient and remainder,
+respectively, to its third and fourth
+arguments.
+\f4sdiv\f1
+is like
+\f4mdiv\f1
+except that the divisor is an ordinary integer.
+\f4msqrt\f1
+produces the square root and remainder of
+its first argument.
+\f4mcmp\f1
+compares the values of its arguments and returns
+\f40\f1
+if the two values are equal,
+\f4>0\f1
+if the first argument is greater than the second,
+and
+\f4<0\f1
+if the second argument is greater than the first.
+\f4rpow\f1
+calculates
+\f2a\f1
+raised to the power
+\f2b\f1,
+while
+\f4pow\f1
+calculates this reduced modulo
+\f2m\f1.
+\f4min\f1
+and
+\f4mout\f1
+do decimal input and output.
+\f4gcd\f1
+finds the greatest common divisor of the first two arguments,
+returning it in the third argument.
+\f4mtox\f1
+provides the inverse of
+\f4xtom\f1.
+To release the storage allocated by
+\f4mtox,\f1
+use
+\f4free\f1
+[see
+\f4malloc\f1(3)].
+.P
+Use the
+\f4\-libmp\f1
+loader option to obtain access to these functions.
+.SH "RETURN VALUE"
+Illegal operations and running out of
+memory produce messages and core images.
+.SH FILES
+.PD 0
+.TP 20
+\f4/usr/ucblib/libmp.a\f1
+.PD
+.SH SEE ALSO
+\f4malloc\fP(3)
+in the \f2Programmer's Reference Manual\f1

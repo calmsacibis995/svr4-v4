@@ -1,0 +1,99 @@
+'\"macro stdmacro
+.if n .pH mb2s.openport @(#)openport	40.6 of 1/9/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} mb2s_openport 3tai "" "\&"
+.if \nX=1 .ds x} mb2s_openport 3tai ""
+.if \nX=2 .ds x} mb2s_openport 3tai "" "\&"
+.if \nX=3 .ds x} mb2s_openport "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4mb2s_openport\f1 \- Opens a synchronous \f4Multibus II\f1 transport endpoint.
+.SH SYNOPSIS
+.ft 4
+.nf
+#include <sys/types.h>
+#include <sys/mb2taiusr.h>
+int mb2s_openport (portid, optptr)
+unsigned short portid;
+mb2_opts *optptr;
+.fi
+.ft
+.SH DESCRIPTION
+The \f4mb2s_openport\f1 function is called as the first step in the
+initialization of a transport endpoint.
+This function establishes a \f4Multibus II\f1
+transport endpoint for a synchronous mode of operation, by opening a UNIX
+system file that identifies a transport provider.
+The \f4mb2s_openport\f1
+function binds a port ID to the endpoint, sets the endpoint parameters to the
+options specified, and returns the file descriptor corresponding to the
+endpoint.
+This file descriptor can only be used with other synchronous mode
+transport application interface routines.
+.TP 10
+\f4portid\f1
+When \f4portid\fP is non-zero, the endpoint corresponding to the
+file descriptor is bound to the port.
+.IP
+When \f4portid\fP is set to zero, this routine allocates a free
+port ID from a range of dynamically allocated port IDs and binds the
+endpoint to that port.
+.TP
+\f4optptr\f1
+is a pointer to an options structure specifying the
+endpoint options to be set.
+.IP
+When \f4optptr\f1 is NULL, the endpoint options are set to default
+values.
+.IP
+When \f4optptr\fP is non-NULL, then the endpoint options are set
+to the values provided in the options structure.
+.P
+All or some of the values in the options structure can be specified to be
+default values if set to \f4MB2_OPTDEFAULT\f1.
+Upon successful completion of the
+routine, the file descriptor is returned.
+A value of -1 is returned and an
+\f4errno\fP is set if there were errors.
+The following is a list of applicable
+errors for this routine.
+.TP 10
+\f4EFAULT\f1
+\f4optptr\fP points outside the allocated address
+space.
+.TP
+\f4EINVAL\f1
+values of options, flags or parameters is out
+of range.
+.TP
+\f4EMFILE\f1
+\f4NOFILES\fP file descriptors are currently open.
+.TP
+\f4EINTR\f1
+a signal was caught during the open operation.
+.TP
+\f4ENOSR\f1
+unable to allocate a stream.
+.TP
+\f4ENFILE\f1
+the system file table is full.
+.TP
+\f4ENXIO\f1
+a STREAMS module or driver open failed.
+.TP
+\f4EAGAIN\f1
+\f4portid\fP is 0 and too many dynamically allocated
+port IDs are in use.
+.br
+.ne 5
+.TP
+\f4EBUSY\f1
+\f4portid\fP is non-zero and the specified port ID is already
+open.
+.TP
+\f4EIO\f1
+a hangup or error occured during a STREAMS open.
+.SH SEE ALSO
+\f4intro\f1(2)

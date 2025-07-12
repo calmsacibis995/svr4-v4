@@ -1,0 +1,43 @@
+#ident	"@(#)pkg.qt:prototype	1.7.1.3"
+
+#	Copyright (c) 1990  Intel Corporation
+#	All Rights Rreserved
+#
+#	INTEL CORPORATION PROPRIETARY INFORMATION
+#
+#	This software is supplied to AT & T under the terms of a license 
+#	agreement with Intel Corporation and may not be copied nor 
+#	disclosed except in accordance with the terms of that agreement.
+#
+
+!PACKDIR=/usr/src/pkg/qt
+
+i pkginfo
+i request
+i postinstall
+i preremove
+i copyright
+
+!PKGINST=qt
+!PKGSAV=/var/sadm/pkg/$PKGINST/save
+!default 0544 bin bin
+d none /tmp	?	?	?
+d none /tmp/qt		775	bin	bin
+v none /tmp/qt/Driver.o=$PACKDIR/Driver.o ? ? ?
+v none /tmp/qt/Space.c=$PACKDIR/Space.c ? ? ?
+v none /tmp/qt/Master=$PACKDIR/Master ? ? ?
+v none /tmp/qt/System=$PACKDIR/System ? ? ?
+v none /tmp/qt/Node=$PACKDIR/Node ? ? ?
+
+d none /usr	?	?	?
+d none /usr/vmsys	?	?	?
+d none /usr/lib	0755	root	bin
+d none /usr/vmsys/OBJECTS	?	?	?
+
+d OAMadmin /usr/vmsys/OBJECTS/tape	755	bin	bin
+f OAMadmin /usr/vmsys/OBJECTS/tape/Menu.tape=$PACKDIR/Menu.tape	755	bin	bin 
+f OAMadmin /usr/vmsys/OBJECTS/tape/Text.tape=$PACKDIR/Text.tape	755	bin	bin 
+f OAMadmin /usr/vmsys/OBJECTS/tape/Text.sop=$PACKDIR/Text.sop	755	bin	bin 
+f OAMadmin /usr/vmsys/OBJECTS/tape/Text.fop=$PACKDIR/Text.fop	755	bin	bin 
+f OAMadmin /usr/vmsys/OBJECTS/tape/admin=$PACKDIR/admin	755	bin	bin 
+

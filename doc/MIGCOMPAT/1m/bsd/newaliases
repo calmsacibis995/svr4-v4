@@ -1,0 +1,34 @@
+.\" @(#)newaliases 40.5 91/05/23 SMI; from UCB 4.1
+'\" macro stdmacro
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.\" Copyright (c) 1988 Sun Microsystems, Inc. - All Rights Reserved.
+.\"
+.nr X
+.if \nX=0 .ds x} newaliases 1M "BSD Compatibility Package" "\&"
+.if \nX=1 .ds x} newaliases 1M "BSD Compatibility Package"
+.if \nX=2 .ds x} newaliases 1M "" "\&"
+.if \nX=3 .ds x} newaliases "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4newaliases\f1 \- rebuild the data base for the mail aliases file
+.SH SYNOPSIS
+\f4/usr/ucb/newaliases\f1
+.SH DESCRIPTION
+\f4newaliases\f1
+rebuilds the random access data base for the mail aliases file
+\f4/etc/aliases\f1.
+\f4newaliases\f1 should be run whenever the \f4/etc/aliases\f1 file
+is updated.
+.SH FILES
+.PD 0
+.TP 20
+\f4/etc/aliases\f1
+.TP 20
+\f4/etc/aliases.dir\f1
+.TP 20
+\f4/etc/aliases.pag\f1
+.PD
+.SH SEE ALSO
+\f4sendmail\fP(1M),
+\f4aliases\fP(4)

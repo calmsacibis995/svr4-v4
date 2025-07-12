@@ -1,0 +1,36 @@
+#ident	"@(#)pkg.kdb:preremove	1.5"
+
+FAILURE=1	# fatal error
+
+CONFDIR=/etc/conf
+CONFBIN=${CONFDIR}/bin
+
+for MODULE in kdb
+do
+	${CONFBIN}/idcheck -p ${MODULE}
+	RES="$?"
+	if
+		[ "${RES}" -ne "100" -a "${RES}" -ne "0" ]
+	then
+		echo "Removing ${NAME} ${MODULE} module ..."
+
+		# If kdb-util is installed, kdb cannot be completely removed.
+		# The Stubs.c, Master and System components must remain,
+		# but it must be deconfigured.
+
+		${CONFBIN}/idcheck -p kdb-util >/dev/null 2>&1
+		if [ $? != 0 -a $? != 8 ]
+		then
+			${CONFBIN}/idinstall -gs ${MODULE} | /bin/sed -e \
+				's/Y/N/' >System 2>/dev/null
+			${CONFBIN}/idinstall -us ${MODULE} >${ERR} 2>&1
+			COMPS=op
+		else
+			COMPS=
+		fi
+
+		${CONFBIN}/idinstall -d${COMPS} ${MODULE}
+	fi
+done
+
+exit 0

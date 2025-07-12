@@ -1,0 +1,43 @@
+'\"macro stdmacro
+.if n .pH g3x.panel_move @(#)panel_move	40.5 of 4/11/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.\" ident	"@(#)svid_ti:ti_lib/panel_move	1.3"
+.nr X
+.if \nX=0 .ds x} panel_move 3X "" "\&"
+.if \nX=1 .ds x} panel_move 3X ""
+.if \nX=2 .ds x} panel_move 3X "" "\&"
+.if \nX=3 .ds x} panel_move "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4panel_move\f1: \f4 move_panel\f1 \- move a \f4panels\fP window on the virtual screen
+.SH SYNOPSIS
+.nf
+.ft 4
+#include <panel.h>
+.sp
+int move_panel(PANEL *panel, int starty, int startx);
+.ft 1
+.fi
+.SH DESCRIPTION
+\f4move_panel\fP moves the \f4curses\fP window associated with
+\f2panel\fP so that its upper left-hand corner is at \f2starty\fP,
+\f2startx\fP.
+See usage note, below.
+.SH RETURN VALUE
+\f4OK\fP is returned if the routine completes successfully, otherwise
+\f4ERR\fP is returned.
+.SH NOTES
+For \f4panels\fP windows, use \f4move_panel\fP instead of the
+\f4mvwin\fP \f4curses\fP routine.
+Otherwise, \f4update_panels\fP will
+not properly update the virtual screen.
+.PP
+The header file \f4<panel.h>\f1 automatically includes the header file
+\f4<curses.h>\f1.
+.SH SEE ALSO
+.na
+\f4curses\fP(3X),
+\f4panels\fP(3X),
+\f4panel_update\fP(3X)
+.ad

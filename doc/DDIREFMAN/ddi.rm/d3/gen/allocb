@@ -1,0 +1,177 @@
+'\"!  pic | mmdoc
+'\"macro stdmacro
+.if n .pH gen.allocb @(#)allocb	40.5 of 3/19/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.nr X
+.if \nX=0 .ds x} allocb D3DK "STREAMS" "DDI/DKI" "\&"
+.if \nX=1 .ds x} allocb D3DK "STREAMS" "DDI/DKI"
+.if \nX=2 .ds x} allocb D3DK "" "\&"
+.if \nX=3 .ds x} allocb "" "" "\&"
+.TH \*(x}
+.IX "\f4allocb\fP(D3DK)"
+.SH NAME
+\f4allocb\f1 \- allocate a message block 
+.SH SYNOPSIS
+.nf
+.na
+\f4#include <sys/types.h>
+#include <sys/stream.h>
+.sp 0.5
+mblk_t *allocb(\f4int \f2size, \f4uint_t \f2pri\f4);\f1
+.ad
+.fi
+.IX "message (STREAMS)"
+.IX "STREAMS message blocks"
+.SH ARGUMENTS
+.IP "\f4\f2size\f1" 10n
+The number of bytes in the message block.
+.IP "\f4\f2pri\f1" 10n
+Priority of the request.  This can take on one of three values:
+\f4BPRI_LO\fP, \f4BPRI_MED\fP, or \f4BPRI_HI\fP.
+.SH DESCRIPTION
+\f4allocb\f1 tries to allocate a STREAMS message block.  Buffer allocation
+fails only when the system is out of memory.
+If no buffer is available,
+the \f4bufcall\f1(D3DK)
+function can help a module recover from an allocation failure.
+.P
+The \f2pri\fP argument is a hint to the allocator indicating how badly the message
+is needed.  \f4BPRI_LO\fP should be used for normal data allocations.  \f4BPRI_MED\fP
+should be used for other non-critical allocations.  \f4BPRI_HI\fP should be used
+for allocations that absolutely must succeed, although success is not guaranteed.
+Some implementations may choose to ignore this parameter.
+.P
+The following figure identifies the data structure members
+affected when a message block is allocated.
+.nf
+.PS 3.5
+scale=100
+define t181 |
+[ box invis ht 48 wid 63 with .sw at 0,0
+"\f4\s8\&b_cont (0)\f1\s0" at 0,42 ljust
+"\f4\s8\&b_rptr\f1\s0" at 0,30 ljust
+"\f4\s8\&b_wptr\f1\s0" at 0,18 ljust
+"\f4\s8\&b_datap\f1\s0" at 0,6 ljust
+] |
+
+define t176 |
+[ box invis ht 30 wid 96 with .sw at 0,0
+"\fH\s9\&message block\f1\s0" at 48,23
+"\fH\s9\&(\f4mblk_t\f1)\f1\s0" at 48,7
+] |
+
+define t190 |
+[ box invis ht 30 wid 72 with .sw at 0,0
+"\fH\s9\&data block\f1\s0" at 36,23
+"\fH\s9\&(\f4dblk_t\f1)\s0" at 36,7
+] |
+
+define t186 |
+[ box invis ht 54 wid 115 with .sw at 0,0
+"\f4\s8\&db_base\f1\s0" at 0,48 ljust
+"\f4\s8\&db_lim\f1\s0" at 0,34 ljust
+"\f4\s8\&db_type (M_DATA)\f1\s0" at 0,20 ljust
+] |
+
+box invis ht 116 wid 442 with .sw at 0,0
+box ht 72 wid 98 with .nw at 0,84 
+line -> from 76,36 to 152,36 
+line  from 74,62 to 106,62 
+line  from 106,62 to 106,48 
+line  from 106,48 to 74,48 
+line  from 106,56 to 136,56 
+line  from 136,56 to 136,116 
+t181 with .nw at 12,77
+t176 with .nw at 0,-1
+t190 with .nw at 192,-1
+"\fH\s9\&data buffer\f1\s0" at 404,-8
+line  from 238,74 to 312,74 
+line -> from 312,74 to 360,84 
+line  from 238,62 to 314,62 
+line -> from 314,62 to 360,12 
+box ht 72 wid 152 with .nw at 152,84 
+box ht 72 wid 82 with .nw at 360,84 
+line  from 360,76 to 440,76 dotted
+line  from 360,20 to 440,20 dotted
+line  from 138,116 to 402,116 
+line -> from 400,116 to 400,84 
+t186 with .nw at 164,76
+.PE
+.fi
+.IX "\f4msgb\fP(D4DK)" 
+.IX "\f4datab\fP(D4DK)"
+.SH "RETURN VALUE"
+If successful, \f4allocb\f1 returns a pointer to the allocated message
+block of type \f4M_DATA\f1 (defined in \f4sys/stream.h\f1).
+If a block cannot be allocated, a \f4NULL\f1 pointer is
+returned.
+.SH "LEVEL"
+Base or Interrupt.
+.SH NOTES
+Does not sleep.
+.br
+.ne 1i
+.SH "SEE ALSO"
+.na
+\f2STREAMS Programmer's Guide\f1
+.P
+\f4bufcall\f1(D3DK),
+\f4esballoc\f1(D3DK),
+\f4esbbcall\f1(D3DK),
+\f4freeb\fP(D3DK),
+\f4msgb\fP(D4DK)
+.ad
+.SH "EXAMPLE"
+.IX "\f4allocb\fP(D3DK), example"
+.IX "\f4putnext\fP(D3DK), example"
+.IX "\f4RD\fP(D3DK), example"
+.P
+Given a pointer to a queue (\f2q\f1) and an error number (\f2err\f1),
+the \f4send_error\f1 routine sends an \f4M_ERROR\f1 type
+message to the stream head.
+.P
+If a message cannot be allocated, 0 is returned, indicating an
+allocation failure (line 8).
+Otherwise, the message type is set to \f4M_ERROR\f1 (line 9).
+Line 10 increments the write pointer 
+(\f4bp->b_wptr\f1) by the size (one byte) of the
+data in the message.
+.P
+A message must be sent
+up the read side of the stream to arrive at the stream head.
+To determine whether \f2q\f1 points to a read queue or a write queue, the
+\%\f4q->q_flag\f1 member is tested to see if \f4QREADR\f1
+is set (line 12).
+If it is not set, \f2q\f1 points to a write queue,
+and on line 13 the \f4RD\f1(D3DK)
+function is used to find the corresponding read queue.
+In line 14, the \f4putnext\f1(D3DK) function is used to send the message
+upstream.  Then \f4send_error\fP returns 1 indicating success.
+.P
+.ne 4
+.P
+.nf
+.ft 4
+.ps 7
+.vs 9
+ 1  send_error(q, err)
+ 2	queue_t *q;
+ 3	uchar_t err;
+ 4  {
+ 5	mblk_t *bp;
+ 6	long fl=0;
+
+ 7	if ((bp = allocb(1, BPRI_HI)) == NULL)
+ 8		return(0);
+ 9	bp->b_datap->db_type = M_ERROR;
+10	*bp->b_wptr++ = err;
+11	(void) strqget(q, QFLAG, 0, &fl);
+12	if (fl & QREADR))
+13		q = RD(q);
+14	putnext(q, bp);
+15	return(1);
+16  }
+.vs
+.ps
+.ft 1
+.fi

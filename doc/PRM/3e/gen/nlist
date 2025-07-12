@@ -1,0 +1,72 @@
+'\"macro stdmacro
+.if n .pH g3c.nlist @(#)nlist	40.18 of 5/22/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} nlist 3E "ELF Library" "\&"
+.if \nX=1 .ds x} nlist 3E "ELF Library"
+.if \nX=2 .ds x} nlist 3E "" "\&"
+.if \nX=3 .ds x} nlist "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4nlist\f1 \- get entries from name list
+.SH SYNOPSIS
+\f4cc\f1
+[\f2flag\fP \|.\|.\|.] \f2file\fP \|.\|.\|.
+\f4\-lelf\f1
+[\f2library\fP \|.\|.\|.]
+.PP
+\f4#include <nlist.h>\f1
+.PP
+\f4int nlist (const char \(**filename, struct nlist \(**nl);\f1
+.SH DESCRIPTION
+\f4nlist\fP
+examines the name list in
+the executable file whose name is pointed to by
+.IR filename ,
+and selectively extracts a
+list of values and puts them in the array of
+\f4nlist\fP
+structures pointed to by
+.IR nl .
+The name list
+.I nl
+consists of
+an array of structures containing names of variables,
+types, and values.
+The list is terminated with a null name,
+that is, a null string is in the name position of the structure.
+Each variable name is
+looked up in the name list of
+the file.
+If the name is found, the type, value, storage class,
+and section number of the
+name are inserted in the other fields.
+The type field may be set to 0 if the
+file was not compiled with the \f4\-g\f1 option to \f4cc\fP(1).
+\f4nlist\fP will always return the information for an
+external symbol of a given name if the name exists in the file.
+If an external symbol does not exist, and
+there is more than one symbol with the specified name 
+in the file (such as static symbols defined in separate
+files), the values returned will be
+for the last occurrence of that name in the file.
+If the name is not found, all fields in the structure
+except
+\f4n_name\fP
+are set to 0.
+.PP
+This function is useful for
+examining the system name list kept in
+the file
+\f4/stand/unix\f1.
+In this way programs can obtain system addresses
+that are up to date.
+.SH SEE ALSO
+\f4a.out\fP(4)
+.SH DIAGNOSTICS
+All
+value entries are set to 0 if the file cannot be read
+or if it does not contain a valid name list.
+.PP
+\f4nlist\fP returns 0 on success, \-1 on error.

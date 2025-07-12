@@ -1,0 +1,42 @@
+'\"!  tbl | mmdoc
+'\"macro stdmacro
+.if n .pH g3x.form_uptr @(#)form_uptr	40.5 of 4/10/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.\" ident	"@(#)svid_ti:ti_lib/form_uptr	1.3"
+.nr X
+.if \nX=0 .ds x} form_userptr 3X "" "\&"
+.if \nX=1 .ds x} form_userptr 3X ""
+.if \nX=2 .ds x} form_userptr 3X "" "\&"
+.if \nX=3 .ds x} form_userptr "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4form_userptr\f1: \f4 set_form_userptr\f1, \f4form_userptr\f1 \- associate application data with \f4forms\fP
+.SH SYNOPSIS
+.nf
+.ft 4
+#include <form.h>
+.sp
+int set_form_userptr(FORM *form, char *ptr);
+char *form_userptr(FORM *form);
+.ft 1
+.fi
+.SH DESCRIPTION
+Every form has an associated user pointer
+that can be used to store pertinent data.
+\f4set_form_userptr\fP sets the user pointer of \f2form\f1.
+\f4form_userptr\fP returns the user pointer of \f2form\f1.
+.SH RETURN VALUE
+\f4form_userptr\fP returns \f4NULL\fP on error.
+\f4set_form_userptr\fP returns one of the following:
+.TS
+lfCWw(1.25i)1 c1 l .
+E_OK	\-	The function returned successfully.
+E_SYSTEM_ERROR	\-	System error.
+.TE
+.SH NOTES
+The header file \f4<form.h>\f1 automatically includes the header files
+\f4<eti.h>\fP and \f4<curses.h>\fP.
+.SH SEE ALSO
+\f4curses\fP(3X),
+\f4forms\fP(3X)

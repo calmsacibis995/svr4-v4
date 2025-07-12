@@ -1,0 +1,590 @@
+.if n .pH 386.apc @(#)apc	40.1.1.1
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.BK "Installation Guide" "System V Release 4"
+.CH "Package Installation Question Summary" "C"
+.H 1 "Introduction"
+This appendix shows you the questions asked by the various packages during 
+.IX "packages, installation questions"
+installation from diskette or tape. Any time a \f4?\fP appears
+when you are 
+asked for input, you can type \f4?\fP for a help message.
+If a specific answer is
+required, you are told what it should be, or where to find the answers.
+Press
+.HK EK
+to accept the default shown.
+.P
+The questions shown must be answered before installation continues.
+The system may ask other questions not shown here.
+If you give an incorrect response to a question, the installation
+of the package may quit, or you may be asked for input again.
+For example, if you assign the same memory address or interrupt number
+to several controllers, you will be warned of a conflict.
+You will also be given the choice of either aborting the installation
+of the package or reassigning the memory address or
+interrupt and continuing.
+.P
+We advise you to read this appendix and prepare your answers before continuing.
+.H 1 "BASIC Package Set Questions"
+The following questions are asked when you specify that you want to install 
+packages from the BASIC package set:
+.H 3 "Terminal Information Utilities (terminf) Package"
+.IX "terminf package"
+When the \f4terminf\fP package installs, the system asks:
+.SS CO
+Do you wish to install all the terminfo files: (default: y)
+.SE
+If there will be unknown numbers and types of terminals attached to your
+system, or if modems or dumb terminals may access your system,
+install all the \f4terminfo\fP files.
+If only one terminal will be attached to your system or hard disk 
+space is tight, do not install all the \f4terminfo\fP files. Respond as desired.
+.AB N
+Installing all the entries takes up about 1 MB of disk space. If you 
+run out of disk space later, you can remove the unneeded entries by 
+removing the files in the subdirectories under the 
+\f4/usr/share/lib/terminfo\fP subdirectories.
+.sp
+If the file is symbolically linked, be sure to also remove the file to 
+which the entry is linked. To find out if a file is linked,
+type \f4ls -l\fP.
+If a file is linked, the far left column has the letter "l" for linked. 
+The far right column has the symbol ->, followed by a pathname. 
+This is the file's link.
+.AC
+The files will be installed and compiled.
+.AB N
+A message displays that says some files are being removed.
+The system is de-installing files it used to compile the terminfo entries. 
+This is normal.
+.AC
+.H 3 "Mouse Driver (mouse) Package"
+.IX "mouse package"
+The questions you are asked when the mouse driver packages install are as
+follows:
+.SS CO
+The Mouse Driver Package provides drivers to support 
+three different types of mice:
+
+Logitech bus mouse
+Logitech serial mouse
+PS/2 compatible mouse
+
+You can install one or more mouse drivers on your system.
+If you only plan to use one mouse with your system,
+answer 'y' to the appropriate question below. 
+If you plan to switch mice at some point, you may want 
+to install more than one mouse driver
+(See mouseadmin(1) for information on how to reconfigure 
+the mice in your system).
+
+Below, answer 'y' for those mice you have or are 
+planning to use and 'n' for those you do not require 
+support for.
+
+In order to use a PS/2 compatible mouse (e.g. AT&T 320 mouse),
+your hardware needs a PS/2 mouse port.
+Check your hardware reference manual to be sure you have the 
+necessary hardware support if you plan to use a PS/2 compatible mouse.
+.SE
+.AB N
+If you answer \f4n\fP to the next three questions, no mice are installed.
+.AC
+If you don't know which type of mouse you will be using, answer \f4y\fP to
+the next three questions.
+.SS CO
+Will you be using a PS2 compatible mouse (e.g. AT&T mouse)?
+(default: n) [y, n, ?, q]
+.SE
+Answer as desired.
+.P
+Next, you are asked:
+.SS CO
+Will you be using a bus mouse?
+(default: n) [y, n, ?, q]
+.SE
+Answer as desired.
+.P
+Next, you are asked:
+.SS CO
+Will you be using a serial mouse?
+(default: n) [y, n, ?, q]
+.SE
+Answer as desired.
+.P
+Next, you are asked:
+.SS CO
+Do you wish to set up the configuration file for the mice?
+(default: y) [y, n, ?, q]
+.SE
+If you don't know which type of mouse you will be using, answer \f4n\fP,
+then go to the next section about using \f4mouseadmin\fP interactively. 
+.IX "mouseadmin command"
+.P
+If you say \f4y\fP, the system asks:
+.SS CO
+Enter the display terminal that will be using <mousetype> mouse
+(default: console) [?, q]
+.SE
+If you specified that you will be using a serial mouse, the following is also 
+asked:
+.SS CO
+Enter the device that the serial mouse will be attached to
+(default: tty00) [?, q]
+.SE
+.H 3 "Using mouseadmin Interactively"
+If you did not set up the configuration file when asked, as shown on the
+previous page, when the \f4mouse\fP package installs, the system checks to see if 
+the configuration file is set up. If it isn't, you are asked if you want to run 
+\f4mouseadmin\fP interactively. If you say \f4y\fP, you are asked the following
+questions about half hour into the package installation process:
+.SS CO
+There are no mice assigned.
+
+Select one of the following:
+
+B)us mouse add
+P)S2 mouse add
+S)erial mouse add
+U)pdate mouse configuration and quit
+E)xit (no update)
+
+Enter selection:
+.SE
+Type the desired mouse type (in lower case).
+.P
+The system responds:
+.SS CO
+Enter the display terminal that will be using the mouse, or strike the
+ENTER key to return to the main menu.
+
+Display terminal (i.e. console, vt100, etc.):
+.SE
+Type \f4console\fP.
+.P
+The system responds:
+.SS CO
+Enter the device that the mouse will be attached to or strike the ENTER key
+to return to the main menu.
+Mouse device (i.e. tty00, tty01):
+.SE
+Type the desired response. If the mouse is connected to port COMM1, type 
+\f4tty00\fP. If the mouse is connected to port COMM2, type \f4tty01\fP.
+.P
+The system responds:
+.SS CO
+Select one of the following:
+
+B)us mouse add
+P)S2 mouse add
+S)erial mouse add
+U)pdate mouse configuration and quit
+E)xit (no update)
+Enter selection:
+.SE
+Type \f4U\fP to update the mouse configuration.
+.AB N
+If you ever need to reconfigure (delete) a mouse, use the \f4mouseadmin\fP
+command.
+See the \f4mouseadmin\fP(1) man page in the
+.BT "System Administrator's Reference Manual" .
+.AC
+.H 3 "Operations, Administration, and Maintenance (OA&M) Package"
+When the \f4oam\fP (Operations, Administration, and Maintenance) package
+.IX "oam package"
+installation begins, the system says:
+.SS CO
+You are about to install the Operations, Administration and Maintenance (OA&M)
+user interface.
+
+The BASIC user interface provides a concise set of tools for basic system
+administration. This will help you conserve disk space.
+
+The EXTENDED user interface provides extensions to the 
+BASIC interface and access to the full OA&M feature set.
+BASIC installs automatically if you choose EXTENDED.
+
+Do you wish to install both the BASIC and EXTENDED 
+portions of the OA&M user interface?
+(default: y) [y, n, ?, q]
+.SE
+Respond as desired.
+If you install all of the \f4oam\fP package, approximately 3 MB is used.
+.P
+The system then asks:
+.SS CO
+Do you wish to install on-line help for OA&M? 
+(default: y) [y, n, ?, q]
+.SE
+.AB N
+If you do not install on-line help, you won't get help when you type 
+\f4?\fP when using the \f4sysadm\fP menus.
+.AC
+Respond as desired.
+.P
+Next, you are told to set a password for your OA&M (\f4sysadm\fP) login.
+Enter the desired password and keep it secure.
+.H 3 "Line Printer Spooler (lp) Package"
+.IX "lp package"
+When you install the \f4lp\fP (Line Printer Spooler) package, the following
+messages display:
+.SS CO
+Examining your system to see if you have the old LP Spooler Utilities.
+
+Enter the name of the OLD spooling directory;
+just press <return> if this is a new installation 
+(default: /usr/spool/lp) [?, q]
+.SE
+If you press
+.HK EK ,
+the following message displays:
+.SS CO
+You have neither old nor new version. Installation 
+continues.
+
+Should the disable and enable commands be available to 
+All users? (default: y) [y, n, ?, q]
+.SE
+Respond as desired.
+Answering \f4y\fP means all users can disable/enable the printer.
+Answering \f4n\fP means only root can disable/enable the printer.
+.P
+The system then asks:
+.SS CO
+Will you be attaching a PostScript printer to this system?
+(default: y) [y, n, ?, q]
+.SE
+Answer as desired.
+.IX "printer, disabling"
+.IX "printer, enabling"
+.H 3 "Application Compatibility Package"
+.IX "acp package"
+When installing the \f4acp\fP package, you are asked the following:
+.SS CO
+Enter the number of compatible pseudo-terminal devices to configure on your
+system.
+(default: 8) [0-32,?,q]
+.SE
+Answer as desired.
+This question refers to the allocation of memory for pseudo terminal devices.
+Specify the maximum number of pseudo-terminal devices you expect to
+be active at one time.
+.H 3 "Network Support Utilities (NSU) Package"
+.IX "nsu package"
+When installing the \f4nsu\fP package, you are asked the following:
+.SS CO
+You have the Operations, Administration, and Maintenance package installed.
+Would you like to add the NSU interface Forms and Menus?
+(default: y) [y, n, ?, q]
+.SE
+.AB N
+If you do not add the forms and menus, you will not be able to use the 
+\f4sysadm\fP interface to perform the \f4nsu\fP functions.
+.AC
+Answer as desired.
+.P
+The system responds:
+.SS CO
+Enter the number of pseudo-terminal devices to configure on your system
+(default: 16) [0-256, ?, q]
+.SE
+Answer as desired.
+This question refers to the allocation of memory and stream buffers for each 
+pseudo terminal device.
+Increasing the number of pseudo-terminal devices allow you to set up
+more xterms.
+.IX "xterms, increasing default"
+Specify 64 pseudo-terminal devices if you want to use more than 5 windows
+at a time.
+.H 1 "NETWORK Package Set Questions"
+The following questions are asked when you specify that you want to install 
+packages from the NETWORK package set:
+.H 3 "Internet Utilities (inet) Package"
+.IX "inet package"
+When installing the \f4inet\fP package, the system asks:
+.SS CO
+You have the Operations, Administration, and 
+Maintenance package installed.
+Would you like to add the Internet Utilities interface Forms and Menus?
+(default: y)
+.SE
+.AB N
+If you do not add the forms and menus, you will not be able to use the 
+\f4sysadm\fP interface to perform the inet functions.
+.AC
+Answer as desired. 
+.P
+The system responds:
+.SS CO
+Do you want to initialize the IP address for host <hostname>?
+(default: y)
+.SE
+The IP address is a unique number/address that other systems use to communicate
+with your system. If you know you are going to be part of a network,
+get an official IP address from your network administrator,
+then answer \f4y\fP to the above question. 
+.IX "IP address"
+.P
+If you say \f4y\fP, the system says:
+.SS CO
+Enter the IP address for host <hostname>
+(default: 0.0.0.0)
+.SE
+Enter the desired address.
+.P
+Then, the system asks:
+.SS CO
+The network listener can provide network services for use with
+Network File Systems (NFS) and Remote File Sharing (RFS).
+
+Do you want to setup the network listener for TCP? (default: y) 
+.SE
+Answer as desired. 
+.IX "network listener"
+If you say \f4y\fP, the system will be set up as a network tcp server.
+.H 3 "Network File System (NFS) Package"
+.IX "nfs package"
+When installing the \f4nfs\fP package, the system asks:
+.SS CO
+You have the Operations, Administration, and Maintenance package installed.
+Would you like to add the NFS interface Forms and Menus?
+(default: y) [y, n, ?, q]
+.SE
+Answer as desired.
+.H 3 "Remote File Sharing (RFS) Package"
+.IX "rfs package"
+When installing the \f4rfs\fP package, the system asks:
+.SS CO
+You have the Operations, Administration, and Maintenance package installed.
+Would you like to add the RFS interface Forms and Menus?
+(default: y) [y, n, ?, q]
+.SE
+Answer as desired.
+.H 3 " Kernel Debugger (kdb) Package"
+.IX "kdb package"
+When installing the \f4kdb\fP package, the system asks:
+.SS CO
+To prevent unauthorized users from invoking the kernel debugger,
+KDB provides optional security checks which cause attempts
+to enter the kernel from a console key sequence to be rejected. Even with
+these security checks enabled, you can still invoke the debugger with the
+"kdb" command, which requires super-user privilege.
+Also, the debugger will still be entered as a result of a kernel panic.
+
+Do you want these security checks turned on? (default: y)
+.SE
+Respond as desired.
+.H 1 "HARDWARE Package Set Questions"
+.AB N
+When you are asked which packages in the HARDWARE Package 
+Set you want to install, only install the package for which you 
+have corresponding hardware.
+.AC
+If you are installing the \f4imx586\fP, \f4wd\fP, \f4ie6\fP, or \f4qt\fP
+packages, the questions shown next display.
+If none of these packages are being installed, there will be no 
+more questions to answer
+and the packages you specified will begin to install.
+It will take several hours for the packages to install. 
+.H 3 "Intel IMXLAN586 Ethernet Driver (imx586) Package"
+.IX "imx586 package"
+When installing the \f4imx586\fP package, the system displays
+the interrupts that are available on your system.
+For example:
+.SS CO
+These interrupts may be available
+
+10
+12
+15
+2
+3
+5
+
+Type the interrupt at which your pc586 board is 
+jumpered (default 12) [?, ??, q]
+.SE
+Press
+.HK EK
+to accept the default, or type the desired number.
+.P
+The system responds with a list of available memory addresses, followed by:
+.SS CO
+The following is a list of I/O high and low addresses 
+at which your Ethernet controller may be jumpered.
+
+   low addr        high addr
+1  0C0000          0C7FFF
+2  0C8000          0CFFFF
+3  0D0000          0D7FFF
+4  0D8000          0DFFFF
+5  F00000          F27FFF
+6  F40000          F67FFF
+7  F80000          FA7FFF
+
+Type the menu number for the address you are using.
+(default: 0D0000) [?, ??, q]
+.SE
+Press
+.HK EK
+for the default or type the number from the first column which 
+corresponds to the desired entry.
+.H 3 "Cartridge Tape Utilities (qt) Package"
+.IX "qt package"
+When you install the \f4qt\fP package (which is only for non-SCSI tape),
+the system responds:
+.IX "system, non-SCSI"
+.SS CO
+These interrupts may be available
+
+2
+3
+5
+7
+
+Type the interrupt at which your tape controller is jumpered.
+(default 5) [?, ??, q]
+.SE
+Press
+.HK EK
+to accept the default, or type the appropriate number.
+.P
+The system responds:
+.SS CO
+The following is a list of I/O high and low address at 
+which your tape controller may be jumpered.
+
+low addr      high addr
+  300            301
+   .              .
+   .              .
+  208            209 
+
+Type the low I/O address as shown in the corresponding 
+menu number at which your tape controller is jumpered. 
+(Default 300)
+.SE
+Press
+.HK EK
+for the default or enter the desired low address number.
+.AB N
+The \f4qt\fP package is only offered if you have a non-SCSI tape drive.
+.AC
+.H 3 "wd8003 Ethernet Driver (wd) Package"
+.IX "wd package"
+When you install the \f4wd\fP package, the system responds:
+.SS CO
+These interrupts may be available
+
+2
+5
+
+Type the interrupt at which your ethernet controller is jumpered.
+(default 5) [?, ??, q]
+.SE
+Press
+.HK EK
+to accept the default, or type the appropriate number.
+.IX "Ethernet, controller interrupts"
+.P
+The system responds:
+.SS CO
+The following is a list of I/O high and low address at 
+which your ethernet controller may be jumpered.
+
+low addr      high addr
+  200           21F
+   .             .
+   .             .
+  3E0           3FF
+
+Type the corresponding menu number at which your ethernet
+controller is jumpered.
+(Default 280) [?, ??, q]
+.SE
+Press
+.HK EK
+to accept the default, or type the appropriate number.
+.P
+The system responds:
+.SS CO
+There two memory sizes available
+
+16
+8
+
+Type the size for your system
+(default 8) [?, ??, q]:
+.SE
+Press
+.HK EK
+to accept the default, or type the appropriate number.
+.P
+The system responds:
+.SS CO
+The following is a list of ram high and low addresses 
+at which your ethernet controller may be jumpered.
+Type the low memory address -value should be 8K 
+boundary Valid range is 80000 to FE000
+(Default D8000) [524288-1040384, ?, q]
+.SE
+Press
+.HK EK
+to accept the default, or type the appropriate number.
+.IX "Ethernet, controller interrupts"
+.AB N
+The number shown above, 524288-1040384, is the range of 80000 to 
+FE000 given in decimal.
+.AC
+.H 3 "3com IE6(#C503) Ethernet Driver (ie6) Package"
+.IX "ie6 package"
+When you install the \f4ie6\fP package, the system responds:
+.SS CO
+These interrupts may be available
+
+2
+5
+
+Type the interrupt at which your ethernet controller is jumpered.
+(default 5) [?, ??, q]
+.SE
+Press
+.HK EK
+to accept the default, or type the appropriate number.
+.P
+The system responds:
+.SS CO
+The following is a list of I/O high and low address at 
+which your ethernet controller may be jumpered.
+
+I/O address range
+  1  250     25F
+      .       .
+      .       .
+  8  350     35F
+
+Type the corresponding menu number at which your 
+ethernet controller is jumpered.
+(Default 300) [?, ??, q] ;
+.SE
+Press
+.HK EK
+to accept the default, or type the appropriate number.
+.P
+The system responds:
+.SS CO
+The driver can be configured for one of two ethernet cable types.
+
+  1  AUI     (thick cable with flat multi-pin connector)
+  2  BNC     *thin cable with round twist on connector)
+
+Type the menu number of the cable type you are using (default: BNC) [?,??,q]:
+.SE
+Press
+.HK EK
+to accept the default, or type the appropriate number.
+.P
+Once you answer the questions, the packages you specified will begin to
+install. It will take several hours for the packages to install.
+.P
+Return to Chapters 2 or 3 for further instructions.

@@ -1,0 +1,498 @@
+'\"macro stdmacro
+.if n .pH g1c.cu @(#)cu	40.7.1.2 of 4/18/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} cu 1C "Basic Networking Utilities" "\&"
+.if \nX=1 .ds x} cu 1C "Basic Networking Utilities"
+.if \nX=2 .ds x} cu 1C "" "\&"
+.if \nX=3 .ds x} cu "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4cu\f1 \- call another \s-1UNIX\s+1 system
+.SH SYNOPSIS
+\f4cu\f1
+[ options ]
+[ destination ]
+.SH DESCRIPTION
+\f4cu\fP
+calls up another \s-1UNIX\s+1 system,
+a terminal,
+or possibly a non-\s-1UNIX\s+1 system.
+It manages an interactive conversation with possible
+transfers of files.
+It is convenient to think of \f4cu\fP as operating in two phases.
+The first phase is the connection phase in which the connection is
+established.
+\f4cu\fP then enters the conversation phase.
+The
+\f4\-d\f1
+option is the only one that applies to both phases.
+.TP 12
+\f4\-d\f1
+Causes diagnostic traces to be printed.
+.SS "Connection Phase"
+\f4cu\fP uses the same mechanism that
+\f4uucp\fP
+does to establish a connection.  This means that it will use the
+\f4uucp\fP
+control files
+\f4/etc/uucp/Devices\f1 and \f4/etc/uucp/Systems\f1.
+This gives \f4cu\fP the ability to choose from several different media
+to establish the connection.
+The possible media include telephone lines, direct connections,
+and
+local area networks (LAN).
+The
+\f4Devices\f1
+file contains a list of media that are available on your system.
+The
+\f4Systems\f1
+file contains information for connecting to remote systems, but it is
+not generally readable.
+.P
+The
+.I destination
+parameter from the command line is used to tell \f4cu\fP what system you
+wish to connect to.  \f2destination\f1 can be blank, a telephone number, a
+system name, or a LAN specific address.
+A telephone number is a string consisting of the tone dial
+characters (the digits 0 through 9, \f(CW*\f1, and \f(CW#\f1) plus
+the special characters \f(CW=\f1 and \-.
+The equal sign designates a secondary dial tone and the minus sign
+creates a 4 second delay.
+A system name is the name of any computer that
+\f4uucp\fP
+can call; the
+\f4uuname\fP
+command prints a list of these names.
+The documentation for your LAN will show the form of the LAN specific
+address.
+.P
+If \f4cu\fP's default behavior is invoked (not using the
+\f4\-c\f1 or \f4\-l\f1
+options), \f4cu\fP will use
+.IR destination
+to determine which medium to use.
+If
+.I destination
+is a telephone number, \f4cu\fP will assume that you wish to use a telephone
+line and it will select an automatic call unit (ACU).
+If the
+.I destination
+is not a telephone number, then \f4cu\fP will assume that it is a system
+name.
+\f4cu\fP will follow the
+\f4uucp\fP
+calling mechanism and use the
+\f4Systems\f1 and \f4Devices\f1
+files to obtain the best available connection.
+Since \f4cu\fP will choose a speed that is appropriate for
+the medium that it selects, you may not use the
+\f4\-s\f1
+option when
+.I destination
+is a system name.
+.P
+The
+\f4\-c\f1 and \f4\-l\f1
+options modify this default behavior.
+\f4\-c\f1
+is most often used to select a LAN by specifying a Type field from the
+\f4Devices\f1
+file.
+Here,
+.I destination
+is assumed to be a system name.  If the connection attempt to system name
+fails, a connection will be attempted using \f2destination\f1 as a LAN
+specific address.
+The
+\f4\-l\f1
+option is used to specify a device associated with a direct connection.
+If the connection is truly a direct connection to the remote machine,
+then there is no need to specify a
+.IR destination .
+This is the only case where a blank
+.I destination
+is allowed.
+On the other hand, there may be cases in which the specified device
+connects to a dialer, so it is valid to specify a telephone number as
+a
+.IR destination .
+The
+\f4\-c\f1 and \f4\-l\f1
+options should not be specified on the same command line.
+.P
+\f4cu\fP
+accepts many options.
+The
+\f4\-c\f1, \f4\-l\f1, and \f4\-s\f1
+options play a part in selecting the medium;
+the remaining options are used in configuring the line.
+.TP 12
+\&\f4\-s\f1\f2speed\f1
+Specifies the transmission speed (300, 1200, 2400, 4800, 9600).
+The default value is "Any" speed which will depend on the order of the
+lines in the \f4/etc/uucp/Devices\f1 file.
+Most modems are either 300, 1200, or 2400
+baud.
+Directly connected lines may be set to a speed higher than 2400 baud.
+.TP
+\f4\-c\f2type\f1
+The first field in the \f4Devices\f1 file is the "Type" field.  The \f4\-c\f1
+option forces \f4cu\fP to only use entries in the "Type" field that match the
+user specified \f2type\f1.
+The specified \f2type\f1 is usually the name of a local area network.
+.TP
+\&\f4\-l\f1\f4line\fP
+Specifies a device name to use as the communication line.
+This can be 
+used to override the search that would otherwise take place
+for the first available line having the right
+speed.
+When the \f4\-l\f1 option is used without the \f4\-s\f1 option, the speed
+of a line is taken from the 
+Devices file record in which
+\f4line\fP
+matches the second field (the Line field).
+When the \f4\-l\f1 and \f4\-s\f1 options are both used together,
+\f4cu\fP will search the Devices file to check if the requested speed for the
+requested line is available.
+If so, the connection will be made at the
+requested speed, otherwise, an error message will be printed and the call
+will not be made. 
+In the general case where a specified device is a directly connected
+asynchronous line
+(e.g., \f4/dev/term/\f2ab\f1), a telephone number 
+(\f2telno\f1) is not required.
+The specified device need not be in the \f4/dev\f1 directory.
+If the specified device
+is associated with an auto dialer, a telephone number must be 
+provided. 
+If
+.I destination
+is used with this option, it must be a telephone number.
+.TP
+\&\f4\-b\f2n\f1
+Forces \f2n\f1 to be the number of bits processed on the line.
+\f2n\f1 is either 7 or 8.  This allows connection between
+systems with different character sizes.  By default, the
+character size of the line is set to the same as the current
+local terminal.
+.TP
+\f4\-e\f1
+Set an EVEN data parity.  This option designates that EVEN parity is
+to be generated for data sent to the remote system.
+.TP
+\f4\-h\f1
+Set communication mode to half-duplex.  This option emulates the local
+\f4echo\fP(1) command in order to support calls to other computer systems
+that expect terminals to be set to half-duplex mode.
+.TP
+\f4\-n\f1
+Request user prompt for telephone number.  For added security, this option
+will prompt the user to provide the telephone number to be dialed, rather than 
+taking it from the command line. 
+.TP
+\f4\-o\f1
+Set an ODD data parity.  This option designates that ODD parity is to be
+generated for data sent to the remote system.
+.TP
+\f4\-t\f1
+Used to dial a terminal which has been set to auto answer.
+Appropriate mapping of carriage-return to carriage-return-line-feed
+pairs is set.
+.P
+.SS "Conversation Phase"
+After making the connection,
+\f4cu\fP
+runs as two processes:
+the
+.I transmit\^
+process reads data from the standard input and,
+except for lines beginning with
+\f(CW~\f1,
+passes it to the remote system;
+the
+.I receive\^
+process accepts data from the remote system and,
+except for lines beginning with
+\f(CW~\f1,
+passes it to the standard output.
+Normally, an automatic \s-1DC\s+1\&3/\s-1DC\s+1\&1 protocol
+is used to control input from the remote so the buffer is
+not overrun.
+Lines beginning with \f(CW~\f1 have special meanings.
+.PP
+The
+.I transmit\^
+process interprets the following user initiated commands:
+.TP 20
+\f(CW~\f1\s+4.\s-4
+terminate the conversation.
+.TP
+\f(CW~\f4!\f1
+escape to an interactive shell on the local system.
+.TP
+\f(CW~\f4!\f2cmd\|.\|.\|.\f1
+run
+.I cmd\^
+on the local system
+(via
+\f4sh \-c\f1).
+.TP
+\f(CW~\f4$\f2cmd\|.\|.\|.\f1
+run
+.I cmd\^
+locally and send its output
+to the remote system.
+.TP
+\f(CW~\f4%cd\f1
+change the directory on the local system.
+Note:
+\f(CW~\f4!cd\f1
+will cause the command to be run by a sub-shell,
+probably not what was intended.
+.TP
+\&\f(CW~\f4%take\f1 \|\f2from\fP \|[ \|\f2to\fP \|]
+copy file
+.I from\^
+(on the remote system)
+to file
+.I to\^
+on the local system.
+If
+.I to\^
+is omitted,
+the
+.I from\^
+argument is used in both places.
+.TP
+\&\f(CW~\f4%put\fP \|\f2from\fP \|[ \|\f2to\fP \|]
+copy file
+.I from\^
+(on local system)
+to file
+.I to\^
+on remote system.
+If
+.I to\^
+is omitted, the
+.I from\^
+argument is used in both places.
+.TP
+\&\f(CW~~\f1 \|\f4line\fP
+send the line
+\f(CW~\f1
+\f4line\fP
+to the remote system.
+.TP
+\&\f(CW~\f4%break\fP
+transmit a 
+\f4BREAK\f1
+to the remote system (which can also be specified as \f(CW~\f4%b\f1).
+.TP
+\f(CW~\f4%debug\f1
+toggles the
+\f4\-d\f1
+debugging option on or off (which can also be specified as \f(CW~\f4%d\f1).
+.TP
+\f(CW~\f4t\f1
+prints the values of the termio structure variables for the user's
+terminal (useful for debugging).
+.TP
+\f(CW~\f4l\f1
+prints the values of the termio structure variables for the remote
+communication line (useful for debugging).
+.TP
+\f(CW~\f4%ifc\f1
+toggles between \s-1DC\s+1\&3/\s-1DC\s+1\&1
+input control protocol and no input control.
+This is useful when the remote system does
+not respond properly to the \s-1DC\s+1\&3 and \s-1DC\s+1\&1 characters.
+(can also be specified as \f4\(ap%nostop\f1).
+.TP
+\f(CW~\f4%ofc\f1
+toggles the output flow control setting.  When
+enabled, outgoing data may be flow controlled
+by the remote host (can also be specified
+as \f4\(ap%noostop\f1).
+.TP
+\f(CW~\f4%divert\f1
+allow/disallow unsolicited diversions.  That is,
+diversions not specified by \f(CW~\f4%take\f1.
+.TP
+\f(CW~\f4%old\f1
+allow/disallow old style syntax for received diversions.
+.PP
+The
+.I receive\^
+process normally copies data from the remote system to the standard
+output of the local system.  It may also direct the output to local
+files.
+.PP
+The use of
+\f(CW~\f4%put\f1
+requires
+\f4stty\fP(1)
+and
+\f4cat\fP(1)
+on the remote side.
+It also requires that the
+current control characters on the remote
+system be identical to the current control
+characters on the local system.
+Backslashes are inserted at appropriate places
+for these control characters.
+.PP
+The use of
+\f(CW~\f4%take\f1
+requires the existence of
+\f4echo\fP(1)
+and
+\f4cat\fP(1)
+on the remote system.
+Also,
+\f4tabs\fP
+mode (See
+.I stty(1))
+should be set on the remote system if
+tabs are to be copied without expansion to spaces.
+.PP
+When  
+\f4cu\fP
+is used on system X to connect to system Y and
+subsequently used on system Y to connect to
+system Z, commands on system Y can be executed
+by using \f(CW~~\f1. Executing a tilde command reminds the user 
+of the local system \f4uname\fP.
+For example, \f4uname\fP can be executed
+on Z, X, and Y as follows:
+.br
+.sp
+.RS
+uname
+.br
+Z
+.br
+\f(CW~\f1[X]!uname
+.br
+X
+.br
+\f(CW~~\f1[Y]!uname
+.br
+Y
+.br
+.RE
+.sp
+In general,
+\f(CW~\f1
+causes the command to be executed on the original machine.
+\f(CW~~\f1
+causes the command to be executed on the next machine in
+the chain.
+.SH EXAMPLES
+To dial a system whose telephone number is 9 1 201 555 1234 using 1200 baud
+(where dialtone is expected after the 9):
+.sp
+.RS
+cu  \-s1200   9=12015551234
+.RE
+.PP
+If the speed is not specified, "Any" is the default value.
+.PP
+To login to a system that is on a Datakit VCS local area network, but
+which has not been defined by your administrator (i.e. is not entered
+in the \f4/etc/uucp/Systems\f1 file(s)):
+.sp
+.RS
+cu \-c DK address
+.RE
+.PP
+.I DK
+is the name of the Datakit local area network, and
+.I address
+is the Datakit address which is of the form, /area/exchange/machine.
+.PP
+To login to a system connected by a direct line:
+.sp
+.RS
+cu  \-l  /dev/term/XX
+.RE
+.PP
+or
+.RS
+cu \-l term/XX
+.RE
+.PP
+To dial a system with a specific line and speed:
+.sp
+.RS
+cu  \-s1200  \-l  term/XX 
+.RE
+.PP
+To dial a system using a specific line associated with an auto dialer:
+.sp
+.RS
+cu  \-l  culXX  9=12015551234 
+.RE
+.PP
+To use a system name:
+.RS
+cu  systemname
+.br
+.SH FILES
+.br
+/etc/uucp/Sysfiles
+.br
+/etc/uucp/Systems
+.br
+/etc/uucp/Devices
+.br
+/var/spool/locks/*
+.SH SEE ALSO
+\f4cat\fP(1),
+\f4ct\fP(1C),
+\f4echo\fP(1),
+\f4stty\fP(1),
+\f4uucp\fP(1C),
+\f4uname\fP(1),
+\f4uuname\fP(1).
+.br
+.I
+System Administrator's Guide.
+.SH DIAGNOSTICS
+Exit code is zero for normal exit,
+otherwise, one.
+.SH NOTES
+The \f4cu\fP command
+does not do any integrity checking on data it transfers.
+Data fields with special
+\f4cu\fP
+characters may not be transmitted properly.
+Depending on the interconnection hardware,
+it may be necessary to use a
+\f(CW~\f1.
+to terminate the conversion, even if
+\f4stty 0\f1
+has been used.
+Non-printing characters are not dependably transmitted using either
+the \f(CW~\f4%put\f1 or \f(CW~\f4%take\f1 commands.
+\f4cu\fP, between an IMBR1 and a PENRIL modem,
+will not return a login prompt immediately upon connection.
+A carriage return will return the prompt.
+.PP
+\f(CW\~\f4%put\f1 and \f(CW\~\f4%take\f1 cannot be used 
+over multiple links.  Files must be moved
+one link at a time.
+.PP
+There is an artificial slowing of transmission by
+\f4cu\fP
+during the
+\f(CW~\f4%put\f1
+operation so that loss of data is unlikely.  Files transferred using
+\f(CW~\f4%take\f1 or \f(CW~\f4%put\f1 must contain a trailing newline, otherwise, the
+operation will hang.  Entering a \s-1CTRL\s+1-d command usually clears the
+hang condition.
+.\"	@(#)cu.1c	2.0 of 8/17/84
+.Ee

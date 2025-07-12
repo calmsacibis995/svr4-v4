@@ -1,0 +1,73 @@
+'\"macro stdmacro
+.if n .pH g1.ipcrm @(#)ipcrm	40.6 of 5/21/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} ipcrm 1 "Inter-Process Communication Utilities" "\&"
+.if \nX=1 .ds x} ipcrm 1 "Inter-Process Communication Utilities"
+.if \nX=2 .ds x} ipcrm 1 "" "\&"
+.if \nX=3 .ds x} ipcrm "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4ipcrm\f1 \- remove a message queue, semaphore set, or shared memory \s-1ID\s0
+.SH SYNOPSIS
+\f4ipcrm\f1
+[
+\f2options\f1
+]
+.SH DESCRIPTION
+\f4ipcrm\fP
+removes one or more messages, semaphores, or shared
+memory identifiers.
+The identifiers are specified
+by the following \f2options\f1:
+.TP 12
+\f4\-q\f2 msqid\f1
+Remove the message queue identifier \f2msqid\f1
+from the system and destroy the message queue
+and data structure associated with it.
+.TP
+\f4\-m\f2 shmid\f1
+Remove the shared memory identifier \f2shmid\f1
+from the system.
+The shared memory segment and data
+structure associated with it are destroyed after
+the last detach.
+.TP
+\f4\-s\f2 semid\f1
+Remove the semaphore identifier \f2semid\f1
+from the system and destroy the set of semaphores and
+data structure associated with it.
+.TP 12
+\f4\-Q\f2 msgkey\f1
+Remove the message queue identifier, created with key \f2msgkey\f1,
+from the system and destroy the message queue
+and data structure associated with it.
+.TP
+\f4\-M\f2 shmkey\f1
+Removes the shared memory identifier, created with key \f2shmkey\f1,
+from the system.
+The shared memory segment and data
+structure associated with it are destroyed after
+the last detach.
+.TP
+\f4\-S\f2 semkey\f1
+Remove the semaphore identifier, created with key \f2semkey\f1,
+from the system and destroy the set of semaphores and
+data structure associated with it.
+.PP
+The details of the removes are described in \f4msgctl\fP(2),
+\f4shmctl\fP(2), and \f4semctl\fP(2).
+Use the \f4ipcs\fP command to find the identifiers and keys.
+.SH "SEE ALSO"
+\f4ipcs\fP(1)
+.br
+\f4msgctl\fP(2),
+\f4msgget\fP(2),
+\f4msgop\fP(2),
+\f4semctl\fP(2),
+\f4semget\fP(2),
+\f4semop\fP(2),
+\f4shmctl\fP(2), \f4shmget\fP(2), \f4shmop\fP(2) in the \f2Programmer's Reference Manual\f1
+.\"	@(#)ipcrm.1	6.2 of 9/2/83
+.Ee

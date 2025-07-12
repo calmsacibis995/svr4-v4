@@ -1,0 +1,10 @@
+
+#ident	"@(#)lp:filter/postscript/filtdesc/postio.fd	1.1.3.1"
+
+Input types: postdown
+Output types: PS
+Printer types: PS
+Printers: any
+Filter type: fast
+Command: /usr/lib/lp/postscript/postio 2>>$ERRFILE
+#Options: PRINTER * = -L/var/tmp/*.log

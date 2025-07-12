@@ -1,0 +1,84 @@
+.if n .pH doctools.MasterToc @(#)MasterToc	40.2
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.CH "Table of Contents" "" "" "" Contents
+.BK "Documenter's Tool Set User's Guide" "Release 1.0" "" ""   
+.BK "Documenter's Tool Set User's Guide" "Release 1.0" "" ""   
+.BK "Documenter's Tool Set User's Guide" "Release 1.0" "" ""   
+.BK "Documenter's Tool Set User's Guide" "Release 1.0" "" ""   
+.BK "Documenter's Tool Set User's Guide" "Release 1.0" "" ""   
+.BK "Documenter's Tool Set User's Guide" "Release 1.0" "" ""   
+.BK "DOCTOOLS Quick Reference" "Release 1.0" "" ""   
+.tC 1 "Introduction" "" "Table of Contents" "1"
+.tC 2 "Product Overview" 1-1  
+.tC 2 "Documentation Overview" 1-6  
+.tC 1 "Formatting Files" "" "Table of Contents" "2"
+.tC 2 "Getting Started" 2-1  
+.tC 2 "Command Mode" 2-2  
+.tC 2 "Interactive Mode" 2-11  
+.tC 2 "File Types" 2-15  
+.tC 2 "Source Code Controlled Files" 2-17  
+.tC 2 "Error Messages" 2-19  
+.tC 1 "Manual Page Macros" "" "Table of Contents" "3"
+.tC 2 "Introduction" 3-1  
+.tC 2 "Manual Page Title" 3-2  
+.tC 2 "Headings" 3-7  
+.tC 2 "Paragraphs" 3-10  
+.tC 2 "Indentation" 3-17  
+.tC 2 "Text Size" 3-21  
+.tC 2 "Tab Distance" 3-23  
+.tC 2 "Proprietary Markings and Draft Notices" 3-24  
+.tC 2 "Fonts" 3-26  
+.tC 2 "String Definitions" 3-32  
+.tC 1 "Guide Macros" "" "Table of Contents" "4"
+.tC 2 "Introduction" 4-1  
+.tC 2 "Book and Chapter Information" 4-2  
+.tC 2 "Chapter Sections" 4-7  
+.tC 2 "Admonitions" 4-10  
+.tC 2 "Screens and Boxes" 4-13  
+.tC 2 "Legends" 4-21  
+.tC 2 "Displays" 4-26  
+.tC 2 "Lists" 4-29  
+.tC 2 "Specialized Displays and Special Text Elements" 4-41  
+.tC 2 "Two-Column Formatting" 4-53  
+.tC 2 "Paragraphs and Spacing" 4-61  
+.tC 2 "Preprocessing" 4-67  
+.tC 2 "PostScript File Inclusion" 4-74  
+.tC 2 "Key Representations" 4-77  
+.tC 2 "Folio Format" 4-79  
+.tC 2 "Text Size" 4-80  
+.tC 2 "Tab Distance" 4-81  
+.tC 2 "Proprietary Markings and Draft Notices" 4-82  
+.tC 2 "Fonts" 4-84  
+.tC 1 "File Type Macro: Collection Files" "" "Table of Contents" "5"
+.tC 2 "Introduction" 5-1  
+.tC 2 "Collection File Structure" 5-2  
+.tC 2 "Collection File Types" 5-5  
+.tC 1 "How to Produce an Index" "" "Table of Contents" "6"
+.tC 2 "Introduction" 6-1  
+.tC 2 "Deciding which Terms to Index" 6-2  
+.tC 2 "Marking the Terms to be Indexed" 6-3  
+.tC 2 "Producing the File for the Index and Table of Contents" 6-9  
+.tC 2 "Producing the Index Source File" 6-10  
+.tC 2 "Printing the Index" 6-11  
+.tC 2 "Practical Pointers" 6-12  
+.tC 2 "Summary" 6-14  
+.tC 1 "DOCTOOLS Quick Reference" "" "Table of Contents" ""
+.tC 2 "The format Command" 1  
+.tC 2 "Manual Page Macros" 2  
+.tC 2 "Guide Macros" 4  
+.tC 2 "File Type Macro" 10  
+.tC 2 "Alphabetical Index of Macros" 11  
+.tC F "Figure 1-1:\0" "Manual Page Macros" 1-4
+.tC F "Figure 1-2:\0" "Guide Macros" 1-4
+.tC F "Figure 1-3:\0" "Collection File Macro" 1-4
+.tC F "Figure 2-1:\0" "Displaying Valid Destinations" 2-6
+.tC F "Figure 2-2:\0" "Confirming Your Formatting Selections" 2-13
+.tC F "Figure 3-1:\0" "The Manual Page Macros" 3-1
+.tC F "Figure 4-1:\0" "The Guide Macros" 4-1
+.tC F "Figure 4-2:\0" "A Typical Marbles Error Message" 4-23
+.tC F "Figure 4-3:\0" "A Function that Counts Marbles" 4-24
+.tC F "Figure 5-1:\0" "A Collection File for a Book" 5-2
+.tC F "Figure 5-2:\0" "A Collection File with Delta Numbers" 5-3
+.tC F "Figure 5-3:\0" "A Sample Master Table of Contents Collection File" 5-6
+.tC F "Table 2-1:\0" "Available Page Sizes" 2-9
+.tC F "Table 4-1:\0" "Auto-Incrementing List Types" 4-30

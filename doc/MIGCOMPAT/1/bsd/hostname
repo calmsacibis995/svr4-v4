@@ -1,0 +1,29 @@
+'\"macro stdmacro
+.if n .pH g1.hostname @(#)hostname	40.8 of 4/18/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.\" @(#)hostname.1 1.11 88/08/25 SMI; 
+.nr X
+.if \nX=0 .ds x} hostname 1 "BSD Compatibility Package" "\&"
+.if \nX=1 .ds x} hostname 1 "BSD Compatibility Package"
+.if \nX=2 .ds x} hostname 1 "" "\&"
+.if \nX=3 .ds x} hostname "" "" "\&"
+.TH \*(x}
+.\" @(#)hostname.1 1.11 88/08/25 SMI; from UCB 4.1
+.SH NAME
+\f4hostname\f1 \- set or print name of current host system
+.SH SYNOPSIS
+\f4/usr/ucb/hostname\f1
+[
+.I name-of-host
+]
+.SH DESCRIPTION
+.P
+The
+\f4hostname\f1
+command prints the name of the current host, as given before the
+\f5login\fP prompt.
+The super-user can set the hostname by giving an argument.
+.SH SEE ALSO
+\f4uname\fP(1)
+in the \f2User's Reference Manual\f1

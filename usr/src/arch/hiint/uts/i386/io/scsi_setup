@@ -1,0 +1,7 @@
+echo "Making scsi add-on with :mk.addon"
+
+unset MORECPP
+unset INC
+unset CFLAGS
+
+sh $ROOT/usr/src/:mk.addon scsi scsi.in

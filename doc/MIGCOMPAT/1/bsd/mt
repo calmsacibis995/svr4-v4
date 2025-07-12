@@ -1,0 +1,166 @@
+'\"macro stdmacro
+.if n .pH g1.mt @(#)mt	40.12 of 5/21/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+'\" macro stdmacro
+.\" Copyright (c) 1988 Sun Microsystems, Inc. - All Rights Reserved.
+.\"
+.nr X
+.if \nX=0 .ds x} mt 1 "BSD Compatibility Package" "\&"
+.if \nX=1 .ds x} mt 1 "BSD Compatibility Package"
+.if \nX=2 .ds x} mt 1 "" "\&"
+.if \nX=3 .ds x} mt "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4mt\f1 \- magnetic tape control
+.SH SYNOPSIS
+\f4/usr/ucb/mt\f1
+[
+\f4\-f\f1
+.I tapename
+]
+.I command
+[
+.I count
+]
+.SH DESCRIPTION
+\f4mt\f1
+sends commands to a magnetic tape drive.
+If
+.I tapename
+is not specified, the environment variable
+\f4TAPE\f1
+is used.
+If
+\f4TAPE\f1
+does not exist,
+\f4mt\f1
+uses the device
+\f4/dev/rmt12\f1.
+.I tapename
+must refer to a raw (not block) tape device.
+By default,
+\f4mt\f1
+performs the requested operation once;  multiple operations
+may be performed by specifying
+.IR count .
+.P
+The available commands are listed below.
+Only as many
+characters as are required to uniquely identify a command
+need be specified.
+.P
+\f4mt\f1
+returns a 0 exit status when the operation(s)
+were successful, 1 if the command was
+unrecognized or if
+\f4mt\f1
+was unable to open the specified tape drive,
+and 2 if an operation failed.
+.P
+the following commands are available to
+\f4mt\f1:
+.TP 13
+\f4eof\f1,\f4 weof\f1
+Write
+.I count
+.SM EOF
+marks at the current position on the tape.
+.TP
+\f4fsf\f1
+Forward space
+.I count
+files.
+.TP
+\f4fsr\f1
+Forward space
+.I count
+records.
+.TP
+\f4bsf\f1
+Back space
+.I count
+files.
+.TP
+\f4bsr\f1
+Back space
+.I count
+records.
+.TP
+\f4asf\f1
+Absolute space to 
+.I count
+file number.
+This is equivalent to a
+\f4rewind\f1
+followed by a
+\f4fsf\f1
+.I count.
+.P
+For the following commands,
+.I count
+is ignored:
+.TP 13
+\f4eom\f1
+Space to the end of recorded media on the tape
+(\s-1SCSI\s0 only).
+This is useful for appending files onto previously written tapes.
+.TP
+\f4rewind\f1
+Rewind the tape.
+.TP
+\f4offline\f1,\f4 rewoffl\f1
+Rewind, unload, and place the tape drive unit off-line.
+.TP
+\f4status\f1
+Print status information about the tape unit.
+.TP
+\f4retension\f1
+Wind the tape to the end of the reel
+and then rewind it, smoothing out
+the tape tension.
+.TP
+\f4erase\f1
+Erase the entire tape.
+.SH FILES
+.PD 0
+.TP 20
+\f4/dev/rmt*\f1
+raw magnetic tape interface
+.TP
+\f4/dev/rar*\f1
+raw Archive cartridge tape interface
+.TP
+\f4/dev/rst* \f1
+raw
+.SM SCSI
+tape interface
+.TP
+\f4/dev/rmt*\f1
+raw Xylogics\(rg tape interface
+.PD
+.SH "SEE ALSO"
+\f4dd\fP(1M),
+\f4ar\fP(4),
+.\" .BR mtio (4), 
+.\" .BR st (4S), 
+.\" .BR tm (4S), 
+.\".BR xt (4S)
+\f4environ\fP(5),
+\f4xt\fP(7)
+in the \f2System Administrator's Reference Manual\f1
+.SH NOTES
+Not all devices support all options.
+For example,
+\f4ar\f1
+currently does not support the
+\f4fsr\f1,
+\f4bsf\f1,
+or
+\f4bsr\f1
+options.
+The half-inch tape driver,
+\f4/dev/rmt*,\f1
+does not support the
+\f4retension\f1
+option.

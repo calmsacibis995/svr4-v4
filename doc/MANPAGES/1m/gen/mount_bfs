@@ -1,0 +1,65 @@
+'\"macro stdmacro
+.if n .pH g1a.mount_bfs @(#)mount_bfs	40.10 of 4/30/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} mount 1M "bfs" "\&"
+.if \nX=1 .ds x} mount 1M "bfs"
+.if \nX=2 .ds x} mount 1M "" "\&"
+.if \nX=3 .ds x} "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4mount\fP (bfs) - mount \f4bfs\fP file systems
+.SH SYNOPSIS
+.nf
+\f4mount [-F bfs] [\f2generic_options\f4] [-r] [-o \f2specific_options\fP] {\f2special | mount_point\fP}
+\f4mount [-F bfs] [\f2generic_options\f4] [-r] [-o \f2specific_options\fP] \f2special  mount_point\fP
+.fi
+.SH DESCRIPTION
+\f2generic_options\fP are options supported by the generic \f4mount\fP command.
+.PP
+\f4mount\f1
+attaches a 
+\f4bfs\f1
+file system, referenced by \f2special\fP, to the file system hierarchy at the
+pathname location
+.IR mount_point ,
+which must already exist.
+If
+.I mount_point
+has any contents prior to the
+\f4mount\f1
+operation, these are hidden until the
+file system is unmounted.
+.PP
+The options are:
+.TP 10
+\f4-F bfs\fP
+Specify the \f4bfs\fP-FSType
+.TP 10
+\f4-r\fP
+Mount the file system read-only
+.TP 10
+\f4-o\fP
+Specify the options specific to the
+\f4bfs\fP file system.
+Available options are:
+.RS 10
+.TP 10
+\f4rw | ro\fR
+Read/write or read-only.
+Default is read/write.
+.RE
+.PP
+Only a privileged user can mount file systems.
+.SH FILES
+.PD 0
+.TP 20
+\f4/etc/mnttab\fP
+mount table
+.SH SEE ALSO
+generic \f4mount\fP(1M),
+\f4mountfsys\fP(1M),
+\f4mnttab\fP(4)
+.br
+\f4mount\fP(2) in the \f2Programmer's Reference Manual\fP

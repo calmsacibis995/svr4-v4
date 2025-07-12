@@ -1,0 +1,157 @@
+'\"macro stdmacro
+.if n .pH g1f.message @(#)message	40.14 of 5/29/91
+.\" Copyright 1989 AT&T
+.nr X
+.if \nX=0 .ds x} message 1F "Form and Menu Language Interpreter Utilities" "\&"
+.if \nX=1 .ds x} message 1F "Form and Menu Language Interpreter Utilities"
+.if \nX=2 .ds x} message 1F "" "\&"
+.if \nX=3 .ds x} message "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4message\f1 \- put arguments on FMLI message line
+.SH SYNOPSIS
+\f4message\f1
+[\f4\-t\f1] [\f4\-b\f1 [\f2num\f1]\|] [\f4\-o\f1] [\f4\-w\f1] [\f2string\f1]
+.br
+\f4message\f1
+[\f4\-f\f1] [\f4\-b\f1 [\f2num\f1]\|] [\f4\-o\f1] [\f4\-w\f1] [\f2string\f1]
+.br
+\f4message\f1
+[\f4\-p\f1] [\f4\-b\f1 [\f2num\f1]\|] [\f4\-o\f1] [\f4\-w\f1] [\f2string\f1]
+.SH DESCRIPTION
+The \f4message\f1 command puts \f2string\f1 out
+on the FMLI message line.
+If there is no string,
+the \f2stdin\f1 input to \f4message\f1 will be used.
+The output of \f4message\f1 has a duration (length of time
+it remains on the message line).
+The default duration is "transient": it or one of two other durations can
+be requested with the following mutually-exclusive options:
+.br
+.TP "\w'\-b\ num\ \ 'u"
+\f4\-t\f1
+explicitly defines a message to have transient duration.
+Transient messages remain on the message line only until the user
+presses another key or a \f4CHECKWORLD\f1 occurs.
+The descriptors
+\f4itemmsg\f1,
+\f4fieldmsg\f1,
+\f4invalidmsg\f1,
+\f4choicemsg\f1,
+the default-if-not-defined value of
+\f4oninterrupt\f1,
+and FMLI generated error messages (i.e., from syntax errors)
+also output transient duration messages.
+Transient messages take precedence over both frame messages and permanent messages.
+.TP
+\f4\-f\fP
+defines a message to have "frame" duration.
+Frame messages remain on the message line as long as
+the frame in which they are defined is current.
+The descriptor 
+\f4framemsg\f1
+also outputs a frame duration message.
+Frame messages take precedence over permanent messages.
+.TP
+\f4\-p\fP
+defines a message to have "permanent" duration.
+Permanent messages remain on the message line for the
+length of the FMLI session, unless explicitly replaced by another
+permanent message or temporarily superseded by a transient message
+or frame message.
+A permanent message is not affected by navigating
+away from, or by closing, the frame which generated the permanent message.
+The descriptor
+\f4permanentmsg\f1
+also outputs a permanent duration message.
+.PP
+Messages displayed with \f4message \-p\f1
+will replace (change the value of) any message
+currently displayed or stored via use of the
+\f4permanentmsg\f1
+descriptor.
+Likewise, \f4message \-f\f1
+will replace any message
+currently displayed or stored via use of the
+\f4framemsg\f1
+descriptor.
+If more than one message in a frame definition file is specified with the \f4-p\f1
+option, the last one specified will be the permanent duration message.
+.PP
+The \f2string\f1 argument should always be the last argument.
+Other options available with \f4message\f1 are the following:
+.br
+.TP .6i
+\f4\-b\f1 [\f2num\f1]
+rings the terminal bell \f2num\f1 times,
+where \f2num\f1 is an integer from 1 to 10.
+The default value is 1.
+If the terminal has no bell,
+the screen will flash \f2num\f1 times instead, if possible.
+.br
+.ne.75i
+.TP
+\f4\-o\f1
+forces \f4message\f1
+to duplicate its message to \f2stdout\f1.
+.TP
+\f4-w\f1
+turns on the working indicator.
+.SH EXAMPLES
+When a value entered in a field is invalid,
+ring the bell 3 times and then
+display \f4Invalid Entry: Try again!\f1
+on the message line:
+.PP
+.RS
+\f4invalidmsg=\(gamessage \-b 3 "Invalid Entry: Try again!"\(ga\f1
+.RE
+.PP
+Display a message that tells the user what is being done:
+.PP
+.RS
+\f4done=\(gamessage EDITOR has been set in your environment\(ga close\f1
+.RE
+.PP
+Display a message on the message line and \f2stdout\f1 for each
+field in a form (a pseudo-"field duration" message).
+.PP
+.RS
+\f4fieldmsg="\(gamessage -o -f "Enter a filename."\(ga"\f1
+.RE
+.PP
+Display a blank transient message (effect is to "remove" a permanent
+or frame duration message).
+.PP
+.RS
+\f4done=\(gamessage  ""\(ga nop\f1
+.RE
+.SH NOTES
+If \f4message\f1 is coded more than once on a single line,
+it may appear that only the right-most instance is interpreted and displayed.
+Use \f4sleep\f1(1) between uses of \f4message\f1 in this case, to display
+multiple messages.
+.PP
+\f4message -f\f1 should not be used in a stand-alone backquoted expression
+or with the \f4init\f1 descriptor because the frame is not yet current
+when these are evaluated.
+.PP
+In cases where \f4\(gamessage -f "\f2string\f1"\(ga is part of a
+stand-alone backquoted expression,
+the context for evaluation of the expression is the previously
+current frame.
+The previously current frame can be the frame that issued the
+\f4open\f1 command for the frame containing the backquoted
+expression, or it can be a frame given as an argument when \f4fmli\f1
+was invoked.
+That is, the previously current frame is the one whose
+frame message will be modified.
+.PP
+Permanent duration messages are displayed when the user navigates
+to the command line.
+.SH "SEE ALSO"
+\f4sleep\f1(1) in the \f2UNIX System V User's Reference Manual\f1
+.ig
+BUILT-IN FMLI
+..
+.Ee

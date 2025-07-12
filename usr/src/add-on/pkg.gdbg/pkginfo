@@ -1,0 +1,15 @@
+#ident	"@(#)pkg.gdbg:pkginfo	1.2"
+
+# gdebugger pkginfo
+
+PKG="gdebugger"
+NAME="GDEBUGGER Kernel Debugger (traditional-style)"
+ARCH="i386"
+RELEASE="4.0"
+VERSION="4.0 2.0"
+VENDOR="USL"
+CATEGORY="system,utilities"
+CLASSES="none"
+BASEDIR=""
+MAXINST="1"
+

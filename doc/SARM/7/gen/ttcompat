@@ -1,0 +1,775 @@
+'\"macro stdmacro
+.if n .pH g7.ttcompat @(#)ttcompat	40.7 of 4/11/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} ttcompat 7 "" "\&"
+.if \nX=1 .ds x} ttcompat 7 ""
+.if \nX=2 .ds x} ttcompat 7 "" "\&"
+.if \nX=3 .ds x} ttcompat "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4ttcompat\fP \- \f4V7\fP, \f44BSD\fP and \f4XENIX\fP \f4STREAMS\fP compatibility module
+.SH SYNOPSIS
+\f4#include <sys/stream.h>
+.br
+#include <sys/stropt.h>
+.br
+#include <sys/ttcompat.h>
+.br
+#include <sys/ttold.h>\fP
+.P
+\f4ioctl(fd, \s-1I_PUSH\s0, "ttcompat");\fP
+.SH DESCRIPTION
+.IX "ttcompat module" "" "\fLttcompat\fP \s-1STREAMS\s0 module"
+.IX STREAMS ttcompat "\s-1STREAMS\s0" "\fLttcompat\fP, \f4V7\fP, \f44BSD\fP compatibility module"
+.P
+\f4ttcompat\fP
+is a
+.SM STREAMS
+module that translates the
+\f4ioctl\fP
+calls
+supported by the older Version 7, \f44BSD\fP and \f4XENIX\fP
+terminal drivers into the
+\f4ioctl\fP
+calls supported by the \f4termio\fP
+interface [see \f4termio\fP(7)].
+All other messages pass through this module unchanged;
+the behavior of \f4read\fP and
+\f4write\fP
+calls is unchanged, as is the behavior of
+\f4ioctl\fP
+calls other than the ones supported by
+\f4ttcompat\fP.
+.P
+This module can be automatically pushed onto a stream using the \f4autopush\fP 
+mechanism when a terminal device is opened; it does not have to be explicitly 
+pushed onto a stream.
+This module requires that the
+\f4termios\fP
+interface be supported by the modules and the application can push
+the driver downstream.
+The
+\f4TCGETS\fP, \f4TCSETS\fP, and
+\f4TCSETSF\fP \f4ioctl\fP calls
+must be supported; if any information set or fetched by those
+\f4ioctl\fP calls is not supported by the modules and driver downstream,
+some of the V7/4\f4BSD/XENIX\fP functions may not be supported.
+For example, if the
+\f4CBAUD\fP bits in the \f4c_cflag\fP
+field are not supported, the functions provided by the
+\f4sg_ispeed\fP and \f4sg_ospeed\fP
+fields of the \f4sgttyb\fP
+structure (see below) will not be supported.
+If the \f4TCFLSH\fP \f4ioctl\fP
+is not supported, the function provided by the
+\f4TIOCFLUSH\fP \f4ioctl\fP
+will not be supported.
+If the
+\f4TCXONC\fP \f4ioctl\fP
+is not supported, the functions provided by the
+\f4TIOCSTOP\fP
+and
+\f4TIOCSTART\fP
+\f4ioctl \fP
+calls
+will not be supported.
+If the
+\f4TIOCMBIS\fP
+and
+\f4TIOCMBIC\fP
+\f4ioctl \fP
+calls
+are not supported, the functions provided by the
+\f4TIOCSDTR\fP
+and
+\f4TIOCCDTR\fP
+\f4ioctl\fP
+calls
+will not be supported.
+.P
+The basic
+\f4ioctl\fP
+calls
+use the
+\f4sgttyb\fP
+structure defined by
+.CO <sys/ioctl.h> :
+.RS
+.nf
+.ft 4
+.ta .5i 1i
+struct sgttyb {
+	char	sg_ispeed;
+	char	sg_ospeed;
+	char	sg_erase;
+	char	sg_kill;
+	int	sg_flags;
+};
+.ft 1
+.fi
+.RE
+.P
+The
+\f4sg_ispeed\fP
+and 
+\f4sg_ospeed\fP
+fields describe the input and output speeds of the
+device, and reflect the values in the
+\f4c_cflag\fP
+field of the
+\f4termios\fP
+structure.
+The
+\f4sg_erase\fP
+and
+\f4sg_kill\fP
+fields of the argument structure
+specify the erase and kill characters respectively, and reflect the
+values in the
+\f4VERASE\fP
+and
+\f4VKILL\fP
+members of the
+\f4c_cc\fP
+field of the
+\f4termios\fP
+structure.
+.P
+The
+\f4sg_flags\fP
+field of the argument structure
+contains several flags that determine the
+system's treatment of the terminal.
+They are mapped into flags in
+fields of the terminal state, represented by the
+\f4termios\fP
+structure.
+.P
+Delay type \f40\fP is always mapped into the equivalent delay type \f40\fP in the
+\f4c_oflag\fP field of the \f4termios\fP
+structure.
+Other delay mappings are performed as follows:
+.RS
+.TP 12
+\f4sg_flags\fP
+\f4c_oflag\fP
+.sp .5
+.PD 0
+.TP 12
+\f4BS1\fP
+\f4BS1\fP
+.TP
+\f4FF1\fP
+\f4VT1\fP
+.TP
+\f4CR1\fP
+\f4CR2\fP
+.TP
+\f4CR2\fP
+\f4CR3\fP
+.TP
+\f4CR3\fP
+not supported
+.TP
+\f4TAB1\fP
+\f4TAB1\fP
+.TP
+\f4TAB2
+\f4TAB2
+.TP
+\f4XTABS
+\f4TAB3
+.TP
+\f4NL1
+\f4ONLRET|CR1
+.TP
+\f4NL2\fP
+\f4NL1\fP
+.RE
+.PD
+.P
+If previous \f4TIOCLSET\fP or
+\f4TIOCLBIS\fP \f4ioctl\fP calls
+have not selected \f4LITOUT\fP
+or
+\f4PASS8\fP mode, and if \f4RAW\fP
+mode is not selected, the
+\f4ISTRIP\fP flag is set in the
+\f4c_iflag\fP field of the
+\f4termios\fP structure, and the
+\f4EVENP\fP and \f4ODDP\fP
+flags control the parity of characters sent to the terminal and
+accepted from the terminal:
+.P
+Parity is not to be generated on output or checked on input; 
+.br
+.in 8
+the character size is set to
+\f4CS8\fP and the flag is cleared in the
+\f4c_cflag\fP
+field of the
+\f4termios\fP
+structure.
+.in
+.P
+Even parity characters are to be generated on output and accepted on input;
+.br
+.in 8
+the flag is set in the
+\f4c_iflag\fP
+field of the
+\f4termios\fP
+structure, the character size is set to
+\f4CS7\fP
+and the
+flag is set in the
+\f4c_cflag\fP
+field of the
+\%\f4termios\fP
+structure.
+.in
+.P
+Odd parity characters are to be generated on output and accepted on input;
+the flag is set in the
+.br
+.in 8
+\f4c_iflag\fP
+field, the character size is set to
+\f4CS7\fP
+and the and flags are set in the
+\f4c_cflag\fP
+field of the
+\f4termios\fP
+structure.
+.in
+.P
+Even parity characters are to be generated on output and characters of either parity are to be accepted on input;
+.br
+.in 8
+the flag is cleared in the
+\f4c_iflag\fP
+field, the character size is set to
+\f4CS7\fP
+and the
+flag is set in the
+\f4c_cflag\fP
+field of the
+\f4termios\fP
+structure.
+.in
+.P
+The \f4RAW\fP
+flag disables all output processing (the
+\f4OPOST\fP flag in the \f4c_oflag\fP
+field, and the \f4XCASE\fP flag in the
+\f4c_lflag\fP field, are cleared in the
+\f4termios\fP
+structure) and input processing (all flags in the
+\f4c_iflag\fP field other than the
+\f4IXOFF\fP and
+\f4IXANY\fP
+flags are cleared in the
+\f4termios\fP
+structure).
+8 bits of data, with no parity bit,
+are accepted on input and generated on output; the character size is
+set to
+\f4CS8\fP
+and the
+\f4PARENB\fP
+and
+\f4PARODD\fP
+flags are cleared in the
+\f4c_cflag\fP
+field of the
+\f4termios\fP
+structure.
+The signal-generating and line-editing control characters are
+disabled by clearing the
+\f4ISIG\fP and \f4ICANON\fP
+flags in the
+\f4c_lflag\fP
+field of the
+\f4termios\fP
+structure.
+.P
+The
+\f4CRMOD\fP
+flag turns input
+.SM RETURN
+characters into
+.SM NEWLINE
+characters, and output and echoed
+.SM NEWLINE
+characters to be output as a
+.SM RETURN
+followed by a
+.SM LINEFEED\s0.
+The
+\f4ICRNL\fP
+flag in the
+\f4c_iflag\fP
+field, and the
+\f4OPOST\fP
+and
+\f4ONLCR\fP
+flags in the
+\f4c_oflag\fP
+field, are set in the
+\f4termios\fP
+structure.
+.P
+The
+\f4LCASE\fP
+flag maps upper-case letters in the
+.SM ASCII
+character set to their lower-case equivalents on input (the
+\f4IUCLC\fP
+flag is set in the
+\f4c_iflag\fP
+field), and maps lower-case letters in the
+.SM ASCII
+character set to their upper-case equivalents on output (the
+\f4OLCUC\fP
+flag is set in the
+\f4c_oflag\fP
+field).
+Escape sequences are accepted on input, and generated on
+output, to handle certain
+.SM ASCII
+characters not supported by older terminals (the
+\f4XCASE\fP
+flag is set in the
+\f4c_lflag\fP
+field).
+.P
+Other flags are directly mapped to flags in the
+\f4termios\fP
+structure:
+.RS
+.TP 12
+\f4sg_flags\fP
+flags in
+\f4termios\fP
+structure
+.sp .5
+.PD 0
+.TP
+\f4CBREAK\fP
+complement of
+\f4ICANON\fP
+in
+\f4c_lflag\fP
+field
+.TP
+\f4ECHO
+\f4ECHO
+in
+\f4c_lflag\fP
+field
+.TP
+\f4TANDEM\fP
+\f4IXOFF\fP
+in
+\f4c_iflag\fP
+field
+.RE
+.PD
+.P
+Another structure associated with each terminal specifies
+characters that are special in both the old Version 7
+and the newer 4\s-1BSD\s0 terminal interfaces.
+The following structure is defined by
+.CO <sys/ioctl.h> :
+.RS
+.nf
+.ft 4
+.ta .5i 1i 2i 
+struct tchars {
+	char	t_intrc;	/* interrupt */
+	char	t_quitc;	/* quit */
+	char	t_startc;	/* start output */
+	char	t_stopc;	/* stop output */
+	char	t_eofc;		/* end-of-file */
+	char	t_brkc;		/* input delimiter (like nl) */
+};
+.DT
+.fi
+.ft 1
+.RE
+.P
+\f4XENIX\fP defines the \f4tchar\f1 structure as \f4tc\f1.
+The characters are mapped to members of the
+\f4c_cc\fP
+field of the
+\f4termios\fP
+structure as follows:
+.RS
+.TP 12
+\f4tchars\fP
+\f4c_cc\fP
+index
+.sp .5
+.PD 0
+.TP
+\f4t_intrc\fP
+\f4VINTR\fP
+.TP
+\f4t_quitc\fP
+\f4VQUIT\fP
+.TP
+\f4t_startc\fP
+\f4VSTART\fP
+.TP
+\f4t_stopc\fP
+\f4VSTOP\fP
+.TP
+\f4t_eofc\fP
+\f4VEOF\fP
+.TP
+\f4t_brkc\fP
+\f4VEOL\fP
+.RE
+.PD
+.P
+Also associated with each terminal is a local flag
+word, specifying flags supported by the new 4\s-1BSD\s0
+terminal interface.
+Most of these flags are directly mapped to flags in the
+\f4termios\fP
+structure:
+.RS
+.TP 15
+local flags
+flags in
+\f4termios\fP
+structure
+.sp .5
+.PD 0
+.TP
+\f4LCRTBS\fP
+not supported
+.TP
+\f4LPRTERA\fP
+\f4ECHOPRT\fP
+in the
+\f4c_lflag\fP
+field
+.TP
+\f4LCRTERA\fP
+\f4ECHOE\fP
+in the
+\f4c_lflag\fP
+field
+.TP
+\f4LTILDE\fP
+not supported
+.TP
+\f4LTOSTOP\fP
+\f4TOSTOP\fP
+in the
+\f4c_lflag\fP
+field
+.TP
+\f4LFLUSHO\fP
+\f4FLUSHO\fP
+in the
+\f4c_lflag\fP
+field
+.TP
+\f4LNOHANG\fP
+\f4CLOCAL\fP
+in the
+\f4c_cflag\fP
+field
+.TP
+\f4LCRTKIL\fP
+\f4ECHOKE\fP
+in the
+\f4c_lflag\fP
+field
+.TP
+\f4LCTLECH\fP
+\f4CTLECH\fP
+in the
+\f4c_lflag\fP
+field
+.TP
+\f4LPENDIN\fP
+\f4PENDIN\fP
+in the
+\f4c_lflag\fP
+field
+.TP
+\f4LDECCTQ\fP
+complement of
+\f4IXANY\fP
+in the
+\f4c_iflag\fP
+field
+.TP
+\f4LNOFLSH\fP
+\f4NOFLSH\fP
+in the
+\f4c_lflag\fP
+field
+.RE
+.PD
+.P
+Another structure associated with each terminal is the
+\f4ltchars\fP
+structure which defines control characters
+for the new 4\s-1BSD\s0 terminal interface.
+Its structure is:
+.RS
+.nf
+.ta .5i 1i 2i
+.ft 4
+struct ltchars {
+	char	t_suspc;	/* stop process signal */
+	char	t_dsuspc;	/* delayed stop process signal */
+	char	t_rprntc;	/* reprint line */
+	char	t_flushc;	/* flush output (toggles) */
+	char	t_werasc;	/* word erase */
+	char	t_lnextc;	/* literal next character */
+};
+.ft 1
+.fi
+.RE
+.P
+The characters are mapped to members of the
+\f4c_cc\fP
+field of the
+\f4termios\fP
+structure as follows:
+.RS
+.TP 12
+\f4ltchars\fP
+\f4c_cc\fP
+index
+.sp .5
+.PD 0
+.TP
+\f4t_suspc\fP
+\f4VSUSP\fP
+.TP
+\f4t_dsuspc\fP
+\f4VDSUSP\fP
+.TP
+\f4t_rprntc\fP
+\f4VREPRINT\fP
+.TP
+\f4t_flushc\fP
+\f4VDISCARD\fP
+.TP
+\f4t_werasc\fP
+\f4VWERASE\fP
+.TP
+\f4t_lnextc\fP
+\f4VLNEXT\fP
+.RE
+.PD
+.SH IOCTLS
+.P
+\f4ttcompat\fP
+responds to the following
+\f4ioctl\fP
+calls.
+All others are passed to the module below.
+.TP 12
+.SM TIOCGETP
+The argument is a pointer to an
+\f4sgttyb\fP structure.
+The current terminal state is fetched; the appropriate
+characters in the terminal state are stored in that structure, as are
+the input and output speeds.
+The values of the flags in the
+\f4sg_flags\fP
+field are derived from the flags in the terminal state and stored in
+the structure.
+.br
+.ne 5
+.TP
+.SM TIOCEXCL
+Set ``exclusive-use'' mode; no further opens are permitted
+until the file has been closed.
+.TP
+.SM TIOCNXCL
+Turn off ``exclusive-use'' mode.
+.TP
+.SM TIOCSETP
+The argument is a pointer to an
+\f4sgttyb\fP structure.
+The appropriate characters and input and output speeds
+in the terminal state are set from the values in that structure, and
+the flags in the terminal state are set to match the values of the
+flags in the
+\f4sg_flags\fP
+field of that structure.
+The state is changed with a
+.SM TCSETSF
+\f4ioctl\fP
+so that the interface delays until output is quiescent,
+then throws away any unread characters, before changing the modes.
+.TP
+.SM TIOCSETN
+The argument is a pointer to an
+\f4sgttyb\fP
+structure.
+The terminal state is changed as \f4TIOCSETP\fP
+would change it, but a \f4TCSETS\fP
+\f4ioctl\fP
+is used, so that the interface neither delays nor discards input.
+.TP
+.SM TIOCHPCL
+The argument is ignored.
+The
+\f4HUPCL\fP flag is set in the
+\f4c_cflag\fP
+word of the terminal state.
+.TP
+.SM TIOCFLUSH
+The argument is a pointer to an
+\f4int\fP
+variable.
+If its value is zero, all characters waiting in input or output queues are
+flushed.
+Otherwise, the value of the
+\f4int\fP
+is treated as the logical
+.SM OR
+of the
+\f4FREAD\fP
+and
+\f4FWRITE\fP
+flags defined by
+\f4<sys/file.h>\fP ;
+if the
+\f4FREAD\fP
+bit is set, all characters waiting in input queues are flushed,
+and if the
+\f4FWRITE\fP
+bit is set, all characters waiting in output queues are flushed.
+.TP
+.SM TIOCBRK
+The argument is ignored.
+The break bit is set for the device.
+.TP
+.SM TIOCCBRK
+The argument is ignored.
+The break bit is cleared for the device.
+.TP
+.SM TIOCSDTR 
+The argument is ignored.
+The Data Terminal Ready bit is set for the device.
+.TP
+.SM TIOCCDTR
+The argument is ignored.
+The Data Terminal Ready bit is cleared for
+the device.
+.TP
+.SM TIOCSTOP
+The argument is ignored.
+Output is stopped as if the
+\f4STOP\fP
+character had been typed.
+.TP
+.SM TIOCSTART
+The argument is ignored.
+Output is restarted as if the \f4START\fP character had been typed.
+.TP
+.SM TIOCGETC
+The argument is a pointer to a \f4tchars\fP structure.
+The current terminal state is fetched, and the appropriate
+characters in the terminal state are stored in that structure.
+.TP
+.SM TIOCSETC
+The argument is a pointer to a \f4tchars\fP structure.
+The values of the appropriate characters in the terminal
+state are set from the characters in that structure.
+.TP
+.SM TIOCLGET
+The argument is a pointer to an \f4int\fP.
+The current terminal state is fetched,
+and the values of the local flags are derived from the flags in
+the terminal state and stored in the
+\f4int\fP pointed to by the argument.
+.TP
+.SM TIOCLBIS
+The argument is a pointer to an \f4int\fP
+whose value is a mask containing flags to be set in the local flags word.
+The current terminal state is fetched,
+and the values of the local flags are derived from the flags in
+the terminal state; the specified flags are set, and the flags in the
+terminal state are set to match the new value of the local flags word.
+.TP
+.SM TIOCLBIC
+The argument is a pointer to an \f4int\fP
+whose value is a mask containing flags to be cleared in the local flags word.
+The current terminal state is fetched,
+and the values of the local flags are derived from the flags in
+the terminal state; the specified flags are cleared, and the flags in the
+terminal state are set to match the new value of the local flags word.
+.TP
+.SM TIOCLSET
+The argument is a pointer to an \f4int\fP
+containing a new set of local flags.
+The flags in the terminal state are set to match the new value of the
+local flags word.
+.TP
+.SM TIOCGLTC
+The argument is a pointer to an \f4ltchars\fP structure.
+The values of the appropriate characters in the terminal
+state are stored in that structure.
+.br
+.ne 3
+.TP
+.SM TIOCSLTC
+The argument is a pointer to an \f4ltchars\fP structure.
+The values of the appropriate characters in the terminal state
+are set from the characters in that structure.
+.TP 12
+.SM FIORDCHK
+\f4FIORDCHK\fP returns the number of immediately readable characters.
+The argument is ignored.
+.TP
+.SM FIONREAD
+\f4FIONREAD\fP returns the number of immediately readable characters
+in the \f4int\fP pointed to by the argument.
+.TP
+.SM LDSMAP
+Calls the function \f4emsetmap\fP (\f2tp\fP, \f2mp\fP) if the function is configured
+in the kernel.
+.TP
+.SM LDGMAP
+Calls the function \f4emgetmap\fP (\f2tp\fP, \f2mp\fP) if the
+function is configured in the kernel.
+.TP
+.SM LDNMAP
+Calls the function \f4emunmap\fP (\f2tp\fP, \f2mp\fP) if the function
+is configured in the kernel.
+.P
+The following \f4ioctls\fP are returned as successful for
+the sake of compatibility.
+However, nothing significant
+is done (\f2i.e.\fP, the state of the terminal is not changed
+in any way).
+.RS
+.nf
+\f4TIOCSETD	LDOPEN\fP
+\f4TIOCGETD	LDCLOSE\fP
+\f4DIOCSETP	LDCHG\fP
+\f4DIOCSETP	LDSETT\fP
+\f4DIIOGETP	LDGETT\fP
+.fi
+.RE
+.SH SEE ALSO
+\f4ioctl\fP(2),
+\f4termios\fP(2),
+\f4termio\fP(7),
+\f4ldterm\fP(7)
+.SH NOTES
+\f4TIOCBRK\fP and \f4TIOCCBRK\fP should be handled by the driver.
+\f4FIONREAD\fP and \f4FIORDCHK\fP are handled in the stream head.

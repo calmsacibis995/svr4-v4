@@ -1,0 +1,199 @@
+.if n .pH rn4.chap1 @(#)chap1	40.56
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.de MR
+.P
+MR \\$1
+.P
+..
+.de MR
+..
+.BK "Software Notes"
+.CH "Installation Notes" "1"
+.H 1 "Before Installing"
+.IX istart UNIX System V/386 Release 4, installation notes
+The following section contains information needed before
+installing UNIX System V/386 Release 4
+on your system.
+.H 3 "ESDI Disk Controllers"
+.MR "mgg 6-15-90"
+.IX ESDI controllers
+On ESDI disk controllers, System V/386 Release 4 
+is unable to recognize cylinders above
+1024, thus making the large disks appear smaller than they
+are.
+The support cylinders greater than 1024 on ESDI drive
+enable logical translation on the disk controller.
+If the correct system setup value does not
+recognize the entire disk, replacing the BIOS will 
+remove this problem.
+.H 2 "Cartridge Tape Controllers"
+.IX cartridge tape controllers, supported controllers and drives
+The SVR4 cartridge tape package currently
+supports the following controller/drive combinations:
+.TB "Cartridge Tape Controllers and Drives"
+.TS
+center box;
+l	l
+l	l.
+Tape Controller	Supported Tape Drive	
+_
+_
+Wangtek PC-36	Wangtek 5099-EN	
+_
+Wangtek PC-36	Wangtek 5125-EN
+_
+Wangtek PC-36	Wangtek 5150-EN
+_
+Everex 811 (B.Tech)	Wangtek 5150-EN
+_
+Archive SC499-R	Archive Ext. FT-60
+_
+Archive VP402	Archive Viper 2150L
+_
+Everex 811 (B.Tech)	Archive Viper 2150L
+_
+Archive VP402	Wangtek 5150-EN	
+_
+Wangtek 30850-412	Wangtek 5125-EN
+.TE
+.IX Wangtek, Everex and Archive hardware
+In order to install the reference binary from
+tape, the controller hardware must have the
+following settings:
+.IX base address settings
+.DS I
+Base address for I/O port 0x300
+Interrupt vector             5 
+DMA channel                  1
+.DE
+.AB N
+See your hardware cartridge tape reference manual 
+for instructions on how to set the base address, 
+interrupt and DMA to those listed above.
+.AC
+.P
+.IX controller error message
+If you do not have a tape controller or your controller is 
+not configured correctly, the following message is 
+displayed at boot time:
+.SS
+Cartridge Controller was not found at address 00000300H
+		  Tape driver disabled
+
+	The cartridge tape will be inoperative.
+.SE
+.H 2 "Boot Diskettes"
+.IX write-protected boot disks
+Boot disks are now write-protected.
+This is normal and the write-protect tabs must not be
+removed.
+.H 2 "Size of Swap"
+.IX the size of \f4/dev/swap\f1
+When running networking applications, the size of 
+\f4/dev/swap\f1 should be
+at least 11MB, or equal to 2 times the size of installed
+memory, or whichever is larger.
+You can allocate this space at installation time or
+use the \f4swap -a\f1 command to add additional space if 
+your system is already installed.
+.H 2 "Mixing Packages"
+.MR "bl90-14531"
+.IX mixing packages in file system and datastream format 
+Packages in file system format should not
+be mixed with packages in datastream format during 
+installation.
+Install all of one type of package, then
+quit out of the installation script and install the other
+type.
+All the System V/386 Release 4 software
+packages are in datastream format.
+.H 2 "Disk Partitioning with DOS/UNIX"
+.MR "bl90-13043"
+.IX disk partitioning, DOS/UNIX
+The DOS 4.01 \f4fdisk\f1 program assumes it can store diagnostic
+information in the last cylinder available on the 
+hard disk, so if a UNIX partition is
+created that uses the last cylinder, MS-DOS 4.01 
+\f4fdisk\f1 will be unable to create a DOS partition.
+The user workaround is to either create the UNIX partition at 
+the front of the disk so the last cylinder isn't used, or 
+create the DOS partition using the UNIX 
+\f4fdisk\f1 (not DOS \f4fdisk\f1) and never delete the
+DOS partition. 
+.P
+.IX boot from DOS floppy
+If you boot from a DOS floppy, you will not be able
+to access a physical DOS partition on the hard disk,
+drive C, unless it is the first partition created by
+\f4fdisk\f1.
+.H 2 "tar Compatibility"
+.IX tar incompatibility
+There is one instance of incompatibility
+between the SVR4 and pre-SVR4 versions of the \f4tar\f1 command.
+The SVR4 \f4tar\f1 command will not restore
+files properly if both of the following
+conditions are true:
+.AL
+.LI
+The archive being read was created with a
+pre-SVR4 version of the \f4tar\f1 command
+.LI
+a file within the archive spans a volume
+boundary.
+.LE
+.IX tar incompatibility conditions
+When both of these conditions are true, the
+pre-SVR4 version of the \f4tar\f1 command can be used to restore the
+archive.
+The suggested workaround is to save and rename your pre-SVR4 version of \f4tar\f1.
+.H 3 "tar and Subdirectories"
+.MR ul91-16907
+.P
+There are also compatibility problems with
+archives containing subdirectories.
+If an archive containing subdirectories of files is created on a
+UNIX System V, Release 4
+\f4tar\f1 command, it can not be read into a Release 3.2 system.
+.IX iend UNIX System V/386 Release 4, installation notes
+.H 3 "tar and Symbolic Links"
+.IX SVR4, SunOS, \f4file\f1 command
+SVR4 has \f4-L\f1 option to follow symbolic links; 
+SunOS has \f4-h\f1 option to follow.
+.H 2 "cpio Command"
+.IX SVR4, SunOS, \f4cpio\f1 command
+SVR4 has \f4-L\f1 option to follow; SunOS does not.
+.H 2 "/etc/vfstab Entries Created by diskadd"
+.MR "bl90-05424"
+.MR "bl90-13507"
+.IX \f4diskadd\f1 command, \f4/etc/vfstab\f1
+If the \f4diskadd\f1 command is run more than once the 
+entries in \f4/etc/vfstab\f1 for that drive may not be deleted.
+If you intend to run the \f4diskadd\f1 
+command more than once for a given drive, 
+delete the entries for it in \f4/etc/vfstab\f1 prior
+to running \f4diskadd\f1.
+.P
+This problem also occurs any time
+disk partitions are changed or disks are removed from the system.
+The \f4/etc/vfstab\f1 file is appended to and never
+cleared and regenerated.  Therefore, the file will contain some
+outdated information.
+.H 3 "diskadd and mount points"
+.MR "bl90-08708
+The \f4diskadd\f1 operation allows the user to re-use
+mount points that already exist in the \f4/etc/vfstab\f1
+file.
+When re-used mount points are mounted the \f4diskadd\f1 
+operation fails when attempting to re-mount the selected mount point.
+When re-used mount points are not mounted the \f4diskadd\f1 
+operation succeeds.
+.H 3 "diskadd and two-disk systems"
+.MR dm91-03917
+If you are installing UNIX System V Release V/386 on a two-disk
+system, you must do a low-level format on the second disk before
+installing the system.
+If the second disk already contains
+information you want to keep, such as a DOS partition, you must back
+that partition, do a low level format, install the UNIX System, then
+restore the partition.

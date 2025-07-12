@@ -1,0 +1,44 @@
+'\"macro stdmacro
+.if n .pH g1a.ccildlist @(#)ccildlist	40.7 of 5/17/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} ccildlist 1iref "System Administration Utilities" "" "\&"
+.if \nX=1 .ds x} ccildlist 1iref "System Administration Utilities" ""
+.if \nX=2 .ds x} ccildlist 1iref "" "\&"
+.if \nX=3 .ds x} ccildlist "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4ccildlist\f1 \- line discipline list on the communications controller.
+.SH SYNOPSIS
+ \f4/usr/lib/cci/ccildlist\f1 [\f4\-p \f2portid\f1] \f2slot-ID\f1
+.SH DESCRIPTION
+\f4ccildlist\f1 displays the line discipline IDs of the line disciplines
+resident on the communications controller. 
+.PP
+Command line options are:
+.PP
+.TP
+\f4\-p \f2n\f1
+Set the Multibus II Transport source Portid to \f2n\f1 instead of the default
+value 0x1ff.
+.PP
+The program sends a \f4CCI_Get_Line_Discipline_List\f1 message to the CCI server
+and prints the information obtained in the reply from the server.
+The program displays the number of line disciplines resident and their
+line Discipline IDs.  The communications controller hosting the CCI
+server is selected by specifying its Multibus II iPSB \f2slot-ID\f1.
+.SH FILES
+\f4/usr/lib/cci/ccildlist\f1
+.SH SEE ALSO
+\f4ccisrvinfo\f1(1iref),
+\f4ccildinfo\f1(1iref),
+\f4ccilinfo\f1(1iref),
+\f4ccisubinfo\f1(1iref),
+\f4cciload\f1(1iref),
+\f4ccibind\f1(1iref),
+\f4cciunbind\f1(1iref),
+\f4ccifree\f1(1iref),
+\f4cciattach\f1(1iref),
+\f4ccidetach\f1(1iref),
+\f4cciswitch\f1(1iref).

@@ -1,0 +1,45 @@
+'\"macro stdmacro
+.if n .pH g1.users @(#)users	40.9 of 4/19/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.\" @(#)users.1 1.12 88/08/25 SMI;
+.nr X
+.if \nX=0 .ds x} users 1 "BSD Compatibility Package" "\&"
+.if \nX=1 .ds x} users 1 "BSD Compatibility Package"
+.if \nX=2 .ds x} users 1 "" "\&"
+.if \nX=3 .ds x} users "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4users\f1 \- display a compact list of users logged in
+.SH SYNOPSIS
+\f4/usr/ucb/users\f1
+[ \f2file\f1 ]
+.SH DESCRIPTION
+\f4users\f1
+lists the login names of the users
+currently on the system in a compact, one-line format.
+.PP
+Specifying
+.IR file ,
+tells \f4users\f1
+where to find its information;
+by default it checks
+\f4/var/adm/utmp\f1.
+.PP
+Typing
+.I users
+is equivalent to typing
+\f4who -q\fP.
+.SH EXAMPLE
+\f4users\f1
+.br
+\f5paul george ringo\f1
+.SH FILES
+.PD 0
+.TP 20
+\f4/var/adm/utmp\f1
+.PD
+.SH SEE ALSO
+\f4who\fP(1)
+in the \f2User's Reference Manual\f1.
+.Ee

@@ -1,0 +1,122 @@
+'\"macro stdmacro
+.if n .pH g1a.disksetup @(#)disksetup	40.5
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} disksetup 1M "Base System" "\&"
+.if \nX=1 .ds x} disksetup 1M "Base System"
+.if \nX=2 .ds x} disksetup 1M "Base System" "\&"
+.if \nX=3 .ds x} disksetup "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4disksetup\f1 \- disk set up utility
+.SH SYNOPSIS
+.nf
+\f4/etc/disksetup\f1 \f4-I -B\f1 [\f1-d\f1 \f2defaults-file\f1] \f4-b\f1\f2boot-file raw-device\f1 (Install primary disk)
+\f4/etc/disksetup -I\f1 [\f4-d\f1 \f2defaults-file\f1] \f2raw-device\f1 (Install additional disk)
+\f4/etc/disksetup -b\f1 \f2boot-file raw-device\f1 (write boot code to the disk)
+.fi
+.SH DESCRIPTION
+.TP
+\f4-I\f1
+will cause the \f2raw-device\f1 to be installed (surface analysis, creation/writing
+the pdinfo, VTOC, and alternates tables (for non-SCSI drives).
+.TP
+\f4-B\f1
+is flag to designate that the raw-device will be the system boot device.
+.TP
+\f4-d\f1 \f2defaults-file\f1
+is used to pass in a default layout for the raw-device. The information
+from the defaults file will be used to generate the default slices
+for the UNIX System partition.
+The layout of the file is explained in one of the following sections.
+.TP
+\f4-b\f1 \f2boot-file\f1
+will cause the \f4disksetup\f1 to write the boot code found the boot file into
+the boot slice of the UNIX System partition.
+The boot code can be in either
+\f4ELF\f1 or \f4COFF\f1 format.
+Only the required sections/segments will be loaded.
+The boot file provided with the system is \f4/etc/boot\f1.
+.TP
+\f2raw-device\f1
+the required raw-device argument is the character special device for the
+disk drive to be accessed. It should the slice 0 device to represent the
+entire device (e.g., \f4/dev/rdsk/0s0\f1 or \f4/dev/rdsk/c0t0d0s0\f1).
+.PP
+\f4disksetup\f1 handles the low level activities required to install the primary
+drive or additional drives.
+The tasks which are required for the setup of disks include surface analysis,
+assisting a user create the layout of slices (either through a set of
+defaults or by querying them), writing the pdinfo, VTOC and alternates tables
+out to the drive, issuing need \f4mkfs\f1 calls, creating mount points, mounting
+filesystems and updating the \f4/etc/vfstab\f1 file.
+program.
+.PP
+In regards to \f4disksetup\f1's method for assisting a user define the layout
+of slices, if no defaults-file is provided, a user is queried first on which
+slices they wish to create, and then are queried on the sizes for those
+slices. (The user must ultimately confirm their choices and can repeat the
+above steps if they are unsatisfied with their choices.)
+If a defaults-file is provided, a default layout of slices will be created
+based on the defaults-file. If the user selects the default layout a VTOC
+representing the default layout is written to the drive. If the user does
+not select the default layout they will be allowed to specify the sizes
+for slices defined in the defaults-file.
+.PP
+The layout for the defaults-file is as follows:
+.ne 7
+.nf
+\f4
+	slice #		slice name	FStype		slice size
+	1		/		s5		35M
+	2		/dev/swap	-		2m
+	3		/usr		ufs		60W
+	4		/home		ufs		40W
+	10		/stand		bfs		5M
+\f1
+.fi
+.PP
+The slice number is the entry in VTOC where the slice will be located.
+Slice name is mount point if the slice is a filesystem or descriptive
+name if no file system will be created.
+\f2FStype\f1 is the file system type
+for the slice where s5, \f4ufs\f1 and \f4bfs\f1
+mean that type of \f4mkfs\f1 is to be issued,
+an - means issue no \f4mkfs\f1 for this slice.
+Slice size is an integer value
+followed by size specifier character.
+The M size specifier character
+means megabytes (MB), so 35M means 35 MB slice size. The m size specifier
+meands times the size of memory, so assuming 4 MB of memory 2m means
+8 MB slice size. The W size specifier character means weighted proportion.
+To calculate a weighted proportion of xW, x is divided by the sum of the W 
+requests and then that value is multiplied with the remaining disk space
+(after M and m type requests were handled) to give the slice size.
+Assuming a 100 MB disk with 4 MB of memory, the above defaults file would
+yield:
+.nf
+\f4
+	slice 1 35M = 35 MB size
+	slice 2 2m = (2 * 4MB) = 8 MB size
+	slice 3 60W = (60/100 * 52 MB) = 31 MB size
+	slice 4 40W = (40/100 * 52 MB) = 21 MB size
+	slice 5 5M = 5 MB size 
+\f1
+.SH FILES
+.nf
+\f4/dev/dsk/1s?\f1
+\f4/dev/dsk/c?t?d?s?\f1
+\f4/dev/rdsk/1s*\f1
+\f4/dev/rdsk/c?t?d?s0\f1
+\f4/etc/vfstab\f1
+.fi
+.SH "SEE ALSO"
+\f4fdisk\f1(1M),
+\f4mkdir\f1(1M)
+\f4mkfs\f1(1M),
+\f4mount\f1(1M),
+.\" \f4scsimkdev\f1(1M),
+\f4swap\f1(1M).
+.Ee
+

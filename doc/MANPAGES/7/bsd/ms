@@ -1,0 +1,279 @@
+'\"macro stdmacro
+.if n .pH g7.ms @(#)ms	40.7 of 4/23/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.\" @(#)ms.7 1.2 89/01/30 SMI; from UCB 4.2
+.nr X
+.if \nX=0 .ds x} ms 7 "BSD Compatibility Package" "\&"
+.if \nX=1 .ds x} ms 7 "BSD Compatibility Package"
+.if \nX=2 .ds x} ms 7 "" "\&"
+.if \nX=3 .ds x} ms "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4ms\f1 \- text formatting macros
+.SH SYNOPSIS
+\f4nroff\ \-ms\f1
+[
+.I options
+]
+.I filename
+\&.\|.\|.
+.P
+\f4troff\ \-ms\f1
+[
+.I options
+] 
+.I filename 
+\&.\|.\|.
+.IX  "ms file"  ""  "\fL\-ms\fP \(em macro package"
+.IX  "document production"  "ms file"  ""  "\fL\-ms\fP \(em macro package"
+.SH DESCRIPTION
+This package of
+\f4nroff\f1(1)
+and
+\f4troff\f1(1)
+macro definitions provides a formatting facility
+for various styles of articles, theses, and books.
+When producing 2-column output on a terminal or lineprinter,
+or when reverse line motions are needed, filter the output through
+\f4col\f1(1V).
+All external
+\f4\-ms\f1
+macros are defined below.
+.P
+Note: this 
+\f4\-ms\f1
+macro package is an extended version written at Berkeley and is a
+superset of the standard 
+\f4\-ms\f1
+macro packages as supplied by Bell Labs.
+Some of the Bell Labs macros have been removed;
+for instance, it is assumed that the user has little
+interest in producing headers stating that the memo was generated at
+Whippany Labs.
+.P
+Many
+\f4nroff\f1
+and
+\f4troff\f1
+requests are unsafe in conjunction with this package.
+However, the first four requests below
+may be used with impunity after initialization,
+and the last two may be used even before initialization:
+.P
+.RS
+.PD 0
+.TP 8
+\f4\&.bp\f1
+begin new page
+.TP
+\f4\&.br\f1
+break output line
+.TP
+\f4\&.sp\f2 n\f1
+insert n spacing lines
+.TP
+\f4\&.ce\f2 n\f1
+center next n lines
+.TP
+\f4\&.ls\f2 n\f1
+line spacing:
+\f2n\f4=1\f1
+single,
+\f2n\f4=2\f1
+double space
+.TP
+\f4\&.na\f1
+no alignment of right margin
+.PD
+.RE
+.P
+Font and point size changes with
+\f4\ef\f1
+and
+\f4\es\f1
+are also allowed; for example,
+\f4\efIword\efR\f1
+will italicize
+.IR word .
+Output of the
+\f4tbl\f1(1),
+\f4eqn\f1(1)
+and
+\f4refer\f1(1)
+preprocessors for equations, tables, and references is acceptable as input.
+.SH REQUESTS
+.if n .in 0
+.ds x \f2x\fP
+.ds y \f2y\fP
+.ds z \f2 y\fP
+.ds Y \f2x y\fP
+.ta \w'MacroNam'u +\w'InitialVal\ \ 'u +\w'Break?\ \ \ \ 'u
+.sp .3
+.nf
+Macro	Initial	Break?	\0 Explanation
+Name	Value	Reset?
+.sp .3
+\f4\&.AB\f1 \*x	\-	y	begin abstract; if \*x=no do not label abstract
+\f4\&.AE\f1	\-	y	end abstract
+\f4\&.AI\f1	\-	y	author's institution
+\f4\&.AM\f1	\-	n	better accent mark definitions
+\f4\&.AU\f1	\-	y	author's name
+\f4\&.B\f1 \*x	\-	n	embolden \*x; if no \*x, switch to boldface
+\f4\&.B1\f1	\-	y	begin text to be enclosed in a box
+\f4\&.B2\f1	\-	y	end boxed text and print it
+\f4\&.BT\f1	date	n	bottom title, printed at foot of page
+\f4\&.BX\f1 \*x	\-	n	print word \*x in a box
+\f4\&.CM\f1	if t	n	cut mark between pages
+\f4\&.CT\f1	\-	y,y	chapter title: page number moved to \s-1CF\s0 (\s-1TM\s0 only)
+\f4\&.DA\f1 \*x	if n	n	force date \*x at bottom of page; today if no \*x
+\f4\&.DE\f1	\-	y	end display (unfilled text) of any kind
+\f4\&.DS\f1 \*Y	I	y	begin display with keep; \*x=I,\|L,\|C,\|B; \*y=indent 
+\f4\&.ID\f1\*z	8n,.5i	y	indented display with no keep; \*y=indent
+\f4\&.LD\f1	\-	y	left display with no keep
+\f4\&.CD\f1	\-	y	centered display with no keep
+\f4\&.BD\f1	\-	y	block display; center entire block
+\f4\&.EF\f1 \*x	\-	n	even page footer \*x (3 part as for \f4.tl\f1)
+\f4\&.EH\f1 \*x	\-	n	even page header \*x (3 part as for \f4.tl\f1)
+\f4\&.EN\f1	\-	y	end displayed equation produced by \f4eqn\fP
+\f4\&.EQ\f1 \*Y	\-	y	break out equation; \*x=L,I,C; \*y=equation number
+\f4\&.FE\f1	\-	n	end footnote to be placed at bottom of page
+\f4\&.FP\f1	\-	n	numbered footnote paragraph; may be redefined
+\f4\&.FS\f1 \*x	\-	n	start footnote; \*x is optional footnote label
+\f4\&.HD\f1	undef	n	optional page header below header margin
+\f4\&.I\f1 \*x	\-	n	italicize \*x; if no \*x, switch to italics
+\f4\&.IP\f1 \*Y	\-	y,y	indented paragraph, with hanging tag \*x; \*y=indent
+\f4\&.IX\f1 \*Y	\-	y	index words \*x \*y and so on (up to 5 levels)
+\f4\&.KE\f1	\-	n	end keep of any kind
+\f4\&.KF\f1	\-	n	begin floating keep; text fills remainder of page
+\f4\&.KS\f1	\-	y	begin keep; unit kept together on a single page
+\f4\&.LG\f1	\-	n	larger; increase point size by 2
+\f4\&.LP\f1	\-	y,y	left (block) paragraph.
+\f4\&.MC\f1 \*x	\-	y,y	multiple columns; \*x=column width
+\f4\&.ND\f1 \*x	if t	n	no date in page footer; \*x is date on cover
+\f4\&.NH\f1 \*Y	\-	y,y	numbered header; \*x=level, \*x=0 resets, \*x=S sets to \*y
+\f4\&.NL\f1	10p	n	set point size back to normal
+\f4\&.OF\f1 \*x	\-	n	odd page footer \*x (3 part as for \f4.tl\f1)
+\f4\&.OH\f1 \*x	\-	n	odd page header \*x (3 part as for \f4.tl\f1)
+\f4\&.P1\f1	if \s-1TM\s0	n	print header on first page
+\f4\&.PP\f1	\-	y,y	paragraph with first line indented
+\f4\&.PT\f1	- % -	n	page title, printed at head of page
+\f4\&.PX\f1 \*x	\-	y	print index (table of contents); \*x=no suppresses title
+\f4\&.QP\f1	\-	y,y	quote paragraph (indented and shorter)
+\f4\&.R\f1	on	n	return to Roman font
+\f4\&.RE\f1	5n	y,y	retreat: end level of relative indentation
+\f4\&.RP\f1 \*x	\-	n	released paper format; \*x=no stops title on first page
+\f4\&.RS\f1	5n	y,y	right shift: start level of relative indentation
+\f4\&.SH\f1	\-	y,y	section header, in boldface
+\f4\&.SM\f1	\-	n	smaller; decrease point size by 2
+\f4\&.TA\f1	8n,5n	n	set \s-1TAB\s0 characters to 8n 16n .\|.\|. (\f4nroff\f1) 5n 10n .\|.\|. (\f4troff\f1)
+\f4\&.TC\f1 \*x	\-	y	print table of contents at end; \*x=no suppresses title
+\f4\&.TE\f1	\-	y	end of table processed by \f4tbl\fP
+\f4\&.TH\f1	\-	y	end multi-page header of table
+\f4\&.TL\f1	\-	y	title in boldface and two points larger
+\f4\&.TM\f1	off	n	\s-1UC\s0 Berkeley thesis mode
+\f4\&.TS\f1 \*x	\-	y,y	begin table; if \*x=H table has multi-page header
+\f4\&.UL\f1 \*x	\-	n	underline \*x, even in \f4troff\fP
+\f4\&.UX\f1 \*x	\-	n	\s-1UNIX\s0; trademark message first time; \*x appended
+\f4\&.XA\f1 \*Y	\-	y	another index entry; \*x=page or no for none; \*y=indent
+\f4\&.XE\f1	\-	y	end index entry (or series of \f4.IX\fP entries)
+\f4\&.XP\f1	\-	y,y	paragraph with first line exdented, others indented
+\f4\&.XS\f1 \*Y	\-	y	begin index entry; \*x=page or no for none; \*y=indent
+\f4\&.1C\f1	on	y,y	one column format, on a new page
+\f4\&.2C\f1	\-	y,y	begin two column format
+\f4\&.]\|\-\f1	\-	n	beginning of \f4refer\fP reference
+\f4\&.[\|0\f1	\-	n	end of unclassifiable type of reference
+\f4\&.[\|N\f1	\-	n	N= 1:journal-article, 2:book, 3:book-article, 4:report
+.fi
+.DT
+.SH REGISTERS
+.P
+Formatting distances can be controlled in
+\f4\-ms\f1
+by means of built-in number registers.
+For example, this sets the line length to 6.5 inches:
+.IP
+\f4\&.nr  LL  6.5i\f1
+.P
+Here is a table of number registers and their default values:
+.P
+.RS
+.nf
+.ta .5i +\w'Name\0'u +\w'paragraph distance 'u +\w'Takes Effect\ \ \  'u
+Name	Register Controls	Takes Effect	Default
+.sp .3
+\f4PS\f1	point size      	paragraph	10
+\f4VS\f1	vertical spacing	paragraph	12
+\f4LL\f1	line length     	paragraph	6i
+\f4LT\f1	title length    	next page	same as \f4LL\f1
+\f4FL\f1	footnote length 	next \f4.FS\f1	5.5i
+\f4PD\f1	paragraph distance	paragraph	1v (if n), .3v (if t)
+\f4DD\f1	display distance	displays	1v (if n), .5v (if t)
+\f4PI\f1	paragraph indent	paragraph	5n
+\f4QI\f1	quote indent    	next \f4.QP\f1	5n
+\f4FI\f1	footnote indent 	next \f4.FS\f1	2n
+\f4PO\f1	page offset     	next page	0 (if n), \(ap1i (if t)
+\f4HM\f1	header margin   	next page	1i
+\f4FM\f1	footer margin   	next page	1i
+\f4FF\f1	footnote format 	next \f4.FS\f1	0 (1, 2, 3 available)
+.fi
+.RE
+.P
+When resetting these values,
+make sure to specify the appropriate units.
+Setting the line length to 7, for example,
+will result in output with one character per line.
+Setting
+\f4FF\fP
+to 1 suppresses footnote superscripting;
+setting it to 2 also suppresses indentation of the first line;
+and setting it to 3 produces an
+\f4\&.IP\f1-like
+footnote paragraph.
+.P
+Here is a list of string registers available in
+\f4\-ms\f1;
+they may be used anywhere in the text:
+.P
+.RS
+.nf
+.ta .5i 1.1i
+Name	String's Function
+.sp .3
+\f4\e*Q\f1	quote (\f4"\f1 in \f4nroff,\fP\| \f4``\f1 in \f4troff\fP )
+\f4\e*U\f1 	unquote (\f4"\f1 in \f4nroff,\fP\| \f4''\f1 in \f4troff\fP )
+\f4\e*\-\f1	dash (\f4--\f1 in \f4nroff,\fP \f4\(em\f1 in \f4troff\fP )
+\f4\e*(MO\f1	month (month of the year)
+\f4\e*(DY\f1	day (current date)
+\f4\e**\f1	automatically numbered footnote
+\f4\e*\'\f1	acute accent (before letter)
+\f4\e*\`\f1	grave accent (before letter)
+\f4\e*\d^\f1	\ucircumflex (before letter)
+\f4\e*,\f1	cedilla (before letter)
+\f4\e*:\f1	umlaut (before letter)
+\f4\e*\d~\f1	\utilde (before letter)
+.fi
+.RE
+.P
+When using the extended accent mark definitions available with
+\f4\&.AM\f1,
+these strings should come after, rather than before,
+the letter to be accented.
+.SH FILES
+.PD 0
+.TP 20
+\f4/usr/ucb/lib/doctools/tmac/s\f1
+.TP
+\f4/usr/ucblib/doctools/tmac/ms.???\f1
+.PD
+.SH SEE ALSO
+\f4col\fP(1V),
+\f4eqn\fP(1),
+\f4nroff\fP(1),
+\f4refer\fP(1),
+\f4tbl\fP(1),
+\f4troff\fP(1)
+.SH BUGS
+.P
+Floating keeps and regular keeps are diverted to the same space,
+so they cannot be mixed together with predictable results.

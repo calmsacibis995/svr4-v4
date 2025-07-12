@@ -1,0 +1,748 @@
+#ident  "@(#)doctools:shells/functions.src	1.3"
+#
+#       Copyright (c) 1990, 1991 UNIX System Laboratories, Inc.
+#       Copyright (c) 1984, 1986, 1987, 1988, 1989, 1990 AT&T
+#         All Rights Reserved
+#
+#       THIS IS UNPUBLISHED PROPRIETARY SOURCE CODE OF
+#       UNIX System Laboratories, Inc.
+#       The copyright notice above does not evidence any
+#       actual or intended publication of such source code.
+#
+#
+#     Modified by: M. Shapiro
+#                 UNIX System Laboratories
+#                 attunix!mxs   201-522-5181
+#                   
+#
+####################################################################
+####################################################################
+# Function Definitions:  AskOpts, AskDest, AskMore, AskToc,
+#   (Prompting Code)     AskPages, AskFiles, AskIfDone
+#
+ERRMSG="\n\t\007*** ERROR: Invalid Choice ***\n" # standard error
+#########  AskOpts: Interactive Mode ##########################
+AskOpts () {
+   while [ "${OPT1}" = "" ]
+   do
+      echo '\nChoose Formatting Options? (y/n): \c'
+      read OPT1
+      case ${OPT1} in
+         y*|Y*) OPT1=Y;;
+         n*|N*|"") OPT1=N; echo "\n\t\007Exiting Now\007"
+                echo "\n\t!! Bye !!"
+                exit 1;;
+         *) OPT1=""; echo ${ERRMSG};;
+      esac
+   done
+}
+########## AskDest: Destination: set (PNAME) ####################
+AskDest () {
+while [ "${DESTOPT}" = "" ]
+do
+   eval "echo '${LDEST}'"                 # echos list of destinations
+   echo '\nEnter Destination Name: \c'
+   read DESTOPT
+   # Check Destination Choice; reprompt if invalid
+   case ${DESTOPT} in
+      ${d0}|${d1}|${d2}|${d3}|${d4}|${d5}|${d6}|${d7})
+         PNAME=${DESTOPT}; : ${PNAME:=$DEFDEST}; DESTOPT=${PNAME};;
+      ${d8}|${d9}|${d10}|${d11}|${d12}|${d13}|${d14}|${d15})
+         PNAME=${DESTOPT}; : ${PNAME:=$DEFDEST}; DESTOPT=${PNAME};;
+      ${d16}|${d17}|${d18}|${d19}|${d20}|${d21}|${d22}|${d23})
+         PNAME=${DESTOPT}; : ${PNAME:=$DEFDEST}; DESTOPT=${PNAME};;
+      "") PNAME=${DEFDEST}; DESTOPT=${PNAME};;
+      *) DESTOPT=""; echo ${ERRMSG};;
+   esac
+done
+echo "\n\t*** Destination Chosen is:  ${PNAME} ***"
+}
+########### AskToc: Printing Toc; set Ptoc (PTOC) ##################
+AskToc() {
+while [ "${TOCOPT}" = "" ]
+do
+   echo '\nCreate and Print Toc File? (y/n): \c'
+   read TOCOPT
+   case ${TOCOPT} in
+      y*|Y*) PTOC=Y; Ptoc=yes; STOC=Y
+         echo "\n\tToc(s) will be Printed for Appropiate File(s)" ;;
+      n*|N*|"") PTOC=N; Ptoc=no; TOCOPT=N
+         echo "\n\tNo Toc(s) will be Printed" ;;
+      *) TOCOPT=""; echo ${ERRMSG};;
+   esac
+done
+}
+########### AskStart: Starting Page Number: Set Pstart (PSTART) #######
+AskStart() {
+while [ "${STARTOPT}" = "" ]
+do
+   echo '\nSelect Starting Page Number? (y/n): \c'
+   read STARTOPT
+   case ${STARTOPT} in
+      y*|Y*)
+         while [ "${Pstart}" = "" ]
+         do
+            echo '\nEnter Page Number: \c'
+            read Pstart
+            case ${Pstart} in
+              [0-9]*) echo "\n\tPage Numbering will Begin with ${Pstart}"
+		  PSTART="-rp${Pstart}";;
+               "") Pstart=1; echo "\n\tPage Numbering will Begin with 1";;
+               *) echo "\n\t\007*** ERROR: ${Pstart} is Invalid ***\n"; Pstart="";;
+            esac
+         done
+         break;;
+      n*|N*|"") Pstart=1; echo "\n\tPage Numbering will Begin with 1"
+		STARTOPT=N;;
+      *) STARTOPT=""; echo ${ERRMSG};;
+   esac
+done
+}
+######## AskLand: Landscape Orientation: set Orient (LAND) #############
+AskLand () {
+while [ "${ORIENTOPT}" = "" ]
+do
+   echo '\nPrint in Landscape Orientation? (y/n): \c'
+   read ORIENTOPT
+   case ${ORIENTOPT} in
+      y*|Y*) Orient=landscape; LAND=Y
+         echo "\n\tJob will be Printed in ${Orient} Orientation";;
+      n*|N*|"") Orient=portrait; ORIENTOPT=N
+         echo "\n\tJob will be Printed in ${Orient} Orientation";;
+      *) ORIENTOPT=""; echo ${ERRMSG};;
+   esac
+done
+}
+######### AskVersion: Print for specific version; set Version ########
+AskVersion () {
+while [ "${VERSIONOPT}" = "" ]
+do
+   echo '\nProcess Job for Specific Version? (y/n): \c'
+   read VERSIONOPT
+   case ${VERSIONOPT} in
+      y*|Y*)
+         while [ "${Version}" = "" ]
+         do
+            echo '\nEnter Version Number: \c'
+            read Version
+            case ${Version} in
+               [0-9]*) VERSION="-rv${Version}"
+                  echo "\n\tVersion ${Version} will be Processed";;
+               "") Version=1; echo "\n\tVersion ${Version} will be Processed";;
+               *) echo "\n\t\007*** ERROR: ${Version} is Invalid ***\n"; Version="";;
+            esac
+         done
+         break;;
+      n*|N*|"") Version=1
+		echo "\n\tVersion ${Version} will be Processed by Default"
+		VERSIONOPT=N;;
+      *) VERSIONOPT=""; echo ${ERRMSG};;
+   esac
+done
+}
+######### AskSize:  Page Size: set Size (SIZE) ###################
+AskSize () {
+while [ "${SIZEOPT}" = "" ]
+do
+   echo '\nSelect Page Size? (y/n): \c'
+   read SIZEOPT
+   case ${SIZEOPT} in
+      y*|Y*)
+         while [ "${Size}" = "" ]
+         do
+	    eval "echo '${SIZES}'"
+            echo '\nEnter Page Size: \c'
+            read Size
+            case ${Size} in
+               [1-7]) SIZE="-rs${Size}"
+                  echo "\n\tPage Size ${Size} will be Used";;
+               "") Size=7; echo "\n\tPage Size ${Size} will be Used";;
+               *) echo "\n\t\007*** ERROR: ${Size} is Invalid ***\n"; Size="";;
+            esac
+         done
+         break;;
+      n*|N*|"") Size=7; echo "\n\tPage Size ${Size} will be Used by Default"
+		SIZEOPT=N;;
+      *) SIZEOPT=""; echo ${ERRMSG};;
+   esac
+done
+}
+####### AskMail: Send Confirmation Mail: Set MAILOPT ############
+AskMail () {
+while [ "${MAILOPT}" = "" ]
+do
+   echo '\nSend Mail upon Completion of Job? (y/n): \c'
+   read MAILOPT
+   case ${MAILOPT} in
+      y*|Y*) MAILOPT=yes; echo "\n\tMail will be Sent";;
+      n*|N*|"") MAILOPT=no; echo "\n\tNo Mail will be Sent";;
+      *) MAILOPT=""; echo ${ERRMSG};;
+   esac
+done
+}
+####### AskPages: Process Selected Pages: set $Pages ($PAGES) #######
+AskPages () {
+while [ "${PAGEOPT}" = "" ]
+do
+   echo '\nFormat Selected Pages? (y/n): \c'
+   read PAGEOPT 
+   case ${PAGEOPT} in
+      y*|Y*)
+         while [ "${Pages}" = "" ]
+         do
+            echo '\nEnter Page Numbers (e.g., 3- or 4-18 or 2,6,8-): \c'
+            read Pages
+            case $Pages in
+               -*|*[a-zA-Z]*)
+                  echo "\n\t\007*** ERROR: ${Pages} is Invalid ***\n"; Pages="";;
+               "") Pages=all; echo "\n\tAll Pages will be Printed";;
+               *) PAGENUM="-o${Pages}";echo "\n\tPages  ${Pages}  will be Printed";;
+            esac
+         done
+         break;;
+      n*|N*|"") echo "\n\tAll Pages will be Printed"; Pages=all;PAGEOPT=N;;
+      *) PAGEOPT=""; echo ${ERRMSG};;
+   esac
+done
+}
+######## AskFiles: File Name(s); set $FILES ##########################
+AskFiles () {
+echo '\nEnter File Name(s): \c'
+read FILEOPT
+while [ "${FILEOPT}" = "" ]
+do
+   echo '\n\t\007*** No File(s) Specified ***\n'
+   echo '\nEnter File Name(s): \c'
+   read FILEOPT
+done
+FILES="`eval echo ${FILEOPT}`"
+}
+######### AskMore:  More Printing Options #######################
+AskMore () {
+while [ "${OPT2}" = "" ]
+do
+   echo '\nSelect Other Formatting Options? (y/n): \c'
+   read OPT2
+   case ${OPT2} in
+      y*|Y*) AskToc; AskPages; AskStart; AskLand; AskVersion
+	     AskSize; AskMail;;
+      n*|N*|"") Pages=all; Ptoc=no; Pstart=1; Orient=portrait
+             Version=1; Size=7 MAILOPT=no; OPT2=N;;
+      *) OPT2=""; echo ${ERRMSG};;
+   esac
+done
+}
+############ AskIfDone: Re-Prompt for all Options ##############
+AskIfDone () {
+while [ "${OPT3}" = "" ]
+do
+   eval "echo '
+\n\t****** Confirm Following Choices ******
+\t* Formatting File(s):    ${FILES}
+\t* For Destination:       ${PNAME}
+\t* For Pages:             ${Pages}
+\t* Printing Toc:          ${Ptoc}
+\t* Starting Page:         ${Pstart}
+\t* Orientation:           ${Orient}
+\t* Version:               ${Version}
+\t* Page Size:             ${Size}
+\t* Confirm with mail:     ${MAILOPT}
+\t***************************************
+\nFormat File(s)? (y, n, q): \c'"
+   read OPT3
+   case ${OPT3} in
+      y*|Y*|"") OPT3=Y; TROPTS="${TROPTS} ${SIZE} ${VERSION} ${PSTART}";;
+      n*|N*) UnSet; AskDest; AskMore; AskFiles; AskIfDone;;
+      q*|Q*) echo "\n\t\007Exiting Now\007"
+             echo "\n\t!! Bye !!"
+             exit 1;;
+      *) OPT3=""; echo ${ERRMSG};;
+   esac
+done
+}
+######## UnSet: Unset Variables #############################
+UnSet () {
+unset DESTOPT PNAME TOCOPT PTOC Ptoc PAGEOPT STARTOPT Pstart PSTART \
+ORIENTOPT Orient LAND VERSIONOPT Version VERSION SIZEOPT Size SIZE \
+MAILOPT PAGEOPT Pages PAGES PAGENUM FILES OPT2 OPT3
+}
+#
+######################## End of Prompting Functions #################
+#####################################################################
+# DoMerge : Get file info and merge files before troffing
+DoMerge () {
+GetNames                     # Collect filenames
+CheckFiles                   # Check for existence and readability
+eval "echo '.ds[Y ${FFFN}'>>${TF}-MGE" # Put file name in defined string
+eval "cat ${i} >> ${TF}-MGE"         # Create one large file
+}
+# Prep one file at a time
+DoPrep () {
+GetNames                                    # Collect filenames
+CheckFiles                                  # Check for existence and readability
+CNT=`expr $CNT + 1`                         # Increment file counter
+if [ "${MERGEFILES}" = "Y" ]; then FN=Mergefile; FNS=${FN}; fi
+if [ "${PNAME}" != "archive" ]; then
+   eval "echo '.ds[E ${FFFN}'>${TF}-${CNT}"   # Put file name in defined string
+   PreP=`${LIB}/vsresolve ${tmparg} ${i} | tee -i ${TF}-VS | ${LIB}/prep 2>>${TF}-${CNT}`   # Run preprocessor check
+   i=${TF}-VS
+else
+   PreP=`${LIB}/prep ${i} 2>/dev/null`       # Run preprocessor check
+fi
+FT=`expr "${PreP}" : '.*FT=\(.*\)TOC'`      # Record .FT existence
+PREP=`expr "${PreP}" : '\(.*\)MAC='`        # Record preprocessor line
+MAC=`expr "${PreP}" : '.*MAC=\(.*\)REF'`    # Record macro package name
+if [ "${FT}" = "on" ]; then DoCollection; return; fi
+# Is file sourced SO or BP file?  If so, return identifier
+if [ "${FT}" = "so" ] || [ "${FT}" = "bp" ]; then return 3; fi
+RP=`expr "${PreP}" : '.*REF=\(.*\)FT'`      # Record .RP existence
+TOC=`expr "${PreP}" : '.*TOC=\(.*\)'`       # Record .tC existence
+if [ "${PNAME}" != "archive" ]; then DoProc     # Go and do processing
+else return; fi
+}
+# Preprocess one file at a time
+DoProc () {
+eval "${PREP} >> ${TF}-${CNT}"              # Execute preprocessing
+if [ "${RP}" = "on" ]; then DoRP; fi        # Troff twice if RP=yes
+# Collect .tm output only for guide macros, but not if toc file
+if [ "${MAC}" = "gmt" ] && [ "${TOC}" != "on" ]; then TocFile=${TF}-Ctoc;
+else TocFile=${LOG}; fi
+DoFontConvert; DoTroff; Ret=$?              # Troff and check return value
+if [ -f "${TF}-Ctoc" ]; then DoCtoc; fi     # Do necessary toc work
+eval "cat ${TF}-TR-${CNT} ${POST}"          # Post Process jobs individually
+rm ${TF}-TR-${CNT} ${TF}-${CNT}             # Do some cleanup now!!
+if [ "${Ret}" = "5" ]; then return; fi    # Break for loop ?
+}
+# DoCollection: For .FT file
+DoCollection () {
+PARENTFN=${FN}                  # Parent collection file name
+# Only do the following for the parent collection file
+if [ "${ARCHIVE}" != "Y" ]  && [ "${PNAME}" = "archive" ]; then
+   HERE=`pwd`                      # keep current location
+   TMpdIR=${TF}                    # temp. dir for TM files
+   mkdir ${TMpdIR}
+   chmod 775 ${TMpdIR}
+fi
+PAGES=Y                     # Turns off chapter toc work
+SFN="${OFN}"                # Current collection file name
+SFNS="${FNS}"               # Save current list of files
+BKNAME="`egrep '^\.BK' ${i}`" 2>/dev/null
+BKTITLE=`expr "${BKNAME}" : '.*BK \(.*\).*'` 2>/dev/null
+if [ "${BKTITLE}" = "" ]; then BKTITLE="Title Not Supplied"; fi
+# Create Top of README file
+echo "Subject: ${BKTITLE}
+
+This book (${BKTITLE})
+contains the following files,
+listed in the order in which they are printed.
+Next to each file name is its SCCS delta number.\n" >${TF}-RM
+# remove comments and blank lines and convert delta numbers
+sed '/^\./d;/^ *$/d;s/	/-!!-/' ${i} > ${TF}-fl
+if [ "${MERGEFILES}" = "Y" ]; then rm ${TF}-MGE; fi # Remove existing merge file
+for AFILE in `cat ${TF}-fl`
+do
+   FNAME=`expr "${AFILE}" : '\(.*\)-!!-'`
+   # if failed to get LONGFNAME from expr above, set to AFILE
+   if [ "${FNAME}" = "0" ] || [ "${FNAME}" = "" ]; then
+      FNAME=`echo ${AFILE}`
+   fi
+   sNUM=`expr "${AFILE}" : '.*-!!-\(.*\)'`  # get delta# from file
+   # Now process file as any other
+   i=${FNAME}
+   if [ "${PNAME}" != "archive" ]; then
+      # If used -rC1, cat named files into one file, and cross fingers
+      if [ "${MERGEFILES}" = "Y" ]; then DoMerge
+      # Handle files one at a time
+      elif [ "${PTOC}" != "Y" ]; then DoPrep 
+      # .FT file processed with -c (produce TC+PI files for ref. manual;
+      #                             or MasterToc for guide)
+      else GetNames; CheckFiles; : ${MFILECNT:=0}; DoColltoc
+      fi
+# ARCHIVE WORK DONE HERE
+   # protect against col. file of col. files
+   else
+         ARCHIVE=Y
+	 DoPrep
+# !BEFORE VS stripping! if [ "${FT}" != "on" ]; then eval "cp ${i} ${TMpdIR}/${OFN}"
+	 if [ "${FT}" != "on" ]; then
+            if [ "${tmparg}" != "all" ]
+                then
+                ${LIB}/vsresolve ${tmparg} ${i} > $TF-GOTVS
+                mv $TF-GOTVS ${i}
+            fi
+	    FTDIR=`eval "expr "${FFN}" : '\(.*\)/${FN}'"` # get named dir, if any
+            if [ -n "${FTDIR}" ]; then
+	       if [ ! -d "${TMpdIR}/${FTDIR}" ]; then eval "mkdir -p ${TMpdIR}/${FTDIR}";fi
+	       eval "cp ${i} ${TMpdIR}/${FTDIR}/${FN}"
+	    else
+	       eval "cp ${i} ${TMpdIR}/${FN}"
+	    fi
+	 else unset ARCHIVE; fi
+   fi
+   echo "$FNAME	$SNUM" >>${TF}-RM
+   unset FNAME SNUM FTDIR
+done
+if [ "${MERGEFILES}" = "Y" ]; then i=${TF}-MGE; DoPrep; fi
+if [ "${ARCHIVE}" = "Y" ]; then DoArchive; return; fi
+if [ "${MFILES}" != "" ] && [ "${REFTOC}" != "Y" ]; then
+   FILES="${MFILES}"; TOC="on"; DoFontConvert; DoTroff
+   eval "cat ${TF}-TR-${CNT} ${POST}"; return; fi
+FNS="${SFNS}"
+# Cancel out file info with following message
+eval "echo '\n\tCollection File - ${PARENTFN} - Finished Processing' >>${TF}-2lp"
+mv ${TF}-2lp ${TF}-lp
+if [ -s "${TF}-RM" ]; then mail ${MACHINE}!${USER} < ${TF}-RM; fi
+if [ "${REFTOC}" = "Y" ]; then FinishReftoc; fi
+}
+# DoArchive: cpio files and cp cpio file and cleanup
+DoArchive () {
+cp ${TF}-RM ${TMpdIR}/README; cd ${TMpdIR}
+eval "find . -print |cpio -ocdm > ${HERE}/cpio.${SFN}" 2>/dev/null
+cd ${HERE}; rm -rf ${TMpdIR}
+mail ${MACHINE}!${USER} < ${TF}-RM 2>/dev/null
+rm ${TF}-RM; unset ARCHIVE; FT=on
+eval "echo '\tCopied cpio.${SFN} into ${HERE}\n' >>${TF}-lp"
+}
+# DoColltoc: Either cat file for MasterToc or send to DoReftoc
+DoColltoc () {
+if egrep "^\.tC" ${i} 2>/dev/null 1>&2; then
+   MFILECNT=`expr ${MFILECNT} + 1`; cp ${i} ${TF}-Mf${MFILECNT}
+   MFILES="$MFILES ${TF}-Mf${MFILECNT}"
+else DoReftoc; fi
+}
+# DoReftoc: get name and brief desc. of each manpage for toc/permuted index
+DoReftoc () {
+# Used sed to get section id and name line
+# echos one line each into toc and perm.index files for each manpage
+REFTOC=Y   # records we we're here to trigger final processing
+sed -n '
+/^\.if \\nX=0 \.ds x} /{
+   s/^.*x} //;s/ /1x1/;s/^.*1x1//;s/ .*//;/.*$/p
+}' ${i} >${TF}-thline
+MSECT=`cat ${TF}-thline`
+if [ "${MSECT}" = "" ]; then return; fi   # not a manpage
+sed -n '
+/^\.SH[ "]*NAME.*/,/^\.SH/{
+   /^\./d;s/\.$//;s/\\f[1-9P]//g
+   s/\\f(CW//g;s/\\s0//g;s/\\s[0-9]//g;s/\\s.[0-9]//g
+   s/\\&//;s/ \\- /1x1/;s/\\- /1x1/;s/ - /1x1/
+   s/ \\(mi /1x1/;s/ \\(em /1x1/;/.*$/p
+}' ${i} >${TF}-mdesc
+# break down name line into pre-hypen and post-hypen info
+MDESC=`cat ${TF}-mdesc`
+MNAME=`echo ${MDESC} |sed 's/[ ,:(1].*//'`
+PreHypen=`echo ${MDESC} | sed 's/1x1.*$//'`
+PostHypen=`echo ${MDESC} | sed 's/^.*1x1//'`
+# echo line for toc file
+echo .tC\\tRM\\t\"${PreHypen}\"\\t\"${MSECT}\"\\t\"${PostHypen}\" >> ${TF}-TCtmp
+# echo line for permuted index
+echo ${MNAME}\(${MSECT}\) ${PreHypen} ${PostHypen} >> ${TF}-PItmp
+}
+# FinishReftoc: sort temp files and finish processing
+FinishReftoc () {
+# First do Table of Contents
+echo "${BKNAME}
+.CH \"Table of Contents\"
+.H 1 \"Table of Contents\"" > ${TF}-TC
+# Add section headings for TOC
+cat ${TF}-TCtmp |awk '
+BEGIN { FS = "\t"; a = 0; b = 0; c = 0; d = 0; e = 0; f = 0; g = 0; }
+   $4 ~ /1|1A|1C|1F|1G|1M|1V/ {
+      if (a++ == 0) print ".H 3 \"1. Commands\"";
+      print;
+   }       
+   $4 ~ /2/ {
+      if (b++ == 0) print ".H 3 \"2. System Calls\"";
+      print;
+   }       
+   $4 ~ /3|3C|3F|3G|3M|3N|3S|3X/ {
+      if (c++ == 0) print ".H 3 \"3. Functions\"";
+      print;
+   }       
+   $4 ~ /4|4V/ {
+      if (d++ == 0) print ".H 3 \"4. File Formats\"";
+      print;
+   }       
+   $4 ~ /5/ {
+      if (e++ == 0) print ".H 3 \"5. Miscellaneous Facilities\"";
+      print;
+   }       
+   $4 ~ /7/ {
+      if (f++ == 0) print ".H 3 \"7. Special Files\"";
+      print;
+   }       
+   $4 ~ /8/ {
+      if (g++ == 0) print ".H 3 \"8. System Maintenance Procedures\"";
+      print;
+   }       
+' |sed 's/	/ /g' >> ${TF}-TC; cp ${TF}-TC ./TC.${SFN}
+eval "echo '\n\tTable of Contents File - TC.${SFN} - Was Created' >>${TF}-lp"
+# Now do Permuted Index
+echo "${BKNAME}
+.CH \"Permuted Index\"
+.H 1 \"Permuted Index\"
+.Px" > ${TF}-PI
+sort -df ${TF}-PItmp |ptx -f -t -w 76 -r >>${TF}-PI; cp ${TF}-PI ./PI.${SFN}
+eval "echo '\n\tPermuted Index File - PI.${SFN} - Was Created' >>${TF}-lp"
+# Now print toc and index
+unset PTOC TOC FNS    # Got to change these so MasterToc isn't done
+i=TC.${SFN};DoPrep
+i=PI.${SFN};DoPrep
+}
+# Check for existence and readability
+CheckFiles () {
+if [ ! -f "${i}" ]; then  # First check if file is local
+   if echo ${i} |egrep "/" 2>/dev/null 1>&2; then
+      eval "echo ${i} |sed -n 's/\/${FN}$/\/s\.${FN}/w ${TF}-sFILE'" # Get real filename
+   else
+      eval "echo ${i} |sed -n 's/${FN}$/s\.&/w ${TF}-sFILE'" # Get real filename
+   fi
+   sFILE=`cat ${TF}-sFILE`
+   if [ -f "${SCCSSRC}/${sFILE}" ];then    # Now check if file is in SCCS location
+      unset SNUM; SNUM=${sNUM}    # Make sure SNUM is clear; check col file
+      if [ "${SNUM}" = "0" ] || [ -z "${SNUM}" ]; then  # get top delta#
+         SNUM=`eval "get -g ${SCCSSRC}/${sFILE}"`
+      fi
+      eval "get -r${SNUM} -t -p ${SCCSSRC}/${sFILE} >${TF}-SRC" 2>/dev/null
+      if [ "${PNAME}" != "archive" ]; then FFFN="${FFFN} (Delta ${SNUM})"; fi
+      i=${TF}-SRC                 # reassign i to SCCS file
+   elif [ -f "${ARCSRC}/${sFILE}" ];then    # Now check archive SCCS source
+      unset SNUM; SNUM=${sNUM}    # Make sure SNUM is clear; check col file
+      if [ "${SNUM}" = "0" ] || [ -z "${SNUM}" ]; then  # get top delta#
+         SNUM=`eval "get -g ${ARCSRC}/${sFILE}"`
+      fi
+      eval "get -r${SNUM} -t -p ${ARCSRC}/${sFILE} >${TF}-SRC" 2>/dev/null
+      if [ "${PNAME}" != "archive" ]; then FFFN="${FFFN} (Delta ${SNUM})"; fi
+      i=${TF}-SRC                 # reassign i to SCCS file
+   else                           # Must be bad filename
+      echo "\n\007Input File *** $i *** Not Found\n"
+      eval "echo '$USAGE'"; exit 1
+   fi
+elif [ ! -r "$i" ]; then
+   echo "\n\007Input File *** $i *** Not Readable\n"
+   eval "echo '$USAGE'"
+   exit 1
+fi
+# Handle non-archive file conversion here
+if [ "${PNAME}" != "archive" ]; then DoFileConvert; fi
+}
+# DoFileConvert: Read in .SO files, do font work, correct .mc bug
+DoFileConvert() {
+# Now check for .SO and read in file if called !
+if egrep "^\.SO" ${i} 2>/dev/null 1>&2; then
+awk '
+{
+if ( $1 == ".SO" )  {
+   if ($3 == "SYS")
+      { gsub(/[<>"]/, "", $2); system("cat '$SYS/'" $2) }
+   else
+      { gsub(/[<>"]/, "", $2); system("cat " $2) }
+   }
+else
+   { print $0; next }
+}' ${i} >${TF}-GOTSO
+i=${TF}-GOTSO
+fi
+# Now check for .mc and change to our redefinition
+if egrep "^\.mc" ${i} 2>/dev/null 1>&2; then
+   sed 's/^\.mc/\."q/g' ${i} >${TF}-GOTmc
+   i=${TF}-GOTmc
+fi
+}
+# DoFontConvert: Change f4,f5,f6 to internal strings for manpage and guide
+DoFontConvert () {
+# Now, change direct calls to f4 (or UI), f5 (or CO), f6 (or PC) to string names
+# to avoid troff conflict with DESC file
+# s/\\UI/\\\&\\\*(@A/g;s/\\CO/\\\&\\\*(@B/g;s/\\PC/\\\&\\\*(@C/g;s/\\P/\\\&\\fP/g
+# s/UI/\\\*(@a/g;s/CO/\\\*(@b/g;s/PC/\\\*(@c/g
+if [ "${MAC}" = "gmt" ] || [ "${MAC}" = "rmt" ]; then
+   eval "mv ${TF}-${CNT} ${TF}-F456"
+   sed 's/\\f4/\\\&\\\*(@A/g;s/\\f5/\\\&\\\*(@B/g;s/\\f6/\\\&\\\*(@C/g;s/\\fR/\\f1/g
+   s/\\fI/\\f2/g;s/\\fB/\\f3/g
+   /^\.TS/,/^\.TE/ { s/^\\\&\\\*(@A\./\\\*(@A\./g
+      s/^\\\&\\\*(@B\./\\\*(@B\./g
+      s/^\\\&\\\*(@C\./\\\*(@C\./g
+   }
+   /^\.IX/ { s/\\\&\\\*(@A/\\\*(@A/g
+      s/\\\&\\\*(@B/\\\*(@B/g
+      s/\\\&\\\*(@C/\\\*(@C/g
+   }
+   /^\.ft/ { s/4/\\\*(@a/;s/5/\\\*(@b/;s/6/\\\*(@c/;s/R/1/;s/I/2/;s/B/3/
+   }' ${TF}-F456 >${TF}-${CNT}
+fi
+}
+# DoDest: Set processing parameters: sets PTYPE, POST, LP
+DoDest () {
+case ${PNAME} in
+   ${d0}) PTYPE="${d0TY}"; POST="${d0PP}"; LP="${d0LP}";;
+   ${d1}) PTYPE="${d1TY}"; POST="${d1PP}"; LP="${d1LP}";;
+   ${d2}) PTYPE="${d2TY}"; POST="${d2PP}"; LP="${d2LP}";;
+   ${d3}) PTYPE="${d3TY}"; POST="${d3PP}"; LP="${d3LP}";;
+   ${d4}) PTYPE="${d4TY}"; POST="${d4PP}"; LP="${d4LP}";;
+   ${d5}) PTYPE="${d5TY}"; POST="${d5PP}"; LP="${d5LP}";;
+   ${d6}) PTYPE="${d6TY}"; POST="${d6PP}"; LP="${d6LP}";;
+   ${d7}) PTYPE="${d7TY}"; POST="${d7PP}"; LP="${d7LP}";;
+   ${d8}) PTYPE="${d8TY}"; POST="${d8PP}"; LP="${d8LP}";;
+   ${d9}) PTYPE="${d9TY}"; POST="${d9PP}"; LP="${d9LP}";;
+   ${d10}) PTYPE="${d10TY}"; POST="${d10PP}"; LP="${d10LP}";;
+   ${d11}) PTYPE="${d11TY}"; POST="${d11PP}"; LP="${d11LP}";;
+   ${d12}) PTYPE="${d12TY}"; POST="${d12PP}"; LP="${d12LP}";;
+   ${d13}) PTYPE="${d13TY}"; POST="${d13PP}"; LP="${d13LP}";;
+   ${d14}) PTYPE="${d14TY}"; POST="${d14PP}"; LP="${d14LP}";;
+   ${d15}) PTYPE="${d15TY}"; POST="${d15PP}"; LP="${d15LP}";;
+   ${d16}) PTYPE="${d16TY}"; POST="${d16PP}"; LP="${d16LP}";;
+   ${d17}) PTYPE="${d17TY}"; POST="${d17PP}"; LP="${d17LP}";;
+   ${d18}) PTYPE="${d18TY}"; POST="${d18PP}"; LP="${d18LP}";;
+   ${d19}) PTYPE="${d19TY}"; POST="${d19PP}"; LP="${d19LP}";;
+   ${d20}) PTYPE="${d20TY}"; POST="${d20PP}"; LP="${d20LP}";;
+   ${d21}) PTYPE="${d21TY}"; POST="${d21PP}"; LP="${d21LP}";;
+   ${d22}) PTYPE="${d22TY}"; POST="${d22PP}"; LP="${d22LP}";;
+   *) echo "Unknown Destination"
+      eval "echo '$USAGE'"
+      exit 1 ;;
+esac
+}
+# DoOrient: Set orientation variable to landscape, if appropriate
+DoOrient () {
+case ${PNAME} in
+   ${d0}) ORIENT="${d0OL}";;
+   ${d1}) ORIENT="${d1OL}";;
+   ${d2}) ORIENT="${d2OL}";;
+   ${d3}) ORIENT="${d3OL}";;
+   ${d4}) ORIENT="${d4OL}";;
+   ${d5}) ORIENT="${d5OL}";;
+   ${d6}) ORIENT="${d6OL}";;
+   ${d7}) ORIENT="${d7OL}";;
+   ${d8}) ORIENT="${d8OL}";;
+   ${d9}) ORIENT="${d9OL}";;
+   ${d10}) ORIENT="${d10OL}";;
+   ${d11}) ORIENT="${d11OL}";;
+   ${d12}) ORIENT="${d12OL}";;
+   ${d13}) ORIENT="${d13OL}";;
+   ${d13}) ORIENT="${d13OL}";;
+   ${d14}) ORIENT="${d14OL}";;
+   ${d15}) ORIENT="${d15OL}";;
+   ${d16}) ORIENT="${d16OL}";;
+   ${d17}) ORIENT="${d17OL}";;
+   ${d18}) ORIENT="${d18OL}";;
+   ${d19}) ORIENT="${d19OL}";;
+   ${d20}) ORIENT="${d20OL}";;
+   ${d21}) ORIENT="${d21OL}";;
+   ${d22}) ORIENT="${d22OL}";;
+esac
+}
+# DoMail: Turn mail variable on, if appropiate
+DoMail () {
+case ${PNAME} in
+   ${d0}) LPOPTS="${LPOPTS} ${d0MA}";;
+   ${d1}) LPOPTS="${LPOPTS} ${d1MA}";;
+   ${d2}) LPOPTS="${LPOPTS} ${d2MA}";;
+   ${d3}) LPOPTS="${LPOPTS} ${d3MA}";;
+   ${d4}) LPOPTS="${LPOPTS} ${d4MA}";;
+   ${d5}) LPOPTS="${LPOPTS} ${d5MA}";;
+   ${d6}) LPOPTS="${LPOPTS} ${d6MA}";;
+   ${d7}) LPOPTS="${LPOPTS} ${d7MA}";;
+   ${d8}) LPOPTS="${LPOPTS} ${d8MA}";;
+   ${d9}) LPOPTS="${LPOPTS} ${d9MA}";;
+   ${d10}) LPOPTS="${LPOPTS} ${d10MA}";;
+   ${d11}) LPOPTS="${LPOPTS} ${d11MA}";;
+   ${d12}) LPOPTS="${LPOPTS} ${d12MA}";;
+   ${d13}) LPOPTS="${LPOPTS} ${d13MA}";;
+   ${d13}) LPOPTS="${LPOPTS} ${d13MA}";;
+   ${d14}) LPOPTS="${LPOPTS} ${d14MA}";;
+   ${d15}) LPOPTS="${LPOPTS} ${d15MA}";;
+   ${d16}) LPOPTS="${LPOPTS} ${d16MA}";;
+   ${d17}) LPOPTS="${LPOPTS} ${d17MA}";;
+   ${d18}) LPOPTS="${LPOPTS} ${d18MA}";;
+   ${d19}) LPOPTS="${LPOPTS} ${d19MA}";;
+   ${d20}) LPOPTS="${LPOPTS} ${d20MA}";;
+   ${d21}) LPOPTS="${LPOPTS} ${d21MA}";;
+   ${d22}) LPOPTS="${LPOPTS} ${d22MA}";;
+esac
+}
+# .RP macro requires troff to process file twice
+DoRP () {
+   eval "mv ${TF}-${CNT} ${TF}-T-${CNT}"
+   eval "${TROFF} ${PID} ${PTYPE} ${TROPTS} -rR1 ${MACBIN}/${MAC} \
+	   ${TF}-T-${CNT} > /dev/null 2>>${LOG}"
+   # Make sure sed file exists, else just cat
+   if [ -f "${TF}-rp" ]; then
+      eval "cat ${TF}-T-${CNT} | ${TF}-rp > ${TF}-${CNT} 2>>${LOG}"
+      eval "rm ${TF}-rp"
+   else
+      eval "cat ${TF}-T-${CNT} > ${TF}-${CNT} 2>>${LOG}"
+   fi
+   TROPTS="${TROPTS} -rR2"   # tells troff to ignore .RP
+}
+# Collect individual and cumulative filenames
+GetNames () {
+   FFN=${i}                                     # Save full name for printout
+   FFFN=${i}                                    # Save full name for BOP
+   FN=`basename $i`                             # Store current filename
+   OFN=${FN}
+   if [ "${CNT}" = "0" ]; then FNS="${FN}";     # Filelist = first file here
+   else FNS="${FNS},${FN}"; fi                  # Cumulative file name list
+}
+# Chapter toc work done here
+DoCtoc () {
+# Cancel if selected pages or if empty
+if [ "${PAGES}" = "" ] && [ -s "${TF}-Ctoc" ] && [ "${STOC}" = "Y" ]; then
+# Translate special cases, like \&(), \e(), \-(^L): use prep -t
+   cat ${TF}-Ctoc | ${LIB}/prep -t > ${TF}-Csed
+   eval "sed -f ${TF}-fs ${TF}-Csed >./C${OFN}" # Copy file (after font convert)
+   echo "\\n\\tCopied file - C${OFN} - into current directory" >>${TF}-lp
+   if [ "${PTOC}" = "Y" ]; then                # Troff file, if requested
+      eval "mv ${TF}-TR-${CNT} ${TF}-m-${CNT}" # Move troff output
+      eval "echo '.ds[E C${OFN}'>${TF}-C2sed"  # Put file name in defined string
+      eval "cat ${TF}-Csed >> ${TF}-C2sed"     # put Cfile after string
+      eval "${TROFF} ${PID} ${PTYPE} ${TROPTS} -rp1 ${MACBIN}/${MAC} \
+	      ${TF}-C2sed >>${TF}-TR-${CNT} 2>>${LOG}"
+      eval "cat ${TF}-m-${CNT} >> ${TF}-TR-${CNT}"  # Now combine files
+   fi
+   unset OFN
+   rm ${TF}-Ctoc ${TF}-Csed
+fi
+}
+# Create and Print Master Table of Contents
+DoMtoc () {
+MCNT=0; FNS=MasterToc; TocFile=${LOG}
+eval "echo '.ds[E MasterToc'>${TF}-${CNT}"   # Put file name in defined string
+for i in ${FILES}
+do
+   MCNT=`expr ${MCNT} + 1`  # Only want one .BK
+   if [ "${MCNT}" = 1 ]; then
+      egrep '^\.BK' $i >> ${TF}-Mtoc
+   fi
+   egrep '^\.(CH|tC 1)' $i >> ${TF}-Mtoc
+   egrep '^\.tC L \"Figure' $i >> ${TF}-Ftoc
+   egrep '^\.tC L \"Table' $i >> ${TF}-Ttoc
+done
+# PUT in IF HERE AOBUT FTOC$$ EXISTING
+if [ -f "${TF}-Ftoc" ]; then cat ${TF}-Ftoc >> ${TF}-Mtoc; fi
+if [ -f "${TF}-Ttoc" ]; then cat ${TF}-Ttoc >> ${TF}-Mtoc; fi
+sed 's/^\.tC 1/\.tC 2/
+s/^\.tC L/\.tC F/
+s/^\.CH/\.tC 1/
+1s/.*/\.CH "Table of Contents" "" "" "" Contents\
+&/' ${TF}-Mtoc > ${TF}-MTOC
+cat ${TF}-MTOC >> ${TF}-${CNT}; mv ${TF}-MTOC ./MasterToc
+FN=MasterToc; unset PTOC
+echo "\\n\\tCopied file - MasterToc - into current directory" >>${TF}-lp
+}
+# Troffing done right here
+DoTroff () {
+if [ "${PTOC}" = "Y" ] && [ "${TOC}" = "on" ]; then
+   DoMtoc                # Create Master Toc file
+   DoFontConvert         # Convert hard coded fonts
+   DoTroff               # Process Master Toc
+   return 5              # Break out of for Loop
+else
+   eval "${TROFF} ${PID} ${PTYPE} ${TROPTS} ${PAGENUM} ${MACBIN}/${MAC} \
+	${TF}-${CNT} > ${TF}-TR-${CNT} 2>${TF}-tm;
+   sed -n '/^\./w ${TocFile}
+	   /^[^\.]/ {
+	      s/^./Error:&/;s/\/tmp.*$/${FN}/p
+	      }' ${TF}-tm"
+fi
+}
+# EOF

@@ -1,0 +1,73 @@
+'\"macro stdmacro
+.if n .pH gen.OTHERQ @(#)OTHERQ	40.2 of 1/7/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.nr X
+.if \nX=0 .ds x} OTHERQ D3DK "STREAMS" "DDI/DKI" "\&"
+.if \nX=1 .ds x} OTHERQ D3DK "STREAMS" "DDI/DKI"
+.if \nX=2 .ds x} OTHERQ D3DK "" "\&"
+.if \nX=3 .ds x} OTHERQ "" "" "\&"
+.TH \*(x}
+.IX "\f4OTHERQ\fP(D3DK)"
+.SH NAME
+\f4OTHERQ\f1 \- get pointer to queue's partner queue
+.SH SYNOPSIS
+.nf
+.na
+\f4#include <sys/stream.h>
+#include <sys/ddi.h>
+.sp 0.5
+queue_t *OTHERQ(queue_t *\f2q\f4);\f1
+.ad
+.fi
+.SH ARGUMENTS
+.RS 0n 10
+.IP "\f2q\f1" 10n
+Pointer to the queue.
+.RE
+.SH DESCRIPTION
+The \f4OTHERQ\f1 function returns a pointer to the other of the
+two \f4queue\f1 structures that make up an instance of a STREAMS module or
+driver.  If \f2q\f1 points to the read queue the write queue will be
+returned, and vice versa.
+.SH RETURN VALUE
+\f4OTHERQ\f1 returns a pointer to a queue's partner.
+.SH LEVEL
+Base or Interrupt.
+.SH NOTES
+Does not sleep.
+.SH SEE ALSO
+.na
+\f4RD\fP(D3DK),
+\f4WR\fP(D3DK)
+.ad
+.SH EXAMPLE
+.IX "\f4OTHERQ\fP(D3DK), example"
+This routine sets the minimum packet size, the maximum
+packet size, the high water mark, and the low water mark
+for the read and write queues of a given module or driver.
+It is passed either one of the queues.  This could be used
+if a module or driver wished to update its queue parameters
+dynamically.
+.ne 4
+.P
+.nf
+.ft 4
+.ps 7
+.vs 9
+ 1  void
+ 2  set_q_params(queue_t *q, long min, long max, ulong_t hi, ulong_t lo)
+ 3  {
+ 4	(void) strqset(q, QMINPSZ, 0, min);
+ 5	(void) strqset(q, QMAXPSZ, 0, max);
+ 6	(void) strqset(q, QHIWAT, 0, hi);
+ 7	(void) strqset(q, QLOWAT, 0, lo);
+ 8	(void) strqset(OTHERQ(q), QMINPSZ, 0, min);
+ 9	(void) strqset(OTHERQ(q), QMAXPSZ, 0, max);
+10	(void) strqset(OTHERQ(q), QHIWAT, 0, hi);
+11	(void) strqset(OTHERQ(q), QLOWAT, 0, lo);
+12  }
+.vs
+.ps
+.ft 1
+.fi
+.FG "OTHERQ \- find partner queue"

@@ -1,0 +1,210 @@
+'\"macro stdmacro
+.if n .pH g1a.restore @(#)restore	40.7 of 1/3/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+'\"macro stdmacro
+.if n .pH g1a.restore @(#)restore @(#)restore	40.11 of 9/21/89
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.if \nX=0 .ds x} restore 1M "System Administration Utilities" "\&"
+.if \nX=1 .ds x} restore 1M "System Administration Utilities"
+.if \nX=2 .ds x} restore 1M "" "\&"
+.if \nX=3 .ds x} restore "" "" "\&"
+.nr X
+.TH \*(x} "" "386 Computer Only"
+.SH NAME
+\f4restore\f1 \- initiate restores of filesystems, data partitions, or disks
+.SH SYNOPSIS
+.P
+\f4restore\f1
+[\f4\-o \f2target\f1]
+[\f4\-d \f2date\f1]
+[\f4\-mn\f1]
+[\f4\-s|v\f1]
+\f4\-P \f2partdev\f1]
+.P
+\f4restore\f1
+[\f4\-o \f2target\f1]
+[\f4\-d \f2date\f1]
+[\f4\-mn\f1]
+[\f4\-s|v\f1]
+\f4\-S \f2odevice
+.P
+\f4restore\f1
+[\f4\-o \f2target\f1]
+[\f4\-d \f2date\f1]
+[\f4\-mn\f1]
+[\f4\-s|v\f1]
+\f4\-A \f2partde\f1v
+.SH DESCRIPTION
+\f4restore\fP
+posts requests for the restore of a data partition,
+a filesystem partition, or a disk from system-maintained archives.
+If the appropriate archive containing the required partition
+is online, the partition is restored immediately.
+If not, a request to restore the specified archive of the partition
+is posted to a restore status table.
+The restore status table is
+\f4/etc/bkup/rsstatus.tab\f1.
+The restore request is assigned a
+\f4restore\f1 \f2jobid\f1
+that can be used to monitor the progress
+of the restore or to cancel it.
+A restore request that has been posted must later be
+resolved by an operator
+[see \f4rsoper\f1(1M)].
+.P
+\f4restore\fP
+may only be executed by a user with superuser privilege.
+.P
+If \f4restore \-A\f2 partdev\f1 is issued, the
+\f4fdisk\f1(1M)
+(full disk recovery) method
+is used to repartition and repopulate disk
+.I partdev.
+.I partdev
+is the name of the device that refers to the entire disk.
+For the AT&T 3B2, it is
+\f4/dev/rdsk/c1d?s6\f1.
+.SS Options
+.TP 10
+\f4\-d \f2date\f1
+Restores the partition as of
+.IR date .
+This may or may not be the latest archive.
+See \f4getdate\f1(1M) for valid date formats.
+.TP 10
+\f4\-m\f1
+If the restore cannot be carried out immediately,
+this option notifies the invoking user [via
+\f4mail\f1(1M)]
+when the request has been completed.
+.TP 10
+\f4\-n\f1
+Displays a list of all archived versions of the object
+contained in the backup history log,
+but does not attempt to restore the object.
+.TP 10
+\f4\-o \f2target\f1
+Instead of restoring directly to the specified object
+.RI ( partdev
+or
+.IR fsdev ),
+this option restores the archive to
+.IR target .
+.I target
+is of the form:
+.sp .25
+.nf
+	[\f2oname\f1][\f4:\f2odev\f1]
+.fi
+.sp .25
+where
+.I oname
+is the name of the filesystem to be restored to (for
+\f4\-S\f1
+archives) and
+.I odev
+is the name of the partition to be restored to (for
+\f4\-P\f1
+and
+\f4\-A\f1
+archives).
+.TP 10
+\f4\-s\f1
+While a restore operation is occurring,
+displays a "." for each 100 (512 byte) blocks transferred from the
+destination device.
+.TP 10
+\f4\-v\f1
+Displays the name of each object as it is restored.
+Only those archiving methods that restore named directories
+and files (\f2incfile, ffile\f1) support this option.
+.TP 10
+\f4\-A \f2partdev\f1
+Initiates restore of the entire disk,
+.IR partdev .
+.br
+.ne 6
+.TP 10
+\f4\-P \f2partdev\f1
+Initiates restore of the
+data partition
+.IR partdev .
+.TP 10
+\f4\-S \f2odevice\f1
+Initiates restore of the filesystem partition
+.IR odevice.
+.SH DIAGNOSTICS
+The exit codes for \f4restore\fP are the following:
+.PP
+0 = the task completed successfully
+.br
+1 = one or more parameters to \f4restore\fP are invalid
+.br
+2 = an error has occurred, causing \f4restore\fP to fail to
+      complete \f2all\f1 portions of its task
+.SH EXAMPLES
+.P
+Example 1:
+.P
+.in 1.0i
+\f4restore \-m \-S /usr\fP
+.in 0
+.P
+posts a request to restore the most
+current archived version of \f4/usr\f1.
+If the restore cannot
+be carried out immediately, notify the invoking user
+when the request has been completed.
+.P
+Example 2:
+.P
+.in 1.0i
+\f4restore \-o /dev/rdsk/0s8 \-P /dev/rdsk/1s2\fP
+.in 0
+.P
+posts a request that the archived data partition
+\f4/dev/rdsk/0s8\f1
+be restored
+to the target device partition \f4/dev/rdsk/c1d0s8\f1.
+.P
+Example 3:
+.P
+.in 1.0i
+\f4restore \-d "december 1, 1987" \-A /dev/rdsk/0s6\fP
+.in 0
+.P
+posts a request for the restore of the entire disk
+\f4/dev/rdsk/0s6\f1.
+The restore should be made as of December 1, 1987.
+.P
+Example 4:
+.P
+.in 1.0i
+\f4restore \-n \-P /dev/drsk/0s1
+.in 0
+.P
+requests the system to display
+the backup date and an \f4ls -l\f1 listing
+from the backup history log
+of all archived versions of the data partition
+\f4/dev/rdsk/0s1\f1.
+The data partition is not restored.
+.SH FILES
+.PD 0
+.TP 26
+\f4/etc/bkup/bkhist.tab\f1 
+lists the labels of all volumes that have been used
+	for backup operations
+.TP
+\f4/etc/bkup/rsstatus.tab\f1 
+lists the status of all restore requests from users
+.TP
+\f4/etc/bkup/rsnotify.tab\f1 
+lists the email address of the operator to be notified
+whenever restore requests require operator intervention
+.SH SEE ALSO
+\f4fdisk\fP(1M),
+\f4getdate\fP(3), \f4mail\fP(1M), \f4rsnotify\fP(1M),
+\f4rsoper\fP(1M), \f4rsstatus\fP(1M), \f4urestore\fP(1M), \f4ursstatus\fP(1M)
+

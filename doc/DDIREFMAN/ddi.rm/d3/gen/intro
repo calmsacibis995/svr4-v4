@@ -1,0 +1,29 @@
+'\"macro stdmacro
+.if n .pH 386.intro3 @(#)intro	40.2 of 1/7/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.nr X
+.if \nX=0 .ds x} intro D3DK "" "DDI/DKI" "\&"
+.if \nX=1 .ds x} intro D3DK "" "DDI/DKI"
+.if \nX=2 .ds x} intro D3DK "" "\&"
+.if \nX=3 .ds x} intro "" "" "\&"
+.TH \*(x}
+.IX "\f4intro\fP(D3DK)"
+.IX istart "DDI/DKI (Device Driver Interface/Driver\(enKernel Interface), kernel functions"
+.IX istart driver, functions
+.SH NAME
+\f4intro\fP \- introduction to kernel utility routines
+.SH SYNOPSIS
+.nf
+\f4#include <sys/types.h>
+#include <sys/ddi.h>
+.fi
+.SH DESCRIPTION
+This section describes the kernel utility functions available for use by device drivers.
+Drivers must not call any kernel routines other than the ones described in this section.
+.P
+Unless otherwise stated, any kernel utility routine that sleeps will do so such that
+signals will not interrupt the sleep.
+.IX iend "DDI/DKI (Device Driver Interface/Driver\(enKernel Interface), kernel functions"
+.ig
+	null section helps create MasterToc
+..

@@ -1,0 +1,58 @@
+'\"macro stdmacro
+.if n .pH g4.ott @(#)ott	40.5 of 1/3/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} ott 4 "Framed Access Command Environment Utilities" "\&"
+.if \nX=1 .ds x} ott 4 "Framed Access Command Environment Utilities"
+.if \nX=2 .ds x} ott 4 "" "\&"
+.if \nX=3 .ds x} ott "" "" "\&"
+.TH \*(x}
+.SH NAME
+\&\f4.ott\f1 \- \s-1FACE\s+1 object architecture information
+.SH DESCRIPTION
+The
+.SM FACE
+object architecture stores information about object-types in an
+.SM ASCII
+file named \f4.ott\f1 (object type table)
+that is contained in each directory.
+This file describes all of the objects in that directory.
+Each line of the \f4.ott\f1 file contains
+information about one object in pipe-separated fields.
+The fields are (in order):
+.TP 18
+\f2name\f1
+the name of the actual
+.SM UNIX
+System file.
+.TP
+\f2dname\f1
+the name that should be displayed to the user,
+or a dot if it is the same as the name of the file.
+.TP
+\f2description\f1
+the description of the object,
+or a dot if the description is the default (the same as object-type).
+.TP
+\f2object-type\f1
+the FACE internal object type name.
+.TP
+\f2flags\f1
+object specific flags.
+.TP
+\f2mod time\f1
+the time that
+.SM FACE
+last modified the object.
+The time is given as number of seconds since 1/1/1970, and is in
+hexadecimal notation.
+.TP
+\f2object information\f1
+an optional field, contains a set of semi-colon separated
+\f2name\f4=\f2value\f1 fields that can be used by
+.SM FACE
+to store
+any other information necessary to describe this object.
+.SH FILES
+\&\f4.ott\f1 is created in any directory opened by \s-1FACE\s+1.

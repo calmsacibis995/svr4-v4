@@ -1,0 +1,77 @@
+'\"!  tbl | mmdoc
+'\"macro stdmacro
+.if n .pH g3x.form_hook @(#)form_hook	40.5 of 5/21/91
+.\" Copyright 1989 AT&T
+.\" ident	"@(#)svid_ti:ti_lib/form_hook	1.3"
+.nr X
+.if \nX=0 .ds x} form_hook 3X "" "\&"
+.if \nX=1 .ds x} form_hook 3X ""
+.if \nX=2 .ds x} form_hook 3X "" "\&"
+.if \nX=3 .ds x} form_hook "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4form_hook\f2: \f4 set_form_init\f1, \f4form_init\f1, \f4set_form_term\f1, \f4form_term\f1, \f4set_field_init\f1, \f4field_init\f1, \f4set_field_term\f1, \f4field_term\f1 \- assign application-specific routines for invocation by \f4forms\fP
+.SH SYNOPSIS
+.nf
+.ft 4
+#include <form.h>
+.sp
+int set_form_init(FORM *form, void (*func)(FORM *));
+void (*)(FORM *) form_init(FORM *form);
+.sp 0.5
+int set_form_term(FORM *form, void (*func)(FORM *));
+void (*)(FORM *) form_term(FORM *form);
+.sp 0.5
+int set_field_init(FORM *form, void (*func)(FORM *));
+void (*)(FORM *) field_init(FORM *form);
+.sp 0.5
+int set_field_term(FORM *form, void (*func)(FORM *));
+void (*)(FORM *) field_term(FORM *form);
+.ft 1
+.fi
+.SH DESCRIPTION
+These routines allow the programmer to assign application
+specific routines to be executed automatically at initialization
+and termination points in the \f4forms\fP application.
+The user need not specify any application-defined initialization or termination
+routines at all, but they may be helpful for displaying messages or page
+numbers and other chores.
+.PP
+\f4set_form_init\fP assigns an application-defined initialization
+function to be called when the \f2form\fP is posted and just after a
+page change.
+\f4form_init\fP returns a pointer to the initialization function,
+if any.
+.PP
+\f4set_form_term\fP assigns an application-defined
+function to be called when the \f2form\fP is unposted and just before a
+page change.
+\f4form_term\fP returns a pointer to the function,
+if any.
+.PP
+\f4set_field_init\fP assigns an application-defined
+function to be called when the \f2form\fP is posted and just after the
+current field changes.
+\f4field_init\fP returns a pointer to the function,
+if any.
+.PP
+\f4set_field_term\fP assigns an application-defined
+function to be called when the \f2form\fP is unposted and just before the
+current field changes.
+\f4field_term\fP returns a pointer to the function,
+if any.
+.SH RETURN VALUE
+Routines that return pointers always return \f4NULL\fP on error.
+Routines that return an integer return one of the following:
+.TS
+lfCWw(1.25i)1 c1 l .
+E_OK	\-	The function returned successfully.
+E_SYSTEM_ERROR	\-	System error.
+.TE
+.SH NOTES
+.PP
+The header file \f4form.h\f1 automatically includes the header files
+\f4eti.h\fP and \f4curses.h\fP.
+.SH SEE ALSO
+\f4curses\fP(3X),
+\f4forms\fP(3X)

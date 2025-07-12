@@ -1,0 +1,221 @@
+'\"macro stdmacro
+.if n .pH g1a.idinstall @(#)idinstall	40.5 of 1/3/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.if \nX=0 .ds x} idinstall 1M "Base System" "\&"
+.if \nX=1 .ds x} idinstall 1M "Base System"
+.if \nX=2 .ds x} idinstall 1M "" "\&"
+.if \nX=3 .ds x} idinstall "" "" "\&"
+.nr X
+.TH \*(x} "" "386 Computer Only"
+.SH NAME
+\f4idinstall\f1 \- add, delete, update, or get device driver configuration data
+.SH SYNOPSIS
+\f4/etc/conf/bin/idinstall\f1
+\-[\f4adug\f1] [\f4\-e\f1] \-[\f4msoptnirhcl\f1] \f2dev_name\f1
+.SH "DESCRIPTION"
+The
+\f4idinstall\f1
+command is called by a Driver Software Package (DSP) Install script or Remove
+script to
+Add (\f4\-a\f1),  Delete (\f4\-d\f1),
+Update (\f4\-u\f1), or Get (\f4\-g\f1) device driver
+configuration data. 
+\f4idinstall\f1
+expects to find driver component files in the current directory.
+When components are installed or updated,
+they are moved or appended to files in the
+\f4/etc/conf\f1
+directory and then deleted from the current directory unless the
+\f4\-k\f1
+flag is used.
+The options for the command are as follows:
+.P
+Action Specifiers:
+.RS 4
+.TP 4
+\f4\-a\f1
+Add the DSP components
+.TP 4
+\f4\-d\f1
+Remove the DSP components
+.TP 4
+\f4\-u\f1
+Update the DSP components
+.TP 4
+\f4\-g\f1
+Get the DSP components (print to std out, except Master)
+.RE
+.P
+Component Specifiers: (*)
+.RS 4
+.TP 4
+\f4\-m\f1
+Master component
+.TP 4
+\f4\-s\f1
+System component
+.TP 4
+\f4\-o\f1
+Driver.o component
+.TP 4
+\f4\-p\f1
+Space.c component
+.TP 4
+\f4\-t\f1
+Stubs.c component
+.TP 4
+\f4\-n\f1
+Node (special file) component
+.TP 4
+\f4\-i\f1
+Inittab component
+.TP 4
+\f4\-r\f1
+Device Initialization (rc) component
+.TP 4
+\f4\-h\f1
+Device shutdown (sd) component
+.TP 4
+\f4\-c\f1
+Mfsys component: file system type config (Master) data
+.TP 4
+\f4\-l\f1
+Sfsys component: file system type local (System) data
+.sp .4v
+(*) If no component is specified, the default is all except
+for the \f4\-g\f1 option where a single component must be
+specified explicitly.
+.RE
+.P
+Miscellaneous:
+.RS 4
+.TP 4
+\f4\-e\f1
+Disable free disk space check
+.TP 4
+\f4\-k\f1
+Keep files (do not remove from current directory) on add or update.
+.RE
+.P
+In the simplest case of installing a new DSP,
+the command syntax used by the DSP's Install
+script should be
+\f4idinstall \-a \f2dev_name\f1.
+In this case the command will require and install a Driver.o, 
+Master and System entry,
+and optionally install the Space.c, Stubs.c, Node, Init, Rc, Shutdown,
+Mfsys, and Sfsys components if
+those modules are present in the current directory.
+.P
+The Driver.o, Space.c, and Stubs.c files are moved to a directory in
+\f4/etc/conf/pack.d\f1.
+The 
+\f2dev_name\f1
+is passed as an argument, which is used as
+the directory name. The remaining components are stored in the corresponding
+directories under
+\f4/etc/conf\f1
+in a file whose name is
+.I dev_name.
+For example, the Node file would be moved to
+\f4/etc/conf/node.d/dev_name\f1.
+.P
+The
+\f4idinstall \-m\f1
+usage provides an interface to the 
+\f4idmaster\f1
+command which will add, delete, and update
+\f4mdevice\f1
+file entries using a Master
+file from the local directory. An interface is provided here so that driver
+writers have a consistent interface to install any DSP component.
+.P
+As stated above, driver writers will generally use only the
+\f4idinstall \-a\f1 \f2dev_name\f1
+form of the command. Other options of
+\f4idinstall\f1
+are provided to allow an Update DSP (i.e., one that replaces an existing
+device driver component) to be
+installed, and to support installation of multiple controller boards
+of the same type.
+.P
+If the call to
+\f4idinstall\f1
+uses the
+\f4\-u\f1
+(update) option, it will:
+.sp .4v
+.RS 5
+overlay the files of the old DSP with the files of the new DSP.
+.sp .4v
+invoke the
+\f4idmaster\f1
+command with the 'update' option if a Master module is part of the new DSP.
+.RE
+.P
+\f4idinstall\f1
+also does a verification that enough free disk space is available
+to start the reconfiguration process. This is done by calling the
+\f4idspace\f1
+command.
+\f4idinstall\f1
+will fail if insufficient space exists, and exit with a non-zero return code. The
+\f4\-e\f1
+option bypasses this check.
+.P
+This version of UNIX Supports Multiple Major numbers per
+device.  For the case of a DSP package where \f4idinstall\f1 is
+invoked by the installation software in the DSP, the range
+specification will be  used.  The range "3.6" will mean four major
+numbers are being requested.  The \f2ID\f1 Software will then
+look for the first four available (consecutive) major
+numbers.
+.P
+If a driver supports both block and charcter I/O both block
+and character majors are assigned by \f4idinstall\f1.  These
+major numbers do not have to be the same.  For SCSI developers
+who require them to be the same, a new field '\f4v\f1' has to
+be added to the third field of the master file.
+.P
+\f4idinstall\f1
+makes a record of the last device installed in a file 
+(\f4/etc/.last_dev_add\f1),
+and saves all removed files from the last delete operation in a directory
+\f4(/etc/.last_dev_del)\f1.
+These files are recovered by
+\f4/etc/conf/bin/idmkenv\f1
+whenever it is determined that a system reconfiguration was aborted due to
+a power failure or unexpected system reboot.
+.SH "ERROR MESSAGES"
+An exit value of zero indicates success. If an error was encountered,
+\f4idinstall\f1
+will exit with a non-zero value, and report an error message.
+All error messages are designed to be self-explanatory.
+Typical error message that can be generated
+by
+\f4idinstall\f1
+are as follows:
+.sp .4v
+.RS 5
+\f4Device package already exists.\f1
+.br
+\f4Cannot make the driver package directory.\f1
+.br
+\f4Cannot remove driver package directory.\f1
+.br
+\f4Local directory does not contain a Driver object (Driver.o) file.\f1
+.br
+\f4Local directory does not contain a Master file.\f1
+.br
+\f4Local directory does not contain a System file.\f1
+.br
+\f4Cannot remove driver entry.\f1
+.RE
+.SH "SEE ALSO"
+\f4idspace\f1(1m),
+\f4idcheck\f1(1m).
+.br
+\f4mdevice\f1(4),
+\f4sdevice\f1(4) in the \f2Programmer's Reference Manual\f1.
+.Ee

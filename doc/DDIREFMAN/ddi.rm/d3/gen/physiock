@@ -1,0 +1,95 @@
+'\"macro stdmacro
+.if n .pH gen.physiock @(#)physiock	40.2 of 1/7/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.nr X
+.if \nX=0 .ds x} physiock D3DK "" "DDI/DKI" "\&"
+.if \nX=1 .ds x} physiock D3DK "" "DDI/DKI"
+.if \nX=2 .ds x} physiock D3DK "" "\&"
+.if \nX=3 .ds x} physiock "" "" "\&"
+.TH \*(x}
+.IX "\f4physiock\fP(D3DK)"
+.SH NAME
+\f4physiock\f1 \- validate and issue raw I/O request
+.SH SYNOPSIS
+.nf
+.na
+\f4#include <sys/types.h>
+#include <sys/buf.h>
+#include <sys/uio.h>
+.sp 0.5
+int physiock(int (*\f2strat\f4)(), buf_t *\f2bp, \f4dev_t \f2dev, \f4int \f2rwflag,
+	\f4daddr_t \f2nblocks, \f4uio_t *\f2uiop\f4);\f1
+.ad
+.fi
+.SH ARGUMENTS
+.RS 0n 10
+.IP "\f2strat\f1" 10n
+Address of the driver \f4strategy\f1(D2DK) routine.
+.IP "\f2bp\f1" 10n
+Pointer to the \f4buf\f1(D4DK) structure describing the I/O request.  If set to
+\f4NULL\f1, then a buffer is allocated from the buffer pool and
+returned to the free list after the transfer completes.
+.IP "\f2dev\f1" 10n
+External device number.
+.IP "\f2rwflag\f1" 10n
+Flag indicating whether the access is a read or a write.  If set to \f4B_READ\f1,
+the direction of the data transfer will be from the kernel to the user's buffer.
+If set to \f4B_WRITE\f1, the direction of the data transfer will be from the user's buffer
+to the kernel.
+.IP "\f2nblocks\f1" 10n
+Number of blocks that a logical device can support.  One block is equal to \f4NBPSCTR\fP
+bytes.  \f4NBPSCTR\fP is defined in \f4sys/param.h\fP.
+.IP "\f2uiop\f1" 10n
+Pointer to the \f4uio\f1(D4DK) structure that defines the user space of the I/O
+request.
+.RE
+.SH DESCRIPTION
+\f4physiock\f1 is called by the character interface (\f4ioctl\fP(D2DK), \f4read\fP(D2DK),
+and \f4write\fP(D2DK)) routines of block drivers
+to help perform unbuffered I/O while
+maintaining the buffer header as the interface structure.
+.P
+\f4physiock\f1 performs the following functions:
+.IP
+Verifies the requested transfer is valid by checking if the offset is at
+or past the end of the device.
+.IP
+Sets up a buffer header describing the transfer.
+.IP
+Faults pages in and locks the pages impacted by the
+I/O transfer so they can't be swapped out.
+.IP
+Calls the driver \f4strategy\f1 routine passed to it (\f2strat\fP).
+.IP
+Sleeps until the transfer is complete and is awakened by a call to
+\f4biodone\f1(D3DK) from the driver's I/O completion handler.
+.IP
+Performs the necessary cleanup and updates, then returns to the driver routine.
+.P
+A transfer using \f4physiock\f1 is considered valid if the specified data
+location exists on the device, and the user has specified a storage area large enough
+that exists in user memory space.
+.SH RETURN VALUE
+\f4physiock\f1 returns 0 if the result is successful, or the appropriate error
+number on failure.  \f4physiock\f1 returns the \f4ENXIO\f1 
+error if an attempt is made to read beyond the end of the
+device.  If a read is performed at the end of the device, 0 is returned.  \f4ENXIO\f1
+is also returned if an attempt is made to write at or beyond the end of a the device.
+\f4EFAULT\f1 is returned if user memory is not valid.
+\f4EAGAIN\f1 is returned if \f4physiock\f1 could not lock pages for DMA.
+.SH LEVEL
+Base Only.
+.SH NOTES
+Can sleep.
+.SH SEE ALSO
+.na
+\f4ioctl\fP(D2DK),
+\f4read\fP(D2DK),
+\f4strategy\f1(D2DK),
+\f4write\fP(D2DK),
+\f4dma_pageio\f1(D3D),
+\f4buf\fP(D4DK),
+\f4uio\fP(D4DK)
+.ad
+.SH EXAMPLE
+See \f4dma_pageio\fP(D3D) for an example of \f4physiock\fP.

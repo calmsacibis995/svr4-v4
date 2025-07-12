@@ -1,0 +1,185 @@
+'\"!  tbl | mmdoc
+'\"macro stdmacro
+.if n .pH g3.mctl @(#)mctl	40.5 of 4/24/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.if n .pH g3.mctl @(#)mctl	40.9 of 6/5/89
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} mctl 3 "BSD Compatibility Package" "\&"
+.if \nX=1 .ds x} mctl 3 "BSD Compatibility Package"
+.if \nX=2 .ds x} mctl 3 "" "\&"
+.if \nX=3 .ds x} mctl "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4mctl\f1 \- memory management control
+.SH SYNOPSIS
+\f4cc \f1[ \f2flag\f1\. \. \. ] \f2file\f1 \. \. \.  \f4\-lucb\f1
+.P
+.nf 
+.ft 4
+#include <sys/types.h>
+#include <sys/mman.h>
+.sp .5
+mctl(caddr_t addr, size_t len, int function, void *arg);
+.ft 1
+.fi
+.SH DESCRIPTION
+\f4mctl\f1
+applies a variety of control functions over pages identified by the mappings
+established for the address range
+[\f2addr, addr + len\fP\^).
+The function to be performed is identified by the argument
+.IR function .
+Valid functions are defined in 
+\f4mman.h\f1
+as follows.
+.TP
+\f4MC_LOCK\f1
+Lock the pages in the range in memory.
+This function is used to support
+\f4mlock\f1.
+See
+\f4mlock\f1(3)
+for semantics and usage.
+.I arg
+is ignored.
+.TP 
+\f4MC_LOCKAS\f1
+Lock the pages in the address space in memory.
+This function is used to support
+\f4mlockall\f1.
+See
+\f4mlockall\f1(3)
+for semantics and usage.
+.I addr
+and
+.I len
+are ignored.
+.I arg
+is an integer built from the flags:
+.TS
+center ;
+lf4 l .
+MCL_CURRENT	Lock current mappings
+MCL_FUTURE	Lock future mappings
+.TE
+.TP
+\f4MC_SYNC\f1
+Synchronize the pages in the range with their backing storage.
+Optionally invalidate cache copies.
+This function is used to support
+\f4msync\f1.
+See
+\f4msync\f1(3)
+for semantics and usage.
+.I arg
+is used to represent the
+.I flags
+argument to 
+\f4msync\f1.
+It is constructed from an OR of the following values:
+.TS
+center ;
+lf4 l .
+MS_SYNC	Synchronized write
+MS_ASYNC	Return immediately
+MS_INVALIDATE	Invalidate mappings
+.TE
+.IP
+\f4MS_ASYNC\f1
+returns
+after all I/O operations are
+scheduled.
+\f4MS_SYNC\f1
+does not return until all I/O operations are complete.
+Specify exactly one of
+\f4MS_ASYNC\f1
+or
+\f4MS_SYNC\f1.
+\f4MS_INVALIDATE\f1
+invalidates all cached copies of data
+from memory,
+requiring them to be re-obtained from the object's permanent
+storage location upon the next reference.
+.TP
+\f4MC_UNLOCK\f1
+Unlock the pages in the range.
+This function is used to support
+\f4munlock\f1.
+See
+\f4munlock\f1(3)
+for semantics and usage.
+.I arg
+is ignored.
+.TP
+\f4MC_UNLOCKAS\f1
+Remove address space memory lock, and locks on all current mappings.
+This function is used to support 
+\f4munlockall\f1(3).
+.I addr
+and
+.I len
+must have the value 0.
+.I arg
+is ignored.
+.SH RETURN VALUE
+\f4mctl\f1
+returns 0 on success, \-1 on failure.
+.SH ERRORS
+\f4mctl\f1
+fails if:
+.TP 20
+\f4EAGAIN\fP
+Some or all of the memory identified by the operation\fP
+could not be locked due to insufficient system resources.\fP
+.TP
+\f4EBUSY\fP
+\f4MS_INVALIDATE\f1\fP
+was specified and one or more of the pages is locked in memory.\fP
+.TP
+\f4EINVAL\fP
+.I addr\fP
+is not a multiple of the page size as returned by\fP
+\f4getpagesize\f1.
+.TP
+\f4EINVAL\fP
+.I addr\fP
+and/or\fP
+.I len\fP
+do not have the value 0 when\fP
+\f4MC_LOCKAS\f1\fP
+or\fP
+\f4MC_UNLOCKAS\f1\fP
+are specified.\fP
+.TP
+\f4EINVAL\fP
+.I arg\fP
+is not valid for the function specified.\fP
+.TP
+\f4EIO\fP
+An I/O error occurred while reading from or writing to the file system.\fP
+.TP
+\f4ENOMEM\fP
+Addresses in the range [\f2addr, addr + len\fP\^) are invalid for the address
+space of a process, or specify one or more pages which are not mapped.
+.TP
+\f4EPERM\fP
+The process's effective user
+.SM ID
+is not super-user and one of
+\f4MC_LOCK\f1,
+\f4MC_LOCKAS\f1,
+\f4MC_UNLOCK\f1,
+or
+\f4MC_UNLOCKAS\f1
+was specified.
+.SH SEE ALSO
+\f4getpagesize\fP(3)
+.P
+\f4mmap\fP(2),
+\f4mlock\fP(3C),
+\f4mlockall\fP(3C),
+\f4msync\fP(3C)
+in the \f2Programmer's Reference Manual\f1

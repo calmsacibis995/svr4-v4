@@ -1,0 +1,43 @@
+'\"macro stdmacro
+.if n .pH g1.gcore @(#)gcore	40.8 of 4/12/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.\" Copyright (c) 1988 Sun Microsystems, Inc. - All Rights Reserved.
+.\"
+.nr X
+.if \nX=0 .ds x} gcore 1 "Directory and File Management Utilities" "\&"
+.if \nX=1 .ds x} gcore 1 "Directory and File Management Utilities"
+.if \nX=2 .ds x} gcore 1 "" "\&"
+.if \nX=3 .ds x} gcore "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4gcore\f1 \- get core images of running processes
+.SH SYNOPSIS
+\f4gcore\f1 [ \f4\-o\f2 filename\f1 ] \f2process-id\f1 .\ .\ .
+.SH DESCRIPTION
+\f4gcore\f1
+creates a core image of each specified process.
+Such an image may be used with debuggers such as \f4sdb\f1.
+The name of the core image file for the process whose process
+.SM ID
+is
+.I process-id
+will be
+\f4core.\f2process-id\f1.
+.P
+The 
+\f4\-o\f1
+option substitutes
+.I filename
+in place of
+\f4core\f1
+as the first part of the name of the core image files.
+.SH FILES
+\f4core.\f2process-id\f1	core images
+.SH "SEE ALSO"
+\f4kill\fP(1),
+\f4csh\fP(1)
+.br
+\f4sdb\fP(1),
+\f4ptrace\fP(2)
+in the \f2Programmer's Reference Manual\f1

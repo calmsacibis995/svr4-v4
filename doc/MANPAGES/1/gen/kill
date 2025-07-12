@@ -1,0 +1,56 @@
+'\"macro stdmacro
+.if n .pH g1.kill @(#)kill	40.6.1.2 of 1/3/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} kill 1 "Essential Utilities" "\&"
+.if \nX=1 .ds x} kill 1 "Essential Utilities"
+.if \nX=2 .ds x} kill 1 "" "\&"
+.if \nX=3 .ds x} kill "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4kill\f1 \- terminate a process by default
+.SH SYNOPSIS
+\f4kill [-signal] pid...\f1
+.br
+\f4kill -signal -pgid...\f1
+.br
+\f4kill -l\f1
+.SH DESCRIPTION
+\f4kill\fP
+sends a signal to the specified processes.
+The value of \f4signal\fP may be numeric or symbolic. [see \f2signal\f1(5)].
+The symbolic signal name is the name as it appears in 
+\f4/usr/include/sys/signal.h\f1, with the \f4SIG\fP prefix stripped off.
+Signal 15 (\f4SIGTERM\fP) is sent by default; this will 
+normally kill processes that do not catch or ignore the signal.
+.PP
+\f2pid\f1 and \f2pgid\f1 are unsigned numeric strings that identify
+which process(es) should receive the signal.  If \f2pid\f1 is used,
+the process with process ID \f2pid\f1 is selected.  If \f2pgid\f1 is
+used, all processes with process group ID \f2pgid\f1 are selected.
+.PP
+The process number of each asynchronous process
+started with \f4&\fP is reported by the shell
+(unless more than one process is started in a pipeline,
+in which case the number of the last process in
+the pipeline is reported).
+Process numbers can also be found by using
+\f4ps\fP(1).
+.PP
+When invoked with the -\f2l\f1 option, \f4kill\fP will print a list of 
+symbolic signal names.
+The details of the kill are described in
+.IR  kill (2).
+For example, if process number 0 is specified, all processes
+in the process group are signaled.
+.PP
+The signaled process must belong to the current user unless
+the user is the super-user.
+.SH SEE ALSO
+\f4ps\fP(1), \f4sh\fP(1).
+.br
+\f4kill\fP(2),
+\f4signal\fP(2), \f4signal\fP(5) in the \f2Programmer's Reference Manual\f1.
+.\"	@(#)kill.1	6.2 of 9/2/83
+.Ee

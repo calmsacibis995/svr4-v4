@@ -1,0 +1,210 @@
+.if n .pH g1.tset @(#)tset	40.3 of 1/3/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1990 AT&T
+'\"macro stdmacro
+.nr X
+.if \nX=0 .ds x} tset 1 "" "\&"
+.if \nX=1 .ds x} tset 1 ""
+.if \nX=2 .ds x} tset 1 "" "" "\&"
+.if \nX=3 .ds x} tset 1 "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4tset\f1 \- provide information to set terminal modes
+.SH SYNOPSIS
+\f4tset\f1
+[\f2options\f1]
+[\f2type\f1]
+.SH DESCRIPTION
+\f4tset\f1
+allows the user to set a terminal's ERASE and KILL characters,
+and define the terminal's type and capabilities by creating
+values for the TERM environment variable.
+\f4tset\f1
+initializes or resets the terminal with \f4tput\fP
+[see \f4tput\f1(1)].
+If a \f2type\fP
+is given with the
+\f4\-s\f1
+option,
+\f4tset\f1
+creates information for a terminal of the specified type.
+The type may be any type given in
+the \f4terminfo\f1 database.
+If the \f2type\fP
+is not specified with the
+\f4\-s\f1
+option,
+\f4tset\f1
+creates information for a terminal of the type
+defined by the value of the \f4TERM\f1
+environment variable, unless the
+\f4\-h\f1
+or
+\f4\-m\f1
+option is given.
+If the \f4TERM\f1 variable is defined, \f4tset\f1
+uses the \f4terminfo\f1 database entry.
+If these options are used,
+\f4tset\f1
+searches the
+\f4/etc/ttytype\f1
+file for the terminal type corresponding to the
+current serial port; it then creates information for
+a terminal based on this type.
+If the serial port is not found in \f4/etc/ttytype\f1,
+the terminal type is set to \f4unknown\f1.
+.PP
+\f4tset\f1
+displays the created information on the standard output.
+The information is in a form that can be used to
+set the current environment variables.
+The exact form depends on the login shell from which \f4tset\f1
+was invoked.
+The examples below illustrate how to use
+this information to change the variables.
+.PP
+The options are:
+.PP
+.TP
+\f4\-e\f1[\f2c\^\f1]
+Sets the ERASE character to \f2c\f1
+on all terminals.
+The default setting is the BACKSPACE,
+or CTRL-h.
+.TP
+\f4\-E\f1[\f2c\^\f1]
+Identical to the
+\f4\-e\f1
+command except that it only operates on terminals that can BACKSPACE.
+.TP
+\f4\-k\f1[\f2c\^\f1]
+Sets the KILL character to \f2c\f1,
+defaulting to CTRL-u.
+.TP
+\f4\-\f1
+Prints the terminal type on the standard output.
+.TP
+\f4\-s\f1
+Outputs the ``setenv'' commands [for
+\f4csh\f1(1)],
+or ``export'' and assignment commands
+[for
+\f4sh\f1(1)].
+The type of commands are determined by the user's login shell.
+.TP
+\f4\-h\f1
+Forces \f4tset\f1\^ to search \f4/etc/ttytype\f1 for
+information and to overlook the \f4TERM\f1 environment variable,
+.TP
+\f4\-S\f1
+Only outputs the strings to be placed in the
+environment variables, without the shell commands printed for \f4\-S\f1.
+.TP
+\f4\-r\f1
+Prints the terminal type on the diagnostic output.
+.TP
+\f4\-Q\f1
+Suppresses the printing of the \f4Erase set to\fP and \f4Kill set to\fP
+messages.
+.TP
+\f4\-I\f1
+Suppresses printing of the terminal initialization strings, e.g., spawns
+\f4tput reset\f1 instead of \f4tput init\f1.
+.TP
+\f4\-m\f1[\f2ident\f1][\f2test baudrate\f1]:\f2type\f1
+Allows a user to specify how a given serial port is
+is to be mapped to an actual terminal type.
+The option applies to any serial port in
+\f4/etc/ttytype\f1
+whose type is indeterminate (e.g.,
+\f4dialup\f1,
+\f4plugboard\f1,
+etc.).
+The
+.I type
+specifies the terminal type to be used,
+and
+.I ident
+identifies the name of the indeterminate type to be matched.
+If no
+.I ident
+is given, all indeterminate types are matched.
+The
+.I test\ baudrate
+defines a test to be performed on the serial port
+before the type is assigned.
+The
+.I baudrate
+must be as defined in \f4stty\fP
+[see \f4stty\f1(1)].
+The
+.I test\^
+may be any combination of:\0\0>, =, <, @, and !.
+If the
+.I type
+begins with a question mark, the user is asked if he
+really wants that type.
+A null response means to use that type;
+otherwise, another type can be entered which will be used instead.
+The question mark must be escaped to prevent filename
+expansion by the shell.
+If more than one
+\f4\-m\f1
+option is given, the first correct mapping prevails.
+.PP
+\f4tset\f1
+is most useful when included in the
+\f4\&.login\f1
+[for
+\f4csh\f1(1)]
+or
+\f4\&.profile\f1
+[for
+\f4sh\f1(1)]
+file executed automatically at login,
+with
+\f4\-m\f1
+mapping used to specify the terminal type
+you most frequently dial in on.
+.SH EXAMPLES
+\f4tset gt42\f1
+.PP
+\f4tset \-mdialup\e>300:adm3a \-mdialup:dw2 \-Qr \-e#\f1
+.PP
+\f4tset \-m dial:ti733 \-m plug:\e?hp2621 \-m unknown:\e? \-e \-k^U\f1
+.PP
+To use the information created by the
+\f4\-s\f1
+option for the Bourne shell, (\f4sh\f1),
+repeat these commands:
+.PP
+.nf
+	\f4tset \-s ... > /tmp/tset$$
+	/tmp/tset$$
+	rm /tmp/tset$$\f1
+.fi
+.PP
+To use the information created for \f4csh\f1,
+use:
+.PP
+.nf
+	\f4set noglob
+	set term=(`tset \-S ....`)
+	setenv \s-1TERM\s0 $term[1]
+	unset term
+	unset noglob\f1
+.fi
+.SH FILES
+\f4/etc/ttytype\f1		Port name to terminal type map database
+.br
+\f4/usr/lib/terminfo/*\f1	Terminal capability database
+.SH SEE ALSO
+\f4stty\f1(1), \f4tput\f1(1), \f4tty\f1(1).
+.sp .4v
+\f4termio\f1(7) in the \f2System Administrator's Reference Manual\fP.
+.sp .4v
+\f4terminfo\f1(4) in the \f2Programmer's Reference Manual\f1.
+.SH NOTES
+This utility was developed
+at the University of California at Berkeley
+and is used with permission.

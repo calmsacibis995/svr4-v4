@@ -1,0 +1,333 @@
+'\"macro stdmacro
+.if n .pH g1a.incfile @(#)incfile	40.11.1.2 of 1/3/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} incfile 1M "System Administration Utilities" "\&"
+.if \nX=1 .ds x} incfile 1M "System Administration Utilities"
+.if \nX=2 .ds x} incfile 1M "" "\&"
+.if \nX=2 .ds x} incfile "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4incfile\f1 \- create, restore an incremental filesystem archive
+.SH SYNOPSIS
+\f4incfile \-B \f1[\f4\-dilmortvxAENSV\f1] \f2bkjobid ofsname ofsdev ofslab descript\fP
+.PP
+\f4incfile \-T \f2bkjobid tocfname descript
+.PP
+\f4incfile \-RC \f1[\f4\-dilmortvxAENSV\f1] \f2ofsname ofsdev refsname redev rsjobid descript
+.PP
+\f4incfile \-RF \f1[\f4\-dilmortvxAENSV\f1] \f2ofsname ofsdev descript rsjobid:uid:date:type:name
+.sp 0
+\f1[:[\f4rename\fP]:[\f4inode\fP]] ...
+.SH DESCRIPTION
+\f4incfile\fP is invoked as a child process by other
+shell commands.
+The command name, \f4incfile\fP, is read either from the
+\f4bkhist.tab\f1 file or the \f4bkreg \-m\f1 command and option.
+The \f4 \-B, \-T, \-R, \-F, \f1and \f4\-C \f1options
+are passed to \f4incfile\fP by
+the shell commands \f4backup, restore,\f1
+and \f2urestore(1)\f1 described below.
+The minus options are passed from the
+\f4bkhist.tab\f1 file or the \f4bkreg \-p\f1 command and option.
+The arguments are sent to \f4incfile\fP from various locations
+in the backup service.
+.PP
+\f4incfile \-B\f1 is invoked as a child process by
+the \f4bkdaemon\fP command
+to perform an incremental backup of the filesystem
+.I ofsname
+(the originating filesystem).
+All files in
+.I ofsname
+that have been modified or have had an inode change since the last
+full backup are archived.
+The resulting backup is created in
+\f4cpio\f1 file format.
+The backup is recorded
+in the backup history log,
+\f4/etc/bkup/bkhist.tab\f1.
+.TP
+.I bkjobid
+the job id assigned by
+\f4backup\f1.
+The method uses the \f2bkjobid\f1 when it creates
+history log and table-of-contents entries.
+.TP
+.I ofsname
+the name of the filesystem that is to be backed up.
+.TP
+.I ofsdev
+the name of the UNIX\*(rg
+block special device on which the filesystem resides.
+.TP ofslab
+.I ofslab
+the volume name on the filesystem [see
+\f4labelit\f1(1M)].
+.TP
+.I descript
+is a description for a destination device in the form:
+.nf
+.I
+	dgroup:dname:dchar:dlabels
+.fi
+.I dgroup
+specifies a device group
+[see \f4devgroup.tab\f1(4)].
+.br
+\f2dname\fP
+specifies a particular device name [see \f4device.tab\f1(4)].
+.br
+.I dchars
+specifies characteristics associated with the device.
+If specified, \f2dchar\f1
+overrides the defaults for the specified device and group.
+[See
+\f4device.tab\f1(4)
+for a further description of device characteristics].
+.br
+.I dlabels
+specifies the volume names for the
+media to be used for reading or writing
+the archive.
+.PP
+\f4incfile \-T\f1 is invoked as a child process by
+the \f4backup\f1
+to archive a table-of-contents on the volumes described by
+.I descript.
+.TP
+.I tocfname
+the name of the file containing the table-of-contents.
+.PP
+\f4incfile \-RC\f1 and \f4incfile \-RF\f1
+are invoked as child processes by the
+\f4rsoper\f1 command
+to extract files from an incremental filesystem archive
+created by \f4incfile \-B\f1.
+The filesystem archive is assumed to be in
+\f4cpio\f1
+format.
+.PP
+If the
+\f4\-RC\f1
+option is selected,
+all files recorded in the archive are restored.
+.TP
+.I refsname
+if non-null,
+the name of the filesystem to be restored to instead of
+.IR ofsname .
+.TP
+.I redev
+if non-null, the partition to be restored to instead of
+.IR ofsdev .
+.PP
+At least one of
+.I refsname
+and
+.I redev
+must be null.
+.PP
+If the
+\f4\-RF\f1
+option is specified,
+only selected objects from the archive are restored.
+Each 7-tuple, composed of
+.IR rsjobid:uid:date:type:name:rename:inode ,
+specifies an object to be restored from the filesystem archive.
+The 7-tuple objects come to \f4incfile\fP from the \f4rsstatus.tab\f1 file.
+.TP
+.I rsjobid
+the restore jobid assigned by
+\f4restore\f1
+or
+\f4urestore\f1.
+.TP
+.I uid
+the real uid of the user who requested the object to be restored.
+It must match the uid of the owner of the object at the
+time the archive was made,
+or it must be the superuser uid.
+.TP
+.I date
+the newest "last modification time" that is acceptable for a restorable
+object.
+The object is restored from the archive immediately
+older than this date.
+.I date
+is a hexadecimal representation of the date and time provided
+by the
+\f4time\f1 system call.
+.TP
+.I type
+either \f4F\f1 or \f4D\f1,
+indicating that the object is a file or a directory,
+respectively.
+.TP
+.I name
+the name the object had in the filesystem archive.
+.TP
+\f4rename\fP
+the name that the object should be restored to (it may differ
+from the name the object had in the filesystem archive).
+If omitted, the object is restored to
+.I name.
+.TP
+\f4inode\fP
+the inode number of the object as it was stored in the filesystem
+archive.
+.I [inode]
+is not used by
+\f4incfile \-R\f2,\f1
+and is provided only for command-line compatibility with
+other restoral methods.
+.SS Options
+Some options are only significant during
+\f4incfile \-B\f1
+invocations;
+they are accepted but ignored during
+\f4incfile \-R\f1
+invocations because the command is invoked and options are specified
+automatically by
+\f4restore\f1.
+These options are flagged with an asterisk (*).
+.TP 10
+\f4d*\f1
+Inhibits the recording of the archive in the backup history log.
+.TP 10
+\f4i*\f1
+Excludes from the backup those files that have only had an inode change.
+.TP 10
+\f4l*\f1
+Creates a long form of the backup history log
+that includes a table of contents for the archive.
+This includes the data used to generate a
+listing of each file in the archive like that produced by the
+\f4ls -l\f1 command.
+.TP 10
+\f4m*\f1
+Mounts the originating filesystem read-only before starting the backup
+and remounts it with its original permissions after completing the backup.
+Cannot be used with \f4root\f1 or \f4/usr\f1 filesystems.
+.TP 10
+\f4o\f1
+Permits the user to override media insertion requests [see
+the \f4getvol\f1(1M), \f4-o\f1 option].
+.TP 10
+\f4r*\f1
+Includes remotely mounted resources in the archive.
+.TP 10
+\f4t*\f1
+Creates a table of contents for the backup on additional media instead of
+in the backup history log.
+.TP 10
+\f4v*\f1
+Validates the archive as it is written.
+A checksum is computed as the archive is being written;
+as each medium is completed, it is re-read and the checksum
+is recomputed to verify that each block is readable and correct.
+If either check fails, the medium is considered unreadable.
+If
+\f4\-A\f1
+has been specified, the archiving operation fails;
+otherwise, the operator is prompted to replace the failed medium.
+.TP 10
+\f4x*\f1
+Ignores the exception list; backs up all changed or modified files.
+.TP 10
+\f4A\f1
+Establishes automated mode,
+(i.e., does not prompt the user to insert or remove media).
+.TP 10
+\f4E*\f1
+Reports an estimate of media usage for the archive,
+then performs the backup.
+.TP 10
+\f4N*\f1
+Reports an estimate of media usage for the archive,
+but does not perform the backup.
+.TP 10
+\f4S\f1
+Displays
+a period (.) for every 100 (512 byte) blocks read-from or written-to
+the archive on the destination device.
+.TP 10
+\f4V\f1
+Displays
+the name of each file written-to or extracted-from
+the archive on the destination device.
+.SS User Interactions
+The connection between an archiving method and
+the \f4backup\f1 command
+is more complex than a simple \f4fork\f1/\f4exec\f1 or \f4pipe\f1.
+The \f4backup\f1 command
+is responsible for all interactions with the user,
+either directly, or through
+the \f4bkoper\f1 command.
+Therefore,
+\f4incfile\fP
+neither reads from standard-input nor writes to standard-output or
+standard-error.
+A method library must be used
+[see
+\f4libbrmeth\f1(3)]
+to communicate
+reports (estimates, filenames, periods, status, etc.)
+to
+the \f4backup\f1 command.
+.SH DIAGNOSTICS
+The exit codes for \f4incfile\fP are the following:
+.PP
+0 = successful completion of the task
+.br
+1 = one or more parameters to \f4incfile\fP are invalid.
+.br
+2 = an error has occurred which caused \f4incfile\fP to fail to
+      complete \f2all\f1 portions of its task.
+.\" Why was this line here? -> .I "ffile -B" backup
+.SH FILES
+.TP 1.75i
+\f4/etc/bkup/bkexcept.tab\f1
+lists the files that are to
+be excluded from an incremental filesystem backup.
+.TP
+\f4/etc/bkup/bkhist.tab\f1
+lists the labels
+of all volumes that have been used for backup operations.
+.TP
+\f4/etc/bkup/rsstatus.tab\f1
+tracks the
+status of all restore requests from users.
+.TP
+\f4/etc/bkup/bklog\f1
+lists errors generated by the backup methods
+and the \f4backup\f1 command.
+.TP
+\f4/etc/bkup/rslog\f1
+logs errors generated by the restore methods and
+the \f4restore\f1 command.
+.TP
+\f2$TMP/filelist$$\f1
+temporarily stores a table of
+contents for a backup archive.
+.SH SEE ALSO
+\f4backup\fP(1M),
+\f4bkoper\fP(1M)
+\f4cpio\fP(1), \f4cpio\fP(4),
+\f4device.tab\fP(4),
+\f4fdp\fP(1),
+\f4ff\fP(1M),
+\f4ffile\fP(1),
+\f4fimage\fP(1),
+\f4getvol\fP(1M),
+\f4incfile\fP(1),
+\f4labelit\fP(1M),
+\f4libbrmeth\fP(3),
+\f4ls\fP(1),
+\f4restore\fP(1M),
+\f4rsoper\fP(1M),
+\f4time\fP(2)
+
+
+

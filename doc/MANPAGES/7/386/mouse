@@ -1,0 +1,296 @@
+'\"macro stdmacro
+.if n .pH g7.mouseman @(#)mouse	40.10 of 1/4/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.tr ~
+.nr X
+.if \nX=0 .ds x} mouse 7 ""  "" "\&"
+.if \nX=1 .ds x} mouse 7 ""  ""
+.if \nX=2 .ds x} mouse 7 "" "\&"
+.if \nX=3 .ds x} mouse "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4mouse\f1 - mouse device driver supporting bus, serial,
+and PS/2 compatible mouse devices.
+.SH DESCRIPTION
+The Mouse Driver Package, Version 3.0, device driver supports
+three types of mouse devices: 
+.TP 10
+~
+Logitech bus mouse, which attaches to a plug-in
+card and is designed to be used in an eight-bit card 
+slot.
+.TP 10
+~
+Logitech serial type mouse, which plugs directly into a serial port
+connector. 
+.TP 10
+~
+PS/2 compatible mouse, which connects to a PS/2 auxiliary port.
+.PP
+The driver will support multiple 
+mouse applications running in virtual terminal screens, both
+under the UNIX System and MS-DOS via SimulTask.
+.PP
+Support for a mouse administration is also provided.
+See \%\f4mouseadmin\f1(1).
+.PP
+The following ioctl's are supported:
+.TP 15
+\f4MOUSEIOCMON\f1
+Used exclusively by \f4/usr/lib/mousemgr\f1 to receive open/close
+commands from \f4/dev/mouse\f1 driver.
+.TP 15
+\f4MOUSEISOPEN\f1
+Used exclusively by \f4mouseadmin\f1.
+Returns 16-byte character array indicating which mouse devices
+are currently open; 1 is open, 0 is not open.
+The array is in the linear order established by
+\f4/usr/bin/mouseadmin\fP in building the display/device map
+pairs.
+.TP 15
+\f4MOUSEIOCCONFIG\f1
+Used exclusively by
+\f4mouseadmin\f1
+to configure display/mouse pairs.
+The \f4mse_cfg\fP data structure
+is used to pass display/device mapping and map
+pair count information to the driver:
+.nf
+.sp .5
+.in +.2i
+\f(CWstruct mse_cfg {
+       struct mousemap *mapping;
+       unsigned int    count;
+}\fP
+\f(CWstruct mousemap {
+       dev_t    disp_dev;
+       dev_t    mse_dev;
+}\fP
+.in -.2i
+.fi
+.TP 15
+\f4MOUSEIOCREAD\f1
+Read mouse position/status data. The following data structure
+is used to return mouse position information to a user
+application:
+.sp .5
+.nf
+.in +.2i
+\f(CWstruct mouseinfo {
+       unsigned char status;
+       char          xmotion:
+       char          ymotion;
+}\fP
+.in -.2i
+.fi
+.TP 15
+~
+\f4MOUSEIOCREAD\f1 will set \f4errno\f1 to \f4EFAULT\f1 for failure
+to return a valid \f4mouseinfo\fP structure.
+The status byte contains the button state information
+according to the following format: 
+.sp .5
+.nf
+       \f40 Mv Lc Mc Rc L M R\f1
+.fi
+.sp .5
+where:
+.PP
+.RS 1.2i
+.TP .3i
+\f4Mv\f1:
+is 1 if the mouse has moved since last \f4MOUSEIOCREAD\f1
+.TP .3i
+\f4Lc\f1:
+is 1 if Left button has changed state since last \f4MOUSEIOCREAD\f1
+.TP .3i
+\f4Mc\f1:
+is 1 if Middle button has changed state since last \f4MOUSEIOCREAD\f1
+.TP .3i
+\f4Rc\f1:
+is 1 if Right button has changed state since last \f4MOUSEIOCREAD\f1
+.TP .3i
+\f4L\f1:
+current state of Left button (1 == depressed)
+.TP .3i
+\f4M\f1:
+current state of Middle button
+.TP .3i
+\f4R\f1:
+current state of Right button
+.RE
+.TP 15
+~
+The \f4Mv\f1 bit is required because the total x and y delta since the
+last \f4MOUSEIOCREAD\f1 ioctl could be 0 yet the mouse may have been moved.
+The \f4Lc\f1, \f4Mc\f1, and \f4Rc\f1 bits are required for a similar reason;
+if a button had been pushed and released since the last \f4MOUSEIOCREAD\f1
+ioctl, the current state bit would be unchanged but the application
+would want to know the button had been pushed.
+.sp
+The \f4xmotion\f1 and \f4ymotion\f1 fields are signed quantities
+relative to the previous position in the range -128 to 127.
+Deltas that would overflow a signed char have been truncated.
+.TP 15
+\f4MOUSE320\f1
+Used to send commands and receive responses from the
+PS/2 compatible mouse devices.
+Failed \f4MOUSE320\f1 commands will return \f4ENXIO\f1 as the \f4errno\fP
+value.
+The following data structure is used to pass
+commands/status/position information between the driver and a
+user application:
+.sp .5
+.nf
+.in +.2i
+\f(CWstruct cmd_320 {
+       int      cmd;
+       int      arg1;
+       int      arg2;
+       int      arg3;
+}\fP
+.fi
+.in -.2i
+.sp .5
+Legal commands for the PS/2 compatible devices are as follows:
+.RS 1i
+.TP .9i
+\f4MSERESET\f1
+reset mouse
+.TP .9i
+\f4MSERESEND\f1
+resend last data
+.TP .9i
+\f4MSESETDEF\f1
+set default status
+.TP .9i
+\f4MSEOFF\f1
+disable mouse
+.TP .9i
+\f4MSEON\f1
+enable mouse
+.TP .9i
+\f4MSESPROMPT\f1
+set prompt mode
+.TP .9i
+\f4MSEECHON\f1
+set echo mode
+.TP .9i
+\f4MSEECHOFF\f1
+reset echo mode
+.TP .9i
+\f4MSESTREAM\f1
+set stream mode
+.TP .9i
+\f4MSESETRES\f1
+set resolution (counts per millimeter)
+.br
+legal arg1 values are as follows:
+.sp .5
+~~~~~~00 = 1 count/mm.
+.br
+~~~~~~01 = 2 count/mm.
+.br
+~~~~~~02 = 4 count/mm.
+.br
+~~~~~~03 = 8 count/mm.
+.TP .9i
+\f4MSESCALE2\f1
+set 2:1 scaling
+.TP .9i
+\f4MSESCALE1\f1
+set 1:1 scaling
+.TP .9i
+\f4MSECHGMOD\f1
+set sampling rate (reports per second)
+.br
+legal arg1 values are as follows:
+.sp .5
+~~~~~~0A = 10 reports/sec.
+.br
+~~~~~~14 = 20 reports/sec.
+.br
+~~~~~~28 = 40 reports/sec.
+.br
+~~~~~~3C = 60 reports/sec.
+.br
+~~~~~~50 = 80 reports/sec.
+.br
+~~~~~~64 = 100 reports/sec.
+.br
+~~~~~~C8 = 200 reports/sec.
+.TP .9i
+\f4MSEGETDEV\f1
+read device type returns a 
+zero (0) for the PS/2 compatible mouse.
+.TP .9i
+\f4MSEREPORT\f1
+read mouse report returns three-byte mouse/button position
+where bytes two and three are 9-bit 2's complement
+relative motions with the 9th bit (sign bit) coming from byte 1.
+.sp .5
+.nf
+.in +2n
+Byte 1
+~~~b0 - left button     (1 == depressed)
+~~~b1 - right button
+~~~b2 - middle button
+~~~b3 - always 1
+~~~b4 - X data sign    (1 == negative)
+~~~b5 - Y data sign
+~~~b6 - X data overflow
+~~~b7 - Y data overflow
+.sp .5
+.br
+.ne 2
+Byte 2
+~~~X axis position data
+.sp .5
+.br
+.ne 3
+Byte 3
+~~~Y axis position data
+.in -2n
+.fi
+.TP .9i
+\f4MSESTATREQ\f1
+status request returns three-byte report with the following format:
+.nf
+.in +2n
+.sp .5
+Byte 1
+~~~b0 - right button    (1 == depressed)
+~~~b1 - middle button
+~~~b2 - left button
+~~~b3 - always 0
+~~~b4 - scaling 1:1 = 0, 2:1 = 1
+~~~b5 - disabled(0)/enabled(1)
+~~~b6 - stream(0)/prompt(1) mode
+~~~b7 - always 0
+~
+Byte 2
+~~~b0 - 6  current resolution
+~~~b7 - always 0
+~
+Byte 3
+~~~b0 - 7  current sampling rate
+.in -2n
+.fi
+.RE
+.SH NOTE
+The Mouse 3.0 device driver is intended for use with UNIX
+System V Release 4.0 or later releases.
+The version 3.0 mouse also supports queue mode for accessing
+mouse input, both motion and button events; see display(7)
+for more information on KDQUEMODE.
+.SH FILES
+\f4/dev/mouse\f1
+.br
+\f4/usr/lib/mousemgr\f1
+.br
+\f4/usr/include/sys/mouse.h\f1
+.SH "SEE ALSO"
+\f4mouseadmin\f1(1)
+.br
+Mouse Driver Administrator's Guide

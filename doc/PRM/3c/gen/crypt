@@ -1,0 +1,100 @@
+'\"macro stdmacro
+.if n .pH g3c.crypt @(#)crypt	40.16 of 1/3/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} crypt 3C "C Programming Language Utilities" "\&"
+.if \nX=1 .ds x} crypt 3C "C Programming Language Utilities"
+.if \nX=2 .ds x} crypt 3C "" "\&"
+.if \nX=3 .ds x} crypt "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4crypt\f1, \f4setkey\f1, \f4encrypt\f1 \- generate encryption
+.SH SYNOPSIS
+.nf
+\f4#include <crypt.h>\f1
+.PP
+\f4char \(**crypt (const char \(**key, const char \(**salt);
+.PP
+\f4void setkey (const char \(**key);\f1
+.PP
+\f4void encrypt (char \(**block, int edflag);\f1
+.SH DESCRIPTION
+\f4crypt\fP
+is the password encryption function.
+It is based on a one-way encryption algorithm
+with
+variations intended (among other things) to frustrate use of hardware
+implementations of a
+key search.
+.PP
+.I key\^
+is the input string to encrypt,
+for instance, a user's typed password.
+Only the first eight characters are used;
+the rest are ignored.
+.I salt\^
+is a two-character string chosen from the
+set \f4a-zA-Z0-9.\/\fP;
+this
+string is used to perturb the
+hashing
+algorithm in one of 4096
+different ways, after which the input string
+is used as the key to encrypt repeatedly a constant string.
+The returned value points to the encrypted input string.
+The first two characters of the return value are the \f2salt\fP itself.
+.PP
+The
+\f4setkey\fP
+and
+\f4encrypt\fP
+functions provide (rather primitive)
+access to the actual
+hashing
+algorithm.
+The argument of
+\f4setkey\fP
+is a character array of length 64 containing only the characters
+with numerical value 0 and 1.
+This string is divided into groups of 8,
+the low-order bit in each group is ignored;
+this gives a 56-bit key that is set into the machine.
+This is the key that will be used
+with the hashing algorithm to encrypt
+the string
+.I block\^
+with the
+\f4encrypt\fP function.
+.PP
+The \f2block\fP argument of
+\f4encrypt\fP
+is a character array of length 64
+containing only the characters with
+numerical value 0 and 1.
+The argument array is modified in place
+to a similar array
+representing the bits of the argument after having been
+subjected to the
+hashing
+algorithm using the key set by
+\f4setkey\fP.
+The argument \f2edflag\fP, indicating decryption
+rather than encryption, is ignored;
+use \f4encrypt\f1 in \f4libcrypt\fP
+[see \f4crypt\f1(3X)] for decryption.
+.SH SEE ALSO
+\f4getpass\fP(3C), \f4crypt\fP(3X), \f4passwd\fP(4).
+.br
+\f4login\fP(1), \f4passwd\fP(1) in the
+\f2User's Reference Manual\f1.
+.SH DIAGNOSTICS
+If \f2edflag\f1 is set to anything
+other than zero,
+\f4errno\f1 will be set to \f4ENOSYS\f1.
+.SH NOTES
+The return value for \f4crypt\fP
+points to static data that are overwritten
+by each call.
+.\"	@(#)crypt.3c	6.2 of 10/20/83
+.Ee

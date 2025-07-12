@@ -1,0 +1,98 @@
+'\"macro stdmacro
+.if n .pH g4.inode_ufs @(#)inode_ufs	40.10 of 4/11/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} inode 4 "UFS" "\&"
+.if \nX=1 .ds x} inode 4 "UFS"
+.if \nX=2 .ds x} inode 4 "" "\&"
+.if \nX=3 .ds x} inode "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4inode\fP (ufs) \- format of a \f4ufs\fP inode
+.SH SYNOPSIS
+\f4#include <sys/param.h>\fP
+.br
+\f4#include <sys/types.h>\fP
+.br
+\f4#include <sys/vnode.h>\fP
+.br
+\f4#include <sys/fs/ufs_inode.h>\fP
+.SH DESCRIPTION
+The I node is the focus of all local file activity in UNIX.
+There is a unique inode allocated for each active file,
+each current directory, each mounted-on file, each mapping,
+and the root.  An inode is `named' by its dev/inumber pair.
+Data in icommon is read in from permanent inode on the actual volume.
+.PP
+.nf
+.ft 4
+.ps -1
+.vs -1
+.ta 2i
+#define EFT_MAGIC 0x90909090	/* magic cookie for EFT */
+#define NDADDR   12	/* direct addresses in inode */
+#define NIADDR    3	/* indirect addresses in inode */
+
+struct inode {
+     struct   inode *i_chain[2];/* must be first */
+     struct   vnode i_vnode;    /* vnode associated with this inode */
+     struct   vnode *i_devvp;   /* vnode for block I/O */
+     u_short  i_flag;
+     dev_t    i_dev;            /* device where inode resides */
+     ino_t    i_number;         /* i number, 1-to-1 with device address */
+     off_t    i_diroff;         /* offset in dir, where we found last entry */
+     struct   fs *i_fs;         /* file sys associated with this inode */
+     struct   dquot *i_dquot;   /* quota structure controlling this file */
+     short    i_owner;          /* proc index of process locking inode */
+     short    i_count;          /* number of inode locks for i_owner */
+     short    i_rwowner;        /* proc index of process holding rwlock */
+     daddr_t  i_nextr;          /* next byte read offset (read-ahead) */
+     struct inode  *i_freef;    /* free list forward */
+     struct inode **i_freeb;    /* free list back */
+     ulong    i_vcode;          /* version code attribute */
+     ulong    i_mapcnt;         /* mappings to file pages */
+     int      *i_map;           /* block list for the corresponding file */
+     struct   icommon {
+         o_mode_t ic_smode;	/* 0: mode and type of file */
+         short    ic_nlink;	/* 2: number of links to file */
+         o_uid_t  ic_suid;	/* 4: owner's user id */
+         o_gid_t  ic_sgid;	/* 6: owner's group id */
+         quad     ic_size;      /* 8: number of bytes in file */
+#ifdef _KERNEL
+         struct timeval ic_atime;	/* 16: time last accessed */
+         struct timeval ic_mtime;	/* 24: time last modified */
+         struct timeval ic_ctime;	/* 32: last time inode changed */
+#else
+         time_t  ic_atime;	/* 16: time last accessed */
+         long    ic_atspare;
+         time_t  ic_mtime;	/* 24: time last modified */
+         long    ic_mtspare;
+         time_t  ic_ctime;	/* 32: last time inode changed */
+         long    ic_ctspare;
+#endif
+         daddr_t ic_db[NDADDR];	/* 40: disk block addresses */
+         daddr_t ic_ib[NIADDR];	/* 88: indirect blocks */
+         long    ic_flags;	/* 100: status, currently unused */
+         long    ic_blocks;	/* 104: blocks actually held */
+         long    ic_gen;	/* 108: generation number */
+         mode_t  ic_mode;	/* 112: EFT version of mode*/
+         uid_t   ic_uid;	/* 116: EFT version of uid */
+         gid_t   ic_gid;	/* 120: EFT version of gid */
+         ulong   ic_eftflag;	/* 124: indicate EFT version*/
+
+     } i_ic;
+};
+
+struct dinode {
+     union {
+         struct  icommon di_icom;
+         char    di_size[128];
+     } di_un;
+};
+.ft 1
+.fi
+.ps -1
+.vs -1
+.SH SEE ALSO
+\f4ufs\fP-specific \f4fs\fP(4)

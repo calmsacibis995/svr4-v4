@@ -1,0 +1,106 @@
+'\"macro stdmacro
+.if n .pH g1.strip @(#)strip	40.16 of 5/22/91 
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} strip 1 "C Development Set" "\&"
+.if \nX=1 .ds x} strip 1 "C Development Set"
+.if \nX=2 .ds x} strip 1 "" "\&"
+.if \nX=3 .ds x} strip "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4strip\f1 \- strip symbol table, debugging and line 
+number information from an object file.
+.SH SYNOPSIS
+\f4strip\f1 [\f4\-blrVx\f1] \f2file\f1 .\ .\ .
+.SH DESCRIPTION
+The 
+\f4strip\fP
+command strips the symbol table, debugging information,
+and line number information
+from \f4ELF\fP object files; \f4COFF\fP object files can
+no longer be stripped.
+Once this
+stripping process has been done, no symbolic debugging access
+will be available for that file; therefore, this command is
+normally run only on production modules that have
+been debugged and tested.
+.PP
+If \f4strip\fP is executed on a common archive file
+[see \f4ar\fP(4)] in addition to processing the members,
+\f4strip\f1 will remove the archive symbol table.
+The archive
+symbol table must be restored by executing the
+\f4ar\fP(1) command with the \f4-s\f1
+option before the archive can be
+linked by the
+\f4ld\fP(1)
+command.
+\f4strip\fP
+will produce appropriate warning messages when this
+situation arises.
+.PP
+The amount of information stripped from the \f4ELF\fP object file
+can be controlled by using any of the 
+following options:
+.PP
+.TP 9
+\f4\-b\f1
+Same effect as the default behavior.
+This option is obsolete
+and will be removed in the next release.
+.PP
+.TP 9
+\f4\-l\f1
+Strip line number information only;
+do not strip the symbol table or debugging information.
+.PP
+.TP 9
+\f4\-r\f1
+Same effect as the default behavior.
+This option is obsolete
+and will be removed in the next release.
+.PP
+.TP 9
+\f4\-V\f1
+Print, on standard error, the version number of \f4strip\fP.
+.PP
+.TP 9
+\f4\-x\f1
+Do not strip the symbol table;
+debugging and line number information may be stripped.
+.DT
+.br
+.PP
+\f4strip\fP is used to reduce the file storage
+overhead taken by the object file.
+.SH "FILES"
+.TP 20
+\f2TMPDIR\f1/strp\(**
+temporary files
+.TP
+\f2TMPDIR\f1
+usually \f4/var/tmp\fP but can be redefined by setting the
+environment variable
+\f4TMPDIR\f1
+[see \f4tempnam\fP() in \f4tmpnam\fP(3S)].
+.SH "SEE ALSO"
+\f4ar\fP(1),
+\*\f4as\fP(1),
+\*\f4cc\fP(1),
+\*\f4ld\fP(1),
+\f4tmpnam\fP(3S),
+\*\f4a.out\fP(4),
+\f4ar\fP(4)
+.SH "NOTES"
+.PP
+The symbol table section will not be removed if it is contained
+within a segment, or the file is either a relocatable 
+or  dynamic shared object.
+.PP
+The line number and debugging sections will not be removed if they
+are contained within a segment, or their associated relocation
+section is contained within a segment.
+'\" \%W\%
+.\"	@(#)strip.1	6.2 of 9/2/83
+.Ee

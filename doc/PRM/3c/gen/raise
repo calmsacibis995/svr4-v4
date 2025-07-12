@@ -1,0 +1,35 @@
+'\"macro stdmacro
+.if n .pH g3c.raise @(#)raise	40.11 of 5/22/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} raise 3C "C Development Set" "\&"
+.if \nX=1 .ds x} raise 3C "C Development Set"
+.if \nX=2 .ds x} raise 3C "" "\&"
+.if \nX=3 .ds x} raise "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4raise\f1 \- send signal to program
+.SH SYNOPSIS
+\f4#include <signal.h>\f1
+.PP
+\f4int raise (int sig);\f1
+.SH DESCRIPTION
+\f4raise\fP sends the signal \f2sig\f1 to the executing program.
+.PP
+\f4raise\fP returns zero if the operation succeeds. Otherwise, \f4raise\f1
+returns \-1 and \f2errno\f1 is set to indicate the error.
+\f4raise\fP uses \f4kill\fP to send the signal to the executing program:
+.PP
+.RS
+.ft CW
+kill(getpid(), sig);
+.ft
+.RE
+.PP
+See \f4kill\fP(2) for a detailed list of failure conditions.
+See \f4signal\fP(2) for a list of signals.
+.SH "SEE ALSO"
+\f4getpid\fP(2), \f4kill\fP(2), \f4signal\fP(2).
+.\"	@(#)raise.3c	
+.Ee

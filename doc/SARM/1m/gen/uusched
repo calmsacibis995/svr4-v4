@@ -1,0 +1,65 @@
+'\"macro stdmacro
+.if n .pH g1a.uusched @(#)uusched	40.10 of 5/13/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} uusched 1M "Basic Networking Utilities" "\&"
+.if \nX=1 .ds x} uusched 1M "Basic Networking Utilities"
+.if \nX=2 .ds x} uusched 1M "" "\&"
+.if \nX=3 .ds x} uusched "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4uusched\f1 \- the scheduler for the uucp file transport program
+.SH SYNOPSIS
+\f4/usr/lib/uucp/uusched\f1 [\f2options\f1]
+.SH DESCRIPTION
+\f4uusched\fP
+is the \f4uucp\fP(1C) file transport scheduler.
+It is usually started by the daemon
+.I uudemon.hour
+that is started by \f4cron\fP(1M)
+from an entry in \f4/var/spool/cron/crontab\f1:
+.sp 0.5
+\f441,11 * * * * /usr/bin/su uucp -c "/usr/lib/uucp/uudemon.hour > /dev/null"\fP
+.sp 0.5
+The options are for debugging purposes only.
+\f2debug_level\f1 are numbers
+between 0 and 9.
+Higher numbers give more detailed debugging information:
+.TP 1i
+\f4\-u\f2debug_level\^\f1
+The \f4\-u\f1 \f2debug_level\f1 option is passed to \f4uucico\fP(1M) as
+\f4\-x\f1 \f2debug_level\f1.
+.TP
+\f4\-x\f2debug_level\^\f1
+Outputs debugging messages from \f4uusched\fP(1M).
+..
+.ig
+\" Commenting out stuff that applies only to source licensees:
+\"Note,
+\"however,
+\"that compiling
+\".I uucp
+\"with the
+\".B -DSMALL
+\"option will result in little debugging output.
+..
+.SH FILES
+.nf
+.ft 4
+/etc/uucp/Systems
+/etc/uucp/Permissions
+/etc/uucp/Devices
+/var/spool/uucp/*
+/var/spool/locks/*
+/var/spool/uucppublic/*
+.ft 1
+.fi
+.SH "SEE ALSO"
+\f4cron\fP(1M), \f4uucico\fP(1M)
+.br
+\f4uucp\fP(1C),
+\f4uustat\fP(1C),
+\f4uux\fP(1C)
+in the \f2User's Reference Manual\f1
+.Ee

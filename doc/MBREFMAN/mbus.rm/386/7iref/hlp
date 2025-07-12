@@ -1,0 +1,137 @@
+.if n .pH g1a.hlp @(#)hlp	40.2 of 5/30/91
+.nr X
+.if \nX=0 .ds x} hlp 7iref "" "" "\&"
+.if \nX=1 .ds x} hlp 7iref "" ""
+.if \nX=2 .ds x} hlp 7iref "" "\&"
+.if \nX=3 .ds x} hlp "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4hlp\f1 \-Parallel printer driver for iSBC 486/133SE board 
+.SH DESCRIPTION
+The \f4hlp\f1 driver provides an \f4lpadmin\f1 interface to the parallel port on an iSBC 486/133SE cpu board.  The parallel port behaves as described in 
+\f4termio\f1(7).  Use \f4/dev/lp\f1 to access the printer.
+.P
+The \f4hlp\f1 driver is configured by the structure \f4lp_cfg\f1 defined in the \f4lp_hiint.h\f1 file as follows:
+.P
+.RS
+.ft 4
+.nf
+struct lp_cfg {
+        int     p_level;
+        int     p_porta;
+        int     p_portb;
+        int     p_portc;
+        int     control;
+};
+.ft 1
+.fi
+.RE
+.P
+This driver uses minor number 5.  The minor number is passed to the \f4iasy\f1
+driver at boot time.
+.P
+The fields are defined as follows:
+.IP p_level .75i
+Specifies the interrupt level for the system.
+.IP p_porta .75i
+Specifies the address (in I/O space) of the printer data out port.
+.IP p_portb .75i
+Specifies the interrupt line and incoming printer status for the printer.
+.IP p_portc .75i
+Specifies the strobe signal for the printer.
+.IP control
+Used for the 8255 Programmable Peripheral Interface chip controls.
+.PP
+This driver supports the following printers:
+.P
+.RS
+Serial and Parallel Printers:
+.RS
+C. Itoh 300Q, 800
+.br
+HP Laserjet
+.br
+Okidata Micro 82A
+.br
+Silver-Reed 800, 770
+.P
+.RE
+Serial Printers:
+.RS
+C. Itoh F10-55, 4000-10, 3500-10, 400Q
+.br
+Smith-Corona D300
+.RE
+.P
+Parallel Printers :
+.RS
+C. Itoh 4000-20, 3500-20
+.br
+Epson FX286
+.br
+Mannesman Tally 440
+.br
+Okidata Micro 84
+.br
+Toshiba P341
+.RE
+.RE
+.bp
+.SH FILES
+.TP 2.2i
+\f4/etc/conf/pack.d/hlp/space.c\f1
+Driver specific configuration
+.TP 2.2i
+\f4/etc/conf/sdevice.d/hlp\f1
+System configuration file
+.TP 2.2i
+\f4/usr/include/sys/lp_hiint.h\f1
+Driver specific definitions
+.SH DIAGNOSTICS
+One of the following two messages is issued at device initialization time:
+.P
+.RS
+.ft 4
+.nf
+Parallel port (at n) level n found.
+.fi
+.ft 1
+.RE
+.P
+or
+.P
+.RS
+.ft 4
+.nf
+Parallel port (at n) level n NOT found.
+.fi
+.ft 1
+.RE
+.P
+Possible error messages include:
+.P
+.RS
+.ft 4
+.nf
+lp: Unexpected interrupt (level n)
+lpintr(): ACK low for too long..
+.fi
+.ft 1
+.RE
+.P
+Check your printer and printer cable if you receive these error messages.
+.SH SEE ALSO
+\f4termio\f1(7), 
+\f4iasy\f1(7iref)
+.P
+\f2iSBC\*R 486/133SE Single Board Computer User's Guide\f1
+.br
+\f2iSBX\*(Tm 350 Hardware Reference Manual\f1
+.SH NOTES
+Interrupting the printer power or disconnecting the cable to the printer while 
+jobs are being printed could result in a loss of print capabilities.  This won't
+affect the system, but you may need to reboot to allow the printer to accept 
+further commands.
+
+
+

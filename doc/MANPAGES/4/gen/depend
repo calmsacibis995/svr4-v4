@@ -1,0 +1,114 @@
+'\"macro stdmacro
+.if n .pH g4.depend @(#)depend	40.12 of 5/23/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} depend 4 "Essential Utilities" "\&"
+.if \nX=1 .ds x} depend 4 "Essential Utilities"
+.if \nX=2 .ds x} depend 4 "Essential Utilities" "\&"
+.if \nX=3 .ds x} depend 4 "Essential Utilities" "\&"
+.TH \*(x}
+.SH NAME
+\f4depend\f1 \- software dependencies files
+.SH DESCRIPTION
+\f4depend\fP
+is an ASCII file used to specify information concerning software dependencies
+for a particular package.
+The file is created by a software developer.
+.PP
+Each entry in the
+\f4depend\fP
+file describes a single software package.
+The instance of the package is
+described after the entry line by giving the package architecture and/or version.
+The format of each entry and subsequent instance definition is:
+.PP
+.RS
+.nf
+\f2type pkg name
+	(arch)version
+ 	(arch)version
+	\f1\&. . .
+.fi
+.RE
+.P
+The fields are:
+.TP 14
+.I type
+Defines the dependency type.
+Must be one of the following characters:
+.RS 16
+.TP 5
+P
+Indicates a prerequisite for installation, for example, the referenced package
+or versions must be installed.
+.TP 5
+I
+Implies that the existence of the indicated package or version is
+incompatible.
+.TP 5
+R
+Indicates a reverse dependency.
+Instead of defining the package's own
+dependencies, this designates that another package depends on this one.
+This
+type should be used only when an old package does not have a
+\f4depend\fP
+file but it relies on the newer package nonetheless.
+Therefore, the present
+package should not be removed if the designated old package is still on the
+system since, if it is removed, the old package will no longer work.
+.RE
+.TP 14
+.I pkg
+Indicates the package abbreviation.
+.TP 14
+.I name
+Specifies the full package name.
+.TP 14
+.I (arch)version
+Specifies a particular instance of the software.
+A version name cannot begin with a left parenthesis.
+The instance specifications, 
+both \f2arch\f1 and \f2version\f1,
+are completely optional 
+but each must begin on a new line that
+begins with white space.
+If no version set is specified,
+any version of the indicated package will match.
+A version preceded by a tilde (\f4~\fP)
+indicates that any compatible version
+will be a match.
+[See \f4compver\fP(4).]
+.SH EXAMPLE
+Here is a sample \f4depend\fP file:
+.P
+.RS
+.nf
+.ft 4
+I msvr 3B2 Messaging Server
+P ctc Cartridge Tape Utilities
+P dfm Directory and File Management Utilities
+P ed Editing Utilities
+P ipc Inter-Process Communication Utilities
+P lp Line Printer Spooling Utilities
+P shell Shell Programming Utilities
+P sys System Header Files
+		3.0
+P sysadm System Administration Utilities
+P terminf Terminal Information Utilities
+P usrenv User Environment Utilities
+P bnu Basic Networking Utilities
+P x25 X.25 Network Interface
+		1.1
+		1.2
+P windowing Layers Windowing Utilities
+		(3B2)1.0
+R cms 3B2 Call Management System
+.ft 1
+.fi
+.RE
+.SH SEE ALSO
+\f4compver\fP(4)
+.\"	@(#)depend.4	5.2 of 6/16/87
+.Ee

@@ -1,0 +1,21 @@
+#ident	"@(#)pcintf:support/intelsvr4/pciprint	1.1"
+#! /bin/sh
+# @(#)pciprint	1.2	Changed   2	15:24:41	
+
+# PC Interface (TM Locus Computing Corporation)
+# (c) 1990 Locus Computing Corporation.  All rights reserved.
+
+# default printer program (replace with your own)
+
+# charconv converts from the DOS code page to the UNIX code set,
+# ensuring that printer output is readable.
+
+# NOTE: The UNIX server provides the following variables to
+#       this shell script: -i %1 -o %2
+#       where %1 is the input code page (the DOS code page)
+#       and %2 is the output code set (the UNIX code set)
+#       Thus the arguments are exactly what charconv needs
+#       to perform a proper conversion from the DOS side 
+#       to the UNIX side.
+
+/usr/bin/charconv $* | lp

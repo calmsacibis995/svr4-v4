@@ -1,0 +1,68 @@
+'\"macro stdmacro
+.if n .pH 386.mps_open_cha @(#)mps_open_cha	40.5 of 7/1/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.nr X
+.if \nX=0 .ds x} mps_open_chan D3D "Multibus II" "DDI" "\&"
+.if \nX=1 .ds x} mps_open_chan D3D "Multibus II" "DDI" "\&"
+.if \nX=2 .ds x} mps_open_chan D3D "" "\&"
+.if \nX=3 .ds x} mps_open_chan "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4mps_open_chan\f1 \- opens a channel
+.SH SYNOPSIS
+.nf
+\f4#include <sys/mps.h>
+long mps_open_chan (\f2portid\fP, \f2intr\fP, \f2priolev\fP)
+unsigned short portid;
+(void) (*intr() );
+unsigned short priolev;\f1
+.fi
+.SH ARGUMENTS
+.TP 11
+\f2portid\f1
+Port ID of a local port.
+.TP 11
+\f2intr\f1
+Pointer to a function that is invoked for every incoming unsolicited message
+for the port specified by \f2portid\f1.
+A pointer to the message buffer
+containing the incoming message buffer is passed to \f4intr\f1 as an
+argument.
+If \f2intr\f1 is NULL, all incoming unsolicited messages are
+discarded and all incoming request messages belonging to a request-response
+transaction result in a transaction cancel being sent to the
+originating socket.
+If the message handler encounters an error on a message
+transmission, the function pointed to by \f2intr\f1 is invoked with the
+erroneous message as an argument.
+If \f2intr\f1 is NULL, all error messages
+are ignored.
+.TP 11
+\f2priolev\f1
+Specifies the priority level at which the \f2intr\f1 routines are executed.
+\f2priolev\f1 should be set to \f4MPS_SRLPRIO\f1 for serial I/O drivers,
+\f4MPS_BLKPRIO\f1 for block I/O drivers, and \f4MPS_NRMPRIO\f1 for all
+other uses of the message handler.
+These are the only valid values
+allowed for \f2priolev\f1.
+.SH DESCRIPTION
+A call to \f4mps_open_chan\f1 is required before any message operations
+can be done on a port.
+\f4mps_open_chan\f1 is synchronous in operation.
+To open a channel a device driver must identify three parameters:
+a port, an interrupt handler routine, and an interrupt priority level, as
+described above.
+.PP
+Message buffers passed to \f2intr\f1 routines are assumed to be allocated
+to the handler for that port.
+It is the responsibility of the \f2intr\f1
+routines to free the message buffers it receives from the message handler.
+.SH RETURN VALUE
+When \f4mps_open_chan\f1 is successful, a channel number is returned that
+is to be used in requests for message services.
+When \f4mps_open_chan\f1
+fails, -1 is returned.
+.SH LEVEL
+Base or Interrupt
+.SH SEE ALSO
+\f4mps_close_chan\f1(D3D)

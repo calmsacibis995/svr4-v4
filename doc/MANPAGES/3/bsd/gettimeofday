@@ -1,0 +1,105 @@
+'\"macro stdmacro
+.if n .pH g3.gettimeofday @(#)gettimeofday	40.16 of 4/24/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.\" Copyright (c) 1988 Sun Microsystems, Inc. - All Rights Reserved.
+.\"
+.\" Copyright (c) 1980 Regents of the University of California.
+.\" All rights reserved.  The Berkeley software License Agreement
+.\" specifies the terms and conditions for redistribution.
+.\"
+.hw gettimeofday
+.nr X
+.if \nX=0 .ds x} gettimeofday 3 "BSD Compatibility Package" "\&"
+.if \nX=1 .ds x} gettimeofday 3 "BSD Compatibility Package"
+.if \nX=2 .ds x} gettimeofday 3 "" "\&"
+.if \nX=3 .ds x} gettimeofday "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4gettimeofday\f1, \f4settimeofday\f1 \- get or set the date and time
+.SH SYNOPSIS
+.nf
+\f4cc \f1[ \f2flag\f1\. \. \. ] \f2file\f1 \. \. \. \f4\-lucb\f1
+.P
+\f4#include <sys/time.h>\f1
+.P
+\f4int gettimeofday(tp, tzp)\f1
+\f4struct timeval *tp;\f1
+\f4struct timezone *tzp;      /* obsolete */\f1
+.P
+\f4int settimeofday(tp, tzp)\f1
+\f4struct timeval *tp;\f1
+\f4struct timezone *tzp;      /* obsolete */\f1
+.fi
+.SH DESCRIPTION
+The system's notion of the current Greenwich time
+is obtained with the
+\f4gettimeofday\f1
+call, and set with the
+\f4settimeofday\f1
+call.
+The current time is expressed in elapsed seconds and microseconds
+since 00:00
+.SM GMT\s0,
+January 1, 1970 (zero hour).
+The resolution of the system
+clock is hardware dependent; the time may be updated continuously,
+or in ``ticks.''
+.P
+.I tp
+points to a
+\f4timeval\f1
+structure, which includes the following members:
+.P
+.RS
+.nf
+.ft 4
+.ta +\w'long\0'u +\w'tv_usec;\0'u
+long	tv_sec;	/\(** seconds since Jan. 1, 1970 \(**/
+long	tv_usec;	/\(** and microseconds \(**/
+.ft 1
+.fi
+.DT
+.RE
+.P
+If
+.I tp
+is a
+\f4NULL\fP
+pointer, the current time information is not returned or set.
+.P
+.I tzp
+is an obsolete pointer formerly used to get and set timezone information.
+.I tzp
+is now ignored.
+Timezone information is now handled using the \f4TZ\fP
+environment variable; see \f4timezone\fP(4).
+.P
+Only the privileged user may set the time of day.
+.SH "RETURN VALUE"
+A \-1 return value indicates an error occurred; in this
+case an error code is stored in the global variable
+\f4errno\f1.
+.SH ERRORS
+The following error codes may be set in
+\f4errno\f1:
+.TP 15
+\f4EINVAL\fP
+.I tp
+specifies an invalid time.
+.TP
+\f4EPERM\fP
+A user other than the privileged user attempted to set the time.
+.SH "SEE ALSO"
+\f4date\fP(1)
+in the \f2User's Reference Manual\f1
+.br
+\f4adjtime\fP(2),
+\f4ctime\fP(3C),
+\f4gettimeofday\f1(3C),
+\f4timezone\fP(4)
+in the \f2Programmer's Reference Manual\f1
+.SH NOTES
+Time is never correct enough to believe the microsecond values.
+.P
+\f4tzp\f1 is ignored.

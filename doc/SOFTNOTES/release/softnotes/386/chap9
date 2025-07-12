@@ -1,0 +1,728 @@
+.if n .pH 386.chap9 @(#)chap9	40.5
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.de MR
+.P
+MR \\$1
+.P
+..
+.de MR
+..
+.BK "Software Notes"
+.CH "Application Notes" "9"
+.IX "application notes"
+.H 1 "Applications for Intel386 Architecture Processors"
+Hundreds of popular application programs have been written for
+UNIX System V on Intel386\(tm microprocessors.
+To insure that most of these applications will install
+and run without change, UNIX System V/386
+Release 4 Version 4 includes many
+features that some applications have come to depend upon in earlier
+UNIX System V/386 systems delivered by different computer vendors.
+.P
+As a result, many applications that are noted as running on
+Interactive, Intel Corporation, or Santa Cruz Operation (SCO)
+UNIX Systems will run as delivered on UNIX System V Release 4.
+The features to support the applications are built into the
+Application Compatability and BSD Compatibility packages of
+System V Release 4 Version 4.
+.P
+During the testing of applications at UNIX System Laboratories, Inc.,
+we noted that some applications rely on minor, but sometimes
+contradictory, operating system features.
+For example, an application may expect the operating system version
+to be set to Release 3.2, or may use a terminal definition that conflicts
+with one delivered with UNIX System V.
+In almost all cases, some simple simple steps will resolve these problems.
+.P
+Go through the application notes in this section before you install and run an
+application that is not specifically created for UNIX System V/386 Release 4.
+These notes are your best insurance for installing and running your
+UNIX System applications in a way that is error free and efficient.
+If you still have problems, contact the customer support organization
+for the application.
+.H 1 "General Application Notes"
+.H 2 "Terminal Information (terminfo/termcap)"
+.IX "terminal information"
+.IX "\f4terminfo\fP file"
+.IX "\f4termcap\fP file"
+Terminal and printer definitions are contained in a database of
+files and directories in \f4/usr/share/lib/terminfo\f1.
+Some pre-System V Release 4 UNIX Systems used a single file (\f4/etc/termcap\f1)
+to hold terminal and printer definitions.
+.P
+Because many SCO applications use definitions from an
+SCO \f4termcap\f1 file, it has been merged with the UNIX System V Release
+4 \f4termcap\f1 with this UNIX system version.
+Even with this addition, however, problems can arise because
+some applications provide their own \f4/etc/termcap\f1 file
+or expect non-standard terminal entries.
+.P
+Usually, the default terminal types delivered in the
+\f4/etc/profile\f1 file for UNIX System V
+.IX "\f4profile\fP file"
+on Intel386\(tm microprocessors (\f4ansi\f1
+or \f4AT386-M\f1 if you are at the console) will work properly.
+.IX "console"
+.P
+If you get stray characters on the screen, a message like
+\f4Unknown terminal type\f1, or
+if you otherwise suspect the terminal type is set improperly,
+do the following and retry the application after each change:
+.BL
+.IX "TERM variable"
+.LI
+Try setting the \f4TERM\f1 environment
+variable to a value recommended by the application.
+.LI
+Try setting the \f4TERM\f1 environment
+variable to \f4ansi\f1 (\f4TERM=ansi;export TERM\f1).
+This is the safest value for the console terminal.
+.LI
+.IX "TERMCAP variable"
+.IX "TERMINFO variable"
+Redefine the \f4TERMCAP\f1 and/or \f4TERMINFO\f1 environment
+variables.
+(Most SCO applications use \f4TERMCAP\f1.)
+Type \f4echo $TERMCAP\f1 to see which \f4termcap\f1 file is being used.
+If the system \f4termcap\f1 file is being used,
+try changing \f4TERMCAP\f1 to the application's own \f4termcap\f1 file
+(if one exists) and set an acceptable \f4TERM\f1 entry
+(e.g. \f4TERMCAP=\f2file\f4;export TERMCAP\f1).
+If the application's \f4TERMCAP\f1 entry is used, try resetting it to the
+system \f4TERMCAP\f1 entry.
+.P
+Here are a few examples of applications that need to have their
+terminal data base definitions reset:
+.DL
+.LI
+For the ``Uniplex II Plus 7.0 for SCO'' application package, set:
+.IX "Uniplex II Plus 7.0 for SCO"
+.nf
+\f4
+   TERMCAP=\f2uniplex_directory\f4/termcap
+   TERMINFO=\f2uniplex_directory\f4/TERMINFO
+   export TERMCAP TERMINFO\f1
+.fi
+.LI
+For the ``UNIFY ACCELL 4.0'' application package, set:
+.IX "UNIFY ACCELL"
+.nf
+\f4
+   TERMCAP=$UNIFY/termcap.std; export TERMCAP\f1
+.fi
+.LI
+For ``Informix 4GL 1.10,'' use \f4TERMCAP=/etc/termcap\f1 rather than
+.IX "Informix 4GL 1.10,"
+\f4/usr/informix/etc/termcap\f1 as the \f4termcap\f1 file.
+.LE
+.LE
+If you still have trouble with your keyboard entries being understood,
+see the ``Keyboard and Function Keys'' description later in this section
+for more help.
+.H 2 "Installation (custom, installpkg, tar, pkgadd, cpio)"
+.IX "installation"
+.IX "\f4custom\fP(1M) command"
+.IX "\f4installpkg\fP(1M) command"
+.IX "\f4tar\fP(1) command"
+.IX "\f4pkgadd\fP(1M) command"
+.IX "\f4cpio\fP(1) command"
+There are different ways of installing applications for different
+UNIX System platforms and releases.
+General rules for installation are:
+.BL
+.LI
+You should use the command designated for the application
+to install it (i.e., \f4custom\f1, \f4installpkg\f1, and \f4pkgadd\f1 were
+not enhanced to accept the other installation formats).
+.LI
+The \f4displaypkg\f1, \f4pkginfo\f1, and \f4custom\f1 commands may not display
+.IX "\f4pkginfo\fP(1) command"
+information about packages installed in formats they are not familiar with.
+(Try each of the package display commands if the application you
+are looking for doesn't appear with the first command you try.)
+.LI
+You should always install applications from the console, rather
+than from a remote terminal.
+.IX "installation, remote terminal"
+.LI
+If the application recommends the product be installed by a particular
+login (such as \f4root\f1), be sure to log in as that user.
+If you don't, the installation may fail or you may have permissions
+problems later on.
+.IX "root login"
+.LI
+You may need to increase the \f4ulimit\f1 size before you can install
+.IX "\f4ulimit\f1(1) command"
+an application or installation will fail.
+Some applications at installation will install all files as one large
+archive file, then proceed to break up the archive into smaller
+files and distribute them.
+This archive may be larger than the file size allowed by \f4ulimit\f1.
+To increase the \f4ulimit\f1, login as \f4root\f1 and type:
+.SP
+   \f4ulimit 45000\f1
+.SP
+You can use a number larger than 45000 if required.
+.LE
+.P
+If installation fails or works improperly, check for the
+following problems depending on the type of installation called
+for by the application:
+.BL
+.LI
+\f4custom\f1 - The \f4custom\f1 command, used to install many SCO applications,
+.IX "\f4custom\fP(1M) command"
+checks for the operating system release number to know how to install the application.
+If the application won't install and the error says the release is incorrect,
+set the \f4SCOMPAT\f1 environment variable.
+.IX "\f4uname\fP(1) command"
+.IX "SCOMPAT variable"
+(The \f4SCOMPAT\f1 variable changes the release number reported by \f4uname\f1
+without changing it permanently on the system.)
+.P
+For example, if the UNIX System release required by the application
+is 3.2, do the following before you run \f4custom\f1:
+.SP
+   \f4SCOMPAT=3.2:2;export SCOMPAT\f1.
+.LI
+\f4tar\f1 - If the application instructs you to install with \f4tar\f1 and
+installation fails, SCO applications can sometimes be
+.IX "\f4tar\fP(1) command"
+installed with:
+.SP
+   \f4tar -xvf /dev/rdsk/f\f2?\f4t\f1
+.SP
+.br
+where \f2?\f1 is replaced by \f40\f1 or \f41\f1 depending on which diskette
+drive you are using.
+.P
+The application may create a file \f4/tmp/init.\f2????\f1 during installation.
+The file will be an executable that should be run immediately after
+installing software.
+.P
+For example,
+.DL
+.\" .LI
+.\" The SCO Development Set floppies can be installed manually
+.\" as follows:
+.\" .nf
+.\" \f4
+.\" # tar xvf /dev/f0t
+.\" # /tmp/init.soft\f1
+.\" 
+.\" .fi
+.\" (For the SCO Basic Development Set, the program \f4/etc/brand\f1 had to be
+.\" retrieved from a machine running
+.\" SCO UNIX System V, Release 3.2 to 'serialize' the installed software.)
+.LI
+After installing the ``SCO C-ISAM'' application, run \f4/once/init.isam\f1 to
+.IX "SCO C-ISAM"
+enter the serial number and activation key for the product.
+.LE
+.LI
+\f4cpio\f1 - ``Access Technology 20/20 Release 2.3'' is installed using \f4cpio\f1.
+.IX "Access Technology 20/20 Release 2.3"
+The application expects \f4/tmp\f1 and \f4/usr\f1 to be separate file systems,
+.IX "\f4cpio\fP(1) command"
+rather than subdirectories of \f4/\f1.
+If \f4/tmp\f1 and \f4/usr\f1 are not separate file systems,
+make the following change to \f4/usr/bin/i2020\f1 after
+installing the product with \f4cpio\f1 but before setting up the program:
+.nf
+
+    \f2 Change lines 405-407 from
+\f4
+    sh -c "$LIBEXTRACT" > /dev/null 2>&1 || {
+    sh -c "$BOMB"; exit 1\f2
+      }
+
+         to
+\f4
+    sh -c "$LIBEXTRACT" > /dev/null 2>&1
+
+\f1
+.fi
+.LI
+\f3Missing Utilities or Files\f1 - An installation may fail because
+an application expects a utility, file or directory to exist
+.IX "PATH variable"
+that is not part of UNIX System V.
+(See the description of the \f4PATH\f1 variable later in this section for information on
+adding executables to your \f4PATH\f1.)
+.P
+For example:
+.DL
+.LI
+The ``MicroFocus COBOL/2'' installation procedure requires the
+.IX "MicroFocus COBOL/2"
+\f4ranlib\f1 utility, which is not available on UNIX System V Release 4.
+The workaround is to hard link \f4/bin/true\f1 to \f4/bin/ranlib\f1
+as follows:
+.SP
+   \f4ln /bin/true /bin/ranlib\f1
+.SP
+.LI
+``Framemaker for SCO'' looks 
+.IX "Framemaker for SCO"
+to see whether the \f4/usr/lib/sco\f1 directory exists to confirm it is
+on a SCO system.  
+To work around this problem, either create a \f4/usr/lib/sco\f1 directory
+or add the following to your \f4.profile\f1:
+.nf
+
+   \f4FMARCH=scounix; export FMARCH\f1
+
+.fi
+.LE
+.LE
+.H 2 "Keyboard and Function Keys (mapstr, mapkey)"
+.IX "\f4mapstr\fP(1M) command"
+If certain function keys or other keys on the keyboard will not work,
+there are several things you could try.
+.BL
+.LI
+\f4mapstr\f1
+.br
+When executed, \f4mapstr\f1 picks up function key definitions from
+\f4/usr/lib/keyboard/strings\f1.
+If you are running a SCO application and the function keys seem
+incorrect, run
+.SP
+   \f4mapstr /usr/lib/keyboard/scostrings\f1
+.SP
+(You will have to do this at each login session or add it to your
+\f4.profile\f1 file.)
+If that doesn't work,
+you can copy and change the \f4strings\f1 file as needed and run \f4mapstr\f1.
+[See the \f4mapkey\f1(1M) manual page in the
+.BT "System Administrator's Reference Manual" .]
+.IX "\f4mapkey\fP(1M) command"
+.P
+The following application requires function keys to be redefined:
+.DL
+.LI
+For ``UNIFY ACCELL/SQL,'' you must use the function key definitions for
+.IX "UNIFY ACCELL"
+keys f1 through f40 that come with that application (\f4$UNIFY/unicap\f1)
+and run \f4mapstr\f1 each time you run the application, as follows:
+.nf
+
+\f4# cd /usr/lib/keyboard
+# cp strings unicap
+# ed unicap
+
+   \f2Replace lines fkey00 through fkey39
+   with lines f1 to f40 from $UNIFY/unicap,
+   where $UNIFY defined as $ACLDIR/lib and
+   $ACLDIR is the location where the
+   application is installed.\fP
+
+# mapstr /usr/lib/keyboard/unicap\f1
+
+.fi
+.IX "\f4mapstr\fP(1M) command"
+.LE
+.LI
+\f4scompat\f1
+.br
+USL UNIX Systems and SCO XENIX\(tm Systems rely on some different values
+for device control functions for \f4ioctls\f1.
+.IX "ioctl function"
+If you find that the application fails with an error from
+the \f4ioctl\f1 system call, or you see the screen go into
+a funny state, try using the \f4scompat\f1 command as
+follows:
+.DL
+.LI
+If the application information says it is for
+XENIX (or SCO UNIX/XENIX) systems, try
+invoking the application by inserting \f4scompat\f1
+in front of the command line used to invoke the
+program.
+.IX "\f4scompat\fP(1) command"
+[See the \f4scompat\f1(1) man pages in the
+.BT "Migration and Compatibility Guide"
+for more information].
+.P
+For example, if the application is started by typing
+\f4foo\f1 on the command line, use the command line:
+.P
+   \f4scompat foo\f1
+.LI
+If the application information says it is for
+AT&T UNIX System V Release 3.2 systems, try using:
+.P
+   \f4scompat -r 3 foo\f1
+.LI
+If neither of the above help the problem, try using
+the command
+.P
+   \f4scompat -r 4 foo\f1
+.LE
+.LI
+\f4mapkey\f1
+.br
+When executed, \f4mapkey\f1 picks up the keyboard mappings from
+\f4/usr/lib/keyboard/keys\f1.
+You can copy and change the \f4keys\f1 file as needed and run \f4mapkey\f1.
+.IX "\f4mapkey\fP(1M) command"
+If you are running a SCO application and the keyboard mappings seem
+incorrect, run the \f4mapkey\f1 command with the \f4/usr/lib/keyboard/scomap\f1
+file.
+.IX "\f4keyboard\f1(7) device"
+[See the \f4keyboard\f1(7) manual page in the
+.BT "System Administrator's Reference Manual"
+for further information.]
+.P
+You can run \f4mapkey\f1 with the \f4-V\f1 to only change keyboard
+mappings for the current virtual terminal or without \f4-V\f1
+to affect all virtual terminals being used on the system.
+.P
+To reset the keyboard back to its default state, type \f4mapkey\f1
+or \f4mapkey -V\f1 without a file name.
+.LI
+\f4stty\f1
+.br
+The eighth bit being dropped causes the AutoCAD application's function
+.IX "\f4stty\f1 command"
+keys not to work properly.
+This command fixes the problem:
+.SP
+   \f4stty cs8 -istrip; stty kill ^c;\f1
+.SP
+.LI
+\f3Arrow keys\f1
+.br
+If the up/down/left/right arrow keys on your keyboard don't work,
+try the arrow keys on the numeric keypad.
+.LI
+\f3Control keys\f1
+.br
+An application may use some control keys that conflict with
+shell control keys.
+For example, for the ``UNIFY ACCELL 4.0'' application package CTRL-z
+.IX "UNIFY ACCELL"
+is reserved as a shortcut for ZOOM.
+If you run the application from a \f4ksh\f1, \f4csh\f1, or \f4jsh\f1 shell,
+the CTRL-z will put the application into the background (susp key).
+To change the susp key from CTRL-z to CTRL-y, do the following
+before starting the application:
+.nf
+
+   \f4stty susp ^y\f1
+
+.fi
+.LI
+\f3Unusable keys\f1
+.br
+Sometimes an application will reset keys in a way that
+makes them unusable once you exit the application.
+If the \f4mapstr\f1 command doesn't work, as described earlier,
+logging off and logging back in may return the keys
+to a useable state.
+.LE
+.H 2 "Executables"
+.br
+.BL
+.LI
+SCO UNIX System V, Release 3.2 supports executable/object file formats
+not previously supported in System V Release 4: Intel Object Module Format (OMF) and
+.IX "executables, Object Module Format"
+.IX "executables, i386 pure segmented executables"
+i386\(tm CPU ``pure segmented'' executables.
+New utilities have been added to convert libraries and
+objects to the proper formats:
+.DL
+.LI
+.IX "\f4cvtomflib\f1(1M)"
+\f4cvtomflib\f1 - Use this utility to convert OMF libraries to ELF.
+[See the \f4cvtomflib\f1(1) manual page in the
+.BT "Migration and Compatibility Guide"
+for further information.]
+For example, for ``Informix-4GL 1.10'' do the following:
+.IX "Informix-4GL 1.10"
+.nf
+\f4
+  cd /usr/informix/lib
+  /usr/bin/cvtomflib lib4gl.a
+  /usr/bin/cvtomflib libforms.a
+  /usr/bin/cvtomflib libsql.a\f1
+.fi
+.LI
+.IX "\f4cvtomf\f1(1M)"
+\f4cvtomf\f1 - Use this utility to convert OMF objects to COFF format.
+.\" .LI
+.\" \f4ar\f1 - Use this version of the archiver utility (\f4/usr/eac/bin/ar\f1)
+.\" to interpret XENIX libraries.
+.LE
+.LI
+Some SCO applications rely on the Microsoft assembler (\f4masm\f1 command)
+to produce executables.
+.IX "\f4masm\fP command"
+This assembler also allows the linking of C and Cobol modules.
+Linking of C and Cobol modules is not supported.
+However, for ``MicroFocus VS COBOL'' and ``MicroFocus COBOL/2'' applications,
+.IX "MicroFocus VS COBOL"
+.IX "MicroFocus COBOL/2"
+programs that can be run by creating \f4a.out\f1s should be able to be
+run by using the \f4cobrun\f1 program provided.
+.LI
+If an application tries to link object modules that are in COFF
+.IX "COFF"
+format, you may get a message like the following indicating that the
+system is converting the executable to ELF format:
+.IX "ELF"
+.SP
+  \f4ld: acad/Driver.o: notice: internal conversion
+       of COFF file to ELF\f1
+.SP
+This is not an error.
+.LI
+Some applications expect the \f4/etc/brand\f1 utility to exist.
+Because it is not deliverd with UNIX System V, the
+application must supply this utility itself.
+.LE
+.H 2 "Shared libraries"
+.IX "shared libraries"
+.BL
+.LI
+When a SCO application is installed using the \f4custom\f1 command,
+\f4fixshlib\f1 is run automatically to change references for
+.IX "\f4fixshlib\f1 command"
+\f4/shlib/libnsl\f1 to \f4/shlib/libNSL_s\f1 in all executables
+installed for the application.
+[See the \f4fixshlib\f1(1M) manual page in the
+.BT "Migration and Compatibility Guide"
+for further information.]
+.P
+If a SCO application, that was not installed by \f4custom\f1,
+fails to execute and dumps core, run \f4fixshlib\f1 on the executable as follows:
+.SP
+   \f4fixshlib \f2file\f1
+.SP
+The ``Uniplex II Plus 7.0 for SCO'' application package requires
+.IX "Uniplex II Plus 7.0 for SCO"
+that \f4fixshlib\f1 be run on its executables in \f2uniplex_directory\f4/bin\f1
+and \f2uniplex_directory\f4/SW/xdt/exe\f1 directories
+before you run the \f2uniplex_directory\f4/install\f1 command.
+.SP
+Two warnings: (1) If \f4fixshlib\f1 produces warning or error messages,
+then \f4fixshlib\f1 did not need to be run in this instance.
+(2) Do not run \f4fixshlib\f1 on applications written
+for AT&T or ISC Release 3.2-based systems.
+If you do by mistake, you must remove and reinstall the application
+because the executables will become unusable.
+.LE
+.H 2 "root Login"
+Most applications require that you be logged in as root when you install them;
+some require root login to use the application.
+When an application fails with an access error, try opening
+permissions of files and devices or running the application as \f4root\f1
+to solve the problem.
+``AutoCAD'' is one application that requires you be logged in as \f4root\f1
+.IX "AutoCAD"
+to use it.
+.H 2 "Devices (/dev)"
+.IX "devices"
+Device names vary between different vendors' operating systems.
+Many new device names have been added to this version to account
+for these differences.
+.IX "diskette devices"
+So, for example, an application that tries to access a diskette drive
+through \f4/dev/fd096\f1 will succeed though that device name was not
+delivered with the operating system in Version 3.
+.P
+If there are applications that try to access devices that are still not
+part of this operating system, there are a few things you can try.
+Check the \f4fd\f1(7) (floppy disk), \f4qt\f1(7) (cartridge tape),
+or \f4hd\f1(7) (hard disk) manual pages in the
+.BT "System Administrator's Reference Manual"
+to determine the name of the device you need to reach.
+You can then either change the application (if possible) to access
+the correct device name or create a new device node based on the
+major and minor numbers of the device you want to access.
+.H 2 "PATH variable"
+.IX "PATH variable"
+If your application was written for SCO, you may need to put
+\f4/usr/eac/bin\f1 at the beginning of your PATH variable.
+This is especially important if your application tries to run
+\f4awk\f1 or \f4cc\f1, or tries to create
+XENIX executables.
+.IX "\f4awk\fP(1) command"
+.IX "\f4cc\fP(1) command"
+To do this, add the following near the end of your \f4.profile\f1 file:
+.SP
+   \f4PATH=/usr/eac/bin:$PATH;export PATH\f1.
+.P
+Some applications suggest you use \f4rehash\f1 to locate executables for the
+application and change your \f4PATH\f1 to include the pathname of the executables.
+If \f4rehash\f1 is not available (it is built into \f4csh\f1 and is not
+in other shells), you should locate the executables you need
+and add the directory that contains them to your \f4PATH\f1.
+.H 2 "Shells"
+The \f4csh\f1 and \f4sh\f1 shells have different ways of setting
+environment variables.
+If an application tries to set environment variables for a \f4csh\f1
+shell without using the \f4setenv\f1 command, the variable will not
+be set.
+For example, in the install script for the ``Sybase 4.0 SQL'' application the
+.IX "Sybase 4.0 SQL"
+following changes should be made to
+\f4$SYBASE/install/loadschema\f1 so the environment variables
+set later in the script are defined properly:
+.nf
+\f4
+	\f2 Change the first line
+
+	\f4 #! /bin/csh -f
+	    \f2to
+          \f4 #! /bin/sh -f
+
+.fi
+.H 2 "Graphical Applications (X, OPEN LOOK)"
+Applications noted as requiring a particular graphical
+user interface (such as Open Desktop) can often be replaced by
+any other X-based graphical user interface (such as OPEN LOOK).
+.IX "OPEN LOOK"
+Here are some things you should consider when running X applications
+in UNIX System V:
+.BL
+.LI
+\f3Graphics vs. Character Modes\f1
+.br
+Many applications can run in either graphics or character modes.
+Try the character mode before trying the graphics mode.
+The reason is that there are fewer inconsistencies between
+character terminals than between graphics terminals.
+.LI
+\f4DISPLAY \f3variable\f1
+.br
+Many X applications written for SCO Open Desktop require that
+the \f4DISPLAY\f1 variable be set to \f4:0\f1, instead of the
+default \f4unix:0.0\f1.
+Before you run the X application, start up the graphical user
+interface, set the \f4DISPLAY\f1 variable (\f4DISPLAY=:0;export DISPLAY\f1),
+and start the application.
+.P
+This is true for ``Uniplex II Plus 7.0 for SCO'' and ``Framemaker for SCO (Release 1)''
+.IX "Uniplex II Plus 7.0 for SCO"
+.IX "Framemaker for SCO"
+applications.
+.LI
+\f3Remote X terminal\f1
+.br
+X applications are designed to run, not only on a local X terminal,
+.IX "X terminals"
+but also on a remote X terminal.
+In general, here is how you would go about doing that:
+.DL
+.LI
+Set up inet utilities to run.
+.IX "inet utilities"
+.LI
+On your internet domain name server: Set up a domain name server for
+internet utilities.
+.LI
+On the local system:  Make sure \f4/usr/lib/resolv.so\f1
+exists.
+.LI
+On the local system:  Add the domain name and nameserver address
+to \f4/etc/resolv.conf\f1.
+For example:
+.SP
+.nf
+\f4domain	abc.com
+nameserver	192.11.169.58\f1
+.LI
+On local system: In \f4/etc/netconfig\f1, (1) move \f4tcp\f1, \f4udp\f1,
+and \f4icmp\f1 lines to before the \f4rawip\f1
+entry (the beginning of the file).
+(2) add the following to the end of the \f4tcp\f1, \f4udp\f1, \f4rawip\f1,
+and \f4icmp lines:
+.SP
+  \f4, /usr/lib/resolv.so\f1
+.LI
+On the local system: Set the \f4DISPLAY\f1 variable to the remote display.
+For example:
+.IX "DISPLAY variable"
+.SP
+   \f4DISPLAY=comp1:0;export DISPLAY\f1
+.LI
+On the X terminal: Open the permissions for remote clients as follows:
+.SP
+   \f4xhost +\f1
+.LI
+On the local system: Run the application.
+.LE
+.LE
+.H 2 "Printing"
+.BL
+.LI
+\f3Postscript Filter\f1 -
+.IX "printing"
+The \f4lp\f1 command delivered with the SCO UNIX System 3.2, by default
+will format print jobs for postscript printers.
+.IX "postscript"
+The UNIX System V version of \f4lp\f1, however, does not use the
+postscript filter by default.
+Therefore, any application that expects \f4lp\f1 to interpret the files
+they print as postscript files, without using the \f4-Tpostscript\f1 option,
+will not print properly.
+.P
+For example, when ``Framemaker'' is asked to print the current file, it calls
+.IX "Framemaker for SCO"
+a shell script called \f4FMlpr\f1 in \f4/usr/lib/frame2.1/.fminit2.0\f1.
+This script prints the file using \f4lp\f1 without the \f4-Tpostscript\f1 option.
+To correct this problem, add the option \f4-Tpostscript\f1 to the
+two \f4lp\f1 lines defined under the \f4scounix\f1 entry
+in the file (about line 58 and 60).
+.LI
+\f3Verifying Printers\f1 -
+Applications may verify that a type of printer is available by looking
+at \f4/usr/spool/lp/admins/lp/interfaces\f1 for an interface file.
+For example, you can print to a printer called \f45ps\f1
+with ``Microsoft Word 5.01c'' by doing the following:
+.IX "Microsoft Word 5.01c"
+.SP
+   \f4> \f4/usr/spool/lp/admins/lp/interfaces/5ps\f1
+.LE
+.H 2 "Communications"
+.BL
+.IX "modems"
+.LI
+Before you can use a modem with the ``Telemagic'' application, the
+modem must have Carrier Detect (CD) turned on.
+(Also, when you set up the modem in Dialer Setup under Master
+Options, the escape sequences for the modem should be
+\f4>/dev/tty00\f1 for the case where the modem is connected to
+COM1, and \f4>/dev/tty01\f1 for the case where the modem
+is connected to COM2.)
+.SK
+.LI
+To use ``Ingres'' over a network, you must change the script
+that compiles code for doing the login verification.
+Before you execute \f4$II_SYSTEM/ingres/bin/mkvalidpw\f1,
+modify line 84 of this script as follows:
+.LE
+.nf
+.S -2
+\f2
+        from
+\f4
+ix3_us5)  LIBS="-lsec"; ln $II_SYSTEM/ingres/bin/wview.isc $II_SYSTEM/ingres/bin/wview;;
+\f2
+        to
+\f4
+ix3_us5)  LIBS=""; ln $II_SYSTEM/ingres/bin/wview.sco $II_SYSTEM/ingres/bin/wview;;\f1
+.fi
+.S +2
+.H 2 "Virtual Terminals"
+.IX "virtual terminals"
+.BL
+.LI
+Some applications cannot be run while the virtual terminal manager
+is running [\f4vtlmgr\f1(1) command].
+One example of this is the ``Autocad'' application.
+.LE

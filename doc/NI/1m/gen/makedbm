@@ -1,0 +1,112 @@
+'\"macro stdmacro
+.if n .pH g1a.makedbm @(#)makedbm	40.5 of 5/30/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.\" @(#)makedbm.8 1.5 89/09/28 SMI;
+.\" Copyright (c) 1988 Sun Microsystems, Inc. - All Rights Reserved.
+.nr X
+.if \nX=0 .ds x} makedbm 1M "" "\&"
+.if \nX=1 .ds x} makedbm 1M ""
+.if \nX=2 .ds x} makedbm 1M "" "\&"
+.if \nX=3 .ds x} makedbm "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4makedbm\fP \- make a Network Information Service (NIS) dbm file
+.SH SYNOPSIS
+\f4/usr/sbin/makedbm\fP [\f4\-l\fP] [\f4\-s\fP] [\f4\-i \f2yp_input_file\f1] [\f4\-o \f2yp_output_name\f1]
+.br
+.ti +.5i
+[\f4\-d \f2yp_domain_name\f1]
+[\f4\-m \f2yp_master_name\f1] \f2infile\f1 \f2outfile\f1
+.P
+\f4makedbm\f1 [\f4\-u \f2dbmfilename\f1]
+.SH DESCRIPTION
+.P
+The
+\f4makedbm\fR
+command takes
+\f2infile\fR
+and converts it to a pair of files in
+\f4dbm\fR(3)
+format, namely
+\f2outfile\f4\&.pag\fR
+and
+\f2outfile\f4\&.dir\fR.
+Each line of the input file is converted to a single
+\f4dbm\fR
+record.
+All characters up to the first
+\s-1TAB\s0
+or
+\s-1SPACE\s0
+form the key, and the rest of the line is the data.
+If a line ends with
+`\f4\e\fR',
+then the data for that record is continued on to the next line.
+It is left for 
+\s-1NIS\s0
+clients to interpret
+`\f4#\fR';
+\f4makedbm\fR
+does not itself treat it as a comment character.
+\f2infile\fR
+can be
+`\f4\-\fR',
+in which case the standard input is read.
+.P
+\f4makedbm\fR
+is meant to be used in generating
+\f4dbm\fR
+files for \s-1NIS\s0
+and it generates a special entry with the key
+\f2yp_last_modified\fR,
+which is the date of
+\f2infile\fR
+(or the current time, if
+\f2infile\fR
+is
+`\f4\-\fR').
+.P
+The following options are available:
+.TP
+\f4\-l\fR
+Lowercase.
+Convert the keys of the given map to lower case, so
+that host name matches, for example, can work independent of upper
+or lower case distinctions.
+.TP
+\f4\-s\fR
+Secure map.
+Accept connections from secure 
+\s-1NIS\s0
+networks only.
+.TP
+\f4\-i \f2yp_input_file\fR
+Create a special entry with the key
+\f2yp_input_file\fR.
+.TP
+\f4\-o \f2yp_output_name\fR
+Create a special entry with the key
+\f2yp_output_name\fR.
+.TP
+\f4\-d \f2yp_domain_name\fR
+Create a special entry with the key
+\f2yp_domain_name\fR.
+.TP 
+\f4\-m \f2yp_master_name\fR
+Create a special entry with the key
+\f2yp_master_name\fR.
+If no master host name is specified,
+.IR yp_master_name
+will be set to the local host name.
+.TP 
+\f4\-u \f2dbmfilename\fR
+Undo a
+\f4dbm\fR
+file.
+That is, print out a
+\f4dbm\fR
+file one entry per line,
+with a single space separating keys from values.
+.SH "SEE ALSO"
+\f4dbm\fR(3)

@@ -1,0 +1,188 @@
+'\"macro stdmacro
+.if n .pH g1.lpstat @(#)lpstat	40.15.1.1 of 1/3/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} lpstat 1 "Line Printer Spooling Utilities" "\&"
+.if \nX=1 .ds x} lpstat 1 "Line Printer Spooling Utilities"
+.if \nX=2 .ds x} lpstat 1 "" "\&"
+.if \nX=3 .ds x} lpstat "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4lpstat\f1 \- print information about the status of the \s-1LP\s+1 print service
+.SH SYNOPSIS
+\f4lpstat\f1 [\f2\|options\|\fP]
+.SH DESCRIPTION
+The \f4lpstat\fP command 
+prints information about the current status of 
+the \s-1LP\s+1 print service.
+.PP
+If no options are given,
+then \f4lpstat\f1
+prints the status of all the user's print
+requests made by \f4lp\f1
+[see \f4lp\f1(1)].
+Any arguments that are not \f2options\f1
+are assumed to be \f2request-IDs\f1
+as returned by \f4lp\f1.
+The \f4lpstat\f1 command 
+prints the status of such requests.
+The \f2options\f1 may appear in any order
+and may be repeated
+and intermixed with other arguments.
+Some of the keyletters below
+may be followed by an optional
+.I list
+that can be in one of two forms:
+a list of items separated from one another by a comma,
+or a list of items separated
+from one another by spaces
+enclosed in quotes.
+For example:
+.PP
+.RS
+\f4\-u "user1, user2, user3"\f1
+.RE
+.PP
+Specifying \f4all\f1 after any keyletter
+that takes \f2list\f1 as an argument causes
+all information relevant to the keyletter to be printed.
+For example, the command
+.PP
+.RS
+\f4lpstat \-o all\f1
+.RE
+.PP
+prints the status of all output requests.
+.PP
+The omission of a \f2list\f1
+following such key letters causes all information
+relevant to the key letter to be prined.
+For example, the command
+.PP
+.RS
+\f4lpstat \-o\f1
+.RE
+.PP
+prints the status of all output requests.
+.TP .5i
+\f4\-a\f1 [\f2list\f1]
+Reports whether print destinations are accepting requests.
+.I list
+is a list of intermixed printer names and class names.
+.TP .5i
+\f4\-c\f1 [\f2list\f1]
+Reports name of all classes and their members.
+.I list
+is a list of class names.
+.TP
+\f4\-d\f1
+Reports the system default destination for
+output requests.
+.TP .5i
+\f4\-f \f1[\f2list\f1] [\f4\-l\f1]
+Prints a verification that the
+forms in \f2list\f1 are recognized by the LP
+print service.
+\f2list\f1 is a list of forms; the default is \f4all\f1.
+The \f4\-l\f1 option will list the form descriptions.
+.TP
+\f4\-o\f1 [\f2list\f1]
+Reports the status of output requests:
+.I list
+is a list of intermixed
+printer names, class names, and
+\f2request-IDs\f1.
+The keyletter \f4\-o\fP may be omitted.
+.TP
+\f4\-p\f1 [\f2list\f1] [\f4\-D\f1] [\f4\-l\f1]
+Reports the status of printers.
+\f2list\f1 is a list of printer names.
+If the \f4\-D\f1 option is given, a brief description is
+printed for each printer in \f2list\f1.
+If the \f4\-l\f1 option is given,
+and the printer is
+on the local machine,
+a full description of each printer's configuration 
+is given, including the form mounted, the acceptable
+content and printer types, a printer description,
+the interface used, and so on.
+If the \f4\-l\f1 option is given
+and the printer is
+remote,
+the only information given is the remote
+machine and printer names, and the shell-commands
+used for file transfer and remote execution.
+.TP
+\f4\-r\f1
+Reports whether the LP request scheduler is on or off.
+.TP
+\f4\-R\f1
+Reports a number showing the position of the job in the print queue.
+.TP
+\f4\-s\f1
+Displays a status summary,
+including the status of the LP scheduler,
+the system default destination,
+a list of class names and their members,
+a list of printers and their associated devices,
+a list of the machines sharing print services,
+a list of all forms currently mounted, 
+and a list of all recognized character sets and print wheels.
+.TP
+\f4\-S [\f2list\f1] [\f4\-l\f1]
+Prints a verification that the character sets or the
+print wheels specified in \f2list\f1 are recognized by
+the LP print service.
+Items in \f2list\f1 can be character sets or print wheels;
+the default for the list is \f4all\f1.
+If the \f4\-l\f1 option is given, 
+each line is appended by a list of
+printers that can handle the print wheel or
+character set.
+The list also shows whether 
+the print wheel or character set 
+is mounted or specifies the built-in character set into which it maps.
+.TP
+\f4\-t\f1
+Displays all status information: all the information
+obtained with the \f4\-s\f1 option,
+plus the acceptance and idle/busy status of all printers.
+.TP
+\f4\-u\f1 [\f2login-ID-list\f1] 
+Displays the status of output requests for users.
+The \f2login-\s-1ID\s+1-list\f1 argument
+may include any or all of the following constructs: 
+.RS .5i
+.TP 1.5i
+\f2login-ID\f1
+a user on any system
+.TP
+\f2system_name\f4!\f2login-ID\f1
+a user on system \f2system_name\f1
+.TP
+\f2system_name\f4!all\f1
+all users on system \f2system_name\f1
+.TP
+\f4all!\f2login-ID\f1
+a user on all systems
+.TP
+\f4all\f1
+all users on all systems
+.RE
+.TP .5i
+\f4\-v\f1 [\f2list\f1]
+Reports the names of printers
+and the pathnames of the devices associated with them
+or remote system names for network printers:
+.I list
+is a list of printer names.
+.SH FILES
+\f4/var/spool/lp/\(**\f1
+.br
+\f4/etc/lp/\(**\f1
+.SH SEE ALSO
+\f4enable\f1(1),
+\f4lp\f1(1).
+.\"	@(#)lpstat.1	6.2 of 9/2/83
+.Ee

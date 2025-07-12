@@ -1,0 +1,46 @@
+'\"macro stdmacro
+.if n .pH gen.rmvq @(#)rmvq	40.2 of 1/7/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.nr X
+.if \nX=0 .ds x} rmvq D3DK "STREAMS" "DDI/DKI" "\&"
+.if \nX=1 .ds x} rmvq D3DK "STREAMS" "DDI/DKI"
+.if \nX=2 .ds x} rmvq D3DK "" "\&"
+.if \nX=3 .ds x} rmvq "" "" "\&"
+.TH \*(x}
+.IX "\f4rmvq\fP(D3DK)"
+.SH NAME
+\f4rmvq\f1 \- remove a message from a queue
+.SH SYNOPSIS
+.nf
+\f4#include <sys/stream.h>
+void rmvq(queue_t *\f2q, \f4mblk_t \f2*mp\f4);\f1
+.fi
+.SH ARGUMENTS
+.PD 0
+.RS 0n 10
+.IP "\f2q\f1" 10n
+Pointer to the queue containing the message to be removed.
+.IP "\f2mp\f1" 10n
+Pointer to the message to remove.
+.RE
+.PD
+.SH DESCRIPTION
+\f4rmvq\f1 removes a message from a queue.
+A message can be removed from anywhere in a queue.
+To prevent modules and drivers from having to deal with the
+internals of message linkage on a queue, either \f4rmvq\f1 or
+\f4getq\f1(D3DK) should be used to remove a message from a queue.
+.SH RETURN VALUE
+None.
+.SH LEVEL
+Base or Interrupt.
+.sp 0.5
+\f2mp\fP must point to an existing message in the queue pointed to by \f2q\fP, or a
+system panic will occur.
+.SH NOTES
+Does not sleep.
+.SH SEE ALSO
+\f4getq\fP(D3DK),
+\f4insq\fP(D3DK)
+.SH EXAMPLE
+See \f4insq\fP(D3DK) for an example of \f4rmvq\fP.

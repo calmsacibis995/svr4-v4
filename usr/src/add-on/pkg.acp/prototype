@@ -1,0 +1,278 @@
+#ident	"@(#)pkg.xx:prototype	1.2.2.32"
+
+!MASTDIR=/usr/src/uts/i386/master.d
+
+# packaging files
+i depend
+i pkginfo
+i preinstall
+i postinstall
+i preremove
+i postremove
+i copyright
+i request
+
+d none /dev	? ? ?
+d none /dev/dsk	? ? ?
+d none /dev/rdsk	? ? ?
+d none /etc	? ? ?
+d none /etc/default	? ? ?
+d none /etc/fs	? ? ?
+d none /sbin	? ? ?
+d none /shlib	? ? ?
+d none /tmp	? ? ?
+d none /usr	? ? ?
+d none /usr/bin	? ? ?
+d none /usr/include	? ? ?
+d none /usr/include/sys	? ? ?
+d none /usr/include/sys/fs	? ? ?
+d none /usr/lib	? ? ?
+d none /usr/lib/fs	? ? ?
+d none /usr/lib/libp	755 bin bin
+d none /usr/lib/mapchan	755 bin bin
+d none /usr/lib/custom	755 bin bin
+d none /usr/lib/lang	755 bin bin
+d none /usr/lib/lang/english	755 bin bin
+d none /usr/lib/lang/english/us	755 bin bin
+d none /usr/lib/lang/english/us/88591	755 bin bin
+
+d none /tmp/xx	755	bin	bin
+v none /tmp/xx/Driver.o=/usr/src/pkg/xx/Driver.o ? ? ?
+v none /tmp/xx/Mfsys=/usr/src/pkg/xx/Mfsys ? ? ?
+v none /tmp/xx/Sfsys=/usr/src/pkg/xx/Sfsys ? ? ?
+v none /tmp/xx/Space.c=/usr/src/pkg/xx/Space.c ? ? ?
+d none /tmp/xnamfs	755	bin	bin
+v none /tmp/xnamfs/Driver.o=/etc/conf/pack.d/xnamfs/Driver.o ? ? ?
+v none /tmp/xnamfs/Space.c=/etc/conf/pack.d/xnamfs/space.c ? ? ?
+# Enhanced Application Compatibility Support
+d none /tmp/osocket	755	bin	bin
+v none /tmp/osocket/Driver.o=/etc/conf/pack.d/osocket/Driver.o ? ? ?
+v none /tmp/osocket/Space.c=/etc/conf/pack.d/osocket/space.c ? ? ?
+v none /tmp/osocket/Master=$MASTDIR/osocket/mdev ? ? ?
+v none /tmp/osocket/System=$MASTDIR/osocket/sdev ? ? ?
+v none /tmp/osocket/Node=$MASTDIR/osocket/node ? ? ?
+
+d none /tmp/devadp	755	bin	bin
+v none /tmp/devadp/Driver.o=/etc/conf/pack.d/devadp/Driver.o ? ? ?
+v none /tmp/devadp/Master=$MASTDIR/devadp/mdev ? ? ?
+v none /tmp/devadp/System=$MASTDIR/devadp/sdev ? ? ?
+v none /tmp/devadp/Node=$MASTDIR/devadp/node ? ? ?
+
+d none /tmp/sp	755	bin	bin
+v none /tmp/sp/Driver.o=/usr/src/pkg/sp/Driver.o ? ? ?
+v none /tmp/sp/Master=/usr/src/pkg/sp/Master ? ? ?
+v none /tmp/sp/System=/usr/src/pkg/sp/System ? ? ?
+v none /tmp/sp/Node=/usr/src/pkg/sp/Node ? ? ?
+v none /tmp/sp/Space.c=/usr/src/pkg/sp/Space.c ? ? ?
+
+d none /tmp/spt	755	bin	bin
+v none /tmp/spt/Driver.o=/etc/conf/pack.d/spt/Driver.o ? ? ?
+v none /tmp/spt/Space.c=$MASTDIR/spt/space.c ? ? ?
+v none /tmp/spt/Master=$MASTDIR/spt/mdev ? ? ?
+v none /tmp/spt/System=$MASTDIR/spt/sdev ? ? ?
+
+d none /tmp/mpt	755	bin	bin
+v none /tmp/mpt/Driver.o=/etc/conf/pack.d/mpt/Driver.o ? ? ?
+v none /tmp/mpt/Master=$MASTDIR/mpt/mdev ? ? ?
+v none /tmp/mpt/System=$MASTDIR/mpt/sdev ? ? ?
+# End Enhanced Application Compatibility Support
+
+# directory references
+d none	/etc/perms	755	bin	bin
+# Enhanced Application Compatibility Support
+# End Enhanced Application Compatibility Support
+d none	/usr/lib/console	755	bin	bin
+d none	/usr/lib/keyboard	755	bin	bin
+d none	/usr/lib/vidi	755	bin	bin
+# Enhanced Application Compatibility Support
+d none	/usr/eac	755	bin	bin
+d none	/usr/eac/bin	755	bin	bin
+d none	/usr/eac/lib	755	bin	bin
+d none	/usr/lib/coff	755	bin	bin
+d none	/usr/lib/xout	755	bin	bin
+# End Enhanced Application Compatibility Support
+
+
+# package objects:
+!default 555 bin bin
+d none	/etc/fs/XENIX	755	root	sys
+d none	/usr/lib/fs/XENIX	755	root	sys
+f none	/etc/perms/inst	644	bin	bin
+f none	/usr/lib/custom/help	644	bin	bin
+
+d none	/usr/lib/event	755	root	sys
+f none	/usr/lib/event/ttys	644	bin	bin
+f none	/usr/lib/event/devices	644	bin	bin
+
+f none	/etc/fs/XENIX/fsck=/usr/src/pkg/xx/fsck	555	bin	bin
+f none	/etc/fs/XENIX/mount=/usr/src/pkg/xx/mount	555	bin	bin
+f none	/usr/include/xcurses.h	444	bin	bin
+f none	/usr/include/sys/fs/xxfblk.h=/usr/src/pkg/xx/xxfblk.h	444	bin	bin
+f none	/usr/include/sys/fs/xxfilsys.h=/usr/src/pkg/xx/xxfilsys.h	444	bin	bin
+f none	/sbin/xinstall
+f none	/sbin/custom
+f none	/sbin/fixperm
+# Enhanced Application Compatibility Support
+f none	/sbin/fdinit=usr/sadm/sysadm/bin/confck	555	bin	bin
+f none	/usr/include/sys/osocket.h	644	bin	bin
+f none	/usr/include/sys/spt.h		644	bin	bin
+f none	/sbin/fixshlib
+# End Enhanced Application Compatibility Support
+f none	/usr/lib/console/screens	644	bin	bin
+f none	/usr/lib/libxcurses.a	644	bin	bin
+f none	/usr/lib/libxtermlib.a	644	bin	bin
+f none	/usr/lib/keyboard/keys	644	bin	bin
+f none	/usr/lib/keyboard/scomap	644	bin	bin
+f none	/usr/lib/keyboard/scostrings	644	bin	bin
+f none	/usr/lib/keyboard/strings	644	bin	bin
+f none	/usr/lib/vidi/font8x8	644	bin	bin
+f none	/usr/lib/vidi/font8x14	644	bin	bin
+f none	/usr/lib/vidi/font8x16	644	bin	bin
+f none	/usr/bin/copy	555	bin	bin
+f none	/usr/bin/hd
+f none	/usr/bin/tset
+f none	/usr/bin/yes
+f none	/usr/bin/random
+f none	/usr/bin/xrestor
+f none	/usr/bin/x286emul	555	root	bin
+f none	/usr/bin/setcolor	511	bin	bin
+f none	/usr/bin/scompat	511	bin	bin
+f none	/usr/bin/vidi	511	bin	bin
+f none	/usr/bin/mapstr		511	bin	bin
+f none	/usr/bin/mapscrn	511	bin	bin
+f none	/usr/bin/mapkey		511	bin	bin
+f none	/usr/bin/mapchan		511	bin	bin
+f none	/usr/bin/trchan		511	bin	bin
+f none	/usr/bin/doscat	2511	bin	dos
+f none	/usr/bin/doscp	2511	bin	dos
+f none	/usr/bin/dosdir	2511	bin	dos
+f none	/usr/bin/dosformat	2511	bin	dos
+f none	/usr/bin/dosmkdir	2511	bin	dos
+f none	/usr/bin/dosrm	2511	bin	dos
+# Enhanced Application Compatibility Support
+f none	/bin/setkey		511	bin	bin
+f none	/usr/eac/rename		511	bin	bin
+f none	/usr/bin/maplocale	511	bin	bin
+f none	/usr/eac/lib/ar	511	bin	bin
+f none	/usr/bin/cvtomf	511	bin	bin
+f none	/usr/bin/cvtomflib	555	bin	bin
+f none	/usr/lib/coff/ar	511	bin	bin
+f none	/usr/lib/xout/ar	511	bin	bin
+f none	/usr/lib/fltused.o	644	bin	bin
+f none	/shlib/libNSL_s	555	bin	bin
+f none  /usr/bin/tape           555     bin     bin
+f none  /usr/eac/bin/cc		555     bin     bin
+f none  /usr/eac/bin/initsock	555     bin     bin
+# End Enhanced Application Compatibility Support
+f none	/usr/lib/libx.a	644	bin	bin
+f none	/usr/lib/libp/libx.a	644	bin	bin
+f none	/etc/default/mapchan	644	bin	bin
+f none	/etc/default/msdos	644	bin	bin
+f none	/etc/default/xrestor	644	bin	bin
+f none	/usr/lib/mapchan/ascii	644	bin	bin
+f none	/usr/lib/mapchan/deadcomp	644	bin	bin
+f none	/usr/lib/mapchan/dec	644	bin	bin
+f none	/usr/lib/mapchan/hp.roman8	644	bin	bin
+f none	/usr/lib/mapchan/iso	644	bin	bin
+f none	/usr/lib/mapchan/ibm	644	bin	bin
+f none	/usr/lib/mapchan/nrc.can	644	bin	bin
+f none	/usr/lib/mapchan/tvi.usa	644	bin	bin
+f none	/etc/default/lang	644	bin	bin
+f none /usr/lib/lang/english/us/88591/collate	644	bin	bin
+f none /usr/lib/lang/english/us/88591/ctype	644	bin	bin
+f none /usr/lib/lang/english/us/88591/currency	644	bin	bin
+f none /usr/lib/lang/english/us/88591/messages	644	bin	bin
+f none /usr/lib/lang/english/us/88591/numeric	644	bin	bin
+f none /usr/lib/lang/english/us/88591/time	644	bin	bin
+
+# linked files
+s none	/usr/lib/fs/XENIX/fsck=/etc/fs/XENIX/fsck
+s none	/usr/lib/fs/XENIX/mount=/etc/fs/XENIX/mount
+l none	/usr/bin/lc=/usr/bin/ls
+l none	/usr/bin/settime=/usr/bin/touch
+s none  /etc/xinstall=/sbin/xinstall
+s none  /etc/custom=/sbin/custom
+s none  /etc/fixperm=/sbin/fixperm
+# Enhanced Application Compatibility Support
+s none  /etc/rename=/usr/eac/rename
+s none  /usr/bin/dosls=/usr/bin/dosdir
+s none  /usr/bin/dosrmdir=/usr/bin/dosrm
+# End Enhanced Application Compatibility Support
+l none	/usr/bin/xrestore=/usr/bin/xrestor
+l none	/usr/bin/setcolour=/usr/bin/setcolor
+l none	/usr/lib/libxtermcap.a=/usr/lib/libxtermlib.a
+# Enhanced Application Compatibility Support
+s none  /usr/eac/bin/awk=/usr/bin/nawk
+s none  /bin/-sh=/sbin/sh
+s none  /bin/chroot=/usr/sbin/chroot
+s none  /bin/printenv=/usr/bin/env
+s none  /bin/rcc=/usr/bin/cc
+s none  /bin/rksh=/usr/bin/ksh
+s none  /bin/sulogin=/etc/sulogin
+s none  /bin/whodo=/usr/sbin/whodo
+s none  /etc/fscmd.d=/etc/fs
+s none  /etc/fscmd.d/AFS=/etc/fs/s5
+s none  /usr/bin/uptime=/usr/ucb/uptime
+s none  /usr/bin/lpr=/usr/bin/lp
+s none  /usr/bin/w=/usr/ucb/w
+s none  /usr/lib/uucp/uutry=/usr/lib/uucp/Uutry
+# End Enhanced Application Compatibility Support
+
+# linked nodes
+l none	/dev/hd00=/dev/dsk/0s0
+l none	/dev/hd01=/dev/dsk/0s3
+l none	/dev/hd02=/dev/dsk/0s4
+l none	/dev/hd03=/dev/dsk/0s5
+l none	/dev/hd04=/dev/dsk/0s6
+# Enhanced Application Compatibility Support
+l none	/dev/sctfdl128=/dev/dsk/f05d9
+l none	/dev/sctfdl0=/dev/fd048
+l none	/dev/sctfdm0=/dev/fd096
+l none	/dev/sctfdm128=/dev/dsk/f05h
+
+l none	/dev/hd0a=/dev/dsk/0s0
+l none	/dev/hd0d=/dev/dsk/0s5
+l none	/dev/hd1d=/dev/dsk/1s5
+l none	/dev/usr=/dev/dsk/0s4
+# End Enhanced Application Compatibility Support
+
+l none	/dev/rhd00=/dev/rdsk/0s0
+l none	/dev/rhd01=/dev/rdsk/0s3
+l none	/dev/rhd02=/dev/rdsk/0s4
+l none	/dev/rhd03=/dev/rdsk/0s5
+l none	/dev/rhd04=/dev/rdsk/0s6
+# Enhanced Application Compatibility Support
+l none	/dev/rhd0a=/dev/rdsk/0s0
+l none	/dev/rhd0d=/dev/rdsk/0s5
+l none	/dev/rhd1d=/dev/rdsk/1s5
+# End Enhanced Application Compatibility Support
+
+l none	/dev/install=/dev/dsk/f0t
+l none	/dev/fd048ds8=/dev/dsk/f0d8dt
+l none	/dev/fd048ds9=/dev/dsk/f0d9dt
+l none	/dev/fd048=/dev/dsk/f0d9dt
+l none	/dev/fd096ds15=/dev/dsk/f0q15dt
+l none	/dev/fd096=/dev/dsk/f0q15dt
+l none	/dev/fd0135ds18=/dev/dsk/f03ht
+l none	/dev/fd096ds18=/dev/dsk/f03ht
+l none	/dev/dsk/f0q18dt=/dev/dsk/f03ht
+l none	/dev/fd0135ds9=/dev/dsk/f03dt
+l none	/dev/fd096ds9=/dev/dsk/f03dt
+l none	/dev/dsk/f0q9dt=/dev/dsk/f03dt
+l none	/dev/dsk/f0d8t=/dev/dsk/f0d8dt
+l none	/dev/dsk/f0d9t=/dev/dsk/f0d9dt
+
+l none	/dev/rinstall=/dev/rdsk/f0t
+l none	/dev/rfd048ds8=/dev/rdsk/f0d8dt
+l none	/dev/rfd048ds9=/dev/rdsk/f0d9dt
+l none	/dev/rfd048=/dev/rdsk/f0d9dt
+l none	/dev/rfd096ds15=/dev/rdsk/f0q15dt
+l none	/dev/rfd096=/dev/rdsk/f0q15dt
+l none	/dev/rfd0135ds18=/dev/rdsk/f03ht
+l none	/dev/rfd096ds18=/dev/rdsk/f03ht
+l none	/dev/rdsk/f0q18dt=/dev/rdsk/f03ht
+l none	/dev/rfd0135ds9=/dev/rdsk/f03dt
+l none	/dev/rfd096ds9=/dev/rdsk/f03dt
+l none	/dev/rdsk/f0q9dt=/dev/rdsk/f03dt
+l none	/dev/rdsk/f0d8t=/dev/rdsk/f0d8dt
+l none	/dev/rdsk/f0d9t=/dev/rdsk/f0d9dt

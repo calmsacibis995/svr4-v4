@@ -1,0 +1,62 @@
+'\"macro stdmacro
+.if n .pH g1a.setmnt @(#)setmnt	40.7 of 4/16/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} setmnt 1M "Essential Utilities" "\&"
+.if \nX=1 .ds x} setmnt 1M "Essential Utilities"
+.if \nX=2 .ds x} setmnt 1M "" "\&"
+.if \nX=3 .ds x} setmnt "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4setmnt\f1 \- establish mount table
+.SH SYNOPSIS
+\f4/sbin/setmnt\f1
+.SH DESCRIPTION
+\f4setmnt\fP
+creates the
+\f4/etc/mnttab\f1
+table
+which is needed for 
+both the \f4mount\fP and \f4umount\fP commands.
+\f4setmnt\fP
+reads standard input
+and creates a \f4mnttab\fP entry for each line.
+Input lines have the format:
+.PP
+.RS
+\f2filesys node\f1
+.RE
+.PP
+where
+.I filesys\^
+is the name of the file system's
+``special file'' (such as \f4/dev/dsk/c?d?s?\f1)
+and
+.I node\^
+is the root name of that file system.
+Thus
+.I filesys\^
+and
+.I node\^
+become the first two strings
+in the
+mount table
+entry.
+.SH FILES
+\f4/etc/mnttab\f1
+.SH SEE ALSO
+\f4mount\fP(1M)
+.SH NOTES
+Problems may occur if
+.I filesys\^
+or
+.I node\^
+are longer than 32 characters.
+.br
+\f4setmnt\fP
+silently enforces an upper limit on the maximum number of
+\f4mnttab\fP
+entries.
+.\"	@(#)setmnt.1m	6.2 of 9/2/83
+.Ee

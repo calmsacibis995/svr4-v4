@@ -1,0 +1,64 @@
+'\"macro stdmacro
+.if n .pH g3s.ungetc @(#)ungetc	40.11 of 5/22/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} ungetc 3S "C Development Set" "\&"
+.if \nX=1 .ds x} ungetc 3S "C Development Set"
+.if \nX=2 .ds x} ungetc 3S "" "\&"
+.if \nX=3 .ds x} ungetc "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4ungetc\f1 \- push character back onto input stream
+.SH SYNOPSIS
+\f4#include <stdio.h>\f1
+.PP
+\f4int ungetc (int c, FILE \(**stream);\f1
+.SH DESCRIPTION
+\f4ungetc\fP
+inserts the character specified by
+.I c\^
+(converted to an \f4unsigned char\fP)
+into the buffer associated with an input
+.I stream
+[see \f4intro\fP(3)].
+That character,
+.IR c ,
+will be returned by the next
+\f4getc\fP(3S)\^
+call on that
+.IR stream .
+\f4ungetc\fP
+returns 
+.IR c ,
+and leaves the file corresponding to
+.I stream\^
+unchanged.
+A successful call to \f4ungetc\fP clears the \f4EOF\fP indicator for stream.
+.PP
+Four bytes of pushback are guaranteed.
+.PP
+The value of the file position indicator for \f2stream\fP after reading or
+discarding all pushed-back characters will be the same as it was before
+the characters were pushed back.
+.PP
+If
+.I c\^
+equals
+\f4EOF\f1,
+\f4ungetc\fP
+does nothing to the buffer and returns
+\f4EOF\f1.
+.PP
+\f4fseek\fP, \f4rewind\fP [both described on \f4fseek\fP(3S)], and \f4fsetpos\fP
+erase the memory of inserted characters for the stream on which they are
+applied.
+.SH "SEE ALSO"
+\f4fseek\fP(3S), \f4fsetpos\fP(3C), \f4getc\fP(3S), \f4setbuf\fP(3S), \f4stdio\fP(3S).
+.SH DIAGNOSTICS
+\f4ungetc\fP
+returns
+\f4EOF\f1
+if it cannot insert the character.
+.\"	@(#)ungetc.3s	6.2 of 10/20/83
+.Ee

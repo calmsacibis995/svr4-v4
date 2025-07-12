@@ -1,0 +1,54 @@
+'\"macro stdmacro
+.if n .pH g1a.rfudaemon @(#)rfudaemon	40.8 of 4/15/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} rfudaemon 1M "RFS" "\&"
+.if \nX=1 .ds x} rfudaemon 1M "RFS"
+.if \nX=2 .ds x} rfudaemon 1M "" "\&"
+.if \nX=3 .ds x} rfudaemon "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4rfudaemon\f1 \- Remote File Sharing daemon process
+.SH SYNOPSIS
+\f4/etc/rfs/rfudaemon\f1
+.SH DESCRIPTION
+The \f4rfudaemon\f1 command is started automatically by \f4rfstart\f1(1M)
+and runs as a daemon process as long as Remote File Sharing is active.
+Its function is to listen for unexpected events, such as broken
+network connections and forced unmounts, and execute appropriate administrative
+procedures.
+.P
+When such an event occurs, \f4rfudaemon\f1 executes the administrative
+shell script \f4rfuadmin\f1, with arguments that identify the event.
+This command is not intended to be run from the shell.
+Here are the events:
+.TP 0.8i
+\f4DISCONNECT\f1
+A link to a remote resource has been cut.  \f4rfudaemon\f1
+executes\p
+\%\f4rfuadmin\f1, with two arguments:  \f4disconnect\f1
+and the name of the disconnected resource.
+.TP 0.8i
+\f4FUMOUNT\f1
+A remote server machine has forced an unmount of a resource
+a local machine has mounted.  \f4rfudaemon\f1
+executes \f4rfuadmin\f1, with two arguments:  \f4fumount\f1
+and the name of the disconnected resource.
+.TP 0.8i
+\f4GETUMSG\f1
+A remote user-level program has sent a message
+to the local \f4rfudaemon\f1.  Currently the only message sent
+is \f2fuwarn\f1, which notifies \f4rfuadmin\f1 that a
+resource is about to be unmounted.  It sends \f4rfuadmin\f1 the
+\f2fuwarn\f1, the resource name, and the number of seconds in which
+the forced unmount will occur.
+.TP 0.8i
+\f4LASTUMSG\f1
+The local machine wants to stop the \f4rfudaemon\f1 [\f4rfstop\f1(1M)].
+This causes \f4rfudaemon\f1 to exit.
+.SH "SEE ALSO"
+\f4rfstart\fP(1M),
+\f4rfuadmin\fP(1M)
+.\"	@(#)rfuadmin.1m	6.3 of 9/2/83
+.Ee

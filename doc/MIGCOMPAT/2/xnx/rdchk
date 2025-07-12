@@ -1,0 +1,54 @@
+'\"macro stdmacro
+.if n .pH g2.rdchk @(#)rdchk	40.10 of 6/18/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} rdchk 2 "Application Compatibility Package" "\&"
+.if \nX=1 .ds x} rdchk 2 "Application Compatibility Package"
+.if \nX=2 .ds x} rdchk 2 "" "\&"
+.if \nX=3 .ds x} rdchk "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4rdchk\f1 \- check to see if there is data to be read
+.SH SYNOPSIS
+\f4cc \f1[\f2flag \f1. . .] \f2file\f1 . . . \f4-lx\f1
+.br
+\f4rdchk(int fdes)\fP;
+.SH DESCRIPTION
+\f4rdchk\f1
+checks to see if a process will block if it attempts to
+read the file designated by \f2fdes\f1.
+\f4rdchk\f1
+returns 
+\f41\f1
+if there is data
+to be read or if it is the end of the file (\s-1EOF\s0).
+In this context, the proper sequence of calls using
+\f4rdchk\f1
+is:
+.P
+.RS
+.ft 4
+.nf
+if(rdchk(fildes) > 0)
+    read(fildes, buffer, nbytes);
+.fi
+.RE
+.SH DIAGNOSTICS
+\f4rdchk\f1
+returns
+\f4-1\f1
+if an error occurs
+(for example, \f4EBADF\f1),
+\f40\f1
+if the process will block if it issues a
+\f4read\f1
+and
+\f41\f1
+if it is okay to read.
+\f4EBADF\f1 is returned if a
+\f4rdchk\f1
+is done on a semaphore file or if the file specified
+doesn't exist.
+.SH SEE ALSO
+\f4read\f1(2)

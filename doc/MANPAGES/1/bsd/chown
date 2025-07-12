@@ -1,0 +1,70 @@
+'\"macro stdmacro
+.if n .pH g1.chown @(#)chown	40.15 of 4/18/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.\" Copyright (c) 1988 Sun Microsystems, Inc. - All Rights Reserved.
+.\"
+.nr X
+.if \nX=0 .ds x} chown 1 "BSD Compatibility Package" "\&"
+.if \nX=1 .ds x} chown 1 "BSD Compatibility Package"
+.if \nX=2 .ds x} chown 1 "" "\&"
+.if \nX=3 .ds x} chown "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4chown\fP \- change file owner
+.SH SYNOPSIS
+\f4/usr/ucb/chown\fP [\f4\-fhR\fP] \f2owner\f1[\f4.\f2group\f1] \f2file \f1.\ .\ .
+.SH DESCRIPTION
+\f4chown\fP
+changes the owner of the
+\f2file\f1s to \f2owner\f1.
+The \f2owner\f1 may be either a decimal user
+.SM ID
+or a login name found in \f4/etc/passwd\fP file.
+The optional \f4.\f2group\f1 suffix may be used to change the
+group at the same time.
+.PP
+If \f4chown\fP
+is invoked by other than the super-user, the set-user-ID
+bit of the file mode, 04000, is cleared.
+.PP
+Only the super-user may change the owner of a file.
+.P
+Valid options to \f4chown\fP are:
+.TP
+\f4\-f\fP
+Suppress error reporting
+.TP
+\f4\-h\fP
+If the file is a symbolic link, change the owner
+of the symbolic link.
+Without this option, the owner of the file referenced
+by the symbolic link is changed.
+.TP
+\f4\-R\fP
+Descend recursively through directories
+setting the ownership
+.SM ID
+of all files in each directory entered.
+.SH FILES
+\f4/etc/group\fP
+.br
+\f4/etc/passwd\fP
+.SH NOTES
+In a Remote File Sharing environment,
+you may not have the permissions that the
+output of the \f4ls \-l\f1 command leads
+you to believe.
+For more information see the ``Mapping
+Remote Users'' section of the Remote File Sharing chapter of the
+\f2System Administrator's Guide\f1.
+.SH "SEE ALSO"
+\f4chgrp\fP(1),
+\f4chmod\fP(1)
+in the \f2User's Reference Manual\f1
+.br
+\f4chown\fP(2)
+in the \f2Programmer's Reference Manual\f1
+.br
+\f4passwd\fP(4)
+in the \f2System Administrator's Reference Manual\f1

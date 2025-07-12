@@ -1,0 +1,85 @@
+'\"macro stdmacro
+.if n .pH g1f.set @(#)set	40.13 of 5/29/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} set 1F "Form and Menu Language Interpreter Utilities" "\&"
+.if \nX=1 .ds x} set 1F "Form and Menu Language Interpreter Utilities"
+.if \nX=2 .ds x} set 1F "" "\&"
+.if \nX=3 .ds x} set "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4set\f1, \f4unset\f1 \- set and unset local or global environment variables
+.SH SYNOPSIS
+\f4set\f1 [ \f4-l\f1 \f2variable\f1[\f4=\f2value\f1 ] ] . . .
+.br
+\f4set\f1 [ \f4-e\f1 \f2variable\f1[\f4=\f2value\f1 ] ] . . .
+.br
+\f4set\f1 [ \f4-f\f2file\f1 \f2variable\f1[\f4=\f2value\f1 ] ] . . .
+.P
+\f4unset \f4-l\f1 \f2variable\f1 . . .
+.br
+\f4unset \-f\f2file variable\f1 . . .
+.SH DESCRIPTION
+The \f4set\f1 command sets \f2variable\f1
+in the environment, or adds \f2variable\f4=\f2value\f1 to \f2file\f1.
+If \f2variable\f1 is not equated it to a value,
+\f4set\f1 expects the value to be on standard input.
+The \f4unset\f1 command removes \f2variable\f1.
+Note that the FMLI predefined, read-only variables (such as \f4ARG1\f1),
+may not be set or unset.
+.PP
+FMLI inherits the UNIX environment when invoked:
+.TP "\w'\-ffile\ \ 'u"
+\f4\-l\f1
+sets or unsets the specified variable in the local environment.
+Variables set with \f4-l\f1 will not be inherited by processes invoked
+from FMLI.
+.TP
+\f4\-e\f1
+sets the specified variable in the UNIX environment.
+Variables set with \f4-e\f1 will be inherited by any processes started
+from FMLI.
+Note that these variables cannot be \f4unset\f1.
+.TP
+\f4-f\f2file\f1
+sets or unsets the specified variable in the global environment.
+The argument \f2file\f1 is the name, or pathname, of a file
+containing lines of the form \f2variable\f4=\f2value\f1.
+\f2file\f1 will be created if it does not already exist.
+Note that no space intervenes between \f4\-f\f1 and \f2file\f1.
+.PP
+Note that at least one of the above options must be used for each
+variable being set or unset.
+If you set a variable with the \f4\-f\f2filename\f1 option,
+you must thereafter include \f2filename\f1 in references to that variable.
+For example, \f4${(\f2file\f4)\f2VARIABLE\f4}\f1.
+.SH EXAMPLE
+Storing a selection made in a menu:
+.PP
+.RS
+.nf
+\f4name=Selection 2
+action=\(gaset \-l SELECTION=2\(gaclose\f1
+.fi
+.RE
+.SH NOTES
+Variables set to be available to the UNIX environment
+(those set using the \f4\-e\f1 option)
+can only be set for the current \f4fmli\fP process
+and the processes it calls.
+.PP
+When using the \f4\-f\f1 option,
+unless \f2file\f1 is unique to the process,
+other users of FMLI on the same machine
+will be able to expand these variables,
+depending on the read/write permissions on \f2file\f1.
+.PP
+A variable set in one frame may be referenced or unset in any other frame.
+This includes local variables.
+.SH "SEE ALSO"
+\f4env\f1(1), \f4sh\f1(1) in the \f2UNIX System V User's Reference Manual\f1
+.ig
+BUILT-IN FMLI
+..
+.Ee

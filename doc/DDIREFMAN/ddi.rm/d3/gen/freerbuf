@@ -1,0 +1,46 @@
+'\"macro stdmacro
+.if n .pH gen.freerbuf @(#)freerbuf	40.2 of 1/7/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.nr X
+.if \nX=0 .ds x} freerbuf D3DK "" "DDI/DKI" "\&"
+.if \nX=1 .ds x} freerbuf D3DK "" "DDI/DKI"
+.if \nX=2 .ds x} freerbuf D3DK "" "\&"
+.if \nX=3 .ds x} freerbuf "" "" "\&"
+.TH \*(x}
+.IX "\f4freerbuf\fP(D3DK)"
+.SH NAME
+freerbuf \- free a raw buffer header
+.IX "buffer header"
+.SH SYNOPSIS
+.nf
+.na
+\f4#include <sys/buf.h>
+#include <sys/ddi.h>
+.sp 0.5
+void freerbuf(buf_t *\f2bp\f4);\f1
+.ad
+.fi
+.SH ARGUMENTS
+.RS 0n 10
+.IP "\f2bp\f1" 10n
+Pointer to a previously allocated buffer header structure.
+.RE
+.SH DESCRIPTION
+\f4freerbuf\f1 frees a raw buffer header previously allocated by
+\f4getrbuf\f1(D3DK).  It may not be used on a buffer header obtained
+through any other interface.  It is typically called from a driver's
+\f2iodone handler\fP, specified in the \f4b_iodone\fP field of the \f4buf\fP(D4DK)
+structure.
+.SH RETURN VALUE
+None.
+.SH LEVEL
+Base or Interrupt.
+.SH NOTES
+Does not sleep.
+.SH SEE ALSO
+.na
+\f4biodone\fP(D3DK),
+\f4biowait\fP(D3DK),
+\f4getrbuf\f1(D3DK),
+\f4buf\fP(D4DK)
+.ad

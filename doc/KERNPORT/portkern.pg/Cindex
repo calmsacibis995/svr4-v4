@@ -1,0 +1,7 @@
+.if n .pH portguide.Cindex @(#)Cindex	40.2
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.BK "Programmer's Guide: Porting the Kernel" "" "" ""   
+.\ACRONYM	                  
+.CH "Index" "" "Table of Contents" "I"
+.\CHAPTER	I
+.tC 1 "Index" I-1  

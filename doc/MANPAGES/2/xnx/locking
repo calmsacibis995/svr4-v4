@@ -1,0 +1,229 @@
+'\"macro stdmacro
+.if n .pH g2.locking @(#)locking	40.9 of 6/18/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} locking 2 "Application Compatibility Package" "\&"
+.if \nX=1 .ds x} locking 2 "Application Compatibility Package"
+.if \nX=2 .ds x} locking 2 "" "\&"
+.if \nX=3 .ds x} locking "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4locking\f1 \- lock or unlock a file region for reading or writing
+.SH SYNOPSIS
+\f4cc \f1[\f2flag \f1. . .] \f2file\f1 . . . \f4-lx 
+.br
+\f4locking (int fildes, int mode, long size);\f1
+.SH DESCRIPTION
+\f4locking\f1
+allows a specified number of bytes in a file to be
+controlled by the locking process.
+Other processes which attempt to read
+or write a portion of the file containing the locked
+region may sleep until the area become unlocked
+depending upon the mode in which the file region
+was locked.
+.P
+A process that attempts to write to or read a file
+region that has been locked against reading and writing
+by another process (using the
+\f4LK_LOCK\f1
+or
+\f4LK_NBLCK\f1
+mode) with sleep until the region of the file
+has been released by the locking process.
+.P
+A process that attempts to write to a file region that has
+been locked against writing by another process
+(using the 
+\f4LK_RLCK\f1
+or 
+\f4LK_NBRLCK\f1
+mode) will sleep until the region of the file has been
+released by the locking process,
+but a read request for that file region
+will proceed normally.
+.P
+A process that attempts to lock a region of a file that contains
+areas that have been locked by other processes will sleep
+if it has specified the
+\f4LK_LOCK\f1
+or 
+\f4LK_RLCK\f1
+mode in its lock request,
+but will return with the error 
+\f4EACCES\f1
+if it specified
+\f4LK_NBLCK\f1
+or 
+\f4LK_NBRLCK\f1.
+.P
+\f2fildes\f1
+is the value returned from a successful
+\f4create\f1,
+\f4open\f1,
+\f4dup\f1,
+or
+\f4pipe\f1
+system call.
+.P
+\f2mode\f1
+specifies the type of lock operation to be performed on
+the file region.
+The available values for mode are:
+.TP 1i
+\f4LK_UNLCK 0\f1
+Unlocks the specified region.
+The calling process releases a region of the file it has
+previously locked.
+.TP
+\f4LK_LOCK 1\f1
+Locks the specified region.
+The calling process will sleep until the entire
+region is available if any part of it has been
+locked by a different process.
+The region is then locked for the calling
+process and no other process may read or write in any part of
+the locked region (lock against read and write).
+.TP
+\f4LK_NBLCK 2\f1
+Locks the specified region.
+If any part of the region is already locked by a different process,
+return the error
+\f4EACCES
+instead of waiting for the region to become available for
+locking (nonblocking lockrequest).
+.TP
+\f4LK_RLCK 3\f1
+Same as \f4LK_LOCK\f1 except that the locked region may be
+read by other processes (read permitted lock).
+.TP
+\f4LK_NBRLCK 4\f1
+Same as \f4LK_NBLCK\f1 except that the locked region may be read
+by other processes (nonblocking, read permitted lock).
+.P
+The
+\f4locking\f1
+utility uses the current file pointer position as the
+starting point for the
+\f4locking\f1
+of the file segment.
+So a typical sequence of commands to
+\f4lock\f1
+a specific range within a file might be as follows:
+.P
+.RS
+.ft 4
+.nf
+fd=open("datafile",O_RDWR);
+lseek(fd, 200L, 0);
+locking(fd, LK_LOCK, 200L);
+.fi
+.RE
+.P
+Accordingly, to
+lock
+or
+unlock
+an entire file a
+\f4seek\f1
+to the beginning of the file (position 0)
+must be done and then a
+\f4locking\f1
+call must be
+executed with a size of 0.
+.P
+\f2size\f1
+is the number of contiguous bytes to be locked for unlocked.
+The region to be locked starts at the current offset in the file.
+If 
+\f2size\f1
+is \f40\f1, the entire file is locked or unlocked.
+\f2size\f1
+may extend beyond the end of the file,
+in which case only the process issuing the lock call may access
+or add information to the file within the boundary defined by
+\f2size\f1.
+.P
+The potential for a deadlock occurs when a process controlling
+a locked area is put to sleep by accessing another
+process's locked area.
+Thus calls to
+\f4locking\f1,
+\f4read\f1,
+or 
+\f4write\f1
+scan for a deadlock prior to sleeping on a locked region.
+An
+\f4EDEADLK\f1
+error return is made if sleeping on the locked
+region would cause a deadlock.
+.P
+Lock requests may, in whole or part,
+contain or be contained by a previously locked region
+for the same process.
+When this occurs, or when adjacent regions are
+locked, the regions are combined into
+a single area if the mode of the lock is the same
+(that is, either read permitted or regular lock).
+If the mode of the overlapping locks differ,
+the locked areas will be assigned assuming that the most
+recent request must be satisfied.
+Thus if a read only lock is applied to a region,
+or part of a region,
+that had been previously locked by the same process
+against both reading and writing, the area of the
+file specified by the new lock will be locked for read only,
+while the remaining region, if any, will remain locked against
+reading and writing.
+There is no arbitrary limit to the number of regions which may be
+locked in a file.
+.P
+Unlock
+requests may, in whole or part, release one or more locked
+regions controlled by the process.
+When regions are not fully released,
+the remaining areas are still locked by the process.
+Release of the center section of a locked area requires
+an additional locked element to hold the separated section.
+If the lock table is full, an error is returned, and the requested
+region is not released.
+Only the process which locked the file region may unlock
+it.
+An
+\f4unlock\f1
+request for a region that the process does not have locked,
+or that is already unlocked, has no effect.
+When a process terminates, all locked regions controlled by
+that process are unlocked.
+.P
+If a process has done more than one open on a file,
+all locks put on the file by that process will be released on the
+first close of the file.
+.P
+Although no error is returned if locks are applied to special
+files or pipes,
+read/write operations on these types of files will ignore
+the locks.
+Locks may not be applied to a directory.
+.SH SEE ALSO
+\f4close\f1(2)
+\f4creat\f1(2),
+\f4dup\f1(2),
+\f4lseek\f1(2),
+\f4open\f1(2),
+\f4read\f1(2),
+\f4write\f1(2)
+.SH DIAGNOSTICS
+\f4locking\f1
+returns the value
+\f4(int)-1\f1
+if an error occurs.
+If any portion of the region has been locked by another process for the
+\f4LK_LOCK\f1
+and \f4LK_RLCK\f1 actions and the lock request is to test only,
+\f4errno\f1 is set to \f4EAGAIN\f1.
+If locking the region would cause a deadlock,
+\f4errno\f1 is set to \f4EDEADLK\f1
+If an internal lock cannot be allocated, \f4errno\f1
+is set to \f4ENOLCK\f1.

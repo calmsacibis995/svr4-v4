@@ -1,0 +1,86 @@
+'\"macro stdmacro
+.if n .pH g1a.strerr @(#)strerr	40.7 of 1/3/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} strerr 1M "Networking Support Utilities" "\&"
+.if \nX=1 .ds x} strerr 1M "Networking Support Utilities"
+.if \nX=2 .ds x} strerr 1M "" "\&"
+.if \nX=3 .ds x} strerr "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4strerr\f1 \- \s-1STREAMS\s0 error logger daemon
+.SH SYNOPSIS
+\f4strerr\f1
+.SH DESCRIPTION
+\f4strerr\fP receives error log messages from the \s-1STREAMS\s0 log driver
+[\f4log\fP(7)] and appends them to a log file.
+The error log files produced
+reside in the directory \f4/var/adm/streams\f1, and are named
+\f4error.\f2mm\f4-\f2dd\f1, where \f2mm\f1 is the month
+and \f2dd\fP is the day of the messages contained in each log file.
+.P
+The format of an error log message is:
+.P
+<\f2seq\fP> <\f2time\fP> <\f2ticks\fP> <\f2flags\fP> <\f2mid\fP> <\f2sid\fP> <\f2text\fP>
+.RS 5
+.TP 10
+<\f2seq\fP>
+error sequence number
+.TP
+<\f2time\fP>
+time of message in hh:mm:ss
+.TP
+<\f2ticks\fP>
+time of message in machine ticks since boot
+priority level
+.TP
+<\f2flags\fP>
+\f4\&T\f1 : the message was also sent to a tracing process
+.br
+\f4\&F\f1 : indicates a fatal error
+.br
+\f4\&N\f1 : send mail to the system administrator
+.TP
+<\f2mid\fP>
+module 
+.SM ID
+number of source
+.TP
+<\f2sid\fP>
+sub-\s-1ID\s+1 number of source
+.TP
+<\f2text\f1>
+formatted text of the error message
+.RE
+.P
+Messages that appear in the error log are intended to report exceptional
+conditions that require the attention of the system administrator.  
+Those messages which indicate the total failure of a \s-1STREAMS\s0 driver
+or module should have the \f4F\f1 flag set.
+Those messages requiring the immediate attention of the administrator will have the \f4N\f1 flag set,
+which causes the error logger to send the message to the system administrator
+via \f4mail\fP.
+The priority level usually has no meaning in the error
+log but will have meaning if the message is also sent to a tracer process.
+.PP
+Once initiated, \f4strerr\fP continues to execute until
+terminated by the user.
+It is commonly executed asynchronously.
+.SH FILES
+\f4/var/adm/streams/error.\f2mm\f4-\f2dd\f1
+.SH SEE ALSO
+\f4log\fP(7)
+.br
+\f2Programmer's Guide: \s-1STREAMS\s0\f1
+.SH NOTES
+Only one \f4strerr\fP process at a time is permitted to open the
+\s-1STREAMS\s0 log driver.
+.PP
+If a module or driver is generating a large number of error messages,
+running the error logger will cause a degradation in \s-1STREAMS\s0 performance.
+If a large burst of messages are generated in a short time, the log driver
+may not be able to deliver some of the messages.
+This situation is indicated
+by gaps in the sequence numbering of the messages in the log files.  
+.Ee

@@ -1,0 +1,143 @@
+#	Copyright (c) 1990  Intel Corporation
+#	All Rights Rreserved
+#
+#	INTEL CORPORATION PROPRIETARY INFORMATION
+#
+#	This software is supplied to AT & T under the terms of a license 
+#	agreement with Intel Corporation and may not be copied nor 
+#	disclosed except in accordance with the terms of that agreement.
+#
+
+#ident	"@(#)pkg.wd:postinstall	1.1.1.2"
+
+FAILURE=1	# fatal error
+
+CONFDIR=/etc/conf
+CONFBIN=${CONFDIR}/bin
+BINDIR=/usr/bin
+TMP=/tmp/wd.err
+ERROR1=" Errors have been written to the file $TMP."
+
+BASE1="ERROR: The ${NAME} is not compatible with this release \
+of the AT&T UNIX System V operating system \
+and can not be used with this system."
+
+NOTOOLS="ERROR: The Installable Driver feature has been removed.\
+The ${NAME} cannot be installed."
+
+#this function edits the /etc/strcf to configure the network device
+#for this driver
+
+do_strcf() {
+if [ -f /etc/inet/strcf ]
+then 
+	cp /etc/inet/strcf /etc/inet/.strcf.old
+	ENTRY=`grep "# i386/$1" /etc/inet/.strcf.old`
+
+	if [ "$ENTRY" = "" ]
+	then
+		ed -s /etc/inet/.strcf.old << EOF > /dev/null
+/# i386\//
+a
+#	cenet ip /dev/wd emd 0			# i386/wd8003
+.
+w
+q
+EOF
+	fi
+
+	sed "/\# i386\/$1/s/^#//" < /etc/inet/.strcf.old > /etc/inet/strcf
+fi
+}
+
+# determine that ID/TP tools are available
+
+if
+	[ -x ${CONFBIN}/idcheck -a -x ${CONFBIN}/idbuild -a -x ${CONFBIN}/idinstall ]
+then
+	:
+else
+	message ${NOTOOLS}
+	exit $FAILURE
+fi
+
+cd /tmp/wd
+
+OSVER=`uname -a | cut -d " " -f3`
+
+case ${OSVER} in
+
+	4.0*) ;;
+	4.1*) ;;
+	*) message ${BASE1};
+	   exit $FAILURE;;
+esac
+
+if [ "${REQINTV}" = 2 ]
+then
+	IRQ=9
+else
+	IRQ=${REQINTV}
+fi
+
+	# Create System file
+	#
+sed -e "s/IRQ/${IRQ}/" \
+    -e "s/PADD1/${REQLADD}/" \
+    -e "s/PADD2/${REQHADD}/" \
+    -e "s/RADD1/${REQRLADD}/" \
+    -e "s/RADD2/${REQRHADD}/" \
+    -e "s/[ 	]N[ 	]/	Y	/" < System >System.new
+mv System.new System
+
+#
+# Now install if that is to be done
+#
+
+${CONFBIN}/idinstall -a wd 2> ${TMP}
+if [ "$?" != "0" ]
+then
+	${CONFBIN}/idinstall -u wd 2> ${TMP}
+	if [ "$?" != "0" ]
+	then
+		message "The installation cannot be completed due to an error \
+in the driver installation.  $ERROR1"
+		exit ${FAILURE}
+	fi
+fi
+
+do_strcf  wd8003
+
+#
+# now build
+#
+${CONFBIN}/idbuild 2>> $TMP
+if [ $? != 0 ]
+then
+        message "The installation cannot be completed due to an error in the \
+kernel reconfiguration. $ERROR1  Please try the installation again.  If the \
+error occurs again, contact your Service Representative." 
+	exit $FAILURE
+fi
+
+errflag=`expr ${errflag:=0} + 10`
+#installf $PKGINST /usr/options/$PKG.name
+
+#this is no longer needed - now being done in pkginfo 
+#echo $NAME > /usr/options/$PKG.name
+
+installf -f $PKGINST
+
+#
+# Now clean up
+#
+removef $PKGINST /tmp/wd/* >/dev/null 2>&1
+for i in Driver.o Master Space.c System Node
+do
+	removef $PKGINST /tmp/wd/$i >/dev/null 2>&1
+done
+removef $PKGINST /tmp/wd >/dev/null 2>&1
+removef -f $PKGINST >/dev/null 2>&1
+rm -f $TMP 1>/dev/null 2>&1
+exit ${errflag} 
+

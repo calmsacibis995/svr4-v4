@@ -1,0 +1,63 @@
+'\"macro stdmacro
+.if n .pH gen.scm @(#)scm	40.2 of 3/12/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.nr X
+.if \nX=0 .ds x} scm D4I SDI "\&"
+.if \nX=1 .ds x} scm D4I SDI
+.if \nX=2 .ds x} scm D4I "" "\&"
+.if \nX=3 .ds x} scm "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4scm\fP, \f4scs\fP \- SCSI command structures
+.SH SYNOPSIS
+\f4#include <sys/scsi.h>\f1
+.SH DESCRIPTION
+Both the \f4scm\f1 and \f4scs\f1 structures are used by target drivers and 
+with the pass-through
+interface to send a SCSI command to a SCSI device.  The \f4scs\f1 structure
+defines the layout for a group 6 (six-byte command length) command descriptor
+block (CDB); \f4scm\f1 is a group 10 (ten-byte command length) CDB.  Both
+types of CDBs are described 
+in the 
+\f2ANSI Small Computer System Interface (SCSI), X3T9.2/82-2,
+Revision 17B\f1, December 16, 1985.
+Refer to the ANSI manual for more information on
+individual structure members.  The \f4sm_pad0\f1 member ensures that the
+\f4sm_addr\f1 member does not cross a 32-bit word boundary.
+.SH STRUCTURE MEMBERS
+The members of the \f4scm\f1 structure are:
+.P
+.RS 3n
+.ft 4
+.nf
+int       sm_pad0 : 16;   /* 16-bit pad */
+int       sm_op   : 8;    /* Opcode */
+int       sm_lun  : 3;    /* Logical unit number */
+int       sm_res1 : 5;    /* reserved field */
+unsigned  sm_addr;        /* Block address */
+int       sm_res2 : 8;    /* reserved field */
+int       sm_len  : 16;   /* Transfer length */
+int       sm_cont : 8;    /* Control byte */
+.ft 1
+.fi
+.RE
+.P
+Because of the \f4sm_pad0\f1 member, you must add 2 to the address of
+the \f4scm\f1 structure when specifying it in the \f4scb\f1 structure.
+.P
+The members of the \f4scs\f1 structure are:
+.P
+.RS 3n
+.ft 4
+.nf
+int       ss_op   : 8;    /* Opcode */
+int       ss_lun  : 3;    /* Logical unit number */
+int       ss_addr : 21;   /* Block address */
+int       ss_len  : 8;    /* Transfer length */
+int       ss_cont : 8;    /* Control byte */
+.fi
+.ft 1
+.RE
+.SH SEE ALSO
+``Send a SCSI Command (Pass-Through Interface)''
+in Chapter 2

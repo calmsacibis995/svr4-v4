@@ -1,0 +1,339 @@
+'\"macro stdmacro
+.if n .pH g1.awk @(#)awk	30.3 of 3/4/86
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} awk 1 "Directory and File Management Utilities" "\&"
+.if \nX=1 .ds x} awk 1 "Directory and File Management Utilities"
+.if \nX=2 .ds x} awk 1 "" "\&"
+.if \nX=3 .ds x} awk "" "" "\&"
+.TH \*(x}
+.tr `
+.SH NAME
+\f4awk\f1 \- pattern scanning and processing language
+.SH SYNOPSIS
+\f4awk\f1
+[
+\f4\-F\f1c
+] [ prog ] [ parameters ] [ files ]
+.SH DESCRIPTION
+\f4awk\fP
+scans each input
+.I file\^
+for lines that match any of a set of patterns specified in
+.IR prog .
+With each pattern in
+.I prog\^
+there can be an associated action that will be performed
+when a line of a
+.I file\^
+matches the pattern.
+The set of patterns may appear literally as
+.IR prog ,
+or in a file
+specified as
+\f4\-f\f1
+.IR file .
+The
+.I prog\^
+string should be enclosed in single quotes
+\f1(\f4\(fm\f1)
+to protect it from the shell.
+.PP
+.I Parameters,\^
+in the form x=... y=... etc., may be passed to
+.I awk.\^
+.PP
+Files are read in order;
+if there are no files, the standard input is read.
+The file name
+\f4\-\f1
+means the standard input.
+Each line is matched against the
+pattern portion of every pattern-action statement;
+the associated action is performed for each matched pattern.
+.PP
+An input line is made up of fields separated by white space.
+(This default can be changed by using
+.SM FS\*S;
+see below).
+The fields are denoted
+\f4$1\f1,
+\f4$2\f1,
+\&.\|.\|.\|;
+\f4$0\f1
+refers to the entire line.
+.PP
+.PP
+A pattern-action statement has the form:
+.PP
+.ss 18
+.RS
+pattern { action }
+.RE
+.ss 12
+.PP
+A missing action means print the line;
+a missing pattern always matches.
+An action is a sequence of statements.
+A statement can be one of the following:
+.PP
+.ss 18
+.RS
+.nf
+if ( conditional ) statement [ else statement ]
+while ( conditional ) statement
+for ( expression ; conditional ; expression ) statement
+break
+continue
+{ [ statement ] .\|.\|. }
+variable = expression
+print [ expression-list ] [ >expression ]
+printf format [ , expression-list ] [ >expression ]
+next	# skip remaining patterns on this input line
+exit	# skip the rest of the input
+.fi
+.RE
+.ss 12
+.PP
+Statements are terminated by
+semicolons, new-lines, or right braces.
+An empty expression-list stands for the whole line.
+Expressions take on string or numeric values as appropriate,
+and are built using the operators
+\f4+\f1,
+\f4\-\f1,
+\f4\(**\f1,
+\f4/\f1,
+\f4%\f1,
+and concatenation (indicated by a blank).
+The
+.B
+C
+operators
+\f4++\f1,
+\f4\-\-\f1,
+\f4+=\f1,
+\f4\-=\f1,
+\f4\(**=\f1,
+\f4/=\f1,
+and
+\f4%=\f1
+are also available in expressions.
+Variables may be scalars, array elements
+(denoted
+x[i])
+or fields.
+Variables are initialized to the null string.
+Array subscripts may be any string,
+not necessarily numeric;
+this allows for a form of associative memory.
+String constants are quoted (\f4"\fP).
+.bp
+.PP
+The
+.I print\^
+statement prints its arguments on the standard output
+(or on a file if
+\f4>\f2expr\^\f1
+is present), separated by the current output field separator,
+and terminated by the output record separator.
+The
+\f4printf\fP
+statement formats its expression list according to the format
+[see \f2printf\^\f1(3S) in the \f2Programmer's Reference Manual\f1].
+.PP
+The built-in function
+.I length\^
+returns the length of its argument
+taken as a string,
+or of the whole line if no argument.
+There are also built-in functions
+\f4exp\fP,
+\f4log\fP,
+\f4sqrt\fP,
+and
+.IR int .
+The last truncates its argument to an integer;
+.IR substr ( s , `m ,\c
+.IR `n )
+returns the
+.IR n -character
+substring of
+.I s\^
+that begins at position
+.IR m .
+The function
+\f4sprintf\fP( fmt , `expr ,\c
+.IR `expr , `.\|.\|. )
+formats the expressions
+according to the
+\f4printf\fP(3S)
+format given by
+.I fmt\^
+and returns the resulting string.
+.PP
+Patterns are arbitrary Boolean combinations
+(
+\f4!\f1,
+\(bv\^\(bv,
+\f4&&\f1,
+and parentheses) of
+regular expressions and
+relational expressions.
+Regular expressions must be surrounded
+by slashes and are as in
+\f4egrep\fP(1).
+Isolated regular expressions
+in a pattern apply to the entire line.
+Regular expressions may also occur in
+relational expressions.
+A pattern may consist of two patterns separated by a comma;
+in this case, the action is performed for all lines
+between an occurrence of the first pattern
+and the next occurrence of the second.
+.PP
+A relational expression is one of the following:
+.PP
+.ss 18
+.RS
+expression matchop regular-expression
+.br
+expression relop expression
+.RE
+.ss 12
+.PP
+where a relop is any of the six relational operators in C,
+and a matchop is either
+\f4~\f1
+(for
+.IR contains )
+or
+\f4!~\f1
+(for
+.IR "does not contain" ).
+A conditional is an arithmetic expression,
+a relational expression,
+or a Boolean combination
+of these.
+.PP
+The special patterns
+.SM BEGIN
+and
+.SM END
+may be used to capture control before the first input line is read
+and after the last.
+.SM BEGIN
+must be the first pattern,
+.SM END
+the last.
+.PP
+A single character
+.I c\^
+may be used to separate the fields by starting
+the program with:
+.PP
+.RS
+\s-1BEGIN\s+1 { \s-1FS\s+1 = \f2c\^\fP }
+.RE
+.PP
+or by using the
+\f4\-F\f2c\^\f1
+option.
+.PP
+Other variable names with special meanings
+include
+.SM NF\*S,
+the number of fields in the current record;
+.SM NR\*S,
+the ordinal number of the current record;
+.SM FILENAME\*S,
+the name of the current input file;
+.SM OFS\*S,
+the output field separator (default blank);
+.SM ORS\*S,
+the output record separator (default new-line);
+and
+.SM OFMT\*S,
+the output format for numbers (default
+\f4%.6g\f1).
+.PP
+.SH EXAMPLES
+Print lines longer than 72 characters:
+.PP
+.ss 18
+.RS
+length > 72
+.RE
+.ss 12
+.PP
+Print first two fields in opposite order:
+.PP
+.ss 18
+.RS
+{ print $2, $1 }
+.RE
+.ss 12
+.PP
+Add up first column, print sum and average:
+.PP
+.ss 18
+.RS
+	{ s += $1 }
+.br
+\s-1END\s+1	{ print "sum is", s, " average is", s/\s-1NR\s+1 }
+.RE
+.ss 12
+.PP
+Print fields in reverse order:
+.PP
+.ss 18
+.RS
+{ for (i = \s-1NF\s+1; i > 0; \-\-i) print $i }
+.RE
+.ss 12
+.PP
+Print all lines between start/stop pairs:
+.PP
+.ss 18
+.RS
+/start/, /stop/
+.RE
+.ss 12
+.PP
+Print all lines whose first field is different from previous one:
+.PP
+.ss 18
+.RS
+$1 != prev { print; prev = $1 }
+.RE
+.ss 12
+.PP
+Print file, filling in page numbers starting at 5:
+.PP
+.ss 18
+.RS
+/Page/ { $2 = n++; }
+       { print }
+.RE
+.ss 12
+.PP
+     command line:  awk \-f program n=5 input
+.SH SEE ALSO
+\f4grep\fP(1),
+\f4nawk\fP(1),
+\f4sed\fP(1).
+.br
+\f4lex\fP(1),
+\f4printf\fP(3S) in the \f2Programmer's Reference Manual\f1.
+.SH NOTES
+Input white space is not preserved on output if fields are involved.
+.br
+There are no explicit conversions between numbers and strings.
+To force an expression to be treated as a number add 0 to it;
+to force it to be treated as a string concatenate the
+null string
+(\f4"\^"\fP) to it.
+.tr ``
+.\"	@(#)awk.1	6.2 of 9/2/83
+.Ee

@@ -1,0 +1,44 @@
+'\"macro stdmacro
+.if n .pH g1a.repquota @(#)repquota	40.8 of 4/16/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} repquota 1M "UFS" "\&"
+.if \nX=1 .ds x} repquota 1M "UFS"
+.if \nX=2 .ds x} repquota 1M "" "\&"
+.if \nX=3 .ds x} repquota "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4repquota\f1 \- summarize quotas for a file system
+.SH SYNOPSIS
+\f4repquota\f1
+[\f4\-v\f1]
+\f2filesystem\f1 .\ .\ .
+.br
+\f4repquota\f1
+[\f4\-av\f1]
+.SH DESCRIPTION
+.LP
+\f4repquota\f1
+prints a summary of the disk usage and quotas for
+the specified file systems.
+For each user the current number of files and amount
+of space (in kilobytes) is printed, along with any
+quotas created with
+\f4edquota\f1.
+.P
+The options are:
+.TP
+\f4\-a\f1
+Report on all file systems that have "rq"
+in the \f4mntopts\fP field of the \f4/etc/vfstab\fP file.
+.TP
+\f4\-v\f1
+Report all quotas, even if there is no usage.
+.LP
+Only privileged users may view quotas which are not their own.
+.SH SEE ALSO
+\f4edquota\fP(1M),
+\f4quota\fP(1M),
+\f4quotacheck\fP(1M),
+\f4quotaon\fP(1M)

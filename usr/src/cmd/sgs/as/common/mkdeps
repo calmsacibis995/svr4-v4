@@ -1,0 +1,94 @@
+#ident	"@(#)nas:common/mkdeps	1.7"
+#
+# common assembler rules and dependencies
+#
+# included by all assembler Makefiles
+#
+
+o=o
+C	= ../common
+INCLIST	= -I. -I.. -I../../inc/common
+YFLAGS	= -lt
+LINT	= lint
+STRIP	= strip
+INS	= ../../sgs.install
+OWN	= bin
+GRP	= bin
+
+PRODUCTS= $(SGS)as
+MACHINC	= ../../inc/$(MACH)
+
+COMOBJS	= dirs.$o expr.$o gram.$o main.$o nums.$o objf.$o sect.$o syms.$o
+
+.SUFFIXES: .ln
+
+.c.o:
+	$(CC) $(INCLIST) $(CFLAGS) -c $(DEFLIST) $<
+
+.c.ln:
+	$(LINT) $(INCLIST) $(CFLAGS) -c $(DEFLIST) $<
+
+all:	$(PRODUCTS)
+
+include ../../fpemu/common/fp.mkdeps
+FPEFATAL= fatal
+
+$(SGS)as: $(COMOBJS) $(MACHOBJS) $(FP_OBJS)
+	$(CC) -o $@ $(CFLAGS) $(LDFLAGS) $(COMOBJS) $(MACHOBJS) $(FP_OBJS) \
+		$(OBJFLIB)
+
+lintit:
+	$(MAKE) o=ln CFLAGS="$(CFLAGS) $(LINTFLAGS)" \
+		CC="$(LINT)" LINT="$(LINT)" llib-las.ln
+
+llib-las.ln: $(COMOBJS) $(MACHOBJS) $(FP_OBJS)
+	$(LINT) -o as $(CFLAGS) $(COMOBJS) $(MACHOBJS) $(FP_OBJS)
+
+install: all
+	cp $(SGS)as as.bak
+	$(STRIP) $(SGS)as
+	/bin/sh $(INS) 755 $(OWN) $(GRP) $(CCSBIN)/$(SGS)as $(SGS)as
+	mv as.bak $(SGS)as
+	/bin/sh $(INS) 755 $(OWN) $(GRP) $(CCSLIB)/cm4defs cm4defs
+
+clean::
+	rm -f $(COMOBJS) $(COMOBJS:.$o=.ln) $(FPEOBJS) $(FPEOBJS:.$o=.ln)
+	rm -f $(MACHOBJS) $(MACHOBJS:.$o=.ln)
+
+clobber:: clean
+	rm -f $(SGS)as llib-las.ln as.bak
+
+$(COMOBJS): $C/as.h
+
+# explicit rules are necessary for make to handle sources
+# not in the current directory!
+
+dirs.$o: $C/dirs.c align.h amode.h $C/dirs.h $C/expr.h $C/nums.h \
+		$C/objf.h $C/sect.h $C/syms.h
+	$(CC) $(INCLIST) $(CFLAGS) -c $(DEFLIST) $C/dirs.c
+
+expr.$o: $C/expr.c amode.h $C/expr.h $C/nums.h $C/sect.h $C/stmt.h $C/syms.h
+	$(CC) $(INCLIST) $(CFLAGS) -c $(DEFLIST) $C/expr.c
+
+gram.$o: $C/gram.c parse.c amode.h $C/dirs.h $C/expr.h $C/gram.h $C/syms.h
+	$(CC) $(INCLIST) $(CFLAGS) -c $(DEFLIST) $C/gram.c
+
+main.$o: $C/main.c amode.h $C/dirs.h $C/expr.h $C/gram.h $C/main.h \
+		$C/nums.h $C/objf.h $C/sect.h $C/syms.h \
+		$(MACHINC)/sgs.h $(MACHINC)/paths.h
+	$(CC) $(INCLIST) -I$(MACHINC) $(CFLAGS) -c $(DEFLIST) $C/main.c
+
+nums.$o: $C/nums.c amode.h packet.h $C/expr.h $C/nums.h $C/sect.h $C/syms.h
+	$(CC) $(INCLIST) $(FP_INC) $(CFLAGS) -c $(DEFLIST) $C/nums.c
+
+objf.$o: $C/objf.c amode.h target.h $C/expr.h $C/nums.h $C/objf.h \
+		$C/sect.h $C/syms.h
+	$(CC) $(INCLIST) $(CFLAGS) -c $(DEFLIST) $C/objf.c
+
+sect.$o: $C/sect.c align.h amode.h $C/expr.h $C/objf.h $C/nums.h \
+		$C/relo.h $C/sect.h $C/stmt.h $C/syms.h
+	$(CC) $(INCLIST) $(CFLAGS) -c $(DEFLIST) $C/sect.c
+
+syms.$o: $C/syms.c align.h amode.h $C/expr.h $C/nums.h $C/objf.h \
+		$C/sect.h $C/syms.h
+	$(CC) $(INCLIST) $(CFLAGS) -c $(DEFLIST) $C/syms.c

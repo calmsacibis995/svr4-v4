@@ -1,0 +1,178 @@
+'\"macro stdmacro
+.if n .pH g1.addbib @(#)addbib	40.8 of 4/18/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.\" @(#)addbib.1 1.2 89/01/25 SMI; 
+.nr X
+.if \nX=0 .ds x} addbib 1 "BSD Compatibility Package" "\&"
+.if \nX=1 .ds x} addbib 1 "BSD Compatibility Package"
+.if \nX=2 .ds x} addbib 1 "" "\&"
+.if \nX=3 .ds x} addbib "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4addbib\f1 \- create or extend a bibliographic database
+.SH SYNOPSIS
+\f4/usr/ucb/addbib\f1
+[
+\f4\-a\f1
+]
+[
+\f4\-p\f1
+.I promptfile
+]
+.I database
+.SH DESCRIPTION
+When
+\f4addbib\f1
+starts up, answering
+\f4y\f1
+to the initial
+\f4Instructions?\f1
+prompt yields directions; typing
+\f4n\f1
+or
+.SM RETURN
+skips them.
+\f4addbib\f1
+then prompts for various bibliographic fields, reads responses
+from the terminal, and sends output records to
+.I database.
+A null response (\s-1RETURN\s0)
+means to leave out that field.
+A
+\f1`\f4\-\f1'
+(minus sign)
+means to go back to the previous field.
+A trailing backslash allows a field to
+be continued on the next line. 
+The repeating
+\f4Continue?\f1
+prompt allows the user either to resume by typing
+\f4y\f1
+or 
+.SM RETURN\s0, 
+to quit the current session by typing
+\f4n\f1
+or
+\f4q\f1,
+or to edit 
+.I database
+with any system editor 
+\f1(\f4vi\f1,
+\f4ex\f1,
+\f4ed\f1).
+.P
+The following options are available:
+.TP 
+\f4\-a\f1
+Suppress prompting for an abstract;
+asking for an abstract is the default.
+Abstracts are ended with a 
+.SM CTRL\s0\-D.
+.TP
+\f4\-p\f2 promptfile\f1
+Use a new prompting skeleton, defined in
+.IR promptfile .
+This file should contain prompt strings, a 
+.SM TAB\s0,
+and the key-letters to be written to the
+.IR database .
+.SH USAGE
+.SS Bibliography Key Letters
+.P
+The most common key-letters and their meanings are given below.
+\f4addbib\f1
+insulates you from these key-letters,
+since it gives you prompts in English,
+but if you edit the bibliography file later on,
+you will need to know this information.
+.RS
+.TP 
+\f4%A\f1
+Author's name
+.TP
+\f4%B\f1
+Book containing article referenced
+.TP
+\f4%C\f1
+City (place of publication)
+.TP
+\f4%D\f1
+Date of publication
+.TP
+\f4%E\f1
+Editor of book containing article referenced
+.TP
+\f4%F\f1
+Footnote number or label (supplied by  
+\f4refer\f1(1))
+.TP
+\f4%G\f1
+Government order number
+.TP
+\f4%H\f1
+Header commentary, printed before reference
+.TP
+\f4%I\f1
+Issuer (publisher)
+.TP
+\f4%J\f1
+Journal containing article
+.TP
+\f4%K\f1
+Keywords to use in locating reference
+.TP
+\f4%L\f1
+Label field used by
+\f4\-k\f1
+option of 
+\f4refer\f1(1)
+.TP
+\f4%M\f1
+Bell Labs Memorandum (undefined)
+.TP
+\f4%N\f1
+Number within volume
+.TP
+\f4%O\f1
+Other commentary, printed at end of reference
+.TP
+\f4%P\f1
+Page number(s)
+.TP
+\f4%Q\f1
+Corporate or Foreign Author (unreversed)
+.TP
+\f4%R\f1
+Report, paper, or thesis (unpublished)
+.TP
+\f4%S\f1
+Series title
+.TP
+\f4%T\f1
+Title of article or book
+.TP
+\f4%V\f1
+Volume number
+.TP
+\f4%X\f1
+Abstract \(em used by
+\f4roffbib\f1,
+not by
+\f4refer\f1
+.TP
+\f4%Y,Z\f1
+Ignored by
+\f4refer\f1
+.RE
+.SH SEE ALSO
+\f4indxbib\fP(1),
+\f4lookbib\fP(1),
+\f4refer\fP(1),
+\f4roffbib\fP(1),
+\f4sortbib\fP(1)
+.P
+\f4ed\fP(1),
+\f4ex\fP(1),
+\f4vi\fP(1)
+in the \f2User's Reference Manual\f1

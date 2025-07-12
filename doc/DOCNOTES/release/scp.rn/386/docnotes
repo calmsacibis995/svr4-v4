@@ -1,0 +1,2044 @@
+.if n .pH 386.docnotes @(#)docnotes	40.21.1.1
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1990 AT&T
+.BK "Source Code Product Machine Readable Documentation Release Notes" "" "SCP MRD Release Notes"
+.CH "SCP MRD Release Notes"
+.H 1 Introduction
+This document provides information about changes to the
+documents provide on the Source Code Product Machine
+Readable Documentation tape (SCP MRD)
+since UNIX\(rg System V/386 Release 4 Version 3
+(see the \f2Read Me First\fP
+for a listing of the documents that have changed for Version 4).
+This document also gives special printing instructions
+for specific documents.
+.H 2 "Release History"
+The following table summarizes the various releases of
+UNIX\(rg System V/386 Release 4:
+.TS
+center;
+c c c
+c c c
+l l l.
+Version	Release Date	Full Release
+\^	\^	or Upgrade
+_
+Version 1	May 1990	Full Release
+Version 2	August 1990	Upgrade
+Version 3	April 1991	Full Release
+Version 4	July 1991	Full Release
+.TE
+.H 2 "Highlights of Version 4 Changes"
+.BL
+.LI
+UNIX System V/386 Release 4 Version 4 contains many software enhancements
+for application compatibility.
+These changes are reflected in the new Application Compatibility Package.
+The documentation changes associated with the new package are
+indicated in this document as changes for Application Compatibility.
+.LI
+Version 4 introduces new installation procedures, which are documented
+in a rewritten, reorganized \f2Installation Guide\fP.
+.LI
+For Version 4, two documents have been significantly restructured.
+.DL
+.LI
+First, the
+.BT "Integrated Software Development Guide"
+has been combined with the
+.BT "Programmer's Guide:  System Services and Application Packaging Tools"
+to form a new
+.BT "Integrated Software Development Guide" .
+.LI
+Second, the
+.BT "Migration Guide"
+and the
+.BT "BSD/XENIX\(rg Compatibility Guide"
+have been combined, along with compatibility information from the
+.BT "Integrated Software Development Guide" ,
+into the
+.BT "Migration and Compatibility Guide" .
+.LE
+.LE
+.SK
+.H 2 "Summary of Changes for the Version 4 Documentation Set"
+The following list summarizes the changes to the Version 4 Documentation Set.
+Though certain documents are not included with the SCP tape,
+they are included both in this summary and in the detailed
+descriptions of the changes for completeness.
+.PD .25
+.BL
+.LI
+The \f2Installation Guide\fP has been rewritten and
+contains new installation procedures.
+.LI
+The \f2Programmer's Guide:  System Services and Application Packaging
+Tools\fP has been merged with the \f2Integrated Software Development
+Guide\fP and disappears as a distinct title.
+.LI
+The Version 4 \f2Integrated Software Development Guide\fP now
+incorporates the Version 3 \f2Programmer's Guide:  System Services and
+Application Packaging Tools\fP.
+This expanded document is organized into a volume containing two
+programmer's guides and a reference manual.
+A new chapter has been added entitled ``File and Device I/O,''
+the document has been updated for Application Compatibility
+and it has been reorganized to serve better as a textbook on UNIX
+System application programming and packaging.
+.LI
+The \f2Migration Guide\fP and \f2BSD/XENIX Compatibility Guide\fP
+have been combined into a new Version 4 document entitled \f2Migration and
+Compatibility Guide\fP.
+This document has been organized into a volume containing three guides
+and two reference manuals and
+has been updated for Application Compatibility.
+.LI
+The \f2Mouse Driver Administrator's Guide\fP has been merged into the
+\f2System Administrator's Guide\fP.
+.LI
+The \f2Multibus Installation and Configuration Guide\fP has been
+updated for Multibus II changes,
+and Multibus I support has been removed.
+.LI
+The \f2Multibus Reference Manual\fP has been updated for Multibus II
+changes,
+and Multibus I support has been removed.
+.LI
+The \f2Transport Application Interface Guide\fP has been
+updated for Multibus II changes,
+and Multibus I support has been removed.
+Furthermore, it has been renamed
+the \f2Multibus Transport Application Interface Guide\fP to indicate
+more clearly that it is specific to the Multibus architecture,
+.LI
+The \f2PC-Interface Administrator's Guide\fP has been updated
+to match Version 3.1 of the PC-Interface software.
+.LI
+The \f2Product Overview and Master Index\fP has been updated with new
+subject and permuted master indexes.
+.LI
+The \f2Programmer's Guide:  SCSI Driver Interface
+(SDI)\fP has had chapters 3 and 4 turned into actual
+manual pages.
+.LI
+The \f2System Administrator's Guide\fP has been updated with
+information on remote printing facilities.
+.LI
+The \f2System Administrator's Reference Manual\fP has had
+new manual pages added for SCSI,
+PostScript\(rg language,
+and
+kernel debugger support.
+It has also been updated for Application Compatibility.
+.LI
+The \f2User's Reference Manual\fP has had new
+manual pages added for PostScript language support.
+It has also been updated for Application Compatibility.
+.LI
+Graphics documents, shipped with Version 3, have been removed
+from the Version 4 product.
+.LI
+All release specific documentation has been updated for Version 4.
+.LI
+Many documents have had minor alterations made to resolve assorted MRs.
+.LE
+.PD
+.H 1 "Detailed Description of Documentation Changes"
+This section details the changes made to each
+document in the Version 4 documentation set.
+Where appropriate, it is indicated when a document
+is not included on the SCP tape and when only manual pages are provided.
+.H 2 "Installation Guide"
+.H 3 "Document Description"
+This document explains how to install the
+UNIX System binary software and provides some guidance on
+installing the associated add-ons.
+It contains procedures for installing new systems
+as well as upgrading from earlier Versions of System V/386 Releases 4.
+.H 3 "Document Outline"
+.TS
+center, tab(	);
+c1p10w(1m) c1p10w(1m) lb1p10.
+\|	\|	Title
+=
+.SP
+.T&
+c1p11f3w(1m) l0p12f2	  s
+c1p11f3w(1m) c1p11f3w(1m) l1p11f1w(3.5i).
+\(sq	Installation Guide
+	\(em	Before You Begin
+	\(em	New Installation
+	\(em	Overlay Installation
+	\(em	Basic System Setup
+	\(em	UNIX System Package Description
+	\(em	Selecting Optional Slices
+	\(em	Package Installation Question Summary
+	\(em	Installing Packages
+	\(em	Copying Diskettes
+	\(em	Index
+.SP
+_
+.TE
+.H 3 "Document Changes"
+The following changes have been made to this document.
+.H 4 "Organizational Changes"
+.BL
+.LI
+This document has been totally reorganized and rewritten.
+.LE
+.H 4 "Technical Changes"
+.BL
+.LI
+New installation procedures have replaced the Version 3 installation
+procedures, and
+procedures for installing from floppy diskette have been included.
+.LI
+Sections entitled
+``Basic System Setup,''
+``Selecting Optional Slices,''
+``Installing Packages,''
+and ``Copying Diskettes'' have been added.
+.LE
+.SK
+.H 2 "Programmer's Guide:  System Services and Application Packaging Tools (SSAPT)"
+.H 3 "Document Description"
+This document describes, from an application programmer's view,
+how to develop and package application software under UNIX System V.
+First it describes how to use UNIX system services
+provided by the kernel,
+such as file and record locking, interprocess communication,
+the process scheduler, and symbolic links.
+Then it describes how use standard tools to package your application
+software for easy installation on a running system.
+This document includes manual pages for all application packaging tools
+and facilities described.
+.H 3 "Document Changes"
+The following changes have been made to this document.
+.H 4 "Organizational Changes"
+.BL
+.LI
+This document has been eliminated in Version 4 because all the
+material from the Version 3 SSAPT has been incorporated
+into the Version 4
+.BT "Integrated Software Development Guide"
+(ISDG).
+.LE
+.P
+See the section on the
+.BT "Integrated Software Development Guide"
+for a discussion on why the SSAPT was merged with the ISDG.
+.SK
+.H 2 "Integrated Software Development Guide (ISDG)"
+.H 3 "Document Description"
+This document describes, from an application programmer's view,
+how to develop and package application software under UNIX System V.
+It addresses the needs of the Independent Software Vendor (ISV),
+the Value-Added Reseller (VAR), and system developers.
+First it describes how to use UNIX system services
+provided by the kernel,
+such as file and record locking, interprocess communication,
+the process scheduler, and symbolic links.
+Then it describes how use standard tools to package your application
+software for easy installation on a running system.
+This document includes manual pages for all application packaging tools
+and facilities described.
+This document can serve as a textbook for a course on
+UNIX System V application programming for people knowledgeable
+in C language programming.
+.P
+Only manual pages from this document are included on the SCP MRD tape.
+.sp -.75
+.H 3 "Document Outline"
+.TS
+center, tab(	);
+c1p10w(1m) c1p10w(1m) lb1p10.
+\| 	 \| 	 Title
+=
+.SP .5
+.T&
+c1p11f3w(1m) l0p12f2      s
+c1p11f3w(1m) c1p11f3w(1m) l1p11f1w(3.5i).
+\(sq 	 Preface to this Volume
+ 	 \(em 	 Introduction
+ 	 \(em 	 Intro. to Application Programming
+ 	 \(em 	 Appl. Prog. in the UNIX Sys. Env.
+.SP .5
+.T&
+c1p11f3w(1m) l0p12f2      s
+c1p11f3w(1m) c1p11f3w(1m) l1p11f1w(3.5i).
+\(sq 	 Programmer's Guide:  Application Software Development
+ 	 \(em 	 UNIX System Services
+ 	 \(em 	 Process Creation and Program Execution
+ 	 \(em 	 Process Scheduler
+ 	 \(em 	 Memory Management
+ 	 \(em 	 Signals
+ 	 \(em 	 Interprocess Communication
+ 	 \(em 	 File and Device I/O
+ 	 \(em 	 File and Record Locking
+ 	 \(em 	 Keyboard and Display I/O
+ 	 \(em 	 Symbolic Links
+ 	 \(em 	 \f4liber\fP, A Library System
+.SP .5
+.T&
+c1p11f3w(1m) l0p12f2      s
+c1p11f3w(1m) c1p11f3w(1m) l1p11f1w(3.5i).
+\(sq 	 Programmer's Guide:  Application and Driver Software Packaging
+ 	 \(em 	 Packaging Application Software
+ 	 \(em 	 Package Installation Case Studies
+ 	 \(em 	 Modifying the \f4sysadm\fP Interface
+ 	 \(em 	 Data Validation Tools
+ 	 \(em 	 Driver Software Packaging
+ 	 \(em 	 Manual Pages
+ 	 \(em 	 Index
+.SP .5
+_
+.TE
+.H 3 "Document Changes"
+The following changes have been made to this document.
+.H 4 "Organizational Changes"
+This document has been reorganized to include all
+SSAPT material not already covered in the Version 3 ISDG, as described
+below.
+.BL
+.LI
+Introductory information has been organized under a section
+entitled ``Preface to this Volume.''
+.P
+The following material from the Version 3 ISDG has been used:
+.DL
+.LI
+Introduction
+.LE
+.S
+.P
+The following material from the Version 3 SSAPT has been adopted:
+.DL
+.LI
+Introduction to Application Programming
+.LI
+Application Programming in the UNIX System Environment
+.LE
+.S
+.LI
+All SSAPT sections pertaining to system services have been
+organized under the sub-title
+\f2Programmer's Guide:  Application Software Development\fP.
+.P
+The following chapters have been moved over or
+adopted from the Version 3 SSAPT:
+.DL
+.LI
+UNIX System Services
+.LI
+Process Creation and Program Execution
+.LI
+Process Scheduler
+.LI
+Signals
+.LI
+Interprocess Communication
+.LI
+Memory Management
+.LI
+Symbolic Links
+.LI
+File and Record Locking
+.LE
+.S
+.P
+A new chapter entitled ``File and Device I/O'' has been
+added to the Version 4 ISDG to align with the training
+course on the same subject and improve the usefulness of
+the ISDG as a textbook.
+.P
+A new chapter on ``Keyboard and Display I/O'' has been created by
+combining the ISDG chapter and appendixes on Video Display Programming.
+.P
+The following has been used from the Version 3 ISDG:
+.DL
+.LI
+\f4liber\fP, A Library System
+.LE
+.S
+.LI
+All SSAPT and ISDG sections pertaining to
+software packaging have been organized under the
+sub-title \f2Programmer's Guide:  Application and Driver Software Packaging\fP.
+.P
+The following chapters have been moved from the Version 3 SSAPT:
+.DL
+.LI
+Modifying the \f4sysadm\fP Interface
+.LI
+Data Validation Tools
+.LE
+.S
+.P
+The following has been used from the Version 3 ISDG:
+.DL
+.LI
+Packaging Application Software
+.LI
+Package Installation Case Studies
+.LI
+Driver Software Packaging
+.LE
+.LI
+Manual pages relevant to the material covered in this volume have been
+organized under the sub-title
+\f2Reference Manual:  Application and Driver Software Packaging\fP.
+.LI
+ISDG Chapter 2 ``Packaging Application Software,''
+Appendix A ``liber, A Library System''
+and Appendix B
+``Package Installation Case Studies'' completely overlap
+SSAPT Chapter 8 and Appendix C of the same names, and hence were
+not brought over from the SSAPT.
+.LI
+ISDG Chapter 3 ``Device Drivers,'' Appendix C ``Trace Driver,''
+Appendix D ``A Prototype Floppy Disk Driver'' and Appendix E
+``A Sample Driver Software Package'' have been combined into a single chapter
+entitled ``Driver Software Packaging'' which follows the chapters
+on Application Packaging Tools.
+.LI
+ISDG Chapter 4 ``Compatibility Considerations''
+has been moved to the \f2Migration Guide\fP
+section of the \f2Migration and Compatibility Guide\fP (MCG).
+.LI
+ISDG Chapter 5 ``Video Interface,'' 
+Appendix F ``Comprehensive Video Programming Example,''
+Appendix G ``Graphics Mode Summary Descriptions''
+and Appendix H ``Text Graphics Mode \f4ioctl\fPs''
+have been combined into a single chapter entitled
+``Keyboard and Display I/O.''
+.LI
+ISDG Appendix I ``UNIX System Compatibility Tables''
+have been moved to the \f2Migration Guide\fP section of the
+\f2Migration and Compatibility Guide\fP.
+.LI
+ISDG Appendix J ``Localization and Time Zone Environment
+Variables'' have been moved to the \f2Migration Guide\fP section of
+the \f2Migration and Compatibility Guide\fP.
+.LE
+.H 4 "Miscellaneous Fixes"
+.H 5 "Section 1 Manual Pages Changed"
+.BL
+.LI
+\f4pkgmk\fP(1): Under \f4-d\fP option, change "directory pathname"
+to "full path name to a directory";
+under \f4pkginst\fP, changed \f4inst.1\fP to \f4inst.2\fP.
+.LE
+.H 5 "Section 1M Manual Pages Changed"
+.BL
+.LI
+\f4installf\fP(1M):  Under NOTES, added text about symbolically linked files.
+.LE
+.H 5 "Section 4 Manual Pages Changed"
+.BL
+.LI
+\f4prototype\fP(4):  Under pathname, added text about symbolically linked
+files.
+.LI
+\f4pkgmap\fP(4):  Under pathname, added text about symbolically linked files.
+.LE
+.H 3 "Reasons for Document Revision"
+.H 4 "Presentation of Information"
+The organizational changes discussed above present information for the same
+functional area together to highlight the subject matter
+and make the ISDG work better as a textbook on UNIX software development.
+.H 4 "SSAPT and ISDG Conflicts"
+Both the Version 3 SSAPT and the Version 3 ISDG
+address application programmers and Independent Software Vendors (ISVs).
+The SSAPT is aimed primarily at first time UNIX
+software developers while the ISDG is intended for more
+sophisticated programmers developing
+device-drivers and low-level graphics applications in particular.
+Unfortunately, both books contain a discussion of SVR4 application
+packaging which varies just enough to confuse a reader who sees them both.
+In addition, they present the same application programming example,
+\f4liber\fP, a library system.
+.H 3 "Document Mapping"
+The following diagram shows how files from the Version 3 SSAPT
+and Version 3 ISDG map into the Version 4 ISDG and Version 4
+.BT "Migration and Compatibility Guide" .
+.VL 1.20i .25i
+.LI "Solid Lines \(em"
+mean either a single chapter from the Version 3 document has been broken
+up into several chapters for the Version 4 document,
+or that a several chapters from the Version 3 document have been
+combined into a single chapter in the Version 4 document.
+.LI "Dotted Lines \(em"
+mean that the chapter has been moved from the Version 3 document
+to the Version 4 document intact.
+.LI "Dashed Lines \(em"
+mean that only one of a pair of duplicate chapters has been moved from the
+Version 3 document to the Version 4 document.
+.LE
+.S
+.SK
+.ce
+SSAPT, ISDG and MCG Document Mapping 
+.SP .5
+.nf
+.PS
+scale=100
+arrowhead=7
+define m0 |
+[ box invis ht 655 wid 300 with .sw at 0,0
+"\f(HX\s12\&SSAPT\f1\s0" at 0,645 ljust
+"\f1\s8\&Preface\f1\s0" at 25,625 ljust
+"\f1\s8\&Intro. to Appl. Programming\f1\s0" at 25,605 ljust
+"\f1\s8\&Appl. Prog. in the UNIX Sys. Env.\f1\s0" at 25,585 ljust
+"\f1\s8\&File & Record Locking\f1\s0" at 25,565 ljust
+"\f1\s8\&Interprocess Communication\f1\s0" at 25,545 ljust
+"\f1\s8\&Process Scheduler\f1\s0" at 25,525 ljust
+"\f1\s8\&Memory Management\f1\s0" at 25,505 ljust
+"\f1\s8\&Symbolic Links\f1\s0" at 25,485 ljust
+"\f1\s8\&Packaging Appl. Software\f1\s0" at 25,465 ljust
+"\f1\s8\&Modifying the \*(cWsysadm\*(cN Interface\f1\s0" at 25,445 ljust
+"\f1\s8\&Data Validation Tools\f1\s0" at 25,425 ljust
+"\f1\s8\&liber, A Library System\f1\s0" at 25,405 ljust
+"\f1\s8\&Package Installation Case Studies\f1\s0" at 25,385 ljust
+"\f1\s8\&Manual Pages\f1\s0" at 25,365 ljust
+"\f1\s8\&Index\f1\s0" at 25,345 ljust
+"\f(HX\s12\&ISDG\f1\s0" at 0,305 ljust
+"\f1\s8\&Preface\f1\s0" at 25,285 ljust
+"\f1\s8\&Packaging Appl. Software\f1\s0" at 25,265 ljust
+"\f1\s8\&Device Drivers\f1\s0" at 25,245 ljust
+"\f1\s8\&Compatibility Considerations\f1\s0" at 25,225 ljust
+"\f1\s8\&Video Interface\f1\s0" at 25,205 ljust
+"\f1\s8\&liber, A Library System\f1\s0" at 25,185 ljust
+"\f1\s8\&Package Installation Case Studies\f1\s0" at 25,165 ljust
+"\f1\s8\&The Trace Driver\f1\s0" at 25,145 ljust
+"\f1\s8\&A Prototype Floppy Disk Driver\f1\s0" at 25,125 ljust
+"\f1\s8\&A Sample Driver Software Package\f1\s0" at 25,105 ljust
+"\f1\s8\&Comprehensive Video Prog. Example\f1\s0" at 25,85 ljust
+"\f1\s8\&Graphics Mode Summary Descriptions\f1\s0" at 25,65 ljust
+"\f1\s8\&Text and Graphics Mode \*(cWioctl\*(cNs\f1\s0" at 25,45 ljust
+"\f1\s8\&UNIX System Compatibility Tables\f1\s0" at 25,25 ljust
+"\f1\s8\&Local. and Time Zone Env. Var.\f1\s0" at 25,5 ljust
+] |
+
+define m1 |
+[ box invis ht 655 wid 300 with .sw at 0,0
+"\f(HX\s12\&ISDG\f1\s0" at 0,645 ljust
+"\f2\s10\&Preface to this Volume\f1\s0" at 25,625 ljust
+"\f1\s8\&About This Guide\f1\s0" at 50,605 ljust
+"\f1\s8\&Intro. to Appl. Programming\f1\s0" at 50,585 ljust
+"\f1\s8\&Appl. Prog. in the UNIX Sys. Env.\f1\s0" at 50,565 ljust
+"\f2\s10\&Programmer's Guide:  Appl. Software Development\f1\s0" at 25,545 ljust
+"\f1\s8\&UNIX System Services\f1\s0" at 50,525 ljust
+"\f1\s8\&Process Creation & Program Execution\f1\s0" at 50,505 ljust
+"\f1\s8\&Process Scheduler\f1\s0" at 50,485 ljust
+"\f1\s8\&Signals\f1\s0" at 50,465 ljust
+"\f1\s8\&Interprocess Communication\f1\s0" at 50,445 ljust
+"\f1\s8\&Memory Management\f1\s0" at 50,425 ljust
+"\f1\s8\&Symbolic Links\f1\s0" at 50,405 ljust
+"\f1\s8\&File & Device I/O\f1\s0" at 50,385 ljust
+"\f1\s8\&File & Record Locking\f1\s0" at 50,365 ljust
+"\f1\s8\&Keyboard & Display I/O\f1\s0" at 50,345 ljust
+"\f1\s8\&liber, A Library System\f1\s0" at 50,325 ljust
+"\f2\s10\&Programmer's Guide:  Appl. & Driver Software Packaging\f1\s0" at 25,305 ljust
+"\f1\s8\&Packaging Appl. Software\f1\s0" at 50,285 ljust
+"\f1\s8\&Modifying the \*(cWsysadm\*(cN Interface\f1\s0" at 50,265 ljust
+"\f1\s8\&Data Validation Tools\f1\s0" at 50,245 ljust
+"\f1\s8\&Packaging Installation Case Studies\f1\s0" at 50,225 ljust
+"\f1\s8\&Driver Software Packaging\f1\s0" at 50,205 ljust
+"\f1\s8\&Manual Pages\f1\s0" at 50,185 ljust
+"\f1\s8\&Appl. Packaging Manual Pages\f1\s0" at 60,165 ljust
+"\f1\s8\&Driver Software Package (DSP) Manual Pages\f1\s0" at 60,145 ljust
+"\f1\s8\&Keyboard & Display Device Manual Pages\f1\s0" at 60,125 ljust
+"\f1\s8\&\f1\s0" at 50,105 ljust
+"\f(HX\s12\&MCGD\f1\s0" at 0,85 ljust
+"\f2\s10\&Migration Guide\f1\s0" at 25,65 ljust
+"\f1\s8\&Compatibility Considerations\f1\s0" at 50,45 ljust
+"\f1\s8\&UNIX System Compatibility Tables\f1\s0" at 50,25 ljust
+"\f1\s8\&Local. and Time Zone Env. Var.\f1\s0" at 50,5 ljust
+] |
+
+box invis ht 716 wid 700 with .sw at 0,0
+"\f3\s14\&Version 3\f1\s0" at 100,700
+m0 with .nw at 0,655
+"\f3\s14\&Version 4\f1\s0" at 450,700
+m1 with .nw at 350,655
+line dotted from 200,605 to 350,605 
+line dotted from 350,605 to 370,585 
+line dotted -> from 370,585 to 390,585 
+line  from 200,585 to 350,585 
+line  from 350,585 to 370,565 
+line  -> from 370,565 to 390,565 
+line  from 310,585 to 370,525 
+line  -> from 370,525 to 390,525 
+line  from 290,585 to 370,505 
+line  -> from 370,505 to 390,505 
+line dotted from 130,525 to 330,525 
+line dotted from 330,525 to 370,485 
+line dotted -> from 370,485 to 390,485 
+line  from 250,585 to 370,465 
+line  -> from 370,465 to 390,465 
+line dotted from 170,545 to 270,545 
+line dotted from 270,545 to 370,445 
+line dotted -> from 370,445 to 390,445 
+line dotted from 150,505 to 290,505 
+line dotted from 290,505 to 370,425 
+line dotted -> from 370,425 to 390,425 
+line dotted from 120,485 to 290,485 
+line dotted from 290,485 to 370,405 
+line dotted -> from 370,405 to 390,405 
+line dotted from 150,565 to 170,565 
+line dotted from 170,565 to 370,365 
+line dotted -> from 370,365 to 390,365 
+line  from 110,205 to 230,205 
+line  from 230,205 to 370,345 
+line  -> from 370,345 to 390,345 
+line  from 210,85 to 230,85 
+line  from 230,85 to 230,205 
+line  from 215,65 to 230,65 
+line  from 230,65 to 230,85 
+line  from 180,45 to 230,45 
+line  from 230,45 to 230,85 
+line dashed from 150,405 to 290,405 
+line dashed from 290,405 to 370,325 
+line dashed -> from 370,325 to 390,325 
+line dashed -> from 160,265 to 260,265 
+line dashed from 160,465 to 190,465 
+line dashed from 190,465 to 370,285 
+line dashed -> from 370,285 to 390,285 
+line dotted from 180,445 to 190,445 
+line dotted from 190,445 to 370,265 
+line dotted -> from 370,265 to 390,265 
+line dotted from 150,425 to 190,425 
+line dotted from 190,425 to 370,245 
+line dotted -> from 370,245 to 390,245 
+line dashed from 200,385 to 210,385 
+line dashed from 210,385 to 370,225 
+line dashed -> from 370,225 to 390,225 
+line  from 110,245 to 330,245 
+line  from 330,245 to 370,205 
+line  -> from 370,205 to 390,205 
+line dashed -> from 150,185 to 260,185 
+line dashed -> from 200,165 to 260,165 
+line  from 120,145 to 310,145 
+line  from 185,125 to 290,125 
+line  from 205,105 to 270,105 
+line  from 270,105 to 370,205 
+line dotted from 160,225 to 290,225
+line dotted from 290,225 to 330,185
+line dotted from 330,185 to 330,45
+line dotted -> from 330,45 to 390,45
+line dotted -> from 160,25 to 390,25
+line dotted -> from 180,5 to 390,5
+.PE
+.fi
+.SK
+.H 2 "Migration and Compatibility Guide (MCG)"
+.H 3 "Document Description"
+This volume contains three guide sections, two of which contain their
+associated manual pages.
+The first guide section, entitled ``Migration Guide,''
+is aimed at programmers
+who are upgrading from an earlier release of UNIX System V.
+It describes changes made to UNIX System V as it has evolved to
+successive releases up to Release 4.
+.P
+The second guide section, entitled
+``Programmer's Guide:  Application Compatibility,''
+describes the capabilities of application compatibility software
+provided through the Application Compatibility Package.
+This compatibility package permits most applications that currently run on
+XENIX systems to run on UNIX System V Release 4.
+This guide includes manual pages for all tools and facilities
+contained in the Application Compatibility Package.
+.P
+The third guide section is the
+``Programmer's Guide:  BSD System Compatibility.''
+This section describes the capabilities of BSD that have been provided
+in the BSD Compatibility Package.
+This compatibility package permits most applications that currently run on
+BSD and SunOS systems to run on UNIX System V Release 4.
+This guide includes manual pages for all tools and facilities
+contained in the BSD Compatibility Package.
+.P
+Only manual pages from this document are included on the SCP MRD tape.
+.NE 36
+.H 3 "Document Outline"
+.TS
+center, tab(	);
+c1p10w(1m) c1p10w(1m) lb1p10.
+\|	\|	Title
+.SP
+=
+.SP .5
+.T&
+c1p11f3w(1m) l0p12f2      s
+c1p11f3w(1m) c1p11f3w(1m) l1p11f1w(3.5i).
+\(sq	Preface to this Volume
+	\(em	About This Volume
+.SP
+.T&
+c1p11f3w(1m) l0p12f2      s
+c1p11f3w(1m) c1p11f3w(1m) l1p11f1w(3.5i).
+\(sq	Migration Guide
+	\(em	About This Guide
+	\(em	The Evolution of UNIX System V
+	\(em	Migrating from Release 2
+	\(em	Migrating from Release 3
+	\(em	UNIX System V Release 4
+	\(em	Compatibility Considerations
+	\(em	UNIX System Compatibility Tables
+	\(em	Localization and Time Zone Env. Variables
+.SP
+.T&
+c1p11f3w(1m) l0p12f2      s
+c1p11f3w(1m) c1p11f3w(1m) l1p11f1w(3.5i).
+\(sq	Programmer's Guide:  Application Compatibility
+	\(em	XENIX System Compatibility Overview
+	\(em	Migration Tables
+	\(em	Manual Page Table of Contents
+	\(em	Manual Page Permuted Index
+	\(em	Manual Pages
+	\(em	XENIX System Subject Index
+.SP
+.T&
+c1p11f3w(1m) l0p12f2      s
+c1p11f3w(1m) c1p11f3w(1m) l1p11f1w(2.8i).
+\(sq	Programmer's Guide:  BSD System Compatibility
+	\(em	BSD System Compatibility Overview
+	\(em	BSD System Compatibility
+	\(em	Manual Page Table of Contents
+	\(em	Manual Page Permuted Index
+	\(em	Manual Pages
+	\(em	BSD System Subject Index
+.SP
+_
+.TE
+.H 3 "Document Changes"
+The following changes have been made to this document:
+.H 4 "Organizational Changes"
+The \f2Migration and Compatibility Guide\fP,
+a new title for Version 4,
+combines the Version 3
+\f2BSD/XENIX Compatibility Guide\fP
+and the Version 3
+\f2Migration Guide\fP into one 386-specific volume.
+In addition, sections of the Version 3 ISDG have been moved into
+this volume, as described below.
+.H 5 "Migration Guide"
+The following organizational changes have been made to the
+\f2Migration Guide\fP section of the \f2Migration and Compatibility Guide\fP:
+.BL
+.LI
+The chapter and appendixes from
+the \f2Integrated Software Development Guide\fP
+that discuss application compatibility and software migration
+have been moved to this guide.
+.LI
+Chapter 4 and Appendixes I and J from the ISDG have been moved to this guide.
+.LE
+.H 5 "Programmer's Guide:  Application Compatibility"
+The following organizational changes have been made to the
+\f2Programmer's Guide:  Application Compatibility\fP
+section of the \f2Migration and Compatibility Guide\fP:
+.BL
+.LI
+Appendix A from the Version 3 \f2Migration Guide\fP has been moved to this
+section of the \f2Migration and Compatibility Guide\fP.
+.LI
+The manual pages in this section of the \f2Migration and Compatibility Guide\fP
+were in the \f2XENIX Compatibility Guide\fP section of the Version 3 
+.BT "BSD/XENIX Compatibility Guide" .
+.LE
+.H 5 "Programmer's Guide:  BSD System Compatibility"
+.BL
+.LI
+This section is the \f2BSD Compatibility Guide\fP
+from the Version 3 \f2BSD/XENIX Compatibility Guide\fP.
+The text is unchanged for Version 4.
+.LI
+The manual pages in this section of the
+.BT "Migration and Compatibility Guide"
+were in the
+.BT "BSD Compatibility Guide"
+section of the Version 3 
+.BT "BSD/XENIX Compatibility Guide" .
+.LE
+.H 4 "Application Compatibility Changes"
+.H 5 "Programmer's Guide:  Application Compatibility"
+This section of the
+\f2Migration and Compatibility Guide\fP
+has been modified to include the following documentation changes
+associated with Application Compatibility.
+.BL
+.LI
+documented keyboard/function key, etc., mapping differences and
+a procedure whereby the user can set the virtual terminal up to use
+the SCO System V/386 Release 3.2 environment
+.LI
+updated for SCO device naming scheme
+.LI
+updated to indicate appropriate file names to use over the file names being
+supported via symbolic links
+.LE
+.H 5 "Section 1 Manual Pages Changed"
+.BL
+.LI
+\f4custom\fP(1)
+.LI
+\f4grep\fP(1)
+.LE
+.H 5 "Section 1 Manual Pages Added"
+.BL
+.LI
+\f4cvtomflib\fP(1)
+.LI
+\f4fixshlib\fP(1)
+.LE
+.H 5 "Section 1M Manual Pages Added"
+.BL
+.LI
+\f4maplocale\fP(1M)
+.LE
+.H 4 "Miscellaneous Fixes"
+.H 5 "Migration Guide:  
+.BL
+.LI
+Added \f4rename\fP to list of system calls for file renaming,
+under ``POSIX, BSD, XENIX File Operations'' in the
+``UNIX System V Release 4'' chapter.
+.LE
+.H 5 "Section 1 Manual Pages Changed (Programmer's Guide:  Application Compatibility)"
+.BL
+.LI
+\f4scompat\fP(1):  Added \f4-r\fP option for \f4ioctl\fP interpretation.
+.LE
+.H 5 "Section 1 Manual Pages Changed (Programmer's Guide:  BSD System Compatibility)"
+.BL
+.LI
+\f4df\fP(1):  Replaced \f4df\fP page with correct version;
+in DESCRIPTION, changed devices in table to 386 types.
+.LI
+\f4chown\fP(1):  Removed redundant references in SEE ALSO.
+.LE
+.H 3 "Document Mapping"
+The following diagram shows how files from the Version 3
+\f2Migration Guide\fP,
+Version 3
+\f2Integrated Software Development Guide\fP
+and Version 3
+\f2BSD/XENIX Compatibility Guide\fP
+map into the Version 4
+\f2Migration and Compatibility Guide\fP.
+Moves are represented with
+dotted lines indicating that all files have been moved intact.
+.SK
+.po -1.7i
+.nf
+.PS
+scale=100
+box invis ht 662 wid 402 with .sw at 0,0
+line  from 174,242 to 266,242 dotted
+line  from 266,242 to 346,322 dotted
+line  from 88,62 to 284,62 dotted
+line  from 346,0 to 284,62 dotted
+line  from 170,82 to 284,82 dotted
+line  from 346,20 to 284,82 dotted
+line  from 170,102 to 286,102 dotted
+line  from 346,42 to 286,102 dotted
+line -> from 344,0 to 386,0 dotted
+line -> from 346,20 to 386,20 dotted
+line -> from 346,42 to 386,42 dotted
+line  from 326,122 to 346,102 dotted
+line  from 120,122 to 326,122 dotted
+line -> from 346,102 to 386,102 dotted
+line -> from 346,120 to 386,120 dotted
+line  from 324,142 to 346,120 dotted
+line  from 156,142 to 324,142 dotted
+line  from 346,182 to 326,162 dotted
+line -> from 346,182 to 386,182 dotted
+line  from 94,162 to 326,162 dotted
+line  from 346,222 to 326,202 dotted
+line  from 346,200 to 330,182 dotted
+line -> from 346,200 to 386,200 dotted
+line  from 328,182 to 186,182 dotted
+line -> from 346,222 to 386,222 dotted
+line  from 326,202 to 196,202 dotted
+"\fR\s8\&Manual Pages\f1\s0" at 402,1 ljust
+"\fR\s8\&Manual Page Permuted Index\f1\s0" at 402,21 ljust
+"\fR\s8\&Manual Page Table of Contents\f1\s0" at 402,41 ljust
+"\fR\s10\&Reference Manual:  BSD System Compatibility\f1\s0" at 376,60 ljust
+"\fR\s8\&BSD Subject Index\f1\s0" at 402,101 ljust
+"\fR\s8\&BSD Compatibility Guide\f1\s0" at 402,121 ljust
+"\fR\s10\&Programmer's Guide:  BSD System Compatibility\f1\s0" at 376,140 ljust
+"\fR\s8\&Manual Pages\f1\s0" at 402,181 ljust
+"\fR\s8\&Manual Page Permuted Index\f1\s0" at 402,201 ljust
+"\fR\s8\&Manual Page Table of Contents\f1\s0" at 402,221 ljust
+"\fR\s10\&Reference Manual:  Application Compatibility\f1\s0" at 376,240 ljust
+"\fR\s8\&XENIX Subject Index\f1\s0" at 402,281 ljust
+"\fR\s8\&Manual Pages\f1\s0" at 26,61 ljust
+"\fR\s8\&Manual Page Permuted Index\f1\s0" at 26,81 ljust
+"\fR\s8\&Manual Page Table of Contents\f1\s0" at 26,101 ljust
+"\fR\s8\&BSD Subject Index\f1\s0" at 26,121 ljust
+"\fR\s8\&BSD Compatibility Guide\f1\s0" at 26,141 ljust
+"\fR\s8\&Manual Pages\f1\s0" at 26,161 ljust
+"\fR\s8\&Manual Page Permuted Index\f1\s0" at 26,181 ljust
+"\fR\s8\&Manual Page Table of Contents\f1\s0" at 26,201 ljust
+"\fR\s8\&XENIX Subject Index\f1\s0" at 26,221 ljust
+"\fR\s8\&XENIX Compatibility Guide\f1\s0" at 26,241 ljust
+"\fR\s8\&About This Volume\f1\s0" at 26,261 ljust
+"\fR\s10\&BSD/XENIX Compatibility Guide\f1\s0" at 0,280 ljust
+"\fR\s8\&About This Volume\f1\s0" at 398,583 ljust
+"\fR\s12\&Migration and Compatibility Guide\f1\s0" at 376,602 ljust
+"\fR\s10\&MIG, ISDG, BSD/XNX to MCG Document Mapping\f1\s0" at 162,652 ljust
+line  from 134,222 to 286,222 dotted
+line -> from 346,282 to 386,282 dotted
+line  from 286,222 to 346,282 dotted
+line  from 250,262 to 132,262 dotted
+line -> from 346,584 to 386,584 dotted
+line -> from 346,322 to 386,322 dotted
+line -> from 346,380 to 386,380 dotted
+line  from 286,320 to 346,380 dotted
+line  from 286,320 to 220,320 dotted
+line  from 346,400 to 288,342 dotted
+line -> from 346,400 to 386,400 dotted
+line  from 288,342 to 206,342 dotted
+line  from 346,422 to 288,362 dotted
+line -> from 346,422 to 386,422 dotted
+line  from 288,362 to 176,362 dotted
+line  from 224,422 to 346,300 dotted
+line -> from 346,300 to 386,300 dotted
+line -> from 162,440 to 386,440 dotted
+line  from 224,422 to 118,422 dotted
+line -> from 162,460 to 386,460 dotted
+line -> from 162,480 to 386,480 dotted
+line -> from 198,500 to 386,500 dotted
+line -> from 118,520 to 386,520 dotted
+"\fR\s8\&Migration Tables\f1\s0" at 26,421 ljust
+"\fR\s8\&Migration Tables\f1\s0" at 402,301 ljust
+"\fR\s8\&XENIX Compatibility Guide\f1\s0" at 402,321 ljust
+"\fR\s10\&Programmer's Guide:  Application Compatibility\f1\s0" at 376,340 ljust
+"\fR\s8\&Localization & Time Zone Env. Var.\f1\s0" at 402,381 ljust
+"\fR\s8\&UNIX System Compatibility Tables\f1\s0" at 402,401 ljust
+"\fR\s8\&Compatibility Considerations\f1\s0" at 402,421 ljust
+"\fR\s8\&UNIX System V Release 4\f1\s0" at 402,441 ljust
+"\fR\s8\&Migrating from Release 3\f1\s0" at 402,461 ljust
+"\fR\s8\&Migrating from Release 2\f1\s0" at 402,481 ljust
+"\fR\s8\&The Evolution of UNIX System V\f1\s0" at 402,501 ljust
+"\fR\s8\&About This Guide\f1\s0" at 402,521 ljust
+"\fR\s10\&Migration Guide\f1\s0" at 376,542 ljust
+"\fR\s10\&Migration Guide\f1\s0" at 0,542 ljust
+"\fR\s8\&Localization & Time Zone Env. Var.\f1\s0" at 26,321 ljust
+"\fR\s8\&UNIX System Compatibility Tables\f1\s0" at 26,341 ljust
+"\fR\s8\&Compatibility Considerations\f1\s0" at 26,361 ljust
+"\fR\s10\&ISDG\f1\s0" at 0,380 ljust
+"\fR\s8\&UNIX System V Release 4\f1\s0" at 26,441 ljust
+"\fR\s8\&Migrating from Release 3\f1\s0" at 26,461 ljust
+"\fR\s8\&Migrating from Release 2\f1\s0" at 26,481 ljust
+"\fR\s8\&The Evolution of UNIX System V\f1\s0" at 26,501 ljust
+"\fR\s8\&About This Guide\f1\s0" at 26,521 ljust
+line  from 346,584 to 296,534 dotted
+line  from 296,308 to 296,534 dotted
+line  from 250,262 to 296,308 dotted
+.PE
+.fi
+.po +1.7i
+.H 2 "Mouse Driver Administrator's Guide"
+.H 3 "Document Description"
+This document describes the installation, configuration, and
+administration of the mouse driver software, which is necessary to run
+a bus, serial, or PS/2 compatible mouse with UNIX
+System V/386 Release 4.
+.P
+This document is not included on the SCP MRD tape.
+.H 3 "Document Changes"
+The following changes have been made to this document:
+.H 4 "Organizational Changes"
+.BL
+.LI
+This document title has been eliminated in Version 4.
+.P
+In response to customer complaints, and at the request of Prentice Hall,
+this document was added to the 386 \f2System Administrator's Guide\fP
+in the Version 3 product.
+It therefore, appeared in two places:  as Appendix E in the
+\f2System Administrator's Guide\fP
+and as a separate title and directory on the DRP MRD tape.
+.P
+For Version 4, this document has been dropped as a separate title; it now
+appears only as an appendix to the 386 \f2System Administrator's Guide\fP.
+.LE
+.SK
+.H 2 "Multibus Installation and Configuration Guide"
+.H 3 "Document Description"
+This document provides instructions for installing the UNIX
+System V/386 Release 4 operating system on a Multibus II-based microcomputer.
+.P
+This document is not included on the SCP MRD tape.
+.H 3 "Document Outline"
+.TS
+center, tab(	);
+c1p10w(1m) c1p10w(1m) lb1p10.
+\|	\|	Title
+.SP
+=
+.SP
+.T&
+c1f3p11w(1m) l0f2p12	  s
+c1p11f3w(1m) c1p11f3w(1m) l1p11f1w(3.5i).
+\(sq	Multibus Installation and Configuration Guide
+	\(em	Introduction
+	\(em	Before You Start
+	\(em	System 320 Specific Installation
+  	\(em	System 520 Specific Installation
+  	\(em	System MDP Specific Installation
+  	\(em	System V/386 Installation
+	\(em	Software Packages Installation
+	\(em	Appendix A:  Device Drivers
+	\(em	Appendix B:  Tunable Parameters
+	\(em	Appendix C:  Hard Disk Drive Parameters
+ 	\(em	Appendix D:  Related Publications
+.SP
+_
+.TE
+.H 3 "Document Changes"
+The following changes have been made to this document:
+.H 4 "Technical Changes"
+.BL
+.LI
+This document has been updated for Multibus II.
+.LI
+Multibus I support has been removed.
+.LE
+.SK
+.H 2 "Multibus Reference Manual"
+.H 3 "Document Description"
+This document describes the commands and drivers that users and programmers
+can use to take advantage of the Multibus features.
+.H 3 "Document Outline"
+.TS
+center, tab(	);
+c1p10w(1m) c1p10w(1m) lb1p10.
+\|	\|	Title
+.SP
+=
+.SP
+.T&
+c1f3p11w(1m) l0f2p12      s
+c1p11f3w(1m) c1p11f3w(1m) l1p11f1w(3.5i).
+\(sq	Multibus Reference Manual
+	\(em	Permuted Index
+	\(em	Manual Overview
+	\(em	Commands
+	\(em	Manual Pages
+	\(em	Functions and Libraries
+	\(em	Manual Pages
+	\(em	System V/386 File Formats
+	\(em	Device Drivers
+	\(em	Manual Pages
+	\(em	System Maintenance Commands
+	\(em	Manual Pages
+	\(em	Static Bad Block Handling
+	\(em	Appendix A:  Window Interface
+	\(em	Appendix B:  Information Unique to MB Systems
+	\(em	Appendix C:  Related Publications
+.SP
+_
+.TE
+.H 3 "Document Changes"
+The following changes have been made to this document:
+.H 4 "Technical Changes"
+.BL
+.LI
+This document has been updated for Multibus II.
+.LI
+Multibus I support has been removed.
+.LE
+.SK
+.H 2 "Multibus Transport Application Interface Guide"
+.H 3 "Document Description"
+This document describes the application interface to the Multibus transport.
+The Multibus II transport uses Multibus II message passing.
+Transport-application interface (TAI) is used by
+applications that need to communicate, via Multibus II transport protocol,
+with remote applications.
+.P
+Only manual pages from this document are included on the SCP MRD tape.
+.H 3 "Document Outline"
+.TS
+center, tab(	);
+c1p10w(1m) c1p10w(1m) lb1p10.
+\|	\|	Title
+.SP
+=
+.SP
+.T&
+c1f3p11w(1m) l0f2p12      s
+c1p11f3w(1m) c1p11f3w(1m) l1p11f1w(3.5i).
+\(sq	Multibus Transport Application Interface Guide
+	\(em	Permuted Index
+	\(em	General Information
+	\(em	Transport Application Interface (TAI)
+	\(em	Basic Operations
+	\(em	An Example Program
+	\(em	Transport Application Interface Structures
+	\(em	Manual Pages
+.SP
+_
+.TE
+.H 3 "Document Changes"
+The following changes have been made to this document:
+.H 4 "Title Change"
+.BL
+.LI
+This document has been renamed for Version 4 to clarify that it is a
+Multibus related document.
+The Version 3 title was, \f2Transport Application Interface Guide\fP.
+.LE
+.H 4 "Technical Changes"
+.BL
+.LI
+This document has been updated for Multibus II.
+.LI
+Multibus I support has been removed.
+.LE
+.SK
+.H 2 "Network User's and Administrator's Guide"
+.H 3 "Document Description"
+This document describes how to use and administer advanced networking
+facilities provided with UNIX System V Release 4:
+TCP/IP, NFS, and RFS.
+Basic networking (\f4uucp\fP) is described in the
+\f2User's Guide\f1
+and the
+\f2System Administrator's Guide\f1.
+.H 3 "Document Outline"
+.TS
+center, tab(	);
+c1p10w(1m) c1p10w(1m) lb1p10.
+\| 	 \| 	 Title
+=
+.SP .5
+.T&
+c1p11f3w(1m) l0p12f2      s
+c1p11f3w(1m) c1p11f3w(1m) l1p11f1w(3.5i).
+\(sq 	 Preface to this Volume
+ 	 \(em 	 About This Volume
+ 	 \(em 	 System V File Sharing
+ 	 \(em 	 RFS vs. NFS
+.SP .5
+.T&
+c1p11f3w(1m) l0p12f2      s
+c1p11f3w(1m) c1p11f3w(1m) l1p11f1w(3.5i).
+\(sq 	 TCP/IP  Network Administrator's Guide
+ 	 \(em 	 Introduction to Administering TCP/IP Networks
+ 	 \(em 	 Setting Up TCP/IP
+ 	 \(em 	 Maintaining Security in a TCP/IP Environment
+ 	 \(em 	 Expanding Your Network
+ 	 \(em 	 Using Domain Name Service
+ 	 \(em 	 Troubleshooting
+ 	 \(em 	 Guidelines for Completing the IP Number Registration Form
+ 	 \(em 	 Guidelines for Completing the Domain Registration Form
+ 	 \(em 	 Glossary
+ 	 \(em 	 Index
+.SP .5
+.T&
+c1p11f3w(1m) l0p12f2      s
+c1p11f3w(1m) c1p11f3w(1m) l1p11f1w(3.5i).
+\(sq 	 Distributed File System Administration Guide
+ 	 \(em 	 Introduction to Distributed File System Administration
+ 	 \(em 	 Setting Up DFS Administration
+ 	 \(em 	 Using DFS Administration Commands and Files
+ 	 \(em 	 The Distributed File System Management Menus
+ 	 \(em 	 Index
+.SP .5
+.T&
+c1p11f3w(1m) l0p12f2      s
+c1p11f3w(1m) c1p11f3w(1m) l1p11f1w(3.5i).
+\(sq 	 Remote File Sharing Administrator's Guide
+ 	 \(em 	 Introduction
+ 	 \(em 	 RFS sysadm Interface
+ 	 \(em 	 RFS Command Interface
+ 	 \(em 	 Glossary
+ 	 \(em 	 Index
+.SP .5
+.T&
+c1p11f3w(1m) l0p12f2      s
+c1p11f3w(1m) c1p11f3w(1m) l1p11f1w(3.5i).
+\(sq 	 Network File System Administrator's Guide
+ 	 \(em 	 Introduction
+ 	 \(em 	 Setting Up NFS
+ 	 \(em 	 Sharing and Mounting Resources Explicitly
+ 	 \(em 	 Obtaining Information
+ 	 \(em 	 Handling NFS Problems
+ 	 \(em 	 Setting Up Secure NFS
+ 	 \(em 	 Using the Automounter
+ 	 \(em 	 The Network Lock Manager
+ 	 \(em 	 Using the NFS sysadm Interface
+ 	 \(em 	 Glossary
+ 	 \(em 	 Index
+.SP .5
+.T&
+c1p11f3w(1m) l0p12f2      s
+c1p11f3w(1m) c1p11f3w(1m) l1p11f1w(3.5i).
+\(sq 	 Remote Services User's Guide
+ 	 \(em 	 Introduction
+ 	 \(em 	 Copying Files Between Machines
+ 	 \(em 	 Executing Commands Remotely
+ 	 \(em 	 Logging In to Remote Machines
+ 	 \(em 	 Transferring Files Between Machines
+ 	 \(em 	 Obtaining Information
+ 	 \(em 	 Index
+.SP .5
+.T&
+c1p11f3w(1m) l0p12f2      s
+c1p11f3w(1m) c1p11f3w(1m) l1p11f1w(3.5i).
+\(sq 	 Reference Manual
+ 	 \(em 	 Table of Contents
+ 	 \(em 	 Permuted Index
+ 	 \(em 	 Manual Pages
+.SP .5
+.TE
+.H 3 "Document Changes"
+The following changes have been made to this document:
+.H 4 "Miscellaneous Fixes"
+.H 5 "Section 3N Manual Pages Changed"
+.BL
+.LI
+\f4getsockname\fP(3N): Under NOTES, added syntax and return
+information for \f4t_getname\fP.
+.LE
+.SK
+.H 2 "PC-Interface Administrator's Guide"
+.H 3 "Document Description"
+This document describes system administration for the 
+server (UNIX system) side of
+PC-Interface, which allows users to run
+DOS applications using data from the UNIX system.
+PC-Interface also allows users to store and access files and DOS
+applications on the server (host UNIX system).
+.P
+This document is not included on the SCP MRD tape.
+.H 3 "Document Outline"
+.TS
+center, tab(	);
+c1p10w(1m) c1p10w(1m) lb1p10.
+\|	\|	Title
+.SP
+=
+.SP
+.T&
+c1f3p11w(1m) l0f2p12      s
+c1p11f3w(1m) c1p11f3w(1m) l1p11f1w(3.5i).
+\(sq	PC-Interface Administrator's Guide
+	\(em	About This Book
+	\(em	Introduction
+	\(em	About PC-Interface
+	\(em	PC-Interface Networks
+	\(em	PC-Interface Administration
+	\(em	PC-Interface System Architecture
+	\(em	Problem Solving Tools
+	\(em	Appendix A
+	\(em	Index
+.SP
+_
+.TE
+.H 3 "Document Changes"
+The following changes have been made to this document:
+.H 4 "Technical Changes"
+.BL
+.LI
+This document has been updated for Version 3.1 of the PC-Interface software.
+.LE
+.SK
+.H 2 "Product Overview and Master Index"
+.H 3 "Document Description"
+This document is divided into three chapters.
+The first chapter is an overview of the UNIX
+System V/386 Release 4 product,
+with an emphasis on features new to Release 4.
+This chapter also describes how the Release 4 document set is organized.
+The second chapter is a master permuted index.
+The third chapter is a master subject index.
+.H 3 "Document Outline"
+.TS
+center, tab(	);
+c1p10w(1m) c1p10w(1m) lb1p10.
+\|	\|	Title
+.SP
+=
+.SP
+.T&
+c1f3p11w(1m) l0f2p12      s
+c1p11f3w(1m) c1p11f3w(1m) l1p11f1w(3.5i).
+\(sq	Product Overview and Master Index
+	\(em	Product Overview
+	\(em	Permuted Index
+	\(em	Master Subject Index
+	\(em	Index Reference Card
+.SP
+_
+.TE
+.H 3 "Document Changes"
+The following changes have been made to this document:
+.H 4 "Content Changes"
+.BL
+.LI
+Chapter one has been modified to reflect the
+changes in document titles for the Version 4 product.
+.LI
+The master indexes in chapters two and three have been updated.
+.LE
+.SK
+.H 2 "Programmer's Guide:  Networking Interfaces"
+.H 3 "Document Description"
+This document describes network interface routines and network protocols
+in several stand-alone sections.
+This document contains manual pages for all the tools and facilities
+described,
+including all Section 3N (network programming) manual pages.
+.H 3 "Document Outline"
+.TS
+center, tab(	);
+c1p10w(1m) c1p10w(1m) lb1p10.
+\| 	 \| 	 Title
+=
+.SP .5
+.T&
+c1p11f3w(1m) l0p12f2      s
+c1p11f3w(1m) c1p11f3w(1m) l1p11f1w(3.5i).
+\(sq 	 TLI and Sockets Programming
+ 	 \(em 	 Introduction
+ 	 \(em 	 Transport Interface Programming
+ 	 \(em 	 The Sockets Interface
+ 	 \(em 	 Sockets Migration and Sockets-to-TLI Conversion
+ 	 \(em 	 Index:  TLI and Sockets Programming
+.SP .5
+.T&
+c1p11f3w(1m) l0p12f2      s
+c1p11f3w(1m) c1p11f3w(1m) l1p11f1w(3.5i).
+\(sq 	 Remote Procedure Calls
+ 	 \(em 	 Introduction to Remote Procedure Calls
+ 	 \(em 	 \f4rpcgen\fP Programming Guide
+ 	 \(em 	 Remote Procedure Call Programming Guide
+ 	 \(em 	 External Data Representation Standard:  Protocol Specification
+ 	 \(em 	 RPC Administration
+ 	 \(em 	 The YP Service
+ 	 \(em 	 Index:  Remote Procedure Calls
+.SP .5
+.T&
+c1p11f3w(1m) l0p12f2      s
+c1p11f3w(1m) c1p11f3w(1m) l1p11f1w(3.5i).
+\(sq 	 Network Selection and Name-to-Address Mapping
+ 	 \(em 	 Network Selection and Name-to-Address Mapping
+ 	 \(em 	 Index:  Network Selection and Name-to-Address Mapping
+.SP .5
+.T&
+c1p11f3w(1m) l0p12f2      s
+c1p11f3w(1m) c1p11f3w(1m) l1p11f1w(3.5i).
+\(sq 	 Writing a Port Monitor for the Service Access Facility
+ 	 \(em 	 Writing a Port Monitor for the Service Access Facility
+ 	 \(em 	 Index:  Writing a Port Monitor for the Service Access Facility
+.SP .5
+.T&
+c1p11f3w(1m) l0p12f2      s
+c1p11f3w(1m) c1p11f3w(1m) l1p11f1w(3.5i).
+\(sq 	 Manual Pages
+ 	 \(em 	 Table of Contents
+ 	 \(em 	 Permuted Index
+ 	 \(em 	 Manual Pages
+.SP .5
+.TE
+.H 3 "Document Changes"
+The following changes have been made to this document:
+.H 4 "Miscellaneous Fixes"
+.H 5 "Network Selection and Name-to-Address Mapping"
+.BL
+.LI
+In the ``Network Selection and Name-to-Address Mapping'' chapter,
+added \f4tpi_raw\fP as a new semantic Under \f2semantics\fP.
+.LE
+.H 5 "TLI and Sockets Programming"
+.BL
+.LI
+In the ``Sockets Migration and Sockets-to-TLI Conversion'' chapter,
+to Sockets-to-TLI Conversion table,
+added pointer to \f4getsockname\fP(3N) manual page (indicating that
+\f4t_getname\fP information is located there)
+to the line with \f4t_getname\fP and \f4getsockname\fP.
+.LE
+.H 5 "Section 3N Manual Pages Changed"
+.BL
+.LI
+\f4accept\fP(3N): Changed \f4struct sockaddr *\fP to \f4caddr_t\fP.
+.LI
+\f4bind\fP(3N): Changed \f4struct sockaddr *\fP to \f4caddr_t\fP.
+.LI
+\f4getpeername\fP(3N): Changed \f4struct sockaddr *\fP to \f4caddr_t\fP;
+added NOTES section.
+.LI
+\f4getsockname\fP(3N): Changed \f4struct sockaddr *\fP to \f4caddr_t\fP;
+added NOTES section.
+.LI
+\f4send\fP(3N): Changed \f4struct sockaddr *\fP to \f4caddr_t\fP;
+added NOTES section.
+.LE
+.SK
+.H 2 "Programmer's Guide:  SCSI Driver Interface (SDI)"
+.H 3 "Document Description"
+This document describes the SCSI (Small Computer Systems Interface)
+Driver Interface (SDI),
+which is a machine-independent mechanism for writing SCSI target drivers to
+access a SCSI device.
+.P
+Only manual pages from this document are included on the SCP MRD tape.
+.H 3 "Document Outline"
+.TS
+center, tab(	);
+c1p10w(1m) c1p10w(1m) lb1p10.
+\|	\|	Title
+.SP
+=
+.SP
+.T&
+c1f3p11w(1m) l0f2p12      s
+c1p11f3w(1m) c1p11f3w(1m) l1p11f1w(3.5i).
+\(sq	Programmer's Guide:  SCSI Driver Interface (SDI)
+	\(em	Introduction
+	\(em	SDI Input/Output Controls
+	\(em	Manual Pages
+	\(em	Glossary
+	\(em	Index
+.SP
+_
+.TE
+.H 3 "Document Changes"
+The following changes have been made to this document:
+.H 4 "Organizational Changes"
+.BL
+.LI
+This document has had the manual-page-like material in Chapters 3 and 4
+turned into actual manual pages.
+.LE
+.SK
+.H 2 "Programmer's Reference Manual"
+.H 3 "Document Description"
+This document contains manual pages for programming commands, libraries,
+system calls, file formats, and miscellaneous information used by
+programmers.
+.H 3 "Document Outline"
+.TS
+center, tab(	);
+c1p10w(1m) c1p10w(1m) lb1p10.
+\|	\|	Title
+.SP
+=
+.SP
+.T&
+c1f3p11w(1m) l0f2p12      s
+c1p11f3w(1m) c1p11f3w(1m) l1p11f1w(3.5i).
+\(sq	Programmer's Guide:  SCSI Driver Interface (SDI)
+	\(em	Introduction
+	\(em	SDI Input/Output Controls
+	\(em	Manual Pages
+	\(em	Glossary
+	\(em	Index
+.SP
+_
+.TE
+.H 3 "Document Changes"
+The following changes have been made to this document:
+.H 4 "Miscellaneous Fixes"
+.H 5 "Section 1 Manual Pages Changed"
+.BL
+.LI
+\f4lex\fP(1):  Changed discussion of three macros under DESCRIPTION.
+Moved example.
+.LI
+\f4lprof\fP(1):  Under NOTES, added text about including header files
+containing code causing erroneous data.
+.LE
+.H 5 "Section 2 Manual Pages Changed"
+.BL
+.LI
+\f4chmod\fP(2):  Fixed bad reference in SEE ALSO.
+Added sentence about the access permissions of the target being set.
+.LI
+\f4close\fP(2):  Added \f4ioctl\fP to list of where a file descriptor can be obtained.
+.LI
+\f4dup\fP(2):  Added \f4ioctl\fP to list of where a file descriptor can be obtained.
+.LI
+\f4exec\fP(2):  Fixed typo, changed \f4cnup\fP to \f4envp\fP.
+.LI
+\f4getdents\fP(2):  Added \f4ioctl\fP to list of where a file descriptor can be obtained.
+.LI
+\f4getrlimit\fP(2):  Under RETURN VALUE, added sentence indicating that
+\f4setrlimit\fP returns 0 upon completion and -1 upon failure.
+.LI
+\f4intro\fP(2):  Under \f436 EIDRM\fP, changed text.
+Changed SEE ALSO section.
+.LI
+\f4lseek\fP(2):  Added \f4ioctl\fP to list of where a file descriptor can be obtained.
+.LI
+\f4read\fP(2):  Added \f4ioctl\fP to list of where a file descriptor can be obtained.
+.LI
+\f4sigaction\fP(2):  Removed "pending signals of type \f2sig\fP are
+reliably queued to the calling process and" from \f4SIGINFO\fP.
+.LI
+\f4sigaltstack\fP(2):  Fixed type declarations in the \f4stack_t\fP structure
+.LI
+\f4stat\fP(2):  Added \f4ioctl\fP to list of where a file descriptor can be obtained.
+.LI
+\f4symlink\fP(2):  Added sentence about symbolic links having permission 777. 
+.LI
+\f4termios\fP(2):  Added return values for \f4cfgetispeed\fP and
+\f4cfgetospeed\fP.
+.LI
+\f4write\fP(2):  Added \f4ioctl\fP to list of where a file descriptor can be obtained.
+.LE
+.H 5 "Sections 3, 3C, 3G, 3N, and 3X Manual Pages Changed"
+.BL
+.LI
+\f4crypt\fP(3X):  Changed names of variables for \f4run_setkey\fP,
+\f4run_crypt\fP, and \f4crypt_close\fP,
+so they match in DESCRIPTION and SYNOPSIS.
+.LI
+\f4directory\fP(3):  Added \f4mkdir\fP(2) and \f4rmdir\fP(2) to SEE ALSO.
+.LI
+\f4dup2\fP(3C):  Fixed typo, changed \f4%[EMFILE\fP to \f4EMFILE\fP.
+.LI
+\f4ecvt\fP(3C):  Add long double support.
+.LI
+\f4end\fP(3C):  Under NOTES, changed \f4sbrk(char *0)\fP to \f4sbrk(0)\fP.
+.LI
+\f4frexp\fP(3C):  Add long double support.
+.LI
+\f4getnetconfig\fP(3N):  Added
+\f2Programmer's Guide: Networking Interfaces\fP to SEE ALSO.
+.LI
+\f4getvfsent\fP(3C):  Changed DESCRIPTION section to clarify how the
+functions use the file \f2fp\fP.
+Clarified what \f4getfsent\fP returns.
+Added \f2fp\fP argument in SYNOPSIS for
+\f4getvfsspec\fP and \f4getvfsany\fP.
+.LI
+\f4isnan\fP(3C):  Add long double support.
+.LI
+\f4maillock\fP(3X):  Under RETURN VALUE, added sentence indicating which
+return code applies to \f4mailunlock\fP.
+.LI
+\f4mkdirp\fP(3G):  Added sentence about protection part of \f2mode\fP
+argument being modified by the process's file creation mask.
+.LI
+\f4strtod\fP(3C):  Add long double support.
+.LI
+\f4strxfrm\fP(3C):  Under DESCRIPTION, changed sentence applying \f4strcmp\fP
+to two transformed strings.
+.LE
+.H 5 "Section 4 Manual Pages Changed"
+.BL
+.LI
+\f4netconfig\fP(4):  Under \f2semantics\fP, added \f4tpi_raw\fP,
+for \f4nc_semantics\fP field, added \f4NC_TPI_RAW\fP,
+added \f4icmp\fP(7) and \f4ip\fP(7) to SEE ALSO.
+.LE
+.SK
+.H 2 "System Administrator's Guide"
+.H 3 "Document Description"
+This document is 386-specific,
+and provides information on administering your computer.
+Note that the 3B2 version of this document has not been included with
+the Version 4 product.
+.P
+This document is not included on the SCP MRD tape.
+.SP -.5
+.H 3 "Document Outline"
+.TS
+center, tab(	);
+c1p10w(1m) c1p10w(1m) lb1p10.
+\|	\|	Title
+.SP .5
+=
+.SP .5
+.T&
+c1f3p11w(1m) l0f2p12      s
+c1p11f3w(1m) c1p11f3w(1m) l1p11f1w(3.5i).
+\(sq	System Administrator's Guide
+	\(em	Overview
+	\(em	Procedures
+	\(em	Storage Devices
+	\(em	File Systems
+	\(em	Basic Networking
+	\(em	Printers
+	\(em	Mail
+	\(em	Backup and Restore
+	\(em	Accounting
+	\(em	Process Scheduling
+	\(em	Service Access Facility
+	\(em	Performance Management
+	\(em	Security
+	\(em	Tunable Parameters
+	\(em	OA&M Menu Map
+	\(em	Symbolic Links
+	\(em	Mouse Driver Administration
+	\(em	Index
+.SP .5
+_
+.TE
+.H 3 "Document Changes"
+The following changes have been made to this document.
+.H 4 "Miscellaneous Fixes"
+.BL
+.LI
+Information on PostScript language printers has been added
+to the chapter on printers.
+.LI
+Information on remote printers has been added to the chapter on procedures.
+.LI
+A chapter on machine management has been added.
+.LI
+In the Appendix on Security, removed the descriptions of
+\f4mountfsys\fP,
+\f4umountfsys\fP,
+\f4checkfsys\fP,
+\f4mkfsys\fP,
+\f4setup\fP, and
+\f4powerdown\fP logins.
+Added description of the \f4sync\fP login.
+.LI
+Comprehensive index entries have been added.
+.LE
+.SK
+.H 2 "System Administrator's Reference Manual"
+.H 3 "Document Description"
+This document describes each of the UNIX System V/386
+administration commands.
+Each description includes a synopsis of the command syntax,
+an explanation of usage, and, where appropriate,
+diagnostic indications and warnings.
+.H 3 "Document Outline"
+.TS
+center, tab(	);
+c1p10w(1m) c1p10w(1m) lb1p10.
+\|	\|	Title
+.SP
+=
+.SP
+.T&
+c1f3p11w(1m) l0f2p12      s
+c1p11f3w(1m) c1p11f3w(1m) l1p11f1w(3.5i).
+\(sq	System Administrator's Reference Manual
+	\(em	Introduction
+	\(em	Table of Contents
+	\(em	Permuted Index
+	\(em	Manual Pages
+.SP
+_
+.TE
+.H 3 "Document Changes"
+The following changes have been made to this document:
+.H 4 "Application Compatibility Changes"
+.H 5 "Section 1M Manual Pages Changed"
+.BL
+.LI
+\f4df\fP(1M)
+.LI
+\f4mapchan\fP(1M)
+.LI
+\f4mapkey\fP(1M)
+.LI
+\f4vidi\fP(1M)
+.LE
+.H 5 "Section 7 Manual Pages Changed"
+.BL
+.LI
+\f4display\fP(7)
+.LE
+.H 4 "Ethernet, SCSI, PostScript Language, and Kernel Debugger Changes"
+.H 5 "Section 1 Manual Pages Added"
+.BL
+.LI
+\f4kdb\fP(1)
+.LI
+\f4postio\fP(1)
+.LE
+.H 5 "Section 7 Manual Pages Added"
+.BL
+.LI
+\f4ie6\fP(7)
+.LI
+\f4scsi_cdrom\fP(7)
+.LI
+\f4scsi_disk\fP(7)
+.LI
+\f4scsi_tape\fP(7)
+.LI
+\f4scsi_worm\fP(7)
+.LI
+\f4scsi_adaptec\fP(7)
+.LI
+\f4scsi_dpt\fP(7)
+.LI
+\f4scsi_wd7000\fP(7)
+.LE
+.H 4 "Miscellaneous Fixes"
+.H 5 "Section 1 Manual Pages Changed"
+.BL
+.LI
+\f4ckdate\fP(1):  Added argument after \f4-W\fP option.
+.LI
+\f4ckgid\fP(1):  Added argument after \f4-W\fP option.
+.LI
+\f4ckint\fP(1):  Added argument after \f4-W\fP option.
+.LI
+\f4ckitem\fP(1):  Added argument after \f4-W\fP option.
+.LI
+\f4ckpath\fP(1):  Added argument after \f4-W\fP option.
+.LI
+\f4ckrange\fP(1):  Added argument after \f4-W\fP option.
+.LI
+\f4ckstr\fP(1):  Added argument after \f4-W\fP option.
+.LI
+\f4cktime\fP(1):  Added argument after \f4-W\fP option.
+.LI
+\f4ckuid\fP(1):  Added argument after \f4-W\fP option.
+.LI
+\f4ckyorn\fP(1):  Added argument after \f4-W\fP option.
+.LI
+\f4pkgparam\fP(1):  In the \f2pkginst\fP description, add sentence stating
+that single quotes should be used when using \f2pkginst.*\fP so
+the shell will not interpret the \f4*\fP;
+under \f4-d\fP option, changed "directory pathname"
+to "full path name to a directory."
+.LI
+\f4pkginfo\fP(1):  Under \f4-d\fP option, "directory pathname"
+to "full path name to a directory."
+.LE
+.H 5 "Section 1M Manual Pages Changed"
+.BL
+.LI
+\f4bkreg\fP(1M):  Under \f4-c \f2weeks:days\fP|\f2demand\f1,
+deleted text about using abbreviations for the days of the week.
+.LI
+\f4chroot\fP(1M): Under NOTES, added paragraph about not \f4exec\fPing a
+command that uses shared libraries.
+.LI
+\f4crash\fP(1M):  Incorporated new, 4.0 version of page.
+This change was made for the Version 3,
+but not documented in the release notes.
+.LI
+\f4df\fP(1M): Added \f4dfspace\fP to page;
+under NOTES, added paragraph about \f4-g\fP and \f4-n\fP options
+being used with remotely mounted resources.
+.LI
+\f4disksetup\fP(1M):  Remove \f4scsimkdev\fP from SEE ALSO section.
+.LI
+\f4ftpd\fP(1M):  Added \f4-d\fP and \f4-l\fP options;
+removed \f4host.socket\fP argument from SYNOPSIS.
+.LI
+\f4fuser\fP(1M):  Reformatted and added letter code "a" just under DESCRIPTION;
+added EXAMPLES section;
+added \f4chroot\fP(1M) and \f4proc\fP(4) to SEE ALSO.
+.LI
+\f4getty\fP(1M):  Changed default speed from 300 to 1200.
+.LI
+\f4mapkey\fP(1M):  For \f4mapstr\fP,
+added note about total number of characters being a maximum of 512.
+.LI
+\f4mount\fP(1M):  Under NOTES, added text about \f4mount\fP not
+preventing you from mounting a file system on a directory that's not empty.
+.LI
+\f4nfsstat\fP(1M):  Added new page to SARM.
+.LI
+\f4pkgadd\fP(1M):  Under \f4-d\fP device, corrected device names;
+in the \f2pkginst\fP description, added sentence stating that single
+quotes should be used when using \f2pkginst.*\fP so the
+shell will not interpret the \f4*\fP.
+.LI
+\f4pkgask\fP(1M):  In the \f2pkginst\fP description, added sentence stating
+that single quotes should be used when using \f2pkginst.*\fP so
+the shell will not interpret the \f4*\fP;
+under \f4-d\fP option, changed "directory pathname"
+to "full path name to a directory."
+.LI
+\f4pkgchk\fP(1M):  In the \f2pkginst\fP description, add sentence stating
+that single quotes should be used when using \f2pkginst.*\fP so
+the shell will not interpret the \f4*\fP;
+added text under \f4-x\fP option about using \f4-f\fP and \f4-x\fP
+together to remove hidden files;
+added NOTES section about removing hidden files and checking
+attributes with \f4-f\fP, \f4-x\fP, \f4-c\fP, and \f4-a\fP options.
+.LI
+\f4pkgtrans\fP(1M):  Under NOTES, added text about using the file system
+format for packages that span multiple floppies.
+.LI
+\f4rfstart\fP(1M):  Under NOTES, added sentence about using \f4idload\fP
+to put any non-default user and group mappings into place;
+added \f4idload\fP(1M) to SEE ALSO.
+.LI
+\f4sadp\fP(1M):  Added 386 specific version of \f4sadp\fP page.
+.LI
+\f4sag\fP(1M):  Moved page from section 1 of the User's Reference Manual
+to section 1M of this document.
+.LI
+\f4sar\fP(1M):  Changed name of page to \f4sadc\fP;
+moved page from section 1 of the User's Reference Manual to section 1M
+of this document.
+.LI
+\f4sysadm\fP(1M):  Under \f4mount\fP (Mount a File System),
+added warning about \f4mount\fP not prevent you from mounting a
+file system on a directory that's not empty.
+.LI
+\f4syslogd\fP(1M):  Corrected path in SYNOPSIS to \f4/usr/sbin\fP.
+.LI
+\f4ttymon\fP(1M):  Changed SYNOPSIS line to match usage line.
+This change was made for the Version 3,
+but not documented in the release notes.
+.LI
+\f4useradd\fP(1M):  Under the \f4-b base_dir\fP option, changed "If the \f4-m\fP
+option is not used ..." to "If the \f4-m\fP option is used ..."
+.LE
+.H 5 "Section 4 Manual Pages Changed"
+.BL
+.LI
+\f4archives\fP(4):  Added description of t_typeflag field in tar header definition.
+.LI
+\f4fs\fP(4):  Changed definition of \f4s_state\fP.
+.LI
+\f4inittab\fP(4):  Changed \f2id\fP to read "This is a one to
+four character tag used to uniquely identify an entry."
+.LE
+.H 5 "Section 5 Manual Pages Changed"
+.BL
+.LI
+\f4environ\fP(5):  Added \f4$SHELL\fP to list of variables with a note
+that the value should be specified with an absolute path name.
+.LE
+.H 5 "Section 7 Manual Pages Changed"
+.BL
+.LI
+\f4display\fP(7):  Fixed escape sequences that were printing wrong.
+.LI
+\f4keyboard\fP(7):  Scan Code 86 was copied to entry 107;
+added "agr     14    ALT-GR key (European keyboards only)"
+after the entry for \f4rctrl\fP in the table with the headings
+"Name      Value      Meaning."
+.LI
+\f4prf\fP(7):  Added note stating that \f4prf\fP is no longer configured
+into the kernel by default;
+described how to configure it back into the kernel.
+.LI
+\f4termio\fP(7):  Added sentence about flow control characters being flushed,
+causing the unflushed output queue to overflow a busy output
+device, to \f4TCFLSH\fP.
+.LE
+.SK
+.H 2 "User's Reference Manual"
+.H 3 "Document Description"
+This document describes each of the UNIX System V/386 user commands.
+Each description includes a synopsis of the command syntax and
+an explanation of how it is used; also supplied where appropriate
+are diagnostic indications, warnings, examples of use, and where to
+find related information.
+.H 3 "Document Outline"
+.TS
+center, tab(	);
+c1p10w(1m) c1p10w(1m) lb1p10.
+\|	\|	Title
+.SP
+=
+.SP
+.T&
+c1f3p11w(1m) l0f2p12      s
+c1p11f3w(1m) c1p11f3w(1m) l1p11f1w(3.5i).
+\(sq	User's Reference Manual
+	\(em	Introduction
+	\(em	Table of Contents
+	\(em	Permuted Index
+	\(em	Manual Pages
+.SP
+_
+.TE
+.H 3 "Document Changes"
+The following changes have been made to this document:
+.H 4 "Application Compatibility Changes"
+.H 5 "Section 1 Manual Pages Changed "
+.BL
+.LI
+\f4compress\fP(1)
+.LI
+\f4cpio\fP(1)
+.LI
+\f4crontab\fP(1)
+.LI
+\f4csplit\fP(1)
+.LI
+\f4expr\fP(1)
+.LI
+\f4file\fP(1)
+.LI
+\f4gencat\fP(1)
+.LI
+\f4setcolor\fP(1)
+.LI
+\f4tar\fP(1)
+.LI
+\f4uname\fP(1)
+.LE
+.H 5 "Section 1 Manual Pages Added"
+.BL
+.LI
+\f4rename\fP(1)
+.LI
+\f4setkey\fP(1)
+.LI
+\f4tape\fP(1)
+.LE
+.H 4 "PostScript Language Changes"
+.H 5 "Section 1 Manual Pages Added"
+.BL
+.LI
+\f4download\fP(1)
+.LI
+\f4dpost\fP(1)
+.LI
+\f4postdaisy\fP(1)
+.LI
+\f4postdmd\fP(1)
+.LI
+\f4postmd\fP(1)
+.LI
+\f4postplot\fP(1)
+.LI
+\f4postprint\fP(1)
+.LI
+\f4postreverse\fP(1)
+.LI
+\f4posttek\fP(1)
+.LE
+.H 4 "Miscellaneous Fixes"
+.H 5 "Section 1 Manual Pages Changed"
+.BL
+.\" .LI
+.\" ??? cpio(1):  Changed 512 byte default block size to "device dependent";
+.\" removed inaccurate statements about padding & from -B and -C options;
+.\" NOTES: chgd -H odc note per mdm, added I/O error explanation note,
+.\" 512 default chgd w/R4 & cautions;
+.LI
+\f4cu\fP(1C):  Change description of \f4%~put\fP to indicate that \f4cu\fP
+inserts backslashes before all control characters.
+.LI
+\f4dos\fP(1):  Added UNIX device names for \f4dosformat\fP;
+added example for \f4doscp\fP.
+.LI
+\f4egrep\fP(1):  In SYNOPSIS, changed \f4full regular expression\fP
+to \f2full-regular-expression\fP to indicate it's a substitutable.
+.LI
+\f4fgrep\fP(1):  Changed "fast grep" to "fixed grep."
+.LI
+\f4getopts\fP(1):  Added sentence about \f4OPTIND\fP not being
+initialized to 1 when a shell function is called.
+.LI
+\f4gettxt\fP(1):  Fixed description of \f2msgfile\fP,
+discussion of whether \f2dflt_msgb\fP is non-empty or empty,
+and explanation of example.
+.LI
+\f4grep\fP(1):   In SYNOPSIS, changed \f4limited regular expression\fP
+to \f2limited-regular-expression\fP to indicate it's a substitutable.
+.LI
+\f4lp\fP(1):  Changed text under \f4-T\fP option to show \f4-o stty=-opost\fP
+.LI
+\f4ls\fP(1):  Clarified text under \f4-L\fP option.
+.LI
+\f4mv\fP(1):  Added text to indicate that directories can be moved.
+.LI
+\f4passwd\fP(1):  Changed \f4-x 0\fP option to say only that
+aging will be turned off, instead of saying that users will be forced
+to change their passwords at next login session.
+.LI
+\f4sh\fP(1):  Added text about curly brace being permitted
+on same line as "list";
+under "The following parameters are automatically set by the shell,"
+added \f4*\fP and \f4@\fP;
+added text about \f4$\fP reporting PID of parent shell in all shell constructs;
+under "Blank Interpretation," added text about whitespace being
+considered internal field separators;
+section under Signals rewritten;
+under "Execution section," added text about the first line of the file
+being \f4#! /sbin/sh\fP in order for the "set user ID on execution" and
+"set group ID on execution" to be effective.
+.LI
+\f4tar\fP(1):  Added pipe (\f4|\fP) to code line under \f4-f\fP option;
+changed default to 20 under \f4-b\fP option;
+changed NOTES section;
+removed extraneous bracket in SYNOPSIS.
+.LI
+\f4uname\fP(1):  Clarified text for \f4-S\fP option;
+put \f4-S\fP with other options,
+added line showing order of output for \f4-a\fP option;
+added information on \f4SCOMPAT\fP to  NOTES section;
+change SYNOPSIS from \f4-S system_name\fP to \f4-S nodename\fP.
+.LE
+.H 5 "Section 1M Manual Pages Changed"
+.BL
+.LI
+\f4sag\fP(1M):  Removed page from section 1 of the \f2User's Reference Manual\fP.
+.LI
+\f4sar\fP(1M):  Removed page from section 1 of the \f2User's Reference Manual\fP.
+.LI
+\f4volcopy_ufs\fP(1M):  Added \f4-y\fP, \f4-bpi\fP, \f4-feet\fP, \f4-reel\fP,
+\f4-buf\fP, and \f4-e\fP options;
+added NOTES section about not supporting tape-to-tape copying.
+.LI
+\f4volcopy_s5\fP(1M):  Added \f4-y\fP, \f4-bpi\fP, \f4-feet\fP, \f4-reel\fP,
+\f4-buf\fP, and \f4-e\fP options;
+added NOTES section about not supporting tape-to-tape copying.
+.LE
+.SK
+.H 2 "Graphics Documents"
+Version 4 does not include graphics software nor documentation.
+Specifically, the following documents, which were included with Version 3,
+have not been included with Version 4:
+.BL
+.LI
+\f2OPEN LOOK\(rg Graphical User Interface Programmer's Reference Manual\fP
+.LI
+\f2OPEN LOOK Graphical User Interface User's Guide\fP
+.LI
+\f2Programmer's Guide:  OPEN LOOK Graphical User Interface\fP
+.LI
+\f2Programmer's Guide:  Porting the X11/NeWS\(rg Server\fP
+.LI
+\f2Programmer's Guide:  Porting the XWIN\(rg Server\fP
+.LI
+\f2Programmer's Guide:  X11/NeWS Graphical Windowing System\fP
+.LI
+\f2Programmer's Guide:  XWIN Graphical Windowing System\fP
+.LE
+.H 1 "Special Printing Instructions"
+.H 2 "Release Documents"
+The documents that are release-dependent, that is, they change
+with each release of the product, are generally referred to as
+Release Documents.
+Except for the
+.BT "Source Code Product Machine Readable Documentation Release Notes"
+and the
+.BT "Technology-File Mapping Guide
+the following release documents are on both the MRD tape and
+included as hard copy with the source code product:
+.BL
+.LI
+.BT "Read Me First"
+.LI
+.BT "Software Notes"
+.LI
+.BT "Source Code Product Build Instructions"
+.LI
+.BT "Source Code Product Machine Readable Documentation Release Notes"
+.LI
+.BT "Technology-File Mapping Guide
+.LE
+If you print these documents from the MRD tape, use the \f4-s4\fP
+option in the format printing line.
+For example, your format command will probably look like this:
+.UI
+format -d\f2printername\fP -s4 \f2filename\fP
+.SF

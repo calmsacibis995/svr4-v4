@@ -1,0 +1,103 @@
+'\"macro stdmacro
+.if n .pH g1a.ckbupscd @(#)ckbupscd	40.11 of 1/3/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} ckbupscd 1M "Essential Utilities" "\&"
+.if \nX=1 .ds x} ckbupscd 1M "Essential Utilities"
+.if \nX=2 .ds x} ckbupscd 1M "" "\&"
+.if \nX=3 .ds x} ckbupscd "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4ckbupscd\f1 \- check file system backup schedule
+.SH SYNOPSIS
+\f4ckbupscd\f1 [ \f4\-m\f1 ]
+.SH DESCRIPTION
+\f4ckbupscd\fP consults the file \f4/etc/bupsched\f1 and
+prints the file system lists from lines with date and time 
+specifications matching the current time.  If the \f4\-m\f1 flag is
+present, an introductory message in the output is suppressed so that
+only the file system lists are printed.
+Entries in the \f4bupsched\f1 file are printed under the
+control of \f4cron\f1.
+.P
+The file \f4bupsched\f1 should contain 
+lines of four or more fields,
+separated by spaces or tabs.
+The first three fields (the schedule fields)
+specify a range of dates and times.
+The rest of the fields constitute 
+a list of names of file systems to be printed 
+if \f4ckbupscd\fP is run at some time within the range 
+given by the schedule fields.
+The general format is:
+.P
+.RS
+.IR time  [,  time  ]
+.IR day  [,  day  ]
+.IR month  [,  month  "] "  fsyslist
+.RE
+.P
+where:
+.P
+.TP 8
+\f2time\f1
+Specifies an hour of the day (\f40\f1 through \f423\f1), matching any
+time within that hour, or an exact time of day (\f40:00\f1 through 
+\f423:59\f1).
+.P
+.TP 8
+\f2day\f1
+Specifies a day of the week (\f4sun\f1 through \f4sat\f1) or day
+of the month (\f41\f1 through \f431\f1).
+.P
+.TP 8
+\f2month\f1
+Specifies the month in which the time and day fields are valid.  Legal 
+values are the month
+numbers (\f41\f1 through \f412\f1).
+.P
+.TP 8
+\f2fsyslist\f1
+The rest of the line is taken to be a file system list to print.
+.P
+Multiple time, day, and month specifications may be separated by
+commas, in which case they are evaluated left to right.  
+.P
+An asterisk (\f4*\f1) always matches the current value for the field
+in which it appears.
+.P
+A line beginning with a sharp sign (\f4#\f1) is interpreted as a
+comment and ignored.  
+.P
+The longest line allowed (including continuations) is 1024 characters.
+.SH EXAMPLES
+The following are examples of lines which could appear in the 
+\f4/etc/bupsched\f1 file.
+.P
+.TP 8
+\f406:00-09:00  fri  1,2,3,4,5,6,7,8,9,10,11  /applic\f1
+Prints the file system name \f2/applic\f1 if \f4ckbupscd\fP is run 
+between 6:00 \s-1A.M.\s0 and 9:00 \s-1A.M.\s0
+any Friday during any month except December.
+.P
+.TP 8
+\f400:00-06:00,16:00-23:59  1,2,3,4,5,6,7  1,8  /\f1
+Prints a reminder to backup the root (\f2/\f1) file system
+if \f4ckbupscd\fP is run between the times of 4:00
+\s-1P.M.\s0 and 6:00 \s-1A.M.\s0
+during the first week of August or January.
+.SH FILES
+\f4/etc/bupsched\f1	specification file containing times and file system to back up
+.SH SEE ALSO
+\f4cron\f1(1M).
+.br
+\f4echo\f1(1),
+\f4sh\f1(1),
+in the
+\f2User's Reference Manual\f1.
+.SH NOTES
+\f4ckbupscd\f1
+will report file systems due for backup if invoked any time in the window.
+It does not know that backups may have just been done.
+.Ee

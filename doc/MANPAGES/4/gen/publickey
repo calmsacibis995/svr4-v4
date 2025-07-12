@@ -1,0 +1,39 @@
+'\"macro stdmacro
+.if n .pH g4.publickey @(#)publickey	40.8 of 4/11/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.\".\" @(#)publickey.5 1.2 89/01/16 SMI;
+.\"'\" macro stdmacro
+.\".\" Copyright\f1(c) 1988 Sun Microsystems, Inc. - All Rights Reserved.
+.\".TH PUBLICKEY 5 "19 October 1987"
+.nr X
+.if \nX=0 .ds x} publickey 4 "" "\&"
+.if \nX=1 .ds x} publickey 4 ""
+.if \nX=2 .ds x} publickey 4 "" "\&"
+.if \nX=3 .ds x} publickey "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4publickey\f1 \- public key database
+.SH SYNOPSIS
+\f4/etc/publickey\f1
+.SH DESCRIPTION
+\f4/etc/publickey\f1
+is the public key database used for secure
+RPC.
+Each entry in the database consists of a network user
+name (which may either refer to
+a user or a hostname), followed by the user's
+public key (in hex
+notation), a colon, and then the user's
+secret key encrypted with
+a password (also in hex notation).
+.P
+This file is altered either by the user through the
+\f4chkey\f1(1)
+command or by the system administrator through the
+\f4newkey\f1(1)
+command.
+.SH SEE ALSO
+\f4chkey\f1(1),
+\f4newkey\f1(1),
+\f4publickey\f1(3N)

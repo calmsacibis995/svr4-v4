@@ -1,0 +1,44 @@
+'\"macro stdmacro
+.if n .pH 386.mps_mk_bgran @(#)mps_mk_bgran	40.5 of 7/1/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.nr X
+.if \nX=0 .ds x} mps_mk_bgrant D3D "Multibus II" "DDI" "\&"
+.if \nX=1 .ds x} mps_mk_bgrant D3D "Multibus II" "DDI" "\&"
+.if \nX=2 .ds x} mps_mk_bgrant D3D "" "\&"
+.if \nX=3 .ds x} mps_mk_bgrant "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4mps_mk_bgrant\f1 \- construct a buffer grant in response to a buffer request.
+.SH SYNOPSIS
+.nf
+\f4#include <sys/mps.h>
+void mps_mk_bgrant(\f2mbp\fP, \f2dsocid\fP, \f2lid\fP, \f2count\fP)
+mps_msgbuf_t		mbp;
+mb2socid_t			dscocid;
+unsigned char		lid;
+unsigned long		count;\f1
+.fi
+.SH ARGUMENTS
+.TP 11
+\f2mbp\f1
+pointer to message buffer
+.TP 11
+\f2dsocid\f1
+32-bit destination socket id (host id:port id)
+.TP 11
+\f2lid\f1
+liaison id
+.TP 11
+\f2count\f1
+number of bytes to transfer
+.SH DESCRIPTION
+The \f4mps_mk_bgrant\f1 function is used to construct a buffer grant in
+response to a buffer request.
+Arguments to this function are not checked
+for valid values.
+.SH RETURN VALUE
+None
+.SH LEVEL
+Base or Interrupt
+.SH SEE ALSO
+\f4mps_mk_unsolrply\f1(D3D)

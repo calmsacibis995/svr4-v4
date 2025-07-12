@@ -1,0 +1,207 @@
+'\"macro stdmacro
+.\" Copyright (c) 1988 Sun Microsystems, Inc. - All Rights Reserved.
+.if n .pH g1.lpq @(#)lpq	40.12 of 4/18/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} lpq 1 "BSD Compatibility Package" "\&"
+.if \nX=1 .ds x} lpq 1 "BSD Compatibility Package" ""
+.if \nX=2 .ds x} lpq 1 "" "\&"
+.if \nX=3 .ds x} lpq "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4lpq\f1 \- display the queue of printer jobs
+.SH SYNOPSIS
+\f4/usr/ucb/lpq\f1
+[
+\f4\-P\f2printer\f1
+] [
+\f4\-l\f1
+] [
+\f4+\f1
+[
+.I interval
+] ] [
+.I job#
+\&.\ .\ .
+] [
+.I username
+\&.\ .\ . ]
+.SH DESCRIPTION
+\f4lpq\f1
+displays the contents of a printer queue.
+It reports the status of
+jobs specified by
+.IR job# ,
+or all jobs owned by the user specified by
+.IR username .
+\f4lpq\f1
+reports on all jobs in the default printer queue when invoked with no
+arguments.
+.P
+For each print job in the queue,
+\f4lpq\f1
+reports the user's name, current position, the names of input
+files comprising the job, the job number (by which it is
+referred to when using
+\f4lprm\f1(1))
+and the total size in bytes.
+Normally, only as much information as will fit on one line
+is displayed.
+Jobs are normally queued on a first-in-first-out basis.
+Filenames comprising a job may be unavailable, such as when
+\f4lpr\f1
+is used at the end of a pipeline; in such cases the filename field
+indicates the standard input.
+.P
+If
+\f4lpq\f1
+warns that there is no daemon present
+(that is, due to some malfunction), the
+\f4lpc\f1(1M)
+command can be used to restart a printer daemon.
+.SH OPTIONS
+.TP 15
+\f4\-P\f2 printer\f1
+Display information about the queue for the specified
+.IR printer .
+In the absence of the
+\f4\-P\f1
+option, the queue to the printer specified by the
+\f4PRINTER\fP
+variable in the environment is used.
+If the
+\f4PRINTER\fP
+variable is not set, the queue for the default printer is used.
+.TP
+\f4\-l\f1
+Display queue information in long format; includes the name of
+the host from which the job originated.
+.TP
+\f4\(pl\f1[ \f2interval\f1 ]
+Display the spool queue periodically until it empties.
+This option
+clears the terminal screen before reporting on the queue.
+If an
+.I  interval
+is supplied,
+\f4lpq\f1
+sleeps that number of seconds in between reports.
+.SH FILES
+.PD 0
+.TP 2.5i
+\f4/var/spool/lp\f1
+spooling directory.
+.TP
+\f4/var/spool/lp/tmp/\f2system_name\fP/*-0\f1
+reqeust files specifying jobs
+.PD
+.SH DIAGNOSTICS
+.TP
+\f4\f2printer\f4 is printing\f1
+The
+\f4lpq\f1
+program queries the spooler
+\f4LPSCHED\fP
+about the status of
+the printer.
+If the printer is disabled, the superuser can 
+restart the spooler using 
+\f4lpc\f1(1M).
+.TP
+\f4\f2printer\f4 waiting for auto-retry (offline ?)\f1
+The daemon could not open the printer device.
+The printer may be
+turned off-line.
+This message can also occur if a printer is out
+of paper, the paper is jammed, and so on.
+Another possible cause is
+that a process, such as an output filter, has exclusive use of the
+device.
+The only recourse in this case is to kill the offending
+process and restart the printer with
+\f4lpc\f1.
+.TP
+\f4waiting for \f2host\f4 to come up\f1
+A daemon is trying to connect to the remote machine named
+.IR host ,
+in order to send the files in the local queue.
+If the remote machine is up,
+\f4lpd\f1
+on the remote machine is probably dead or
+hung and should be restarted using
+\f4lpc\fP.
+.br
+.ne 5
+.TP
+\f4sending to \f2host\f1
+The files are being transferred to the remote
+.IR host ,
+or else the local daemon has hung while trying to transfer the
+files.
+.TP
+\f4printer disabled reason:\f1
+The printer has been marked as being unavailable with
+\f4lpc\f1.
+.TP
+\f4lpq: The LP print service isn't running or can't be reached.\f1
+The
+\f4lpsched\f1
+process
+overseeing
+the spooling queue does not exist.
+This normally occurs
+only when the daemon has unexpectedly died.
+You can
+restart the printer daemon with
+\f4lpc\f1.
+.TP
+\f4lpr: \f2printer\fP\|: unknown printer\f1
+The
+\f4printer\f1
+was not found in the
+System V
+.SM LP
+database.
+Usually this is a typing mistake; however, it 
+may indicate that the printer does not exist on the system.
+Use
+\f1`\f4lptstat \-p\f1'
+to find the reason.
+.TP
+\f4lpr: error on opening queue to spooler\f1
+The connection to
+\f4lpsched\f1
+on the local machine failed.
+This usually means the printer server started at
+boot time has died or is hung.
+Check if the printer
+spooler daemon
+\f4/usr/lib/lpsched\f1
+is running.
+.TP
+\f4lpr: Can't send message to LP print service\f1
+.TP
+\f4lpr: Can't receive message from LP print service\f1
+These indicate that the
+.SM LP
+print service has been 
+stopped.
+Get help from the system administrator. 
+.TP
+\f4lpr: Received unexpected message from LP print service\f1
+It is likely there is an error in this software.
+Get help from system administrator.
+.SH "SEE ALSO"
+\f4lpc\fP(1M),
+\f4lpr\fP(1),
+\f4lprm\fP(1)
+.P
+\f4lpsched\fP(1M)
+in the \f2System Administrator's Reference Manual\f1
+.br
+\f4lp\fP(1)
+in the \f2User's Reference Manual\f1
+.SH NOTES
+Output formatting is sensitive to the line length of the terminal;
+this can result in widely-spaced columns.

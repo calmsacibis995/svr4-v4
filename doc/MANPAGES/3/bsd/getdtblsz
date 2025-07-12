@@ -1,0 +1,38 @@
+'\"macro stdmacro
+.if n .pH g2.getdtblsz @(#)getdtblsz	40.14 of 4/24/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.\" Copyright (c) 1983 Regents of the University of California.
+.\" Copyright (c) 1988 Sun Microsystems, Inc. - All Rights Reserved.
+.\"
+.\" All rights reserved.  The Berkeley software License Agreement
+.\" specifies the terms and conditions for redistribution.
+.\"
+.nr X
+.if \nX=0 .ds x} getdtablesize 3 "BSD Compatibility Package" "\&"
+.if \nX=1 .ds x} getdtablesize 3 "BSD Compatibility Package"
+.if \nX=2 .ds x} getdtablesize 3 "" "\&"
+.if \nX=3 .ds x} getdtablesize "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4getdtablesize\f1 \- get descriptor table size
+.SH SYNOPSIS
+\f4cc \f1[ \f2flag\f1\. \. \. ] \f2file\f1 \. \. \. \f4\-lucb\f1
+.sp .5
+\f4long getdtablesize()\f1
+.SH DESCRIPTION
+Each process has a descriptor table
+which is guaranteed to have at least 20 slots.
+The entries in
+the descriptor table are numbered with small integers starting at 0.
+The call
+\f4getdtablesize\f1
+returns the current maximum size of this table
+by calling the \f4getrlimit\f1 system call.
+.SH "SEE ALSO"
+\f4close\fP(2),
+\f4dup\fP(2),
+\f4getrlimit\fP(2),
+and
+\f4open\fP(2)
+in the \f2Programmer's Reference Manual\f1

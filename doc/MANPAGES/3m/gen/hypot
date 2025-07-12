@@ -1,0 +1,53 @@
+'\"macro stdmacro
+.if n .pH g3m.hypot @(#)hypot	40.7 of 1/3/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} hypot 3M "Math Libraries" "\&"
+.if \nX=1 .ds x} hypot 3M "Math Libraries"
+.if \nX=2 .ds x} hypot 3M "" "\&"
+.if \nX=3 .ds x} hypot "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4hypot\f1 \- Euclidean distance function
+.SH SYNOPSIS
+\f4cc\f1
+[\f2flag\fP \|.\|.\|.] \f2file\fP \|.\|.\|.
+\f4\-lm\f1
+[\f2library\fP \|.\|.\|.]
+.PP
+\f4#include <math.h>\f1
+.PP
+\f4double hypot (double x, double y);\f1
+.SH DESCRIPTION
+\f4hypot\fP
+returns 
+.PP
+.RS
+.ft 4
+sqrt(x \(** x + y \(** y)
+.ft 1
+.RE
+.PP
+taking precautions against unwarranted overflows.
+.SH SEE ALSO
+\f4matherr\fP(3M).
+.SH DIAGNOSTICS
+When the correct value would overflow,
+\f4hypot\fP
+returns
+\f4HUGE\f1
+and sets
+\f4errno\fP
+to
+\f4ERANGE\fP.
+.PP
+Except when the \f4\-Xc\f1 compilation option is used,
+these error-handling procedures may be changed with the function
+\f4matherr\fP.
+When the \f4\-Xa\f1 or \f4\-Xc\f1 compilation options are used, 
+\f4HUGE_VAL\fP
+is returned instead of 
+\f4HUGE\fP.
+.\"	@(#)hypot.3m	6.3 of 10/20/83
+.Ee

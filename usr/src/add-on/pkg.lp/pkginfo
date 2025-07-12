@@ -1,0 +1,17 @@
+#ident	"@(#)pkg.lp:pkg.lp/pkginfo	1.1.1.2"
+
+ARCH="i386"
+BASEDIR=""
+CATEGORY="application"
+#
+# The class "post" is conditionally added to CLASSES during
+# installation.
+#
+CLASSES=""
+MAXINST="1"
+NAME="LP Print Service"
+PKG="lp"
+PREDEPEND="lp"
+RELEASE="4.0"
+VENDOR="USL"
+VERSION="1"

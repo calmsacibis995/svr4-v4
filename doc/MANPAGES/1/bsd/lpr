@@ -1,0 +1,392 @@
+'\"macro stdmacro
+.if n .pH g1.lpr @(#)lpr	40.14 of 4/18/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.\" Copyright (c) 1980 Regents of the University of California.
+.\" All rights reserved.  The Berkeley software License Agreement
+.\" specifies the terms and conditions for redistribution.
+.\"
+.\" Copyright (c) 1988 Sun Microsystems, Inc. - All Rights Reserved.
+.\"
+.nr X
+.if \nX=0 .ds x} lpr 1 "BSD Compatibility Package" "\&"
+.if \nX=1 .ds x} lpr 1 "BSD Compatibility Package" ""
+.if \nX=2 .ds x} lpr 1 "" "\&"
+.if \nX=3 .ds x} lpr "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4lpr\f1 \- send a job to the printer
+.SH SYNOPSIS
+.na
+.HP
+\f4/usr/ucb/lpr\f1
+[ \f4\-P \f2printer\f1 ]
+[ \f4\-# \f2copies\f1 ]
+[ \f4\-C \f2class\f1 ]
+[ \f4\-J \f2job\f1 ]
+[ \f4\-T \f2title\f1 ]
+.br
+[ \f4\-i\f1 [ \f2indent\f1 ] ]
+[ \f4\-w \f2cols\f1 ]
+[ \f4\-B\f1 ]
+[ \f4\-r\f1 ]
+[ \f4\-m\f1 ]
+[ \f4\-h\f1 ]
+[ \f4\-s\f1 ]
+.br
+[ \f4\-\f2filter_option\f1 ]
+[ \f2filename\f1 .\ .\ . ]
+.ad
+.SH DESCRIPTION
+\f4lpr\f1
+forwards printer jobs to a spooling area for subsequent printing as
+facilities become available.
+Each printer job consists of copies of,
+or, with
+\f4\-s ,\f1
+complete pathnames of
+each
+.I filename
+you specify.
+The spool area is managed by the line printer spooler,
+\f4lpsched\f1.
+\f4lpr\f1
+reads from the standard input if no files are specified.
+.SH OPTIONS
+.TP 15
+\f4\-P \f2printer\f1
+Send output to the named
+.IR printer .
+Otherwise send output to the printer named in the
+\f4PRINTER\fP
+environment variable, or to the default printer,
+\f4lp\f1.
+.TP
+\f4\-# \f2copies\f1
+Produce the number of
+.I copies
+indicated for each named file.
+For example:
+.RS
+.IP
+\f4lpr \-#3 index.c lookup.c\f1
+.RE
+.IP
+produces three copies of
+\f4index.c\f1,
+followed by three copies of
+\f4lookup.c\f1.
+On the other hand,
+.RS
+.IP
+\f4cat index.c lookup.c | lpr \-#3\f1
+.RE
+.IP
+generates three copies of the concatenation of the files.
+.TP
+\f4\-C \f2class\f1
+Print
+.I class
+as the job classification on the
+burst page.
+For example,
+.RS
+.IP
+\f4lpr \-C Operations new.index.c\f1
+.RE
+.IP
+replaces the system name (the name returned by
+.IR hostname )
+with \f5Operations\fP on the burst page, and prints the file
+\f4new.index.c\fP.
+.TP
+\f4\-J \f2job\f1
+Print
+.I job
+as the job name on the
+burst page.
+Normally,
+\f4lpr\f1
+uses the first file's name.
+.TP
+\f4\-T  \f2title\f1
+Use
+.I title
+instead of the file name for the title
+used by
+\f4pr\f1(1).
+.TP
+\f4\-i\f1[\f2indent\f1]\f1
+Indent output
+.I indent
+.SM SPACE
+characters.
+Eight
+.SM SPACE
+characters is the default.
+.TP
+\f4\-w \f2cols\f1
+Use
+.I cols
+as the page width for
+\f4pr\f1.
+.TP
+\f4\-r\f1
+Remove the file upon completion of spooling,
+or upon completion of printing with the
+\f4\-s\f1
+option.
+This is not supported in the SunOS compatibility
+package.
+However if the job is submitted to a  
+remote SunOS system, these options will be sent 
+to the remote system for processing.
+.TP
+\f4\-m\f1
+Send mail upon completion.
+.TP
+\f4\-h\f1
+Suppress printing the burst page.
+.TP
+\f4\-s\f1
+Use the full pathnames (not symbolic links) of the files to be printed 
+rather than trying to copy
+them.
+This means the data files should
+not be modified or removed until they
+have been printed.
+\f4\-s\f1
+only prevents copies of local files from being made.
+Jobs from
+remote hosts are copied anyway.
+\f4\-s\f1
+only works with named data files; if the
+\f4lpr\f1
+command is at the end of a pipeline, the data is copied to the
+spool.
+.br
+.ne 10
+.TP
+.I filter_option
+The following single letter options notify the line printer
+spooler that the files are not standard text files.
+The spooling daemon will use the appropriate filters to
+print the data accordingly.
+.ne 12
+.RS
+.TP
+\f4\-p\f1
+.PD 0
+Use
+\f4pr\f1
+to format the files
+(\f4lpr \-p\f1
+is very much like
+\f4pr | lpr\f1).
+.TP
+\f4\-l\f1
+Print control characters and suppress page breaks.
+.TP
+\f4\-t\f1
+The files contain
+\f4troff\f1(1)
+(cat phototypesetter) binary data.
+.TP
+\f4\-n\f1
+The files contain data from
+\f4ditroff\f1
+(device independent troff).
+.TP
+\f4\-d\f1
+The files contain data from
+\f4tex\f1
+(\s-1DVI\s0
+format from Stanford).
+.TP
+\f4\-g\f1
+The files contain standard plot data as produced by the
+\f4plot\f1(3X)
+routines (see also
+\f4plot\f1(1G)
+for the filters used by the printer spooler).
+.TP
+\f4\-v\f1
+The files contain a raster image.
+The printer must support an appropriate imaging model such as
+PostScript\(rg in order to print the image.
+.TP
+\f4\-c\f1
+The files contain data produced by
+.IR cifplot .
+.TP
+\f4\-f\f1
+Interpret the first character of each line as a standard
+.SM FORTRAN
+carriage control character.
+.PD
+.P
+If no
+.I filter_option
+is given (and the printer can interpret PostScript), the string
+\f1`\f4%!\f1'
+as the first two characters of a file indicates that it
+contains PostScript commands.
+.P
+These filter options offer a standard user interface,
+and all options may not be available for, nor applicable to,
+all printers.
+.RE
+.SH FILES
+.PD 0
+.TP 2.1i
+\f4/etc/passwd\f1
+personal identification
+.TP
+\f4/usr/lib/lp/lpsched\f1
+System V line printer spooler
+.TP
+\f4/var/spool/lp/tmp/*\f1
+directories used for spooling
+.TP
+\f4/var/spool/lp/tmp/\f2system\fP/*-0\f1
+spooler control files
+.TP
+\f4/var/spool/lp/tmp/\f2system\fP/*-\f2N\f1
+(\f2N\f1 is an integer and > 0) data files specified in
+\&`\f4*-0\f1'
+files
+.PD
+.br
+.ne 5
+.SH DIAGNOSTICS
+.TP
+\f4lpr: \f2printer\fP\|: unknown printer\f1
+The
+\f4printer\f1
+was not found in the
+.SM LP
+database.
+Usually this is a typing mistake; however, it 
+may indicate that the printer does not exist on the system.
+Use 
+\f1`\f4lptstat \-p\f1'
+to find the reason.
+.TP
+\f4lpr: error on opening queue to spooler\f1
+The connection to
+\f4lpsched\f1
+on the local machine failed.
+This usually means the printer server started at
+boot time has died or is hung.
+Check if the printer
+spooler daemon 
+\f4/usr/lib/lpsched\f1
+is running.
+.TP
+\f4lpr: \f2printer\fP\|: printer queue is disabled\f1
+This means the queue was turned off with
+.RS
+.IP
+\f4/usr/etc/lpc disable \f2printer\f1
+.RE
+.IP
+to prevent
+\f4lpr\f1
+from putting files in the queue.
+This is normally
+done by the system manager when a printer is
+going to be down for a long time.
+The
+printer can be turned back on by a privileged user with
+\f4lpc\f1.
+.TP
+\f4lpr: Can't send message to the LP print service\f1
+.TP
+\f4lpr: Can't receive message from the LP print service\f1
+These indicate that the 
+.SM LP
+print service has been 
+stopped.
+Get help from the system administrator. 
+.TP
+\f4lpr: Received unexpected message from LP print service\f1
+It is likely there is an error in this software.
+Get help from system administrator.
+.TP
+\f4lpr: There is no filter to convert the file content\f1
+Use the
+\f1`\f4lpstat \-p\  \-l\f1'
+command to find a printer that can handle 
+the file type directly, or consult with your system 
+administrator.
+.TP 
+\f4lpr: cannot access the file\f1
+Make sure file names are valid.
+.SH "SEE ALSO"
+\f4lpc\fP(8),
+\f4lpq\fP(1),
+\f4lprm\fP(1),
+\f4plot\fP(1G),
+\f4troff\fP(1)
+.P
+\f4plot\fP(3X)
+in the \f2Programmer's Reference Manual\f1
+.br
+\f4lpsched\fP(1)\f1
+in the \f2System Administrator's Reference Manual\f1
+.br
+\f4lp\fP(1),
+\f4pr\fP(1)
+in the \f2User's Reference Manual\f1
+.SH NOTES
+\f4lp\f1 is the preferred interface.
+.P
+Command-line options cannot be combined into a single argument
+as with some other commands.
+The command:
+.IP
+\f4lpr \-fs\f1
+.P
+is not equivalent to
+.IP
+\f4lpr \-f \-s\f1
+.P
+Placing the
+\f4\-s\f1
+flag first, or writing each option as a separate argument, makes a link
+as expected.
+.P
+\f4lpr \-p\f1
+is not precisely
+equivalent
+to
+\f4pr | lpr\f1.
+\f4lpr \-p\f1
+puts the current date at the top of each page, rather
+than the date last modified.
+.P
+Fonts for
+\f4troff\f1(1)
+and
+\s-1T\s-1\dE\u\s+1X\s+1\(rg
+reside on the printer host.
+It is currently not possible to use local font libraries.
+.P
+\f4lpr\f1
+objects to printing binary files.
+.P
+The
+\f4\-s\f1
+option, intended to use symbolic links in SunOS, does not use 
+symbolic links in the compatibility package.
+Instead, the complete path names are used.
+Also, the copying is avoided only for print jobs that are 
+run from the printer host itself.
+Jobs added to the queue from 
+a remote host are always copied into the spool area.
+That is, if 
+the printer does not reside on the host that
+\f4lpr\f1
+is run from, the spooling system makes a copy the file to print,
+and places it in the spool area of the printer host, regardless of
+\f4\-s\f1.

@@ -1,0 +1,878 @@
+.if n .pH g7.keyboard @(#)keyboard	40.9 of 1/3/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.dsT \t
+.nr X
+.if \nX=0 .ds x} keyboard 7 "" "\&"
+.if \nX=1 .ds x} keyboard 7 ""
+.if \nX=2 .ds x} keyboard 7 "" "\&"
+.if \nX=3 .ds x} keyboard "" "" "\&"
+.TH \*(x} "" "386 Computer Only"
+.SH NAME
+\f4keyboard\f1 \- system console keyboard
+.SH DESCRIPTION
+The system console is composed of two separate pieces:
+the keyboard and the display [see
+\f4display\f1 (7)].
+.PP
+The keyboard is used to type data,
+and send certain control signals to the computer.
+UNIX software performs terminal emulation on the console
+screen and keyboard, and, in doing so,
+makes use of several particular keys and key combinations.
+These keys and key combinations have special names that
+are unique to the UNIX system, and may or may not
+correspond to the keytop labels on your keyboard.
+.PP
+When you press a key, one of the following happens:
+.PP
+.RS
+\-\0An
+ASCII
+value is entered
+.sp .4v
+\-\0The meaning of another key, or keys, is changed.
+.sp .4v
+\-\0A string is sent to the computer.
+.sp .4v
+\-\0A function is initiated.
+.RE
+.PP
+When a key is pressed (a keystroke),
+the keyboard sends a scancode to the computer.
+This scancode is interpreted by the keyboard driver.
+The actual code sequence delivered to the terminal input routine [see
+\f4termio\f1 (7)]
+is defined by a set of
+internal tables in the driver.
+These tables can be modified by software
+(see the discussion of \f4ioctl\f1 calls below).
+In addition, the driver can be instructed not to do translations,
+delivering the keyboard up/down scan codes directly.
+.SS Changing Meanings
+The action performed by a key can be changed by
+using certain keys in combination.
+For example, the
+\f4SHIFT\f1
+key changes the
+ASCII
+values of the alphanumeric keys.
+Holding down the
+\f4CTRL\f1
+key while pressing another key sends a control code
+(such as \f4CTRL-D\f1,
+\f4CTRL-S\f1,
+and
+\f4CTRL-Q\f1).
+Holding down the ALT key also modifies a key's value.
+The \f4SHIFT\f1, \f4CTRL\f1, and
+\f4ALT\f1 keys can be used in combination.
+.SS "Switching Screens"
+To change screens (virtual terminals), first run the \f4vtlmgr\f1 command
+[see \f4vtlmgr\f1(1M)].
+Switch the current screen by typing
+\f4ALT-SYSREQ\f1 (also labelled \f4ALT-PRINTSCRN\f1 on some systems)
+followed by a key which identifies the desired screen.
+Any active screen may be selected by following \f4ALT-SYSREQ\f1 with
+\f2Fn\f1,
+where
+\f2Fn\f1
+is one of the function keys.
+\f4F1\f1 refers to the
+first virtual terminal screen, \f4F2\f1 refers to the second virtual
+terminal screen, etc.
+\f4ALT-SYSREQ\f1 `h' refers to the main
+console display (\f4/dev/console\f1).
+The next active screen can be selected with
+\f4ALT-SYSREQ\f1 `n,' and the previous screen
+can be selected with \f4ALT-SYSREQ\f1 `p.'
+.PP
+The default screen switch enable sequence (\f4ALT-SYSREQ\f1) is
+configurable.
+The \f4SYSREQ\f1 table entry can be modified by
+software (see discussion of \f4ioctl\f1 calls below).
+.br
+.ne6
+.SS Special Keys
+The following
+table shows which keys on a typical console
+correspond to UNIX system keys.
+In this table, a
+hyphen (-) between keys means you must hold down the
+first key while pressing the second.
+The mapping between characters
+which generate signals and the signal actually generated is set with
+\f4stty\f1(1), and may be changed [see \f4stty\f1(1)].
+.bp
+.TS
+center box;
+l l c
+l l l.
+.sp .2v
+Name	Keytop	Action
+.sp .2v
+_
+.sp .2v
+\f4INTR\f1	\f4DEL\f1	T{
+Stops current action and returns to the shell.
+This key is also called the \f4RUB OUT\f1 or \f4INTERRUPT\f1 key.
+T}
+.sp .4v
+\f4BACKSPACE\f1	\(<-	T{
+Deletes the first character to the left of the
+cursor.
+.br
+Note that the ``cursor left'' key also has
+a left arrow (\(<-) on its keytop,
+but you cannot backspace using that key.
+T}
+.sp .4v
+\f4CTRL-D\f1	\f4CTRL-D\f1	T{
+Signals the end of input from the keyboard; also exits current shell.
+T}
+.sp .4v
+\f4CTRL-H\f1	\f4CTRL-H\f1	T{
+Deletes the first character to the left of the cursor.
+Also called the \f4ERASE\f1 key.
+T}
+.sp .4v
+\f4CTRL-Q\f1	\f4CTRL-Q\f1	T{
+Restarts printing after it has been stopped with
+\f4CTRL-S\f1.
+T}
+.sp .4v
+\f4CTRL-S\f1	\f4CTRL-S\f1	T{
+Suspends printing on the screen (does not stop
+the program).
+T}
+.sp .4v
+\f4CTRL-U\f1	\f4CTRL-U\f1	T{
+Deletes all characters on the current line.
+Also called the \f4KILL\f1 key.
+T}
+.sp .4v
+\f4CTRL-\e\f1	\f4CTRL-\e\f1	Quits current command and creates a \f4core\f1
+		file, if allowed.  (Recommended for debugging only.)
+.sp .4v
+\f4ESCAPE\f1	\f4ESC\f1	T{
+Special code for some programs.
+For example,
+changes from insert mode to command mode in the
+\f4vi\f1(1) text editor.
+T}
+.sp .4v
+\f4RETURN\f1	T{
+(down-left arrow
+.br
+or \f4ENTER\f1)
+T}	T{
+Terminates a command line and initiates an action from
+the shell.
+T}
+.sp .4v
+\f4F\f2n\f1	\f4F\f2n\f1	T{
+Function key \f2n\f1.
+\f4F1-F12\f1 are unshifted,
+\f4F13-F24\f1 are shifted \f4F1-F12\f1,
+\f4F25-F36\f1 are \f4CTRL-F1\f1 through \f4F12\f1,
+and
+\f4F37-F48\f1 are \f4CTRL-SHIFT-F1\f1 through \f4F12\f1.
+.sp .4v
+The next \f4F\f2n\f1 keys (\f4F49-F60\f1) are on the
+number pad (unshifted):
+.sp .4v
+.nf
+.in +.5i
+\f4F49\f1\0-\0`7'	\f4F55\f1\0-\0`6'
+\f4F50\f1\0-\0`8'	\f4F56\f1\0-\0`+'
+\f4F51\f1\0-\0`9'	\f4F57\f1\0-\0`1'
+\f4F52\f1\0-\0`-'	\f4F58\f1\0-\0`2'
+\f4F53\f1\0-\0`4'	\f4F59\f1\0-\0`3'
+\f4F54\f1\0-\0`5'	\f4F60\f1\0-\0`0'
+.in -.5i
+.fi
+T}
+.sp .2v
+.TE
+.bp
+.SS Keyboard Map
+The keyboard mapping structure is
+defined in \f4/usr/include/sys/kd.h\f1.
+Each key can have ten states.
+The first eight states are:
+.PP
+.nf
+.in +3
+\-\0\f4BASE\f1	\-\0\f4CTRL-SHIFT\f1
+\-\0\f4SHIFT\f1	\-\0\f4ALT-SHIFT\f1
+\-\0\f4CTRL\f1	\-\0\f4ALT-CTRL\f1
+\-\0\f4ALT\f1	\-\0\f4ALT-CTRL-SHIFT\f1
+.in -3
+.fi
+.PP
+The two remaining states are indicated by two special bytes.
+The first byte is a ``special state'' byte whose bits indicate whether
+the key is ``special'' in one or more of the first eight states.
+The second byte is one of four codes represented by the characters
+C, N, B, or O which indicate
+how the lock keys affect the particular key.
+.PP
+The following table describes the default keyboard mapping.
+All values, except for special keywords (which are described later), are
+ASCII
+character values.
+.TP \w'SCAN\ CODE\ \ \ \ 'u
+.B Heading
+.B Description
+.TP
+\f4SCAN CODE\f1
+This column contains the scan code generated
+by the keyboard hardware when a key is pressed.
+There are no table entries for the scan code generated by releasing a key.
+.TP
+\f4BASE\f1
+This column contains the normal value of a key press.
+.TP
+\f4SHIFT\f1
+This column contains the value of a key press
+when the \f4SHIFT\f1 is also being held down.
+.TP
+\f4LOCK\f1
+This column indicates which lock keys affect that particular key:
+.sp .4v
+.nf
+\-\0\f4C\f1 indicates \f4CAPSLOCK\f1
+\-\0\f4N\f1 indicates \f4NUMLOCK\f1
+\-\0\f4B\f1 indicates both
+\-\0\f4O\f1 indicates locking is off
+.fi
+.PP
+The remaining columns are the values of key presses when
+combinations of the \f4CTRL\f1, \f4ALT\f1 and
+\f4SHIFT\f1 keys are also held down.
+.PP
+The \f4SRQTAB\f1 column entry is included in this table to provide
+a simple index of the default virtual terminal key selectors
+to the scan code to which it is assigned.
+The actual \f4SRQTAB\f1
+table is a stand-alone table which can be read or written
+via the \f4KDGKBENT\f1 and \f4KDSKBENT\f1 \f4ioctl\f1 calls.
+.TS
+center box expand;
+l l l l l l l l l l l
+l l l l l l l l l l l
+l l l l l l l l l l l
+n l l l l l l l l l l.
+.sp .2v
+\s-2\&	\&	\&	\&	\&	\&	\&	\&	ALT	\&	\&
+SCAN	\&	\&	\&	CTRL	\&	ALT	ALT	CTRL	\&	\&
+CODE	BASE	SHIFT	CTRL	SHIFT	ALT	SHIFT	CTRL	SHIFT	LOCK	SRQTAB
+_
+.sp .2v
+1	esc	esc	esc	esc	esc	esc	esc	esc	O	nop
+2	'1'	'!'	'1'	'1'	escn	escn	nop	nop	O	nop
+3	'2'	'@'	'2'	nul	escn	escn	nop	nop	O	nop
+4	'3'	'#'	'3'	'3'	escn	escn	nop	nop	O	nop
+5	'4'	'$'	'4'	'4'	escn	escn	nop	nop	O	nop
+6	'5'	'%'	'5'	'5'	escn	escn	nop	nop	O	nop
+7	'6'	'^'	'6'	rs	escn	escn	nop	nop	O	nop
+8	'7'	'&'	'7'	'7'	escn	escn	nop	nop	O	nop
+9	'8'	'*'	'8'	'8'	escn	escn	nop	nop	O	nop
+10	'9'	'('	'9'	'9'	escn	escn	nop	nop	O	nop
+11	'0'	')'	'0'	'0'	escn	escn	nop	nop	O	nop
+12	'-'	'_'	'-'	ns	escn	escn	nop	nop	O	nop
+13	'='	'+'	'='	'='	escn	escn	nop	nop	O	nop
+14	bs	bs	bs	bs	bs	bs	bs	bs	O	nop
+15	ht	btab	ht	btab	ht	btab	ht	btab	O	nop
+16	'q'	'Q'	dc1	dc1	escn	escn	nop	nop	C	nop
+17	'w'	'W'	etb	etb	escn	escn	nop	nop	C	nop
+18	'e'	'E'	enq	enq	escn	escn	nop	nop	C	nop
+19	'r'	'R'	dc2	dc2	escn	escn	nop	nop	C	nop
+20	't'	'T'	dc4	dc4	escn	escn	nop	nop	C	nop
+21	'y'	'Y'	em	em	escn	escn	nop	nop	C	nop
+22	'u'	'U'	nak	nak	escn	escn	nop	nop	C	nop
+23	'i'	'I'	ht	ht	escn	escn	nop	nop	C	nop
+24	'o'	'O'	si	si	escn	escn	nop	nop	C	nop
+25	'p'	'P'	dle	dle	escn	escn	nop	nop	C	K_PREV
+26	'['	'{'	esc	nop	escn	escn	nop	nop	O	nop
+27	']'	'}'	gs	nop	escn	escn	nop	nop	O	nop
+28	cr	cr	cr	cr	cr	cr	cr	cr	O	nop
+29	lctrl	lctrl	lctrl	lctrl	lctrl	lctrl	lctrl	lctrl	O	nop
+30	'a'	'A'	soh	soh	escn	escn	nop	nop	C	nop
+31	's'	'S'	dc3	dc3	escn	escn	nop	nop	C	nop
+32	'd'	'D'	eot	eot	escn	escn	nop	nop	C	nop
+33	'f'	'F'	ack	ack	escn	escn	nop	nop	C	K_FRCNEXT
+34	'g'	'G'	bel	bel	escn	escn	nop	nop	C	nop
+35	'h'	'H'	bs	bs	escn	escn	nop	nop	C	K_VTF
+36	'j'	'J'	nl	nl	escn	escn	nop	nop	C	nop
+37	'k'	'K'	vt	vt	escn	escn	nop	nop	C	nop
+38	'l'	'L'	np	np	escn	escn	nop	nop	C	nop
+39	';'	':'	';'	':'	escn	escn	nop	nop	O	nop
+40	'\''	'"'	'\''	'"'	escn	escn	nop	nop	O	nop
+41	'`'	'~'	'`'	'~'	escn	escn	nop	nop	O	nop\s+2
+.TE
+.PP
+.TS
+center box expand;
+l l l l l l l l l l l
+l l l l l l l l l l l
+l l l l l l l l l l l
+n l l l l l l l l l l.
+.sp .2v
+\s-2\&	\&	\&	\&	\&	\&	\&	\&	ALT	\&	\&
+SCAN	\&	\&	\&	CTRL	\&	ALT	ALT	CTRL	\&	\&
+CODE	BASE	SHIFT	CTRL	SHIFT	ALT	SHIFT	CTRL	SHIFT	LOCK	SRQTAB
+_
+.sp .2v
+42	lshift	lshift	lshift	lshift	lshift	lshift	lshift	lshift	O	nop
+43	'\e\e'	'|'	fs	'|'	escn	escn	nop	nop	O	nop
+44	'z'	'Z'	sub	sub	escn	escn	nop	nop	C	nop
+45	'x'	'X'	can	can	escn	escn	nop	nop	C	nop
+46	'c'	'C'	etx	etx	escn	escn	nop	nop	C	nop
+47	'v'	'V'	syn	syn	escn	escn	nop	nop	C	nop
+48	'b'	'B'	stx	stx	escn	escn	nop	nop	C	nop
+49	'n'	'N'	so	so	escn	escn	nop	nop	C	K_NEXT
+50	'm'	'M'	cr	cr	escn	escn	nop	nop	C	nop
+51	','	'<'	','	'<'	escn	escn	nop	nop	O	nop
+52	'.'	'>'	'.'	'>'	escn	escn	nop	nop	O	nop
+53	'/'	'?'	'/'	ns	escn	escn	nop	nop	O	nop
+54	rshift	rshift	rshift	rshift	rshift	rshift	rshift	rshift	O	nop
+55	'*'	'*'	'*'	'*'	escn	escn	nop	nop	O	nop
+56	lalt	lalt	lalt	lalt	lalt	lalt	lalt	lalt	O	nop
+57	' '	' '	nul	nul	escn	escn	nop	nop	O	nop
+58	clock	clock	clock	clock	clock	clock	clock	clock	O	nop
+59	fkey1	fkey13	fkey25	fkey37	fkey1	fkey13	fkey25	fkey37	O	K_VTF+1
+60	fkey2	fkey14	fkey26	fkey38	fkey2	fkey14	fkey26	fkey38	O	K_VTF+2
+61	fkey3	fkey15	fkey27	fkey39	fkey3	fkey15	fkey27	fkey39	O	K_VTF+3
+62	fkey4	fkey16	fkey28	fkey40	fkey4	fkey16	fkey28	fkey40	O	K_VTF+4
+63	fkey5	fkey17	fkey29	fkey41	fkey5	fkey17	fkey29	fkey41	O	K_VTF+5
+64	fkey6	fkey18	fkey30	fkey42	fkey6	fkey18	fkey30	fkey42	O	K_VTF+6
+65	fkey7	fkey19	fkey31	fkey43	fkey7	fkey19	fkey31	fkey43	O	K_VTF+7
+66	fkey8	fkey20	fkey32	fkey44	fkey8	fkey20	fkey32	fkey44	O	K_VTF+8
+67	fkey9	fkey21	fkey33	fkey45	fkey9	fkey21	fkey33	fkey45	O	K_VTF+9
+68	fkey10	fkey22	fkey34	fkey46	fkey10	fkey22	fkey34	fkey46	O	K_VTF+10
+69	nlock	nlock	nlock	nlock	nlock	nlock	nlock	nlock	O	
+70	slock	slock	brk	brk	slock	slock	brk	brk	O	
+71	fkey49	'7'	fkey49	'7'	fkey49	escn	nop	nop	N	
+72	fkey50	'8'	fkey50	'8'	fkey50	escn	nop	nop	N	
+73	fkey51	'9'	fkey51	'9'	fkey51	escn	nop	nop	N	
+74	fkey52	'-'	fkey52	'-'	fkey52	escn	nop	nop	N	
+75	fkey53	'4'	fkey53	'4'	fkey53	escn	nop	nop	N	
+76	fkey54	'5'	fkey54	'5'	fkey54	escn	nop	nop	N	
+77	fkey55	'6'	fkey55	'6'	fkey55	escn	nop	nop	N	
+78	fkey56	'+'	fkey56	'+'	fkey56	escn	nop	nop	N	
+79	fkey57	'1'	fkey57	'1'	fkey57	escn	nop	nop	N	
+80	fkey58	'2'	fkey58	'2'	fkey58	escn	nop	nop	N	
+81	fkey59	'3'	fkey59	'3'	fkey59	escn	nop	nop	N	
+82	fkey60	'0'	fkey60	'0'	fkey60	escn	nop	nop	N	
+83	del	'.'	del	'.'	del	escn	rboot	nop	N	\s+2
+.TE
+.bp
+.PP
+.TS
+center box expand;
+l l l l l l l l l l l
+l l l l l l l l l l l
+l l l l l l l l l l l
+n l l l l l l l l l l.
+.sp .2v
+\s-2\&	\&	\&	\&	\&	\&	\&	\&	ALT	\&	\&
+SCAN	\&	\&	\&	CTRL	\&	ALT	ALT	CTRL	\&	\&
+CODE	BASE	SHIFT	CTRL	SHIFT	ALT	SHIFT	CTRL	SHIFT	LOCK	SRQTAB
+_
+.sp .2v
+84	fkey60	fkey26	fkey60	nop	sysreq	sysreq	sysreq	sysreq	O	
+85	fkey58	fkey58	fkey58	fkey58	fkey58	fkey58	fkey58	fkey58	O	
+86	fkey53	fkey53	fkey53	fkey53	fkey53	fkey53	fkey53	fkey53	O	
+87	fkey11	fkey23	fkey35	fkey47	fkey11	fkey23	fkey35	fkey47	O	K_VTF+11
+88	fkey12	fkey24	fkey36	fkey48	fkey12	fkey24	fkey36	fkey48	O	K_VTF+12
+89	nop	nop	nop	nop	nop	nop	nop	nop	O	K_NOP
+90	nop	nop	nop	nop	nop	nop	nop	nop	O	K_NOP
+91	nop	nop	nop	nop	nop	nop	nop	nop	O	K_NOP
+92	nop	nop	nop	nop	nop	nop	nop	nop	O	K_NOP
+93	nop	nop	nop	nop	nop	nop	nop	nop	O	K_NOP
+94	nop	nop	nop	nop	nop	nop	nop	nop	O	K_NOP
+95	nop	nop	nop	nop	nop	nop	nop	nop	O	K_NOP
+96	nop	nop	nop	nop	nop	nop	nop	nop	O	K_NOP
+97	nop	nop	nop	nop	nop	nop	nop	nop	O	K_NOP
+98	nop	nop	nop	nop	nop	nop	nop	nop	O	K_NOP
+99	nop	nop	nop	nop	nop	nop	nop	nop	O	K_NOP
+100	nop	nop	nop	nop	nop	nop	nop	nop	O	K_NOP
+101	nop	nop	nop	nop	nop	nop	nop	nop	O	K_NOP
+102	nop	nop	nop	nop	nop	nop	nop	nop	O	K_NOP
+103	nop	nop	nop	nop	nop	nop	nop	nop	O	K_NOP
+104	nop	nop	nop	nop	nop	nop	nop	nop	O	K_NOP
+105	nop	nop	nop	nop	nop	nop	nop	nop	O	K_NOP
+106	nop	nop	nop	nop	nop	nop	nop	nop	O	K_NOP
+107	fkey53	fkey53	fkey53	fkey53	fkey53	fkey53	fkey53	fkey53	O	
+108	nop	nop	nop	nop	nop	nop	nop	nop	O	K_NOP
+109	nop	nop	nop	nop	nop	nop	nop	nop	O	K_NOP
+110	nop	nop	nop	nop	nop	nop	nop	nop	O	K_NOP
+111	fkey51	fkey51	nop	nop	nop	nop	nop	nop	O	K_NOP
+112	nop	nop	nop	nop	nop	nop	nop	nop	O	K_NOP
+113	nop	nop	nop	nop	nop	nop	nop	nop	O	K_NOP
+114	ralt	ralt	ralt	ralt	ralt	ralt	ralt	ralt	O	K_NOP
+115	rctrl	rctrl	rctrl	rctrl	rctrl	rctrl	rctrl	rctrl	O	K_NOP
+116	cr	cr	cr	cr	cr	cr	cr	cr	O	K_NOP
+117	'/'	'/'	nop	nop	escn	escn	nop	nop	O	K_NOP
+118	nop	nop	nop	nop	nop	nop	nop	nop	O	K_NOP
+119	brk	brk	brk	brk	brk	brk	brk	brk	O	K_NOP
+120	fkey50	fkey50	nop	nop	nop	nop	nop	nop	O	K_NOP
+121	del	del	del	del	del	del	del	del	O	K_NOP
+122	fkey57	fkey57	nop	nop	nop	nop	nop	nop	O	K_NOP
+123	fkey60	fkey60	nop	nop	nop	nop	nop	nop	O	K_NOP\s+2
+.TE
+.TS
+center box expand;
+l l l l l l l l l l l
+l l l l l l l l l l l
+l l l l l l l l l l l
+n l l l l l l l l l l.
+.sp .2v
+\s-2\&	\&	\&	\&	\&	\&	\&	\&	ALT	\&	\&
+SCAN	\&	\&	\&	CTRL	\&	ALT	ALT	CTRL	\&	\&
+CODE	BASE	SHIFT	CTRL	SHIFT	ALT	SHIFT	CTRL	SHIFT	LOCK	SRQTAB
+_
+.sp .2v
+124	nop	nop	nop	nop	nop	nop	nop	nop	O	K_NOP
+125	fkey55	fkey55	nop	nop	nop	nop	nop	nop	O	K_NOP
+126	fkey59	fkey59	nop	nop	nop	nop	nop	nop	O	K_NOP
+127	fkey49	fkey49	nop	nop	nop	nop	nop	nop	O	K_NOP\s+2
+.TE
+.PP
+The following table lists the value of each of the special
+keywords used in the preceding tables.
+The keywords are only used in the preceding tables for readability.
+In the actual keyboard map, a special keyword is represented
+by its value with the corresponding ``special state'' bit being set.
+.TS
+center box tab(:);
+l l l
+l  n  l.
+.sp .2v
+Name:Value:Meaning
+.sp .2v
+_
+.sp .2v
+nop:0:No operation - no action from keypress
+lshift:2:Left-hand shift
+rshift:3:Right-hand shift
+clock:4:Caps lock
+nlock:5:Numeric lock
+slock:6:Scroll lock
+alt:7:Alt key
+btab:8:Back tab key - generates fixed sequence (ESC[ Z)
+ctrl:9:Control key
+lalt:10:Left-hand alt key
+ralt:11:right-hand alt key
+lctrl:12:Left-hand control key
+rctrl:13:Right-hand control key
+agr:14:ALT-GR key (European keyboards only)
+fkey1:27:Function key #1
+\&.:\&:\&.
+\&.:\&:\&.
+\&.:\&:\&.
+fkey96:122:Function key #96
+sysreq:123:System request
+brk:124:Break key
+escn:125:T{
+Generate an ESC N \f2x\f1 sequence, where \f2x\f1 is
+the un-alt'ed value of the scan code
+T}
+esco:126:T{
+Generate an ESC O \f2x\f1 sequence, where \f2x\f1
+is the un-alt'ed value of the scan code
+T}
+escl:127:T{
+Generate an ESC L \f2x\f1 sequence, where \f2x\f1 is the
+un-alt'ed value of the scan code
+T}
+rboot:128:Reboot system
+debug:129:Invoke kernel debugger
+NEXT:130:Switch to next virtual terminal on queue
+.TE
+.br
+.ne 2i
+.TS
+center box tab(:);
+l l l
+l n l.
+.sp .2v
+Name:Value:Meaning
+.sp .2v
+_
+.sp .2v
+PREV:131:Switch to previous virtual terminal on queue
+FNEXT:132:Forced switch to next virtual terminal on queue
+FPREV:133:Forced switch to previous virtual terminal on queue
+VTF:134:Virtual Terminal First (VT00)
+\&.:\&:\&.
+\&.:\&:\&.
+\&.:\&:\&.
+VTL:148:Virtual Terminal Last (VT14)
+MGRF:149:T{
+Virtual Terminal Manager First.
+Allows assigning special
+significance to key sequence for actions by virtual terminal
+layer manager.
+Used in SRQTAB table.
+T}
+\&.:\&:\&.
+\&.:\&:\&.
+\&.:\&:\&.
+MGRL:179:T{
+Virtual Terminal Manager Last.
+Used in SRQTAB table.
+T}
+.TE
+.PP
+The following table lists names and decimal values
+for ASCII characters in the preceding table.
+Names are used in place of numeric constants to
+make it easier to read the scan code table.
+Only the decimal values are placed in the
+\f4ioctl\f1 buffer.
+These values are taken from
+\f4ascii\f1(5).
+.PP
+.ne 2.5i
+.TS
+center box tab(:);
+l l | l l
+l n | l n.
+.sp .2v
+Name:Value:Name:Value
+.sp .2v
+_
+.sp .2v
+nul:0:dc1:17
+soh:1:dc2:18
+stx:2:dc3:19
+etx:3:dc4:20
+eot:4:nak:21
+enq:5:syn:22
+ack:6:etb:23
+bel:7:can:24
+bs:8:em:25
+ht:9:sub:26
+nl:10:esc:27
+vt:11:fs:28
+np:12:gs:29
+cr:13:rs:30
+so:14:ns:31	
+si:15:del:127
+dle:16
+.sp .2v
+.TE
+.SS "String Key Mapping"
+The string mapping table is an array of 512 bytes
+(typedef \f4strmap_\^t\f1) containing
+null-terminated strings that redefine the function keys.
+The first null-terminated\p
+.br
+.ne 2
+string is assigned
+to the first function key, the second string is assigned to the second
+function key, etc.
+.PP
+There is no limit to the length of any particular
+string as long as the whole table does not exceed 512 bytes, including
+nulls.
+To make a string a null, add extra null characters.
+The following table contains default function key values.
+.PP
+.TS
+center box tab(:);
+cs s s s
+c c c c c
+c c c c c
+c c c c c
+n l l l l.
+.sp .2v
+Default Function Key Values
+.sp .2v
+_
+.sp .2v
+\&:\&:\&:\&:Ctrl
+Function:\&:Shift:Ctrl:Shift
+Key #:Function:Function:Function:Function
+.sp .2v
+_
+.sp .2v
+1:ESC OP:ESC Op:ESC OP:ESC Op
+2:ESC OQ:ESC Oq:ESC OQ:ESC Oq
+3:ESC OR:ESC Or:ESC OR:ESC Or
+4:ESC OS:ESC Os:ESC OS:ESC Os
+5:ESC OT:ESC Ot:ESC OT:ESC Ot
+6:ESC OU:ESC Ou:ESC OU:ESC Ou
+7:ESC OV:ESC Ov:ESC OV:ESC Ov
+8:ESC OW:ESC Ow:ESC OW:ESC Ow
+9:ESC OX:ESC Ox:ESC OX:ESC Ox
+10:ESC OY:ESC Oy:ESC OY:ESC Oy
+11:ESC OZ:ESC Oz:ESC OZ:ESC Oz
+12:ESC OA:ESC Oa:ESC OA:ESC Oa
+.sp .2v
+.TE
+.SS Ioctl Calls:
+.TP
+\f4KDGKBMODE\f1
+This call gets the current keyboard mode.
+It returns one of the
+following values, as defined in
+\f4/usr/include/sys/kd.h\f1:
+.nf
+.ta 4m 8m 12m 16m 20m 24m 28m 32m 36m 40m 44m 48m 52m 56m 60m
+.IP
+\*T#define\*TK_RAW\*T\*T0x00\*T/* Send row scan codes */
+\*T#define\*TK_XLATE\*T0x01\*T/* Translate to ASCII */
+.fi
+.DT
+.TP
+\f4KDSKBMODE\f1
+This call sets the keyboard mode.
+The argument to the call is either \f4K_RAW\f1 or \f4K_XLATE\f1.
+By using raw mode, the program can see the raw
+up/down scan codes from the keyboard.
+In translate mode, the translation
+tables are used to generate the appropriate character code.
+.TP
+\f4KDGKBTYTE\f1
+This call gets the keyboard type.
+It returns one of the following values,
+as defined in \f4/usr/include/sys/kd.h\f1:
+.nf
+.ta 4m 8m 12m 16m 20m 24m 28m 32m 36m 40m 44m 48m 52m 56m 60m
+.IP
+\*T#define\*TKB_84\*T\*T0x00\*T/*84 key keyboard*/
+\*T#define\*TKB_101\*T\*T0x01\*T/*101 key keyboard*/
+\*T#define\*TKB_OTHER\*T0x03\*T/*Other type keyboard*/
+.fi
+.DT
+.TP
+KDGKBENT
+This call reads one of the entries in the translation tables.
+The argument to the call is the address of one of the following structures,
+defined in
+\f4/usr/include/sys/kd.h\f1, with the first two fields filled in:
+.nf
+.ta 4m 8m 12m 16m 20m 24m 28m 32m 36m 40m 44m 48m 52m 56m 60m
+.ne 5
+.IP
+.ft 4
+\*Tstruct kbentry {
+\*T\*Tunchar\*Tkb_table;\*T/* Table to use */
+\*T\*Tunchar\*Tkb_index;\*T/* Entry in table */
+\*T\*Tushort\*Tkb_value;\*T/* Value to get/set */
+\*T};  \f1
+.fi
+.DT
+.IP
+Valid values for the \f2kb_table\f1 field are:
+.nf
+.ta 4m 8m 12m 16m 20m 24m 28m 32m 36m 40m 44m 48m 52m 56m 60m
+.IP
+\*T#define\*TK_NORMTAB\*T\*T0x00\*T/* Base */
+\*T#define\*TK_SHIFTTAB\*T\*T0x01\*T/* Shifted */
+\*T#define\*TK_ALTTAB\*T\*T0x02\*T/* Alt */
+\*T#define\*TK_ALTSHIFTTAB\*T0x03\*T/* Shifted alt */
+\*T#define\*TK_SRQTAB\*T\*T0x04\*T/* Select sysreq
+							table */
+.fi
+.DT
+.IP
+The \f4ioctl\f1 will get the indicated entry from the indicated table and return it
+in the third field.
+.IP
+The \f4K_SRQTAB\f1 value for the kb_table field allows access to
+the scancode indexed table which allows assignment of a
+given virtual terminal selector (\f4K_VTF\(emK_VTL\f1) or the
+virtual terminal layer manager (\f4K_MGRF\(emK_MGRL\f1)
+"specialkey" assignments.
+.IP
+The virtual terminal selector (\f4K_VTF\f1) is normally associated with
+\f4/dev/tty00\f1,
+on which the user login shell is commonly found.
+The following terminal selectors also are used
+to select virtual terminals:
+.sp .4v
+.in +.5i
+.nf
+K_VTF+1 for the 1st virtual terminal (/dev/vt01)
+K_VTF+2 for the 2nd virtual terminal (/dev/vt02)
+              .
+              .
+              .
+K_VTF+12 for the 12th virtual terminal (/dev/vt12)
+.fi
+.in -.5i
+.TP
+\f4KDSKBENT\f1
+This call sets an entry in one of the translation tables.
+It uses the same structure as the \f4KDGKBENT\f1 \f4ioctl\f1,
+but with the third field filled in
+with the value that should be placed in the translation table.
+This can be used to partially or completely remap the keyboard.
+.PP
+The \f4kd\f1 driver provides support for virtual terminals.
+The console minor device,
+\f4/dev/vtmon\f1 ,
+provides virtual terminal key requests from the \f4kd\f1 driver
+to the process that has
+\f4/dev/vtmon\f1
+open.
+Two \f4ioctl\f1s are provided for virtual terminal support:
+.TP
+\f4VT_GETSTATE\f1
+The \f4VT_GETSTATE\f1 \f4ioctl\f1 returns global virtual terminal state information.
+It returns the active virtual terminal in the v_active field,
+and the number of active virtual terminals
+and a bit mask of the global state in the vt_state field,
+where bit\ x is the state of vt\ x
+(1 indicates that the virtual terminal is open).
+.TP
+\f4VT_SENDSIG\f1
+The \f4VT_SENDSIG\f1 \f4ioctl\f1 specifies a signal (in vt_signal)
+to be sent to a bit mask of virtual terminals (in vt_state).
+.PP
+The data structure used by the \f4VT_GETSTATE\f1 and \f4VT_SENDSIG\f1 \f4ioctl\f1s is:
+.sp .4v
+.ta .3i 1.5i
+.nf
+.in +.25i
+\f4struct vt_stat {
+	ushort v_active;	\f1/* active vt */\f4
+	ushort v_signal;	\f1/* signal to send (\f4VT_SENDSIG\f1) */\f4
+	ushort v_state;		\f1/* vt bit mask (\f4VT_SENDSIG\f1 and \f4VT_GETSTATE\f1) */\f4
+};  \f1
+.in -.25i
+.fi
+.DT
+.sp .4v
+and is defined in
+\f4/usr/include/sys/vt.h\f1 .
+.TP
+\f4VT_OPENQRY\f1
+The \f4VT_OPENQRY\f1 \f4ioctl\f1 is used to get the next available virtual terminal.
+This value is set in the last argument of the
+\f4ioctl\f1 (2)
+call.
+.TP
+\f4GIO_KEYMAP\f1
+This call gets the entire keyboard mapping table from the kernel.
+The structure
+of the argument is given in \f4/usr/include/sys/kd.h\f1.
+.TP
+\f4PIO_KEYMAP\f1
+This call sets the entire keyboard mapping table.
+The structure
+of the argument is given in \f4/usr/include/sys/kd.h\f1.
+.TP
+\f4GIO_STRMAP\f1
+This call gets the string key mapping table from the kernel.
+The structure
+of the argument is given in \f4/usr/include/sys/kd.h\f1.
+.TP
+\f4PIO_STRMAP\f1
+This call sets the string key mapping table.
+The structure
+of the argument is given in \f4/usr/include/sys/kd.h\f1.
+.TP
+\f4TIOCKBOF\f1
+Extended character codes are disabled.
+This is the default mode.
+.TP
+\f4TIOCKBON\f1
+Allows extended characters to be transmitted to the user program.
+The extended characters are transmitted as a null byte followed
+by a second byte containing the character's extended code.
+When a true null byte is sent, it is transmitted as two
+consecutive null bytes.
+.PP
+When the keyboard is fully enabled, an
+8-bit character code can be obtained by holding down the
+\f4ALT\f1
+key and entering the 3-digit decimal value of the character
+from the numeric keypad.
+The character is transmitted when the \f4ALT\f1 key is released.
+.PP
+Some keyboard characters have special meaning.
+Under default operations, pressing the
+\f4DELETE\f1
+key generates an interrupt signal which is sent to all
+processes designated with the associated control terminal.
+When the keyboard is fully enabled,
+holding down the
+\f4ALT\f1
+key and pressing the 8 key on the home keyboard (not on the
+numeric keypad) returns a null byte followed by 0x7F.
+This will produce the same effect as the \f4DELETE\f1 key (0x7F)
+unless you have executed the \f4stty\f1(1) command with the
+\f4\-isig\f1
+option.
+.TP
+\f4KBENABLED\f1
+If the keyboard is fully enabled (\f4TIOCKBON\f1), a
+non-zero value will be returned.
+If the keyboard is not
+fully enabled (\f4TIOCKBOF\f1), a value of zero will be
+returned.
+.TP
+\f4GETFKEY\f1
+Obtains the current definition of a function key.
+The argument to the call
+is the address of one of the following structures defined in
+\f4/usr/include/sys/kd.h\f1:
+.PP
+.nf
+.ta 2m 4m 8m 12m 16m 20m 28m 32m 36m 40m 44m 48m 52m 56m 60m
+.IP
+\*T\f4struct fkeyarg {
+\*T\*Tunsigned int	keynum;
+\*T\*Tchar   keydef [MAXFK];    \f1/*Comes from ioctl.h via comcrt.h*/\f4
+\*T\*Tchar   flen;
+\*T};\f1
+.fi
+.DT
+.IP
+The function key number must be passed in
+.I keynum
+(see
+.I arg
+structure above).
+The string currently assigned to the key will be returned in
+.I keydef
+and the length of the string will be returned in
+.I flen
+when the
+\f4ioctl\f1
+is performed.
+.TP
+\f4SETFKEY\f1
+Assigns a given string to a function key.
+It uses the same structure as
+the \f4GETFKEY\f1 \f4ioctl\f1.
+The function key
+number must be passed in
+\f2keynum\f1,
+the string must be passed in
+\f2keydef\f1,
+and the length of the string (number of characters) must be
+passed in
+\f2flen\f1.
+.SH FILES
+\f4/dev/console\f1
+.br
+\f4/dev/vt00-n\f1
+.br
+\f4/usr/include/sys/kd.h\f1
+.SH SEE ALSO
+\f4stty\f1(1), \f4console\f1(7), \f4display\f1(7), \f4termio\f1(7).
+.br
+\f4ioctl\f1(2),
+\f4ascii\f1(5)
+in the
+.IR "Programmer's Reference Manual" .
+.br
+\f4vtlmgr\f1(1M)
+in the 
+.IR "User's Reference Manual" .

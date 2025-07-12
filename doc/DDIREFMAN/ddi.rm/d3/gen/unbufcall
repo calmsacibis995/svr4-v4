@@ -1,0 +1,83 @@
+'\"macro stdmacro
+.if n .pH gen.unbufcall @(#)unbufcall	40.2 of 1/7/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.nr X
+.if \nX=0 .ds x} unbufcall D3DK "STREAMS" "DDI/DKI" "\&"
+.if \nX=1 .ds x} unbufcall D3DK "STREAMS" "DDI/DKI"
+.if \nX=2 .ds x} unbufcall D3DK "" "\&"
+.if \nX=3 .ds x} unbufcall "" "" "\&"
+.TH \*(x}
+.IX "\f4unbufcall\fP(D3DK)"
+.SH NAME
+\f4unbufcall\f1 \- cancel a pending \f4bufcall\fP request
+.SH SYNOPSIS
+.nf
+.na
+\f4#include <sys/stream.h>
+.sp 0.5
+void unbufcall(int \f2id\fP);\f1
+.ad
+.fi
+.SH ARGUMENTS
+.RS 0n 10
+.IP "\f2id\f1" 10n
+Identifier returned from \f4bufcall\f1(D3DK) or \f4esbbcall\fP(D3DK).
+.RE
+.SH DESCRIPTION
+\f4unbufcall\f1 cancels a pending \f4bufcall\fP or \f4esbbcall\fP request.
+The argument \f2id\f1 is a non-zero identifier for the request to be canceled.
+\f2id\f1 is returned from the \f4bufcall\f1 or \f4esbbcall\f1
+function used to issue the request.
+.SH RETURN VALUE
+None.
+.SH LEVEL
+Base or Interrupt.
+.SH NOTES
+Does not sleep.
+.SH SEE ALSO
+.na
+\f4bufcall\f1(D3DK)
+\f4esbbcall\f1(D3DK)
+.ad
+.SH EXAMPLE
+.P
+See \f4bufcall\fP for the other half of this example.
+.P
+In the module close routine, if a \f4bufcall\fP request is pending (line 14),
+we cancel it (line 15).  Otherwise, if a \f4timeout\fP request is pending (line 16),
+we cancel it (line 17).  Then the \f4m_type\fP field in the module's private
+data structure is set to 0, indicating no pending \f4bufcall\fP or \f4timeout\fP.
+.ne 4
+.P
+.nf
+.ft 4
+.ps 7
+.vs 9
+ 1  struct mod {
+ 2	long	m_id;
+ 3	char	m_type;
+	...
+ 4  };
+ 5  #define TIMEOUT	1
+ 6  #define BUFCALL	2
+    ...
+ 7  modclose(q, flag, crp)
+ 8	queue_t *q;
+ 9	int flag;
+10	cred_t *crp;
+11  {
+12	struct mod *modp;
+
+13	modp = (struct mod *)q->q_ptr;
+14	if (modp->m_type == BUFCALL)
+15		unbufcall(modp->m_id);
+16	else if (modp->m_type == TIMEOUT)
+17		untimeout(modp->m_id);
+18	modp->m_type = 0;
+	...
+.vs
+.ps
+.ft 1
+.fi
+.IX "\f4unbufcall\fP(D3DK), example"
+.IX "\f4untimeout\fP(D3DK), example"

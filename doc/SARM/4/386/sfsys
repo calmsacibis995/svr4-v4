@@ -1,0 +1,42 @@
+'\"macro stdmacro
+.if n .pH g4.sfsys @(#)sfsys	40.4 of 1/3/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.if \nX=0 .ds x} sfsys 4 "" "\&"
+.if \nX=1 .ds x} sfsys 4 ""
+.if \nX=2 .ds x} sfsys 4 "" "\&"
+.if \nX=3 .ds x} sfsys "" "" "\&"
+.nr X
+.TH \*(x} "" "386 Computer Only"
+.SH NAME
+\f4sfsys\f1  \-  file format.
+.SH SYNOPSIS
+\f4sfsys\f1
+.SH "DESCRIPTION"
+The \f4sfsys\f1 file contains local system information about each
+file system type specified in the \f4mfsys\f1 file.
+It is present in the directory \f4/etc/conf/cf.d\f1, and contains a
+one-line entry for each file system type specified in the \f4mfsys\f1 file.
+The \f4sfsys\f1 file is coalesced from
+component files in the directory
+\f4/etc/conf/sfsys.d\f1.
+Each line in this file is a whitespace-separate set of fields
+that specify:
+.TP 5
+1.
+\f2name\f1:  This field contains the internal name of the file system
+type (e.g., DUFST, S51K).
+By convention, this name is up to 32 characters long, and is composed of all
+uppercase alphanumeric characters.
+.TP 5
+2.
+\f2Y/N\f1:  This field contains either an uppercase 'Y' (for "yes")
+or an uppercase 'N' (for "no) to indicate whether the named file system
+type is to be configured into the next system kernel to be built.
+.SH "SEE ALSO"
+\f4mfsys\f1(4).
+.br
+\f4idinstall\f1(1m),
+\f4idbuild\f1(1m)
+in the \f2User's/System Administrator's Reference Manual\f1.
+.Ee

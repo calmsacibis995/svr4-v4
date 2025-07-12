@@ -1,0 +1,83 @@
+'\"macro stdmacro
+.if n .pH g3s.vprintf @(#)vprintf	40.17 of 5/22/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} vprintf 3S "C Development Set" "\&"
+.if \nX=1 .ds x} vprintf 3S "C Development Set"
+.if \nX=2 .ds x} vprintf 3S "" "\&"
+.if \nX=3 .ds x} vprintf "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4vprintf\f1, \f4vfprintf\f1, \f4vsprintf\f1 \- print formatted output of a variable argument list
+.SH SYNOPSIS
+.nf
+.ft 4
+#include <stdio.h>
+#include <stdarg.h>
+.ft 4
+.sp0.5
+int vprintf(const char \(**\f2format\fP, va_list \f2ap\fP);
+.sp0.5
+int vfprintf(FILE \(**\f2stream\fP, const char \(**\f2format\fP, va_list \f2ap\fP);
+.sp0.5
+int vsprintf(char \(**\f2s\fP, const char \(**\f2format\fP, va_list \f2ap\fP);
+.fi
+.SH DESCRIPTION
+\f4vprintf\f1, \f4vfprintf\f1
+and \f4vsprintf\f1 are the same as \f4printf\f1,
+\f4fprintf\f1, and \f4sprintf\f1 respectively,
+except that instead of being called with a variable
+number of arguments, they are called with an argument
+list as defined by the \f4stdarg.h\f1 header file.
+.PP
+The \f4stdarg.h\f1 header file defines the
+type \f4va_list\f1 and a set of macros for advancing
+through a list of arguments whose number and types may vary.
+The argument \f2ap\f1 to the vprint family of
+routines is of type \f4va_list\f1.
+This argument is used with the \f4stdarg.h\f1 header
+file macros \f4va_start\f1, \f4va_arg\f1 and \f4va_end\f1
+[see \f4va_start\f1, \f4va_arg\f1, and \f4va_end\f1
+in \f4stdarg\fP(5)].
+The
+.SM EXAMPLE
+section below shows their use with \f4vprintf\f1.
+.SH EXAMPLE
+The following demonstrates how \f4vfprintf\f1 could be used to write
+an \f4error\f1 routine:
+.PP
+.RS
+.nf
+.ft 4
+#include <stdio.h>
+#include <stdarg.h>
+. . .
+/*
+ *   error should be called like
+ *         error(function_name, format, arg1, . . .);
+ */
+void error(char *function_name, char *format, . . .)
+.sp0.5
+{
+    va_list ap;
+.sp0.5
+    va_start(ap, format);
+    /* print out name of function causing error */
+    (void) fprintf(stderr, "ERR in %s: ", function_name);
+    va_arg(ap, char*);
+    /* print out remainder of message */
+    (void) vfprintf(stderr, format, ap);
+    va_end(ap);
+    (void) abort;
+}
+.ft 1
+.fi
+.RE
+.SH "SEE ALSO"
+\f4printf\fP(3S),
+\f4stdarg\fP(5)
+.SH DIAGNOSTICS
+\f4vprintf\f1 and \f4vfprintf\f1
+return the number of characters transmitted, or return \f4\-1\f1 if an
+error was encountered.

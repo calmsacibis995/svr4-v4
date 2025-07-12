@@ -1,0 +1,255 @@
+'\"macro stdmacro
+.if n .pH g3.ndbm @(#)ndbm	40.11 of 4/24/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.\" Copyright (c) 1988 Sun Microsystems, Inc. - All Rights Reserved.
+.\"
+.\" Copyright (c) 1985 Regents of the University of California.
+.\" All rights reserved.  The Berkeley software License Agreement
+.\" specifies the terms and conditions for redistribution.
+.\"
+.nr X
+.if \nX=0 .ds x} ndbm 3 "BSD Compatibility Package" "\&"
+.if \nX=1 .ds x} ndbm 3 "BSD Compatibility Package"
+.if \nX=2 .ds x} ndbm 3 "" "\&"
+.if \nX=3 .ds x} ndbm "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4ndbm\f1:  \f4dbm_clearerr\f1, \f4dbm_close\f1, \f4dbm_delete\f1, \f4dbm_error\f1, \f4dbm_fetch\f1, \f4dbm_firstkey\f1, \f4dbm_nextkey\f1, \f4dbm_open\f1, \f4dbm_store\f1 \- data base subroutines
+.SH SYNOPSIS
+\f4cc \f1[ \f2flag\f1\. \. \. ] \f2file\f1 \. \. \. \f4\-ldbm\f1
+.sp .5
+.P
+\f4#include <ndbm.h>\f1
+.P
+.nf
+.ft 4
+typedef struct {
+	char *dptr;
+	int dsize;
+} datum;
+.ft 1
+.fi
+.P
+.nf
+.ft 4
+int dbm_clearerr(db)
+DBM *db;
+.ft 1
+.fi
+.P
+.nf
+.ft 4
+void dbm_close (db)
+DBM *db;
+.ft 1
+.fi
+.P
+.nf
+.ft 4
+int dbm_delete(db, key)
+DBM *db;
+datum key;
+.ft 1
+.fi
+.P
+.nf
+.ft 4
+int dbm_error(db)
+DBM *db;
+.ft 1
+.fi
+.P
+.nf
+.ft 4
+datum dbm_fetch(db, key)
+DBM *db;
+datum key;
+.ft 1
+.fi
+.P
+.nf
+.ft 4
+datum dbm_firstkey(db)
+DBM *db;
+.ft 1
+.fi
+.P
+.nf
+\f4datum dbm_nextkey(db)\f1
+\f4DBM *db;\f1
+.fi
+.P
+.nf
+.ft 4
+DBM *dbm_open(file, flags, mode)
+char *file;
+int flags, mode;
+.ft 1
+.fi
+.P
+.nf
+.ft 4
+int dbm_store(db, key, content, flags)
+DBM *db;
+datum key, content;
+int flags;
+.ft 1
+.fi
+.SH DESCRIPTION
+.P
+These functions maintain
+.IR key / content
+pairs in a data base.
+The functions will handle very large (a billion blocks)
+data base and will access a keyed item
+in one or two file system accesses.
+This package replaces the earlier
+\f4dbm\f1(3X)
+library, which managed only a single data base.
+.P
+.IR key s
+and
+.IR content s
+are described by the
+\f4datum\f1
+typedef.
+A
+\f4datum\f1
+specifies a string of
+.I dsize
+bytes pointed to by
+.IR dptr .
+Arbitrary binary data, as well as normal
+.SM ASCII
+strings, are allowed.
+The data base is stored in two files.
+One file is a directory containing a bit map and has \f4\.dir\f1
+as its suffix.
+The second file contains
+all data and has \f4\.pag\f1
+as its suffix.
+.P
+Before a data base can be accessed, it must be opened by
+\f4dbm_open\f1.
+This will open and/or create the files
+\f2file\f4.dir\f1
+and
+\f2file\f4.pag\f1
+depending on the flags parameter (see
+\f4open\f1(2V)).
+.P
+A data base is closed by calling
+\f4dbm_close\f1.
+.P
+Once open, the data stored under a key is accessed by
+\f4dbm_fetch\f1
+and data is placed under a key by
+\f4dbm_store\f1.
+The
+.I flags
+field can be either
+\f4DBM_INSERT\fP
+or
+\f4DBM_REPLACE\f1.
+\f4DBM_INSERT\fP
+will only insert new entries into the
+data base and will not
+change an existing entry with the same key.
+\f4DBM_REPLACE\fP
+will replace an existing entry if it has the same key.
+A key (and its associated contents) is deleted by
+\f4dbm_delete\f1.
+A linear pass through all keys in a data base may be made,
+in an (apparently) random order, by use of
+\f4dbm_firstkey\f1
+and
+\f4dbm_nextkey\f1.
+\f4dbm_firstkey\f1
+will return the first key in the data base.
+\f4dbm_nextkey\f1
+will return the next key in the data base.
+This code will traverse the data base:
+.P
+.ft 4
+.nf
+for (key = dbm_firstkey(db); key.dptr != NULL; key = dbm_nextkey(db))
+.fi
+.ft 1
+.P
+\f4dbm_error\f1
+returns non-zero when an error has occurred
+reading or writing the data base.
+\f4dbm_clearerr\f1
+resets the error condition on the named data base.
+.SH SEE ALSO
+\f4open\fP(2),
+\f4dbm\fP(3X)
+in the \f2Programmer's Reference Manual\f1
+.SH "RETURN VALUE"
+.P
+All functions that return an
+\f4int\f1
+indicate errors with negative values.
+A zero return indicates no error.
+Routines that return a
+\f4datum\f1
+indicate errors with a
+\f4NULL\fP
+(0)
+.IR dptr .
+If
+\f4dbm_store\f1
+is called with a
+.I flags
+value of
+\f4DBM_INSERT\fP
+and finds an existing entry with the same key,
+it returns 1.
+.SH NOTES
+.P
+The \f4\.pag\f1
+file will contain holes so that its apparent
+size is about four times its actual content.
+Older
+versions of the 
+.SM UNIX
+operating system may create real file blocks for
+these holes when touched.
+These files cannot be copied
+by normal means (\c
+\f4cp\f1(1),
+\f4cat\f1(1),
+\f4tar\f1(1),
+\f4ar\f1(1))
+without filling in the holes.
+.P
+.I dptr
+pointers returned by these subroutines point
+into static storage
+that is changed by subsequent calls.
+.P
+The sum of the sizes of a 
+.IR key / content
+pair must not exceed
+the internal block size (currently 4096 bytes).
+Moreover all
+.IR key / content
+pairs that hash
+together must fit on a single block.
+\f4dbm_store\f1
+will return an error in the event that a
+disk block fills with inseparable data.
+.P
+\f4dbm_delete\f1
+does not physically reclaim file space,
+although it does make it available for reuse.
+.P
+The order of keys presented by
+\f4dbm_firstkey\f1
+and
+\f4dbm_nextkey\f1
+depends on a hashing function.
+.P
+There are no interlocks and no reliable cache flushing;
+thus concurrent updating and reading is risky.

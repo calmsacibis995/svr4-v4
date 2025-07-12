@@ -1,0 +1,103 @@
+'\"macro stdmacro
+.if n .pH gen.drv_getparm @(#)drv_getparm	40.3 of 3/26/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.nr X
+.if \nX=0 .ds x} drv_getparm D3DK "" "DDI/DKI" "\&"
+.if \nX=1 .ds x} drv_getparm D3DK "" "DDI/DKI"
+.if \nX=2 .ds x} drv_getparm D3DK "" "\&"
+.if \nX=3 .ds x} drv_getparm "" "" "\&"
+.TH \*(x}
+.IX "\f4drv_getparm\fP(D3DK)"
+.SH NAME
+\f4drv_getparm\f1 \- retrieve kernel state information
+.SH "SYNOPSIS" 
+.nf
+.na
+\f4#include <sys/types.h>
+#include <sys/ddi.h>
+.sp 0.5
+int drv_getparm(ulong_t \f2parm, \f4ulong_t *\f2value_p\f4);\f1
+.ad
+.fi
+.SH ARGUMENTS 
+.RS 0n 10
+.IP "\f2parm\f1" 10n
+The kernel parameter to be obtained.
+Possible values are:
+.P
+.RS 12
+.TP 10
+\f4LBOLT\f1
+Read the number of clock ticks since the last system reboot.
+The difference between the values returned from successive
+calls to retrieve this parameter provides an indication of
+the elapsed time between the calls in units of clock ticks.
+The length of a clock tick can vary across different implementations,
+and therefore drivers should not include any hard-coded assumptions
+about the length of a tick.
+The \f4drv_hztousec\f1(D3DK) and \f4drv_usectohz\f1(D3DK) functions can
+be used, as necessary, to convert between clock ticks and microseconds
+(implementation independent units).
+.TP
+\f4UPROCP\f1
+Retrieve a pointer to the process structure for the current process.
+The value returned in \f2*value_p\f1 is of type \f4(proc_t *)\f1 and the only
+valid use of the value is as an argument to \f4vtop\f1(D3DK).
+Since this value is associated with the current process, the caller
+must have process context (that is, must be at base level) when attempting
+to retrieve this value.
+Also, this value should only be used in the context of the process
+in which it was retrieved.
+.TP
+\f4UCRED\f1
+Retrieve a pointer to the credential structure describing the current
+user credentials for the current process.
+The value returned in \f2*value_p\f1 is of type \f4(cred_t *)\f1 and the only
+valid use of the value is as an argument to \f4drv_priv\f1(D3DK).
+Since this value is associated with the current process, the caller
+must have process context (that is, must be at base level) when attempting
+to retrieve this value.
+Also, this value should only be used in the context of the process
+in which it was retrieved.
+.TP
+\f4TIME\f1
+Read the time in seconds.
+This is the same time value that is returned by the \f4time\fP(2) system
+call.
+The value is defined as the time in seconds since \f400:00:00 GMT,
+January 1, 1970\f1.
+This definition presupposes that the
+administrator has set the correct system date and time.
+.RE
+.IP "\f2value_p\f1" 10n
+A pointer to the data space into which the value of the
+parameter is to be copied.
+.RE
+.SH "DESCRIPTION" 
+\f4drv_getparm\f1 returns the value of the parameter specified by
+\f2parm\f1 in the location pointed to by \f2value_p\f1.
+.P
+\f4drv_getparm\f1 does not explicitly check to see whether the
+driver has the appropriate context when the function is called.
+It is the responsibility of the driver to use this
+function only when it is appropriate to do so and to correctly 
+declare the data space needed.
+.SH "RETURN VALUE" 
+If the function is successful, 0 is returned.
+Otherwise \-1 is returned to indicate that \f2parm\f1 specified
+an invalid parameter.
+.SH "LEVEL" 
+Base only when using the \f4UPROCP\f1 or \f4UCRED\f1
+argument values.
+.sp 0.5
+Base or interrupt when using the \f4LBOLT\f1 or \f4TIME\f1
+argument values.
+.SH NOTES
+Does not sleep.
+.SH "SEE ALSO" 
+.na
+\f4drv_hztousec\f1(D3DK),
+\f4drv_priv\f1(D3DK),
+\f4drv_usectohz\f1(D3DK),
+\f4vtop\f1(D3D)
+.ad

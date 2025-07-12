@@ -1,0 +1,158 @@
+'\"macro stdmacro
+.if n .pH g1.join @(#)join	40.5.1.1 of 1/3/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} join 1 "Directory and File Management Utilities" "\&"
+.if \nX=1 .ds x} join 1 "Directory and File Management Utilities"
+.if \nX=2 .ds x} join 1 "" "\&"
+.if \nX=3 .ds x} join "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4join\f1 \- relational database operator
+.SH SYNOPSIS
+\f4join\f1
+[
+.I options
+]
+.I file1
+.I file2
+.SH DESCRIPTION
+\f4join\fP
+forms, on the standard output,
+a join
+of the two relations specified by the lines of
+.I file1\^
+and
+.IR file2 .
+If
+.I file1\^
+is \f4\-\fP, the standard input is used.
+.PP
+.I file1\^
+and 
+.I file2\^
+must be sorted in increasing \s-1ASCII\s+1 collating
+sequence on the fields
+on which they are to be joined,
+normally the first in each line [see \f4sort\fP(1)].
+.PP
+There is one line in the output 
+for each pair of lines in 
+.I file1\^
+and 
+.I file2\^
+that have identical join fields.
+The output line normally consists of the common field,
+then the rest of the line from 
+.IR file1 ,
+then the rest of the line from
+.IR file2 .
+.PP
+The default input field separators are blank, tab, or new-line.
+In this case, multiple separators count as one field separator, and
+leading separators are ignored.
+The default output field separator is a blank.
+.PP
+Some of the options below use the argument
+.IR n .
+This argument should be a
+\f41\f1
+or a
+\f42\f1
+referring to either
+.I file1
+or
+.IR file2 ,
+respectively.
+The following options are recognized:
+.TP \w'\f4\-o\fP\ \f2list\fP\ \ 'u
+\f4\-a\f2n\f1
+In addition to the normal output,
+produce a line for each unpairable line in file
+.IR n ,
+where
+.I n\^
+is 1 or 2.
+.TP
+\f4\-e\f2 s\f1
+Replace empty output fields with string
+.IR s .
+.TP
+\f4\-j\f2n m\f1
+Join on the
+.IR m th
+field of file
+.IR n .
+If
+.I n\^
+is missing, use the
+.IR m th
+field in each file.
+Fields are numbered starting with
+\f41\f1.
+.TP
+\f4\-o\f2 list\f1
+Each output line includes the fields specified in
+.IR list ,
+each element of which has the form
+\f2n\f4.\f2m\^\f1,\f1
+where
+.I n\^
+is a file number and
+.I m\^
+is a field number.
+The common field is not printed
+unless specifically requested.
+.TP
+\f4\-t\f2c\f1
+Use character
+.I c\^
+as a separator (tab character).
+Every appearance of
+.I c\^
+in a line is significant.
+The character
+.I c\^
+is used as the field separator for both
+input and output.
+.SH EXAMPLE
+The following command line will join
+the password file and the group file,
+matching on the numeric group ID, and outputting
+the login name, the group name and the login
+directory.
+It is assumed that the files have been sorted
+in ASCII collating sequence on
+the group ID fields.
+.PP
+.RS 2n
+.ft 4
+join \-j1 4 \-j2 3 \-o 1.1 2.1 1.6 \-t: /etc/passwd /etc/group
+.ft 1
+.RE
+.SH "SEE ALSO"
+\f4awk\fP(1), \f4comm\fP(1), \f4sort\fP(1), \f4uniq\fP(1).
+.SH NOTES
+With default field separation,
+the collating sequence is that of
+\f4sort \-b\f1;
+with
+\f4\-t\f1,
+the sequence is that of a plain sort.
+.PP
+The conventions of the
+\f4join\fP,
+\f4sort\fP,
+\f4comm\fP,
+\f4uniq\fP,
+and
+\f4awk\fP
+commands are wildly incongruous.
+.P
+Filenames that are numeric may cause conflict
+when the
+\f4-o \f1
+option is used just before listing filenames.
+.\"	@(#)join.1	6.3 of 9/2/83
+.Ee

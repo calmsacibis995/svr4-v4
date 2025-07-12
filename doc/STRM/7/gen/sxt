@@ -1,0 +1,156 @@
+'\"macro stdmacro
+.if n .pH g7.sxt @(#)sxt	40.4 of 1/3/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} sxt 7 "" "\&"
+.if \nX=1 .ds x} sxt 7 ""
+.if \nX=2 .ds x} sxt 7 "" "\&"
+.if \nX=3 .ds x} sxt "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4sxt\f1 \- pseudo-device driver
+.SH DESCRIPTION
+The special file
+\f4/dev/sxt\fP
+is a pseudo-device driver that interposes a discipline between the standard
+\f4tty\fP
+line disciplines and a real device driver.
+The standard disciplines manipulate
+virtual tty
+structures (channels) declared by the
+\f4/dev/sxt\fP
+driver.
+\f4/dev/sxt\fP
+acts as a discipline manipulating a 
+real tty
+structure declared by a real device driver.
+The
+\f4/dev/sxt\fP
+driver is currently only used by the
+\f4shl\fP(1)
+command.
+.P
+Virtual ttys 
+are named by inodes in the subdirectory \f4/dev/sxt\fP
+and are allocated in groups of up to eight.
+To allocate a group, a program should exclusively open a file with a name
+of the form \f4/dev/sxt/??0\fP (channel 0) and then execute 
+a \f4SXTIOCLINK ioctl\fP
+call to initiate the multiplexing.
+.P
+Only one channel, the 
+controlling channel,
+can receive input from the keyboard at a time; 
+others attempting to read will be blocked.
+.P
+There are two groups of
+\f4ioctl\fP(2)
+commands supported by
+\f4sxt\fP.
+The first group contains the standard
+\f4ioctl\fP
+commands described in
+\f4termio\fP(7),
+with the addition of the following:
+.TP 20
+\f4TIOCEXCL\fP
+Set
+exclusive use
+mode: no further opens are permitted until the file has been closed.
+.TP
+\f4TIOCNXCL\fP
+Reset
+exclusive use
+mode: further opens are once again permitted.
+.P
+The second group are commands to 
+\f4sxt\fP
+itself.
+Some of these may only be executed on channel 0.
+.TP 20
+\f4SXTIOCLINK\fP
+Allocate a channel group
+and multiplex the virtual ttys onto the real tty.
+The argument is the number of channels to allocate.
+This command may only be executed on channel 0.
+Possible errors include:
+.RS 20
+.TP 10
+\f4EINVAL\fP
+The argument is out of range.
+.TP
+\f4ENOTTY\fP
+The command was not issued from a real tty.
+.TP
+\f4ENXIO\fP
+\f4linesw\fP
+is not configured with
+\f4sxt\fP.
+.TP
+\f4EBUSY\fP
+An
+\f4SXTIOCLINK\fP
+command has already been issued for this real \f4tty\fP.
+.TP
+\f4ENOMEM\fP
+There is no system memory available for allocating the virtual tty structures.
+.TP
+\f4EBADF\fP
+Channel 0 was not opened before this call.
+.RE
+.TP 20
+\f4SXTIOCSWTCH\fP
+Set the controlling channel.
+Possible errors include:
+.RS 20
+.TP 10
+\f4EINVAL\fP
+An invalid channel number was given.
+.TP
+\f4EPERM\fP
+The command was not executed from channel 0.
+.RE
+.br
+.ne 5
+.TP 20
+\f4SXTIOCWF\fP
+Cause a channel to wait until it is the controlling channel.
+This command will return the error, \f4EINVAL\f1, if
+an invalid channel number is given.
+.TP
+\f4SXTIOCUBLK\fP
+Turn off the \f4loblk\f1 control flag in the
+virtual tty of the indicated channel.
+The error \f4EINVAL\f1 will be returned if an
+invalid number or channel 0 is given.
+.TP
+\f4SXTIOCSTAT\fP
+Get the status (blocked on input or output)
+of each channel and store in the \f4sxtblock\f1
+structure referenced by the argument.
+The error \f4EFAULT\f1 will be returned
+if the structure cannot be written.
+.TP
+\f4SXTIOCTRACE\fP
+Enable tracing.
+Tracing information is written to 
+the console on the 3B2 Computer.
+This command has no effect if tracing is not configured.
+.TP
+\f4SXTIOCNOTRACE\fP
+Disable tracing.
+This command has no effect if tracing is not configured.
+.SH FILES
+.PD 0
+.TP 20
+\f4/dev/sxt/??[0-7]\fP
+Virtual tty devices
+.PD
+.SH SEE ALSO
+\f4shl\fP(1),
+\f4stty\fP(1)
+\f4ioctl\fP(2),
+\f4open\fP(2), 
+\f4termio\fP(7)
+.Ee

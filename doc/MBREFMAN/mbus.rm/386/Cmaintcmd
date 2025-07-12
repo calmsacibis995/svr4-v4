@@ -1,0 +1,7 @@
+.if n .pH 386.Cmaintcmd @(#)Cmaintcmd	40.8
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.BK "Multibus Reference Manual" "" "" ""   
+.\ACRONYM	                  
+.CH "System Maintenance Commands" "" "Table of Contents" "6"
+.\CHAPTER	6
+.tC 1 "Maintenance Commands" 6-1  

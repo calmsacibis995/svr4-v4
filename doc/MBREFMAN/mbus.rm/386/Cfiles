@@ -1,0 +1,7 @@
+.if n .pH 386.Cfiles @(#)Cfiles	40.8
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.BK "Multibus Reference Manual" "" "" ""   
+.\ACRONYM	                  
+.CH "File Formats" "" "Table of Contents" "4"
+.\CHAPTER	4
+.tC 1 " File Formats" 4-1  

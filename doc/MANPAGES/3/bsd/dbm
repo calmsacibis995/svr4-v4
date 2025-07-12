@@ -1,0 +1,191 @@
+.\" @(#)dbm 40.6 91/04/19 SMI; from UCB 4.3
+'\" macro stdmacro
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.\" Copyright (c) 1988 Sun Microsystems, Inc. - All Rights Reserved.
+.\"
+.\" Copyright (c) 1980 Regents of the University of California.
+.\" All rights reserved.  The Berkeley software License Agreement
+.\" specifies the terms and conditions for redistribution.
+.\"
+.nr X
+.if \nX=0 .ds x} dbm 3X "BSD Compatibility Package" "\&"
+.if \nX=1 .ds x} dbm 3X "BSD Compatibility Package"
+.if \nX=2 .ds x} dbm 3X "" "\&"
+.if \nX=3 .ds x} dbm "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4dbm\f1:  \f4dbminit\f1, \f4dbmclose\f1, \f4fetch\f1, \f4store\f1, \f4delete\f1, \f4firstkey\f1, \f4nextkey\f1 \- data base subroutines
+.SH SYNOPSIS
+\f4cc \f1[ \f2flag\f1\. \. \. ] \f2file\f1 \. \. \. \f4\-ldbm\f1
+.P
+\f4#include <dbm.h>\f1
+.P
+.nf
+\f4typedef struct {\f1
+\f4char *dptr;\f1
+\f4int dsize;\f1
+\f4} datum;\f1
+.fi
+.P
+.nf
+\f4dbminit(file)\f1
+\f4char *file;\f1
+.fi
+.P
+\f4dbmclose\f1
+.P
+.nf
+\f4datum fetch(key)\f1
+\f4datum key;\f1
+.fi
+.P
+.nf
+\f4store(key, content)\f1
+\f4datum key, content;\f1
+.fi
+.P
+.nf
+\f4delete(key)\f1
+\f4datum key;\f1
+.fi
+.P
+\f4datum firstkey\f1
+.P
+.nf
+\f4datum nextkey(key)\f1
+\f4datum key;\f1
+.fi
+.SH DESCRIPTION
+Note: the
+\f4dbm\f1
+library has been superceded by
+\f4ndbm\f1(3),
+and is now implemented using
+\f4ndbm\f1.
+.P
+These functions maintain key/content pairs in a data base.
+The functions will handle very large (a billion blocks)
+databases and will access a keyed item in one or two file system accesses.
+The functions are obtained with the loader option
+\f4\-libdbm\f1.
+.P
+\f2key\f1s
+and
+\f2content\f1s
+are described by the
+\f4datum\f1
+typedef.
+A
+\f4datum\f1
+specifies a string of
+\f2dsize\f1
+bytes pointed to by
+\f2dptr\f1.
+Arbitrary binary data, as well as normal
+\s-1ASCII\s0
+strings, are allowed.
+The data base is stored in two files.
+One file is a directory containing a bit map and has
+\f4\&.dir\f1
+as its suffix.
+The second file contains all data and has
+\f4\&.pag\f1
+as its suffix.
+.P
+Before a database can be accessed, it must be opened by
+\f4dbminit\f1.
+At the time of this call, the files
+\f2file\f4\&.dir\f1
+and
+\f2file\f4\&.pag\f1
+must exist.
+An empty database is created by creating zero-length
+\f4\&.dir\f1
+and
+\f4\&.pag\f1
+files.
+.P
+A database may be closed by calling
+\f4dbmclose\f1.
+You must close a database before opening a new one.
+.P
+Once open, the data stored under a key is accessed by
+\f4fetch\f1
+and data is placed under a key by
+\f4store\f1.
+A key (and its associated contents) is deleted by
+\f4delete\f1.
+A linear pass through all keys in a database may be made,
+in an (apparently) random order, by use of
+\f4firstkey\f1
+and
+\f4nextkey\f1.
+\f4firstkey\f1
+will return the first key in the database.
+With any key
+\f4nextkey\f1
+will return the next key in the database.
+This code will traverse the data base:
+.IP
+.ft 4
+for
+(key = firstkey; key.dptr != \s-1NULL\s0; key = nextkey(key))
+.ft 1
+.SH SEE ALSO
+\f4ndbm\fP(3)
+.SH "RETURN VALUE"
+All functions that return an
+\f4int\f1
+indicate errors with negative values.
+A zero return indicates no error.
+Routines that return a
+\f4datum\f1
+indicate errors with a
+\s-1NULL\s0
+\f4\f1(0)
+\f2dptr\f1.
+.br
+.ne 8
+.SH NOTES
+The
+\f4\&.pag\f1
+file will contain holes so that its apparent size is about
+four times its actual content.
+Older
+versions of the
+\s-1UNIX\s0
+operating system may create real
+file blocks for these holes when touched.
+These files cannot be copied
+by normal means
+(\f4cp\f1(1),
+\f4cat\f1(1),
+\f4tar\f1(1),
+\f4ar\f1(1))
+without filling in the holes.
+.P
+\f2dptr\f1
+pointers returned by these subroutines point into static storage
+that is changed by subsequent calls.
+.br
+.ne 6
+.P
+The sum of the sizes of a key/content pair must not exceed
+the internal block size (currently 1024 bytes).
+Moreover all key/content pairs that hash together must fit on a single block.
+\f4store\f1
+will return an error in the event that a disk block fills with inseparable data.
+.P
+\f4delete\f1
+does not physically reclaim file space,
+although it does make it available for reuse.
+.P
+The order of keys presented by
+\f4firstkey\f1
+and
+\f4nextkey\f1
+depends on a hashing function, not on anything interesting.
+.P
+There are no interlocks and no reliable cache flushing;
+thus concurrent updating and reading is risky.

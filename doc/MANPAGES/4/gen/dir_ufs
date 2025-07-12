@@ -1,0 +1,50 @@
+'\"macro stdmacro
+.if n .pH g4.dir_ufs @(#)dir_ufs	40.8 of 1/3/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} dir 4 "UFS" "\&"
+.if \nX=1 .ds x} dir 4 "UFS"
+.if \nX=2 .ds x} dir 4  "" "\&"
+.if \nX=3 .ds x} dir "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4dir\f1 (ufs) \- format of \f4ufs\fP directories
+.SH SYNOPSIS
+\f4#include <sys/param.h>\f1
+.br
+\f4#include <sys/types.h>\f1
+.br
+\f4#include <sys/fs/ufs_fsdir.h>\f1
+.SH DESCRIPTION
+A directory consists of some number of blocks of \f4DIRBLKSIZ\fP
+bytes, where \f4DIRBLKSIZ\fP is chosen such that it can be transferred
+to disk in a single atomic operation (e.g. 512 bytes on most machines).
+.PP
+Each \f4DIRBLKSIZ\fP-byte block contains some number of directory entry
+structures, which are of variable length.  Each directory entry has
+a \f4struct direct\fP at the front of it, containing its inode number,
+the length of the entry, and the length of the name contained in
+the entry.  These are followed by the name padded to a 4 byte boundary
+with null bytes.  All names are guaranteed null-terminated.
+The maximum length of a name in a directory is \s-1MAXNAMLEN\s0.
+.PP
+.ps -1
+.vs -1
+.ft 4
+.nf
+.ta 2.35i
+#define DIRBLKSIZ    DEV_BSIZE
+#define MAXNAMLEN    256
+struct     direct {
+    u_long    d_ino;	/* inode number of entry */
+    u_short   d_reclen;	/* length of this record */
+    u_short   d_namlen;	/* length of string in d_name */
+    char      d_name[MAXNAMLEN + 1];	/* name must be no longer than this */
+};
+.fi
+.ft 1
+.ps +1
+.vs +1
+.SH SEE ALSO
+\f4ufs\fP-specific \f4fs\fP(4)

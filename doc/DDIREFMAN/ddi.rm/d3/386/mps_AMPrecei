@@ -1,0 +1,50 @@
+'\"macro stdmacro
+.if n .pH 386.mps_AMPrecei @(#)mps_AMPrecei	40.5 of 7/1/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.nr X
+.if \nX=0 .ds x} mps_AMPreceive D3D "Multibus II" "DDI" "\&"
+.if \nX=1 .ds x} mps_AMPreceive D3D "Multibus II" "DDI" "\&"
+.if \nX=2 .ds x} mps_AMPreceive D3D "" "\&"
+.if \nX=3 .ds x} mps_AMPreceive "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4mps_AMPreceive\f1 \- receives solicited data that corresponds to an
+outstanding buffer request
+.SH SYNOPSIS
+.nf
+\f4long mps_AMPreceive(\f2chan\fP, \f2dsocid\fP, \f2omsg\fP, \f2ibuf\fP)
+long chan;
+mb2socid_t dsocid;
+mps_msgbuf_t *omsg;
+struct dma_buf *ibuf;\f1
+.fi
+.SH ARGUMENTS
+.PD 0
+.TP
+\f2chan\f1
+Channel number received from a previous \f4mps_open_chan\f1.
+.TP
+\f2dsocid\f1
+Destination socket id from which the solicited data is received.
+.TP
+\f2omsg\f1
+Points to a message buffer with a buffer grant message created using
+\f4mps_mk_bgrant\f1.
+.TP
+\f2ibuf\f1
+Describes the input data buffer.
+.SH DESCRIPTION
+The \f4mps_AMPreceive\f1 routine is used to receive solicited data that
+corresponds to an outstanding buffer request.
+This routine is
+asynchronous in operation.
+Solicited data is received in the input data buffer.
+.SH RETURN VALUE
+If no error is detected, 0 (zero) is returned.
+If an error is detected,
+\-1 is returned.
+.SH LEVEL
+Base or Interrupt
+.SH SEE ALSO
+\f4mps_open_chan\f1(D3D),
+\f4mps_mk_bgrant\f1(D3D)

@@ -1,0 +1,68 @@
+'\"macro stdmacro
+.if n .pH g1a.console @(#)console	40.8 of 5/20/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} console 7iref "System Administration Utilities" "" "\&"
+.if \nX=1 .ds x} console 7iref "System Administration Utilities" ""
+.if \nX=2 .ds x} console 7iref "" "\&"
+.if \nX=3 .ds x} console "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4console\f1 \- console port device driver
+.SH DESCRIPTION
+The \f4console\f1 device driver provides an interface to the device
+driver controlling the physical port assigned as the console port
+(for example, the i354 device driver).  Operations performed to the
+console are redirected by the console device driver to the device
+driver controlling the physical device for interpretation and handling.  
+.PP
+Following is a list of device drivers that can control physical ports in
+Multibus systems.  The console driver provides an interface to one of
+these device drivers:
+.nf
+
+	i354
+	rci
+.fi
+.PP
+If you are writing a device driver in order for it to become the console, it
+must  call \f4consregister\f1 with the following parameters:
+.nf
+
+	\f4void consregister(ci,co,dev)
+	int (*ci)();
+	int (*co)();
+	dev_t dev;\f1
+.fi
+.PP
+The \f2co\f1 and \f2ci\f1 fields contain pointers to the routines which
+handle the output and input operations, respectively, for the kernel
+(debug console).  The \f2co_dev\f1 field contains the major-minor number
+value for the device driver controlling the /dev/console.  These fields
+are set automatically if the i354 or rci devices are used as the
+console.  See the
+\f2Device Driver Interface/Driver-Kernel Interface (DDI/DKI)
+Reference Manual\f1 for information on writing a device driver.
+.SH FILES
+.TP 2.25i
+\f4/etc/conf/cf.d/mdevice\f1
+\f4mdevice\f1 entries
+.TP
+\f4/etc/conf/sdevice.d/console\f1
+\f4sdevice\f1 entries
+.TP
+\f4/etc/conf/pack.d/console/Driver.o\f1
+console device driver object module
+.TP
+\f4/usr/include/sys/conf.h\f1
+console driver specific definitions
+.SH SEE ALSO
+\f4ioctl\f1(3),
+\f4i354\f1(7iref),
+\f4iasy\f1(7iref),
+\f4rci\f1(7iref),
+\f4termio\f1(7).
+.br
+\f2Device Driver Interface/Driver-Kernel Interface (DDI/DKI)
+Reference Manual\f1.

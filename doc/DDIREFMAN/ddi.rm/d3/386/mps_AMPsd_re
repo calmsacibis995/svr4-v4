@@ -1,0 +1,62 @@
+'\"macro stdmacro
+.if n .pH 386.mps_AMPsd_re @(#)mps_AMPsd_re	40.5 of 7/1/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.nr X
+.if \nX=0 .ds x} mps_AMPsend_reply D3D "Multibus II" "DDI" "\&"
+.if \nX=1 .ds x} mps_AMPsend_reply D3D "Multibus II" "DDI" "\&"
+.if \nX=2 .ds x} mps_AMPsend_reply D3D "" "\&"
+.if \nX=3 .ds x} mps_AMPsend_reply "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4mps_AMPsend_reply\f1 \- replies to a received request that is part of a 
+request-response transaction
+.SH SYNOPSIS
+.nf
+\f4#include <sys/mps.h>
+long mps_AMPsend_reply(\f2chan\fP, \f2omsg\fP, \f2obuf\fP)
+long chan;
+mps_msgbuf_t *omsg;
+struct dma_buf *obuf;\f1
+.fi
+.SH ARGUMENTS
+.PD 0
+.TP 11
+\f2chan\f1
+Channel number received from a previous \f4mps_open_chan\f1.
+.TP 11
+\f2omsg\f1
+Points to a message buffer containing the message to be sent.
+The message
+in \f2omsg\f1 should be constructed using \f4mps_mk_solrply\f1 or
+\f4mps_mk_unsolrply\f1 (depending on whether \f2obuf\f1 is NULL or not)
+with the EOT flag set appropriately.
+.TP 11
+\f2obuf\f1
+Points to a data buffer containing data to be sent.
+When \f2obuf\f1 is
+NULL, the reply message is assumed to be an unsolicited message.
+When \f2obuf\f1 is not NULL,
+the reply message is assumed to be a solicited message.
+A completion indication is sent via a message to the appropriate
+\f4intr\f1 routine.
+.SH DESCRIPTION
+\f4mps_AMPsend_reply\f1 is used to send a reply in response to a received
+request that is part of a request-response transaction.
+The \f4mps_AMPsend_reply\f1 routine is asynchronous in operation.
+\f4mps_AMPsend_reply\f1 returns immediately, queuing up to send
+the reply.
+Be sure to use the \f2tid\f1 from the corresponding received
+request.
+.PP
+\f4mps_AMPsend_reply\f1 can be used to send a reply as a number of
+solicited fragments.
+The message buffer in the last reply fragment should
+have the \f2EOT\f1 flag set to 1.
+.SH RETURN VALUE
+If no error is detected, 0 (zero) is returned; otherwise \-1 is returned.
+.SH LEVEL
+Base or Interrupt
+.SH SEE ALSO
+\f4mps_mk_solrply\f1(D3D),
+\f4mks_mk_unsolrply\f1(D3D),
+\f4mks_open_chan\f1(D3D)

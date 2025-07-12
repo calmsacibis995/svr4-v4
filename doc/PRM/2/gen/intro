@@ -1,0 +1,1255 @@
+'\"macro stdmacro
+.if n .pH g2.intro @(#)intro	40.31.1.3 of 2/21/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} intro 2 "" "\&"
+.if \nX=1 .ds x} intro 2 ""
+.if \nX=2 .ds x} intro 2 "" "\&"
+.if \nX=3 .ds x} intro "" "" "\&"
+.TH \*(x}
+.de {n
+.HP
+\\$1  \f4\\$2 \f1  \\$3
+.br
+..
+.SH NAME
+\f4intro\f1 \- introduction to system calls and error numbers
+.SH SYNOPSIS
+\f4#include <errno.h>\fP
+.SH DESCRIPTION
+This section
+describes all of the system calls.
+Most of these calls have one or more error returns.
+An error condition is indicated by an otherwise
+impossible returned value.
+This is almost always \-1 or the
+\f4NULL\fP
+pointer;
+the individual descriptions specify the details.
+An error number is also made available
+in the external variable
+\f4errno\fP.
+\f4errno\fP
+is not cleared on successful calls, so it should be tested only
+after an error has been indicated.
+.PP
+Each system call description attempts to list
+all possible error numbers.
+The following is a complete list of the error numbers and
+their names as defined in
+\f4<errno.h>\f1.
+.{n 1 EPERM "Not super-user"
+Typically this error indicates
+an attempt to modify a file in some way forbidden
+except to its owner or the super-user.
+It is also returned for attempts
+by ordinary users to do things
+allowed only to the super-user.
+.{n 2 ENOENT "No such file or directory"
+A file name is specified and the file should exist but doesn't,
+or one of the directories in a pathname does not exist.
+.{n 3 ESRCH "No such process"
+No process can be found corresponding to that specified by
+.SM PID
+in the \f4kill\f1 or \f4ptrace\f1 routine.
+.{n 4 EINTR "Interrupted system call"
+An asynchronous signal (such as interrupt or quit),
+which the user has elected to catch,
+occurred during a system service routine.
+If execution is resumed
+after processing the signal,
+it will appear as if the interrupted routine call
+returned this error condition.
+.{n 5 EIO "I/O error"
+Some physical I/O error has occurred.
+This error may in some cases occur
+on a call following the one to which it actually applies.
+.{n 6 ENXIO "No such device or address"
+I/O on a special file refers to a subdevice which does not
+exist,
+or exists beyond the limit of the device.
+It may also occur when, for example, a tape drive
+is not on-line or no disk pack is loaded on a drive.
+.{n 7 E2BIG "Arg list too long"
+An argument list longer than
+.SM ARG_MAX
+bytes is presented to a member of the
+\f4exec\fP family of routines.
+The argument list limit is the sum of the size of the argument
+list plus the size of the environment's exported shell variables.
+.{n 8 ENOEXEC "Exec format error"
+A request is made to execute a file
+which, although it has the appropriate permissions,
+does not start with a valid format [see
+\f4a.out\fP(4)].
+.{n 9 EBADF "Bad file number"
+Either a file descriptor refers to no
+open file,
+or a 
+\f4read\fP
+[respectively, 
+\f4write\fP]
+request is made to
+a file that is open only for writing (respectively, reading).
+.{n 10 ECHILD "No child processes"
+A
+\f4wait\fP routine
+was executed by a process that had no existing or unwaited-for child processes.
+.{n 11 EAGAIN "No more processes"
+For example,
+the
+\f4fork\fP routine
+failed because the system's process table is full
+or the user is not allowed to create any more processes,
+or a system call failed because of insufficient memory or swap space.
+.{n 12 ENOMEM "Not enough space"
+During execution of an
+\f4exec\fP,
+\f4brk\fP,
+or
+\f4sbrk\fP routine,
+a program asks for more space than the system is able to supply.
+This is not a temporary condition; the maximum size
+is a system parameter.
+The error may also occur if the arrangement
+of text, data, and stack segments
+requires too many segmentation registers, or
+if there is not enough swap space during the
+\f4fork\fP routine.
+If this error occurs on a resource associated with
+Remote File Sharing (\s-1RFS\s0),
+it indicates a memory depletion
+which may be temporary, dependent on system activity at the time the call was invoked.
+.{n 13 EACCES "Permission denied"
+An attempt was made to access a file in a way forbidden
+by the protection system.
+.{n 14 EFAULT "Bad address"
+The system encountered a hardware fault in attempting to
+use an argument of a routine.
+For example, \f4errno\f1 potentially may be set to \f4EFAULT\f1
+any time a routine that takes a pointer argument is passed an invalid address,
+if the system can detect the condition.
+Because systems will differ in their ability to reliably detect a bad
+address, on some implementations passing a bad address to a routine
+will result in undefined behavior.
+.{n 15 ENOTBLK "Block device required"
+A non-block file was mentioned where a block device was required
+(e.g., in a call to the 
+\f4mount\fP routine).
+.{n 16 EBUSY "Device busy"
+An attempt was made to mount a device that was already mounted or
+an attempt was made to unmount a device
+on which there is an active file
+(open file, current directory, mounted-on file, active text segment).
+It will also occur if an attempt is made to enable accounting when it is
+already enabled.
+The device or resource is currently unavailable.
+.{n 17 EEXIST "File exists"
+An existing file was mentioned in an inappropriate context
+(e.g., call to the
+\f4link\fP routine).
+.{n 18 EXDEV "Cross-device link"
+A link to a file on another device
+was attempted.
+.{n 19 ENODEV "No such device"
+An attempt was made to apply an inappropriate
+operation to a device
+(e.g., read a write-only device).
+.{n 20 ENOTDIR "Not a directory"
+A non-directory was specified where a directory
+is required
+(e.g., in a path prefix or
+as an argument to the 
+\f4chdir\fP routine).
+.{n 21 EISDIR "Is a directory"
+An attempt was made to write on a directory.
+.{n 22 EINVAL "Invalid argument"
+An invalid argument was specified (e.g., unmounting a non-mounted device),
+mentioning an undefined signal in a call to the 
+\f4signal\fP
+or
+\f4kill\fP routine.
+.{n 23 ENFILE "File table overflow"
+The system file table is full (i.e.,
+.SM SYS_OPEN
+files are open,
+and temporarily no more files can be opened).
+.{n 24 EMFILE "Too many open files"
+No process may have more than
+.SM OPEN_MAX
+file descriptors open at a time.
+.{n 25 ENOTTY "Not a typewriter"
+A call was made to the \f4ioctl\fP routine specifying a file that
+is not a special character device.
+.{n 26 ETXTBSY "Text file busy"
+An attempt was made to execute a pure-procedure
+program that is currently open for writing.
+Also an attempt to open for writing or to remove a pure-procedure
+program that is being executed.
+.{n 27 EFBIG "File too large"
+The size of a file exceeded the maximum file size,
+.SM FCHR_MAX
+[see \f4getrlimit\fP].
+.{n 28 ENOSPC "No space left on device"
+While writing an ordinary file or creating a directory entry,
+there is no free space left on the device.
+In the \f4fcntl\fP routine, the setting or removing of record locks on a file
+cannot be accomplished because there are no more record entries
+left on the system.
+.{n 29 ESPIPE "Illegal seek"
+A call to the 
+\f4lseek\fP routine was issued to a pipe.
+.{n 30 EROFS "Read-only file system"
+An attempt to modify a file or directory
+was made
+on a device mounted read-only.
+.{n 31 EMLINK "Too many links"
+An attempt to make more than the maximum number of links, LINK_MAX, to a file.
+.{n 32 EPIPE "Broken pipe"
+A write on a pipe for which there is no process
+to read the data.
+This condition normally generates a signal;
+the error is returned if the signal is ignored.
+.{n 33 EDOM "Math argument out of domain of func"
+The argument of a function in the math package (3M)
+is out of the domain of the function.
+.{n 34 ERANGE "Math result not representable"
+The value of a function in the math package (3M)
+is not representable within machine precision.
+.{n 35 ENOMSG "No message of desired type"
+An attempt was made to receive a message of a type
+that does not exist on the specified message queue [see
+\f4msgop\fP(2)].
+.{n 36 EIDRM "Identifier removed"
+This error is returned to processes that resume execution due to the removal
+of a message or semaphore identifier from the system [see
+\f4msgop\fP(2), \f4semop\fP(2), \f4msgctl\fP(2), and \f4semctl\fP(2)].
+.{n 37 ECHRNG "Channel number out of range"
+.{n 38 EL2NSYNC "Level 2 not synchronized"
+.{n 39 EL3HLT "Level 3 halted"
+.{n 40 EL3RST "Level 3 reset"
+.{n 41 ELNRNG "Link number out of range"
+.{n 42 EUNATCH "Protocol driver not attached"
+.{n 43 ENOCSI "No CSI structure available"
+.{n 44 EL2HLT "Level 2 halted"
+.{n 45 EDEADLK "Deadlock condition"
+A deadlock situation was detected and avoided.
+This error pertains to file and record locking.
+.{n 46 ENOLCK "No record locks available"
+There are no more locks available.
+The system lock table is full [see \f4fcntl\f1(2)].
+.{n 47\-49 "" Reserved numbers
+.{n 58\-59 "" Reserved numbers
+.{n 60 ENOSTR "Device not a stream"
+A
+\f4putmsg\fP or \f4getmsg\fP
+system call was attempted on
+a file descriptor that is not a
+.SM STREAMS
+device.
+.{n 61 ENODATA "No data available"
+.{n 62 ETIME "Timer expired"
+The timer set for a
+.SM STREAMS
+\f4ioctl\fP call has expired.
+The cause of this error is device
+specific and could indicate either a hardware
+or software failure, or perhaps a timeout value
+that is too short for the specific operation.
+The status of the \f4ioctl\fP operation is indeterminate.
+.{n 63 ENOSR "Out of stream resources"
+During a
+.SM STREAMS
+\f4open\f1, either no
+.SM STREAMS
+queues or no
+.SM STREAMS
+head data structures were available.
+This is a temporary condition; one may recover from it
+if other processes release resources.
+.{n 64 ENONET "Machine is not on the network"
+This error is Remote File Sharing (\s-1RFS\s0) specific.
+It occurs when users try to advertise,
+unadvertise, mount, or unmount remote resources while the machine has not
+done the proper startup to connect to the network.
+.{n 65 ENOPKG "Package not installed"
+This error occurs when users attempt to use
+a system call from a package which has not been installed.
+.{n 66 EREMOTE "Object is remote"
+This error is
+.SM RFS
+specific.
+It occurs when users try to advertise
+a resource which is not on the local machine, or try to 
+mount/unmount a device (or pathname) that is on a remote machine.
+.{n 67 ENOLINK "Link has been severed"
+This error is
+.SM RFS
+specific.
+It occurs when the link (virtual
+circuit) connecting to a remote machine is gone.
+.{n 68 EADV "Advertise error"
+This error is
+.SM RFS
+specific.
+It occurs when users try to advertise
+a resource which has been advertised already, or try to stop
+.SM RFS
+while there are resources still advertised, or try to force
+unmount a resource when it is still advertised.
+.{n 69 ESRMNT "Srmount error"
+This error is
+.SM RFS
+specific.
+It occurs when an attempt is made to stop
+.SM RFS
+while resources
+are still mounted by remote machines,
+or when a resource is readvertised with a client list that
+does not include a remote machine that currently has the resource mounted.
+.{n 70 ECOMM "Communication error on send"
+This error is
+.SM RFS
+specific.
+It occurs when the current process is waiting for a
+message from a remote machine,
+and the virtual circuit fails.
+.{n 71 EPROTO "Protocol error"
+Some protocol error occurred.  This error
+is device specific, but is generally not related
+to a hardware failure.
+.{n 74 EMULTIHOP "Multihop attempted"
+This error is
+.SM RFS
+specific.
+It occurs when users try to
+access remote resources which are not directly accessible.
+.{n 76 EDOTDOT "Error 76"
+This error is
+.SM RFS
+specific.
+A way for the server to tell the client that a process has transferred
+back from mount point.
+.{n 77 EBADMSG "Not a data message"
+During a \f4read\fP, \f4getmsg\fP, or \f4ioctl\fP \f4I_RECVFD\fP system call
+to a \s-1STREAMS\s0 device, something has come to the head of the queue
+that can't be processed.  That something depends on the
+system call:
+  \f4read\fP: control information or a passed file descriptor.
+  \f4getmsg\fP: passed file descriptor.
+  \f4ioctl\fP: control or data information.
+.{n 78 ENAMETOOLONG "File name too long"
+The length of the path argument exceeds \f4PATH_MAX\fP, or the
+length of a path component exceeds \f4NAME_MAX\fP while
+\f4_POSIX_NO_TRUNC\fP is in effect; see \f4limits\fP(4).
+.{n 79 EOVERFLOW ""
+Value too large for defined data type.
+.{n 80 ENOTUNIQ "Name not unique on network"
+Given log name not unique.
+.{n 81 EBADFD "File descriptor in bad state"
+Either a file descriptor refers to no open file or a read request was
+made to a file that is open only for writing.
+.{n 82 EREMCHG "Remote address changed"
+.{n 83 ELIBACC  "Cannot access a needed shared library"
+Trying to \f4exec\fP an \f4a.out\fP that requires a static shared library
+and the static shared library doesn't exist or
+the user doesn't have permission to use it.
+.{n 84 ELIBBAD "Accessing a corrupted shared library"
+Trying to \f4exec\fP an \f4a.out\fP that requires a static shared library
+(to be linked in) and \f4exec\fP could not load the static shared
+library.
+The static shared library is probably corrupted.
+.{n 85 ELIBSCN "\f4.lib\fP section in \f4a.out\fP corrupted"
+Trying to \f4exec\fP an \f4a.out\fP that requires a static shared library
+(to be linked in) and there was erroneous data in the \f4.lib\fP
+section of the \f4a.out\fP.
+The \f4.lib\fP section tells \f4exec\fP what static shared libraries are needed.
+The \f4a.out\fP is probably corrupted.
+.{n 86 ELIBMAX "Attempting to link in more shared libraries than system limit"
+Trying to \f4exec\fP an \f4a.out\fP that requires more static shared
+libraries than is allowed on the current configuration of the system.
+See the \f2System Administrator's Guide\fP.
+.{n 87 ELIBEXEC "Cannot \f4exec\f1 a shared library directly"
+Attempting to \f4exec\fP a shared library directly.
+.{n 88 EILSEQ "Error 88"
+Illegal byte sequence.
+Handle multiple characters as a single character.
+.{n 89 ENOSYS "Operation not applicable"
+.{n 90 ELOOP "Number of symbolic links encountered during pathname traversal exceeds \f4MAXSYMLINKS\fP"
+.{n 91 ESTART "Error 91"
+Interrupted system call should be restarted.
+.{n 92 ESTRPIPE "Error 92"
+Streams pipe error (not externally visible).
+.{n 93 ENOTEMPTY "Directory not empty"
+.{n 94 EUSERS "Too many users"
+Too many users.
+.{n 95 ENOTSOCK "Socket operation on non-socket"
+Self-explanatory.
+.{n 96 EDESTADDRREQ "Destination address required"
+A required address was omitted from an operation on a transport endpoint.
+Destination address required.
+.{n 97 EMSGSIZE "Message too long"
+A message sent on a transport provider was larger than the internal message
+buffer or some other network limit.
+.{n 98 EPROTOTYPE "Protocol wrong type for socket"
+A protocol was specified that does not support the semantics of
+the socket type requested.
+.{n 99 ENOPROTOOPT "Protocol not available"
+A bad option or level was specified when getting or setting options
+for a protocol.
+.{n 120 EPROTONOSUPPORT "Protocol not supported"
+The protocol has not been configured into the system
+or no implementation for it exists.
+.{n 121 ESOCKTNOSUPPORT "Socket type not supported"
+The support for the socket type has not been configured into the system
+or no implementation for it exists.
+.{n 122 EOPNOTSUPP "Operation not supported on transport endpoint"
+For example, trying to accept a connection on a datagram transport endpoint.
+.{n 123 EPFNOSUPPORT "Protocol family not supported"
+The protocol family has not been configured into the system
+or no implementation for it exists.
+Used for the Internet protocols.
+.{n 124 EAFNOSUPPORT "Address family not supported by protocol family"
+An address incompatible with the requested protocol was used.
+.{n 125 EADDRINUSE "Address already in use"
+User attempted to use an address already in use,
+and the protocol does not allow this.
+.{n 126 EADDRNOTAVAIL "Cannot assign requested address"
+Results from an attempt to create a transport endpoint with
+an address not on the current machine.
+.{n 127 ENETDOWN "Network is down"
+Operation encountered a dead network.
+.{n 128 ENETUNREACH "Network is unreachable"
+Operation was attempted to an unreachable network.
+.{n 129 ENETRESET "Network dropped connection because of reset"
+The host you were connected to crashed and rebooted.
+.{n 130 ECONNABORTED "Software caused connection abort"
+A connection abort was caused internal to your host machine.
+.{n 131 ECONNRESET "Connection reset by peer"
+A connection was forcibly closed by a peer.
+This normally results from a loss of the connection on the remote
+host due to a timeout or a reboot.
+.{n 132 ENOBUFS "No buffer space available"
+An operation on a transport endpoint or pipe was not performed
+because the system lacked sufficient buffer space or because
+a queue was full.
+.{n 133 EISCONN "Transport endpoint is already connected"
+A connect request was made on an already connected transport endpoint;
+or, a \f4sendto\f1 or \f4sendmsg\f1 request on a connected
+transport endpoint specified a destination when already connected.
+.{n 134 ENOTCONN "Transport endpoint is not connected"
+A request to send or receive data was disallowed because the transport
+endpoint is not connected and (when sending a datagram) no address was supplied.
+.{n 143 ESHUTDOWN "Cannot send after transport endpoint shutdown"
+A request to send data was disallowed because the transport endpoint has already
+been shut down.
+.{n 144 ETOOMANYREFS "Too many references: cannot splice"
+.{n 145 ETIMEDOUT "Connection timed out"
+A connect or send request failed because the connected party
+did not properly respond after a period of time.
+(The  timeout period is dependent on the communication protocol.)
+.{n 146 ECONNREFUSED "Connection refused"
+No connection could be made because the target machine actively refused it.
+This usually results from trying to connect to a service
+that is inactive on the remote host.
+.{n 147 EHOSTDOWN "Host is down"
+A transport provider operation failed because the destination host was down.
+.{n 148 EHOSTUNREACH "No route to host"
+A transport provider operation was attempted to an unreachable host.
+.{n 149 EALREADY "Operation already in progress"
+An operation was attempted on a non-blocking object that already had an
+operation in progress.
+.{n 150 EINPROGRESS "Operation now in progress"
+An operation that takes a long time to complete (such as a \f4connect\f1)
+was attempted on a non-blocking object.
+.{n 151 ESTALE "Stale \s-1NFS\s0 file handle"
+.SH DEFINITIONS
+.PP
+.SS "Background Process Group"
+Any process group that is not the foreground process group 
+of a session that has established a connection
+with a controlling terminal.
+.SS "Controlling Process"
+A session leader that established a connection to a controlling terminal.
+.SS "Controlling Terminal"
+A terminal that is associated with a session.  Each session may have, at most,
+one controlling terminal associated with it and a controlling terminal may
+be associated with only one session.  Certain input sequences from the
+controlling terminal cause signals to be sent to process groups in the session
+associated with the controlling terminal; see \f4termio\fP(7).
+.SS "Directory"
+Directories organize files into a hierarchical system where
+directories are the nodes in the hierarchy.
+A directory is a file that catalogues the list of files, including
+directories (sub-directories), that are directly beneath it in the hierarchy.
+Entries in a directory file are called links.
+A link associates a file identifier with a filename.
+By convention, a directory contains at least two links, \f4.\f1 (dot)
+and \f4..\f1 (dot-dot).
+The link called dot refers to the directory itself while dot-dot
+refers to its parent directory.
+The root directory, which is the top-most node of the hierarchy, has itself
+as its parent directory.
+The pathname of the root directory is \f(CW/\f1 and the
+parent directory of the root directory is \f(CW/\f1.
+.SS "Downstream"
+In a stream, the direction from stream head to driver.
+.SS "Driver"
+In a stream,
+the driver provides the interface between
+peripheral hardware and the stream.
+A driver can also be a pseudo-driver,
+such as a multiplexor or log driver [see \f4log\fP(7)],
+which is not associated with a hardware device.
+.SS "Effective User \s-1ID\s+1 and Effective Group \s-1ID\s+1"
+An active process has an effective user
+.SM ID
+and an effective group
+.SM ID
+that are used to determine file access permissions (see below).
+The effective
+user
+.SM ID
+and effective group
+.SM ID
+are equal to the process's real user
+.SM ID
+and real group
+.SM ID
+respectively, unless the process
+or one of its ancestors evolved from a file that had the set-user-\s-1ID\s+1
+bit or set-group
+.SM ID
+bit set 
+[see \f4exec\fP(2)].
+.SS "File Access Permissions"
+Read, write, and execute/search permissions on a file are
+granted to a process if one or more of the following are true:
+.IP
+The effective user
+.SM ID
+of the process
+is super-user.
+.IP
+The effective user
+.SM ID
+of the process
+matches the user
+.SM ID
+of the owner of the file
+and the appropriate access bit of the
+``owner'' portion (0700) of the file mode is set.
+.IP
+The effective user \f4ID\fP of the process does not
+match the user \f4ID\fP of the owner of the file,
+but either the effective group \f4ID\fP or one
+of the supplementary group \f4IDs\fP of the process
+match the group \f4ID\fP of the file and the
+appropriate access bit of the ``group'' portion (0070)
+of the file mode is set.
+.IP
+The effective user
+.SM ID
+of the process does not match the user
+.SM ID
+of the owner of the file, and neither the effective group
+.SM ID
+nor any of the supplementary group \s-1ID\s+1s of the process match the group
+ID of the file, but the appropriate access bit of the ``other''
+portion (0007) of the file mode is set.
+.PP
+Otherwise, the corresponding permissions are denied.
+.SS "File Descriptor"
+A file descriptor is a small integer used
+to do
+.SM I/O
+on a file.
+The value of a file descriptor is from
+0 to (\f4NOFILES\-1\fP).
+A process may have no more than \f4NOFILES\fP file descriptors 
+open simultaneously.
+A file descriptor is returned by system calls such as
+\f4open\fP,
+or \f4pipe\fP.
+The file descriptor is used as an
+argument by calls such as
+\f4read\fP,
+\f4write\fP,
+\f4ioctl\fP,
+and
+\f4close\fP.
+.SS "File Name"
+Names consisting of 1 to \f4NAME_MAX\fP characters may be used to name an ordinary file,
+special file or directory.
+.PP
+These characters may be selected from the set of all character values
+excluding \e0 (null) and the
+.SM ASCII
+code for
+\f4/\fP
+(slash).
+.PP
+Note that it is generally unwise to use
+\f4*\f1,
+\f4?\f1,
+\f4[\f1,
+or
+\f4]\fP
+as part of file names because of the special meaning attached to these
+characters by the shell
+[see
+\f4sh\fP(1)].
+Although permitted, the use of unprintable
+characters in file names should be avoided.
+.PP
+A file name is sometimes referred to as a pathname component.  The
+interpretation of a pathname component is dependent on the values of
+\f4NAME_MAX\fP and \f4_POSIX_NO_TRUNC\fP associated with the path prefix of that
+component.  If any pathname component is longer than \f4NAME_MAX\fP and
+\f4_POSIX_NO_TRUNC\fP is in effect for the path prefix of that component
+[see \f4fpathconf\fP(2) and \f4limits\fP(4)], it shall be considered an error condition in 
+that implementation.  Otherwise, the implementation shall use the first
+\f4NAME_MAX\fP bytes of the pathname component.
+.SS "Foreground Process Group"
+Each session that has established a connection with a controlling terminal
+will distinguish one process group of the session as the foreground process group
+of the controlling terminal.  This group has certain privileges when accessing
+its controlling terminal that are denied to background process groups.
+.SS "Message"
+In a stream, one or more blocks of data or information, with associated
+\s-1STREAMS\s0 control structures.
+Messages can be of several defined types, which identify
+the message contents.
+Messages are the only means of transferring data and communicating within a stream.
+.SS "Message Queue"
+In a stream, a linked list of messages awaiting processing by
+a module or driver.
+.SS "Message Queue Identifier"
+A message queue identifier (\f4msqid\fP) is a unique positive integer created by a
+\f4msgget\fP
+system call.
+Each \f4msqid\fP has a message queue and a data structure associated with it.
+The data structure is referred to as
+\f4msqid_ds\fP
+and contains the following members:
+.PP
+.RS
+.TS
+;
+l2f4 lf4.
+struct	ipc_perm msg_perm;
+struct	msg \(**msg_first;
+struct 	msg \(**msg_last;
+ushort	msg_cbytes;
+ushort	msg_qnum;
+ushort	msg_qbytes;
+pid_t	msg_lspid;
+pid_t	msg_lrpid;
+time_t	msg_stime;
+time_t	msg_rtime;
+time_t	msg_ctime;
+.TE
+.RE
+.de Ip
+.IP "\\$1"
+\\$2
+..
+.PP
+Here are descriptions of the fields of the
+\f4msqid_ds\fP structure:
+.Ip "" \f4msg_perm\fP
+is an \f4ipc_perm\fP structure that
+specifies the message operation permission (see below).
+This structure includes the following members:
+.PP
+.RS 12n
+.TS
+;
+l2f4 l2f4 lf4.
+uid_t	cuid;	/\(** creator user id \(**/
+gid_t	cgid;	/\(** creator group id \(**/
+uid_t	uid;	/\(** user id \(**/
+gid_t	gid;	/\(** group id \(**/
+mode_t	mode;	/\(** r/w permission \(**/
+ushort	seq;	/\(** slot usage sequence # \(**/
+key_t	key;	/\(** key \(**/
+.TE
+.PP
+.RE
+.Ip "" \f4\(**msg_first\fP
+is a pointer to the first message on the queue.
+.Ip "" \f4\(**msg_last\fP
+is a pointer to the last message on the queue.
+.Ip "" \f4msg_cbytes\fP
+is the current number of bytes on the queue.
+.Ip "" \f4msg_qnum\fP
+is the number of messages currently on the queue.
+.Ip "" \f4msg_qbytes\fP
+is the maximum number of bytes allowed on the queue.
+.Ip "" \f4msg_lspid\fP
+is the process
+.SM ID
+of the last process that performed a
+\f4msgsnd\fP
+operation.
+.Ip "" \f4msg_lrpid\fP
+is the process id of the last process that performed a
+\f4msgrcv\fP
+operation.
+.Ip "" \f4msg_stime\fP
+is the time of the last
+\f4msgsnd\fP
+operation.
+.Ip "" \f4msg_rtime\fP
+is the time of the last
+\f4msgrcv\fP
+operation
+.Ip "" \f4msg_ctime\fP
+is the time of the last
+\f4msgctl\fP
+operation that changed a member of the above structure.
+.SS "Message Operation Permissions"
+In the
+\f4msgop\fP and \f4msgctl\fP
+system call descriptions, the permission required
+for an operation is given as {\f2token\fP}, where \f2token\fP is the type
+of permission needed, interpreted as follows:
+.PP
+.RS 12n
+.TS
+;
+l3 l .
+00400	\s-1READ\s0 by user
+00200	\s-1WRITE\s0 by user
+00040	\s-1READ\s0 by group
+00020	\s-1WRITE\s0 by group
+00004	\s-1READ\s0 by others
+00002	\s-1WRITE\s0 by others
+.TE
+.RE
+.PP
+Read and write permissions on a \f4msqid\fP are
+granted to a process if one or more of the following are true:
+.IP
+The effective user
+.SM ID
+of the process
+is super-user.
+.IP
+The effective user
+.SM ID
+of the process
+matches
+\f4msg_perm.cuid\fP
+or
+\f4msg_perm.uid\fP
+in the data structure associated with
+\f4msqid\fP
+and the appropriate bit of the
+``user'' portion (0600) of
+\f4msg_perm.mode\fP
+is set.
+.IP
+The effective group
+.SM ID
+of the process
+matches
+\f4msg_perm.cgid\fP
+or
+\f4msg_perm.gid\fP
+and the appropriate bit of the ``group'' portion
+(060) of
+\f4msg_perm.mode\fP
+is set.
+.IP
+The appropriate bit of the ``other'' portion (006) of
+\f4msg_perm.mode\fP
+is set.
+.PP
+Otherwise, the corresponding permissions are denied.
+.SS "Module"
+A module is an entity containing processing
+routines for input and output data.
+It always exists in the middle of a
+stream, between the stream's head
+and a driver.
+A module is the \s-1STREAMS\s0 counterpart to the commands
+in a shell pipeline except that a module contains a pair
+of functions which allow independent bidirectional (downstream
+and upstream) data flow and processing.
+.SS "Multiplexor"
+A multiplexor is a driver that allows streams
+associated with several user processes to be
+connected to a single driver, or
+several drivers to be connected to a single
+user process.
+\s-1STREAMS\s0 does not provide a general multiplexing
+driver, but does provide the facilities for
+constructing them and for connecting multiplexed
+configurations of streams.
+.SS "Orphaned Process Group"
+A process group in which the parent of every member in the group is
+either itself a member of the group, or is not a member of the process
+group's session.
+.SS "Pathname"
+A pathname is a null-terminated character string
+starting with an optional slash
+\f1(\f4/\f1),
+followed by
+zero or more directory names separated by slashes, optionally followed
+by a filename.
+.PP
+If a pathname begins with a slash, the path search begins at the
+root directory.
+Otherwise, the search begins from the current working directory.
+.PP
+A slash by itself names the root directory.
+.PP
+Unless specifically stated otherwise,
+the null pathname is treated as if it named
+a non-existent file.
+.SS "Process \s-1ID\s+1"
+Each process in the system is uniquely identified during its lifetime by
+a positive integer called a process
+\s-1ID\s+1.
+A process
+.SM ID
+may not be reused
+by the system until the process lifetime, process group lifetime and
+session lifetime ends for any process \s-1ID\s+1, process group
+.SM ID
+and session
+.SM ID
+equal to that process \s-1ID\s+1.
+.SS "Parent Process \s-1ID\s+1"
+A new process is created by a currently active
+process [see
+\f4fork\fP(2)].
+The parent process
+.SM ID
+of a process is the process
+.SM ID
+of its creator.
+.SS "Privilege"
+Having appropriate privilege means having the capability to override 
+system restrictions.
+.SS "Process Group"
+Each process in the system is a member of a process group that is 
+identified by a process group \s-1ID\s+1.  Any process that is not a process
+group leader may create a new process group and become its leader.
+Any process that is not a process group leader may join an existing 
+process group that shares the same session as the process.  A newly
+created process joins the process group of its parent.
+.SS "Process Group Leader"
+A process group leader is a process whose process
+.SM ID
+is the same as
+its process group \s-1ID\s+1.
+.SS "Process Group \s-1ID\s+1"
+Each active process is a member of a process group and is
+identified by a positive integer called the process group \s-1ID\s+1.
+This
+.SM ID
+is the process
+.SM ID
+of the group leader.
+This grouping permits the signaling of related processes [see
+\f4kill\fP(2)].
+.SS "Process Lifetime"
+A process lifetime begins when the process is forked and ends after it
+exits, when its termination has been acknowledged by its parent process.
+See \f4wait\fP(2).
+.SS "Process Group Lifetime"
+A process group lifetime begins when the process group is created by its
+process group leader, and ends when the lifetime of the last process in the group
+ends or when the last process in the group leaves the group.
+.SS "Read Queue"
+In a stream, the message queue in a module or driver containing messages moving upstream.
+.SS "Real User \s-1ID\s+1 and Real Group \s-1ID\s+1"
+Each user allowed on the system is 
+identified by a positive integer (0 to MAXUID) called a real user
+.SM ID\*S.
+.PP
+Each user is also a member of a group.
+The group is identified by a positive integer called the real group
+.SM ID\*S.
+.PP
+An active process has a real user
+.SM ID
+and real group
+.SM ID
+that are set to the real user
+.SM ID
+and real group
+.SM ID\*S,
+respectively, of the user responsible for the creation of the process.
+.SS "Root Directory and Current Working Directory"
+Each process has associated with it a concept of a root directory and
+a current working directory for the purpose of resolving pathname searches.
+The root directory of a process need not be the root directory of the root
+file system.
+.SS "Saved User \s-1ID\s0 and Saved Group \s-1ID\s0"
+The saved user \f4ID\fP and saved
+group \f4ID\fP are the values of the 
+effective user \f4ID\fP and effective group
+\f4ID\fP prior to an exec of a file
+whose set user or set group file mode bit
+has been set [see \f4exec\fP(2)].
+.SS "Semaphore Identifier"
+A semaphore identifier (\f4semid\fP) is a unique positive integer created by a
+\f4semget\fP system call.
+Each semid has a set of semaphores and a data structure associated with it.
+The data structure is referred to as
+\f4semid_ds\fP
+and contains the following members:
+.PP
+.RS 3
+.TS
+;
+l2f4 l2f4 lf4.
+struct	ipc_perm sem_perm;	/\(** operation permission struct \(**/
+struct	sem \(**sem_base;	/\(** ptr to first semaphore in set \(**/
+ushort	sem_nsems;	/\(** number of sems in set \(**/
+time_t	sem_otime;	/\(** last operation time \(**/
+time_t	sem_ctime;	/\(** last change time \(**/
+		/\(** Times measured in secs since \(**/
+		/\(** 00:00:00 GMT, Jan. 1, 1970 \(**/
+.TE
+.RE
+.PP
+Here are descriptions of the fields of the
+\f4semid_ds\fP structure:
+.Ip "" \f4sem_perm\fP
+is an \f4ipc_perm\fP structure that
+specifies the semaphore operation permission (see below).
+This structure includes the following members:
+.PP
+.RS 12n
+.TS
+;
+l2f4 l2f4 lf4.
+uid_t	uid;	/\(** user id \(**/
+gid_t	gid;	/\(** group id \(**/
+uid_t	cuid;	/\(** creator user id \(**/
+gid_t	cgid;	/\(** creator group id \(**/
+mode_t	mode;	/\(** r/a permission \(**/
+ushort	seq;	/\(** slot usage sequence number \(**/
+key_t	key;	/\(** key \(**/
+.TE
+.PP
+.RE
+.Ip "" \f4sem_nsems\fP
+is equal to the number of semaphores in the set.
+Each semaphore in the set is referenced by a nonnegative integer
+referred to as a
+\f4sem_num\fP.
+\f4sem_num\fP
+values run sequentially from 0 to the value of \f4sem_nsems\fP minus 1.
+.Ip "" \f4sem_otime\fP
+is the time of the last
+\f4semop\fP
+operation.
+.Ip "" \f4sem_ctime\fP
+is the time of the last
+\f4semctl\fP
+operation that changed a member of the above structure.
+.PP
+A semaphore is a data structure called \f4sem\fP
+that contains the following members:
+.PP
+.RS
+.TS
+;
+l2f4 l2f4 lf4.
+ushort	semval;	/\(** semaphore value \(**/
+pid_t	sempid;	/\(** pid of last operation  \(**/
+ushort	semncnt;	/\(** # awaiting semval > cval \(**/
+ushort	semzcnt;	/\(** # awaiting semval = 0 \(**/
+.TE
+.RE
+.Ip "" \f4semval\fP
+is a non-negative integer that is the actual value of the semaphore.
+.Ip "" \f4sempid\fP
+is equal to the process
+.SM ID
+of the last process that performed a semaphore operation on this semaphore.
+.Ip "" \f4semncnt\fP
+is a count of the number of processes that are currently suspended
+awaiting this semaphore's semval to become greater than its current value.
+.Ip "" \f4semzcnt\fP
+is a count of the number of processes that are currently suspended
+awaiting this semaphore's semval to become 0.
+.SS "Semaphore Operation Permissions"
+In the
+\f4semop\fP and \f4semctl\fP
+system call descriptions, the permission required
+for an operation is given as {\f2token\fP}, where \f2token\fP is the type
+of permission needed interpreted as follows:
+.PP
+.RS
+.TS
+;
+l3 l .
+00400	\s-1READ\s0 by user
+00200	\s-1ALTER\s0 by user
+00040	\s-1READ\s0 by group
+00020	\s-1ALTER\s0 by group
+00004	\s-1READ\s0 by others
+00002	\s-1ALTER\s0 by others
+.TE
+.RE
+.PP
+Read and alter permissions on a semid are
+granted to a process if one or more of the following are true:
+.IP
+The effective user
+.SM ID
+of the process
+is super-user.
+.IP
+The effective user
+.SM ID
+of the process
+matches
+\f4sem_perm.cuid\fP
+or
+\f4sem_perm.uid\fP
+in the data structure associated with
+\f4semid\fP
+and the appropriate bit of the
+``user'' portion (0600) of
+\f4sem_perm.mode\fP
+is set.
+.IP
+The effective group
+.SM ID
+of the process
+matches
+\f4sem_perm.cgid\fP
+or
+\f4sem_perm.gid\fP
+and the appropriate bit of the ``group'' portion
+(060) of
+\f4sem_perm.mode\fP
+is set.
+.IP
+The appropriate bit of the ``other'' portion (06) of
+\f4sem_perm.mode\fP
+is set.
+.PP
+Otherwise, the corresponding permissions are denied.
+.SS "Session"
+A session is a group of processes identified by a common
+.SM ID
+called a session 
+\s-1ID\s+1, capable of establishing a connection with a controlling terminal.  
+Any process that is not a process group leader may create a new session 
+and process group, becoming the session leader of the session and process
+group leader of the process group.  A newly created process joins the
+session of its creator.
+.SS "Session \s-1ID\s+1"
+Each session in the system is uniquely identified during its lifetime by 
+a positive integer called a session \s-1ID\s+1, the process
+.SM ID
+of its session leader.
+.SS "Session Leader"
+A session leader is a process whose session
+.SM ID
+is the same as its 
+process and process group \s-1ID\s+1.
+.SS "Session Lifetime"
+A session lifetime begins when the session is created by its session
+leader, and ends when the lifetime of the last process that is a member 
+of the session ends, or when the last process that is a member in the
+session leaves the session.  
+.SS "Shared Memory Identifier"
+A shared memory identifier (\f4shmid\fP)
+is a unique positive integer created by a
+\f4shmget\fP system call.
+Each \f4shmid\fP has a segment of memory
+(referred to as a shared memory segment)
+and a data structure associated with it.
+(Note that these shared memory segments 
+must be explicitly removed by the user
+after the last reference to them is removed.)
+The data structure is referred to as
+\f4shmid_ds\fP
+and contains the following members:
+.PP
+.RS 3
+.TS
+;
+l2f4 l2f4 lf4 .
+struct ipc_perm	shm_perm;	/\(** operation permission struct \(**/
+int	shm_segsz;	/\(** size of segment \(**/
+struct region	\(**shm_reg;	/\(** ptr to region structure \(**/
+char	pad[4];	/\(** for swap compatibility \(**/
+pid_t	shm_lpid;	/\(** pid of last operation \(**/
+pid_t	shm_cpid;	/\(** creator pid \(**/
+ushort	shm_nattch;	/\(** number of current attaches \(**/
+ushort	shm_cnattch;	/\(** used only for shminfo \(**/
+time_t	shm_atime;	/\(** last attach time \(**/
+time_t	shm_dtime;	/\(** last detach time \(**/
+time_t	shm_ctime;	/\(** last change time \(**/
+		/\(** Times measured in secs since \(**/
+		/\(** 00:00:00 GMT, Jan. 1, 1970 \(**/
+.TE
+.RE
+.PP
+Here are descriptions of the fields of the
+\f4shmid_ds\fP structure:
+.Ip "" \f4shm_perm\fP
+is an \f4ipc_perm\fP structure that
+specifies the shared memory operation permission (see below).
+This structure includes the following members:
+.PP
+.RS 12n
+.TS
+;
+l2f4 l2f4 lf4 .
+uid_t	cuid;	/\(** creator user id \(**/
+gid_t	cgid;	/\(** creator group id \(**/
+uid_t	uid;	/\(** user id \(**/
+gid_t	gid;	/\(** group id \(**/
+mode_t	mode;	/\(** r/w permission \(**/
+ushort	seq;	/\(** slot usage sequence # \(**/
+key_t	key;	/\(** key \(**/
+.TE
+.RE
+.PP
+.Ip "" \f4shm_segsz\fP
+specifies the size of the shared memory segment in bytes.
+.Ip "" \f4shm_cpid\fP
+is the process
+.SM ID
+of the process that created the shared memory identifier.
+.Ip "" \f4shm_lpid\fP
+is the process
+.SM ID
+of the last process that performed a
+\f4shmop\fP operation.
+.Ip "" \f4shm_nattch\fP
+is the number of processes that currently have this segment attached.
+.Ip "" \f4shm_atime\fP
+is the time of the last
+\f4shmat\fP
+operation
+[see \f4shmop\fP(2)].
+.Ip "" \f4shm_dtime\fP
+is the time of the last
+\f4shmdt\fP
+operation
+[see \f4shmop\fP(2)].
+.Ip "" \f4shm_ctime\fP
+is the time of the last
+\f4shmctl\fP
+operation that changed one of the members of the above structure.
+.SS "Shared Memory Operation Permissions"
+In the
+\f4shmop\fP and \f4shmctl\fP
+system call descriptions, the permission required
+for an operation is given as {\f2token\fP}, where \f2token\fP is the type
+of permission needed interpreted as follows:
+.RS
+.TS
+;
+l3 l .
+00400	\s-1READ\s0 by user
+00200	\s-1WRITE\s0 by user
+00040	\s-1READ\s0 by group
+00020	\s-1WRITE\s0 by group
+00004	\s-1READ\s0 by others
+00002	\s-1WRITE\s0 by others
+.TE
+.RE
+.PP
+Read and write permissions on a \f4shmid\fP are
+granted to a process if one or more of the following are true:
+.IP
+The effective user
+.SM ID
+of the process
+is super-user.
+.IP
+The effective user
+.SM ID
+of the process
+matches
+\f4shm_perm.cuid\fP
+or
+\f4shm_perm.uid\fP
+in the data structure associated with
+\f4shmid\fP
+and the appropriate bit of the
+``user'' portion (0600) of
+\f4shm_perm.mode\fP
+is set.
+.IP
+The effective group
+.SM ID
+of the process
+matches
+\f4shm_perm.cgid\fP
+or
+\f4shm_perm.gid\fP
+and the appropriate bit of the ``group'' portion
+(060) of
+\f4shm_perm.mode\fP
+is set.
+.IP
+The appropriate bit of the ``other'' portion (06) of
+\f4shm_perm.mode\fP
+is set.
+.PP
+Otherwise, the corresponding permissions are denied.
+.SS "Special Processes"
+The process with
+.SM ID
+0 and the process with
+.SM ID
+1 are special processes referred to as
+proc0 and proc1; see \f4kill\fP(2).
+proc0
+is the process scheduler.
+proc1
+is the initialization process 
+(\f4init\fP);
+proc1
+is the ancestor of every other
+process in the system and is used to control the process structure.
+.SS "\s-1STREAMS\s0"
+A set of kernel mechanisms that support the development of
+network services and data communication drivers.
+It defines interface standards for character input/output
+within the kernel and between the kernel and user level processes.
+The \s-1STREAMS\s0 mechanism is composed of utility routines,
+kernel facilities and a set of data structures.
+.SS "Stream"
+A stream is a full-duplex data path within the kernel 
+between a user process and driver routines.
+The primary components are a stream head,
+a driver and zero or more modules
+between the stream head and driver.
+A stream is analogous to a shell pipeline except that
+data flow and processing are bidirectional.
+.SS "Stream Head"
+In a stream, the stream head is the end of the stream
+that provides
+the interface between the stream and a user process.
+The principal functions of the stream head are processing
+\s-1STREAMS\s0-related system calls,
+and passing data and information between a user
+process and the stream.
+.SS "Super-user"
+A process is recognized as a
+super-user
+process and is granted special privileges, such as immunity from
+file permissions, if its effective user
+.SM ID
+is 0.
+.SS "Upstream"
+In a stream, the direction from driver to stream head.
+.SS "Write Queue"
+In a stream, the message queue in a module or
+driver containing messages moving downstream.

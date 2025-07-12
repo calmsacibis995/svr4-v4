@@ -1,0 +1,133 @@
+'\"macro stdmacro
+.if n .pH g3c.ctype @(#)ctype	40.16.1.1 of 1/3/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} ctype 3C "C Programming Language Utilities" "\&"
+.if \nX=1 .ds x} ctype 3C "C Programming Language Utilities"
+.if \nX=2 .ds x} ctype 3C "" "\&"
+.if \nX=3 .ds x} ctype "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4ctype: isdigit\f1, \f4isxdigit\f1, \f4islower\f1, \f4isupper\f1, \f4isalpha\f1, \f4isalnum\f1, \f4isspace\f1, \f4iscntrl\f1, \f4ispunct\f1, \f4isprint\f1, \f4isgraph\f1, \f4isascii\f1 \- character handling
+.SH SYNOPSIS
+.ft CW
+.nf
+#include <ctype.h>
+.sp0.5
+int isalpha(int c);
+.sp0.5
+int isupper(int c);
+.sp0.5
+int islower(int c);
+.sp0.5
+int isdigit(int c);
+.sp0.5
+int isxdigit(int c);
+.sp0.5
+int isalnum(int c);
+.sp0.5
+int isspace(int c);
+.sp0.5
+int ispunct(int c);
+.sp0.5
+int isprint(int c);
+.sp0.5
+int isgraph(int c);
+.sp0.5
+int iscntrl(int c);
+.sp0.5
+int isascii(int c);
+.ft 1
+.fi
+.SH DESCRIPTION
+These macros classify character-coded integer values.
+Each is a predicate returning non-zero for true, zero for false.
+The behavior of these macros, except \&\f4isascii\f1, is affected
+by the current locale [see setlocale(3C)].
+To modify the behavior, change the \f4LC_TYPE\fP category in 
+\f4setlocale\f1, that is, \f4setlocale\fP (\f4LC_CTYPE\fP, \f2newlocale\f1).
+In the \f4C\f1
+locale, or in a locale where character type information is not
+defined, characters are classified according to the rules of the
+\s-1US-ASCII\s+1 7-bit coded character set.
+.P
+The macro \&\f4isascii\f1 is defined on all integer values;
+the rest are defined only where the argument is an \&\f4int\f1,
+the value of which is representable as an \&\f4unsigned char\f1,
+or \&\f4EOF\f1, which is defined by the \&\f4stdio.h\f1 header file
+and represents end-of-file.
+.TP 15
+\f4isalpha\f1
+tests for any character for which \&\f4isupper\f1 or \&\f4islower\f1
+is true, or any character that is one of an implementation-defined set of
+characters for which none of \&\f4iscntrl\f1, \&\f4isdigit\f1,
+\&\f4ispunct\f1, or \&\f4isspace\f1 is true.
+In the \&\f4C\f1 locale, \&\f4isalpha\f1 returns true only for the
+characters for which \&\f4isupper\f1 or \&\f4islower\f1 is true.
+.TP 15
+\f4isupper\f1
+tests for any character that is an upper-case letter or is one of an
+implementation-defined set of characters for which none of
+\&\f4iscntrl\f1, \&\f4isdigit\f1, \&\f4ispunct\f1, \&\f4isspace\f1, or \f4islower\f1 is true.  In the \&\f4C\f1 locale, \&\f4isupper\f1 returns true only
+for the characters defined as upper-case \s-1ASCII\s+1 characters.
+.TP 15
+\f4islower\f1
+tests for any character that is a lower-case letter or is one of an
+implementation-defined set of characters for which none of
+\&\f4iscntrl\f1, \&\f4isdigit\f1, \&\f4ispunct\f1, \&\f4isspace\f1, or \f4isupper\f1 is true.  In the \&\f4C\f1 locale, \&\f4islower\f1 returns true only
+for the characters defined as lower-case \s-1ASCII\s+1 characters.
+.TP 15
+\f4isdigit\f1
+tests for any decimal-digit character.
+.TP 15
+\f4isxdigit\f1
+tests for any hexadecimal-digit character (\&\f4[0\-9]\f1,
+\&\f4[A\-F]\f1 or \&\f4[a\-f]\f1).
+.TP 15
+\f4isalnum\f1
+tests for any character for which \&\f4isalpha\f1
+or \&\f4isdigit\f1 is true (letter or digit).
+.TP 15
+\f4isspace\f1
+tests for any space, tab, carriage-return, newline,
+vertical-tab or form-feed (standard white-space characters)
+or for one of an implementation-defined set of characters for which
+\&\f4isalnum\f1 is false.  In the \&\f4C\f1 locale,
+\&\f4isspace\f1 returns true only for the standard white-space characters.
+.TP 15
+\f4ispunct\f1
+tests for any printing character which is neither a space nor
+a character for which \&\f4isalnum\f1 is true.
+.TP 15
+\f4isprint\f1
+tests for any printing character, including space (\&\f4" "\f1).
+.TP 15
+\f4isgraph\f1
+tests for any printing character, except space.
+.TP 15
+\f4iscntrl\f1
+tests for any ``control character'' as defined by the character set.
+.TP 15
+\f4isascii\f1
+tests for any \s-1ASCII\s+1 character,
+code between \&\f40\f1 and \&\f40177\f1 inclusive.
+.PP
+All the character classification macros and the conversion functions and macros
+use a table lookup.
+.PP
+Functions exist for all the above-defined macros.  To get the function
+form, the macro name must be undefined (e.g., \f4#undef isdigit\f1).
+.SH "FILES"
+\f4/usr/lib/locale/\f2locale\f4/LC_CTYPE\fP
+.SH "SEE ALSO"
+\f4chrtbl\fP(1M),
+\f4setlocale\fP(3C),
+\f4stdio\fP(3S),
+\f4ascii\fP(5),
+\f4environ\fP(5).
+.SH DIAGNOSTICS
+If the argument to any of the character handling macros  
+is not in the domain of the function, the result is undefined.
+.\"	@(#)ctype.3c	6.2 of 10/20/83
+.Ee

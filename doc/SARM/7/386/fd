@@ -1,0 +1,316 @@
+.if n .pH g7.fd @(#)fd	40.9 of 1/3/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.dsT \t
+.nr X
+.if \nX=0 .ds x} fd 7 "" "\&"
+.if \nX=1 .ds x} fd 7 ""
+.if \nX=2 .ds x} fd 7 "" "\&"
+.if \nX=3 .ds x} fd "" "" "\&"
+.TH \*(x} "" "386 Computer Only"
+.SH NAME
+\f4fd\f1 \- diskette (floppy disk)
+.SH DESCRIPTION
+The diskette driver provides access to diskettes as both block and character
+devices.
+Diskettes must be formatted before their use [see
+\f4format(1)\f1].
+Both 5.25" and 3.50" diskette formats are supported.
+The driver controls up to two diskette drives.
+The minor device number specifies
+the drive number, the format of the diskette and the
+partition number.
+.PP
+Diskette device file names (which correspond to a specific major and minor
+device) use the following format:
+.IP
+\f4/dev/{r}dsk/{0,1}{5h,5d9,5d8,5d4,5d16,5q,3h,3d}{t,u}\f1
+.PP
+where \f4r\f1 indicates a raw (character) interface to the diskette,
+\f4rdsk\f1 selects the raw device interface and \f4dsk\f1
+selects the block device interface.
+\f40\f1 or \f41\f1 selects the drive to be accessed:
+\f4f0\f1 selects floppy drive 0, while \f4f1\f1 selects drive 1.
+The following list describes the format to be interacted
+with:
+.sp \n(PDu
+.RS
+.PD 0
+.TP 8
+\f45h\f1
+5.25" high density diskette (1.2MB).
+.TP
+\f45d9\f1
+5.25" double density diskette, 9 sectors per track (360KB).
+.TP
+\f45d8\f1
+5.25" double density diskette, 8 sectors per track (320KB).
+.TP
+\f45d4\f1
+5.25" double density diskette, 4 sectors per track (320KB).
+.TP
+\f45d16\f1
+5.25" double density diskette, 16 sectors per track (320KB).
+.TP
+\f45q\f1
+5.25" quad density diskette (720KB).
+.TP
+\f43h\f1
+3.50" high density diskette (1.44MB).
+.TP
+\f43d\f1
+3.50" double density diskette (720KB).
+.RE
+.PD
+.sp \n(PDu
+.PP
+Format specification is mandatory when opening the device for
+formatting.
+However, when accessing a floppy disk for other
+operations (read and write), the format specification field can be
+omitted.
+In this case, the floppy disk driver will automatically
+determine the format previously established on the diskette and
+then perform the requested operation (for example,
+\f4cpio -itv</dev/rsdk/f1).
+.PP
+The last parameter, \f4t\f1 or \f4u\f1, selects the
+partition to be accessed.
+\f4t\f1 represents the whole diskette.
+Without \f4t\f1 or \f4u\f1 specified, the whole
+diskette except cylinder 0 will be selected.
+\f4u\f1 represents the whole diskette except track 0 of cylinder 0
+and applies only to the 568 type of floppy (floppies created
+on AT&T UNIX computer).
+.PP
+Besides the device file naming convention described above,
+some of the formats have alias names that correlate to
+previous releases.
+The following list describes the formats that have an alias:
+.sp \n(PDu
+.RS
+.PD 0
+.TP 15
+format
+alias
+.TP
+\f45h\f1
+q15d
+.TP
+\f45d8\f1
+\f4d8d\f1
+.TP
+\f45d9\f1
+\f4d9d\f1
+.RE
+.PD
+.sp \n(PDu
+.PP
+For example, the device file \f4/dev/rdsk/f0q15dt\f1 is
+equivalent to \f4/dev/rdsk/f05ht\f1.
+.PP
+In order to minimize errors when using diskettes, the driver attempts to
+assure that the diskette is installed when needed, and that the operations
+requested have been completed before the device close is completed.
+In particular, the drive is checked for the presence of a diskette each time
+a read/write request is made to the drive.
+If this is not true (either the
+diskette is not physically present or the door is open), the driver retries
+the request continually, at five-second intervals.
+The message:
+.sp .5
+.br
+.ti +.25i
+\f4FD(\f2n\fP): diskette not present \- please insert\f1
+.PP
+appears after each attempt (the \f2n\f1 represents the drive number).
+The INTR and QUIT signals are honored in this case,
+so that the process accessing the diskette drive in question
+will receive these signals
+(unless, of course, the process itself is ignoring them).
+In particular, if the diskette is removed prematurely,
+or not inserted soon enough,
+.I "no data is lost,"
+provided the correct diskette is inserted in the drive when the message to do
+so is displayed.
+.SS Ioctl Calls
+.TP
+\f4V_GETPARMS\f1
+This call is used to get information about the current drive configuration.
+The argument to the \f4ioctl\f1 is the address of one of the following structures,
+defined in
+\f4<sys/vtoc.h>\f1,
+which will be filled in by the \f4ioctl\f1:
+.nf
+.ta 4m 8m 12m 16m 20m 24m 28m 32m 36m 40m 44m 48m 52m 56m 60m
+.IP
+\f4
+struct disk_parms {
+\*Tchar\*Tdp_type;\*T/* Disk type (see below) */
+\*Tunchar\*Tdp_heads;\*T/* Number of heads */
+\*Tushort\*Tdp_cyls;\*T\*T/* Number of cylinders */
+\*Tunchar\*Tdp_sectors;\*T/* Number of sectors/track */
+\*Tushort\*Tdp_secsiz;\*T/* Number of bytes/sector */
+\*T\*T\*T\*T\*T/* for this partition: */
+\*Tushort\*Tdp_ptag;\*T/* Partition tag (not used) */
+\*Tushort\*Tdp_pflag;\*T/* Partition flag (not used) */
+\*Tushort\*Tdp_pstartsec;\*T/* Starting sector number */
+\*Tushort\*Tdp_pnumsec;\*T/* Number of sectors */
+}
+
+/* Disk types */
+#define\*TDPT_WINI\*T1\*T/* Winchester disk */
+#define\*TDPT_FLOPPY\*T2\*T/* Floppy */
+#define\*TDPT_OTHER\*T3\*T/* Other type of disk */
+#define\*TDPT_NOTDISK\*T0\*T/* Not a disk device */
+\f1
+.fi
+.DT
+.IP
+For the floppy driver, the disk type will always be DPT_FLOPPY.
+The unused
+fields in the disk_parms structure are only applicable to hard disks;
+however, returning the same structure from both the hard disk driver and
+the diskette driver allows programs to be written that can understand either
+one.
+.TP
+\f4V_FORMAT\f1
+This call is used to format tracks on a diskette.
+The argument passed to the
+\f4ioctl\f1 is the address of one of the following structures, defined in
+\f4<sys/vtoc.h>\f1,
+containing the starting track, number of tracks, and
+interleave factor:
+.nf
+.ta 4m 8m 12m 16m 20m 24m 28m 32m 36m 40m 44m 48m 52m 56m 60m
+.IP
+\f4union io_arg {
+\*Tstruct {
+\*T\*Tushort\*Tstart_trk;\*T/* first track */
+\*T\*Tushort\*Tnum_trks;\*T/* number of tracks
+					to format */
+\*T\*Tushort\*Tintlv;\*T\*T/* interleave factor */
+\*T} ia_fmt;
+} \f1
+.fi
+.DT
+.IP
+Formatting will start at the given track and will continue so that the
+given number of tracks are formatted, using the given interleave factor.
+.IP
+Note that the file descriptor must refer to the character (raw) special
+device for the desired drive, and the file must have been opened in exclusive
+mode (i.e., O_EXCL).
+.SH FILES
+\f4/dev/dsk/f0, /dev/rdsk/f0, \.\.\.\f1
+.br
+\f4/dev/dsk/f0t, /dev/rdsk/f0t, \.\.\.\f1
+.br
+\f4/dev/dsk/f05h, /dev/rdsk/f05h, \.\.\.\f1
+.br
+\f4/dev/dsk/f05ht, /dev/rdsk/f05ht, \.\.\.\f1
+.br
+\f4/dev/dsk/f05d9, /dev/rdsk/f05d9, \.\.\.\f1
+.br
+\f4/dev/dsk/f05d9t, /dev/rdsk/f05d9t, \.\.\.\f1
+.br
+\f4/dev/dsk/f0fd8, /dev/rdsk/f05d8, \.\.\.\f1
+.br
+\f4/dev/dsk/f05d8t, /dev/rdsk/f05d8t, \.\.\.\f1
+.br
+\f4/dev/dsk/f05d4, /dev/rdsk/f05d4, \.\.\.\f1
+.br
+\f4/dev/dsk/f05d4t, /dev/rdsk/f05d4t, \.\.\.\f1
+.br
+\f4/dev/dsk/f05d16, /dev/rdsk/f05d16, \.\.\.\f1
+.br
+\f4/dev/dsk/f05d16t, /dev/rdsk/f05d16t, \.\.\.\f1
+.br
+\f4/dev/dsk/f05q, /dev/rdsk/f05q, \.\.\.\f1
+.br
+\f4/dev/dsk/f05qt, /dev/rdsk/f05qt, \.\.\.\f1
+.br
+\f4/dev/dsk/f03h, /dev/rdsk/f03h, \.\.\.\f1
+.br
+\f4/dev/dsk/f03ht, /dev/rdsk/f03ht, \.\.\.\f1
+.br
+\f4/dev/dsk/f03d, /dev/rdsk/f03d, \.\.\.\f1
+.br
+\f4/dev/dsk/f03dt, /dev/rdsk/f03dt, \.\.\.\f1
+.SH SEE ALSO
+\f4format\f1(1),
+\f4ioctl\f1(2),
+\f4hd\f1(7).
+.SH DIAGNOSTICS
+The driver will retry failed transfers up to ten times.
+If the request still has not succeeded,
+the driver will display an appropriate message.
+Errors from the diskette controller, other than the above,
+are displayed as follows:
+.sp .25
+.nf
+     \f4FD\f1  \f4drv n, blk b: drive error message\f1
+     \f4FD\f1 \f4controller controller error message\f1
+.fi
+.PP
+The first message occurs on an error after a transfer has begun, where
+\f4n\f1 is the drive where the error occurred,
+and \f4b\f1 is the block number
+that is being read or written.
+The
+.I drive error message
+is one of the messages appearing in the following list:
+.TP
+\f4Missing data address mark\f1
+The diskette may not be formatted properly.
+.TP
+\f4Cylinder marked bad\f1
+The accessed cylinder has been marked bad by the formatter.
+.TP
+\f4Seek error (wrong cylinder)\f1
+The drive positioned itself at the wrong cylinder when attempting to set up
+for the requested transfer.
+.TP
+\f4Uncorrectable data read error\f1
+A CRC error was detected when attempting to read the requested block from
+the drive.
+.TP
+\f4Sector marked bad\f1
+The accessed sector has been marked bad by the formatter.
+.TP
+\f4Missing header address mark\f1
+The diskette may not be formatted properly.
+.TP
+\f4Write protected\f1
+A write was attempted to a diskette that is currently write-protected.
+.TP
+\f4Sector not found\f1
+The diskette may not be formatted properly.
+.TP
+\f4Data overrun\f1
+The system could not keep up with the requested transfer of data.
+(Should not occur.)
+.TP
+\f4Header read error\f1
+The diskette may not be formatted properly.
+.TP
+\f4Illegal sector specified\f1
+The driver is confused about the format of the diskette that has been
+inserted.
+(Should not occur.)
+.PP
+The second message occurs when there is a controller error during the setup
+for, or actual transfer of, a block.
+The
+.I controller error message
+is one of the messages appearing in the following list:
+.TP
+\f4command timeout\f1
+The controller failed to complete the requested command in a reasonable
+length of time.
+.TP
+\f4status timeout\f1
+The controller failed to return its status after a command was completed.
+.TP
+\f4busy\f1
+During an attempt to access the controller, a timeout occurred.

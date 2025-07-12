@@ -1,0 +1,63 @@
+'\"!  tbl | mmdoc
+'\"macro stdmacro
+.if n .pH g3x.form_f @(#)form_f	40.5 of 4/10/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.\" ident	"@(#)svid_ti:ti_lib/form_f	1.3"
+.nr X
+.if \nX=0 .ds x} form_field 3X "" "\&"
+.if \nX=1 .ds x} form_field 3X ""
+.if \nX=2 .ds x} form_field 3X "" "\&"
+.if \nX=3 .ds x} form_field "" "" "\&"
+.TH \*(x}
+.SH NAME
+.na
+\f4form_field\f1: \f4 set_form_fields\f1, \f4form_fields\f1, \f4field_count\f1, \f4move_field\f1 \- connect fields to \f4forms\fP
+.ad
+.SH SYNOPSIS
+.nf
+.ft 4
+#include <form.h>
+.sp
+int set_form_fields(FORM *form, FIELD **field);
+.sp 0.5
+FIELD **form_fields(FORM *form);
+.sp 0.5
+int field_count(FORM *form);
+.sp 0.5
+int move_field(FIELD *field, int frow, int fcol);
+.ft 1
+.fi
+.SH DESCRIPTION
+\f4set_form_fields\fP changes the fields connected to \f2form\f1 to
+\f2fields\f1.
+The original fields are disconnected.
+.PP
+\f4form_fields\fP returns a pointer to the field pointer array connected
+to \f2form\f1.
+.PP
+\f4field_count\fP returns the number of fields connected to \f2form\f1.
+.PP
+\f4move_field\fP moves the disconnected \f2field\f1 to the location
+\f2frow, fcol\f1 in the \f4forms\fP subwindow.
+.SH RETURN VALUE
+\f4form_fields\fP returns \f4NULL\fP on error.
+.P
+\f4field_count\fP returns \f4-1\fP on error.
+.P
+\f4set_form_fields\fP and \f4move_field\fP return one of the
+following:
+.TS
+lfCWw(1.25i)1 c1 l .
+E_OK	\-	The function returned successfully.
+E_CONNECTED	\-	The field is already connected to a form.
+E_SYSTEM_ERROR	\-	System error.
+E_BAD_ARGUMENT	\-	An argument is incorrect.
+E_POSTED	\-	The form is posted.
+.TE
+.SH NOTES
+The header file \f4<form.h>\f1 automatically includes the header files
+\f4<eti.h>\fP and \f4<curses.h>\fP.
+.SH SEE ALSO
+\f4curses\fP(3X),
+\f4forms\fP(3X)

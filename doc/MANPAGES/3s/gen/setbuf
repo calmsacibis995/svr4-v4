@@ -1,0 +1,108 @@
+'\"macro stdmacro
+.if n .pH g3s.setbuf @(#)setbuf	40.12 of 5/22/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} setbuf 3S "C Development Set" "\&"
+.if \nX=1 .ds x} setbuf 3S "C Development Set"
+.if \nX=2 .ds x} setbuf 3S "" "\&"
+.if \nX=3 .ds x} setbuf "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4setbuf\f1, \f4setvbuf\f1 \- assign buffering to a stream
+.SH SYNOPSIS
+\f4#include <stdio.h>\f1
+.PP
+\f4void setbuf (FILE \(**stream, char \(**buf);\f1
+.PP
+\f4int setvbuf (FILE \(**stream, char \(**buf, int type, size_t size);\f1
+.SH DESCRIPTION
+\f4setbuf\fP
+may be used after a
+.I stream
+[see \f4intro\fP(3)] has been opened but before it
+is read or written.
+It causes the array pointed to by
+.I buf\^
+to be used instead of an automatically allocated buffer.
+If
+.I buf\^
+is the
+\f4NULL\fP
+pointer input/output will be completely unbuffered.
+.PP
+While there is no limitation on the size of the buffer, 
+the constant 
+\f4BUFSIZ,\f1
+defined in the
+\f4stdio.h\f1
+header file,
+is typically a good buffer size: 
+.PP
+.RS
+.ft 4
+char buf[BUFSIZ];
+.ft 1
+.RE
+.P
+\f4setvbuf\fP
+may be used after a stream has been opened 
+but before it is read or written.
+.I type\^
+determines how 
+.I stream\^
+will be buffered.
+Valid values for 
+.I type\^
+(defined in \f4stdio.h\fP) are:
+.TP 12
+\f4_IOFBF\fP
+causes input/output to be fully buffered.
+.TP
+\f4_IOLBF\fP
+causes output to be line buffered; 
+the buffer is flushed when a newline
+is written, the buffer is full, or input is requested.
+.TP
+\f4_IONBF\fP
+causes input/output to be completely unbuffered.
+.P
+If
+.I buf\^
+is not the 
+\f4NULL\f1
+pointer, the array it points to
+is used for buffering, instead of an automatically allocated
+buffer.
+.I size\^
+specifies the size of the buffer to be used.
+If input/output is unbuffered, 
+.I buf
+and 
+.I size
+are ignored.
+.P
+For a further discussion of buffering,
+see \f4stdio\f1(3S).
+.SH "SEE ALSO"
+\f4fopen\fP(3S), \f4getc\fP(3S), \f4malloc\fP(3C), \f4putc\fP(3S), \f4stdio\fP(3S)
+.SH "DIAGNOSTICS"
+If an invalid value for 
+.I type\^
+is provided,
+\f4setvbuf\fP
+returns a non-zero value.  
+Otherwise, it returns zero.
+.SH NOTES
+A common source of error is allocating buffer space
+as an ``automatic'' variable in a code block, and then
+failing to close the stream in the same block.
+.PP
+Parts of \f4buf\f1 are used for internal bookkeeping
+of the stream and, therefore, \f4buf\f1 contains
+less than \f2size\f1 bytes when full.
+It is recommended that the automatically allocated buffer
+is used when using 
+\f4setvbuf\f1.
+.\"     @(#)setbuf.3s	6.2 of 10/20/83
+.Ee

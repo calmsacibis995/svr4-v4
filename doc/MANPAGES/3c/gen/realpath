@@ -1,0 +1,64 @@
+'\"macro stdmacro
+.if n .pH g3c.realpath @(#)realpath	40.7 of 1/3/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.\" @(#)realpath.3 1.8 88/03/07 SMI;
+'\"! tbl | mmdoc
+'\"macro stdmacro
+.if n .pH g3c.realpath @(#)realpath	31.1 of 4/5/88
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.nr X
+.if \nX=0 .ds x} realpath 3C "C Programming Language Utilities" "\&"
+.if \nX=1 .ds x} realpath 3C "C Programming Language Utilities"
+.if \nX=2 .ds x} realpath 3C "" "\&"
+.if \nX=3 .ds x} realpath "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4realpath\f1 \- returns the real file name
+.SH SYNOPSIS
+.PP
+.nf
+\f4#include <stdlib.h>\f1
+\f4#include <sys/param.h>\f1
+.P
+\f4char \(**realpath (char \(** file_name, char \(** resolved_name);
+.fi
+.SH DESCRIPTION
+\f4realpath\f1
+resolves all links and references to ``.'' and ``..'' in
+.I file_name
+and stores it in
+.IR resolved_name.
+.PP
+It can handle both relative and absolute path names.
+For absolute path names and the relative names whose resolved
+name cannot
+be expressed relatively (e.g.,
+\f4../../reldir\f1), it returns the
+\f2resolved absolute\f1 name.
+For the other relative path names, it returns the
+\f2resolved relative\f1 name.
+.PP
+\f2resolved_name\f1 must be big enough
+(\f4MAXPATHLEN\f1) to contain the
+fully resolved path name.
+.SH SEE ALSO
+\f4getcwd\f1(3C).
+.SH DIAGNOSTICS 
+If there is no error, \f4realpath\f1 returns a pointer to the
+.IR resolved_name.
+Otherwise it returns a
+null
+pointer and places the name of the offending file in
+.IR resolved_name.
+The global variable
+\f4errno\f1
+is set to indicate the error.
+.SH NOTES
+\f4realpath\f1 operates on null-terminated strings.
+.PP
+One should have execute permission on all the directories
+in the given and the resolved path.
+.PP
+\f4realpath\f1
+may fail to return to the current directory if an error occurs.

@@ -1,0 +1,39 @@
+'\"macro stdmacro
+.if n .pH g1.fold @(#)fold	40.9 of 5/29/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.\" Copyright (c) 1988 Sun Microsystems, Inc - All Rights Reserved.
+.nr X
+.if \nX=0 .ds x} fold 1 "Directory and File Management Utilities" "\&"
+.if \nX=1 .ds x} fold 1 "Directory and File Management Utilities"
+.if \nX=2 .ds x} fold 1 "" "\&"
+.if \nX=3 .ds x} fold "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4fold\f1 \- fold long lines
+.SH SYNOPSIS
+\f4fold\f1 [ \f4\-w \f2width\f1 | \f4\-\f2width\f1 ] [ \f2filename\f1 .\ .\ . ]
+.SH DESCRIPTION
+Fold the contents of the specified 
+.IR filename s,
+or the standard input if no files are specified,
+breaking the lines to have maximum width
+.IR width .
+The default for
+.I width
+is 80.
+.I width
+should be a multiple of 8 if
+tabs
+are present, or the 
+tabs
+should be expanded.
+.SH SEE ALSO
+\f4pr\f1(1)
+.SH NOTES
+Folding may not work correctly if underlining is present.
+.P
+The
+\f4-w\f2 width\f1
+option is provided as a transition tool only.
+It will be removed in future releases.

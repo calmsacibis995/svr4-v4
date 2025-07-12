@@ -1,0 +1,407 @@
+'\"macro stdmacro
+.if n .pH g1a.ufsrestore @(#)ufsrestore	40.6 of 1/3/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+'\"macro stdmacro
+.if n .pH g1a.ufsrestore @(#)ufsrestore	40.6 of 9/16/89
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.if \nX=0 .ds x} ufsrestore 1M "UFS" "\&"
+.if \nX=1 .ds x} ufsrestore 1M "UFS"
+.if \nX=2 .ds x} ufsrestore 1M "" "\&"
+.if \nX=3 .ds x} ufsrestore "" "" "\&"
+.nr X
+.TH \*(x} "" "386 Computer Only"
+.SH NAME
+\f4ufsrestore\f1 \- incremental file system restore
+.SH SYNOPSIS
+\f4/usr/sbin/ufsrestore\f1
+.I options
+[
+.IR filename .\|.\|.
+]
+.SH DESCRIPTION
+.LP
+\f4ufsrestore\f1
+restores files from backup tapes created with the
+\f4ufsdump\f1.
+command.
+.I options
+is a string of at least one of the options listed
+below, along with
+any modifiers and arguments you supply.
+Remaining arguments to
+\f4ufsrestore\f1
+are the names of files (or directories whose files)
+are to be restored to disk.
+Unless the
+\f4h\f1
+modifier is in effect, a directory name refers
+to the files it contains, and (recursively) its
+subdirectories and the files they contain.
+.LP
+The options are:
+.TP .75i
+\f4\-i\f1
+Interactive.
+After reading in the directory information from
+the tape,
+\f4ufsrestore\f1
+invokes an interactive interface that allows
+you to browse through the dump tape's directory
+hierarchy and select individual files to be extracted.
+See \f4Interactive Commands\f1,
+below, for a description of available commands.
+.TP .75i
+\f4\-r\f1
+Restore the entire tape.
+Load the tape's full contents into the
+current directory. 
+This option should be used only to restore a
+complete dump tape onto a clear filesystem,
+or to restore an incremental dump tape after a full
+\(lqlevel 
+\f40\f1\(rq
+restore. 
+.TP
+\f4\-R\f1
+Resume restoring.
+\f4ufsrestore\f1
+requests a particular tape of a \%multivolume set
+from which to resume a full restore (see the
+\f4\-r\f1
+\%option above).
+This allows
+\f4ufsrestore\f1
+to start from a checkpoint when it is interrupted
+in the middle of a full restore.
+.TP .75i
+\f4\-t\f1
+Table of contents. 
+List each
+.I filename
+that appears on the tape.
+If no
+.I filename
+argument is given, the root directory is listed.
+This results in a list of all files on the tape,
+unless the
+\f4\-h\f1
+modifier is in effect.
+.TP .75i
+\f4\-x\f1
+Extract the named files from the tape.
+If a named file matches a
+directory whose contents were written onto the tape, and the
+\f4\-h\f1
+modifier is not in effect, the directory is recursively extracted.
+The owner, modification time, and mode are restored (if possible).
+If no
+.I filename
+argument is given, the root directory is extracted.
+This results in the entire tape being extracted unless the
+\f4\-h\f1
+modifier is in effect.
+.TP .75i
+\f4\-c\f1
+Convert the contents of the dump tape to the new
+filesystem format.
+.TP .75i
+\f4\-d\f1
+Debug. 
+Turn on debugging output.
+.TP .75i
+\f4h\f1
+Extract the actual directory,
+rather than the files that it references.
+This prevents hierarchical restoration
+of complete subtrees from the tape.
+.TP .75i
+\f4m\f1
+Extract by inode numbers rather than by filename to
+avoid regenerating complete pathnames.
+This is useful if
+only a few files are being extracted.
+.TP .75i
+\f4v\f1
+Verbose.
+\f4ufsrestore\f1
+displays the name of each file it restores, preceded by its file type.
+.TP .75i
+\f4y\f1
+Do not ask whether to abort the restore in the event of tape errors.
+\%\f4ufsrestore\f1
+tries to skip over the bad tape block(s) and continue as best it can.
+.TP .75i
+\f4b\f2 factor\f1
+Blocking factor.
+Specify the blocking factor for tape reads.
+By default,
+\f4ufsrestore\f1
+will attempt to figure out the block size of the tape.
+.br
+Note: a tape block is 512 bytes.
+.TP .75i
+\f4f\f2 dump-file\f1
+Use
+.I dump-file
+instead of
+\f4/dev/dump?\f1
+as the file to restore from.
+If
+\%\f2dump-file\f1
+is specified as
+\f1`\f4\-\f1',
+\f4ufsrestore\f1
+reads from the standard input.
+.ne 5
+This allows,
+\f4ufsdump\f1(1M)
+and
+\f4ufsrestore\f1
+to be used in a pipeline to dump and restore a file system:
+.RS
+.IP
+\f4example# ufsdump  0f \- /dev/rxy0g  |  (cd /mnt; ufsrestore xf \-)\f1
+.RE
+.IP
+If the name of the file is of the form
+\f2machine\f4:\f2device\f1
+the restore is done from the specified machine over the network using
+\f4rmt\f1(1M).
+Since
+\%\f4ufsrestore\f1
+is normally run by root,
+the name of the local machine must appear in the
+\f4\&.rhosts\f1
+file of the remote machine.
+If the file is specified as
+\f2user\f4!\f2machine\f4:\f2device\f1,\f1
+\f4ufsrestore\f1
+will attempt to execute as the specified user on the remote machine.
+The specified user must have a
+\f4\&.rhosts\f1
+file on the remote machine that allows root from the local machine.
+If
+\f4ufsrestore\f1
+is called as
+\f4ufsrrestore,\f1
+the tape defaults to
+\f4dumphost:/dev/rmt8\f1\f1.
+To direct the input from a desired remote machine,
+set up an alias for
+\%\f4dumphost\f1
+in the file
+\f4/etc/hosts\f1.
+.TP .75i
+\f4s\f2 n\f1
+Skip to the
+.IR n 'th
+file when there are multiple dump files on the same tape.
+For example, the command:
+.RS
+.IP
+\f4example# ufsrestore xfs /dev/nrar0 5\f1
+.RE
+.IP
+would position you at the fifth file on the tape.
+.LP
+\f4ufsrestore\f1
+enters interactive mode when invoked with the
+\f4i\f1
+option.
+Interactive commands are reminiscent of the shell.
+For those commands that accept an argument, the default is the current
+directory.
+.TP 15
+\f4ls\f1[\f2directory\f1]\f1
+List files in
+\f4directory\fP
+or the current directory, represented by a 
+\f1`\f4.\f1'
+(period).
+Directories are appended with a
+\f1`\f4/\f1'
+(backslash).
+Entries marked for extraction are prefixed with a
+\f1`\f4*\f1'
+(asterisk).
+If the verbose option is in effect, inode numbers are also listed.
+.TP
+\f4cd\f2 directory\f1
+Change to directory
+\f4directory\fP
+(within the dump-tape).
+.TP
+\f4pwd\f1
+Print the full pathname of the current working directory.
+.TP
+\f4add\f1[\f2filename\f1]\f1
+Add the current directory, or the named file or directory
+\f4directory\f1
+to the list of files to extract.
+If a directory is specified, add that
+directory and its files (recursively) to
+the extraction list (unless the
+\f4h\f1
+modifier is in effect).
+.TP
+\f4delete\f1[\f2filename\f1]\f1
+.br
+Delete the current directory, or the
+named file or directory from the list of
+files to extract.
+If a directory is specified, delete that
+directory and all its descendents from the
+extraction list (unless the
+\f4h\f1
+modifier is in effect).
+The most expedient way to extract
+a majority of files from a directory is to add
+that directory to the
+extraction list,
+and then delete specific files to omit.
+.TP
+\f4extract\f1
+Extract all files on the extraction list from the dump tape.
+\%\f4ufsrestore\f1
+asks which volume the user wishes to mount.
+The fastest way to extract a
+small number of files is to start with the
+last tape volume and work toward the first.
+.TP
+\f4verbose\f1
+Toggle the status of the
+\f4v\f1
+modifier.
+While
+\f4v\f1
+is in effect, the
+\f4ls\f1
+command lists the inode numbers of all entries, and
+\f4ufsrestore\f1
+displays information about each file as it is extracted.
+.TP
+\f4help\f1
+Display a summary of the available commands.
+.TP
+\f4quit\f1
+\f4ufsrestore\f1
+exits immediately, even if the extraction list is not empty.
+.SH NOTES
+.LP
+\f4ufsrestore\f1
+can get confused when doing incremental restores from
+dump tapes that were made on active file systems.
+.LP
+A \(lqlevel 
+\f40\f1\(rq
+dump must be done after a full restore.
+Because 
+\f4ufsrestore \f1
+runs in user mode,
+it has no control over inode allocation;
+this means that
+\f4ufsrestore\f1
+repositions the files, although it
+does not change their contents. 
+Thus, a full dump must be done to get a
+new set of directories reflecting the new file positions, so that later
+incremental dumps will be correct.
+.SH DIAGNOSTICS
+.LP
+\f4ufsrestore\f1
+complains about bad option characters.
+.LP
+Read errors result in complaints.
+If
+\f4y\f1
+has been specified, or the user responds
+\f4y\f1,
+\f4ufsrestore\f1
+will attempt to continue.
+.LP
+If the dump extends over more than one tape,
+\f4ufsrestore\f1
+asks the user to change tapes. 
+If the
+\f4x\f1
+or
+\f4i\f1
+option has been specified,
+\f4ufsrestore\f1
+also asks which volume the user wishes to mount.
+.LP
+There are numerous consistency checks that can be listed by
+\f4ufsrestore\f1.
+Most checks are self-explanatory or can \(lqnever happen\(rq.
+Common errors are given below.
+.TP
+\f4Converting to new file system format.\f1
+A dump tape created from the old file system has been loaded.
+It is automatically converted to the new file system format.
+.TP
+\f2filename\f4: not found on tape\f1
+The specified file name was listed in the tape directory,
+but was not found on the tape.
+This is caused by tape read errors while looking for the file,
+and from using a dump tape created on an active file system.
+.TP
+\f4expected next file \f2inumber\f4, got \f2inumber\f1
+A file that was not listed in the directory showed up.
+This can occur when using a dump tape created on an active file system.
+.TP
+\f4Incremental tape too low\f1
+When doing an incremental restore,
+a tape that was written before the previous incremental tape,
+or that has too low an incremental level has been loaded.
+.TP
+\f4Incremental tape too high\f1
+When doing incremental restore,
+a tape that does not begin its coverage
+where the previous incremental tape left off,
+or one that has too high an incremental level
+has been loaded.
+.br
+.ne 10
+.TP
+\f4Tape read error while restoring \f2filename\f1
+.PD 0
+.TP
+\f4Tape read error while skipping over inode  inumber\f1
+.TP
+\f4Tape read error while trying to resynchronize\f1
+.TP
+\f4A tape read error has occurred.\f1
+If a file name is specified,
+then its contents are probably partially wrong.
+If an inode is being skipped or the tape is trying to resynchronize,
+then no extracted files have been corrupted,
+though files may not be found on the tape.
+.ne 4
+.TP
+\f4resync ufsrestore, skipped \f2num\f1
+After a tape read error,
+\f4ufsrestore\f1
+may have to resynchronize itself.
+This message lists the number of blocks that were skipped over.
+.PD
+.SH FILES
+.PD 0
+.TP
+\f4dumphost:/dev/rmt8\f1
+the default tape drive if called as
+\f4ufsrrestore\f1
+.TP
+\f4/tmp/rstdir*\f1
+file containing directories on the tape
+.TP
+\f4/tmp/rstmode*\f1
+owner, mode, and timestamps for directories
+.TP
+\f4\&./restoresymtable\f1
+information passed between incremental restores
+.PD
+.SH SEE ALSO
+\f4ufsdump\fP(1M),
+\f4mkfs\fP(1M),
+\f4mount\fP(1M).

@@ -1,0 +1,41 @@
+'\"macro stdmacro
+.if n .pH gen.bp_mapout @(#)bp_mapout	40.2 of 1/7/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.nr X
+.if \nX=0 .ds x} bp_mapout D3DK "" DDI/DKI "\&"
+.if \nX=1 .ds x} bp_mapout D3DK "" DDI/DKI
+.if \nX=2 .ds x} bp_mapout D3DK "" "\&"
+.if \nX=3 .ds x} bp_mapout "" "" "\&"
+.TH \*(x}
+.IX "\f4bp_mapout\fP(D3DK)"
+.SH NAME
+\f4bp_mapout\f1 \- deallocate virtual address space for buffer page list
+.SH SYNOPSIS
+.nf
+.na
+\f4#include <sys/types.h>
+#include <sys/buf.h>
+.sp 0.5
+void bp_mapout(struct buf *\f2bp\fP);\f1
+.ad
+.fi
+.SH ARGUMENTS
+.RS 0n 10
+.IP "\f2bp\fP" 10n
+Pointer to the buffer header structure.
+.RE
+.SH DESCRIPTION
+This function deallocates the system virtual address space
+associated with a buffer header page list.  The virtual address space
+must have been allocated by
+a previous call to \f4bp_mapin\fP(D3DK).  Drivers should not reference
+any virtual addresses in the mapped range after \f4bp_mapout\fP has been called.
+.SH RETURN VALUE
+None.
+.SH LEVEL
+Base or Interrupt.
+.SH SEE ALSO
+.na
+\f4bp_mapin\fP(D3DK),
+\f4buf\fP(D4DK)
+.ad

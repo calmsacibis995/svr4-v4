@@ -1,0 +1,1075 @@
+'\"!  pic | mmdoc
+.if n .pH 386.intro @(#)intro	40.12
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+'\"!  pic | tbl | mmdoc
+.BK "Technology File Mapping Guide"
+.CH "Introduction" 1
+.H 1 "Introduction"
+The development of the UNIX operating system emphasizes
+the addition of needed facilities, improvement of the
+structure, and preservation of the existing software base.
+UNIX System V Release 4 represents not only the evolution of
+UNIX system functionality, but also maturation of the
+software base.
+The UNIX operating system has grown to be a complete
+software base that meets a variety of industry standards
+and is supported by a professional software development organization.
+.H 2 "Completeness"
+SVR4 includes the operating system, networking, program
+development tools, window systems, user interface toolkits,
+and documentation.
+It provides a variety of extension and customization
+mechanisms for companies to add value in a consistent
+and compatible way.
+By integrating features from predecessor versions of the
+UNIX system, SVR4 provides a migration path for existing
+UNIX system customers.
+.P
+SVR4 also provides for the convergence of the BSD,
+XENIX, and UNIX System V communities.
+The resulting system is not a multi-modal mix of
+capabilities, with some capabilities available in some
+modes and not in others, but a true unification.
+This gives all programs complete access to system facilities,
+and provides the best foundation for future system evolution.
+.H 2 "Standardization"
+AT&T has the strongest commitment to standards of any
+company in the industry, and SVR4 is the realization
+of that commitment.
+SVR4 conforms to the existing standards, including:
+POSIX P1003.1, ANSI X3J11 C language, XPG3,
+and SVID3.
+.P
+SVR4 provides a C language compiler that meets ANSI
+Standard X3J11.
+With command flags, it will compile old C language programs,
+and assist programmers in migrating to ANSI C language.
+.P
+In addition, SVR4 continues the commitment to well-documented,
+compatible system interfaces, and responds to the
+different user communities by providing smooth migration
+paths from the most widely used versions of the UNIX system.
+.P
+With SVR4 comes the mechanisms to support Application
+Binary Interfaces (ABI).
+ABIs provide the opportunity to create software
+that spans multiple vendors and multiple versions of the UNIX system.
+A binary standard that includes all the necessary details
+of the operating environment opens the door to
+shrink-wrapped software and the ability to have a complete
+and stable platform for applications.
+.H 2 "Quality"
+SVR4 is a mature software product built by an established
+software organization with years of experience dealing
+with standards, multiple vendors, portability, and stable
+evolution of software.
+The integration of functionality has required careful
+engineering, and has resulted in a significantly improved UNIX system.
+.P
+SVR4 is the result of multiple development iterations on
+several important components, and incorporation of existing
+implementations of others.
+The Virtual File Subsystem resulted from improvements to
+both Sun's \f2v-node\f1 interface and AT&T's File System Switch.
+The networking code has been improved in the process of
+integrating it into the STREAMS I/O framework.
+.P
+The portability and hardware neutrality of the UNIX
+system has evolved over years of use by many vendors,
+from PC to supercomputer.
+Because of the variety of platforms being used to
+develop SVR4, it is impossible for any one vendor to bias
+the system in its favor.
+.H 2 "Architecture"
+The structure of UNIX System V allows it to work easily on
+different kinds of computers.
+At the core of UNIX System V lies a ``kernel'' of basic software
+that works directly with the underlying computer hardware;
+all other software, including the user-interface and
+C language library routines, as well as most commands and
+utilities, works with the kernel software instead of the
+computer hardware.
+Kernel software makes up 5 to 10 percent of the
+operating system and it is the only part permanently resident in memory.
+To move UNIX System V to a new and different type of computer,
+only parts of the kernel need to be significantly modified.
+Hence, most of UNIX System V, and the application-software
+written for it, remains completely independent of
+the computer hardware.
+.P
+This figure depicts the layers of software that make up
+the UNIX System V Operating System
+(see M.Bach, \f2The Design of the \f(HIUNIX\fP Operating System\f1,
+Prentice-Hall: Englewood Cliffs NJ, 1986).
+.FG "Structure and Component Types"
+.SK
+.SP 2
+.DS L
+.PS 6.0i
+scale = 100
+arrowhead = 7
+unit = 8
+B00: box invis wid 600 ht 300
+C01: circle rad ( 8*unit) with .c at B00.c "" "UNIX System V" "Kernel" "\*(CfOS\*(Cx"
+C20: circle invis rad (12*unit) with .c at C01.c
+move to C20.n "" "C Language" "Libraries"
+move to C20.s "\*(CfLIB\*(Cx"
+C21: circle rad (16*unit) with .c at C01.c
+     circle rad (16*unit)+2 with .c at C01.c
+C30: circle invis rad (24*unit) with .c at C01.c
+move to C30.n "" "UNIX System V Shells" "Commands and Utilities"
+move to C30.s "\*(CfCMD\*(Cx"
+C31: circle rad (32*unit) with .c at C01.c
+.PE
+.SP 2
+.DE
+To a software developer, UNIX System V consists of three layers:
+kernel software (OS); C language library
+routines (LIB); and UNIX System V Shells, commands, and
+utility programs (CMD).
+.VL
+.LI "OS"
+The UNIX System V kernel schedules processes, manages memory, and
+handles low-level input/output services.
+Kernel software supports the UNIX System V file-system and
+system-calls programs used to access system resources and
+control process execution.
+.LI "LIB"
+The C Language Libraries build on the UNIX System V kernel to
+create a UNIX system software execution environment on
+the underlying computer hardware.
+.LI "CMD"
+The UNIX System V Shells, commands, and utilities adapt the basic
+facilities provided by the C language libraries and UNIX System V
+kernel to create a software development environment.
+.LE
+.P
+To a system integrator, or an end-user, the system consists of
+a set of capabilities that cuts across the UNIX system structure,
+using OS, LIB, and CMD software components.
+This document's organization reflects both viewpoints:
+.AL 1
+.LI
+Operating System Kernel
+.VL
+.LI "(BA_OS)"
+Base System Services
+.LI "(KE_OS)"
+Kernel Extension
+.LE
+.LI
+System Services & Libraries
+.VL
+.LI "(BA_OS)"
+Base System Services
+.LI "(BA_LIB)"
+Base System Libraries
+.LI "TI"
+Terminal Interface Extension
+.LI "RT"
+Real-Time Services Extension
+.LE
+.LI
+Shells, Commands & Utilities
+.VL
+.LI "(BU_CMD)"
+Basic Utilities Extension
+.LI "(AU_CMD)"
+Advanced Utilities Extension
+.LI "" 1
+Character Terminal Facilities
+.LE
+.LI
+System Administration Facilities
+.VL
+.LI "(AS_LIB)"
+Administered Systems Libraries
+.LI "(AS_CMD)"
+Administered Systems Utilities
+.LE
+.LI
+Programming Tools & Languages
+.VL
+.LI "(SD_LIB)"
+Software Development Library
+.LI "(SD_CMD)"
+Software Development Utilities
+.LE
+.LI
+Networking Software Technology
+.VL
+.LI "(BA_LIB)"
+Basic Networking Libraries
+.LI "(AU_CMD)"
+Basic Networking Utilities
+.LI "RS"
+Remote Services Extension
+.LI ""
+Internet Networking Services
+.LI ""
+TCP/IP Protocol Modules
+.LE
+.LI
+Windowing Software Technology
+.VL
+.LI "WS"
+Graphic Services Extension
+.LI ""
+XView/TypeScaler/Fonts
+.LE
+.LE
+.ig
+The software technology of SVR4 offers many new and
+pervasive features and enhancements including low-level
+changes in the internal workings of the system as well
+as new capabilities and utilities for system users.
+..
+.H 2 "Hardware Architecture"
+SVR4 supports several bus architectures
+(AT, EISA, Multibus-I, and Multibus-II).
+Most of the commands, libraries, and kernel code are bus independent.
+Only a small localized set of changes
+are required to support a bus other than AT386. The bus
+specific files are
+placed in the architecture specific source tree in
+\f4usr/src/arch\f1.
+SVR4 also supports two different hardware platforms:
+SCSI (Small Computer System Interface) and
+Non-SCSI. The Non-SCSI hardware is either
+a ST506 or
+EDSI bootable hard disk; while SCSI disk
+is associated with a
+more powerful and intelligent controller. The SCSI
+specific code
+and system tunable parameters are placed in the \f4add-on\f1
+branch of the source tree.
+.H 1 "Operating System Kernel"
+SVR4 significantly enhances the internals of the UNIX operating system.
+SVR4 redesigned and reimplemented many portions of the UNIX System V kernel to
+increase the extensibility and scalability of the operating system.
+Some parts of the kernel changed to conform to industry standards, some
+parts changed to improve performance and maintainability of the system, and some
+parts changed to provide new features and capabilities for system users.
+.H 2 "Kernel Modularity"
+To cope with the increasing demands placed on the UNIX system, in the
+variety of operating environments and user expectations, the kernel has
+become more modular.
+The increased modularity provided by these changes also has the effect
+of making UNIX System V much easier for system providers to maintain the system and to port the kernel to new hardware.  The increased modularity also
+makes it easier for system programmers to extend and enhance the
+capabilities of the system.
+For example, the added modularity serves to make UNIX security
+enhancements much easier.
+.P
+An internal study conducted in preparation for B2 security certification of UNIX System V described the kernel as consisting of six major subsystems:
+.VL
+.LI "System Services"
+startup and shutdown, user/kernel interface, and time services
+.LI "File Management"
+file-descriptors, \f2v-nodes\f1, the buffer cache, and file-system-types
+.LI "I\/O Management"
+STREAMS I/O, TTY subsystem, device-drivers, and support facilities
+.LI "Memory Management"
+allocation and management of virtual and physical memory
+.LI "Process Management"
+process creation, termination, scheduling, and related functions
+.LI "Kernel Utilities"
+support routines for use by other parts of the kernel
+.LE
+.P
+Each of these six subsystems was further divided into functionally and/or structurally related modules, which were in turn composed of source files.
+.ig
+Although steps were taken towards a new layout for the kernel source-code during the development of SVR4 most of the restructuring awaits SVR4.1 development.
+.P
+The \f2UNIX System V/386 Release 4 Technology File Mapping Guide\f1
+partitions the SVR4 source-code along the lines presented above.
+Modularity Study; despite the fact that the Modularity Study only addressed SVR3.1 and the fact the SVR4 has yet to realize the structure proposed in the Modularity Study.
+SVR4 introduces new technology absent from earlier releases of UNIX System V, and it extends other technology introduced in earlier releases, notably STREAMS I/O.
+..
+.P
+For the purposes of Technology Licensing, the six subsystems described above were collapsed into five by moving the Kernel Utilities into the same subsystem as the System Services and giving the subsystem a new name, ``Kernel Management.''
+.ig
+To reflect the pervasive nature of STREAMS I/O in SVR4 and to further the identification of the STREAMS I/O technology in the marketplace, the I/O Management subsystem was renamed ``STREAMS I/O Management.''
+The File Management subsystem added the word ``Virtual'' to its name to reflect the inclusion of v-nodes and the Virtual File System (VFS) interface.
+The Process Scheduler in the Process Management subsystem became a separate module, while other modules in other subsystems changed in accordance with changes from the SVR3.1 to SVR4 implementations.
+The name of each subsystem has the word ``Subsystem'' added to distinguish kernel software technology both from user-level \*(Cc language libraries and from Shell commands and other software utilities.
+..
+Finally, Real-Time System Facilities are included in Kernel Software Technology.
+.P
+The \f2UNIX System V Release 4 Technology File Mapping Guide\f1 classifies UNIX System V kernel source-code files using the following categories:
+.BL
+.LI
+Virtual File Subsystem
+.LI
+STREAMS I\/O Subsystem
+.LI
+Memory Management Subsystem
+.LI
+Process Management Subsystem
+.LI
+Kernel Management Subsystem
+.LI
+Real-Time System Facilities
+.LE 
+.P
+These subsystems, and the interfaces between them, create the
+framework for AT&T UNIX Software Operation (USO) and UNIX
+system-based vendors to innovate and provide enhanced capabilities
+without software incompatibility problems.
+.H 2 "File System"
+SVR4 replaces the earlier File System Switch (FSS) architecture introduced in SVR3 with a new Virtual File Subsystem (VFS) architecture.
+VFS simultaneously supports different file-system types on the
+same system, and makes it easy for system vendors to design and configure support for new file-system types in the operating system without having to
+discard old file-systems when new ones are developed and added.
+.H 4 "File-system Types"
+Through VFS, SVR4 supports two distributed file-system types
+[Network File System (NFS) and Remote File Sharing (RFS)]
+and two disk file-systems [UNIX System V File System (\f4s5fs\fP) and
+Unified File System (UFS), which is based on and compatible
+with the BSD 4.2 Fast File System)].
+VFS also supports the new \f4specfs\fP and \f4fifofs\fP
+file-systems and the \f4proc\fP file-system, which provides
+kernel-independent access to information about processes and allows
+a debugger to control processes that were already running when
+the debugger started.
+The fact that SVR4 includes several file-system types in the
+source-code release is evidence of the success of the VFS interface.
+.P
+Another advantage of VFS is that it can support special file-systems for custom applications.
+VFS provides a framework for new types of file-systems.
+Hardware vendors, or ISVs (Independent Software Vendors), can
+build special-purpose file-systems that are reliable, have
+very high-performance, are tuned to a particular workload, or have
+other desirable characteristics.
+As long as file system designers implement their file-system types
+using the VFS interface, their file-systems will work with
+other file-systems and they will be able to fully use UNIX system
+functions, including remote access and mapped files.
+.H 4 "File-system Reliability"
+VFS improves file-system reliability by handling bad
+blocks dynamically and by ordering writes to avoid leaving
+the disk in an inconsistent state.
+A write-through option, and more control of \f4sync\f1ing, provides
+for applications that need more robust file I/O.
+.H 4 "File-system Disk Quotas"
+VFS supports disk space quotas for individual users, which allows better administrative control of large numbers of users.
+.H 4 "File and Record Locking"
+VFS provides mandatory and advisory locking for records and for whole files.
+With RFS, mandatory locking is available across the network.
+.H 4 "Symbolic Links"
+VFS provides the capability to define symbolic links so
+that a name in the file-system can be linked to a file in a different
+physical file-system.
+.H 2 "STREAMS I/O"
+SVR4 significantly extends the STREAMS I/O mechanisms first introduced in SVR3.
+First, the entire TTY subsystem has been reimplemented under STREAMS I/O, including all terminal and console drivers and line
+disciplines, as well as all multiplexing terminal drivers.
+The STREAMS I/O TTY subsystem maintains binary compatibility with existing user programs and provides seamless integration of user terminals into networking configurations.
+SVR4 adds some new STREAMS I/O capabilities, including
+a persistent push feature, called ``named streams,'' and dynamic
+allocation for all data buffers used in STREAMS I/O
+drivers and modules.
+Finally, the standard system accounting package now tracks STREAMS I/O parameters and activity reporting.
+.H 2 "Virtual Memory"
+SVR4 provides paged memory management through the Virtual Memory (VM) architecture implemented in the kernel.
+The VM implementation is based on the BSD/SunOS virtual memory management; it replaces the REGIONS paging implementation SVR2.1 first provided.
+Programs can now access and share data by mapping files or parts of files into their address spaces.
+Copy-on-write access supports fast \f4fork\fP as well as initializing program data.
+The common memory pool provides a consistent view of data, whether accessed by file or memory operations.
+Permitting page-level operations provides maximum flexibility. 
+There are no arbitrary limitations on the portion of the file to be mapped
+nor on the number of files that can be mapped.
+.P
+The \f4mmap\fP family of system-calls access the most important new capabilities provided by VM. 
+The \f4mmap\fP system-calls allow a user-program to map a file (or part of a file) into the user program's own address space where it can be manipulated as local data.
+This provides an efficient alternative to the \f4read\fP/\f4write\fP style of file I/O that UNIX System V has used exclusively in the past.
+.P
+The VM implementation is designed to be portable by relying
+on a 32-bit address space and by isolating all machine dependencies
+in one small section of its source code.
+VM is also designed to swap pages to an ordinary UNIX System
+file rather than to a raw physical device.
+This paging convention makes it easy to satisfy the needs of networked diskless workstations, as well as being more robust than other paging methods.
+.P
+Swap space is more flexible and scalable because paging can be done to files instead of to preallocated swap areas.
+The swap areas are managed to provide proper resource control by notifying programs of space constraints when memory is allocated, instead of arbitrarily terminating a process when space is exhausted.
+.P
+The VM mechanism lets libraries, and other code, be shared
+among programs.
+The ability to map libraries at arbitrary addresses gives programs complete control of their address spaces.
+Shared libraries are marked with version numbers so that old binaries can run on new systems.
+.H 2 "Process Scheduling"
+SVR4 has completely redesigned and reimplemented the kernel mechanisms responsible for process scheduling.
+The new scheduler provides a modular interface to the rest of the system kernel and allows several different schedulers to reside in the system simultaneously.
+SVR4 includes two schedulers in the source-code release:  the traditional UNIX System V process scheduler and a new fixed-priority scheduler.
+System providers can also define and install new schedulers for SVR4 systems.
+A process can switch its own scheduling from one scheduler class to another on a running system, and several different scheduler classes can run simultaneously on the same system.
+.H 2 "Kernel Management"
+The management of kernel memory and data structures is crucial to the ability of the system to scale from PCs to supercomputers.
+UNIX System V continues to be the only operating system that spans this
+wide range.
+SVR4 contains many improvements to the kernel to support both smaller and larger platforms.
+.P
+SVR4 expands many variables inside UNIX System V to accommodate the needs of larger UNIX systems.
+These include such values as process-ID numbers, user-ID numbers, major and minor device numbers, as well as several others.
+This change makes UNIX System V more useful on large systems and large configurations of networked workstations.
+.P
+Most kernel data structures grow dynamically by increments, rather than being preallocated in real or kernel virtual memory.
+SVR4 dynamically allocates all major system tables inside the kernel, automatically expanding tables as new entries are needed.
+This means that it is much easier to configure the system, and also that the system kernel is never occupying more space than is necessary.
+This feature makes UNIX System V work efficiently on systems of all
+sizes, with a minimum of intervention from a system administrator.
+In SVR4, the same binary system code can run divergent workloads and immediately adapt its data structures to changing system demands.
+This policy imposes the least demands on low-end systems, yet allows expansion to high-end systems with the same software.
+.P
+SVR4 uses the virtual memory hardware to good advantage in providing a common memory pool for program text and data, as well as file information.
+It does so without requiring special hardware support or large kernel virtual address spaces, which makes very effective use of physical memory.
+The flexibility of this approach is that both the kernel and the application can dynamically map files into their address spaces and use only as much space as is needed.
+.P
+SVR4 has improved the organization of system data structures to support large numbers of users and larger applications and services.
+For example, linear searches of data structures have been eliminated.
+Applications can now have an arbitrary number of simultaneous open files.
+The number of files a process may have open simultaneously is a per-process tunable parameter in SVR4.
+A process may modify the maximum number of files it is capable of holding open while it is running, and the system imposes no arbitrary limit on the size of this value.
+.P
+SVR4 has further enhanced UNIX System V with a new configuration and booting procedure that will allow UNIX System V to initialize itself using any type of file-system, and will relink the UNIX System V kernel more quickly than in previous releases.
+.H 2 "Real Time"
+SVR4 supports high-resolution timing to the granularity of nanoseconds if the hardware has such resolution.
+It also provides a real-time scheduler that gives full priority control
+to user-processes; this allows high-priority processes to pre-empt
+lower priority or interactive programs.
+.P
+.ig
+SVR4 provides significant new capabilities to support time-critical application programs:
+.AL 1
+.LI
+The first of these capabilities is a tunable, fixed-priority process scheduler that a user-process can invoke.
+The new scheduler module allows a process to tune the system to provide the level of service it requires, while allowing other processes to coexist on the system.
+.LI
+The second capability is a high-resolution timing service.
+While the absolute resolution of system timers is limited by the hardware clock speed on each system, all user programs will have access to timing services with a resolution no coarser than 1 msec.
+.LE 1
+..
+SVR4 has substantially improved kernel responsiveness for real-time applications.
+The insertion of many pre-emption points permits lower interrupt latency without introducing the overhead of locking for non-real-time environments.
+.H 2 "Multi-processor"
+SVR4 continues to have an efficient kernel design for uni-processor systems.
+To fully support multi-processor architectures, in general, requires more than just a pre-emptable kernel.
+Other aspects include the design of data structures and algorithms, with
+regard to locking protocols, to avoid deadlock and starvation.
+.H 2 "Internal Interfaces"
+SVR4 defines internal interfaces for major kernel components, including the file-system, the I/O subsystem and traditional device drivers, virtual
+memory, and the scheduler.
+These interfaces are maintained across releases so that, for example, a new file-system type can be implemented without the risk of becoming incompatible with future releases.
+.P
+Implementing all kernel facilities within common, well-defined internal interfaces also has the effect of optimizing system size and performance.
+SVR4 offers significantly more user program interfaces and capabilities than earlier releases, but is not significantly larger or slower.
+The modular interfaces now defined inside the SVR4 kernel are:
+.VL
+.LI "VFS Interface"
+The architecture of the Virtual File Subsystem (VFS) allows new file-system types to be easily designed, implemented, and configured into the system.
+Once present in the system, they can be used by all existing application programs, just as older file-system types are used.
+The interface between a file-system and the rest of the kernel is clearly defined and documented.
+.LI "STREAMS I/O Interfaces"
+The STREAMS I/O and networking architecture offers unparalleled modularity and portability for character I/O processing inside the kernel.
+STREAMS I/O code not directly associated with a particular piece of hardware (including the drivers and modules that implement networking protocols) can be completely portable from system to system, needing only recompilation before being installed on a new hardware base.
+.LI "Device Driver Interface"
+UNIX System V device drivers, including STREAMS I/O drivers, character-type drivers, and block-type drivers are all implemented using a well-defined and documented Device Driver Interface (DDI) that promotes driver portability and protects other parts of the kernel by effectively isolating hardware-dependent I/O portions in the kernel.
+DDI also isolates drivers from parts of the kernel that could change in the future.
+.LI "VM Interface"
+The Virtual Memory (VM) subsystem of UNIX System V is entirely new with SVR4 and has been designed to be as self-contained as possible.
+VM has a well-defined interface with the remainder of the kernel to make porting and maintenance easier.
+.LI "MMU Interface"
+The SVR4 Memory Management subsystem incorporates a well-defined Memory Management Unit (MMU) interface that makes it easy for system providers to implement SVR4 on top of a broad range of different MMU hardware implementations.
+.LI "Process Scheduler Interface"
+The UNIX System V process scheduler has a completely modular design that isolates it from other portions of the kernel, as well as allowing multiple classes of process schedulers to reside in the system simultaneously.
+Control of the system switches from one class of scheduler to another as
+the system responds to user-level commands.
+.LE 1
+All these interfaces serve to make UNIX System V source-code more portable and to isolate it from other portions of the UNIX System V kernel.
+Furthermore, the interfaces in SVR4 are orthogonal.
+For example, the virtual memory system works equally well with any file-system, and the network file-systems work with a variety of network protocols.
+.P
+To support portability across the widest range of system platforms, the virtual memory subsystem of SVR4 is further modularized by an interface to the hardware-dependent part of SVR4.
+This isolation of machine-specific code makes porting easier.
+.P
+To support a variety of computing workloads, the SVR4 scheduler is also modular.
+It is possible to define multiple scheduling classes that can run concurrently in the same system.
+The scheduling classes already provided in SVR4 include time-sharing and real-time.
+.P
+STREAMS I/O is a well-defined interface for implementing protocols in SVR4.
+STREAMS I/O unifies terminal control protocols, line disciplines, pseudo TTYs, and serial line communications.
+The modularity of the STREAMS I/O structure opens up many possibilities for networking.
+Applications and servers can be written that are protocol independent.
+Additional protocols can be implemented by third parties and integrated into many vendor systems.
+The STREAMS I/O structure can support both the OSI protocols and the DARPA protocols (TCP/IP/UDP).
+.FG "Kernel Subsystems"
+.ps 8
+.vs 9
+.PS
+scale = 130
+arrowhead = 7
+box_step = 4
+BOX00: box invis wid 00*box_step ht 180*box_step with .c at (0,0)
+BOX01: box invis wid 48*box_step ht 00*box_step with .nw at BOX00.ne
+BOX11: box invis wid 48*box_step ht 20*box_step with .nw at BOX01.sw
+BOX21: box invis wid 48*box_step ht 20*box_step with .nw at BOX11.sw
+BOX31: box invis wid 48*box_step ht 20*box_step with .nw at BOX21.sw
+BOX41: box invis wid 48*box_step ht 20*box_step with .nw at BOX31.sw
+BOX51: box invis wid 48*box_step ht 20*box_step with .nw at BOX41.sw
+BOX61: box invis wid 48*box_step ht 20*box_step with .nw at BOX51.sw
+BOX71: box invis wid 48*box_step ht 20*box_step with .nw at BOX61.sw
+BOX81: box invis wid 48*box_step ht 20*box_step with .nw at BOX71.sw
+BOX91: box invis wid 48*box_step ht 20*box_step with .nw at BOX81.sw
+
+BOX02: box invis wid 48*box_step ht 00*box_step with .nw at BOX01.ne
+BOX12: box invis wid 48*box_step ht 20*box_step with .nw at BOX02.sw
+BOX22: box invis wid 48*box_step ht 20*box_step with .nw at BOX12.sw
+BOX32: box invis wid 48*box_step ht 20*box_step with .nw at BOX22.sw
+BOX42: box invis wid 48*box_step ht 20*box_step with .nw at BOX32.sw
+BOX52: box invis wid 48*box_step ht 20*box_step with .nw at BOX42.sw
+BOX62: box invis wid 48*box_step ht 20*box_step with .nw at BOX52.sw
+BOX72: box invis wid 48*box_step ht 20*box_step with .nw at BOX62.sw
+BOX82: box invis wid 48*box_step ht 20*box_step with .nw at BOX72.sw
+BOX92: box invis wid 48*box_step ht 20*box_step with .nw at BOX82.sw
+
+BOX03: box invis wid 48*box_step ht 00*box_step with .nw at BOX02.ne
+BOX13: box invis wid 48*box_step ht 20*box_step with .nw at BOX03.sw
+BOX23: box invis wid 48*box_step ht 20*box_step with .nw at BOX13.sw
+BOX33: box invis wid 48*box_step ht 20*box_step with .nw at BOX23.sw
+BOX43: box invis wid 48*box_step ht 20*box_step with .nw at BOX33.sw
+BOX53: box invis wid 48*box_step ht 20*box_step with .nw at BOX43.sw
+BOX63: box invis wid 48*box_step ht 20*box_step with .nw at BOX53.sw
+BOX73: box invis wid 48*box_step ht 20*box_step with .nw at BOX63.sw
+BOX83: box invis wid 48*box_step ht 20*box_step with .nw at BOX73.sw
+BOX93: box invis wid 48*box_step ht 20*box_step with .nw at BOX83.sw
+
+box invis wid 60*box_step ht 00*box_step with .c at BOX22.c
+line <-> from last box.e to last box.w
+
+KMS: box wid 132*box_step ht 20*box_step with .s at BOX12.c
+box dashed wid 40*box_step ht 16*box_step with .e at BOX11.ne "system initialization" "and termination"
+box dashed wid 44*box_step ht 16*box_step with .c at BOX12.n "kernel/user services"
+box dashed wid 40*box_step ht 16*box_step with .w at BOX13.nw "time services"
+
+FMS: box wid 36*box_step ht 82*box_step with .n at BOX21.n
+box dashed wid 32*box_step ht 18*box_step with .s at BOX21.s "file-descriptor" "level"
+box dashed wid 32*box_step ht 18*box_step with .s at BOX31.s "file-system" "independent" "v-node level"
+box dashed wid 32*box_step ht 18*box_step with .s at BOX41.s "file-system type" "dependent" "level"
+box dashed wid 32*box_step ht 18*box_step with .s at BOX51.s "buffer" "management"
+
+SMS: box wid 36*box_step ht 42*box_step with .n at BOX61.c
+line <-> from SMS.n to FMS.s
+box dashed wid 32*box_step ht 8*box_step with .s at BOX61.s "\s-3STREAMS I/O\s0 services"
+box dashed wid 32*box_step ht 8*box_step with .s at BOX71.c "\s-3STREAMS I/O\s0 modules"
+BX71A: box invis wid 8*box_step ht 20*box_step with .sw at BOX71.sw
+box dashed wid 15*box_step ht 8*box_step with .sw at BX71A.se "device" "drivers"
+BX71B: box invis wid 8*box_step ht 20*box_step with .se at BOX71.se
+box dashed wid 15*box_step ht 8*box_step with .se at BX71B.sw "\s-2TTY\s0" "drivers"
+box dashed wid 32*box_step ht 8*box_step with .s at BOX81.c "\s-3I/O\s0 support services"
+
+MMS: box wid 36*box_step ht 82*box_step with .n at BOX42.n
+box dashed wid 32*box_step ht 18*box_step with .s at BOX42.s "memory" "management"
+box dashed wid 32*box_step ht 18*box_step with .s at BOX52.s "memory" "segmentation"
+box dashed wid 32*box_step ht 18*box_step with .s at BOX62.s "memory" "paging"
+box dashed wid 32*box_step ht 18*box_step with .s at BOX72.s "data" "movement"
+box invis wid 10*box_step ht 00*box_step with .c at BOX42.se
+line <-> from last box.e to last box.w
+box invis wid 10*box_step ht 00*box_step with .c at BOX42.sw
+line <-> from last box.e to last box.w
+
+PMS: box wid 36*box_step ht 82*box_step with .n at BOX23.n
+box dashed wid 32*box_step ht 18*box_step with .s at BOX23.s "process control" "primitives"
+box dashed wid 32*box_step ht 18*box_step with .s at BOX33.s "process" "scheduling"
+box dashed wid 32*box_step ht 18*box_step with .s at BOX43.s "process" "memory"
+box dashed wid 32*box_step ht 18*box_step with .s at BOX53.s "inter-process" "communication"
+
+box wid 122*box_step ht 12*box_step with .c at BOX92.c "kernel support routines"
+line <-> from SMS.s to BOX91.n
+line <-> from MMS.s to BOX92.n
+line <-> from PMS.s to BOX93.n
+
+.PE
+.VL
+.LI "Virtual File Subsystem Modules"
+.BL
+.LI
+FF - File-descriptor level
+.LI
+FV - File-system independent v-node level
+.LI
+FB - Buffer management
+.LI
+FS - File-System-Type (FSType) dependent level
+.nf
+
+	Unified FSType \(em \f4ufs\fP
+	System V FSType \(em \f4s5\fP
+	FIFO FSType \(em \f4fifofs\fP
+	Named STREAMS FSType \(em \f4namefs\fP
+	Special FSType \(em \f4specfs\fP
+	Process FSType \(em \f4proc\fP
+	Boot FSType \(em \f4bfs\fP
+	File Descriptor FSType \(em \f4fd\fP
+.fi
+.LE
+.LI "STREAMS I/O Subsystem Modules"
+.BL
+.LI
+SS - STREAMS I/O services
+.LI
+SM - STREAMS I/O modules
+.LI
+ST - STREAMS TTY subsystem
+.LI
+SD - STREAMS device drivers
+.LI
+SR - STREAMS support routines
+.LE
+.LI "Memory Management Subsystem Modules"
+.BL
+.LI
+MM - Memory management
+.LI
+MS - Memory segmentation
+.LI
+MP - Memory paging
+.LI
+MX - Memory transfer
+.LE
+.LI "Process Management Subsystem Modules"
+.BL
+.LI
+PP - Process creation, deletion, and related functions
+.LI
+PS - Process scheduling
+.LI
+PM - Process memory management
+.LI
+PI - Inter-process communication
+.LE
+.LI "Kernel Management Subsystem Modules"
+.BL
+.LI
+KK - System initialization/termination
+.LI
+KU - Kernel/User interface (user services and assorted system-calls)
+.LI
+KT - Time services
+.LI
+KS - Kernel support routines
+.LE
+.LE
+.H 1 "System Services & Libraries"
+.H 2 "\f(HBUNIX\fP System Services"
+.BL
+.LI
+File System Services
+.LI
+I/O System Services
+.LI
+Memory System Services
+.LI
+Process System Services
+.LE
+.H 2 "\f(HBC\fP Language Libraries"
+C is a general purpose programming language used for system-level code as well as commercial and scientific applications.
+The C language bridges the realm of assembly language programming and block-structured, procedure-oriented languages by combining the advantages of low-level languages with the benefits and features of high-level languages.
+Programmers using C can deal easily with machine-level facilities at a low-level, while having the high-control and data structures found in other modern, structured programming languages.
+Using C as a low-level language, programmers can achieve maximum efficiency by exploiting specific machine characteristics; using C as a high-level language, programmers can hide the details of the underlying computer to promote software portability.
+.P
+The C library, which accompanies the C language, adds function to the otherwise very compact and spare C programming language, and makes C flexible, efficient, and consistent across different systems.
+The functions in the C library satisfy the need for various commonly used operations, and programmers can create new C functions to meet specific needs.
+Programmers may use C library functions in a program and link the functions into the program when preparing it for execution.
+.ig
+The \*(Cc compiler \f4cc\fP command automatically searchs the standard \*(Cc library to resolve undefined external references.
+To have other libraries searched requires specific linker options on the \f4cc\fP command line.
+For example, the mathematical library (\*(CfMF\*(Cx \(em Mathematical Functions) is searched by using the option \f4-lm\fP on the command line as follows:
+.P
+.DS I
+\f4cc \f2file\fP.c -lm\fP
+.DE
+.P
+Other libraries include
+the \f4lex\fP library (\^\f4cc -ll\fP\^) to compile programs generated by \f4lex\fP [see \*(CfLEX(SD_CMD)\*(Cx]
+and
+the \f4yacc\fP library (\^\f4cc -ly\fP\^) to support \f4yacc\fP [see \*(CfYACC(SD_CMD)\*(Cx].
+.P
+.tl ''\f3Header Files\f1''
+.P
+.DS CB
+.LB 21 0 1 0 \(em 0 0
+.LI "\f4errno.h\fP" 1
+Error Codes & Conditions
+.LI "\f4stddef.h\fP" 1
+Common Definitions
+.LI "\f4assert.h\fP" 1
+Program Diagnostic Routines
+.LI "\f4ctype.h\fP" 1
+Character Handling Routines
+.LI "\f4locale.h\fP" 1
+Localization Routines
+.LI "\f4math.h\fP" 1
+Mathematical Functions
+.LI "\f4setjmp.h\fP" 1
+Non-local Jump Functions
+.LI "\f4signal.h\fP" 1
+Signal Handling Routines
+.LI "\f4stdarg.h\fP" 1
+Variable Arguments
+.LI "\f4stdio.h\fP" 1
+Standard I/O Routines
+.LI "\f4stdlib.h\fP" 1
+Common Library Routines
+.LI "\f4string.h\fP" 1
+String Handling Routines
+.LI "\f4time.h\fP" 1
+Date & Time Routines
+.LI "\f4types.h\fP" 1
+Standard Type Definitions
+.LI "\f4unistd.h\fP" 1
+Implementation Constants
+.LE 1
+.DE
+..
+.P
+C Language Libraries make up most of the libraries that fall into the Technology License \f4Base\fP category.
+They include:
+.BL
+.LI
+Run-Time Loader Library Routines
+.LI
+Standard I/O (\f4stdio\fP) Library Routines
+.LI
+Character and String Handling Library Routines
+.LI
+Searching and Sorting Library Routines
+.LI
+Floating-Point Library Routines
+.LI
+Mathematical Library Routines
+.LI
+Miscellaneous Library Routines
+.LE
+.H 2 "Shared Libraries and Dynamic Linking"
+The key technology that makes past and future compatibility possible is the SVR4 virtual memory and dynamic linking.
+At present, there is the choice of implementing facilities in the kernel, servers, applications, or libraries.
+With dynamic linking, the application is insulated from the details of exactly how a functionality is implemented.
+.P
+Dynamic linking also supports modern software development with incremental programming environments and object-oriented programming.
+There may be special dynamic linkers for some applications that provide more dynamic access to system services.
+.P
+With dynamic linking, shared libraries, and mapped files, it is possible to construct facilities out of shared libraries rather than implementing them in the kernel or server process.
+Windowing system tool kits are good examples of this sort of service.
+.P
+Shared libraries and executable files are marked with version numbers to identify the expected interface.
+As the system evolves, it is easy to support old interfaces by providing a compatibility with the current library.
+The version numbers allow the dynamic linker to bind the application with the proper library, routine, and interface.
+.P
+Shared libraries are also useful for structuring system software.
+They efficiently support tool kits for window systems, libraries of network services, and alternate implementations of functions.
+Shared libraries and dynamic linking are used to widen the scope of
+programming implementations.  They are transparent to the user and do not change the semantics of programs.
+.P
+The SVR4 dynamic linker is not built into the kernel; it is rather a user-mode program that allows modern programming environments to exploit the dynamic linking technology.
+The linker is not a separate process; it becomes part of the virtual address space of the application and is, therefore, available for dynamic use.
+.H 1 "Shells, Commands & Utilities"
+Shells, Commands & Utilities is made up of operating system software that builds on and surrounds the operating system kernel.
+Shells, Commands & Utilities provide most end-user functionality (excluding Programming Tools & Languages used by software developers) and comprises a wide range of libraries, commands and utilities, including printing and plotting facilities and character user interfaces.
+.H 2 "\f(HBUNIX\fP System Shells"
+The Shell acts as the primary user-interface for UNIX System V.
+The Shell accepts input from the user and interprets it as commands to the operating system.
+The Shell works both as an interactive command line interpreter and as a powerful programming language.
+.P
+The Shell allows users to enhance and build on UNIX System V capabilities and to adapt the operating system to many applications without needing a compiler, loader or other language translation steps.
+The user can quickly write custom shell procedures or scripts to do simple or complex tasks.
+Because Shell scripts are easy to create and use, they can avoid much of the drudgery associated with a programming language compiler.
+The flexible command language lets users make the system appear the way they want it to; that is, they can tailor the user-interface for specific needs, and each user can have a different interface.
+.H 2 "Commands & Utilities"
+UNIX System V commands and utilities represent programs the Shell can execute at the request of the user.
+Each UNIX program typically implements one simple and general function that different applications can use (including many the original programmer never imagined).
+Different commands serve different purposes and perform separate functions.
+Separate commands, for example, rename files, delete them, report on their size, or other relevant statistics.
+UNIX System V commands and utilities work as tools that do generic data processing tasks.
+.P
+UNIX System V offers a wide variety of commands and utilities.
+Commands that operate on files let users create, organize, and remove files and directories.   Commands also provide the means to copy, edit, and print files.
+Commands include text-editing utilities, such as line and screen editors for creating and changing text, and pattern-matching utilities for extracting data from files.
+Commands exist that process and compare the contents of files and that perform more sophisticated information processing techniques.
+.H 1 "System Administration Facilities"
+One of the goals of SVR4 is to simplify system administration and maintenance, while adding functionality to meet the demands of increasingly complex computer and network configurations.
+Toward that goal, SVR4 provides new capabilities in backup and restore operations and software installation.
+Commands have been defined or augmented for software installation and removal, configuration management, and file-system backup and restore.
+The BSD administrative commands are also incorporated.
+SVR4 also introduces an enhanced administration interface that makes it easier for a novice administrator to set up and maintain a system.
+SVR4 has enhanced many aspects of system administration and maintenance.
+.P
+A greatly enhanced and unified set of system administration tools is part of SVR4.
+The programs present a consistent, extensible, menu-driven interface to the array of administrative tools.
+.P
+For detailed information about these features and for information about system administration in general, see the \f2System Administrator's Guide\f1 and the ``System Administration Utilities'' manual pages in the \f2System Administrator's Reference Manual\f1.
+The system administration features new in SVR4 are described in the following sections:
+.H 2 "OA&M Interface"
+SVR4 provides an enhanced and more extensible administrator's interface.
+The new interface is based on form and menu, and incorporates a much broader set of administrative tasks than its predecessor.
+System Administration Menus (accessed using the \f4sysadm\fP command) allow a user to administer a UNIX system without knowing the exact commands and utilities needed.
+Context-sensitive help messages make it possible for an administrator to explore the interface with a minimum of documentation.
+The system also provides tools to use when extending the interface to new tasks.
+.H 2 "Software Installation and Configuration Management"
+Software installation and Configuration Management are two independent and inter-related features.
+As a group, they allow the customer to load software in their systems (either manually or via a network) and to easily access information on the system configuration.
+The following sections describe the plans for each feature included in SVR4.
+.H 3 "Software Installation"
+This feature installs and removes operating system releases (both major and maintenance), package updates, and tools/add-on packages.
+It is aimed at providing installation procedures that are consistent across software packages, releases, and machines.
+.P
+The installation procedure is powerful enough to handle the needs of a wide range of software and hardware combinations, as well as provide a simple end-user view of installation and a simple interface for developers.
+Current problems involving consistency, reliability, maintainability, and security are  addressed.
+More functionality and control mechanisms are placed in the system, requiring less sophistication in the software installation scripts provided with the package.
+.P
+Compatibility is guaranteed for packages that comply with the standard installation procedures.
+Add-ons that could be installed and removed on previous releases, and that followed the porting base standard installation procedure, will also work properly on future releases of UNIX System V.
+.H 3 "Configuration Management"
+Configuration Management has the following functions:
+.BL
+.LI
+display user, software, system, and hardware configuration information
+.LI
+allow application developers to easily access system and hardware configuration information
+.LI
+check for package hardware and software dependencies at installation time
+.LI
+change the system name through the \f4setuname\fP command instead of \f4uname -S\fP
+.LE 1
+There are three main areas for which the Configuration Management feature will provide displays:  user and system logins, software information, and system and hardware information.
+This new feature accesses information on each area (user, software, hardware) via a single command for each type of information. 
+.P
+In addition, an application developer's interface is provided to access hardware information.
+This interface consists of routines to access information on the system memory and physically installed boards.
+Furthermore, configuration management interacts with the Installation Tool to determine package hardware dependencies at installation time.
+A new command changes the information displayed by \f4uname\fP\^.
+.P
+SVR4 provides an entirely new software packaging and installation method, together with the utilities needed to construct and install software packages.
+The installation mechanism maintains a local database on each system; it is capable of tracking cross-package dependencies, storing information on all installed packages, and managing file version numbers inside packages.
+.H 2 "Backup and Restore"
+SVR4 provides a new backup and restore utility that can store backups on any medium, and which supports on-line restore requests from system users.
+The utility also automatically keeps and maintains all backup history records.
+.H 2 "Message Management"
+SVR4 includes all the underlying mechanisms required for all programs to provide user messages of uniform format and consistent content.
+.H 2 "Command Line Interpreters"
+SVR4 provides and supports the BSD C-shell and the Korn shell, though the standard UNIX System V shell remains the default for users and system scripts.
+.H 2 "The Directory Tree"
+SVR4 substantially rearranges the layout of files in the UNIX System V file tree to better meet the needs of distributed computing environments.
+In SVR4, the UNIX System V directory-tree has been arranged to facilitate sharing files, directories, and file-systems in a networked environment.
+SVR4 divides files in the system into four standard file-systems: \f4/\fP (called ``root''), \f4/usr\fP\^, \f4/home\fP, and \f4/var\fP\^.
+Within the standard file-systems, files are organized by type, with each type occupying a separate branch of the tree.
+The directory-tree defines three file types: machine private files, architecture dependent files, and architecture independent files.
+Because the directory-tree separates private files from
+shareable files, a system administrator can easily mount
+a complete file-system for distribution over a network.
+.H 1 "System Compatibility Software"
+.H 2 "XENIX System Compatibility"
+UNIX System V provides full source-code compatibility with Microsoft's
+XENIX system.  XENIX system features first supported in AT&T's
+implementation of UNIX System V Release 3.2 for the 386 processor are
+supported in the source-code in SVR4, along with XENIX system file and
+record locking (via the \f4locking\fP function), shared-memory, and
+semaphores.  Existing XENIX system source-code that uses these
+facilities compiles and runs in SVR4.  (These facilities are provided
+strictly for compatibility with existing XENIX source-code.
+New applications should use SVID interfaces.)
+.H 2 "BSD System Compatibility"
+SVR4 provides a separate source archive for BSD compatibility.
+The BSD compatibility package contains all BSD/SunOS commands, libraries, and header files absent from UNIX System V, but identified as critical to porters.
+This package also includes the SunOS implementation of System V commands, libraries, and header files that are supersets of their System V counterparts, or incompatible with the UNIX System V releases, or that have slightly different behavior in the two systems.
+.H 1 "Programming Tools & Languages"
+SVR4 incorporates enhancements to packages known by the following names in earlier releases:
+C Programming Language Utilities (CPLU), Advanced Programming Utilities (APU), and C Programmer Productivity Tools (CPPT) packages. 
+The major features are:
+.BL
+.LI
+Compilation modes corresponding to degrees of compliance with ANSI C.
+.LI
+Dynamic linking, which allows different processes to share library code at run time.
+.LI
+Dynamic tables, which provide the necessary support for compilation of applications with very large tables (macros, symbols, etc.).
+.LI
+Additional international support, allowing the international date and time to be set as a default, and support for customized internal character sets.
+.LI
+A new transparent object file format, ELF (Extensible Linking Format), which supports extensions to the C language (such as new types).
+ELF is flexible enough to support other programming languages, particularly C++.
+.LI
+Support tools for ELF and conversion tools for converting COFF (Common Object File Format) to ELF.
+All tools handle both COFF and ELF objects and archives.
+.LE
+.ig
+See the \f2Programmer's Guide: ANSI C and Programming Support Tools\f1 and the \f2Programmer's Reference Manual\f1 for more information.
+..
+.H 2 "C Language and Program Execution"
+Release 4 is constructed using a new C compilation system: C Issue 5.
+The new compilation system supports the new industry-standard ANSI C language, as well as the traditional Kernighan & Ritchie C language.
+.P
+The object-file format supported by the operating system has been changed to the Extensible Linking Format (ELF) from the older Common Object File Format (COFF).
+ELF files contain fewer machine-dependent sections than the old COFF files, are easier to adapt to the needs of different processor architectures, and better serve the needs of run-time dynamic linking.
+Of course, old COFF executable binaries continue to run properly
+on SVR4 as well.
+.P
+SVR4 supports dynamic linking of shared system resources to executable files at run-time.
+Dynamic-linking replaces the earlier static shared library facility first provided in SVR3.0, and provides great flexibility for system providers while maximizing the potential lifetime of compiled programs.
+.P
+SVR4 provides major system libraries (\f4libc\fP\^ for example) both in dynamically-linkable form and in traditional archive form.
+Program developers can choose which of these formats they wish to use at the time a program is compiled.
+.H 2 "Application Binary Interface (ABI)"
+A new set of specifications, the UNIX System V Application Binary Interfaces (ABI), define a binary interface for application software.
+The ABIs consist of a generic component and several different processor-specific components.
+These specifications facilitate the binary portability of application software across systems provided by different manufacturers that share a common processor architecture.
+.P
+The definition and support of ABI is the enabling technology for shrink-wrapped software.
+In today's environment of rapidly evolving technology and many competing vendors, it has become essential to provide ways for today's software to survive in the future.
+ABI is the foundation on which third-party applications can be built, and the primary standard for vendor conformance.
+It is the doorway that gives the ISV access to a variety of hardware platforms, and the hardware vendor access to a diverse and growing software base.
+.P
+The ABI also provides a mechanism for technological progress in hardware and operating systems.
+By precisely defining the standard interface, ABI encourages innovation.
+.P
+ABI specifies more than just the operating system interface.
+It completely describes the run-time environment that an application can depend on, including which programs and libraries are guaranteed to be available, where system files are located, and so forth.
+It also describes the standard distribution format, installation and configuration procedures, and conventions for file organization.
+Applications that meet ABI requirements will always be consistent and easy to install and manage.
+.H 2 "Shared Libraries and Dynamic Linking"
+The key technology that makes past and future compatibility possible is the SVR4 virtual memory and dynamic linking.
+At present, there is the choice of implementing facilities in the kernel, servers, applications, or libraries.
+With dynamic linking, the application is insulated from the details of exactly how a function is implemented.
+.P
+Dynamic linking also supports modern software development with incremental programming environments and object-oriented programming.
+There may be special dynamic linkers for some applications that provide more dynamic access to system services.
+.P
+With dynamic linking, shared libraries and mapped files, it is possible to construct facilities out of shared libraries rather than implementing them in the kernel or server process.
+Window system tool kits are good examples of this sort of service.
+.P
+Shared libraries and executable files are marked with version numbers to identify the expected interface.
+As the system evolves, it is easy to support old interfaces by providing compatibility with the current library.
+The version numbers allow the dynamic linker to bind the application with the proper library, routine, and interface.
+.P
+Shared libraries are also useful for structuring system software.
+They efficiently support tool kits for window systems, libraries of network services, and alternate implementations of functions.
+Shared libraries and dynamic linking are used to widen the scope of
+programming implementations.  They are transparent to the user and do
+not change the semantics of programs.
+.P
+The SVR4 dynamic linker is not built into the kernel, but is rather a user-mode program that allows modern programming environments to exploit the dynamic linking technology.
+The linker is not a separate process, but becomes part of the virtual address space of the application and is, therefore, available for dynamic use.
+.H 2 "Extensible Linking Format (ELF)"
+The Extensible Linking Format (ELF) is an advanced format for executables and object files.
+Designed for machine architecture and compiler technology independence, it provides a solid base for dynamic linking and cross-development environments.
+Also, ELF is designed to be extensible and support new language features and new languages.
+.P
+ELF assures that executable and object-file binaries are portable across all instances of a particular architecture, regardless of operating system or compilation system changes.
+Although it does assume an architecture with a 32-bit linear address space, it is not otherwise tied to any particular hardware architecture.
+Extension to a 64-bit architecture would require changes in the assumptions about the address space and would result in a new version of ELF.
+Features provided by ELF include:
+.BL
+.LI
+Extensible headers and tables, including section, symbol, and relocation tables.
+.LI
+Addition and deletion of user-defined sections.
+.LI
+Extensible \f4a.out\fP files.
+.LI
+Flexibility to support new types and other programming languages.
+.LE
+Changes have been made to the assembler, code generator and optimizer, \f4ld\fP\^, \f4sdb\fP\^, \f4ar\fP\^, \f4dis\fP\^, \f4dump\fP\^, \f4lorder\fP\^, \f4mcs\fP\^, \f4nm\fP\^, \f4size\fP, and \f4strip\fP utilities, as well as to the \f4exec()\fP system-call.
+Several tools, such as \f4lprof\fP and \f4prof\fP\^, have been changed, as have object-file format-sensitive C library routines [such as \f4monitor()\fP\^].
+ELF access libraries provide a unified programmer interface to the new object format, and conversion tools from COFF to ELF format.
+.P
+C Issue 5 provides tools for the support of both ELF and COFF object-files and for the execution of both COFF and ELF \f4a.out\fP\^s.
+.H 1 "Networking Software Technology"
+SVR4 significantly expands the networking capabilities of UNIX System V with improvements to existing capabilities and the addition of new features.
+All networking capabilities in UNIX System V are implemented under the STREAMS I/O architecture.
+Because all protocol suites under STREAMS I/O have been
+implemented to incorporate the Transport Protocol Interface (
+TPI) and the Data Link Protocol Interface
+(DLPI), all user programs and system utilities can be
+written in a protocol-independent and media-independent manner.
+The structure matches the OSI layers, and an increasing number of protocols are becoming available using the STREAMS I/O structure.
+.H 2 "Protocols"
+Earlier releases of UNIX System V provided tools for developing network protocols and applications, specifically STREAMS I/O and the Transport Layer Interface (TLI).
+STREAMS I/O defines standard programming interfaces for character I/O processing within the kernel.
+Network architectures and higher-level protocols, when implemented using
+STREAMS I/O, can be made to be independent of
+underlying protocols, drivers, and media.
+TLI defines an interface between applications and transport-level network protocols, relieving user programs of the need to know the characteristics of the transport-protocol.
+.H 2 "Transport Level Interface (TLI)"
+The UNIX System V Transport-Level Interface (\f2TLI\f1) provides a library of routines for user programs that are used to communicate with a documented OSI level-4 transport interface inside the system kernel.
+UNIX System V networking protocol suites are all implemented as transport-providers that work with the Transport Provider Interface (TPI).
+As a result, user programs written using TLI work properly, no matter what network transport provider happens to be present on a system.
+The user program does not need to know any special characteristics of the networking protocol suite, and has greatly expanded portability and generality as a result.
+TLI was first provided in SVR3.
+.H 2 "Transport-Independent \f4uucp\fP"
+SVR3 reimplemented the \f4uucp\fP family of commands using the TLI library routines and standard interface so that they all function properly, no matter what networking medium is present on a system.
+While they were originally limited to using telephone lines, these commands now run using \f4Ethernet\f1 or StarLAN connections, or whatever other TLI-conforming transport provider is available.
+.H 2 "TCP/IP and Utilities"
+SVR4 contains all of the networking functionality of BSD and SunOS systems, including sockets.
+There is a complete implementation of the DARPA protocols (TCP/IP/UDP), which are improved by integration into the STREAMS I/O framework.
+All of the BSD networking commands (\^\f4rlogin\fP\^, \f4rsh\fP\^, \f4rexec\fP\^, etc.) are provided.
+Because all UNIX System V networking services are implemented to the TLI interface, including TCP/IP, existing programs can use this set of networking protocols without being modified or recompiled.
+.P
+SVR4 provides the popular TCP/IP protocol suite, and all of its associated utilities, such as the ``\f4r\fP-commands'' (\f4rlogin\fP, \f4rexec\fP, etc.).
+The UNIX System V implementation of the protocol suite is entirely new, and is implemented under STREAMS I/O.
+This means that all the user programs written to use the TLI library routines and interface will all automatically run over this networking medium without modification.
+It also means that system-provided networking services, like the RFS and NFS resource-sharing utilities, will all run without being changed on this suite of networking protocols.
+.H 2 "Remote Procedure Call (RPC)"
+SVR4 provides the Remote Procedure Call (RPC) and eXternal Data Representation (XDR) libraries along with \f4rpcgen\fP\^, a compiler for generating servers and libraries that use RPC.
+These libraries expand the networking capabilities of UNIX System V and provide a foundation for remote execution service and distributed processing.
+Secure RPC uses encryption to provide client authentication.
+Network services are built using the RPC protocol with an extended port monitor for administration of servers.
+.H 2 "Distributed File Systems"
+SVR4 supports the two most widely used distributed file-systems:
+.BL
+.LI
+The Network File System (NFS) provides the interoperability and robustness of a loosely coupled file-system for a network of computers running different operating systems.
+.LI
+Remote File Sharing (RFS) provides the central administration and control of an integrated file-system for a network of computers all running UNIX System V.
+.LE
+By providing both NFS and RFS, SVR4 demonstrates how UNIX System V can provide multiple services, each with the same application interface, but with useful differences in implementation.
+SVR4 provides a new set of common administrative utilities to manage both NFS and RFS.
+.P
+In SVR4, NFS is transport-independent and can run over different networks.
+Diskless operation is supported and the requirement of dedicated root partitions for diskless clients has been eliminated.
+NFS can be configured to use Secure RPC to increase the security of the network.
+Because NFS is stateless, clients can survive reboots of servers without loss of data.
+.P
+For environments that require centralized administrative control or more tightly-coupled file-systems, RFS provides full UNIX system semantics across the network.
+A program can access a device on a remote machine, can trust file locking across the network, and can open named pipes or streams to connect programs on different machines.
+Multiple administrative domains, with distinct user names and
+identifiers, are possible.
+.P
+NFS and RFS provide distinct, largely complementary services.
+Both are implemented within the framework of VFS and both are administered with a unified set of administrative commands.
+Generally, a binary program works transparently with any remote or
+local file-system.
+.H 1 "Windowing Software Technology"
+SVR4 contains Windowing Software Technology that addresses the requirements
+of naive and sophisticated users.
+Windowing Software Technology simplifies the development of applications that directly interact with end-users by supporting device-independent display management for character-oriented and bit-mapped graphic display devices.
+Style guidelines and development tool-kits help programmers maintain consistency in the ``look'' and ``feel'' of the user-interface.
+This promotes ``user portability'' between different applications that
+follow the guidelines.  Furthermore, software costs are reduced by
+insulating applications from display device dependencies.
+User training costs, and loss of user productivity as users move
+between different applications, are also reduced.
+Software developers benefit from a rich and robust set of tools for developing applications that share the same ``look'' and ``feel.''
+End-users benefit because they can transfer existing skills and knowledge of how to use one application to the use of another, thereby avoiding the
+need to learn a new and different user-interface. 
+.P
+SVR4 supports graphical terminals through two standard interfaces: the
+MIT X.11 Window Interface and the X11/NeWS Window Interface.
+The X Window System and XT toolkit provide access to the
+industry standard window system.
+In addition, the NDE toolkit makes a \f4PostScript\f1-based window
+system available.
+An X11 server and an X11/NeWS server are also available, and
+SVR4 provides toolkits for both systems.  For both of these
+systems, AT&T OPEN LOOK\(tm toolkits allow programmers to use the
+OPEN LOOK ``look and feel'' with either of these systems.
+In addition, the system provides a window manager and other necessary utilities.

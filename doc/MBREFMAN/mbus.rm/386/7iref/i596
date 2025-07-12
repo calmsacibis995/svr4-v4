@@ -1,0 +1,57 @@
+.if n .pH g1a.i596 @(#)i596	40.1 of 5/17/91
+.nr X
+.if \nX=0 .ds x} i596 7iref "System Administration Utilities" "" "\&"
+.if \nX=1 .ds x} i596 7iref "System Administration Utilities" ""
+.if \nX=2 .ds x} i596 7iref "" "\&"
+.if \nX=3 .ds x} i596 "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4i596\f1 \- 82596 Ethernet Driver
+.SH DESCRIPTION
+The \f4i596\f1 driver provides a streams interface that integrates with
+the System V/386 TCP/IP protocol stack.  The \f4i596\f1 driver is the
+end of the streams queue pair providing the interface to the
+data link layer.
+.P
+The Link Level Interface is provided by the \f4i596\f1 driver by transmitting 
+and receiving frames over a physical communications medium via the 
+Intel 82596 LAN coprocessor.
+.P
+Configuration and tunable parameters for the \f4i596\f1 driver are
+defined in \f4/etc/conf/pack.d/i596/space.c\f1.  In order to change the
+driver configuration, edit this file and then rebuild the kernel.
+These parameters are described below:
+.TP 1.25i
+\f4I596_N_TBD\f1
+Number of i596 Transmit Buffer Descriptors.  The default value is 25.
+.TP 1.25i
+\f4I596_N_FD\f1
+Number of i596 Frame Descriptors.  The default value is 50.
+.TP 1.25i
+\f4I596_N_RBD\f1
+Number of i596 Receive Buffer Descriptors.  This value indicates the 
+number of Streams Buffers to be allocated for data reception.  The default 
+value is 50.
+.TP 1.25i
+\f4I596_RCVBUFSIZ\f1
+Size of Receive Buffers.  This value indicates the size of the 
+Stream buffer referenced by the RBD.  The default value is 256.
+.TP 1.25i
+\f4I596_N_LSAP\f1
+Number of Link Service Access Points. The default is 32.
+.SH FILES
+.TP 2.25i
+\f4/etc/conf/pack.d/i596/space.c\f1
+i596 driver configuration file
+.TP 2.25i
+\f4/etc/conf/pack.d/i596/Driver.o\f1
+i596 driver object file
+.TP 2.25i
+\f4/etc/conf/node.d/i596\f1
+i596 driver device node definition
+.TP 2.25i
+\f4/etc/conf/sdevice.d/i596\f1
+i596 driver system device entry
+.TP 2.25i
+\f4/usr/include/sys/i596.h\f1
+i596 driver user data structures

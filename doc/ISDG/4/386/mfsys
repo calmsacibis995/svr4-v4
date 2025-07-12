@@ -1,0 +1,66 @@
+'\"macro stdmacro
+.if n .pH g4.mfsys @(#)mfsys	40.4 of 1/3/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.if \nX=0 .ds x} mfsys 4 "" "\&"
+.if \nX=1 .ds x} mfsys 4 ""
+.if \nX=2 .ds x} mfsys 4 "" "\&"
+.if \nX=3 .ds x} mfsys "" "" "\&"
+.nr X
+.TH \*(x} "" "386 Computer Only"
+.SH NAME
+\f4mfsys\f1  \-  file format.
+.SH SYNOPSIS
+\f4mfsys\f1
+.SH "DESCRIPTION"
+The \f4mfsys\f1 file contains configuration information for file system types
+that are to be included in the next system kernel to be built.
+It is included in the directory \f4/etc/conf/cf.d\f1, and includes a one-line
+description of each file system type.
+The \f4mfsys\f1 file is coalesced from
+component files in the directory
+\f4/etc/conf/mfsys.d\f1.
+Each line contains the following whitespace-separated fields:
+.TP 5
+1.
+\f2name\f1:  This field contains the internal name for the file system type
+(e.g., S51K, DUFST).
+This name is no more than 32 characters long, and by convention is composed
+of upper-case alphanumeric characters.
+.TP 5
+2.
+\f2prefix\f1:  The \f2prefix\f1 in this field is the string prepended to
+the \f2fstypsw\f1 handler functions defined for this file system type
+(e.g., s5, du).
+The prefix must be no more that 8 characters long.
+.TP 5
+3.
+\f2flags\f1:  The \f2flags\f1 field contains a hex number of the form
+"0xNN" to be used in populating the \f2fsinfo\f1 data structure table
+entry for this file system type.
+.TP 5
+4.
+\f2notify flags\f1:  The \f2notify flags\f1 field contains a hex number
+of the form "0xNN" to be used in population the \f2fsinfo\f1 data
+structure table entry for this file system type.
+.TP 5
+5.
+\f2function bitstring\f1:  The \f2function bitstring\f1 is a string
+of 28 0's and 1's.
+Each file system type potentially defines 28 functions to populate
+the \f2fstypsw\f1 data structure table entry for itself.
+All file system types do not supply all the functions in this table,
+however, and this bitstring is used to indicate which of the functions
+are present and which are absent.
+A '1' in this string indicates that a function has been supplied, and a '0'
+indicates that a function has not been supplied.
+Successive characters in the string represent successive elements of
+the \f2fstypsw\f1 data structure, with the first entry in this data
+structure represented by the rightmost character in the string.
+.SH "SEE ALSO"
+\f4sfsys\f1(4).
+.br
+\f4idinstall\f1(1m),
+\f4idbuild\f1(1m)
+in the \f2User's/System Administrator's Reference Manual\f1.
+.Ee

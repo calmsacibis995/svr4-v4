@@ -1,0 +1,72 @@
+.if n .pH g1.scompat @(#)scompat	40.10 of 6/18/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+'\"!  tbl | mmdoc
+'\"macro stdmacro
+.nr X 2
+.if \nX=0 .ds x} scompat 1 "" "\&"
+.if \nX=1 .ds x} scompat 1 ""
+.if \nX=2 .ds x} scompat 1 "Application Compatibility Package" "\&"
+.if \nX=3 .ds x} scompat "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4scompat\f1 \- set up compatibility environment for console applications
+.SH SYNOPSIS
+\f4scompat\f1 [-r \f2interpretnumber\fP] [\f2UNIX System command line\fP]
+.SH DESCRIPTION
+COFF- or ELF-based applications developed for SCO UNIX System V/386 3.2
+(or later releases) that use graphics may not
+work correctly on the system VGA/EGA/CGA console or Fiber Optic
+Workstations, which are now STREAMS-based in UNIX System
+V/386 Release 4.
+.P
+The \f4scompat\f1 command sets up the workstation environment
+so that these applications may function correctly.
+While the environment is in effect, access to the workstation
+as a STREAMS device will not work correctly unless the \f4-r\fP
+option is used with the argument \f44\fP (see below).
+.SH OPTIONS
+For COFF or ELF executables,
+\f4scompat\f1 may be invoked with no arguments to give you XENIX
+\f4ioctl\fP interpretation
+[see \f4ioctl\fP(2) in the \f2Programmer's Reference Manual\fP].
+In this case, a sub-shell is created.
+For the lifetime of the shell,
+the compatibility environment is in effect on the workstation.
+.P
+\f4scompat\fP may also be invoked with the \f4-r\fP
+\f2interpretnumber\fP option, where \%\f2interpretnumber\fP is:
+.TP
+3
+UNIX System V/386 Release 3.2 \f4ioctl\fP interpretation for XENIX applications
+.TP
+4
+STREAMS \f4ioctl\fP interpretation for COFF executables or XENIX applications
+.P
+\f4scompat\f1 also accepts as arguments a shell command line
+(that is, \f4scompat ls -l\f1).
+This results in the command line being
+executed with the compatibility environment in effect.
+When the command completes execution, the compatibility
+environment is restored to its previous state.
+.SH NOTES
+For computers based on Intel microprocessors,
+if \f4SCOMPAT\fP is set to \f43.2\fP, \f4uname -a\fP
+gives a value of \f43.2\fP for \f2release\fP and a value of \f42\fP
+for \f2version\fP.
+.P
+To set \f4SCOMPAT\fP to any other version, use the syntax
+.P
+.RS
+\f4SCOMPAT=\f2release\fP:\f2version\f1
+.RE
+.P
+To return to the beginning state, unset \f4SCOMPAT\fP.
+.P
+In all cases, when \f4SCOMPAT\fP is set, it must be exported [see \f4sh\fP(1) in
+the \f2User's Reference Manual\fP].
+.SH "SEE ALSO"
+\f4ioctl\fP(2) in the \f2Programmer's Reference Manual\fP
+.P
+\f4sh\fP(1) and
+\f4uname\fP(1) in the \f2User's Reference Manual\fP

@@ -1,0 +1,72 @@
+'\"macro stdmacro
+.if n .pH g3.getusrshl @(#)getusrshl	40.11 of 4/24/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.\" Copyright (c) 1988 Sun Microsystems, Inc. - All Rights Reserved.
+.\"
+.\" Copyright (c) 1985 Regents of the University of California.
+.\" All rights reserved.  The Berkeley software License Agreement
+.\" specifies the terms and conditions for redistribution.
+.\"
+.nr X
+.if \nX=0 .ds x} getusershell 3 "BSD Compatibility Package" "\&"
+.if \nX=1 .ds x} getusershell 3 "BSD Compatibility Package"
+.if \nX=2 .ds x} getusershell 3 "" "\&"
+.if \nX=3 .ds x} getusershell "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4getusershell\f1, \f4setusershell\f1, \f4endusershell\f1 \- get legal user shells
+.SH SYNOPSIS
+.nf
+\f4cc \f1[ \f2flag\f1\. \. \. ] \f2file\f1 \. \. \. \f4\-lucb\f1
+.P
+\f4char *getusershell()\f1
+.P
+\f4setusershell()\f1
+.br
+\f4endusershell()\f1
+.fi
+.SH DESCRIPTION
+.P
+\f4getusershell\f1
+returns a pointer to a legal user shell as defined by the
+system manager in the file
+\f4/etc/shells\f1.
+If
+\f4/etc/shells\f1
+does not exist, the locations of the standard system shells,
+\f4/usr/bin/csh\f1,
+\f4/usr/bin/sh\f1,
+and
+\f4/usr/bin/ksh\f1
+are returned.
+.P
+\f4getusershell\f1
+reads the next
+line (opening the file if necessary);
+\f4setusershell\f1
+rewinds the file;
+\f4endusershell\f1
+closes it.
+.SH FILES
+.PD 0
+.TP 20
+\f4/etc/shells\f1
+.TP
+\f4/usr/bin/csh\f1
+.TP
+\f4/usr/bin/ksh\f1
+.TP
+\f4/usr/bin/sh\f1
+.PD
+.SH "RETURN VALUE"
+The routine
+\f4getusershell\f1
+returns a
+\f4NULL\fP
+pointer (0) on
+.SM EOF
+or error.
+.SH NOTES
+All information is contained in a static area
+so it must be copied if it is to be saved.

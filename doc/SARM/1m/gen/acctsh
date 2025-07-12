@@ -1,0 +1,267 @@
+'\"macro stdmacro
+.if n .pH g1a.acctsh @(#)acctsh	40.10.1.2 of 1/3/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} acctsh 1M "Job Accounting Utilities" "\&"
+.if \nX=1 .ds x} acctsh 1M "Job Accounting Utilities"
+.if \nX=2 .ds x} acctsh 1M "" "\&"
+.if \nX=3 .ds x} acctsh "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4chargefee\f1, \f4ckpacct\f1, \f4dodisk\f1, \f4lastlogin\f1, \f4monacct\f1, \f4nulladm\f1, \f4prctmp\f1, \f4prdaily\f1, \f4prtacct\f1, \f4runacct\f1, \f4shutacct\f1, \f4startup\f1, \f4turnacct\f1 \- shell procedures for accounting
+.SH SYNOPSIS
+\f4/usr/lib/acct/chargefee\f1
+\f2login-name number\fP
+.PP
+\f4/usr/lib/acct/ckpacct\f1
+[\^\f2blocks\fP\^]
+.PP
+\f4/usr/lib/acct/dodisk\f1
+[\^-o\^] [\^\f2files\fP ...\^]
+.PP
+\f4/usr/lib/acct/lastlogin\f1
+.PP
+\f4/usr/lib/acct/monacct\f1
+\f2number\fP
+.PP
+\f4/usr/lib/acct/nulladm\f1
+\f2file\fP
+.PP
+\f4/usr/lib/acct/prctmp\f1
+.PP
+\f4/usr/lib/acct/prdaily\f1
+[\^\f4-l\fP\^] [\^\f4-c\fP\^] \&[ \f2mmdd\fP ]
+.PP
+\f4/usr/lib/acct/prtacct\f1
+\f2file\fP [
+\f4"\fP\f2heading\fP\f4"\fP
+]
+.PP
+\f4/usr/lib/acct/runacct\f1
+[\^\f2mmdd\fP\^] [\^\f2mmdd\fP \f2state\fP\^]
+.PP
+\f4/usr/lib/acct/shutacct\f1
+[
+\f4"\fP\f2reason\fP\f4"\fP
+]
+.PP
+\f4/usr/lib/acct/startup\f1
+.PP
+\f4/usr/lib/acct/turnacct\f1
+\f4on\f1 \(bv \f4off\f1 \(bv \f4switch\f1
+.SH DESCRIPTION
+\f4chargefee\fP
+can be invoked to charge a
+.I number\^
+of units to \f2login-name\f1.
+A record is written to \f4/var/adm/fee\f1,
+to be merged with other accounting records by \f4runacct\f1.
+.PP
+\f4ckpacct\fP
+should be initiated via \f4cron\fP(1M) to
+periodically check the size of \f4/var/adm/pacct\f1.
+If the size exceeds \f2blocks\fP, 1000 by default,
+\f4turnacct\fP
+will be invoked with argument \f2switch\f1.
+If the number of free disk blocks in the
+\f4/var\fP
+file system
+falls below 500,
+\f4ckpacct\fP
+will automatically turn off the collection of
+process accounting records via
+the
+.I off
+argument to \f4turnacct\fP.
+When at least 500 blocks are restored, 
+the accounting will be activated again
+on the next invocation of \f4ckpacct\f1.
+This feature is sensitive to the frequency at which
+\f4ckpacct\fP
+is executed, usually by \f4cron\fP.
+.PP
+\f4dodisk\fP
+should be invoked by
+\f4cron\fP
+to perform the disk accounting functions.
+By default, it will use \f4diskusg\f1 (see \f4diskusg(1M)\f1) to do
+disk accounting on the \f4S5\f1 file system in \f4/etc/vfstab\f1
+and \f4acctdusg [see \f4acct\f1(1M)] on non-s5 file systems.
+If the
+\f4\-o\f1
+flag is used, it will use \f4acctdusg\f1 (see \f4acct(1M)\f1) to do a
+slower version of disk accounting by login directory for all file
+systems.
+.I files
+specifies the one or more filesystem names where disk accounting
+will be done.
+If
+.I files
+are used, disk accounting will be done on these
+filesystems only.
+If the
+\f4\-o\f1
+flag is used,
+.I files
+should be mount points of mounted filesystems.
+If the \f4\-o\f1 option is omitted, \f2files\f1 should be the special file
+names of mountable filesystems.
+.PP
+\f4lastlogin\fP
+is invoked by
+\f4runacct\fP
+to update \f4/var/adm/acct/sum/loginlog\f1,
+which shows the last date on which each person logged in.
+.PP
+\f4monacct\fP
+should be invoked once each month or each accounting
+period.
+.I number\^
+indicates
+which month or period it is.
+If
+.I number
+is not given, it defaults to the
+current month (01\-12).
+This default is useful if
+\f4monacct\fP
+is to executed via
+\f4cron\fP(1M)
+on the first day of each month.
+\f4monacct\fP
+creates summary files in
+\f4/var/adm/acct/fiscal\f1
+and restarts the summary files in \f4/var/adm/acct/sum\f1.
+.PP
+\f4nulladm\fP
+creates
+.I file\^
+with mode 664 and ensures that owner and group are \f4adm\f1.
+It is called by
+various accounting shell procedures.
+.PP
+\f4prctmp\fP
+can be used to print the session record file (normally
+\f4/var/adm/acct/nite/ctmp\f1
+created by
+\f4acctcon1\f1 (see \f4acctcon(1M)\f1).
+.PP
+\f4prdaily\fP
+is invoked by
+\f4runacct\fP
+to format a report of the previous day's accounting data.
+The report resides in
+\f4/var/adm/acct/sum/rprt/mmdd\f1
+where
+.I mmdd\^
+is the month and day of the report.
+The current daily accounting reports may be printed by typing \f4prdaily\fP.
+Previous days' accounting reports can be printed by using the
+.I mmdd
+option and specifying the exact report date desired.
+The
+\f4\-l\f1
+flag prints a
+report of exceptional usage by login id for
+the specified date.
+Previous daily reports are cleaned up
+and therefore inaccessible after each invocation of \f4monacct\fP.
+The
+\f4\-c\f1
+flag prints a report
+of exceptional resource usage by command,
+and may be used on current day's accounting data only.
+.PP
+\f4prtacct\fP
+can be used to format and print any total accounting (\f4tacct\fP) file.
+.PP
+\f4runacct\fP
+performs the accumulation of connect,
+process,
+fee,
+and disk accounting on a daily basis.
+It also creates summaries of command usage.
+For more information, see \f4runacct\fP(1M).
+.PP
+\f4shutacct\fP
+is invoked during a system shutdown
+to turn process accounting
+off and append a "reason" record to \f4/var/adm/wtmp\f1.
+.PP
+\f4startup\fP
+can be invoked when the system is brought to a multi-user state to
+turn process accounting on.
+.PP
+\f4turnacct\fP
+is an interface to
+\f4accton\fP
+(see
+\f4acct\fP(1M))
+to turn process accounting \f4on\fP or \f4off\fP.
+The
+\f4switch\fP\^
+argument moves the current
+\f4/var/adm/pacct\f1
+to the next free name in
+\f4/var/adm/pacct\f2incr\f1
+(where
+.I incr
+is a number starting with \f41\f1
+and incrementing by one 
+for each additional \f4pacct\f1 file),
+then turns accounting back on again.
+This procedure is called by
+\f4ckpacct\fP
+and thus can be taken care of by
+the \f4cron\fP and used to keep \f4pacct\fP
+to a reasonable size.  \f4shutacct\f1 uses \f4turnacct\f1 to stop
+process accounting.  \f4startup\f1 uses \f4turnacct\f1 to start
+process accounting.
+.SH FILES
+.TP 1.85i
+\f4/var/adm/fee\f1
+accumulator for fees
+.TP
+\f4/var/adm/pacct\f1
+current file for per-process accounting
+.TP
+\f4/var/adm/pacct\f2incr\f1
+used if \f4pacct\f1 gets large and during
+execution of daily accounting procedure
+.TP
+\f4/var/adm/wtmp\f1
+login/logoff summary
+.TP
+\f4/usr/lib/acct/ptelus.awk\f1
+contains the limits for exceptional
+usage by login \s-1ID\s+1
+.TP
+\f4/usr/lib/acct/ptecms.awk\f1
+contains the limits for exceptional
+usage by command name
+.TP
+\f4/var/adm/acct/nite\f1
+working directory
+.TP
+\f4/usr/lib/acct\f1
+holds all accounting commands listed in
+section \s-11M\s+1 of this manual
+.TP
+\f4/var/adm/acct/sum\f1
+summary directory contains information
+for \f4monacct\f1
+.TP
+\f4var/adm/acct/fiscal\f1
+fiscal reports directory
+.SH SEE ALSO
+\f4acct\fP(1M), \f4acctcms\fP(1M), \f4acctcon\fP(1M), \f4acctmerg\fP(1M), \f4acctprc\fP(1M),
+\f4cron\fP(1M), \f4diskusg\fP(1M), \f4fwtmp\fP(1M), \f4runacct\fP(1M),
+\f4acct\fP(4), \f4utmp\fP(4)
+.br
+\f4acctcom\fP(1) in the \f2User's Reference Manual\f1
+.br
+\f4acct\fP(2)
+in the \f2Programmer's Reference
+Manual\f1
+.\"	@(#)acctsh.1m	6.4 of 9/2/83

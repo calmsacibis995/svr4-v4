@@ -1,0 +1,42 @@
+'\"macro stdmacro
+.if n .pH g2.sdgetv @(#)sdgetv	40.11 of 6/18/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} sdgetv 2 "Application Compatibility Package" "\&"
+.if \nX=1 .ds x} sdgetv 2 "Application Compatibility Package"
+.if \nX=2 .ds x} sdgetv 2 "" "\&"
+.if \nX=3 .ds x} sdgetv "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4sdgetv\f1 \- synchronize shared data access
+.SH SYNOPSIS
+\f4cc \f1[\f2flag \f1. . .] \f2file\f1 . . . \f4-lx\f1
+.PP
+\f4#include <sys/sd.h>\f1
+.PP
+\f4int sdgetv(addr)
+.PP
+\f4int sdwaitv(char *addr, int vnum);\fP
+.SH DESCRIPTION
+\f4sdgetv\fP and \f4sdwaitv\fP may be used to synchronize cooperating
+processes that are using shared data segments.
+The return value of
+both routines is the version number of the shared data segment attached
+to the process at address \f2addr\f1.
+The version number of a
+segment changes whenever some process does an \f4sdleave\fP for that
+segment.
+.P
+\f4sdgetv\fP simply returns the version number of the indicated segment.
+.P
+\f4sdwaitv\fP forces the current process to sleep until the version
+number for the indicated segment is no longer equal to \f2vnum\f1.
+.SH DIAGNOSTICS
+Upon successful completion, both \f4sdgetv\fP and \f4sdwaitv\fP return
+a positive integer that is the current version number for the indicated
+shared data segment.
+Otherwise, a value of \-1 is returned, and
+\f4errno\f1 is set to indicate the error.
+.SH SEE ALSO
+\f4sdenter\fP(2), \f4sdget\fP(2)

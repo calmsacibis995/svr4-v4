@@ -1,0 +1,100 @@
+'\"macro stdmacro
+.if n .pH g1.copy @(#)copy	40.9 of 6/18/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} copy 1 "Application Compatibility Package" "\&"
+.if \nX=1 .ds x} copy 1 "Application Compatibility Package"
+.if \nX=2 .ds x} copy 1 "" "\&"
+.if \nX=3 .ds x} copy "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4copy\fP \- copy groups of files
+.SH SYNOPSIS
+\f4copy\fP [\f2option\f1]. . .\f2source\f1. . .\f2dest\f1
+.SH DESCRIPTION
+The \f4copy\fP command copies the contents of directories to another
+directory.
+It is possible to copy whole file systems since directories 
+are made when needed.
+.P
+If files, directories, or special files do not exist at the destination,
+then they are created with the same modes and flags as the source.
+In addition, the super-user may set the user and group \f4ID\fP.
+The owner and mode are not changed if the destination file exists.
+Note that there may be more than one source directory.
+If so, the effect
+is the same as if the \f4copy\fP command had been issued for each source 
+directory with the same destination directory for each copy.
+.P
+All of the options must be given as separate arguments, and they may
+appear in any order even after the other arguments.
+The arguments are:
+.TP 10
+\f4-a\fP
+Asks the user before attempting a copy.
+If the response does not begin
+with a "y", then a copy is not done.
+This option also sets the \f4ad\fP
+option.
+.TP
+\f4-l\fP
+Uses links instead whenever they can be used.
+Otherwise a copy is done.
+Note that links are never done for special files or directories.
+.TP
+\f4-n\fP
+Requires the destination file to be new.
+If not, then the \f4copy\fP
+command does not change the destination file.
+The \f4-n\fP flag is
+meaningless for directories.
+For special files an \f4-n\fP flag is 
+assumed (that is, the destination of a special file must not exist).
+.TP
+\f4-o\fP
+If set then every file copied has its owner and group set to those of
+source.
+If not set, then the file's owner is the user who invoked
+the program.
+.TP
+\f4-m\fP
+If set, then every file copied has its modification time and access time
+set to that of the source.
+If not set, then the modification time is set
+to the time of the copy.
+.TP
+\f4-r\fP
+If set, then every directory is recursively examined as it is encountered.
+If not set, then any directories that are found are ignored.
+.TP
+\f4-ad\fP
+Asks the user whether an \f4-r\fP flag applies when a directory is 
+discovered.
+If the answer does not begin with a ``\f4y\fP'', then the
+directory is ignored.
+.TP
+\f4-v\fP
+If the verbose option is set, messages are printed that reveal what the
+program is doing.
+.TP
+\f2source\fP
+This may be a file, directory or special file.
+It must exist.
+If it is not a directory, then the results of the command are the same as
+for the \f4cp\fP command.
+.br
+.ne5
+.TP
+\f2dest\fP
+The destination must be either a file or directory that is different
+from the source.
+If \f2source\f1 and \f2destination\f1 are anything but
+directories, then \f4copy\fP acts just like a \f4cp\fP command.
+If
+both are directories, then \f4copy\fP copies each file into the
+destination directory according to the flags that have been set.
+.SH NOTES
+Special device files can be copied.
+When they are copied, any data
+associated with the specified device is not copied.

@@ -1,0 +1,156 @@
+'\"macro stdmacro
+.if n .pH g1a.share_nfs @(#)share_nfs	40.14 of 1/3/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} share 1M "NFS" "\&"
+.if \nX=1 .ds x} share 1M "NFS"
+.if \nX=2 .ds x} share 1M "" "\&"
+.if \nX=3 .ds x} share "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4share\f1 \- make local NFS resource available for mounting by remote systems
+.SH SYNOPSIS
+\f4share\f1
+[
+\f4\-F nfs\f1
+]
+[
+\f4\-o\f2 specific_options\f1
+]
+[
+\f4-d\f2 description\f1
+]
+\f2pathname\f1
+.LP
+.SH DESCRIPTION
+.LP
+The 
+\f4share\f1
+command makes local resources available
+for mounting by remote systems.
+.LP
+If no argument is specified, then 
+\f4share\f1
+displays all resources currently shared,
+including NFS resources and resources shared through 
+other distributed file system packages.
+.LP
+The following options are recognized:
+.TP
+\f4\-o\f2 specific_options\f1
+Specify options in a comma-separated list of keywords
+and attribute-value-assertions for interpretation by
+the file-system-type-specific command.
+.IP
+.I specific_options
+can be any combination of the following:
+.RS .5i
+.TP
+\f4rw\f1
+Sharing will be read-write to all clients.
+.TP
+\f4rw=\f2client\fR[\f4:\f2client\fR].\|.\|.\f1
+Sharing will be read-write to the listed clients;
+overrides the
+\f4ro\f1
+suboption for the clients specified.
+.TP
+\f4ro\f1
+Sharing will be read-only to all clients.
+.TP
+\f4ro=\f2client\fR[\f4:\f2client\fR].\|.\|.\f1
+Sharing will be read-only to the listed clients;
+overrides the 
+\f4rw\f1
+suboption for the clients specified.
+.TP
+\f4anon=\f2uid\f1
+Set 
+.I uid
+to be the effective user
+.SM ID
+of unathenticated users if
+.SM AUTH_DES
+authentication is used,
+or to be root if
+.SM AUTH_UNIX
+authentication is used.
+By default, unknown users are given the effective
+user
+.SM ID
+\s-1\f4UID_NOBODY\f1\s0.
+If 
+.I uid
+is set to
+\f4\-1\f1,
+access is denied.
+.TP
+\f4root=\f2host\fR[\f4:\f2host\fR]\|.\|.\|.\f1
+Only root users from the specified hosts
+will have root access.
+By default, no host has root access.
+.TP
+\f4secure\f1
+Clients must use the
+\s-1AUTH_DES\s0
+authentication of \s-1RPC\s0.
+\s-1AUTH_UNIX\s0
+authentication is the default.
+.RE
+.IP
+If 
+.I specific_options
+is not specified, then by default sharing will be 
+read-write to all clients.
+.TP 12
+\f4\-d\f2 description\f1
+Provide a comment that describes the resource to be shared.
+.TP
+.I pathname
+Specify the pathname of the resource to be
+shared.
+.SH FILES
+.PD 0
+.TP 20
+\f4/etc/dfs/fstypes\f1
+.TP
+\f4/etc/dfs/sharetab\f1
+.SH "SEE ALSO"
+\f4unshare\f1(1M)
+.SH NOTES
+The command will fail if both
+\f4ro\f1
+and 
+\f4rw\f1
+are specified.  If the same client name exists in both the
+\f4ro=\f1
+and 
+\f4rw=\f1
+lists,
+the \f4rw\f1 will override the \f4ro\f1, giving read/write 
+access to the client
+specified.
+.LP
+\f4ro=\f1, \f4rw=\f1, and \f4root=\f1 are guaranteed to work
+over UDP but may not work over other transport
+providers.
+.LP
+If a resource is shared with a \f4ro=\f1 list and a \f4root=\f1 list,
+any host that is on the \f4root=\f1 list will be given only read-only
+access, regardless of whether that host is specified in the \f4ro=\f1
+list, unless \f4rw\f1 is declared as the default, or 
+the host is mentioned in a \f4rw=\f1 list. 
+The same is true if the resource is shared with \f4ro\f1
+as the default. For example, the following \f4share\f1 commands will
+give read-only permissions to \f4hostb\f1:
+.IP
+\f4share -F nfs -oro=hosta,root=hostb /var
+.IP
+share -F nfs -oro,root=hostb /var\f1
+.P
+While the following will give read/write permissions to hostb:
+.IP
+\f4share -F nfs -oro=hosta,rw=hostb,root=hostb /var
+.IP
+share -F nfs -oroot=hostb /var\f1

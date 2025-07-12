@@ -1,0 +1,81 @@
+'\"macro stdmacro
+.if n .pH g1M.devfree @(#)devfree	40.15 of 4/15/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} devfree 1M "Essential Utilities" "\&"
+.if \nX=1 .ds x} devfree 1M "Essential Utilities"
+.if \nX=2 .ds x} devfree 1M "" "\&"
+.if \nX=3 .ds x} devfree "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4devfree\f1 \- release devices from exclusive use
+.SH SYNOPSIS
+\f4devfree \f2key\f4 \f1[\f4\f2device\f4 \f1[\f4.\ .\ .\f1]\|]\f4
+.SH DESCRIPTION
+\f4devfree\f1
+releases devices from exclusive use.
+Exclusive use is requested with
+the command \f4devreserv\f1.
+.P
+When \f4devfree\f1 is invoked with only the
+\f2key\f1 argument, it releases all
+devices that have been reserved for that \f2key\fP.
+When called with \f2key\f1
+and \f2device\f1 arguments, \f4devfree\f1 releases 
+the specified devices that have been
+reserved with that \f2key\fP.
+.P
+The arguments for this command are:
+.P
+.PD 0
+.TP
+\f2key\f1
+Designates the unique key on which the device was
+reserved.
+.sp
+.TP
+\f2device\f1
+Defines device that this command will release from exclusive use.
+Can be the pathname of the device or the device alias.
+.PD
+.SH ERRORS 
+The command will exit with one of the following values:
+.TP 4
+\f40\f1 =
+successful completion of the task.
+.TP 4
+\f41\f1 =
+command syntax incorrect,
+invalid option used,
+or internal error occurred.
+.TP 4
+\f42\f1 =
+device table or device reservation table could not be opened for reading.
+.TP 4
+\f43\f1 =
+reservation release could not be completely fulfilled because one or more of
+the devices was not reserved or was not reserved on the specified key.
+.SH FILES
+.ft CW
+/etc/device.tab
+.br
+/etc/devlkfile
+.ft
+.SH NOTES
+The commands \f4devreserv\f1 and \f4devfree\f1 are used to manage the 
+availability of devices on a system.
+These commands do not place any 
+constraints on the access to the device.
+They serve only as a centralized
+bookkeeping point for those who wish to use them.
+Processes that do not use
+\f4devreserv\f1 may concurrently use a device with a process that has reserved
+that device.
+.SH SEE ALSO
+.na
+\f4devfree\fP(3X),
+\f4devreserv\fP(1),
+\f4devreserv\fP(3X),
+\f4reservdev\fP(3X)
+.ad

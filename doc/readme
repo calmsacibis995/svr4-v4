@@ -1,0 +1,138 @@
+.if n .pH 386.readme @(#)readme	40.14
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1990 AT&T
+--------------------------- start readme ------------------------------------
+UNIX* System V/386 Release 4 Version 4:  January, 1991
+
+
+DOCUMENTATION DEPARTMENT:
+
+This directory contains the Documentation provided with the
+UNIX System V/386 Release 4 Version 4 Source Code Product.
+
+
+TAPE CONTENTS
+-------------
+Book Directories:	Each document is contained in its own directory.
+			See the Source Code Product Read Me First for a listing
+			of the directories and the documents they contain.
+			One of these directories, DOCTOOLS, contains the
+			software and documentation for the documentation tools.
+
+Information files:	
+
+   readme		(this file)
+
+   tape.contents	listing of all documentation files
+
+
+
+HARDCOPY SUPPLIED WITH TAPE
+---------------------------
+Four printed documents are supplied with the source code product:
+
+Installation Guide
+	This document contains instructions on how to install the
+	reference binary that accompanies the source code product.
+
+
+Read Me First
+	This document describes the major components of the source code
+	product, the DOCTOOLS environment, and how to extract and print
+	Release 4 books.
+
+
+Software Notes
+	This document identifies software changes and workarounds for
+	the reference binary.
+
+
+Source Code Product Build Instructions
+	This document contains instructions on how to build and
+	install the source code product software.
+
+
+If you do not have the Read Me First, check with whoever unpacked
+this product.  If they cannot locate the document, you will find
+its files under the RMF directory.  Look at the files "intro" and
+"doctape."  Though these files are not meant as on-line documentation
+(they contain formatting macros), you can use the "cat" command to
+read it and obtain the necessary information for setting up your
+DOCTOOLS environment and printing the documents.  After setting up
+your DOCTOOLS environment, print the Read Me First document.
+
+
+USL STYLE GUIDE
+---------------
+The Style Guide used by the documentation department at USL has been
+included on this tape.  It is found in the directory STYLE  and
+is printed the same way as the rest of the documents, i.e., using
+the DOCTOOLS "format" command.
+
+
+NEW TAPE DIRECTORY STRUCTURE VERSION 4
+--------------------------------------
+There is a new directory structure on the tape for Version
+4 (this was first introduced with the Version 3 Device
+Driver Interface/Driver-Kernel Interface (DDI/DKI)
+Reference Manual).
+
+The tape structure has changed in two ways since Version 3.
+
+First, the file organization has been changed to remove
+file duplication.  Files are organized as before in
+directories according to book title, which means that some
+manual pages appear in more than one directory.  For
+example, all manual pages for networking administration
+appear in both the System Administrator's Reference Manual
+and the Network User's and Administrator's Guide.
+
+In Version 3 these files were exact duplicates.  Beginning
+with the Version 4 MRD tapes, the files appear in both
+directories but are linked.  This means that each file
+exists physically only once on the MRD tape.
+
+Second, we have reorganized the directory structure and
+renamed files using the following rules:
+
+o  Name directories consistently, based on the titles of the
+   books they include.  Give directories mnemonic names
+   including, if appropriate, one of the following suffixes:
+
+      ag	administrator's guide
+      g		guide
+      pg	programmer's guide
+      rm	reference manual
+      rmf	read me first
+      rn	release notes
+      uag	user and administrator's guide
+      ug	user's guide
+
+o  Organize manual pages in directories named for the manual
+   page sections (but use lower-case to make typing easier).
+
+   For example, use 1, 1c, 1m, . . . 
+
+o  Use machine-specific directory names (for example, 386) to
+   hold machine-specific files, and put the machine-specific
+   directories at the lowest level of organization to keep
+   related files near each other in the file system.
+
+o  If a book is not machine-specific, it need not be labeled
+   generic, but if a book contains machine-specific as well as
+   generic files, label the generic files as such (directory
+   name gen).
+
+o  Create subdirectories in multi-book volumes to avoid
+   cluttering a directory with files on more than one major
+   topic.
+
+   For example, in the Network User's and Administrator's
+   Guide we created separate subdirectories for the NFS
+   material, the RFS material, and so on.
+
+o  Group the books that are most release-specific under a
+   single directory (release).
+
+* UNIX is a registered trademark of UNIX System Laboratories.
+------------------------------ end readme -----------------------------------

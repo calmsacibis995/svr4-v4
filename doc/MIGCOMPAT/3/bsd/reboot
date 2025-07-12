@@ -1,0 +1,85 @@
+'\"macro stdmacro
+.if n .pH g2.reboot @(#)reboot	40.10 of 4/24/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.\" Copyright (c) 1988 Sun Microsystems, Inc. - All Rights Reserved.
+.\"
+.nr X
+.if \nX=0 .ds x} reboot 3 "BSD Compatibility Package" "\&"
+.if \nX=1 .ds x} reboot 3 "BSD Compatibility Package"
+.if \nX=2 .ds x} reboot 3 "" "\&"
+.if \nX=3 .ds x} reboot "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4reboot\f1 \- reboot system or halt processor
+.SH SYNOPSIS
+.nf
+\f4cc \f1[ \f2flag\f1\. \. \. ] \f2file\f1 \. \. \. \f4\-lucb\f1
+.P
+\f4#include <sys/reboot.h>\f1
+.P
+\f4reboot(howto, \f1[\f4 bootargs \f1]\f4 )\f1
+\f4int howto;\f1
+\f4char \(**bootargs;\f1
+.fi
+.SH DESCRIPTION
+\f4reboot\f1
+reboots the system, and is invoked automatically
+in the event of unrecoverable system failures.
+.I howto
+is a mask of options passed to the bootstrap program.
+The system call interface permits only
+\f4RB_HALT\fP
+or
+\f4RB_AUTOBOOT\fP
+to be passed to the reboot program; the other flags
+are used in scripts stored on the console storage media, or used
+in manual bootstrap procedures.
+When none of these options (for instance
+\f4RB_AUTOBOOT\f1)
+is given, the system is rebooted
+from file 
+\f4/stand/unix\f1.
+An automatic consistency check of the disks is then normally performed.
+.P
+The bits of
+.I howto
+that are used are:
+.TP 15
+\f4RB_HALT\fP
+the processor is simply halted; no reboot takes place.
+\f4RB_HALT\fP
+should be used with caution.
+.TP
+\f4RB_ASKNAME\fP
+Interpreted by the bootstrap program itself, causing it to
+inquire as to what file should be booted.
+Normally, the system is booted from the file
+\f4/stand/unix\f1
+without asking.
+.P
+.SH "RETURN VALUE"
+If successful, this call never returns.
+Otherwise, a \-1 is returned and an error is returned in the global variable
+\f4errno\f1.
+.SH ERRORS
+.TP 15
+\f4EPERM\fP
+The caller is not the super-user.
+.SH FILES
+.PD 0
+.TP 20
+\f4/vmunix\f1
+.PD
+.SH "SEE ALSO"
+\f4halt\f1(1M)
+\f4init\f1(1M)
+\f4reboot\f1(1M)
+.P
+\f4intro\f1(1M),
+\f4crash\f1(1M)
+in the \f2System Administrator's Reference Manual\f1
+.SH NOTES
+Any other \f2howto\f1 argument causes \f4/stand/unix\f1 to boot.
+.P
+Only the super-user may \f4reboot\f1 a machine.

@@ -1,0 +1,135 @@
+'\"macro stdmacro
+.if n .pH g1a.ping @(#)ping	40.9 of 5/21/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} ping 1M "Internet Utilities" "\&"
+.if \nX=1 .ds x} ping 1M "Internet Utilities"
+.if \nX=2 .ds x} ping 1M "" "\&"
+.if \nX=3 .ds x} ping "" "" "\&"
+.TH \*(x}
+.UC 6
+.SH NAME
+\f4ping\f1 \- send \s-1ICMP\s0 \f4ECHO_REQUEST\f1 packets to network hosts
+.SH SYNOPSIS
+\f4/usr/sbin/ping\f1
+.I host
+[
+.I timeout
+]
+.LP
+\f4/usr/sbin/ping\f1 \f4\-s\f1 [ \f4\-lrRv\f1 ]
+.I host
+[
+.I packetsize
+] [
+.I count
+]
+.\".SH AVAILABILITY
+.\".LP
+.\"This program is available with the
+.\".I Networking Tools and Programs
+.\"software installation option.  Refer to
+.\".TX INSTALL
+.\"for information on how to install optional software.
+.SH DESCRIPTION
+.LP
+\f4ping\f1
+utilizes the
+.SM ICMP
+protocol's 
+\f4ECHO_REQUEST\f1
+datagram to elicit an
+.SM ICMP 
+\f4ECHO_RESPONSE\f1
+from the specified
+\f2host\f1 or network gateway.
+If
+.I host
+responds,
+\f4ping\f1
+will print
+\f2host \f4is alive\f1
+on the standard output and exit.  Otherwise after
+.I timeout
+seconds, it will write
+\f4no answer from \f2host\f1.
+The default value of
+.I timeout
+is 20 seconds.
+.LP
+When the
+\f4\-s\f1
+flag is specified,
+\f4ping\f1
+sends one datagram per second, and
+prints one line of output for every
+\f4ECHO_RESPONSE\f1
+that it receives.  No output is produced if there is no response.
+In this second form,
+\f4ping\f1
+computes round trip times and packet loss statistics;
+it displays a summary of this information upon termination or timeout.
+The default datagram packet size is 64 bytes, or you can specify
+a size with the
+.I packetsize
+command-line argument.  If an optional
+.I count
+is given,
+\f4ping\f1
+sends only that number of requests.
+.LP
+When using
+\f4ping\f1
+for fault isolation, first
+ping
+the local host to verify that the local network interface is running.
+.LP
+.SH OPTIONS
+.TP
+\f4\-l\f1
+Loose source route. Use this option in the
+.SM IP
+header to send the packet to the given host and back again.
+Usually specified with the 
+\f4\-R\f1
+option.
+.TP
+\f4\-r\f1
+Bypass the normal routing tables and send directly to a host on an
+attached network.  If the host is not on a directly-attached network,
+an error is returned.
+This option can be used to
+\f4ping\f1
+a local host through an interface that has been dropped by the
+router daemon [see
+\f4routed\f1(1M)].
+.TP
+\f4\-R\f1
+Record route.
+Sets the
+.SM IP
+record route option, which will store the route
+of the packet inside the
+.SM IP
+header.  The contents of the record route
+will only be printed if the
+\f4\-v \f1
+option is given, and only be set on return packets if the target host
+preserves the record route option across echos, or the 
+\f4\-l\f1
+option is given.
+.TP
+\f4\-v\f1
+Verbose output.  List any
+.SM ICMP
+packets, other than
+\f4ECHO_RESPONSE\f1,
+that are received.
+.\".SH AUTHOR
+.\"Mike Muuss
+.SH SEE ALSO
+\f4ifconfig\f1(1M),
+\f4netstat\f1(1M),
+\f4rpcinfo\f1(1M),
+\f4icmp\f1(7)

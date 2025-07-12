@@ -1,0 +1,46 @@
+'\"macro stdmacro
+.if n .pH gen.freemsg @(#)freemsg	40.2 of 1/7/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.nr X
+.if \nX=0 .ds x} freemsg D3DK "STREAMS" "DDI/DKI" "\&"
+.if \nX=1 .ds x} freemsg D3DK "STREAMS" "DDI/DKI"
+.if \nX=2 .ds x} freemsg D3DK "" "\&"
+.if \nX=3 .ds x} freemsg "" "" "\&"
+.TH \*(x}
+.IX "\f4freemsg\fP(D3DK)"
+.IX "STREAMS message blocks"
+.IX "message (STREAMS), block"
+.SH NAME
+\f4freemsg\f1 \- free a message
+.SH SYNOPSIS
+.nf
+.na
+\f4#include <sys/stream.h>
+.sp 0.5
+void freemsg(mblk_t *\f2mp\f4);\f1
+.ad
+.fi
+.SH ARGUMENTS
+.RS 0n 10
+.IP "\f2mp\f1" 10n
+Pointer to the message to be deallocated.
+.RE
+.SH DESCRIPTION
+\f4freemsg\f1 frees all message blocks, data blocks,
+and data buffers
+associated with the message pointed to by \f2mp\f1.
+\f4freemsg\f1 walks down the \f4b_cont\fP list [see \f4msgb\fP(D4DK)], calling
+\f4freeb\f1(D3DK) for every message block in the message.
+.SH "RETURN VALUE" 
+None.
+.SH "LEVEL" 
+Base or Interrupt.
+.SH NOTES
+Does not sleep.
+.SH "SEE ALSO" 
+.na
+\f4freeb\f1(D3DK),
+\f4msgb\fP(D4DK)
+.ad
+.SH EXAMPLE 
+See \f4copymsg\f1(D3DK) for an example of \f4freemsg\f1.

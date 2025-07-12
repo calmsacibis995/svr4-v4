@@ -1,0 +1,129 @@
+'\"macro stdmacro
+.if n .pH g1a.uugetty @(#)uugetty	40.6 of 2/27/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} uugetty 1M "Basic Networking Utilities" "\&"
+.if \nX=1 .ds x} uugetty 1M "Basic Networking Utilities"
+.if \nX=2 .ds x} uugetty 1M "" "\&"
+.if \nX=3 .ds x} uugetty "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4uugetty\f1 \- set terminal type, modes, speed, and line discipline
+.SH SYNOPSIS
+\f4/usr/lib/uucp/uugetty\f1 [\f4\-t \f2timeout\f1] [\f4\-r\f1] \f2line\f1 [\f2speed\f1 [\f2type\f1 [\f2linedisc\f1] ] ]
+.br
+\f4/usr/lib/uucp/uugetty \-c\f1
+\f2file\f1
+.SH DESCRIPTION
+\f4uugetty\fP
+is identical to \f4getty\fP(1M) but changes have been made to support
+using the line for \f4uucico\fP, \f4cu\fP, and \f4ct\fP;
+that is, the line can be used in both directions.
+The \f4uugetty\fP allows users to login, but if the line is free,
+\f4uucico\fP, \f4cu\fP, or \f4ct\fP can use it for dialing out.
+The implementation depends on the fact that \f4uucico\fP, \f4cu\fP, and \f4ct\fP
+create lock files when devices are used.
+When the \f4open\fP returns
+(or the first character is read when
+\f4\-r\f1
+option is used),
+the status of the lock file indicates whether the line is being
+used by \f4uucico\fP, \f4cu\fP, \f4ct\fP, or someone trying to login.
+Note that in the
+\f4\-r\f1
+case, several
+.SM RETURN
+characters may be required before the
+login message is output.
+\f4uucico\f1 trying to login will have to be told by using the following
+login script:
+.PP
+	\f4""  \\r\\d\\r\\d\\r\\d\\r in:--in: \f1. . .
+.PP
+where the ``. . .'' is whatever would normally be used for the login sequence.
+.PP
+If there is a
+\f4uugetty\fP
+on one end of a direct line,
+there must be a
+\f4uugetty\fP
+on the other end as well.
+Here is an \f4/etc/inittab\f1 entry using \f4uugetty\fP on an intelligent modem or
+direct line:
+.PP
+	\f430:2:respawn:/usr/lib/uucp/uugetty \-r \-t 60 tty12 1200\fP
+.PP
+.PP
+The meanings of the available options are
+.PP
+.PD 0
+.TP
+\f4\-t \f2timeout\f1
+Specifies that \f4uugetty\fP should exit if the open on the line
+succeeds and there is no response to the login prompt in \f2timeout\f1 seconds.
+\f2timeout\f1 is replaced by an integer.
+.TP
+\f4\-r\fP
+Causes \f4uugetty\fP to wait to read a character before it puts out the
+login message, thus preventing two \f4uugetty\fPs from looping.
+An entry for an intelligent modem or direct line that has a \f4uugetty\fP
+on each end must use this option.
+.TP
+\f2line\fP
+Defines the name of the line to which \f4uugetty\fP will attach itself.
+The line name will point to an entry in the \f4/dev\f1 directory.
+For example, \f4/dev/tty03\f1.
+.TP
+\f2speed\fP
+Defines the entry to use from the \f4/usr/lib/saf/ttymondefs\f1 file.
+The entry defines the line speed, the login message, the initial
+tty setting, and the next speed to try if the user says the speed
+is inappropriate (by sending a \f2break\f1 character).
+The default \f2speed\f1 is 300.
+.TP
+\f2type\fP
+Defines the type of terminal connected to the line.
+The default terminal is \f4none\f1, representing a normal terminal
+unknown to the system.
+.TP
+\f2linedisc\fP
+Sets the line discipline to use on the line.
+The default is \f4LDISC0\f1, which is the only one currently compiled
+into the operating system.
+.bp
+.TP
+\f4\-c \f2file\f1
+Checks the speed and tty definitions in \f2file\f1 and sends the results
+to standard output.
+Unrecognized modes and improperly constructed entries are reported.
+For correct entries, flag values are printed.
+\f2file\f1 is replaced by \f4/usr/lib/saf/ttymondefs\f1 or a similarly structured
+file.
+.PD
+.SH FILES
+.ft 4
+.nf
+/usr/lib/saf/ttymondefs
+/etc/issue
+.ft 1
+.SH "SEE ALSO"
+\f4uucico\fP(1M),
+\f4getty\fP(1M),
+\f4init\fP(1M),
+\f4gettydefs\fP(4),
+\f4inittab\fP(4),
+\f4tty\fP(7).
+.P
+\f4ct\fP(1C),
+\f4cu\fP(1C),
+\f4login\fP(1) in the
+\f2User's Reference Manual\f1.
+.P
+\f4ioctl\fP(2),
+in the
+\f2Programmer's Reference Manual\f1.
+.SH NOTES
+\f4ct\fP
+does not work when \f4uugetty\fP is used with an intelligent modem
+such as Penril or Ventel.

@@ -1,0 +1,84 @@
+'\"macro stdmacro
+.if n .pH g4.login @(#)login	40.6 of 1/3/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+'\"macro stdmacro
+.if n .pH g1.login @(#)login 30.2 of 12/25/85
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.if \nX=0 .ds x} login 4 "" "\&"
+.if \nX=1 .ds x} login 4 ""
+.if \nX=2 .ds x} login 4 "" "\&"
+.if \nX=3 .ds x} login 4 "" "" "\&"
+.nr X
+.TH \*(x} "" "386 Computer Only"
+.SH NAME
+\f4login\f1 \- login default file 
+.SH DESCRIPTION
+.PP
+Options for the \f4login\f1 program can be set or changed with keywords
+in \f4/etc/default/login\f1.
+The following keywords are recognized by \f4login\f1.
+.TP .75i
+\f4CONSOLE\f1
+If set, only the superuser may login on the terminal defined 
+at the console.
+For example,
+.sp .5
+.nf
+     \f4CONSOLE= /dev/console\f1
+.fi
+.sp .5
+means that only root may login on the console.
+If CONSOLE is not in \f4/etc/default/login\f1, the superuser may 
+login on any terminal.
+.TP
+\f4ALTSHELL\f1
+If set to \f4YES\f1, the SHELL environment variable will be set to the users shell,
+if that shell is not \f4/bin/sh\f1.
+If set to \f4NO\f1, the names of nonstandard shells will not be put in the
+SHELL environment variable.
+The default value for this variable is \f4NO\f1.
+For increased security, this should be set to \f4YES\f1.
+.TP
+\f4PASSREQ\f1
+If set to \f4YES\f1, all users must have a password.
+Any  user without a password will be asked for one at the first
+opportunity permitted by the password aging set for that user
+(i.e., users without passwords may not change their
+NULL passwords if password aging is enabled for them, and
+the minimum time before a password can be changed has not elapsed).
+.TP
+\f4TIMEZONE\f1
+This variable sets the \f4TZ\f1 variable in the environment of the user.
+It must match the timezone set in the \f4/etc/TIMEZONE\f1.       
+.TP
+\f4HZ\f1
+This variable sets the environment \f2HZ\f1, the rate of the system
+clock, for the user logging in.
+.TP
+\f4PATH\f1
+This variable sets a default path for a user who does not have uid 0.
+.TP
+\f4SUPATH\f1
+This variable sets the default path for the superuser logging in.
+Another default path for the superuser is in
+\f4/etc/default/su\f1, which is set for superusers who did not
+login in as such.
+.TP
+\f4ULIMIT\f1
+This variable sets the maximum file size for a user.
+It is in units of 512-byte blocks.
+.TP
+\f4TIMEOUT\f1
+This variable is the length of time which \f4login\f1 will wait
+for a password after receiving a user name.
+It is in units of seconds.
+.TP
+\f4UMASK\f1
+This variable is the default umask for users.
+\f4IDLEWEEKS\f1
+This variable is the number of weeks which an account may
+remain idle before its login is disabled.
+.SH FILES
+\f4/etc/default/login\f1
+.Ee

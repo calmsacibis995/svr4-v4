@@ -1,0 +1,49 @@
+'\"macro stdmacro
+.if n .pH g1.uptime @(#)uptime	40.11 of 5/21/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+'\" macro stdmacro
+.\" Copyright (c) 1988 Sun Microsystems, Inc. - All Rights Reserved.
+.\"
+.nr X
+.if \nX=0 .ds x} uptime 1 "BSD Compatibility Package" "\&"
+.if \nX=1 .ds x} uptime 1 "BSD Compatibility Package"
+.if \nX=2 .ds x} uptime 1 "" "\&"
+.if \nX=3 .ds x} uptime "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4uptime\f1 \- show how long the system has been up
+.SH SYNOPSIS
+\f4/usr/ucb/uptime\f1
+.SH DESCRIPTION
+.P
+The
+\f4uptime\f1
+command prints the current time, the length
+of time the system has been up.
+It is the first line of a
+\f4w\f1(1)
+command.
+.SH EXAMPLE
+.P
+Below is an example of the output
+\f4uptime\f1
+provides:
+.RS
+.nf
+.ft 4
+uptime
+6:47am  up 6 days, 16:38,  1 users
+.ft 1
+.fi
+.RE
+.SH SEE ALSO
+\f4w\fP(1)
+.P
+\f4whodo\fP(1)
+in the \f2System Administrator's Reference Manual\f1
+.br
+\f4who\f1
+in the \f2User's Reference Manual\f1
+.SH NOTES
+\f4who \-b\f1 gives the time the system was last booted.

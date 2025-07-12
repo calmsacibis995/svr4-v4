@@ -1,0 +1,12 @@
+.if n .pH 386.Cblockhnd @(#)Cblockhnd	40.8
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.BK "Multibus Reference Manual" "" "" ""   
+.\ACRONYM	                  
+.CH "Static Bad Block Handling" "" "Table of Contents" "7"
+.\CHAPTER	7
+.tC 1 "Overview" 7-1  
+.tC 1 "Architecture" 7-2  
+.tC 2 " Overview" 7-2  
+.tC 2 "Disk Partitions" 7-2  
+.tC 3 "Manufacturer's Defect List" 7-2  
+.tC 3 "Surrogate Block Pool" 7-2  

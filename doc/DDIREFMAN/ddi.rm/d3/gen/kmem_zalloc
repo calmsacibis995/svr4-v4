@@ -1,0 +1,69 @@
+'\"macro stdmacro
+.if n .pH gen.kmem_zalloc @(#)kmem_zalloc	40.3 of 3/26/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.nr X
+.if \nX=0 .ds x} kmem_zalloc D3DK "" "DDI/DKI" "\&"
+.if \nX=1 .ds x} kmem_zalloc D3DK "" "DDI/DKI"
+.if \nX=2 .ds x} kmem_zalloc D3DK "" "\&"
+.if \nX=3 .ds x} kmem_zalloc "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4kmem_zalloc\f1 \- allocate and clear space from kernel free memory
+.IX "\f4kmem_zalloc\fP(D3DK)"
+.SH SYNOPSIS
+.nf
+.na
+\f4#include <sys/types.h>
+#include <sys/kmem.h>
+.sp 0.5
+void *kmem_zalloc(size_t \f2size, \f4int \f2flag\f4);\f1
+.ad
+.fi
+.SH ARGUMENTS
+.RS 0n 10
+.IP "\f2size\f1" 10n
+Number of bytes to allocate.
+.IP "\f2flag\f1" 10n
+Specifies whether the caller is willing to sleep waiting for memory.
+If \f2flag\f1 is set to \f4KM_SLEEP\f1, the caller will sleep
+if necessary until the specified amount of memory is available.
+If \f2flag\f1 is set to \f4KM_NOSLEEP\f1, the caller will not sleep,
+but \f4kmem_zalloc\f1 will return \f4NULL\f1 if the specified amount
+of memory is not immediately available.
+.RE
+.SH DESCRIPTION
+\f4kmem_zalloc\f1 allocates \f2size\f1 bytes of kernel
+memory, clears the memory by filling it with zeros,
+and returns a pointer to the allocated memory.
+.SH RETURN VALUE
+Upon successful completion, \f4kmem_zalloc\f1 returns a pointer to the
+allocated memory.
+If \f4KM_NOSLEEP\f1 is specified and sufficient memory is not immediately
+available, \f4kmem_zalloc\f1 returns a \f4NULL\f1 pointer.
+If \f2size\f1 is set to \f40\f1, \f4kmem_zalloc\f1 returns \f4NULL\f1
+regardless of the value of \f2flag\f1.
+.SH LEVEL
+Base only if \f2flag\f1 is set to \f4KM_SLEEP\f1.
+Base or interrupt if \f2flag\f1 is set to \f4KM_NOSLEEP\f1.
+.SH NOTES
+May sleep if \f2flag\f1 is set to \f4KM_SLEEP\f1.
+.sp 0.5
+Kernel memory is a limited resource and should be used judiciously.
+Memory allocated using \f4kmem_zalloc\f1 should be freed as soon as
+possible.
+Drivers should not use local freelists for memory or similar schemes
+that cause the memory to be held for longer than necessary.
+.sp 0.5
+Since holding memory allocated using \f4kmem_zalloc\f1 for extended periods
+of time (e.g allocating memory at system startup and never freeing it)
+can have an adverse effect on overall memory usage and system performance,
+memory needed for such extended periods should be statically allocated whenever
+possible.
+.sp 0.5
+The address returned by a successful call to \f4kmem_zalloc\f1 is
+word-aligned.
+.SH SEE ALSO
+.na
+\f4kmem_alloc\f1(D3DK),
+\f4kmem_free\f1(D3DK)
+.ad

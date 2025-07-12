@@ -1,0 +1,39 @@
+'\"macro stdmacro
+.if n .pH g1a.id @(#)id	40.11 of 4/16/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} id 1M "Essential Utilities" "\&"
+.if \nX=1 .ds x} id 1M "Essential Utilities"
+.if \nX=2 .ds x} id 1M "" "\&"
+.if \nX=3 .ds x} id "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4id\f1 \- print the user name and ID, and group name and ID
+.SH SYNOPSIS
+\f4id\f1
+[
+\f4\-a\f1
+]
+.SH DESCRIPTION
+.LP
+\f4id\f1
+displays the calling process's \f4ID\fP and name.
+It also displays the group \f4ID\fP and name.  If the real
+effective \f4ID\fPs do not match, both are printed.
+.P
+The \f4-a\fP option reports all the groups to which the
+invoking process belongs.
+.SM ID\s0,
+and your username.
+If your real and effective 
+.SM ID\s0s
+do not match, both are printed.
+.LP
+The
+\f4\-a\f1
+option reports all the groups to which the invoking
+user belongs.
+.SH SEE ALSO
+\f4getuid\f1(2)
+in the \f2Programmer's Reference Manual\f1

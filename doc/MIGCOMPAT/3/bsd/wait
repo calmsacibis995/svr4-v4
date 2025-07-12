@@ -1,0 +1,386 @@
+'\"macro stdmacro
+.if n .pH g2.wait @(#)wait	40.11 of 4/24/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.\" Copyright (c) 1980 Regents of the University of California.
+.\"
+.\" Copyright (c) 1988 Sun Microsystems, Inc. - All Rights Reserved.
+.\"
+.\" All rights reserved.  The Berkeley software License Agreement
+.\" specifies the terms and conditions for redistribution.
+.\"
+.nr X
+.if \nX=0 .ds x} wait 3 "BSD Compatibility Package" "\&"
+.if \nX=1 .ds x} wait 3 "BSD Compatibility Package"
+.if \nX=2 .ds x} wait 3 "" "\&"
+.if \nX=3 .ds x} wait "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4wait\f1, \f4wait3\f1, \f4WIFSTOPPED\f1, \f4WIFSIGNALED\f1, \f4WIFEXITED\f1 \- wait for process to terminate or stop
+.SH SYNOPSIS
+\f4cc \f1[ \f2flag\f1\. \. \. ] \f2file\f1 \. \. \. \f4\-lucb\f1
+.P
+\f4#include <sys/wait.h>\f1
+.P
+.nf
+\f4int wait(statusp)\f1
+\f4union wait \(**statusp;\f1
+.fi
+.P
+.nf
+\f4#include <sys/time.h>\f1
+\f4#include <sys/resource.h>\f1
+.fi
+.P
+.nf
+.ft 4
+int wait3(statusp, options, rusage)
+union wait \(**statusp;
+int options;
+struct rusage \(**rusage;
+.ft 1
+.fi
+.\".P
+.\".nf
+.\".ft 4
+.\"int wait4(pid, statusp, options, rusage)
+.\"int pid;
+.\"union wait \(**statusp;
+.\"int options;
+.\"struct rusage \(**rusage;
+.\".ft 1
+.\".fi
+.P
+.nf
+\f4WIFSTOPPED(status)\f1
+\f4union wait status;\f1
+.fi
+.P
+.nf
+\f4WIFSIGNALED(status)\f1
+\f4union wait status;\f1
+.fi
+.P
+.nf
+\f4WIFEXITED(status)\f1
+\f4union wait status;\f1
+.fi
+.SH DESCRIPTION
+.P
+\f4wait\f1
+delays its caller until a signal is received or
+one of its child
+processes terminates or stops due to tracing.
+If any child has died or stopped due to tracing and this has not been
+reported using
+\f4wait\f1,
+return is immediate, returning the process
+.SM ID
+and exit status of one of those children.
+If that child had died, it is discarded.
+If there are no children, return is immediate with
+the value \-1 returned.
+If there are only running or stopped but reported children,
+the calling process is blocked.
+.P
+If
+.I status
+is not a
+\f4NULL\fP
+pointer, then on return from a successful
+\f4wait\f1
+call the status of the child process whose process
+.SM ID
+is the return value of
+\f4wait\f1
+is stored in the
+\f4wait\f1
+union pointed to by
+.IR status .
+The
+\f4w_status\f1
+member of that union is an
+\f4int\f1;
+it indicates the cause of termination and other information about the
+terminated process in the following manner:
+.RS
+.TP 3
+\(bu
+If the low-order 8 bits of
+\f4w_status\f1
+are equal to 0177, the child process has stopped; the 8 bits higher up from
+the low-order 8 bits of
+\f4w_status\f1
+contain the number of the signal that caused the process to stop.
+See
+\f4ptrace\f1(2)
+and
+\f4sigvec\f1(3).
+.TP
+\(bu
+If the low-order 8 bits of
+\f4w_status\f1
+are non-zero and are not equal to 0177, the child process terminated
+due to a signal; the low-order 7 bits of
+\f4w_status\f1
+contain the number of the signal that terminated the process.
+In addition, if the low-order seventh bit of
+\f4w_status\f1
+(that is, bit 0200) is set, a ``core image'' of the process was produced; see
+\f4sigvec\f1(3).
+.TP
+\(bu
+Otherwise, the child process terminated due to an
+\f4exit\f1
+call; the 8 bits higher up from the low-order 8 bits of
+\f4w_status\f1
+contain the low-order 8 bits of the argument that the child process
+passed to
+\f4exit\f1;
+see
+\f4exit\f1(2).
+.RE
+.br
+.ne 5
+.P
+Other members of the
+\f4wait\f1
+union can be used to extract this information more conveniently:
+.RS
+.TP 3
+\(bu
+If the
+\f4w_stopval\f1
+member has the value
+\f4WSTOPPED\f1,
+the child process has stopped; the
+value of the
+\f4w_stopsig\f1
+member is the signal that stopped the process.
+.TP
+\(bu
+If the
+\f4w_termsig\f1
+member is non-zero, the child process terminated due to a signal; the
+value of the
+\f4w_termsig\f1
+member is the number of the signal that terminated the process.
+If the
+\f4w_coredump\f1
+member is non-zero, a core dump was produced.
+.TP
+\(bu
+Otherwise, the child process terminated due to an
+\f4exit\f1
+call; the value of the
+\f4w_retcode\f1
+member is the low-order 8 bits of the argument that the child process
+passed to
+\f4exit\f1.
+.RE
+.P
+The other members of the
+\f4wait\f1
+union merely provide an alternate way of analyzing the status.
+The
+value stored in the
+\f4w_status\f1
+field is compatible with the values stored by other versions of the
+.SM UNIX
+system, and an argument of type
+\f4int \(**\f1
+may be provided instead of an argument of type
+\f4union wait \(**\f1
+for compatibility with those versions.
+.P
+\f4wait3\f1
+is an alternate interface that
+allows both non-blocking status collection and
+the collection of the status of children stopped by any means.
+The
+.I status
+parameter is defined as above.
+The
+.I options
+parameter is used to indicate the call should not block if
+there are no processes that have status to report
+\f1(\f4WNOHANG\f1),
+and/or that children of the current process that are stopped
+due to a
+\f4SIGTTIN\f1,
+\f4SIGTTOU\f1,
+\f4SIGTSTP\f1,
+or
+\f4SIGSTOP\fP
+signal are eligible to have
+their status reported as well
+\f1(\f4WUNTRACED\f1).
+A terminated child is discarded after it reports status, and a stopped
+process will not report its status more than once.
+If
+.I rusage
+is not a
+\f4NULL\fP
+pointer, a summary of the resources used by the terminated
+process and all its
+children is returned.
+Only the user time used and the system time used are currently available.
+They are returned in
+\f4rusage.ru_utime\f1 and \f4rusage.ru_stime\f1, respectively.
+.P
+When the
+.SM WNOHANG
+option is specified and no processes
+have status to report,
+\f4wait3\f1
+returns 0.
+The
+\f4WNOHANG\fP
+and
+\f4WUNTRACED\fP
+options may be combined by
+.SM OR\s0ing
+the two values.
+.\" .P
+.\" \f4wait4\f1
+.\" is another alternate interface.
+.\" With a
+.\" .I pid
+.\" argument of 0, it is equivalent to
+.\" \f4wait3\f1.
+.\" If
+.\" .I pid
+.\" has a nonzero value, then \f4wait4\f1
+.\" returns status for
+.\" the user time used and the system time used, only.
+.P
+\f4WIFSTOPPED\f1,
+\f4WIFSIGNALED\f1,
+\f4WIFEXITED\f1,
+are macros that take an argument
+.IR status ,
+of type
+\f1`\f4union wait\f1',
+as returned by
+\f4wait\f1,
+or
+\f4wait3\f1.
+.\" or
+.\" \f4wait4\f1.
+\f4WIFSTOPPED\fP
+evaluates to true (1) when the process for which the
+\f4wait\f1
+call was made is stopped, or to false (0) otherwise.
+\f4WIFSIGNALED\fP
+evaluates to true when the process was terminated with a signal.
+\f4WIFEXITED\fP
+evaluates to true whe the process exited by using an
+\f4exit\f1(2)
+call.
+.SH "RETURN VALUE"
+If
+\f4wait\f1
+returns due to a stopped
+or terminated child process, the process ID of the child
+is returned to the calling process.
+Otherwise, a value of \-1
+is returned and
+\f4errno\f1
+is set to indicate the error.
+.P
+\f4wait3\f1
+.\" and
+.\" \f4wait4\f1
+returns 0 if
+\f4WNOHANG\fP
+is specified and there are
+no stopped or exited children, and returns the process
+.SM ID
+of the
+child process if it returns due to a stopped or terminated child
+process.
+Otherwise, wait3 returns a value of \-1
+and sets
+\f4errno\f1
+to indicate the error.
+.SH ERRORS
+\f4wait\f1,
+or
+\f4wait3\f1
+.\" or
+.\" \f4wait4\f1
+will fail and return immediately if one or more of the following
+are true:
+.TP 15
+\f4ECHILD\fP
+The calling process has no existing unwaited-for
+child processes.
+.TP
+\f4EFAULT\fP
+The
+\f2status\fP or
+.I rusage
+arguments point to an illegal address.
+.P
+\f4wait\f1,
+and
+\f4wait3\f1
+.\" and
+.\" \f4wait4\f1
+will terminate prematurely, return \-1, and set
+\f4errno\f1
+to
+\f4EINTR\fP
+upon the arrival of a signal whose
+\f4SV_INTERRUPT\fP
+bit in its flags field is set [see
+\f4sigvec\f1(3)
+and
+\f4siginterrupt\f1(3)].
+\f4signal\f1(3),
+in the System V compatibility library, sets this bit for any signal it catches.
+.SH "SEE ALSO"
+\f4sigvec\fP(3),
+\f4getrusage\fP(3),
+\f4siginterrupt\fP(3),
+\f4signal\fP(3)
+.P
+\f4exit\fP(2),
+\f4ptrace\fP(2),
+\f4signal\fP(2)
+\f4wait\fP(2),
+\f4waitpid\fP(2)
+in the \f2Programmer's Reference Manual\f1
+.SH NOTES
+.P
+If a parent process terminates without
+waiting on its children,
+the initialization process
+(process
+.SM ID
+= 1)
+inherits the children.
+.P
+\f4wait\f1,
+and
+\f4wait3\f1
+.\" and
+.\" \f4wait4\f1
+are automatically restarted when a process receives a
+signal while awaiting termination of a child process, unless the
+\f4SV_INTERRUPT\fP
+bit is set in the flags for that signal.
+.P
+Calls to
+\f4wait\f1
+with an argument of 
+\f40\f1
+should be cast to type
+\f1`\f4union wait *\f1',
+as in:
+.IP
+\f4wait((union wait *)0)\f1
+.P
+Otherwise
+\f4lint\f1
+will complain.

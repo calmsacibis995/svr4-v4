@@ -1,0 +1,47 @@
+'\"macro stdmacro
+.if n .pH gen.etoimajor @(#)etoimajor	40.2 of 1/7/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.nr X
+.if \nX=0 .ds x} etoimajor D3DK "" "DDI/DKI" "\&"
+.if \nX=1 .ds x} etoimajor D3DK "" "DDI/DKI"
+.if \nX=2 .ds x} etoimajor D3DK "" "\&"
+.if \nX=3 .ds x} etoimajor "" "" "\&"
+.TH \*(x}
+.IX "\f4etoimajor\fP(D3DK)"
+.SH NAME
+\f4etoimajor\f1 \- convert external to internal major device number
+.IX "major device number"
+.SH SYNOPSIS
+.nf
+.na
+\f4#include <sys/types.h>
+#include <sys/ddi.h>
+.sp 0.5
+major_t etoimajor(major_t \f2emaj\f4);\f1
+.ad
+.fi
+.SH ARGUMENTS
+.RS 0n 10
+.IP "\f2emaj\f1" 10n
+External major number.
+.RE
+.SH DESCRIPTION
+\f4etoimajor\f1 converts the external major number (\f2emaj\f1)
+to an internal major number.  See \f4getemajor\fP(D3DK) for a description
+of external and internal major numbers.
+.SH RETURN VALUE
+\f4etoimajor\f1 returns the internal major number or
+\f4NODEV\f1 if the external major number is invalid.
+.SH LEVEL
+Base or Interrupt.
+.SH NOTES
+Does not sleep.
+.SH SEE ALSO
+.na
+\f4getemajor\f1(D3DK),
+\f4geteminor\f1(D3DK),
+\f4getmajor\f1(D3DK),
+\f4getminor\f1(D3DK),
+\f4itoemajor\f1(D3DK),
+\f4makedevice\f1(D3DK)
+.ad

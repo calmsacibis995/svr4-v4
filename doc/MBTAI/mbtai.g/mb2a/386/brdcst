@@ -1,0 +1,94 @@
+.if n .pH 386.brdcst @(#)brdcst	40.7 of 5/15/91
+'\"macro stdmacro
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} mb2a_brdcst 3tai "" "\&"
+.if \nX=1 .ds x} mb2a_brdcst 3tai ""
+.if \nX=2 .ds x} mb2a_brdcst 3tai "" "\&"
+.if \nX=3 .ds x} mb2a_brdcst "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4mb2a_brdcst\f1 \- Sends a broadcast message in asynchronous mode.
+.SH SYNOPSIS
+.ft 4
+.nf
+#include <sys/types.h>
+#include <sys/mb2taiusr.h>0
+int mb2a_brdcst(fd, portid, ctlbufptr)
+int fd;
+unsigned short portid;
+mb2_buf *ctlbufptr;
+.fi
+.SH DESCRIPTION
+This routine is used to send broadcast messages in asynchronous mode.
+.TP .7i
+\f4fd\f1
+specifies an asynchronous mode file descriptor referencing
+an open port.
+.TP
+\f4portid\f1
+is the port to which broadcasts are sent.
+.TP
+\f4ctlbufptr\f1
+is a pointer to a buffer describing the control
+portion of the message to be broadcast.
+.P
+To broadcast a message, \f4ctlbufptr\f1 must be non-NULL and the len
+field of \f4ctlbufptr\f1 must have a value greater than 0.
+A NULL message can be
+broadcast if the \f4ctlbufptr\f1
+is NULL or the len field is set to 0.
+The maximum
+control portion of the broadcast message is 20 bytes.
+\f4mb2a_brdcst\f1 fails
+with a return value of -1 and \f4errno\fP set to \f4EAGAIN\f1
+if the send side queue is
+full due to internal flow control conditions.
+The flow control parameters can
+be set at the time the port is opened.
+.P
+\f4mb2a_brdcst\f1 blocks when waiting for the availablility of internal
+buffers.
+When the routine returns, the message has been either broadcast or has
+been queued to be broadcast.
+No completion or error indication is returned to
+the user if the transfer fails.
+.P
+Upon successful completion of the routine, a value of 0 is returned.
+A value of -1 is returned and an \f4errno\fP is set if there were errors.
+The following is a list of applicable errors for this routine.
+.TP .7i
+\f4EAGAIN\f1
+buffers could not be allocated for message to
+be sent.
+.TP .7i
+\f4EAGAIN\f1
+the message could not be sent due to flow
+control conditions.
+.TP .7i
+\f4EBADF\f1
+\f4fd\f1 is not a valid file descriptor.
+.TP .7i
+\f4EFAULT\f1
+\f4ctlbufptr\fP points outside the allocated address
+space.
+.TP .7i
+\f4EINTR\f1
+a signal was caught during the \f4mb2a_brdcst\f1
+call.
+.TP .7i
+\f4ENOSTR\f1
+\f4fd\f1 is not a file descriptor to a MB II
+transport endpoint.
+.TP .7i
+\f4EINVAL\f1
+an invalid value was specified in one of the
+argument buffers.
+.TP .7i
+\f4ERANGE\f1
+the size of the control part of the message is
+outside the range of minimum/maximum allowable message size.
+.SH SEE ALSO
+\f4putmsg\f1(2), \f4getmsg\f1(2), \f4write\f1(2), \f4mb2a_openport\f1(3tai),
+\f4mb2a_closeport\f1(3tai)

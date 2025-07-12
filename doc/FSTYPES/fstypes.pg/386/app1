@@ -1,0 +1,165 @@
+.if n .pH fstw_guide.app1 @(#)app1	40.3
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1990 AT&T
+.BK "Writing File System Types"
+.CH "Appendix" "A"
+.H 1 "Recent Changes Affecting File System Types"
+In UNIX System V/386 Release 4 Version 3, several changes 
+were made that affect the implementation of file system types.
+This appendix briefly describes and discusses the
+affect that the changes have on the compatibility
+of file system types and kernels from different
+versions of UNIX System V/386 Release 4.
+In the following pages, UNIX System V/386 Release 4
+Version 2 and UNIX System V/386 Release 4 Version 3 
+will be referred to as Version 2 and Version 3 respectively.
+.P
+The changes discussed here permit old file system types to
+run on new systems with minimal or no change,
+but do not allow new file system types to run on old systems.
+They are provided here specifically for developers of 
+file system types.
+.H 2 "New vnode Operation"
+The first change affecting development
+of file system types is the addition of
+a new vnode operation called
+\f4vop_allocstore\f1.
+This operation allocates storage for a specified offset
+and length within a file.
+Its primary use is to pre-allocate space for a
+swap file, although it is also used to
+pre-allocate space for any file.
+Details are provided in the body of this document.
+.H 2 "Implementation Changes in Standard FS Types"
+There have been some important changes in the 
+implementation of the standard
+file system types, that serve as a
+model for file system type developers.
+In both the s5 and ufs file system types,
+the implementation of the \f4vop_putpage\f1
+operation has been changed.
+The \f4vop_putpage\f1 operation does not allocate disk 
+blocks for the page being written out.
+Instead, it writes out the portion of the page
+for which blocks have been allocated.
+.P
+With disk block allocation removed from \f4vop_putpage\f1
+all necessary disk blocks must be allocated outside of
+\f4vop_putpage\f1.
+This is accomplished by a combination of
+additional file system and kernel changes.
+The basic idea involves two principles, one old and one new.
+The first principle is that
+needed disk blocks are allocated
+during page-fault handling on a write fault.
+The second principle is that logically writable mappings
+to pages that may have holes
+should be maintained as read-only mappings within page tables,
+so that any write access will result in a write fault,
+during which needed disk blocks will be allocated.
+.P
+The second principle was already in effect in
+the use of \f4vop_getpage\f1.
+When a page was brought in as a result of
+a read fault, the page table was set up to keep
+the page read-only, even if the mapping was logically
+writable.
+This principle now finds new applications in the
+following three contexts.
+.BL
+.LI
+In the kernel routine, \f4hat_map\f1, when a new writable 
+mapping is made to an in-core page
+that is mapped read-only in all other address spaces.
+.P
+In this case, the page table entry for the new mapping
+has read-only permissions, until a write fault occurs
+and disk blocks can be allocated; at that point, the
+page table entry is changed to allow writing.
+.LI
+In the vnode segment driver routine \f4segvn_setprot\f1,
+when an incore read-only page is made writable.
+.P
+The page table entry for the mapping continues
+to have read-only permissions, until a write fault occurs.
+.LI
+In the s5 file system, and in any other
+file system in which the blocksize is less than the page size,
+when the last page of a file has a writable mapping, and
+the file is extended in such a way as to create holes in the
+last page.
+.P
+In this case, the file system calls a new kernel
+routine called \f4page_rdonly\f1 to change all page table entries
+referencing the page to be read-only, and if a subsequent
+write fault occurs, disk blocks can be allocated for the page.
+.LE
+.H 2 "Additional VM Changes"
+There are several changes in the VM interface
+used by file system add-ons.
+.P
+The first change is the introduction of special
+page structures called "marker" pages.
+Marker pages are dummy pages used when traversing
+a vnode's page list.
+The routine doing the traversal inserts a start marker
+at the head of the list, and may also use a moving marker to track
+the current position in the list.
+The marker pages are used to track the location in the vnode's page
+list in the face of insertions or deletions of pages
+from the list.
+.P
+Additional changes were made to the semantics of existing
+VM routines used by file system code.
+The routine \f4pvn_vplist_dirty\f1 now calls
+\f4vop_putpage\f1 to write out each dirty page, rather
+than return a list of dirty pages to
+\f4vop_putpage\f1.
+To preserve the interface, \f4pvn_vplist_dirty\f1
+returns a NULL, signifying an empty list.
+.P
+The routine \f4segmap_pagecreate\f1, has also been changed.
+Consequently, the page that is created in the \f4segmap\f1 
+segment is marked as undefined until a \f4segmap_release\f1
+is done on the page.
+More specifically, \f4p_intrans\f1 and \f4p_pagein\f1
+are set for the page, the page is held and locked 
+and the translation is locked.
+.P
+Two new routines were added that are called from file system code.
+The first, \f4as_iolock\f1 is used to pre-fault pages which are
+used as the source for data being written to a file.
+The second, \f4page_rdonly\f1, is used to turn off 
+all write permissions to a page.
+.H 1 "Inter-Version Compatibility of File System Types and the Kernel"
+This section addresses the compatibility issues introduced
+by these changes in the file system types.
+At the present time, while Version 2 file systems will run on Version 3,
+Version 3 file systems will not run on Version 2.
+.H 2 "Version 2 File Systems Running on Version 3"
+Although the compatibility of file system types has
+been preserved during recent VM/VFS changes, one known incompatibility exists.
+This incompatibility will effect only a very limited number
+of file system types.
+.P
+This incompatibility affects Version 2
+file systems that traverse the vnode pages list.
+In Version 2, all pages in the vnode pages list pointed
+back to the vnode.
+With the addition of marker pages in Version 3,
+however, there may be pages in the vnode
+pages list that do not point back to the vnode.
+Moreover, the discipline for inserting and deleting
+pages in the vnode pages list has changed slightly.
+As a result, any file system that traverses the vnode pages
+list directly should be rewritten to follow the new discipline.
+The routine \f4rfc_pageabort\f1 in the RFS code provides an example.
+.H 2 "Version 3 File Systems Running on Version 2"
+File system add-ons developed for Version 3, or converted
+to Version 3 from Version 2, will not run on a Version 2
+kernel.
+The file system changes in Version 3 described above
+must be accompanied by additional changes
+in the kernel; since these changes are not present
+in the Version 2 kernel, the Version 3 file systems will
+not run on the Version 2 kernel.

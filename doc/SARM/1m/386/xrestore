@@ -1,0 +1,194 @@
+'\"macro stdmacro
+.if n .pH g1a.xrestore @(#)xrestore	40.5 of 1/3/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+'\"macro stdmacro
+.if n .pH g1.xrestore @(#)xrestore	1.0 of 12/15/87
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.if \nX=0 .ds x} xrestore 1M "Base System" "\&"
+.if \nX=1 .ds x} xrestore 1M "Base System"
+.if \nX=2 .ds x} xrestore 1M "" "\&"
+.if \nX=3 .ds x} xrestore "" "" "\&"
+.nr X
+.TH \*(x} "" "386 Computer Only"
+.SH NAME
+\f4xrestore, xrestor\f1 \- invoke XENIX incremental filesystem restorer
+.SH SYNOPSIS
+\f4xrestore\f1
+.I key 
+[ 
+.I arguments 
+]
+.sp
+\f4xrestor\f1
+.I key 
+[ 
+.I arguments 
+]
+.SH DESCRIPTION
+\f4xrestore\f1
+is used to read archive media backed up with the XENIX 
+\f4backup\fR(C)\f1
+command.
+The
+.I key\^
+specifies what is to be done.
+.I Key\^
+is one of the characters
+.BR rRxt ,
+optionally combined with
+.BR f .
+\f4xrestor\f1
+is an alternate spelling for the same command.
+.TP 8
+.B  f
+Uses the first
+.I argument\^
+as the name of the archive instead of the default.
+.TP
+\f4F\f1 \f2num\f1
+Specifies the file number of the first volume to be
+restored.
+.TP
+\f4k\f1 \f2vsize\f1
+Specifies the size of the volume to be restored.
+.TP
+\f4r\f1 , \f4R\f1  
+The archive is read and loaded into the filesystem
+specified in
+.IR argument .
+This should not be done lightly (see below).
+If the 
+.I key 
+is
+\f4R\f1 ,
+\f4xrestore\f1
+asks which archive of a multi\&volume set to start on.
+This allows
+\f4xrestore\f1
+to be interrupted and then
+restarted (an
+\f4fsck\f1
+must be done before the restart).
+.TP
+.B  x
+Each file on the archive named by an 
+.I argument\^
+is extracted.
+The filename has all ``mount'' prefixes removed;
+for example, if
+\f4/usr\f1
+is a mounted filesystem,
+\f4/usr/bin/lpr\f1
+is named
+\f4/bin/lpr\f1
+on the archive.
+The extracted file is placed in a file with a numeric name supplied by
+\f4xrestore\f1
+(actually the inode number).
+In order to keep the amount of archive read to a minimum,
+the following procedure is recommended:
+.RS
+.TP 4
+1.
+Mount volume 1 of the set of backup archives.
+.TP
+2.
+Type the
+\f4xrestore\f1
+command.
+.TP
+3.
+\f4r1restore\f1
+will announce whether or not it found the files,
+give the numeric name that it will assign to the file, 
+and in the case of a tape, rewind to the start of the archive.
+.TP
+4.
+It then asks you to ``mount the desired tape volume''.
+Type the number of the volume you choose.
+On a multivolume backup the recommended procedure is to mount the
+volumes, last through first.
+\f4restore\f1
+checks to see if any of the requested files are on the
+mounted archive (or a later archive\-thus the reverse order). 
+If the requested files are not there, \f4xrestore\f1
+doesn't read through the tape.
+If you are working with a single-volume backup 
+or if the number of files
+being restored is large, respond to the query with
+1 ,
+and
+\f4xrestore\f1
+will read the archives in sequential order.
+.RE
+.TP
+\f4X\f1 \f2files\f1
+Puts files in the directory specified by
+.IR arguments .
+.TP
+\f4t\f1
+Prints the date the archive was written and the date
+the filesystem was backed up.
+.TP
+\f4T\f1
+This causes 
+\f4xrestore\f1
+to behave like
+\f4dumpdir\f1 (C)
+except that it doesn't list directories.
+.PP
+The
+\f4r\f1
+option should only be used to restore
+a complete backup archive onto a clear filesystem,
+or to restore an incremental backup archive onto
+a filesystem so created.
+Thus:
+.PP
+	\f4/etc/mkfs\ \|/dev/dsk/0s3\ \|10000\f1
+.br
+	\f4xrestore\ \|r\ \|/dev/dsk/0s3\f1
+.PP
+is a typical sequence to restore a complete backup.
+Another
+\f4xrestore\f1
+can be done to get an incremental backup in on top of this.
+.PP
+A
+\f4backup\f1
+followed by a
+\f4mkfs\f1
+and a
+\f4xrestore\f1
+is used to
+change the size of a filesystem.
+.SH FILES
+.TP 23
+\f4rst*\f1
+Temporary files
+.TP
+\f4/etc/default/xrestore\f1
+Name of default archive device
+.PP
+The default archive unit varies with installation.
+.SH NOTES
+\f4xrestore\f1
+is for XENIX compatibility and should only be used to restore filesystems
+that were backed up under XENIX.
+.P
+It is not possible to successfully 
+restore an entire active 
+\f4root\f1 
+filesystem. 
+.SH DIAGNOSTICS
+There are various diagnostics
+involved with reading the archive and writing the disk.
+There are also diagnostics if the i-list or the free list
+of the filesystem is not large enough to hold the dump.
+.PP
+If the dump extends over more than one disk or tape,
+it may ask you to change disks or tapes.
+Reply with a 
+.SM NEWLINE
+when the next unit has been mounted.

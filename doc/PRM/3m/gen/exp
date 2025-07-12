@@ -1,0 +1,161 @@
+'\"macro stdmacro
+.if n .pH g3m.exp @(#)exp	40.10 of 1/3/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} exp 3M "Math Libraries" "\&"
+.if \nX=1 .ds x} exp 3M "Math Libraries"
+.if \nX=2 .ds x} exp 3M "" "\&"
+.if \nX=3 .ds x} exp "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4exp\f1, \f4expf\f1, \f4cbrt\f1, \f4log\f1, \f4logf\f1, \f4log10\f1, \f4log10f\f1, \f4pow\f1, \f4powf\f1, \f4sqrt\f1, \f4sqrtf\f1 \- exponential, logarithm, power, square root functions
+.SH SYNOPSIS
+\f4cc\f1
+[\f2flag\fP \|.\|.\|.] \f2file\fP \|.\|.\|.
+\f4\-lm\f1
+[\f2library\fP \|.\|.\|.]
+.PP
+\f4cc \-O \-Ksd\f1
+[\f2flag\fP \|.\|.\|.] \f2file\fP \|.\|.\|.
+\f4\-J sfm\f1
+[\f2library\fP \|.\|.\|.]
+.PP
+\f4#include <math.h>\f1
+.nf
+.PP
+\f4double exp (double x);\f1
+.PP
+\f4float expf (float x);\f1
+.PP
+\f4double cbrt (double x);\f1
+.PP
+\f4double log (double x);\f1
+.PP
+\f4float logf (float x);\f1
+.PP
+\f4double log10 (double x);\f1
+.PP
+\f4float log10f (float x);\f1
+.PP
+\f4double pow (double x, double y);\f1
+.PP
+\f4float powf (float x, float y);\f1
+.PP
+\f4double sqrt (double x);\f1
+.PP
+\f4float sqrtf (float x);\f1
+.SH DESCRIPTION
+\f4exp\fP
+and
+\f4expf\fP
+return
+.IR e\u\s8x\s0\d .
+.PP
+\f4cbrt\fP
+returns the cube root of
+.IR x .
+.PP
+\f4log\fP
+and
+\f4logf\fP
+return the natural logarithm of
+.IR x .
+The value of
+.I x\^
+must be positive.
+.PP
+\f4log10\fP
+and
+\f4log10f\fP
+return the base ten logarithm of
+.IR x .
+The value of
+.I x\^
+must be positive.
+.PP
+\f4pow\fP
+and
+\f4powf\fP
+return
+.IR x\u\s8y\s0\d .
+If
+.I x\^
+is 0,
+.I y\^
+must be positive.
+If
+.I x\^
+is negative,
+.I y\^
+must be an integer.
+.PP
+\f4sqrt\fP
+and
+\f4sqrtf\fP
+return the non-negative square root of
+.IR x .
+The value of
+.I x\^
+may not be negative.
+.SH SEE ALSO
+\f4hypot\fP(3M),
+\f4matherr\fP(3M),
+\f4sinh\fP(3M).
+.SH DIAGNOSTICS
+\f4exp\fP and \f4expf\fP return \f4HUGE\f1
+when the correct value would overflow,
+or 0 when the correct value would underflow,
+and set \f4errno\fP to \f4ERANGE\f1.
+.PP
+\f4log\fP, \f4logf\fP, \f4log10\fP, and \f4log10f\fP
+return \f4\-HUGE\f1 and set \f4errno\fP to \f4EDOM\f1 when
+.I x\^
+is non-positive.
+A message indicating \f4DOMAIN\fP
+error is printed on standard error.
+.PP
+\f4pow\fP and \f4powf\fP return 0
+and set \f4errno\fP to \f4EDOM\f1 when
+.I x\^
+is 0 and
+.I y\^
+is non-positive, or when
+.I x\^
+is negative and
+.I y\^
+is not an integer.
+In these cases, a message indicating
+\f4DOMAIN\fP
+error is printed on standard error.
+When the correct value for \f4pow\fP or \f4powf\fP
+would overflow or underflow, these functions return
+\(+-\f4HUGE\f1 or 0, respectively, and set \f4errno\fP to \f4ERANGE\fP.
+.PP
+\f4sqrt\fP and \f4sqrtf\fP return 0 and set \f4errno\fP
+to \f4EDOM\f1 when
+.I x\^
+is negative.
+A message indicating \f4DOMAIN\fP
+error is printed on standard error.
+.PP
+Except when the \f4\-Xc\f1 compilation option is used,
+these error-handling procedures may be changed with the function
+\f4matherr\fP.
+When the \f4\-Xa\f1 or \f4\-Xc\f1 compilation options are used, 
+\f4HUGE_VAL\f1
+is returned instead of 
+\f4HUGE\f1
+and no error messages are printed.
+In these compilation modes, \f4pow\f1 and \f4powf\f1 return
+1, with no error, when both \f2x\f1 and \f2y\f1 are 0;
+when \f2x\f1 is 0 and \f2y\f1 is negative,
+they return \f4\-HUGE_VAL\f1 and set
+\f4errno\f1 to \f4EDOM\f1.
+Under \f4\-Xc\f1, \f4log\f1 and \f4logf\f1
+return \f4\-HUGE_VAL\f1 and
+set \f4errno\f1 to \f4ERANGE\f1 when \f2x\f1 is 0.
+Under \f4\-Xc\f1, \f4sqrt\f1 and \f4sqrtf\f1 return
+\f4NaN\f1 when \f2x\f1 is negative.
+.\"	@(#)exp.3m	6.3 of 10/20/83
+.Ee

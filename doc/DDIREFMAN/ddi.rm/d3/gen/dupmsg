@@ -1,0 +1,46 @@
+'\"macro stdmacro
+.if n .pH gen.dupmsg @(#)dupmsg	40.2 of 1/7/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.nr X
+.if \nX=0 .ds x} dupmsg D3DK "STREAMS" "DDI/DKI" "\&"
+.if \nX=1 .ds x} dupmsg D3DK "STREAMS" "DDI/DKI"
+.if \nX=2 .ds x} dupmsg D3DK "" "\&"
+.if \nX=3 .ds x} dupmsg "" "" "\&"
+.TH \*(x}
+.IX "\f4dupmsg\fP(D3DK)"
+.IX "STREAMS message blocks"
+.SH NAME
+\f4dupmsg\f1 \- duplicate a message
+.SH SYNOPSIS
+.nf
+.na
+\f4#include <sys/stream.h>
+.sp 0.5
+mblk_t *dupmsg(mblk_t *\f2mp\f4);\f1
+.ad
+.fi
+.SH ARGUMENTS
+.RS 0n 10
+.IP "\f2mp\f1" 10n
+Pointer to the message.
+.RE
+.SH DESCRIPTION
+\f4dupmsg\f1 forms a new message by duplicating the message blocks in the message
+pointed to by \f2mp\f1 and linking them via their \f4b_cont\fP pointers.
+.SH RETURN VALUE
+If successful, \f4dupmsg\f1 returns a pointer to the new message.
+Otherwise, it returns a \f4NULL\f1 pointer.
+.SH LEVEL
+Base or Interrupt.
+.SH NOTES
+Does not sleep.
+.SH SEE ALSO
+.na
+\f4copyb\f1(D3DK),
+\f4copymsg\f1(D3DK),
+\f4dupb\f1(D3DK),
+\f4datab\fP(D4DK),
+\f4msgb\fP(D4DK)
+.ad
+.SH EXAMPLE
+See the \f4copyb\f1(D3DK) manual page for an example of \f4dupmsg\f1.

@@ -1,0 +1,178 @@
+'\"macro stdmacro
+.if n .pH g1.dump @(#)dump	40.13 of 5/22/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} dump 1 "C Development Set" "\&"
+.if \nX=1 .ds x} dump 1 "C Development Set"
+.if \nX=2 .ds x} dump 1 "" "\&"
+.if \nX=3 .ds x} dump "" "" "\&"
+.TH \*(x}
+.tr ~
+.SH NAME
+\f4dump\f1 \- dump selected parts of an object file
+.SH SYNOPSIS
+\f4dump\f1 [ \f2options\f1 ] \f2files\f1
+.SH DESCRIPTION
+The \f4dump\f1
+command
+dumps selected parts of each
+of its object \f2file\fP arguments.
+.PP
+This command
+will accept both object files and archives
+of object files.
+It processes each file argument according
+to one or more of the following options:
+.TP \w'\f4\-d~number~~'u
+\f4\-a\f1
+Dump the archive header of each member of an archive.
+.TP
+\f4\-C\f1
+Dump decoded C++ symbol table names.
+.TP
+\f4\-c\f1
+Dump the string table(s).
+.TP
+\f4\-D\f1
+Dump debugging information.
+.TP
+\f4\-f\f1
+Dump each file header.
+.TP
+\f4\-g\f1
+Dump the global symbols in the symbol table of an archive.
+.TP
+\f4\-h\f1
+Dump the section headers.
+.TP
+\f4\-L\f1
+Dump dynamic linking information and static shared library information, if
+available.
+.TP
+\f4\-l\f1
+Dump line number information.
+.TP
+\f4\-o\f1
+Dump each program execution header.
+.TP
+\f4\-r\f1
+Dump relocation information.
+.TP
+\f4\-s\f1
+Dump section contents in hexadecimal.
+.TP
+\f4\-T \f2index\f1 or \f4\-T \f2index1\f4,\f2index2\f1
+Dump only the indexed symbol table entry defined by \f2index\f1
+or a range of entries defined by \f2index1\f4,\f2index2\f1.
+.TP
+\f4\-t\f1
+Dump symbol table entries.
+.TP
+\f4\-u\f1
+When reading a \s-1COFF\s0 object file, \f4dump\f1 translates the file to
+\s-1ELF\s0
+internally (this translation does not affect the file contents).
+This option controls how much translation occurs from \s-1COFF\s0
+values to \s-1ELF\s0.
+Normally (without \f4\-u\f1), the \s-1COFF\s0 values are preserved as much
+as possible,
+showing the actual bytes in the file.
+If \f4\-u\f1 is used, \f4dump\f1 updates the values and completes the
+internal translation,
+giving a consistent \s-1ELF\s0 view of the contents.
+Although the bytes displayed under this option might not match the file
+itself,
+they show how the file would look if it were converted to \s-1ELF\s0.
+(See \f4cof2elf\f1(1) for more information.)
+.PP
+.TP 12
+\f4\-V\f1
+Print
+version information.
+.PP
+The following modifiers are used in conjunction with the options
+listed above to modify their capabilities.
+.TP \w'\f4\-d~number~~'u
+\f4\-d\f1~\f2number\f1 or \f4\-d\f1~\f2number1\f4,\f2number2\f1
+Dump the section number indicated by \f2number\fP or the range of sections 
+starting at \f2number1\fP
+and ending at \f2number2\fP.
+This modifier can be used with \f4\-h\f1, \f4\-s\f1, and \f4\-r\f1.
+When \f4\-d\f1 is used with \f4\-h\f1 or \f4\-s\f1,
+the argument is treated as the number of a section or range of sections.
+When \f4\-d\f1 is used with \f4\-r\f1,
+the argument is treated as the number of the section or range of sections to
+which the relocation applies.
+For example,
+to print out all relocation entries associated with the \f4.text\f1 section,
+specify the number of the section as the argument to \f4\-d\f1.
+If \f4.text\f1 is section number 2 in the file,
+\f4dump~\-r~\-d~2\f1 will print all associated entries.
+To print out a specific relocation section use
+\f4dump~\-s~\-n~\f2name\f1
+for raw data output, or
+\f4dump~\-sv~\-n~\f2name\f1
+for interpreted output.
+.TP
+\f4\-n\f1~\f2name\f1
+Dump information pertaining only to the named entity.
+This
+modifier
+can be used with
+\f4\-h\f1,
+\f4\-s\f1,
+\f4\-r\f1,
+and 
+\f4\-t\f1.
+When \f4\-n\f1 is used with \f4\-h\f1 or \f4\-s\f1,
+the argument will be treated as the name of a section.
+When \f4\-n\f1 is used with \f4\-t\f1 or \f4\-r\f1,
+the argument will be treated as the name of a symbol.
+For example, \f4dump~\-t~\-n~.text\f1 will dump the symbol table entry
+associated with the symbol
+whose name is \f4.text\f1, where
+\f4dump~\-h~\-n~.text\f1
+will dump the section header information for the \f4.text\f1
+section.
+.TP
+\f4\-p\f1
+Suppress printing of the headings.
+.TP
+\f4\-v\f1
+Dump information in symbolic representation rather than numeric.
+This modifier can be used with
+\f4\-a\f1 (date, user id, group id),
+\f4\-f\f1 (class, data, type, machine, version, flags),
+\f4\-h\f1 (type, flags),
+\f4\-o\f1 (type, flags),
+\f4\-r\f1 (name, type),
+\f4\-s\f1 (interpret section contents wherever possible),
+\f4\-t\f1 (type, bind), and
+\f4\-L\f1 (value).
+When \f4\-v\f1 is used with \f4\-s\f1,
+all sections that can be interpreted, such as the string table or symbol
+table, will be interpreted.
+For example,
+\f4dump \-sv \-n .symtab \f2files\f1
+will produce the same formatted output as
+\f4dump \-tv \f2files\f1,
+but
+\f4dump \-s \-n .symtab \f2files\f1
+will print raw data in hexadecimal.
+Without additional modifiers,
+\f4dump \-sv \f2files\f1
+will dump all sections in the files interpreting all those that it can and
+dumping the rest (such as \f4.text\f1
+or \f4.data\f1)
+as raw data.
+.PP
+The
+\f4dump\f1
+command
+attempts to format the information it dumps in a meaningful way,
+printing certain information in character,
+hexadecimal, octal or decimal representation as appropriate.
+.SH "SEE ALSO"
+\f4a.out\fP(4), \f4ar\fP(4)
+.tr ~~

@@ -1,0 +1,138 @@
+'\"macro stdmacro
+.if n .pH g1.checknr @(#)checknr	40.14 of 4/18/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.\" @(#)checknr.1 1.2 89/01/25 SMI; from UCB 4.1
+'\" macro stdmacro
+.\" Copyright (c) 1988 Sun Microsystems, Inc. - All Rights Reserved.
+.\"
+.nr X
+.if \nX=0 .ds x} checknr 1 "BSD Compatibility Package" "\&"
+.if \nX=1 .ds x} checknr 1 "BSD Compatibility Package"
+.if \nX=2 .ds x} checknr 1 "" "\&"
+.if \nX=3 .ds x} checknr "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4checknr\f1 \- check nroff and troff input files; report possible errors
+.SH SYNOPSIS
+\f4/usr/ucb/checknr\fP [ \f4\-fs\fP ] [ \f4\-a \&.\f2x1\f1 \f4\&.\f2y1\f1 \f4\&.\f2x2\f1
+\f4\&.\f2y2\f1 \&.\ .\ .  \f4\&.\f2xn\f1 \f4\&.\f2yn\f1 ] 
+.br
+                       [ \f4\-c\fP \f4\&.\f2x1\f1 \f4\&.\f2x2\f1 \f4\&.\f2x3\f1 \&.\ .\ .  \f4\&.\f2xn\f1 ] 
+[ \f2filename\f1 \&.\ .\ . ]
+.SH DESCRIPTION
+The \f4checknr\fP
+command checks a list of
+\f4nroff\fP
+or
+\f4troff\fP
+input files for certain kinds of errors
+involving mismatched opening and closing delimiters and
+unknown commands.
+If no files are specified,
+\f4checknr\fP
+checks the standard input.
+Delimiters checked are:
+.RS
+.TP 3
+\(bu
+Font changes using \f4\ef\f2x \f1.\ .\ . \f4\efP\f1.
+.TP
+\(bu
+Size changes using \f4\es\f2x \f1.\ .\ . \f4\es0\f1.
+.TP
+\(bu
+Macros that come in open .\ .\ .
+close forms, for example, the
+\f4\&.TS\fP
+and
+\f4\&.TE\fP
+macros which must always come in pairs.
+.RE
+.P
+\f4checknr\fP
+knows about the
+\f4ms\fP
+and
+\f4me\fP
+macro packages.
+.P
+\f4checknr\fP
+is intended to be used on documents that are prepared with
+\f4checknr\fP
+in mind.
+It expects a certain
+document writing style for
+\f4\ef\fP
+and
+\f4\es\fP
+commands, in that each
+\f4\ef\f2x\f1
+must be terminated with
+\f4\efP\f1
+and each
+\f4\es\f2x\f1
+must be terminated with
+\f4\es0\f1.
+While it will work to directly go into the next font
+or explicitly specify the
+original font or point size, and many existing
+documents actually do this,
+such a practice will produce complaints from
+\f4checknr\f1.
+Since it is probably better to use the
+\f4\efP\f1
+and
+\f4\es0\f1
+forms anyway, you
+should think of this as a contribution to your
+document preparation style.
+.P
+The following options are available:
+.TP
+\f4\-f\fP
+Ignore
+\f4\ef\fP
+font changes.
+.TP
+\f4\-s\fP
+Ignore
+\f4\es\fP
+size changes.
+.TP
+\f4\-a .\f2x1 \f4.\f2y1 \f1.\ .\ .
+Add pairs of macros to the list.
+The pairs of macros are assumed
+to be those (such as
+\f4\&.DS\f1
+and
+\f4.DE\f1)
+that should be checked for balance.
+The
+\f4\-a\f1
+option must be followed by groups of six characters,
+each group defining a pair of macros. 
+The six characters are a period, the
+first macro name, another period, and the second macro name.
+For example, to define a pair
+\f4\&.BS\fP
+and
+\f4.ES\fP,
+use
+\f1\f4\-a.BS.ES\f1
+.TP
+\f4\-c .\f2x1\f1 .\ .\ .
+Define commands which
+\f4checknr\fP
+would otherwise complain about
+as undefined.
+.SH SEE\ ALSO
+\f4eqn\fP\fP(1),
+\f4nroff\fP\fP(1),
+\f4troff\fP\fP(1),
+\f4me\fP\fP(7),
+\f4ms\fP\fP(7)
+.SH NOTES
+There is no way to define a one-character macro name using the
+\f4\-a\fP
+option.

@@ -1,0 +1,84 @@
+'\"macro stdmacro
+.if n .pH gen.datamsg @(#)datamsg	40.2 of 1/7/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.nr X
+.if \nX=0 .ds x} datamsg D3DK "STREAMS" "DDI/DKI" "\&"
+.if \nX=1 .ds x} datamsg D3DK "STREAMS" "DDI/DKI"
+.if \nX=2 .ds x} datamsg D3DK "" "\&"
+.if \nX=3 .ds x} datamsg "" "" "\&"
+.TH \*(x}
+.IX "\f4datamsg\fP(D3DK)"
+.IX "STREAMS messages"
+.SH NAME
+\f4datamsg\f1 \- test whether a message is a data message
+.SH SYNOPSIS
+.nf
+.na
+\f4#include <sys/types.h>
+#include <sys/stream.h>
+#include <sys/ddi.h>
+.sp 0.5
+int datamsg(uchar_t \f2type\f4);\f1
+.ad
+.fi
+.SH ARGUMENTS
+.RS 0n 10
+.IP "\f2type\f1" 10n
+The type of message to be tested.  The \f4db_type\f1 field of the \f4datab\f1 structure
+contains the message type.
+This field may be accessed through the message block using
+\f4mp->b_datap->db_type\f1. 
+.RE
+.SH DESCRIPTION
+The \f4datamsg\f1 function tests the type of message to determine 
+if it is a data message type (\f4M_DATA\fP, \f4M_DELAY\fP, \f4M_PROTO\fP, or
+\f4M_PCPROTO\fP). 
+.IX STREAMS messages
+.SH RETURN VALUE
+\f4datamsg\f1 returns 1
+if the message is a data message and 0
+if the message is any other type.
+.SH LEVEL
+Base or Interrupt.
+.SH NOTES
+Does not sleep.
+.SH SEE ALSO
+.na
+\f4allocb\f1(D3DK),
+\f4datab\f1(D4DK),
+\f4msgb\f1(D4DK),
+\f4messages\fP(D5DK)
+.ad
+.SH EXAMPLE
+.IX "\f4datamsg\fP(D3DK), example"
+.IX "\f4putq\fP(D3DK), example"
+.P
+The \f4put\f1(D2DK) routine enqueues all data messages for handling
+by the \f4srv\f1(D2DK) (service) routine.
+All non-data messages are
+handled in the \f4put\f1 routine.
+.ne 4
+.P
+.nf
+.ft 4
+.ps 7
+.vs 9
+ 1  xxxput(q, mp)
+ 2	queue_t *q;
+ 3	mblk_t *mp;
+ 4  {
+ 5	if (datamsg(mp->b_datap->db_type)) {
+ 6		putq(q, mp);
+ 7		return;
+ 8	}
+ 9	switch (mp->b_datap->db_type) {
+10	case M_FLUSH:
+	...
+11	}
+12  }
+.vs
+.ps
+.ft 1
+.fi
+.FG "datamsg \- test message for type"
+.IX "STREAMS messages"

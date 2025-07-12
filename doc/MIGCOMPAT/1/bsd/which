@@ -1,0 +1,71 @@
+'\"macro stdmacro
+.if n .pH g1.which @(#)which	40.10 of 5/21/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+'\" macro stdmacro
+.\" Copyright (c) 1988 Sun Microsystems, Inc. - All Rights Reserved.
+.\"
+.nr X
+.if \nX=0 .ds x} which 1 "BSD Compatibility Package" "\&"
+.if \nX=1 .ds x} which 1 "BSD Compatibility Package"
+.if \nX=2 .ds x} which 1 "" "\&"
+.if \nX=3 .ds x} which "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4which\f1 \- locate a command; display its pathname or alias
+.SH SYNOPSIS
+\f4/usr/ucb/which\f1 [ \f2filename\f1 ] .\ .\ .
+.SH DESCRIPTION
+\f4which\f1
+takes a list of names and looks for the files which would be
+executed had these names been given as commands.
+Each argument is expanded if it is aliased,
+and searched for along the user's path.
+Both aliases and path are taken from the user's
+\f4\&.cshrc\f1
+file.
+.SH FILES
+.PD 0
+.TP 20
+\f4~/\&.cshrc\f1
+source of aliases and path values
+.PD
+.SH SEE ALSO
+\f4csh\fP(1),
+\f4ksh\fP(1),
+\f4sh\fP(1)
+in the \f2User's Reference Manual\f1.
+.SH DIAGNOSTICS
+A diagnostic is given for names which
+are aliased to more than a single word,
+or if an executable file with the
+argument name was not found in the path.
+.SH NOTES
+Only aliases and paths from
+\f4~/\&.cshrc\f1
+are used; importing from the current
+environment is not attempted.
+.P
+\f4which\f1
+must be executed by
+\f4csh\f1(1),
+since only
+\f4csh\f1
+knows about aliases.
+If you are using \f4sh\f1 instead of \f4csh\f1,
+\f4whence \-v\f1 provides similar functionality.
+.P
+To compensate for
+\f4\&~/.cshrc\f1
+files in which aliases depend upon the
+\f4prompt\f1
+variable being set,
+\f4which\f1
+sets this variable.
+If the
+\f4\&~/.cshrc\f1
+produces output or prompts for input when
+\f4prompt\f1
+is set,
+\f4which\f1
+may produce some strange results.

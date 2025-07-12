@@ -1,0 +1,151 @@
+'\"macro stdmacro
+.if n .pH g1a.custom @(#)custom	40.6 of 1/3/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+'\"macro stdmacro
+.if n .pH g1a.ff @(#)ff xx.x of xx/xx/xx
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.if \nX=0 .ds x} custom 1M "Base System" "\&"
+.if \nX=1 .ds x} custom 1M "Base System"
+.if \nX=2 .ds x} custom 1M "" "\&"
+.if \nX=3 .ds x} custom "" "" "\&"
+.nr X
+.TH \*(x} "" "386 Computer Only"
+.SH NAME
+\f4custom\f1 - install specific portions of a UNIX package
+.SH SYNOPSIS
+\f4custom [-ir] \f1[\f2package\f1] ] [\f4-m\f1 \f2device\f1] [\f4-f\f1 [\f2file\f1] ]
+.SH DESCRIPTION
+\f4custom\f1 allows the super-user to create a custom installation
+by selectively installing or deleting portions of the UNIX packages
+to or from the 386 operating system.  It can be used interactively
+or it can be invoked from the command line with applicable command
+options.
+.PP
+Files are extracted or deleted in \f2packages.\f1  A \f2package\f1
+is a collection of individual files that are grouped together in
+\f2sets\f1.
+.PP
+When in interactive mode, \f4custom\f1 prompts you for volume 1 of
+the new product distribution and extracts the product information
+necessary to support it.  The following menu provides support for 
+adding or removing a package:
+.nf
+.sp .5
+.in 1i
+1. Install one or more packages
+2. Remove one or more packages
+3. List the files in a package
+4. Install a single file
+5. Select a new set to customize
+6. Display current disk usage
+7. Help
+.fi
+.PP
+When you enter a menu option, you are prompted for further
+information.  The following describes what actions are necessary
+for each menu option:  
+.sp .5
+1.  Install
+.in +1P
+.sp .5
+Prompts for one or more package names
+.sp 0.5
+Calculates which installation volumes (distribution media) are
+needed and then prompts the user for the correct volume numbers.   If
+multiple packages are specified, the names should be separated
+by spaces on the command line.
+.sp .5
+This option, as well as "2" and "3," displays a list of 
+available packages in the selected set.  Each line
+describes the package name, whether the package is fully 
+installed, not installed or partially installed, the size of
+the package (in 512 byte blocks), and a one line description of
+the package contents.
+.PP
+2.  Remove
+.in +1P
+.sp .5
+Prompts for one or more package names.
+.sp 0.5
+Deletes the correct files in the specified package.  If multiple
+packages are specified, the names should be separated by spaces
+on the command line.
+.sp 0.5
+Displays available packages (see option "1").
+.PP
+3.  List files in a package
+.in +1P
+.sp .5
+Lists all files in the specified package
+.sp 0.5
+.ne 6
+Prompts for one or more package names.
+Enter the name of the
+desired package(s).
+.sp 0.5
+Displays available packages (see option "1").
+.PP
+4.  Install a single file
+.in +1P
+.sp .5
+Retrieves the specified file from the distribution set
+.sp .5
+Filename should be a full pathname relative to the root directory
+"/".
+.PP
+5.  Select a new set
+.in +1P
+.sp .5
+Allows the user to work from a  different set 
+.PP
+6.  Display current disk usage
+.in +1P
+.sp .5
+Tells current disk usage.
+.PP
+7.  Help
+.in +1P
+.sp .5
+Prints a page of instructions to help you use \f2custom\f1.
+.sp .5
+.nf
+\f4-s\f1  A set identifier
+.sp .5
+\f4-i\f1  Install the specified package(s)
+.sp .5
+\f4-r\f1  Remove the specified package(s)
+.sp .5
+\f4-l\f1  List the files in the specified package(s)
+.sp .5
+\f4-f\f1  Install the specified file
+.fi
+.PP
+The \f4-m\f1 flag specifies the media device.
+The default is \f4/dev/install\f1 (which is always the 0 device, as in
+\f4/dev/fd0\f1).
+This is very useful if the system has a 5.25-inch
+drive on \f4/dev/fd0\f1 and a 3.5-inch floppy on \f4/dev/fd1\f1 and it is
+necessary to install 3.5-inch media.
+For example:
+.sp .5
+.ti +3P
+\f4custom -m /dev/rfd196ds9\f1
+.sp .5
+This will override the default device and use the one supplied
+with the \f4-m\f1 flag.
+.PP
+If any information is missing from the command line, \f4custom\f1
+prompts for the missing data.
+.SH NOTES
+When installing some XENIX applications, error messages such as "\f4bad gid\f1"
+or "\f4bad uid\f1" may be printed.
+These messages occur because XENIX and UNIX
+assign UID and GID numbers differently.
+If necessary, the file and/or
+directory permissions can be altered with "\f4chmod\f1(1)" after installation.  
+.SH FILES
+\f4/etc/perms/*\f1
+.SH "SEE ALSO"
+\f4fixperm\f1(1M) , \f4df\f1(1M), \f4du\f1(1M), \f4install\f1(1M)
+.Ee

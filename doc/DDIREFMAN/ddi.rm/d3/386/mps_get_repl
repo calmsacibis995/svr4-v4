@@ -1,0 +1,39 @@
+'\"macro stdmacro
+.if n .pH 386.mps_get_repl @(#)mps_get_repl	40.5 of 7/1/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.nr X
+.if \nX=0 .ds x} mps_get_reply_len D3D "Multibus II" "DDI" "\&"
+.if \nX=1 .ds x} mps_get_reply_len D3D "Multibus II" "DDI" "\&"
+.if \nX=2 .ds x} mps_get_reply_len D3D "" "\&"
+.if \nX=3 .ds x} mps_get_reply_len "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4mps_get_reply_len\f1 \- get data length for a solicited reply.
+.SH SYNOPSIS
+.nf
+\f4#include <sys/mps.h>
+long mps_get_reply_len(\f2socid\fP, \f2tid\fP)
+mb2socid_t       socid;
+unsigned char    tid;\f1
+.fi
+.SH ARGUMENTS
+.TP 11
+\f2socid\f1
+The source socid for the solicited reply
+.TP 11
+\f2tid\f1
+the transaction id of the solicited reply
+.SH DESCRIPTION
+This function should be invoked when an rsvp completes with an unsolicited
+message, instead of with a a solicited message; that is, when the flags
+field of the final message buffer is MPS_MG_UNSOL.
+In this case, the
+\f4mps_get_reply_len\f1 function returns the length of the data for the
+solicited reply associated with the rsvp when it is called after the
+transaction completes.
+.SH RETURN VALUE
+A successful operation returns the length of the data.
+If an error
+occurs, 0 is returned as the data length.
+.SH LEVEL
+Base or Interrupt

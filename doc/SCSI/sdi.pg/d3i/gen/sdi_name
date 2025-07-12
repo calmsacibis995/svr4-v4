@@ -1,0 +1,74 @@
+'\"macro stdmacro
+.if n .pH d3i.sdi_name @(#)sdi_name	40.9 of 3/12/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} sdi_name D3I SDI
+.if \nX=1 .ds x} sdi_name D3I SDI
+.if \nX=2 .ds x} sdi_name D3I "" "\&"
+.if \nX=3 .ds x} sdi_name "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4sdi_name\fP \- get name of addressed SCSI controller
+.SH SYNOPSIS
+.nf
+.ft 4
+void
+sdi_name(struct scsi_ad *\f2addr\f4, char *\f2name\f4);
+.ft 1
+.fi
+.SH ARGUMENTS
+.TP 8
+\f2addr\f1
+pointer to the \f4scsi_ad\f1 (SCSI device address) structure
+.TP 8
+\f2name\f1
+string containing the device \f2name\f1 
+.SH DESCRIPTION
+\f4sdi_name\f1 decodes a device number into a character string so that the
+device number can be displayed (with \f4cmn_err\f1).  The controller name
+is copied into \f2name\f1.  The returned string may be as long as 48 bytes. 
+(You must allocate 49 bytes.)
+Access to the controller name can only be used for display; the driver should
+not attempt to decode the string for other uses.  The
+string returned is ``\f2SLOT\0#\0\0TC\0#\fP'' with the slot number of the host adapter
+card filled in and the target controller ID filled in.
+.IX "Target controller ID"
+.IX "Target controller name access"
+.IX "SLIC # Controller message"
+.IX "SLOT # TC message"
+.IX "cmn_err"
+.SH RETURN VALUE
+None
+.SH LEVEL
+Base or Interrupt
+.SH EXAMPLE
+This example is a sample \f4print\f1 routine in a disk target driver.  The
+arguments to the \f4cmn_err\f1 function are the device number and a string
+to display (on the system console).
+.P
+.ft 4
+.nf
+diskprint(dev, str)
+dev_t dev;
+char *str;
+{
+   char name[49];       /* Character array for device name */
+   struct scsi_ad addr; /* SCSI address structure          */
+        
+   /* Fill in SCSI device address based on device number */
+   addr.sa_major = emajor(dev);
+   addr.sa_minor = eminor(dev);
+   addr.sa_lun = LUN(eminor(dev));
+.ne 1.5i
+   /* Call sdi_name with the address of the SCSI address
+    * structure and a pointer to the character array.
+    */
+   sdi_name(&addr, name);
+
+   /* Print the error message */
+      cmn_err(CE_WARN, "%s, Unit %d, Partition %d:  %s", name, 
+              addr.sa_lun, eminor(dev) & PARTMASK, str);
+}
+.ft 1
+.fi

@@ -1,0 +1,15 @@
+#ident	"@(#)pkg.xx:pkginfo	1.2.1.2"
+
+#
+# "must" parameters
+#
+
+PKG="acp"
+CLASSES="none"
+NAME="Application Compatibility Package"
+RELEASE="4.0"
+VERSION="1"
+VENDOR="USL"
+CATEGORY=system
+ARCH="i386"
+PREDEPEND="acp"

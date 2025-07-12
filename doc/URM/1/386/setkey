@@ -1,0 +1,127 @@
+'\"!  tbl | mmdoc
+'\"macro stdmacro
+.if n .pH 386.setkey @(#)setkey	40.1 of 5/31/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.nr X
+.if \nX=0 .ds x} setkey 1 "" "\&"
+.if \nX=1 .ds x} setkey 1 ""
+.if \nX=2 .ds x} setkey 1 "" "\&"
+.if \nX=3 .ds x} setkey "" "" "\&"
+.TH \*(x}
+.SH NAME
+setkey \- assigns the function keys
+.SH SYNOPSIS
+\f4setkey\fP \f2keynum\fP \f2string\fP
+.SH DESCRIPTION
+The \f4setkey\fP command assigns the given ANSI
+\f2string\fP to be the output of the computer function key given by \f2keynum\fP.
+For example, the command:
+.P
+.RS
+.ft 4
+setkey 1 date
+.ft 1
+.RE
+.P
+assigns the string \f4date\fP as the output of
+function key 1.
+The \f2string\fP 
+can contain control characters, such as a newline character,
+and should be quoted to protect it from processing by the shell.
+For example, the command:
+.P
+.RS
+.ft 4
+setkey 2 "pwd ; lc\en"
+.ft 1
+.RE
+.P
+assigns the command sequence \f4pwd ; lc\fP to function key 2.
+Notice how the newline character is embedded in the quoted string.
+This causes the commands to be carried out when 
+function key 2 is pressed.
+Otherwise, the Enter key would have to be pressed after
+pressing the function key, as in the previous example.
+.P
+\f4setkey\fP translates \f4^\fP into \f4^^\fP, which, when
+passed to the screen driver, is interpreted as a right angle
+bracket (\f4>\fP), or greater than key.
+.SH NOTES
+\f4setkey\fP works only on the console keyboard.
+.P
+The string mapping table is where the function keys are defined.
+It is an array of 512 bytes (\f4typedef\fP \f4strmap_t\fP)
+where null terminated strings can be put to redefine the function keys. 
+The first null terminated string is assigned to the first string key,
+the second to the second string key, and so on.
+There is one string mapping table per multiscreen.
+.P
+Although the size of the \f4setkey\fP string mapping table
+is 512 bytes, there is a limit of 30 characters that
+can be assigned to any individual function key.
+.P
+Assigning more than 512 characters to the string
+mapping table causes the function key buffer to overflow. 
+When this happens, the sequences sent by the arrow keys
+are overwritten, effectively disabling them.
+Once the function key buffer overflows, the only way to
+enable the arrow keys is to reboot the system.
+.P
+The table below lists the \f2keynum\fP values for the function keys:
+.sp
+.ps-1
+.TS
+box center;
+lw(.2i) lw(1i) lf2w(.5i) |lw(.2i) lw(1i) lf2w(.5i)
+lw(.2i) lw(1i) lf4w(.5i) |lw(.2i) lw(1i) lf4w(.5i).
+.sp .04i
+\&	Function key	keynum\fP	 \&	Function key	keynum
+.sp .07i
+_	_	_	_	_	_
+.sp .1i
+\&	F1	1	\&	Ctrl-F10	34
+\&	F2	2	\&	Ctrl-F11	35
+\&	F3	3	\&	Ctrl-F12	36
+\&	F4	4	\&	Ctrl-Shift-F1	37
+\&	F5	5	\&	Ctrl-Shift-F2	38
+\&	F6	6	\&	Ctrl-Shift-F3	39
+\&	F7	7	\&	Ctrl-Shift-F4	40
+\&	F8	8	\&	Ctrl-Shift-F5	41
+\&	F9	9	\&	Ctrl-Shift-F6	42
+\&	F10	10	\&	Ctrl-Shift-F7	43
+\&	F11	11	\&	Ctrl-Shift-F8	44
+\&	F12	12	\&	Ctrl-Shift-F9	45
+\&	Shift-F1	13	\&	Ctrl-Shift-F10	46
+\&	Shift-F2	14	\&	Ctrl-Shift-F11	47
+\&	Shift-F3	15	\&	Ctrl-Shift-F12	48
+\&	Shift-F4	16	_	_	_
+.T&
+lw(.2i) lw(1i) lw(.5i) |lw(1i) lw(.2i) lf2w(.5i)
+lw(.2i) lw(1i) lf4w(.5i) |lw(.2i) cw(1i) lf4w(.5i).
+\&	Shift-F5	17	\&	Numeric Key-Pad	keynum
+\&	Shift-F6	18	_	_	_
+\&	Shift-F7	19	\&	7	49
+\&	Shift-F8	20	\&	8	50
+\&	Shift-F9	21	\&	9	51
+\&	Shift-F10	22	\&	-	52
+\&	Shift-F11	23	\&	4	53
+\&	Shift-F12	24	\&	5	54
+\&	Ctrl-F1	25	\&	6	55
+\&	Ctrl-F2	26	\&	+	56
+\&	Ctrl-F3	27	\&	1	57
+\&	Ctrl-F4	28	\&	2	58
+\&	Ctrl-F5	29	\&	3	59
+\&	Ctrl-F6	30	\&	0	60
+\&	Ctrl-F7	31	\&	\&	\&
+\&	Ctrl-F8	32	\&	\&	\&
+\&	Ctrl-F9	33	\&	\&	\&
+.sp .1i
+.TE
+.P
+For a table of the escape sequences, see \f4keyboard\fP(7) in the
+\f2System Administrator's Guide\fP.
+.ne 2i
+.SH FILES
+/bin/setkey
+.SH "SEE ALSO"
+keyboard(7)

@@ -1,0 +1,34 @@
+'\"!  tbl | mmdoc
+.if n .pH scp_mrd_rn.titlepage.we @(#)titlepage	40.11
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1990 AT&T
+.\" Title page file
+.nrNF 1
+
+.rs
+.ft\*(@e
+.ps24
+.vs24
+.nf
+.sp|4.2i
+.in3i
+UNIX\v'-0.1i'\s-8\(rg\s0\v'0.1i' System V/386
+Release 4 Version 4
+.ft\*(@d
+.sp0.25
+.ps20
+.vs20
+Read Me First
+.in
+.sp 2.0i
+.ps 13 
+.vs 15
+.TS
+box center ;
+cp18f2.
+
+Route this Document 
+to your 
+Documentation Department
+
+.TE

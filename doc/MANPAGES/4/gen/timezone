@@ -1,0 +1,37 @@
+'\"macro stdmacro
+.if n .pH @(#)timezone	40.12 of 4/11/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} timezone 4 "" "\&"
+.if \nX=1 .ds x} timezone 4 ""
+.if \nX=2 .ds x} timezone 4 "" "\&"
+.if \nX=3 .ds x} timezone "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4timezone\f1 \- set default system time zone
+.SH SYNOPSIS
+\f4/etc/TIMEZONE\f1
+.SH DESCRIPTION
+This file sets and exports the time zone environmental variable \f4TZ\f1.
+.PP
+This file is ``dotted'' into other files that must know the time zone.
+.SH EXAMPLES
+.PP
+\f4/etc/TIMEZONE\f1
+for the east coast:
+.P
+.RS
+.nf
+\f4#	Time Zone
+TZ=EST5EDT
+export TZ\f1
+.fi
+.RE
+.SH SEE ALSO
+\f4ctime\f1(3C), \f4environ\f1(5)
+.br
+\f4rc2\f1(1M),
+\f4profile\f1(4)
+in the \f2System Administrator's Reference Manual\f1
+.Ee

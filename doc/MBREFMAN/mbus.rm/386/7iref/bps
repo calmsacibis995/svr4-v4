@@ -1,0 +1,408 @@
+'\"!  tbl | mmdoc
+'\"macro stdmacro
+.if n .pH g1a.bps @(#)bps	40.6 of 5/17/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} bps 7iref "System Administration Utilities" "" "\&"
+.if \nX=1 .ds x} bps 7iref "System Administration Utilities" ""
+.if \nX=2 .ds x} bps 7iref "" "\&"
+.if \nX=3 .ds x} bps "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4bps\f1 \- Bootstrap Parameter String driver
+.SH DESCRIPTION
+The \f4bps\f1 driver provides an interface to the bootstrap parameter
+string (BPS) for the kernel, Multibus II device drivers, and applications.
+When the operating system is loaded on a host, it uses the BPS to
+configure the system.  For UNIX, the individual device drivers configure
+their tables and devices based on the information in the BPS.
+.P
+The BPS consists of several entries of the form \f4parameter\f1=\f2value\f1
+that are separated by semicolons.  The parameter must be unique within
+a parameter string for a particular host, so multiple entries can be
+specified by similar parameter names that can be matched with wildcards.
+The value can have multiple configuration parameters of the form
+\f4config\f1:\f2value\f1 that are separated by commas.  For example, the
+BPS entry for an asynchronous I/O device at host id 5 that is assigned
+to minor numbers 23 through 30 is a 
+.P
+.RS
+.ft4
+.nf
+ASYNC=hid:5,port:0-7,minor:23-30;
+.ft1
+.fi
+.RE
+.SH CONFIGURATION
+The \f4bps\f1 driver configuration file contains the following configurable
+variables:
+.PP
+.TP 11
+\f4bps_use_native\f1
+When this flag is set to 1, the \f4bps\f1 driver uses the default BPS left in
+RAM by the Multibus II Systems Architecture (MSA) firmware BPS manager.
+The BPS contains parameters from ROM, operator intervention, and the
+bootserver configuration file.
+.TP 11
+\f4bps_tokenized_value\f1
+In R1.0 of the MSA firmware, the BPS manager splits the value of the
+parameter into tokens.  When this flag is set to 1, the \f4bps\f1 driver
+parses through the value of the parameter.
+.TP 11
+\f4bps_testing\f1
+When this variable is set to 1, it lets an application use the \f4BPSINIT\f1
+command of the \f4ioctl\f1 function, which allows specification of a
+bootstrap parameter string.
+.TP 11
+\f4bps_ram_addr\f1
+This is the physical address in memory where the MSA firmware BPS manager
+stores the bootstrap parameter string.  This value is used by the \f4bps\f1
+driver in conjunction with \f4bps_testing\f1 to access the BPS in
+systems which do not have the updated second-stage bootstrap loader.
+.SH "BPS DRIVER KERNEL INTERFACE"
+The following routines define the \f4bps\f1 driver Kernel Interface.
+The routines are synchronous and return on completion of the request.
+They assume that the character string is null-terminated.  All routines
+return a 0 if successfully completed and a -1 or error number if there
+is a failure.  Errors are listed later in this section.
+.SH bps_open
+.P
+\f4e_code = bps_open();\f1
+.P
+The \f4bps_open\f1 function ensures that the \f4bps\f1 driver is initialized
+correctly.  This routine must be called by all device drivers which access
+the \f4bps\f1.  It eliminates any dependency on the order in which the
+kernel calls the driver init routines.
+.SH bps_init\f1
+.P
+\f4e_code = bps_init(string_p);\f1
+.br
+\f4char *string_p;\f1
+.P
+The \f4bps_init\f1 function allows the caller to specify an alternate BPS.
+The \f4bps\f1 driver assumes that the string is null-terminated,
+well-formed, and conforms to the syntax of the Bootstrap Parameter String.
+After this call returns, the \f4bps\f1 driver uses this string to
+retrieve parameters or values.
+.SH bps_get_val
+.P
+\f4e_code = bps_get_val(string_p, vbuf_len, valbuf_p);\f1
+.br
+\f4char *string_p;\f1
+.br
+\f4int  vbuf_len;\f1
+.br
+\f4char *valbuf_p;\f1
+.P
+The \f4bps_get_val\f1 function retrieves the value of the parameter
+pointed to by \f4string_p\f1 and returns it in the buffer pointed to by
+\f4valbuf_p\f1.  \f4vbuf_len\f1 is the length of the buffer, so the
+contents of the buffer are valid only if the length of the returned
+character string is less than \f4vbuf_len\f1. 
+.SH bps_get_wcval
+.P
+\f4e_code = bps_get_wcval(string_p, state_p, vbuf_len, valbuf_p);\f1
+.br
+\f4char	*string_p;\f1
+.br
+\f4int  *state_p;\f1
+.br
+\f4int  vbuf_len;\f1
+.br
+\f4char *valbuf_p;\f1
+.P
+The \f4bps_get_wcval\f1 function retrieves the value of the parameter
+pointed to by \f4string_p\f1 and returns the value in the buffer pointed
+to by \f4valbuf_p\f1.  \f4vbuf_len\f1 is the length of the buffer, so
+the contents of the buffer are valid only if the length of the returned
+character string is less than \f4vbuf_len\f1.
+.PP
+Simplistic wildcards are supported.  The wildcard characters \f4*\f1 and \f4?\f1 must
+always be the last character of the parameter name and the parameter
+name must have at least one other character besides the wildcard character.
+The \f4?\f1 will match one character of the parameter name, while the \f4\(**\f1
+will match a sequence of characters.  For example, the wildcards \f4async?\f1 or
+\f4asy\(**\f1 can be used to retrieve the following parameters:
+.P
+.RS
+.ft 4
+.nf
+async1 = major:4,minor:0-5,protocol:atcs;
+async2 = major:4,minor:7-11,protocol:atcs;
+.ft 1
+.fi
+.RE
+.P
+Prior to the first call to \f4bps_get_wcval\f1, the value pointed to
+by \f4state_p\f1 should be initialized to 0, and in subsequent calls to
+\f4bps_get_wcval\f1 it should not be modified.  The \f4bps\f1 driver
+uses \f4state_p\f1 as an index of successfully matched parameters. 
+.SH bps_get_opt
+.P
+\f4e_code = bps_get_opt(valbuf_p, state2_p, string_p, config_code,
+value_len, value_p);\f1
+.br
+\f4char *valbuf_p;\f1
+.br
+\f4int  *state2_p;\f1
+.br
+\f4char *string_p;\f1
+.br
+\f4int  *config_code;\f1
+.br
+\f4int  value_len;\f1
+.br
+\f4char *value_p;\f1
+.P
+The \f4bps_get_opt\f1 function retrieves the value of the keywords
+pointed to by the string \f4string_p\f1 and returns the value in the
+buffer pointed to by \f4value_p\f1.  \f4value_len\f1 is the length of
+the buffer, so the contents of the buffer are valid only if the length
+of the returned character string is less than \f4value_len\f1.
+\f4valbuf_p\f1 is the value to scan and is the output of a prior call
+to either \f4bps_get_val\f1 or \f4bps_get_wcval\f1.  The value pointed
+to by \f4state2_p\f1 should be initialized to 0, and in subsequent
+invocations of \f4bps_get_opt\f1, \f4state2_p\f1 should not be modified.  The
+bps driver uses \f4state2_p\f1 as an index of successfully matched parameters.  If a keyword is scanned, then the location of its index is returned by \f4config_code\f1 and
+ the location of its value is returned by \f4value_p\f1.
+.SH bps_get_socket
+.P
+\f4e_code = bps_get_socket(value_p, port_p, hostid_p);\f1
+.br
+\f4char	*value_p;\f1
+.br
+\f4int	*port_p;\f1
+.br
+\f4int	*hostid_p;\f1
+.P
+The \f4bps_get_socket\f1 function returns the host id and port id as
+long integers from the character string pointed to by \f4value_p\f1.
+This character string is the output from a previous call to
+\f4bps_get_val\f1, \f4bps_get_wcval\f1, or \f4bps_get_opt\f1.
+.SH bps_get_range
+.P
+\f4e_code = bps_get_range(value_p, lo_range_p, hi_range_p);\f1
+.br
+\f4char *value_p ;\f1
+.br
+\f4int  *lo_range_p;\f1
+.br
+\f4int  *hi_range_p;\f1
+.P
+The \f4bps_get_range\f1 function returns the lower and upper bounds of
+a range as long integers from the character string pointed to by
+\f4value_p\f1.  This character string is the output from a previous
+call to \f4bps_get_val\f1, \f4bps_get_wcval\f1, or \f4bps_get_opt\f1.
+.SH bps_get_integer
+.P
+\f4e_code = bps_get_integer(value_p, int_p)\f1
+.br
+\f4char	value_p;\f1
+.br
+\f4int	int_p;\f1
+.P
+The \f4bps_get_integer\f1 function returns the value of the character
+string pointed to by \f4value_p\f1 as a long integer.  The character
+string is the output from a previous call to \f4bps_get_val\f1,
+\f4bps_get_wcval\f1, or \f4bps_get_opt\f1.  Overflow conditions are ignored.
+.SH "BPS DRIVER LIBRARY INTERFACE"
+The following routines define the \f4bps\f1 driver Library Interface.
+The routines are synchronous and return on completion of the request.
+They assume that the character string is null-terminated.  All routines
+return a 0 if successfully completed and a -1 or error number if there
+is a failure.  Errors are listed later in this section.
+.SH bpsopen
+.P
+\f4e_code = bpsopen();\f1
+.P
+The \f4bpsopen\f1 function opens the \f4bps\f1 device driver.  It must
+be called by all applications which need access to the \f4bps\f1.
+.SH bpsclose
+.P
+\f4e_code = bpsclose();\f1
+.P
+The \f4bpsclose\f1 function closes the \f4bps\f1 device driver.  It must be
+called by all applications when they have finished accessing the \f4bps\f1.
+.SH bpsinit
+.P
+\f4e_code = bps_init(Newbps);\f1
+.br
+\f4char	Newbps;\f1
+.P
+The \f4bpsinit\f1 function allows the application to specify an
+alternate BPS for use.  This function is provided for testing purposes
+only, so it will work if the BPS is configured for testing.  The \f4bps\f1
+driver assumes that the string is null-terminated, well-formed, and
+conforms to the syntax of the Bootstrap Parameter String.  After this
+call returns, the \f4bps\f1 driver uses this string for references when
+retrieving parameters or values.  The following functions have the same
+syntax as in the Kernel Interface: \f4bps_get_val\f1, \f4bps_get_wcval\f1,
+\f4bps_get_opt\f1, \f4bps_get_integer\f1, \f4bps_get_range\f1, and
+\f4bps_get_socket\f1.
+.SH "SUPPORTED FEATURES"
+The \f4bps\f1 driver supports the following \f4ioctl()\f1 calls for use
+by applications:
+.PP
+.TP 11
+\f4BPSINIT\f1
+This command requires that the \f4bps\f1 driver be configured with the
+\f4bps_testing\f1 flag enabled and that the caller's id is zero.  If
+the argument addr is NULL, the \f4bps\f1 driver reinitializes its
+internal data structures with the BPS in RAM.  If the argument \f4addr\f1
+is a pointer to structure \f4bps_ioctl\f1, the \f4bps\f1 driver
+reinitializes its internal data structures with the BPS pointed to by
+\f4bps_ioctl->string_p\f1.  The \f4bps\f1 driver assumes that the
+string is well-formed and conforms to the syntax specification of the BPS.
+.TP 11
+\f4BPSGETPV\f1
+The argument is a pointer to structure \f4bps_ioctl\f1.  It returns a
+character string at the location pointed to by
+\f4bps_ioctl->valbuf_p\f1, which is the value of the parameter pointed to
+by \f4bps_ioctl->string_p\f1.
+.TP 11
+\f4BPSGETWCPV\f1
+The argument is a pointer to structure \f4bps_ioctl\f1.  It returns a
+character string at the location pointed to by
+\f4bps_ioctl->valbuf_p\f1, which is the value of the wildcard parameter
+pointed to by \f4bps_ioctl->string_p\f1.
+.TP 11
+\f4BPSGETOPTS\f1
+The argument is a pointer to structure \f4bps_ioctl\f1.  It returns an
+integer value at the location pointed to by
+\f4bps_ioctl->config_code\f1, which is an index in the list of names
+pointed by \f4bps_ioctl->string_p\f1.  It also returns a character
+string pointed to by \f4bps_ioctl->value_p\f1, which is the value of
+the name.  \f4bps_ioctl->valbuf_p\f1 is the pointer to the character
+string; it is the value of a parameter name retrieved by either
+\f4BPSGETPV\f1 or \f4BPSGETWCPV\f1.
+.TP 11
+\f4BPSGETINTEGER\f1
+This command converts a character string to an integer.  The argument
+is a pointer to structure \f4bps_ioctl\f1.  It returns an integer
+(at the location pointed to by \f4bps_ioctl->lo_return_p\f1) for the
+character string pointed to by \f4bps_ioctl->value_p\f1.
+.TP 11
+\f4BPSGETSOCKET\f1
+This command returns the host id and port id components.  The argument
+is a pointer to structure \f4bps_ioctl\f1.  It returns integer values
+(at the location pointed to by \f4bps_ioctl->lo_return_p\f1 and
+\f4bps_ioctl->hi_return_p\f1) for the character string pointed to by
+\f4bps_ioctl->value_p\f1.
+.TP 11
+\f4BPSGETRANGE\f1
+This command returns the lower and upper bounds of a range.  The
+argument is a pointer to structure \f4bps_ioctl\f1.  It returns integer
+values (at the location pointed to by \f4bps_ioctl->lo_return_p\f1 and
+\f4bps_ioctl->hi_return_p\f1) for the character string pointed to by
+\f4bps_ioctl->value_p\f1.
+.SH EXAMPLES
+An example of how to use the \f4bps\f1 routines is as follows:
+.P
+.ft 4
+.nf
+.ta .2i .4i .6i .8i .1i
+if !(bpsopen()) {
+	BPSstate1 = 0;
+	while !(bps_get_wcval("ASYNC", &BPSstate1, 
+	BPSvalbuflen, &BPSvalbuf1) {
+		BPSstate2 = 0;
+		while !(bps_get_opt(&BPSvalbuf, &BPSstate2, 
+		"hid:minor:minor", &ConfigCode, &ValPntrLen, 
+			&ValPntr)) { switch (ConfigCode) {
+				1)
+					if !(bps_get_integer(ValPntr, &ThisHID))
+						dev_printf("illegal HID value0);
+					break;
+				2)
+				3)
+					...
+			}
+		}
+	}
+}
+.ft 1
+.fi
+.DT
+.P
+The next example illustrates the format of the BPS for the mapping of
+host/port to minor numbers shown in the following table.  
+.TS
+center box;
+cB | cB | cB
+cB | cB | cB
+c | c | c .
+.sp .5
+Host id	Port	Minor
+		Number
+.sp .25
+_
+.sp .5
+6	3	5
+.sp .25
+_
+.sp .5
+6	4	6
+.sp .25
+_
+.sp .5
+6	5	7
+.sp .25
+_
+.sp .5
+7	0	8
+.sp .25
+.TE
+.DS
+
+\f4ASYNC1=hid:6,port:3,minor:5;
+.br
+ASYNC2=hid:6,port:4,minor:6;
+.br
+ASYNC3=hid:6,port:5,minor:7;
+.br
+ASYNC4=hid:7,port:0,minor:8;\f1
+
+.DE
+.PP
+If the driver can pack values, then ranges could be specified in the
+above mappings as follows:
+.DS
+
+\f4ASYNC1=hid:6,port:3-5,minor:5-7;
+ASYNC2=hid:7,port:0,minor:8;\f1
+
+.DE
+.SH "ERROR CODES"
+Possible error codes are as follows:
+.PP
+.TP 11
+\f4EFAULT\f1
+A memory address used in an \f4ioctl\f1 is not a valid data address.
+.TP 11
+\f4EINVAL\f1
+An invalid \f4ioctl\f1 request is attempted or the parameters to the
+\f4ioctl\f1 request are inconsistent.
+.TP 11
+\f4EPERM\f1
+\f4BPSINIT ioctl\f1 request is attempted with non-zero user id.
+.TP 11
+\f4EBUSY\f1
+\f4BPSINIT ioctl\f1 request is attempted while another \f4BPSINIT\f1
+is in progress or the \f4bps\f1 is configured with the \f4bps_testing\f1
+flag disabled.
+.TP 11
+\f4ENOMEM\f1
+The \f4bps\f1 could not allocate enough memory to copy user parameters.
+.TP 11
+\f4ENODEV\f1
+An \f4ioctl\f1 request is made prior to the \f4bps\f1 driver
+initializing its internal state.
+.SH FILES
+.DS
+\f4/usr/include/sys/bps.h\f1            Definitions for data structures
+.br
+\f4/etc/conf/pack.d/bps/space.c\f1      BPS driver configuration file
+.DE
+.SH "SEE ALSO"
+\f2Multibus II System Architecture Bootstrap Specification\fP.

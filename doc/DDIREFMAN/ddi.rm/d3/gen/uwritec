@@ -1,0 +1,58 @@
+'\"macro stdmacro
+.if n .pH gen.uwritec @(#)uwritec	40.2 of 1/7/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.nr X
+.if \nX=0 .ds x} uwritec D3DK "" "DDI/DKI" "\&"
+.if \nX=1 .ds x} uwritec D3DK "" "DDI/DKI"
+.if \nX=2 .ds x} uwritec D3DK "" "\&"
+.if \nX=3 .ds x} uwritec "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4uwritec\f1 \- return a character from space described by \f4uio\f1(D4DK) structure
+.IX "\f4uwritec\fP(D3DK)"
+.SH SYNOPSIS
+.nf
+.na
+\f4#include <sys/uio.h>
+.sp 0.5
+int uwritec(uio_t *\f2uiop\f4);\f1
+.ad
+.fi
+.SH ARGUMENTS
+.RS 0n 10
+.IP "\f2uiop\f1" 10n
+Pointer to the \f4uio\f1 structure.
+.RE
+.SH DESCRIPTION
+\f4uwritec\f1 copies a character from the space described by the
+\f4uio\f1 structure pointed to by \f2uiop\f1 and returns the character
+to the caller.
+.P
+The \f4uio_segflg\f1 member of the \f4uio\f1 structure specifies
+the type of space from which the copy is made.
+If \f4uio_segflg\f1 is set to \f4UIO_SYSSPACE\f1 the character is
+copied from a kernel address.
+If \f4uio_segflg\f1 is set to \f4UIO_USERSPACE\f1 the character is
+copied from a user address.
+.P
+If the character is successfully copied, \f4uwritec\f1 updates the
+appropriate members of the \f4uio\f1 and \f4iovec\f1(D4DK)
+structures to reflect the copy (\f4uio_offset\f1 and \f4iov_base\f1
+are incremented and \f4uio_resid\f1 and \f4iov_len\f1 are decremented)
+and returns the character to the caller.
+.SH RETURN VALUE
+If successful, \f4uwritec\f1 returns the character.
+\f4-1\f1 is returned if the space described by the \f4uio\f1 structure is
+empty or there is an error.
+.SH LEVEL
+Base only if \f4uio_segflg\f1 is set to \f4UIO_USERSPACE\f1.
+Base or interrupt if \f4uio_segflg\f1 is set to \f4UIO_SYSSPACE\f1.
+.SH NOTES
+May sleep if \f4uio_segflg\f1 is set to \f4UIO_USERSPACE\f1.
+.SH SEE ALSO
+.na
+\f4uiomove\f1(D3DK),
+\f4ureadc\f1(D3DK),
+\f4iovec\f1(D4DK),
+\f4uio\f1(D4DK)
+.ad

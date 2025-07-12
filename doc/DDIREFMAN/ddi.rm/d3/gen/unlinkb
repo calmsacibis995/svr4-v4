@@ -1,0 +1,71 @@
+'\"macro stdmacro
+.if n .pH gen.unlinkb @(#)unlinkb	40.2 of 1/7/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.nr X
+.if \nX=0 .ds x} unlinkb D3DK "STREAMS" "DDI/DKI" "\&"
+.if \nX=1 .ds x} unlinkb D3DK "STREAMS" "DDI/DKI"
+.if \nX=2 .ds x} unlinkb D3DK "" "\&"
+.if \nX=3 .ds x} unlinkb "" "" "\&"
+.TH \*(x}
+.IX "\f4unlinkb\fP(D3DK)"
+.SH NAME
+\f4unlinkb\f1 \- remove a message block from the head of a message
+.SH SYNOPSIS
+.nf
+.na
+\f4#include <sys/stream.h>
+.sp 0.5
+mblk_t *unlinkb(mblk_t *\f2mp\f4);\f1
+.ad
+.fi
+.SH ARGUMENTS
+.RS 0n 10
+.IP "\f2mp\f1" 10n
+Pointer to the message.
+.RE
+.SH DESCRIPTION
+\f4unlinkb\f1 removes the first message block from the message pointed
+to by \f2mp\f1.  The removed message block is not freed.  It is the caller's
+responsibility to free it.
+.SH RETURN VALUE
+\f4unlinkb\f1 returns a pointer to the remainder of the message
+after the first message block has been removed.
+If there is only one message block in the message,
+\f4NULL\f1 is returned.
+.SH LEVEL
+Base or Interrupt.
+.SH NOTES
+Does not sleep.
+.SH SEE ALSO
+.na
+\f4linkb\f1(D3DK)
+.ad
+.SH EXAMPLE
+.IX "\f4freeb\fP(D3DK), example"
+.IX "\f4unlinkb\fP(D3DK), example"
+.P
+The routine expects to get passed an \f4M_PROTO T_DATA_IND\f1
+message.  It will remove and free the \f4M_PROTO\f1 header and
+return the remaining \f4M_DATA\f1 portion of the message.
+.P
+.ne 4
+.P
+.nf
+.ft 4
+.ps 7
+.vs 9
+1  mblk_t *
+2  makedata(mp)
+3	mblk_t *mp;
+4  {
+5	mblk_t *nmp;
+
+6	nmp = unlinkb(mp);
+7	freeb(mp);
+8	return(nmp);
+9  }
+.vs
+.ps
+.ft 1
+.fi
+.FG "unlinkb \- remove message block\f1"

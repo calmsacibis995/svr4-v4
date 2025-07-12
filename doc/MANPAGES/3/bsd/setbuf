@@ -1,0 +1,181 @@
+'\"macro stdmacro
+.if n .pH g3.setbuf @(#)setbuf	40.9 of 4/24/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.\" Copyright (c) 1988 Sun Microsystems, Inc. - All Rights Reserved.
+.\"
+.nr X
+.if \nX=0 .ds x} setbuf 3S "BSD Compatibility Package" "\&"
+.if \nX=1 .ds x} setbuf 3S "BSD Compatibility Package"
+.if \nX=2 .ds x} setbuf 3S "" "\&"
+.if \nX=3 .ds x} setbuf "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4setbuf\f1, \f4setbuffer\f1, \f4setlinebuf\f1, \f4setvbuf\f1 \- assign buffering to a stream
+.SH SYNOPSIS
+.nf
+\f4cc \f1[ \f2flag\f1\. \. \. ] \f2file\f1 \. \. \. \f4\-lucb\f1
+.P
+\f4#include <stdio.h>\f1
+.P
+\f4setbuf(stream, buf)\f1
+\f4FILE *stream;\f1
+\f4char *buf;\f1
+.P
+\f4setbuffer(stream, buf, size)\f1
+\f4FILE *stream;\f1
+\f4char *buf;\f1
+\f4int size;\f1
+.P
+\f4setlinebuf(stream)\f1
+\f4FILE *stream;\f1
+.P
+\f4int setvbuf(stream, buf, type, size)\f1
+\f4FILE *stream;\f1
+\f4char *buf;\f1
+\f4int type, size;\f1
+.fi
+.SH DESCRIPTION
+The three types of buffering available are unbuffered, block buffered,
+and line buffered.
+When an output stream is unbuffered, information appears on the
+destination file or terminal as soon as written;
+when it is block buffered many characters are saved up and written as a block;
+when it is line buffered characters are saved up until a
+.SM NEWLINE
+is encountered or input is read from
+\f4stdin\f1.
+\f4fflush\f1
+(see
+\f4fclose\f1(3S))
+may be used to force the block out early.
+Normally all files are block buffered.
+A buffer is obtained from
+\f4malloc\f1(3C)
+upon the first
+\f4getc\f1
+or
+\f4putc\f1(3S)
+on the file.
+If the standard stream
+\f4stdout\f1
+refers to a terminal it is line buffered.
+The standard stream
+\f4stderr\f1
+is unbuffered by default.
+.P
+\f4setbuf\f1
+can be used after a stream has been opened but before it is read or written.
+It causes the array pointed to by
+.I buf
+to be used instead of an automatically allocated buffer.  If
+.I buf
+is the
+\f4NULL\fP
+pointer, input/output will be completely unbuffered.
+A manifest constant
+\f4BUFSIZ\*S\f1,
+defined in the
+\f4<stdio.h>\f1
+header file,
+tells how big an array is needed:
+.IP
+\f4char\f1
+\f4buf[BUFSIZ];\f1
+.P
+\f4setbuffer\f1,
+an alternate form of
+\f4setbuf\f1,
+can be used after a stream has been opened but before it is read or written.
+It uses the character array
+.I buf
+whose size is determined by the
+.I size
+argument instead of an automatically allocated buffer.
+If
+.I buf
+is the
+\f4NULL\fP
+pointer, input/output will be completely unbuffered.
+.P
+\f4setvbuf\f1
+can be used after a stream has been opened
+but before it is read or written.
+.I type
+determines how
+stream
+will be buffered.
+Legal values for
+.I type
+(defined in
+\f4<stdio.h>\f1)
+are:
+.TP .85i
+\f4    _IOFBF\fP
+fully buffers the input/output.
+.TP
+\f4    _IOLBF\fP
+line buffers the output;
+the buffer will be flushed when a
+.SM NEWLINE
+is written, the buffer is full, or input is requested.
+.TP
+\f4    _IONBF\fP
+completely unbuffers the input/output.
+.P
+If
+.I buf
+is not the
+\f4NULL\fP
+pointer, the array it points to
+will be used for buffering, instead of an automatically allocated
+buffer.
+.I size
+specifies the size of the buffer to be used.
+.P
+\f4setlinebuf\f1
+is used to change the buffering on a stream
+from block buffered or unbuffered to line buffered.
+Unlike
+\f4setbuf\f1,
+\f4setbuffer\f1,
+and
+\f4setvbuf\f1,
+it can be used at any time that the file descriptor is active.
+.P
+A file can be changed from unbuffered or line buffered to block buffered
+by using
+\f4freopen\f1
+(see
+\f4fopen\f1(3S)).
+A file can be changed from block buffered or line buffered to unbuffered
+by using
+\f4freopen\f1
+followed by
+\f4setbuf\f1
+with a buffer argument of
+\f4NULL\fP.
+.SH NOTE
+A common source of error is allocating buffer space
+as an ``automatic'' variable in a code block, and then
+failing to close the stream in the same block.
+.SH "SEE ALSO"
+\f4fclose\fP(3S),
+\f4fopen\fP(3S),
+\f4fread\fP(3S),
+\f4getc\fP(3S),
+\f4malloc\fP(3C),
+\f4printf\fP(3S),
+\f4putc\fP(3S),
+\f4puts\fP(3S),
+\f4setbuf\fP(3S)
+in the \f2Programmer's Reference Manual\f1
+.SH "RETURN VALUE"
+If an illegal value for
+.I type
+or
+.I size
+is provided,
+\f4setvbuf\f1
+returns a non-zero value.
+Otherwise, the value returned will be zero.

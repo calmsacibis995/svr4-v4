@@ -1,0 +1,137 @@
+.if n .pH 386.preface @(#)preface	40.7
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.BK "Technology File Mapping Guide"
+.CH "Preface"
+.H 1 Preface
+UNIX\(rg System V/386 Release 4 (SVR4) is a general-purpose, multi-tasking,
+interactive operating system found on micro, mini, and mainframe systems;
+it offers a number of features seldom found, even in larger
+operating systems:
+.BL
+.LI
+highly portable device-independent buffered I/O
+.LI
+a hierarchical file-system incorporating demountable volumes
+.LI
+compatible file, device, and inter-process I/O
+.LI
+media-independent networking with OSI transport-services
+.LI
+the ability to initiate and manage asynchronous processes
+.LI
+a variety of mechanisms for inter-process co-ordination
+.LI
+libraries for sorting, searching, and string-handling
+.LI
+over 100 subsystems, including a dozen languages
+.LI
+system command language selectable on a per-user basis
+.LE
+.P
+These features of SVR4 allows users to achieve a greater
+degree of independence from technology:
+.BL
+.LI
+uniform, device-independent I/O
+.LI
+portable, machine-independent data-processing
+.LI
+flexible, protocol, and media-independent networking
+.LE
+.P
+SVR4 is a major enhancement of
+the functionality and quality of the UNIX system.
+Industry-standard implementations of virtual memory,
+protocol-independent networking and file system types,
+the introduction of binary standards and user interface
+standards, and the provision of an evolution path are
+important aspects of this release.
+In addition, SVR4 provides a true merge
+(unification) of the major variants of the UNIX system, thus
+maintaining continuity and broadening the market for applications
+programs.
+.P
+SVR4 was designed to achieve these major goals:
+.VL
+.LI "Unify Major Variants"
+unify the major UNIX system derivatives into a single
+common source-code release
+.LI "Conform to Standards"
+promote industry standards and ensure that UNIX System V
+provides an open systems platform for users and suppliers
+of UNIX System-Based Products
+.LI "Integrate Computing and Communication"
+support networking of computer systems and the development
+of integrated computer and communication systems and products
+.LI "Strengthen Existing Markets"
+strengthen the value of UNIX System V for existing customers
+in commercial markets and government markets, emphasizing
+improved Operations, Administration and Maintenance (OA&M)
+.LI "Increase Value in New Markets"
+broaden the appeal of UNIX System V with additional
+features and capabilities, especially in the areas of
+real-time and internationalization
+.LE
+SVR4 development followed seven guidelines:
+.VL
+.LI "Quality"
+Special care was taken to use quality and productivity
+metrics and procedures, including C language coding standards,
+requirements reviews, design reviews, code inspections, and
+system test procedures, as well as entry and exit criteria
+for each step of the development process.
+.LI "Modularity"
+Internal interfaces are better defined to provide system
+builders with ``hooks'' to support everything from
+high-performance mainframe systems to small, inexpensive control systems.
+.LI "Efficiency"
+Size has been monitored to ensure that new features consume
+the smallest possible amount of memory space.
+.LI "Performance"
+Each new capability has been developed according to specified
+performance goals
+and an extensive test effort has been established to verify compliance.
+.LI "Standards"
+UNIX System V adheres to all relevant industry standards,
+especially those specified in the \f2X/OPEN Portability Guide Issue 3\fP
+(XPG3).
+.LI "Portability"
+UNIX System V utilities have been enhanced to remove
+interdependencies and, where possible, to isolate and remove
+machine dependencies.
+.LI "Compatibility"
+Compatibility with previous versions of UNIX System V is a primary UNIX
+International requirement.
+.LE
+.P
+SVR4 supports four levels of compatibility.  
+.VL
+.LI "Source Compatibility"
+Source code that conforms to the interfaces documented in the
+\f2System V Interface Definition
+ANSI X3J11 C Language, POSIX 1003.1\fP, and
+\f2X/OPEN Portability Guide Issue 3\fP
+will compile and run, with equivalent results, when moved
+between two SVR4-based systems regardless of the make or model of processor.
+This level of compatibility is defined at the point before
+preprocessors are used.
+.LI "Binary Compatibility"
+Compiled programs for a particular processor architecture will
+continue to run properly when a new release of system software is installed.
+Binaries that comply with the Application Binary Interface
+(ABI) for a particular processor architecture from one
+release will run on later releases.
+This is called upward compatibility.
+.LI "Object Compatibility"
+Object files (including libraries) compiled under one
+release of the C language compilation system will be valid
+input to the next release of the C language compilation system.
+.LI "Data Compatibility"
+Existing data storage formats (including the file-system,
+\f4cpio\fP, \f4volcopy\fP, \f4ar\fP, and \f4tar\fP) do
+not change from their current form in UNIX System V.
+.LE
+.P
+This gives SVR4 licensees a detailed overview of
+the product and the means for determining per-copy fees for
+sublicensed products based on SVR4.

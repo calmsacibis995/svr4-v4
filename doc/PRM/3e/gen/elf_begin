@@ -1,0 +1,455 @@
+'\"macro stdmacro
+.if n .pH g3e.elf_begin @(#)elf_begin	40.13 of 5/1/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.\"#ident	"@(#)ci5-doc:req/libelf/begin.man	1.3"
+.nr X
+.if \nX=0 .ds x} elf_begin 3E "ELF Library" "\&"
+.if \nX=1 .ds x} elf_begin 3E "ELF Library"
+.if \nX=2 .ds x} elf_begin 3E "" "\&"
+.if \nX=3 .ds x} elf_begin "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4elf_begin\f1 \- make a file descriptor
+.SH SYNOPSIS
+\f4cc\f1
+[\f2flag\fP \|.\|.\|.] \f2file\fP \|.\|.\|.
+\f4\-lelf\f1
+[\f2library\fP \|.\|.\|.]
+.PP
+.nf
+.na
+.ft 4
+#include <libelf.h>
+.sp 0.5
+Elf \(**elf_begin(int fildes, Elf_Cmd cmd, Elf \(**ref);
+.ft 1
+.ad
+.fi
+.SH DESCRIPTION
+\f4elf_begin\fP,
+\f4elf_next\fP,
+\f4elf_rand\fP,
+and
+\f4elf_end\fP
+work together to process
+.SM ELF
+object files, either
+individually or as members of archives.
+After obtaining an
+.SM ELF
+descriptor from
+\f4elf_begin\fP,
+the program may read an existing file, update an existing file,
+or create a new file.
+.I fildes
+is an open file descriptor that
+\f4elf_begin\fP
+uses for reading or writing.
+The initial file offset [see
+\f4lseek\fP(2)]
+is unconstrained, and the resulting file offset is undefined.
+.P
+.I cmd
+may have the following values.
+.TP 16
+\f4ELF_C_NULL\f1
+When a program sets
+.I cmd
+to this value,
+\f4elf_begin\fP
+returns a null pointer, without opening a new descriptor.
+.I ref
+is ignored for this command.
+See
+\f4elf_next\fP(3E)
+and the examples below for more information.
+.TP 16
+\f4ELF_C_READ\f1
+When a program wishes to examine the
+contents of an existing file, it should set
+.I cmd
+to
+this value.
+Depending on the value of
+.IR ref ,
+this command examines archive members or entire files.
+Three cases can occur.
+.IP ""
+First, if
+.I ref
+is a null pointer,
+\f4elf_begin\fP
+allocates a new
+.SM ELF
+descriptor and prepares to process the entire file.
+If the file being read is an archive,
+\f4elf_begin\fP
+also prepares the resulting descriptor to examine
+the initial archive member on the next call to
+\f4elf_begin\fP,
+as if the program had used
+\f4elf_next\fP
+or
+\f4elf_rand\fP
+to ``move'' to the initial member.
+.IP ""
+Second, if
+.I ref
+is a non-null descriptor associated with an archive file,
+\f4elf_begin\fP
+lets a program obtain a separate
+.SM ELF
+descriptor associated
+with an individual member.
+The program should have used
+\f4elf_next\fP
+or
+\f4elf_rand\fP
+to position
+.I ref
+appropriately (except for the initial member, which
+\f4elf_begin\fP
+prepares; see the example below).
+In this case,
+.I fildes
+should be the same file descriptor used for the parent archive.
+.IP ""
+Finally, if
+.I ref
+is a non-null
+.SM ELF
+descriptor that is not an archive,
+\f4elf_begin\fP
+increments the number of activations for the descriptor and returns
+.IR ref ,
+without allocating a new descriptor
+and without changing the descriptor's read/write permissions.
+To terminate the descriptor for
+.IR ref ,
+the program must call
+\f4elf_end\fP
+once for each activation.
+See
+\f4elf_next\fP(3E)
+and the examples below for more information.
+.TP 16
+\f4ELF_C_RDWR\f1
+This command duplicates the actions of
+\f4ELF_C_READ\fP 
+and additionally allows the program
+to update the file image [see \f4elf_update\fP(3E)].
+That is, using 
+\f4ELF_C_READ\fP
+gives a read-only view of the file, while
+\f4ELF_C_RDWR\fP
+lets the program read \f2and\fP write the file.
+\f4ELF_C_RDWR\fP
+is not valid for archive members.
+If 
+\f2ref\fP
+is non-null, it must have been created with the
+\f4ELF_C_RDWR\fP
+command.
+.TP
+\f4ELF_C_WRITE\f1
+If the program wishes to ignore previous file
+contents, presumably to create a new file, it should set
+.I cmd
+to this value.
+.I ref
+is ignored for this command.
+.P
+\f4elf_begin\fP
+``works'' on all files (including files with zero bytes),
+providing it can allocate memory for its internal structures and read any
+necessary information from the file.
+Programs reading object files thus may call
+\f4elf_kind\fP
+or
+\f4elf_getehdr\fP
+to determine the file type (only object files have an
+ELF
+header).
+If the file is an archive with no
+more members to process, or an error occurs,
+\f4elf_begin\fP
+returns a null pointer.
+Otherwise, the return value is a non-null
+.SM ELF
+descriptor.
+.P
+Before the first call to
+\f4elf_begin\fP,
+a program must call
+\f4elf_version\fP
+to coordinate versions.
+.SH "SYSTEM SERVICES"
+When processing a file, the library decides when to read or
+write the file, depending on the program's requests.
+Normally, the library assumes the file descriptor remains
+usable for the life of the
+.SM ELF
+descriptor.
+If, however, a program must process many files simultaneously
+and the underlying operating system limits the number of
+open files, the program can use
+\f4elf_cntl\fP
+to let it reuse file descriptors.
+After calling
+\f4elf_cntl\fP
+with appropriate arguments, the program
+may close the file descriptor without interfering with the library.
+.P
+All data associated with an
+.SM ELF
+descriptor remain allocated until
+\f4elf_end\fP
+terminates the descriptor's last activation.
+After the descriptors have been terminated, the storage
+is released; attempting to reference such data gives
+undefined behavior.
+Consequently, a program that deals with multiple input (or output)
+files must keep the
+.SM ELF
+descriptors active until it finishes
+with them.
+.SH EXAMPLES
+A prototype for reading a file appears below.
+If the file is a simple object file, the program executes the
+loop one time, receiving a null descriptor in the second iteration.
+In this case, both \f4elf\fP and \fParf\fP
+will have the same value, the activation count will be two,
+and the program calls
+\f4elf_end\fP
+twice to terminate the descriptor.
+If the file is an archive, the loop processes each
+archive member in turn, ignoring those that are not object files.
+.P
+.RS .5i
+.DT
+.nf
+.ft 4
+.ta 8u*\w' 'u +8u*\w' 'u +8u*\w' 'u +8u*\w' 'u +8u*\w' 'u +8u*\w' 'u
+.ne 17
+if (elf_version(EV_CURRENT) =\^= EV_NONE)
+{
+	/\(** library out of date \(**/
+	/\(** recover from error \(**/
+}
+cmd = ELF_C_READ;
+arf = elf_begin(fildes, cmd, (Elf \(**)0);
+while ((elf = elf_begin(fildes, cmd, arf)) != 0)
+{
+	if ((ehdr = elf32_getehdr(elf)) != 0)
+	{
+		/\(** process the file ... \(**/
+	}
+	cmd = elf_next(elf);
+	elf_end(elf);
+}
+elf_end(arf);
+.fi
+.RE
+.P
+Alternatively, the next example illustrates random
+archive processing.
+After identifying the file as an archive, the program
+repeatedly processes archive members of interest.
+For clarity, this example omits error checking and
+ignores simple object files.
+Additionally, this fragment preserves the
+.SM ELF
+descriptors
+for all archive members, because it does not call
+\f4elf_end\fP
+to terminate them.
+.P
+.RS .5i
+.DT
+.nf
+.ft 4
+.ta 8u*\w' 'u +8u*\w' 'u +8u*\w' 'u +8u*\w' 'u +8u*\w' 'u +8u*\w' 'u
+.ne 18
+elf_version(EV_CURRENT);
+arf = elf_begin(fildes, ELF_C_READ, (Elf *)0);
+if (elf_kind(arf) != ELF_K_AR)
+{
+	/\(** not an archive \(**/
+}
+/\(** initial processing \(**/
+/\(** set offset = ... for desired member header \(**/
+while (elf_rand(arf, offset) =\^= offset)
+{
+	if ((elf = elf_begin(fildes, ELF_C_READ, arf)) =\^= 0)
+		break;
+	if ((ehdr = elf32_getehdr(elf)) != 0)
+	{
+		/\(** process archive member ... \(**/
+	}
+	/\(** set offset = ... for desired member header \(**/
+}
+.fi
+.RE
+.P
+The following outline shows how one
+might create a new
+.SM ELF
+file.
+This example is simplified to show the overall flow.
+.P
+.RS .5i
+.DT
+.nf
+.ft 4
+.ta 8u*\w' 'u +8u*\w' 'u +8u*\w' 'u +8u*\w' 'u +8u*\w' 'u +8u*\w' 'u
+.ne 10
+elf_version(EV_CURRENT);
+fildes = open("path/name", O_RDWR|O_TRUNC|O_CREAT, 0666);
+if ((elf = elf_begin(fildes, ELF_C_WRITE, (Elf \(**)0)) =\^= 0)
+	return;
+ehdr = elf32_newehdr(elf);
+phdr = elf32_newphdr(elf, count);
+scn = elf_newscn(elf);
+shdr = elf32_getshdr(scn);
+data = elf_newdata(scn);
+elf_update(elf, ELF_C_WRITE);
+elf_end(elf);
+.fi
+.RE
+.P
+Finally, the following outline shows how one
+might update an existing
+.SM ELF
+file.
+Again, this example is simplified to show the overall flow.
+.P
+.RS .5i
+.DT
+.nf
+.ft 4
+.ta 8u*\w' 'u +8u*\w' 'u +8u*\w' 'u +8u*\w' 'u +8u*\w' 'u +8u*\w' 'u
+.ne 10
+elf_version(EV_CURRENT);
+fildes = open("path/name", O_RDWR);
+elf = elf_begin(fildes, ELF_C_RDWR, (Elf \(**)0);
+
+/\(** add new or delete old information ... \(**/
+
+close(creat("path/name", 0666));
+elf_update(elf, ELF_C_WRITE);
+elf_end(elf);
+.fi
+.RE
+.P
+In the example above, the call to
+\f4creat\fP
+truncates the file, thus ensuring the
+resulting file will have the ``right'' size.
+Without truncation, the updated file might be
+as big as the original, even if information were deleted.
+The library truncates the file, if it can, with
+\f4ftruncate\fP
+[see
+\f4truncate\fP(2)].
+Some systems, however, do not support
+\f4ftruncate\fP,
+and the call to \f4creat\fP protects against this.
+.P
+Notice that both file creation examples
+open the file with write \f2and\fP read permissions.
+On systems that support \f4mmap\fP, the
+library uses it to enhance performance,
+and \f4mmap\fP requires a readable file descriptor.
+Although the library can use a write-only
+file descriptor, the application will
+not obtain the performance advantages of
+\f4mmap\fP.
+.SH "SEE ALSO"
+.na
+\f4cof2elf\fP(1),
+\f4creat\fP(2),
+\f4lseek\fP(2),
+\f4mmap\fP(2),
+\f4open\fP(2),
+\f4truncate\fP(2),
+\f4elf\fP(3E),
+\f4elf_cntl\fP(3E),
+\f4elf_end\fP(3E),
+\f4elf_getarhdr\fP(3E),
+\f4elf_getbase\fP(3E),
+\f4elf_getdata\fP(3E),
+\f4elf_getehdr\fP(3E),
+\f4elf_getphdr\fP(3E),
+\f4elf_getscn\fP(3E),
+\f4elf_kind\fP(3E),
+\f4elf_next\fP(3E),
+\f4elf_rand\fP(3E),
+\f4elf_rawfile\fP(3E),
+\f4elf_update\fP(3E),
+\f4elf_version\fP(3E),
+\f4ar\fP(4)
+.ad
+.SH "NOTES"
+.SM COFF
+is an object file format that preceded
+.SM ELF .
+When a program calls
+\f4elf_begin\fP on a
+.SM COFF
+file, the library translates
+.SM COFF
+structures to their
+.SM ELF
+equivalents,
+allowing programs to read (but not to write) a
+.SM COFF
+file as if it were
+.SM ELF .
+This conversion happens only to the memory image and
+not to the file itself.
+After the initial
+\f4elf_begin\fP,
+file offsets and addresses in the
+.SM ELF
+header,
+the program headers, and the section headers
+retain the original
+.SM COFF
+values [see
+\f4elf_getehdr\fP,
+\f4elf_getphdr\fP,
+and
+\f4elf_getshdr\fP].
+A program may call
+\f4elf_update\fP
+to adjust these values (without writing the file),
+and the library will then present a
+consistent,
+.SM ELF
+view of the file.
+Data obtained through
+\f4elf_getdata\fP
+are translated (the
+.SM COFF
+symbol table is presented as
+.SM ELF ,
+etc.).
+Data viewed through
+\f4elf_rawdata\fP
+undergo no conversion, allowing the program to view the
+bytes from the file itself.
+.P
+Some
+.SM COFF
+debugging information is not translated, though
+this does not affect the semantics of a running program.
+.P
+Although the
+.SM ELF
+library supports
+.SM COFF ,
+programmers are strongly encouraged to
+recompile their programs, obtaining
+.SM ELF
+object files.

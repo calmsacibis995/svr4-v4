@@ -1,0 +1,160 @@
+'\"macro stdmacro
+.if n .pH g1.roffbib @(#)roffbib	40.8 of 4/18/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} roffbib 1 "BSD Compatibility Package" "\&"
+.if \nX=1 .ds x} roffbib 1 "BSD Compatibility Package"
+.if \nX=2 .ds x} roffbib 1 "" "\&"
+.if \nX=3 .ds x} roffbib "" "" "\&"
+.TH \*(x}
+.\" Copyright (c) 1988 Sun Microsystems, Inc. - All Rights Reserved.
+.\"
+.SH NAME
+\f4roffbib\f1 \- format and print a bibliographic database
+.SH SYNOPSIS
+.na
+.HP
+\f4/usr/ucb/roffbib\f1 [ \f4\-e\f1 ] [ \f4\-h\f1 ] [ \f4\-Q\f1 ] [ \f4\-x\f1 ]
+[ \f4\-m\f1 \f2filename\f1 ] [ \f4\-n\f2p\f1 ] [ \f4\-o\f2list\f1 ]
+.br
+                  [ \f4\-r\f2aN\f1 ] [ \f4\-s\f2N\f1 ] [ \f4\-T\f2term\f1 ] [ \f2filename\f1 ] .\ .\ .
+.SH DESCRIPTION
+The 
+\f4roffbib\f1
+command prints out all records in a bibliographic
+database, in bibliography format rather than as
+footnotes or endnotes.
+Generally it is used in conjunction with
+\f4sortbib\f1(1):
+.IP
+\f4example% sortbib  database | roffbib\f1
+.P
+If abstracts or comments are entered following the
+\f4%X\f1
+field key,
+\f4roffbib\f1
+will format them into paragraphs for an
+annotated bibliography.
+Several
+\f4%X\f1
+fields may be given if several
+annotation paragraphs are desired.
+.P
+\f4roffbib\f1
+accepts all options understood by
+\f4nroff\f1(1)
+except
+\f4\-i \f1
+and
+\f4\-q\f1,
+as well as those listed below:
+.TP 0.75i
+\f4\-e\f1
+Produce equally-spaced words in adjusted lines using full
+terminal resolution.
+.TP
+\f4\-h\f1
+Use output tabs during horizontal spacing to speed output and
+reduce output character count.
+.SM TAB
+settings are assumed to be
+every 8 nominal character widths.
+.TP
+\f4\-Q\f1
+Queue output for the phototypesetter.
+Page offset is set to 1 inch.
+.TP
+\f4\-x\f1
+Suppress printing of abstracts.
+.TP
+\f4\-m\f2 filename\f1
+Prepend the macro file
+\f4/usr/ucblib/doctools/tmac/tmac.name\f1
+to the input files.
+There should be a space between the
+\f4\-m\f1
+and the macro filename.
+This set of macros will replace the ones
+defined in
+\f4/usr/ucblib/doctools/tmac/tmac.bib\f1.
+.TP
+\f4\-n\f2p\f1
+Number first generated page
+.IR p .
+.TP
+\f4\-o\f2list\f1
+Print only page numbers that appear in the comma-separated
+.I list
+of numbers and ranges.
+A range
+\f2N\f4\-\f2M\f1
+means pages
+.I N
+through
+.IR M ;
+an initial
+\f4\-\f2N\f1
+means from the beginning to page
+.IR N ;
+a final
+\f2N\f4\-\f1
+means from page
+.I N
+to end.
+.TP
+\f4\-r\f2aN\f1
+Set register
+.I a
+(one-character) to
+.IR N .
+The command-line argument
+\f4\-rN1\f1
+will number the references starting at 1.
+.IP
+Four command-line registers control formatting style
+of the bibliography, much like the number registers of
+\f4ms\f1(7).
+The flag
+\f4\-rV2\f1
+will double space the bibliography, while
+\f4\-rV1\f1
+will double space references but single space annotation paragraphs.
+The line length can be changed from the default 6.5 inches
+to 6 inches with the
+\f4\-rL6i\f1
+argument, and the page offset can be set from the default of 0
+to one inch by specifying
+\f4\-rO1i\f1
+(capital O, not zero).
+.TP
+\f4\-s\f2N\f1
+Halt prior to every
+.I N
+pages for paper loading or changing
+(default
+.IR N \|=1).
+To resume, enter
+.SM NEWLINE
+or
+.SM RETURN\s0.
+.TP
+\f4\-T\f2term\f1
+Specify
+.I term
+as the terminal type.
+.SH FILES
+.TP 2.5i
+\f4/usr/ucblib/doctools/tmac/tmac.bib\f1
+file of macros used by
+\f4nroff/troff\f1
+.SH SEE ALSO
+\f4addbib\fP(1),
+\f4indxbib\fP(1),
+\f4lookbib\fP(1),
+\f4nroff\fP(1)
+\f4refer\fP(1),
+\f4sortbib\fP(1),
+\f4troff\fP(1)
+.SH NOTES
+Users have to rewrite macros to create customized formats.

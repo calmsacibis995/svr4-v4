@@ -1,0 +1,87 @@
+'\"macro stdmacro
+.if n .pH g1a.cpout @(#)cpout	40.6 of 5/17/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} cpout 1iref "System Administration Utilities" "" "\&"
+.if \nX=1 .ds x} cpout 1iref "System Administration Utilities" ""
+.if \nX=2 .ds x} cpout 1iref "" "\&"
+.if \nX=3 .ds x} cpout "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4cpout\f1 \- copy out file archives to multiple volumes
+.SH SYNOPSIS
+\f4cpout\f1 [\f4\-a] [\f4\-c] [\f4\-B] [\f4\-v] [\f4\-V] [\f4\-k]
+.br
+[\f4\-C \f2bufsize\f1] [\f4\-M \f2message\f1] \f2nblks specfile\f1
+.SH DESCRIPTION
+The \f4cpout\f1 program reads the standard input to obtain a list of
+pathnames and then copies those files into the file specified in
+\f2specfile\f1.  The output is written in cpio format.  The output medium
+is assumed to be nblks blocks in size, where a block is 512 bytes if
+the \f4\-k\f1 option is not specified, and 1024 bytes if the \f4\-k\f1
+option is specified.  When \f4cpout\f1 finishes writing the number of
+blocks specified in nblks, it prints the message:
+.P
+.nf
+\f4Insert Volume #:<RETURN> to continue, s<RETURN> to skip\f1
+.fi
+.P
+To continue, replace the medium and press \f4<RETURN>\f1.  Typing
+\f4s <RETURN>\f1 causes \f4cpout\f1 to skip to the next volume of the
+output medium.  Each volume becomes an independent cpio archive.
+The above message also appears as a prompt before beginning to write the
+first volume of the output medium.
+.PP
+The options are:
+.PP
+.TP
+\f4\-a\f1
+Resets access time of input files after they have been copied.
+.TP
+\f4\-c\f1
+Writes header information in ASCII format for portability.
+(Always use this option when the origin and destination machines are
+different types.)
+.TP
+\f4\-B\f1
+Blocks output 5,120 bytes per record (meaningful only with data directed
+to a character special device.)
+.TP
+\f4\-v\f1
+Prints a list of file names as they are processed.
+.TP
+\f4\-V\f1
+Special verbose mode.  This option causes a dot to be printed for each
+file seen.
+.TP
+\f4\-k\f1
+Sets the block size to 1024 bytes.  Default is 512 bytes.
+.TP
+\f4-C\f1
+Causes the input/output to be blocked bufsize bytes per record.
+\f2bufsize\f1 must be a positive integer.  The default buffer size
+is 512 bytes when the \f4-C\f1 and \f4-B\f1 options are not specified.
+The \f4-C\f1 option is meaningful only with data directed to or from
+a character special file (for example, \f4/dev/rmt/c0s0)\f1.
+.TP
+\f4-M\f1
+Used to define a message to be displayed when the end of an output medium
+is reached.  Data inconsistencies are introduced when the end of the
+physical medium is reached.  Thus, if  this message appears, it
+indicates that data corruption may have occurred.
+.SH FILES
+\f4/sbin/cpout\f1
+.SH NOTES
+Upon completion, the \f4cpout\f1 command writes the number of output volumes
+processed to stderr.
+.PP
+The \f2specfile\f1 argument cannot be an ordinary file.  Normally,
+\f2specfile\f1 will
+be the pathname of a special device file such as a tape drive or a floppy
+disk drive.  This must be specified as the raw device.
+.PP
+Reaching the end of the physical medium before nblks blocks are written is
+not allowed and results in inconsistent data written to the output medium.
+Therefore, the value of nblks must always be less than the actual number
+of blocks that the output medium can contain.

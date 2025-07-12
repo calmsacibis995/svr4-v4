@@ -1,0 +1,72 @@
+'\"macro stdmacro
+.if n .pH g1a.labelit_s5 @(#)labelit_s5	40.5 of 4/18/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+'\"macro stdmacro
+.if n .pH g1a.labelit_s5 @(#)labelit_s5	40.4 of 7/17/89
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.if \nX=0 .ds x} labelit 1M "s5" "\&"
+.if \nX=1 .ds x} labelit 1M "s5"
+.if \nX=2 .ds x} labelit 1M "" "\&"
+.if \nX=3 .ds x} labelit "" "" "\&"
+.nr X
+.TH \*(x} "" "386 Computer Only"
+.SH NAME
+\f4labelit\f1 (s5) \- provide labels for \f4s5\f1 file systems
+.SH SYNOPSIS
+\f4labelit\f1
+[\f4\-F s5\f1] [\f2generic_options\f1] [\f4\-n\f1] \f2special\f1 [ \f2fsname volume\f1 ]
+.SH DESCRIPTION
+.I generic_options
+are options supported by the generic \f4labelit\f1 command.
+.PP
+\f4labelit\f1
+can be used to provide labels for unmounted  \f4s5\f1 disk
+file systems or \f4s5\f1 file systems being copied to tape.
+.PP
+With the optional arguments omitted,
+\f4labelit\f1
+prints current label values.
+.PP
+The
+.I special\^
+name should be the disk partition (e.g.,
+\f4/dev/rdsk/0s3\f1),
+or the cartridge tape (e.g.,
+\f4/dev/rmt/c0s0\f1).
+The device may not be on a remote machine.
+.PP
+The
+.I fsname\^
+argument represents the mounted name (e.g.,
+\f4root\f1,
+\f4u1\f1,
+etc.)
+of the file system.
+.PP
+.I Volume\^
+may be used to equate an internal name to a volume
+name applied externally to the hard disk, diskette or tape.
+.PP
+For file systems on disk,
+.I fsname\^
+and
+.I volume\^
+are recorded in 
+the superblock.
+.PP
+The options are:
+.TP 10
+\f4\-F s5\f1
+Specifies the \f4s5\f1-FSType.
+Used to ensure that an \f4s5\f1
+file system is labelled.
+.TP 10
+\f4\-n\f1
+Provides for initial tape labeling only
+(This destroys the previous contents of the tape).
+.SH "SEE ALSO"
+generic \f4labelit\f1(1M),
+\f4makefsys\fP(1M),
+s5_specific \f4mount\fP(1M),
+\f4fs\f1(4).

@@ -1,0 +1,12 @@
+#ident	"@(#)pkg.fmli:pkginfo	1.1.1.3"
+
+PKG="fmli"
+PREDEPEND="fmli"
+NAME="Form and Menu Language Interpreter"
+ARCH="i386"
+RELEASE="4.0"
+VERSION="1"
+VENDOR="USL"
+
+CLASSES="fmli"
+CATEGORY="application"

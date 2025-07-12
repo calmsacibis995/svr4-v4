@@ -1,0 +1,119 @@
+'\"macro stdmacro
+.if n .pH g1.ln @(#)ln	40.7 of 3/14/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+'\"macro stdmacro
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} ln 1 "Essential Utilities" "\&"
+.if \nX=1 .ds x} ln 1 "Essential Utilities"
+.if \nX=2 .ds x} ln 1 "" "\&"
+.if \nX=3 .ds x} ln "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4ln\f1 \- link files
+.SH SYNOPSIS
+\f4ln\f1
+[
+\f4\-s\f1
+]
+[
+\f4\-f\f1
+]
+[
+\f4\-n\f1
+]
+.I file1
+[
+.IR file2 ...
+]
+.I target
+.SH DESCRIPTION
+The \f4ln\fP command links \f2filen\f1 to \f2target\f1
+by creating a directory entry that refers to \f2target\f1.
+By using \f4ln\fP with one or more file names,
+the user may create one or more links to \f2target\f1.
+.P
+The \f4ln\fP command may be used to create both hard links and symbolic links;
+by default it creates hard links.
+A hard link to a file is indistinguishable from
+the original directory entry.
+Any changes to a file are effective independent of the
+name used to reference the file.
+Hard links may not span file systems
+and may not refer to directories.
+.P
+Without the \f4\-s\f1 option, \f4ln\fP is used to create hard links.
+\f2filen\f1 is linked to \f2target\f1.
+If \f2target\f1 is a directory,
+another file named \f2filen\f1
+is created in \f2target\f1 and linked to the original \f2filen\f1.
+If \f2target\f1 is a file, its contents are overwritten.
+.P
+If \f4ln\fP determines that the mode of \f2target\f1 forbids writing,
+it will print the mode (see \f4chmod\fP(2)),
+ask for a response, and read the standard input for one line.
+If the line begins with \f4y\f1, the link occurs,
+if permissible;
+otherwise, the command exits.
+.P
+There are three options to \f4ln\fP.  If multiple options are specified, the 
+one with the highest priority is used and the remainder are ignored.  The 
+options, in descending order of priority, are:
+.TP
+\f4\-s\f1
+\f4ln\fP will create a symbolic link.
+A symbolic link contains the name of the file to which it is linked.
+Symbolic links may span file systems and may refer to directories.
+If the linkname exists, then do not overwrite the contents of the file.
+A symbolic link's permissions are always set to read, write, and execute
+permission for owner, group, and world (\f4777\f1),
+.TP 5
+\f4\-f\f1
+\f4ln\fP will link files without questioning the user,
+even if the mode of \f2target\f1 forbids writing.
+Note that this is the default if the standard input is not a terminal,
+.TP
+\f4\-n\f1
+If the linkname is an existing file,
+do not overwrite the contents of the file.
+The
+\f4\-f\f1
+option overrides this option.
+.P
+If the \f4\-s\f1 option is used with two arguments,
+\f2target\f1 may be an existing directory or a non-existent file.
+If \f2target\f1 already exists and is not a directory,
+an error is returned.
+\f2filen\f1 may be any path name and need not exist.
+If it exists, it may be
+a file or directory and may reside on a different
+file system from \f2target\f1.
+If \f2target\f1 is an existing directory,
+a file is created in directory \f2target\f1 whose name is
+\f2filen\f1 or the last component of \f2filen\f1.
+This file is a symbolic link that references \f2filen\f1.
+If \f2target\f1 does not exist, a file with
+name \f2target\f1 is created
+and it is a symbolic link that references \f2filen\f1.
+.P
+If the \f4\-s\f1 option is used with more than two arguments,
+\f2target\f1 must be an existing directory or an error will be returned.
+For each \f2filen\f1,
+a file is created in \f2target\f1 whose name is \f2filen\f1 or its last
+component;
+each new \f2filen\f1 is a symbolic link to the original \f2filen\f1.
+The \f2files\f1 and \f2target\f1 may reside on different file systems.
+.SH SEE ALSO
+\f4chmod\fP(1), \f4cp\fP(1), \f4mv\fP(1), \f4rm\fP(1), \f4link\fP(2), \f4readlink\fP(2), \f4stat\fP(2), \f4symlink\fP(2).
+.SH NOTES
+Doing operations that involve ".." (such as "\f4cd ..\f1") in a
+directory that is symbolically linked will reference the
+original directory not the target.
+.P
+The \f4-s\f1 option does not use the current working directory.  In the
+command 
+.IP
+\f4ln -s\f2 path target\f1
+.P
+\f2path\f1 is taken literally without
+being evaluated against the current working directory.

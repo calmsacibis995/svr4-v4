@@ -1,0 +1,143 @@
+'\"macro stdmacro
+.if n .pH g3.dec2flt @(#)dec2flt	40.11 of 4/19/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.\" Copyright (c) 1988 Sun Microsystems, Inc. - All Rights Reserved.
+.\"
+.nr X
+.if \nX=0 .ds x} decimal_to_floating 3 "BSD Compatibility Package" "\&"
+.if \nX=1 .ds x} decimal_to_floating 3 "BSD Compatibility Package"
+.if \nX=2 .ds x} decimal_to_floating 3 "" "\&"
+.if \nX=3 .ds x} decimal_to_floating "" "" "\&"
+.TH \*(x}
+.SH NAME
+.nf
+\f4decimal_to_floating\f1:  \f4decimal_to_single\f1, \f4decimal_to_double\f1,
+\f4decimal_to_extended\f1 \- convert decimal record to floating-point value
+.fi
+.SH SYNOPSIS
+\f4cc \f1[ \f2flag\f1\. \. \. ] \f2file\f1 \. \. \. 
+\f4\-lucb\f1
+.sp .5
+\f4#include <floatingpoint.h>\f1
+.P
+.nf
+\f4void decimal_to_single(px, pm, pd, ps)\f1
+\f4single *px ;\f1
+\f4decimal_mode *pm;\f1
+\f4decimal_record *pd;\f1
+\f4fp_exception_field_type *ps;\f1
+.fi
+.P
+.nf
+\f4void decimal_to_double(px, pm, pd, ps)\f1
+\f4double *px ;\f1
+\f4decimal_mode *pm;\f1
+\f4decimal_record *pd;\f1
+\f4fp_exception_field_type *ps;\f1
+.fi
+.P
+.nf
+\f4void decimal_to_extended(px, pm, pd, ps)\f1
+\f4extended *px ;\f1
+\f4decimal_mode *pm;\f1
+\f4decimal_record *pd;\f1
+\f4fp_exception_field_type *ps;\f1
+.fi
+.SH DESCRIPTION
+.P
+The
+\f4decimal_to_floating\f1
+functions convert the decimal record at
+.I *pd
+into a floating-point value at
+.IR *px ,
+observing the modes specified in
+.I *pm
+and setting exceptions in
+.IR *ps .
+If there are no
+.SM IEEE
+exceptions,
+.I *ps
+will be zero.
+.P
+.I pd->sign
+and
+.I pd->fpclass
+are always taken into account.
+.I pd->exponent
+and
+.I pd->ds
+are used when
+.nh
+.I pd->fpclass
+.hy
+is
+.I fp_normal
+or
+.IR fp_subnormal .
+In these cases
+.I pd->ds
+must contain one or more
+.SM ASCII
+digits followed by a
+\f4NULL\fP.
+.I *px
+is set to a correctly rounded approximation to
+.IP
+\f4(pd->sign)*(pd->ds)*10**(pd->exponent)\f1
+.P
+Thus if
+.I pd->exponent
+== \-2 and
+.I pd->ds
+== "1234",
+.I *px
+will get 12.34 rounded
+to storage precision.
+.nh
+.I pd->ds
+.hy
+cannot have more than
+\f4DECIMAL_STRING_LENGTH-1\fP
+significant digits
+because one character is used to terminate the string with a
+\f4NULL\fP.
+If
+.IR pd->more != 0
+on input then additional nonzero digits follow those in
+.IR pd->ds "; " fp_inexact
+is set accordingly on output in
+.IR *ps .
+.P
+.I *px
+is correctly rounded according to the
+.SM IEEE
+rounding modes in
+.IR pm->rd .
+.I *ps
+is set to contain
+.IR fp_inexact ,
+.IR fp_underflow ,
+or
+.I fp_overflow
+if any of these arise.
+.P
+.IR pd->ndigits ,
+.IR pm->df ,
+and
+.I pm->ndigits
+are not used.
+.P
+\f4strtod\f1(3C),
+\f4scanf\f1(3S),
+\f4fscanf\f1(),
+and
+\f4sscanf\f1()
+all use
+\f4decimal_to_double\f1.
+.SH SEE ALSO
+\f4scanf\fP(3S),
+\f4strtod\fP(3C)
+in the \f2Programmer's Reference Manual\f1

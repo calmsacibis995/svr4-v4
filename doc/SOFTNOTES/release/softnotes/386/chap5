@@ -1,0 +1,333 @@
+.if n .pH rn4.chap5 @(#)chap5	40.69
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.de MR 
+.P 
+MR \\$1 
+.P 
+..
+.de MR
+..
+.BK "Software Notes"
+.CH  "System Administration and Maintenance" "5"
+.H 1 "System Administration and Maintenance Notes"
+.IX istart UNIX System V/386 Release 4, system administration notes
+.H 2 "Improved Backup and Restore Operations"
+.H 3 "Extended Backup and Restore"
+.MR "bl90-13814
+If the user would like to use the extended \f4backup\f1 and
+\f4restore\f1 capabilities provided by OA&M, the following changes
+must be made,
+.P
+For the \f4backup\f1 section, edit \f4/usr/sadm/sysadm/menu/backup_service/ext.menu\f1 and add the line:
+.DS I UI
+extended^Extended Backup Services^backup.menu
+.DE
+For the \f4restore\f1 section, edit \f4/usr/sadm/sysadm/menu/restores/ext.menu\f1 and add the line:
+.DS I UI
+extended^Extended Restore Services^restore.menu
+.DE
+.AB N
+Use of the extended \f4backup\fP and \f4restore\fP capabilities requires
+an advanced level of familiarity with SVR4's \f4backup\fP and 
+\f4restore\fP commands.
+(For more information, see the \f2System Administrator's Guide\fP).
+.AC
+.H 3 "Source Compatibility"
+System administrators must recreate the online backup 
+schedule using the \f4bkreg\f1 command.  
+.H 3 "Future Directions"
+.IX \f4ckbupscd\fP
+The \f4ckbupscd\f1 command will not be supported 
+in future releases.
+.H 2 "Specific Backup/Restore Notes and Workarounds"
+.H 3 "backup and cpio"
+.MR "ul90-24714 
+Do not use \f4cpio\f1, \f4volcopy\f1, or \f4tar\f1 to backup \f4/usr\f1. 
+Only use the \f4backup\f1 command to backup \f3/usr\f1.
+\f4cpio\f1, \f4volcopy\f1 and \f4tar\f1 are resident in \f3/usr/sbin\f1.
+.IX backup jobs, label checking override
+.H 3 "-o Method Option"
+.IX backup jobs, \f4-o\f1 method
+The \f4-o\f1 \f4method\f1 option overrides label checking on 
+\f4backup\f1.
+The override allows a backup to a tape or disk that
+has a label different from that specified for the operation.
+Because \f4restore\f1, and \f4rsoper\f1 always check
+labels, non-NULL labelled media should always be supplied in
+any backup operation, even with label checking override.
+.H 3 "Backup and Device Names"
+.IX \f4backup\f1 and \f4restore\f1
+When using the \f4backup/restore\f1 commands, 
+a specific device name must be specified
+not just the device group.
+If for some reason, the device group must also
+be specified, the ``spool'' entry in 
+\f4/etc/device.tab\f1 must be moved to the
+end of the file.
+.AB N
+Save a copy of the \f4/etc/device.tab\fP file as it 
+is recreated each time the system boots.
+.AC
+.H 3 "Fimage Archives"
+.IX backup methods, full image
+.IX backup methods, full file
+The \f4fimage\f1 method restores an entire file system.
+If such an archive is online, and the file system is 
+unmounted, the restore will occur automatically.  
+A slice may be unintentionally overwritten if the
+administrator requests a \f4restore\f1 and such an archive is
+available.
+.H 3 "Backup Strategy"
+.IX backup strategy, \f4fimage\f1 and \f4ffile\f1
+Both \f4fimage\f1 and \f4ffile\f1 methods are 
+complete file system backup strategies and 
+are mutually exclusive.
+Correct strategy is to use either \f4fimage\f1 or 
+\f4ffile\f1 in conjunction with \f4incfile\f1.
+.H 3 "Viewing Archive Labels"
+.IX backup jobs, archive label viewing
+The \f4rsoper\f1 \f4-n\f1 \f4-d\f1 command allows an 
+administrator to view the label of the archive 
+on the device specified.
+This is useful if external labels are damaged or a 
+backup history is lost.
+.H 3 "sysadm Backup Service"
+.MR ul90-26926
+.MR ul91-11932
+The option to backup all user files (\f4All\f1) using \f4sysadm\f1
+fails.  (The means of selection within \f4sysadm\f1 is \f4backup_
+service\f1, \f4basic\f1, \f4System Backup\f1, \f4Backup Users\f1,
+\f2media\f1, \f4All\f1.) You can get the desired results by marking
+the users individually from the menu before trying the backup.
+.H 3 "backup and Relative Paths"
+.MR ul91-04220
+The \f4sysadm\f1 backup and restore facility creates backups using
+relative pathnames.
+However, the restore utility does not have the
+current directory set to root (\f4/\f1) when it is executed.  The
+workaround is to log in as \f4root\f1, instead of \f4sysadm\f1, and
+execute the utility from the root directory.
+.H 3 "/etc/bkup/rsstatus.tab: Not Created During Installation"
+.IX \f4etc/bkup/rsstatus.tab\f1 
+The file \f4etc/bkup/rsstatus.tab\f1 is not created when the
+system is installed.
+If you attempt to query this file using the Extended 
+Restore function under OA&M, you will get a message to
+this effect.
+This is not serious as the file will be created
+when the first Extended Restore is executed under OA&M.
+.H 2 "Console Logging"
+.H 3 "Future Directions"
+.IX consol logging, future directions, \f4/dev/console\f1 and \f4/dev/syscon\f1
+The \f4/dev/console\f1 and \f4/dev/syscon\f1 
+special files are still available for use
+in this release.
+Access to a console by \f4/dev/console\f1 may be
+unavailable in future releases.
+.H 2 "System Administration Menus sysadm"
+.IX menus (\f4sysadm\fP), dependencies and compatibilities
+.IX \f4sysadm\fP, dependencies and compatibilities
+A new screen-based administrative interface, \f4sysadm\f1, is 
+introduced in SVR4.
+This interface uses FMLI utilities and can be 
+operated with the function keys on most terminals.
+.H 4 "Function Key Resets"
+.IX function key resets
+In a limited number of cases, users may find that keyboard
+function keys may need to be reset after the termination of
+a \f4sysadm\f1 session.
+.H 3 "Future Directions"
+.IX unsupported administrative logins
+.IX \f4sysadmn\f1
+.IX \f4setup\f1
+.IX \f4powerdown\f1 
+.IX \f4makefys\f1
+.IX \f4mountfsys\f1
+The administrative logins (i.e. \f4setup\f1, 
+\f4powerdown\f1, \f4makefsys\f1, \f4mountfsys\f1, 
+\f4umountfsys\f1, and \f4checkfsys\f1) no longer have
+entries in \f4/etc/passwd\f1 and may not be 
+supported in the next release.
+.H 2 "Device Management"
+.IX table driven device mangement facility
+A table driven device management facility is provided in this
+release.
+The administration feature set depends upon the information
+in a device table to access tape drives, floppy disks, and
+hard disks for software installation, backup/restore operations, and
+device access throughout the \f4sysadm\f1 interface.
+The table may be populated using the 
+\f4storage_devices/descriptions/add\f1
+task on the \f4sysadm\f1 interface.  
+.H 3 "Source Compatibility"
+.IX source compatibility, installation commands
+The SVR4 software installation feature recognizes
+packages in the pre-SVR4 format and cannot be used to install and
+remove such packages.
+.IX \f4installpkg\f1
+.IX \f4removepkg\f1
+.IX \f4displaypkg\f1
+The SVR3.2 commands \f4installpkg\f1, \f4removepkg\f1, 
+and \f4displaypkg\f1 are provided for compatibility.
+It is recommended, that new software packages be created
+and existing packages be converted, where feasible,
+using the new format in order to take advantage of 
+package auditing capabilities, and future enhancements.
+Add-on packages that supply \f4FACE\f1 interface tasks
+should use the new \f4sysadm\f1 hierarchy.
+.SK
+.H 2 "User and Password Administration"
+.H 3 "useradd Command"
+.IX useradd
+.MR us90-27801
+When you add a user (using \f4useradd\f1(1M)), be careful if the
+home directory you assign to it already exists.  If the directory is
+already owned by another user and permissions are not open, the new
+user will not have access to its own home directory.  The
+\f4useradd\f1 command does not warn you of this fact when you add
+the user.
+.H 3 "passwd Command"
+.IX passwd(1)
+.MR dm91-12701
+.MR ul91-16110
+The \f4passwd\f1 command behaves inconsistently in regards to the
+option that turns off password aging.  If \f4passwd -x 0 \f2user\f1
+is run, sometimes \f2user\f1 will be requested to change the
+password at the next login session and sometimes the user will not.
+.H 3 "Future Directions"
+.IX \f4pwconv\fP
+The \f4pwconv\f1 command will not be updated in future 
+releases to work with new identification and 
+authorization database files.
+.IX \f4passmgmt\fP
+.P
+The \f4passmgmt\f1 command will be removed from distribution in
+the next release.
+The functionality has been replaced by the SVR4 
+\f4useradd\f1, \f4usermod\f1, and \f4userdel\f1 commands.
+.H 2 "EVGA Mode Changes"
+.\Mark Gitner
+.IX EVGA mode changes
+For the video cards that are described 
+on the \f4evgainit\f1 manual page,
+there are new mode switching constants in \f4kd.h\f1.
+They are all prefixed with \f4SW_GEN_ \f1 followed by the resolution.
+These should be used to set any of these video cards to graphics 
+modes with resolutions higher than 640x480.
+For example, to set the video card to 800x600, the 
+\f4SW_GEN_800x600\f1 constant would be used.
+The ioctl to set the mode will succeed if the video card 
+in question supports the specified resolution, otherwise 
+it will fail and set errno to \f4ENXIO\f1.
+In order to set the video card mode, first open \f4/dev/video\f1 
+and then do an \f4ioctl\f1 on the file descriptor with the 
+appropriate mode switching constant.
+For example:
+.DS I UI
+fd = open("/dev/video", O_RDWR);
+
+ioctl(fd, SW_GEN_800x600, 0);
+.DE
+.\ recent 386 softnotes
+.H 3 "Supported Video cards"
+.IX supported video cards
+The following video cards are supported in the 800x600 pixels(16 color) VGA mode: 
+.DL
+.LI
+AT&T VDC 600
+.LI
+ATI VGA Wonder
+.LI
+Video7 VRAM VGA
+.LI
+Video7 Fastwrite VGA
+.LI
+Sigma VGA/H
+.LI
+Dell VGA
+.LI
+Paradise 16PLUS
+.LI
+Techmar VGA
+.LE
+The following video cards are supported in the 1024x768
+pixels(16 color) VGA mode:
+.DL
+.LI 
+Paradise 1024
+.LI
+Orchid Pro Designer VGA
+.LI
+STB VGA Extra/EM 16
+.LE
+.H 2 "Commands"
+.H 3 "pkgadd"
+.MR "dm90-27584
+.IX \f4pkgadd\f1
+There is a problem with the OA&M \f4pkgadd\f1 if the
+files contained in the OA&M package have group
+ownership values not contained in the system's
+\f4/etc/group\f1 file.
+Enter the group owner ID values in the \f4/etc/group\f1 file.
+.P
+Labels must be specified for all backups and 
+there must be enough for the number of volumes to be created.
+The option to overwrite the label \f4-o\f1, should not be used.
+.H 3 "pkgmk"
+.IX \f4pkgmk\f1
+When using \f4pkgmk\f1 to create a file, the 
+capacity specified should be slightly
+less than the true capacity of the device.
+The simpliest way to do this is to 
+add \f4-l <sm. size>\f1 to the \f4pkgmk\f1 command line.
+Where <sm. size> is roughly equal 
+to the size of the \f4pkginfo\f1 file (in 512 byte blocks) 
+plus 1.
+If the new value is still too large, a 
+warning about no space being left on the device will
+be sent to the console.
+.H 3 "pkgrm"
+If a package removal fails, attempts to remove the package again.
+If the removal still fails the second time, then try to remove
+the lock file as outlined here. 
+To remove the lock file do the following:
+.DS 1i
+1. \f4cd /var/sadm/pkg\f1
+
+2. \f4cd\f1 <pkgname> 
+	where <pkgname> is the directory 
+	corresponding to the package you are trying to install.
+	Check the "NAME" field in the \f4pkginfo\f1 file to
+	assure the correct directory has been selected
+
+3. Remove the file called \f4!R-Lock!\f1.
+.DE
+.H 3 "pwck"
+.IX \f4pwck\fP
+System Administrators should be aware that the
+command \f4pwck\f1 only lists information about \f4/etc/passwd\f1,
+and not \f4/etc/shadow\f1.
+.H 2 "OA&M Screens and Help"
+.MR "bl90-04505
+.IX OA&M screens and Help
+The following menus have no Help text:
+.BL
+.LI
+restore_services/extended/status/full
+.LI
+backup_services/extended/status/full
+.LI
+applications
+.LI
+network_services
+.LE
+.P
+Consult Networking documentation for help.
+.H 2 "Setting up RFS through sysadm"
+.MR "bl90-12232
+.IX RFS via \f4sysadm\f1 menus 
+Setting up RFS via \f4sysadm\f1 menus is not currently
+possible. 
+The menu function for RFS is unpredictable and problematic.
+.IX iend UNIX System V/386 Release 4, system administration notes

@@ -1,0 +1,472 @@
+'\"macro stdmacro
+.if n .pH g1.cc @(#)cc	40.3 of 1/3/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} cc 1 "C Programming Language Utilities" "\&"
+.if \nX=1 .ds x} cc 1 "C Programming Language Utilities"
+.if \nX=2 .ds x} cc 1 "" "\&"
+.if \nX=3 .ds x} cc "" "" "\&"
+.TH \*(x}
+.if '\*p'' \{\
+.ds N
+.ds p
+.ds P
+.ds l libc.a\}
+.SH NAME
+\f4cc\f1 \- C compiler
+.SH SYNOPSIS
+\f4cc\f1 [\f2options\f1] \f2file\f1 ...
+.SH DESCRIPTION
+\f4cc\fP
+is the interface to the C compilation system.
+The compilation tools conceptually consist of
+a preprocessor, compiler, optimizer, basic block analyzer,
+assembler, and link editor.
+\f4cc\fP
+processes the supplied options
+and then executes the various tools with the proper arguments.
+\f4cc\fP
+accepts several types of files as arguments.
+.PP
+Files whose names end with \f4.c\f1
+are taken to be
+C source files and may be preprocessed, compiled, optimized, instrumented
+for profiling, assembled, and link edited.
+The compilation process may be stopped after the completion of any pass if the
+appropriate options are supplied.
+If the compilation process runs through the assembler, then
+an object file is produced
+whose name is that of the source with \f4.o\f1
+substituted for \f4.c\f1.
+However, the \f4.o\f1
+file is normally deleted if a single
+C file is compiled and then immediately link edited.
+In the same way, files whose names end in \f4.s\f1
+are taken to be assembly source files; they may be assembled and link edited.
+Files whose names end in \f4.i\f1
+are taken to be preprocessed C source files,
+and they may be compiled,
+optimized, instrumented for profiling, assembled, and link edited.
+Files whose names do not end in \f4.c\f1, \f4.s\f1, or \f4.i\f1
+are handed to the link editor,
+which produces a dynamically linked executable 
+whose name by default is \f4a.out\f1.
+.PP
+Since
+\f4cc\fP
+usually creates files in the current directory during the compilation
+process, it is necessary to run \f4cc\fP
+in a directory in which a file can be created.
+.PP
+The following options are interpreted by \f4cc\fP:
+.PP
+.TP
+\f4\-A\f2 name\f1[\f4(\f1tokens\f4)\f1]
+Associates \f2name\f1 as a predicate with the specified \f2tokens\f1
+as if by a \f4#assert\f1 preprocessing directive.
+.PP
+.RS
+.ta .75i +.5i
+.nf
+Preassertions:	\f4system(unix)\f1
+		\f4cpu(i386)\f1 
+		\f4machine(i386)\f1
+.fi
+.DT
+.RE
+.TP
+\f4\-A \-\f1
+Causes all predefined macros (other than those that begin with \f4_\|_\f1\|)
+and predefined assertions to be forgotten.
+.TP
+\f4\-B\f2 c\f1
+\f2c\f1 can be either \f4dynamic\f1 or \f4static\f1.
+\f4\-B dynamic\f1 causes the link editor to look for files named
+\f4lib\f2x\fP.so\f1 and then for files named \f4lib\f2x\fP.a\f1
+when given the \f4\-l\f2x\f1 option.
+\f4\-B static\f1 causes the link editor to look only for files
+named \f4lib\f2x\fP.a\f1.
+This option may be specified multiple times on the command line as
+a toggle.
+This option and its argument are passed to \f4ld\fP.
+.TP
+\f4\-C\f1
+Cause the preprocessing phase to pass along all comments
+other than those on preprocessing directive lines.
+.TP
+\f4\-c\f1
+Suppress the link editing phase of the compilation and do not remove any
+produced object files.
+.TP
+\f4\-D\f2 name\f1[=\f2tokens\f1]
+.PP
+Associates \f2name\f1 with the specified \f2tokens\f1
+as if by a \f4#define\f1 preprocessing directive.
+If no \f4=\f2tokens\f1 is specified,
+the token \f4\&1\f1 is supplied.
+.PP
+.RS
+.ta .75i +.5i
+.nf
+Predefinitions:	\f4i386
+		unix\f1
+.fi
+.DT
+.RE
+.TP
+\f4\-d\f2 c\f1
+\f2c\f1 can be either \f4y\f1 or \f4n\f1.
+\f4\-dy\f1 specifies dynamic linking, which is the default, in the link editor.
+\f4\-dn\f1 specifies static linking in the link editor.
+This option and its argument are passed to \f4ld\fP.
+.TP
+\f4\-E\f1
+Only preprocess the named C files and send the result to the standard output.
+The output will contain preprocessing directives
+for use by the next pass of the compilation system.
+.TP
+\f4\-f\f1
+This option is obsolete and will be ignored.
+.TP
+\f4\-G\f1
+Used to direct the link editor to
+produce a shared object rather than a dynamically linked executable.
+This option is passed to \f4ld\fP.
+It cannot be used with the \f4\-dn\f1 option.
+.TP
+\f4\-g\f1
+Cause the compiler to generate additional information needed for the
+use of \f4sdb\fP.
+Use of \f4sdb\fP on a program compiled
+with both the \f4\-g\f1 and \f4\-O\f1 options
+is not recommended
+unless the user understands the behavior of optimization.
+.TP
+\f4\-H\f1
+Print, one per line, the path name of each file
+included during the current compilation on the standard error output.
+.TP
+\f4\-I\f2 dir\f1
+Alter the search for included files whose names do not begin with \f4/\f1
+to look in \f2dir\f1 prior to the usual directories.
+The directories for multiple \f4\-I\f1 options are searched in the order specified.
+.TP
+\f4\-K\f1 [\f4PIC\f1, \f4minabi\f1]
+\f4\-K PIC\f1 causes position-independent code (PIC) to be generated.
+.P
+\f4\-K minabi\f1 directs the compilation system to use a version
+of the C library that minimizes dynamic linking, without
+changing the application's ABI conformance (or non-conformance,
+as the case may be).  Applications that use the Network
+Services Library or the X library may not use \f4\-K minabi\f1.
+.TP
+\f4\-L\f2 dir\f1
+Add \f2dir\f1 to the list of directories searched for libraries by \f4ld\fP.
+This option and its argument are passed to \f4ld\fP.
+.TP
+\f4\-l\f2 name\f1
+Search the library \f4lib\f2name\fP.so\f1 or \f4lib\f2name\f4.a\f1.
+Its placement on the command line is significant as a library is
+searched at a point in time relative to the placement of other libraries
+and object files on the command line.
+This option and its argument are passed to \f4ld\fP.
+.TP
+\f4\-O\f1
+Arrange for compilation phase optimization.
+This option has no effect on \f4.s\f1 files.
+.TP
+\f4\-o\f2 pathname\f1
+Produce an output object file \f2pathname\f1,
+instead of the default \f4a.out\f1.
+This option and its argument are passed to \f4ld\fP.
+.TP
+\f4\-P\f1
+Only preprocess the named C files and leave the result in
+corresponding files suffixed \f4.i\f1.
+The output will not contain any preprocessing directives,
+unlike \f4\-E\f1.
+.TP
+\f4\-p\f1
+Arrange for the compiler to produce code that counts
+the number of times each routine is called; also, if
+link editing takes place, profiled versions of \f4libc.a\f1 and \f4libm.a\f1
+(with the \f4\-lm\f1 option) are linked if the
+\f4\-dn\f1 option is used.
+A \f4mon.out\f1
+file will then be produced at normal termination of execution of the
+object program.
+An execution profile can then be generated by use
+of \f4prof\fP.
+.TP
+\f4\-Q\f2 c\f1
+\f2c\f1 can be either \f4y\f1 or \f4n\f1.
+If \f2c\f1 is \f4y\f1, identification information about each invoked
+compilation tool will be added to the output files (the default behavior).
+This can be useful for software administration.
+Giving \f4n\f1 for \f2c\f1 suppresses this information.
+.TP
+\f4\-q\f2 c\f1
+\f2c\f1 can be either \f4l\f1 or \f4p\f1.
+\f4\-ql\f1 causes the invocation of the basic block analyzer
+and arranges for the production of code that counts
+the number of times each source line is executed.
+A listing of these counts can be generated by use of \f4lprof\fP.
+\f4\-qp\f1 is a synonym for \f4\-p\f1.
+.TP
+\f4\-S\f1
+Compile, optimize (if \f4\-O\f1 is present),
+and do not assemble or link edit the named C files.
+The assembler-language output is left in corresponding files suffixed \f4.s\f1.
+.if \nD \{\
+.TP 
+\f4\-t v\f1
+Causes all function calls to be made through a transfer vector table.\}
+.TP
+\f4\-U\f2 name\f1
+Causes any definition of \f2name\f1 to be forgotten,
+as if by a \f4#undef\f1 preprocessing directive.
+If the same \f2name\f1 is specified for both \f4\-D\f1 and \f4\-U\f1,
+\f2name\f1 is not defined, regardless of the order of the options.
+.TP
+\f4\-V\f1
+Cause each invoked tool to print its version information
+on the standard error output.
+.TP
+\f4\-v\f1
+Cause the compiler to perform more and stricter semantic checks,
+and to enable certain \f4lint\f1-like checks on the named C files.
+.TP
+\f4\-W\f2 tool\f4,\^\f2arg\s-1\d1\u\s+1\f1[\f4,\^\f2arg\s-1\d2\u\s+1\f1 ...]
+Hand off the argument(s) \f2arg\s-1\di\u\s+1\f1 each as a separate argument
+to \f2tool\f1.
+Each argument must be separated from the preceding by only a comma.
+(A comma can be part of an argument by escaping it
+by an immediately preceding backslash (\f4\e\f1) character;
+the backslash is removed from the resulting argument.)
+\f2tool\f1 can be one of the following:
+.PP
+.PD 0
+.RS 1i
+.TP
+\f4p\f1
+A synonym for \f4\&0\f1
+.TP
+\f4\&0\f1
+compiler
+.TP
+\f4\&2\f1
+optimizer
+.TP
+\f4b\f1
+basic block analyzer
+.TP
+\f4a\f1
+assembler
+.TP
+\f4l\f1
+link editor
+.RE
+.PD
+.IP
+For example,
+\f4\-Wa,\-o,\f2objfile\f1 passes \f4\-o\f1 and \f2objfile\f1
+to the assembler, in that order; also \f4\-Wl,\-I,\f2name\f1 
+causes the linking phase to override 
+the default name of the dynamic linker, \f4/usr/lib/libc.so.1\f1.
+.if '\*p'3b' \{\
+\f4\-W0,\-W\f1 passes \f4\-W\f1 to the compiler which causes it
+to produce a warning message whenever a data item of less than word
+size is defined as an automatic variable, or is passed as an argument
+to a function, or is a member of a structure that is used in this
+manner.\}
+.IP
+The order in which the argument(s) are passed to a tool with respect
+to the other specified command line options may change.  
+.TP
+\f4\-X\f2 c\f1
+Specify the degree of conformance
+to the ANSI C standard.
+\f2c\f1 can be one of the following:
+.RS
+.TP
+\f4t\f1 (transition)
+The compiled language includes all new features
+compatible with older (pre-ANSI) C (the default behavior).
+The compiler warns about all language constructs that have
+differing behavior between the new and old versions and
+uses the pre-ANSI C interpretation.
+This includes, for example,
+warning about the use of trigraphs
+the new escape sequence \f4\ea\f1, and
+the changes to the integral promotion rules.
+.TP
+\f4a\f1 (ANSI)
+The compiled language includes all new features of ANSI C
+and uses the new interpretation of constructs with differing behavior.
+The compiler continues to warn about the integral promotion rule changes,
+but does not warn about trigraph replacements or new escape sequences.
+.TP
+\f4c\f1 (conformance)
+The compiled language and associated header files are ANSI C
+conforming, but include all conforming extensions of \f4\-Xa\f1.
+Warnings will be produced about some of these.
+Also, only ANSI defined identifiers are visible in the standard header files.
+.RE
+.IP
+The predefined macro \f4_\|_STDC_\|_\f1 has the value \f4\&0\f1 for
+\f4\-Xt\f1 and \f4\-Xa\f1, and \f4\&1\f1 for \f4\-Xc\f1.
+All warning messages about differing behavior can be eliminated in
+\f4\-Xa\f1 through appropriate coding; for example, use of casts
+can eliminate the integral promotion change warnings.
+.TP
+\f4\-Y\f2 item\f4,\^\f2dir\f1
+Specify a new directory \f2dir\f1 for the location of \f2item\f1.
+\f2item\f1 can consist of any of the characters representing
+tools listed under the \f4\-W\f1 option or the
+following characters representing directories containing special files:
+.PP
+.RS
+.PD 0
+.TP
+\f4F\f1
+obsolete.
+Use \f4\-YP\f1 instead.
+For this release, \f4\-YF\f1 will be simulated using \f4\-YP\f1.
+\f4\-YF\f1 will be removed in the next release.
+.TP
+\f4I\f1
+directory searched last for include files: \f2INCDIR\f1 (see \f4\-I\f1)
+.TP
+\f4S\f1
+directory containing the start-up object files: \f2LIBDIR\f1
+.TP
+\f4L\f1
+obsolete.
+Use \f4\-YP\f1 instead.
+For this release, \f4\-YL\f1 will be simulated using \f4\-YP\f1.
+\f4\-YL\f1 will be removed in the next release.
+.TP
+\f4U\f1
+obsolete.
+Use \f4\-YP\f1 instead.
+For this release, \f4\-YU\f1 will be simulated using \f4\-YP\f1.
+\f4\-YU\f1 will be removed in the next release.
+.TP
+\f4P\f1
+Change the default directories used for finding libraries. \f2dir\f1
+is a colon-separated path list.
+.PD
+.RE
+.IP
+If the location of a tool is being specified,
+then the new path name for the tool will be \f2dir\f4/\f2tool\f1.
+If more than one  \f4\-Y\f1  option is applied to any one item,
+then the last occurrence holds.
+.PP
+\f4cc\fP recognizes \f4-a\fP, \f4\-B\fP, \f4-e\fP, \f4-h\fP \f4-m\fP, 
+\f4-o\fP, \f4-r\fP, \f4-s\fP, \f4-t\fP, \f4-u\fP, and \f4-z\fP
+and passes these options and their arguments to \f4ld\fP.
+\f4cc\fP also
+passes any unrecognized options to \f4ld\fP
+without any diagnostic.
+.PP
+When \f4cc\fP is put in a file \f2prefix\f1cc, the prefix will
+be recognized and used to prefix the names of each tool executed.
+For example, \f4OLDcc\f1 will execute \f4OLDacomp\f1,
+\f4OLDoptim\f1, \f4OLDbasicblk\f1, \f4OLDas\f1, and \f4OLDld\f1,
+and will link the object file(s) with \f4OLDcrt1.o\f1.
+Therefore, be careful when moving
+\f4cc\fP around.
+The prefix applies to the compiler,
+optimizer, basic block analyzer, assembler, link editor,
+and the start-up routines.
+.SH FILES
+.PD 0
+.TP 22
+\f2file\f4.c\f1
+C source file
+.TP 22
+\f2file\f4.i\f1
+preprocessed C source file
+.TP 22
+\f2file\f4.o\f1
+object file
+.TP 22
+\f2file\f4.s\f1
+assembly language file
+.TP 22
+\f4a.out\f1
+link-edited output
+.TP 22
+\f2LIBDIR\f4/\(**crti.o\f1
+startup initialization code
+.TP 22
+\f2LIBDIR\f4/\(**crt1.o\f1
+startup routine
+.TP 22
+\f2LIBDIR\f4/\(**crtn.o\f1
+last startup routine
+.TP 22
+\f2TMPDIR\f4/\(**\f1
+temporary files
+.if '\*p'3b' .nr C 0
+.if !\nC \{\
+.TP 22
+\f2LIBDIR\f4/acomp\f1
+preprocessor and compiler\}
+.TP 22
+\f2LIBDIR\f4/optim\f1
+optimizer
+.TP 22
+\f2LIBDIR\f4/basicblk\f1
+basic block analyzer
+.TP 22
+\f2BINDIR\f4/as\f1
+assembler
+.TP 22
+\f2BINDIR\f4/ld\f1
+link editor
+.TP 22
+\f2LIBDIR\f4/libc.so\f1
+shared standard C library
+.TP 22
+\f2LIBDIR\f4/libc.a\f1
+archive standard C library
+.PD
+.PP
+.PD 0
+.TP 22
+\f2INCDIR\f1
+usually \f4/usr/include\f1
+.TP 22
+\f2LIBDIR\f1
+usually \f4/usr/ccs/lib\f1
+.TP 22
+\f2BINDIR\f1
+usually \f4/usr/ccs/bin\f1
+.TP 22
+\f2TMPDIR\f1
+usually \f4/var/tmp\f1 but can be redefined by setting 
+the environment variable \f4TMPDIR\f1
+(see \f4tempnam\fP in \f4tmpnam\fP(3S)).
+.PD
+.SH "SEE ALSO"
+as(1), ld(1), lint(1), lprof(1), prof(1),
+sdb(1), monitor(3C), tmpnam(3S).
+.br
+The ``C Compilation System'' chapter in the
+\f2Programmer's Guide: ANSI C and Programming Support Tools\f1.
+.sp .2
+Kernighan, B. W., and Ritchie, D. M.,
+.IR "The C Programming Language",
+Second Edition, Prentice-Hall, 1988.
+.sp .2
+American National Standard for Information Systems \- Programming Language C,
+X3.159-1989.
+.SH NOTES
+Obsolescent but still recognized \f4cc\fP options include
+\f4\-f\fP, \f4\-F\fP, \f4\-YF\f1, \f4-YL\fP, and \f4-YU\fP. 
+The \f4-ql\f1 and \f4-O\f1 options do not work together; \f4-O\f1
+will be ignored.
+.Ee

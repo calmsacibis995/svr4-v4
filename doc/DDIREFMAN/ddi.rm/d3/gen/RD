@@ -1,0 +1,47 @@
+'\"macro stdmacro
+.if n .pH gen.RD @(#)RD	40.3 of 3/25/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.nr X
+.if \nX=0 .ds x} RD D3DK "STREAMS" "DDI/DKI" "\&"
+.if \nX=1 .ds x} RD D3DK "STREAMS" "DDI/DKI"
+.if \nX=2 .ds x} RD D3DK "" "\&"
+.if \nX=3 .ds x} RD "" "" "\&"
+.TH \*(x}
+.IX "\f4RD\fP(D3DK)"
+.SH NAME 
+\f4RD\f1 \- get a pointer to the read queue
+.SH SYNOPSIS 
+.nf
+.na
+\f4#include <sys/stream.h>
+#include <sys/ddi.h>
+.sp 0.5
+queue_t *RD(queue_t *\f2q\f4);\f1
+.ad
+.fi
+.SH ARGUMENTS 
+.RS 0n
+.IP "\f2q\f1" 10n
+Pointer to the write queue whose read queue is to be
+returned.
+.RE
+.SH DESCRIPTION 
+The \f4RD\f1 function accepts a write queue pointer as an argument and
+returns a pointer to the read queue of the same module or driver.
+.SH "RETURN VALUE"
+The pointer to the read queue.
+.SH LEVEL
+Base or Interrupt.
+.SH NOTES
+Does not sleep.
+.sp 0.5
+Make sure the argument to this function is a pointer to
+a write queue.  \f4RD\f1 does not check the queue type, and a
+system panic could result if it is not the right type.
+.SH "SEE ALSO" 
+.na
+\f4OTHERQ\fP(D3DK),
+\f4WR\f1(D3DK)
+.ad
+.SH EXAMPLE 
+See the \f4put\f1(D2DK) function page for an example of \f4RD\f1.

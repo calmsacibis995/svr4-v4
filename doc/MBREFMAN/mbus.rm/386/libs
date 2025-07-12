@@ -1,0 +1,26 @@
+.if n .pH 386.libs @(#)libs	40.10 of 5/17/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.BK "Multibus Reference Manual"
+.CH "Functions and Libraries" 3
+.H 1 "Interconnect-Space Application Interface"
+This chapter lists the functions that make up the Interconnect-Space
+Application Interface.  This interface is defined in the following routines:
+.BL
+.LI
+\f4ics_find_rec\f1
+.LI
+\f4ics_read\f1
+.LI
+\f4ics_write\f1
+.LE
+.P
+The functions take a file descriptor as the first argument.  The file
+descriptor is obtained by opening the special device \f4/dev/ics\f1 with the
+system call open.  The routines are synchronous and return on completion
+of the request.
+.P
+The interconnect space of any board on the Multibus II backplane can
+be accessed from a UNIX System V/386 application using these functions.
+Accessing a board's interconnect space is useful for system maintenance
+and administrative functions.

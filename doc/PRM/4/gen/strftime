@@ -1,0 +1,77 @@
+'\"macro stdmacro
+.if n .pH g4.strftime @(#)strftime	40.4.1.2 of 4/12/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} strftime 4 "" "\&"
+.if \nX=1 .ds x} strftime 4 ""
+.if \nX=2 .ds x} strftime 4 "" "\&"
+.if \nX=3 .ds x} strftime "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4strftime\f1 \- language specific strings
+.SH DESCRIPTION
+There can exist one printable file per locale
+to specify its date and time formatting information.
+These files must be kept in
+the directory \f4/usr/lib/locale/<\f2locale\f4>/LC_TIME\f1.
+The contents of these files are:
+.TP 3
+1.
+abbreviated month names (in order)
+.TP
+2.
+month names (in order)
+.TP
+3.
+abbreviated weekday names (in order)
+.TP
+4.
+weekday names (in order)
+.TP
+5.
+default strings that specify formats for locale time (\f4%X\fP) and 
+locale date (\f4%x\fP).
+.TP
+6.
+default format for cftime, if the argument for cftime is zero or null.
+.TP
+7.
+AM (ante meridian) string
+.TP
+8.
+PM (post meridian) string
+.PP
+Each string is on a line by itself.
+All white space is significant.
+The order of the strings in the above list
+is the same order in which they must appear in the file.
+.SH EXAMPLE
+\f4/usr/lib/locale/C/LC_TIME\f1
+.nf
+.sp
+.ft4
+Jan
+Feb
+ ...
+January
+February
+ ...
+Sun
+Mon
+ ...
+Sunday
+Monday
+ ...
+%H:%M:%S
+%m/%d/%y
+%a %b %d %T %Z %Y
+AM
+PM
+.ft1
+.fi
+.SH FILES
+\f4/usr/lib/locale/<\f2locale\f4>/LC_TIME\f1
+.SH "SEE ALSO"
+\f4ctime\fP(3C), \f4setlocale\fP(3C), \f4strftime\fP(3C)
+.Ee

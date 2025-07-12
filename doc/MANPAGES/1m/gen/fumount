@@ -1,0 +1,46 @@
+'\"macro stdmacro
+.if n .pH g1a.fumount @(#)fumount	40.4.1.2 of 2/28/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} fumount 1M "Remote File Sharing Utilities" "\&"
+.if \nX=1 .ds x} fumount 1M "Remote File Sharing Utilities"
+.if \nX=2 .ds x} fumount 1M "" "\&"
+.if \nX=3 .ds x} fumount "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4fumount\f1 \- forced unmount of advertised resources
+.SH SYNOPSIS
+\f4fumount\f1
+[-w \f2sec\f1] \f2resource\f1 [[-w \f2sec\fP] \f2resource\fP]...
+.SH DESCRIPTION
+\f4fumount\f1 unadvertises each \f2resource\f1 and disconnects 
+remote access to the \f2resource\fP. 
+The \f4-w \f2sec\f1 causes a delay of \f2sec\f1 seconds 
+prior to the disconnect from the \f2resource\fP specified immediately 
+after the \f4\-w\fP. 
+.P
+When the forced unmount occurs, an administrative shell script
+is started on each remote computer that has the resource mounted
+(\f4/usr/bin/rfuadmin\f1).  If a grace period of several seconds is specified with \f4\-w\fP,
+\f4rfuadmin\f1 is started with the \f4fuwarn\f1 option.
+When the actual forced unmount is ready to occur, \f4rfuadmin\f1 is started
+with the \f4fumount\f1 option. 
+See the \f4rfuadmin\f1(1M) manual page
+for information on the action taken in response to the forced unmount.
+.P
+This command is restricted to the super-user.
+.SH ERRORS
+If \f2resource\f1 (1) does not physically reside on the local machine, (2) is
+an invalid resource name, (3) is not currently advertised and is not
+remotely mounted, or (4)
+the command is not run with super-user privileges, an error
+message will be sent to standard error.
+.SH "SEE ALSO"
+\f4adv\fP(1M),
+\f4mount\fP(1M),
+\f4rfuadmin\fP(1M),
+\f4rfudaemon\fP(1M),
+\f4rmount\fP(1M),
+\f4unadv\fP(1M).
+.\"	@(#)fumount.1m	6.3 of 9/2/83

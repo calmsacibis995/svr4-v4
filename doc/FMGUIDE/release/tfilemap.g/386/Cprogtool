@@ -1,0 +1,14 @@
+.if n .pH 386.Cprogtool @(#)Cprogtool	40.5
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.BK "Technology File Mapping Guide" "" "" ""   
+.\ACRONYM	                  
+.CH "Programming Tools & Languages" "" "Table of Contents" "8"
+.\CHAPTER	8
+.tC 1 "Software Development Facilities" 8-1  
+.tC 2 "Software Development Libraries" 8-1  
+.tC 2 "Software Development Utilities" 8-1  
+.tC 2 "Source Code Control System (SCCS)" 8-2  
+.tC 1 "C Programming Language Utilities (CPLU)" 8-3  
+.tC 2 "Software Generation System (SGS)" 8-3  
+.tC 2 "Symbolic Debugger (SDB)" 8-4  
+.tC 2 "C++ Translator" 8-4  

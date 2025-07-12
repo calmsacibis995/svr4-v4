@@ -1,0 +1,24 @@
+.if n .pH 386.MasterToc @(#)MasterToc	40.18.1.2
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.CH "Table of Contents" "" "" "" Contents
+.BK "Source Code Product Build Instructions" "" "" ""   
+.BK "Source Code Product Build Instructions" "" "" ""   
+.tC 1 "Source Code Product Build Instructions" "" "Table of Contents" "1"
+.tC 2 "Contents of the Tape" 1-1  
+.tC 2 "Dependency Notes" 1-3  
+.tC 2 "Building Binary from Source" 1-5  
+.tC 2 "Packaging the Binary Output" 1-14  
+.tC 2 "Freeing Disk Space" 1-16  
+.tC 2 "Warning Messages" 1-17  
+.tC 2 "Building Other Bus Architectures" 1-22  
+.tC 2 "Using Other C Software Development Sets" 1-27  
+.tC 1 "Appendix: Source Code Product Documentation" "" "Table of Contents" "A"
+.tC 2 "Introduction" A-1  
+.tC 2 "Copying Documentation Files from the Tape" A-2  
+.tC 2 "Installing DOCTOOLS" A-5  
+.tC 2 "Using DOCTOOLS to Print Documents" A-8  
+.tC F "Figure 1-1:\0" "Setup and Build Space Requirements" 1-3
+.tC F "Figure 1-2:\0" "Source Code Build Defines" 1-8
+.tC F "Figure 1-3:\0" "Make Argument Maps Into" 1-10
+.tC F "Figure 1-4:\0" "Acceptable Warning Messages" 1-17
+.tC F "Table A-1:\0" "Directory Contents" A-3

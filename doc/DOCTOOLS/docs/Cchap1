@@ -1,0 +1,84 @@
+.if n .pH doctools.Cchap1 @(#)Cchap1	40.2
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.PM "DN" "FINAL COPY"
+.BK "Documenter's Tool Set User's Guide" "Release 1.0" "" ""   
+.\ACRONYM	                  
+.CH "Introduction" "" "Table of Contents" "1"
+.\CHAPTER	1
+.tC 1 "Product Overview" 1-1  
+.Index: product overview       	1
+.Index: overview        	1
+.tC 2 "Text Processing in a UNIX System Environment" 1-1  
+.Index: text processing       	1
+.Index: macros        	1
+.Index: troff        	1
+.Index: PostScript        	1
+.Index: preprocessing        	1
+.Index: mm macros       	2
+.Index: macros, mm       	2
+.tC 2 "DOCTOOLS and the Local Environment" 1-2  
+.Index: requirements        	2
+.Index: DWB        	2
+.Index: troff        	2
+.Index: tbl        	2
+.Index: pic        	2
+.Index: eqn        	2
+.Index: grap        	2
+.Index: vi        	2
+.Index: ed        	2
+.Index: nroff        	2
+.tC 2 "A Feature Description of DOCTOOLS" 1-3  
+.Index: feature description       	3
+.Index: format        	3
+.Index: manual page files      	3
+.Index: guide files       	3
+.Index: memoranda files       	3
+.Index: collection files       	3
+.Index: files, manual pages      	3
+.Index: files, guides       	3
+.Index: files, memoranda       	3
+.Index: files, collections       	3
+.Index: index        	3
+.Index: macro files       	3
+.Index: files, macros       	3
+.Index: checkmacs        	3
+.Index: macro checking program      	3
+.Index: text files       	3
+.Index: man (5)       	3
+.Index: docmacs        	3
+.Index: mm        	3
+.Index: MM        	3
+.Index: memoranda macros       	3
+.tC L "Figure 1-1:\0" "Manual Page Macros" 1-4
+.Index: manual page macros      	4
+.tC L "Figure 1-2:\0" "Guide Macros" 1-4
+.Index: guide macros       	4
+.tC L "Figure 1-3:\0" "Collection File Macro" 1-4
+.Index: collection file macro      	4
+.tC 1 "Documentation Overview" 1-6  
+.Index: documentation overview       	6
+.tC 2 "Intended Audience" 1-6  
+.Index: intended audience       	6
+.Index: administration        	6
+.Index: installation        	6
+.tC 2 "Organization" 1-6  
+.Index: book organization       	6
+.tC 2 "Terminology" 1-7  
+.Index: terminology        	7
+.Index: admonition        	7
+.Index: chapter toc       	7
+.Index: collection file       	7
+.Index: constant-width font       	7
+.Index: DWB        	7
+.Index: fill mode       	7
+.Index: landscape orientation       	7
+.Index: macro        	7
+.Index: master toc       	7
+.Index: MRD        	7
+.Index: no-fill mode       	7
+.Index: portrait orientation       	8
+.Index: PostScript        	8
+.Index: primitive        	8
+.Index: recto        	8
+.Index: scale indicator       	8
+.Index: verso        	8

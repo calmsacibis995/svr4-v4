@@ -1,0 +1,49 @@
+.if n .pH 386.Capc @(#)Capc	40.1.1.1
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.BK "Installation Guide" "System V Release 4" "" ""   
+.\ACRONYM	                  
+.CH "Package Installation Question Summary" "" "Table of Contents" "C"
+.\CHAPTER	C
+.tC 1 "Introduction" C-1  
+.Index: packages, installation questions        	1
+.tC 1 "BASIC Package Set Questions" C-2  
+.tC 3 "Terminal Information Utilities (terminf) Package" C-2  
+.Index: terminf package        	2
+.tC 3 "Mouse Driver (mouse) Package" C-2  
+.Index: mouse package        	2
+.Index: mouseadmin command        	4
+.tC 3 "Using mouseadmin Interactively" C-4  
+.tC 3 "Operations, Administration, and Maintenance (OA&M) Package" C-6  
+.Index: oam package        	6
+.tC 3 "Line Printer Spooler (lp) Package" C-7  
+.Index: lp package        	7
+.Index: printer, disabling        	7
+.Index: printer, enabling        	7
+.tC 3 "Application Compatibility Package" C-7  
+.Index: acp package        	7
+.tC 3 "Network Support Utilities (NSU) Package" C-8  
+.Index: nsu package        	8
+.Index: xterms, increasing default        	8
+.tC 1 "NETWORK Package Set Questions" C-9  
+.tC 3 "Internet Utilities (inet) Package" C-9  
+.Index: inet package        	9
+.Index: IP address        	9
+.Index: network listener        	10
+.tC 3 "Network File System (NFS) Package" C-10  
+.Index: nfs package        	10
+.tC 3 "Remote File Sharing (RFS) Package" C-10  
+.Index: rfs package        	10
+.tC 3 " Kernel Debugger (kdb) Package" C-10  
+.Index: kdb package        	10
+.tC 1 "HARDWARE Package Set Questions" C-12  
+.tC 3 "Intel IMXLAN586 Ethernet Driver (imx586) Package" C-12  
+.Index: imx586 package        	12
+.tC 3 "Cartridge Tape Utilities (qt) Package" C-13  
+.Index: qt package        	13
+.Index: system, non-SCSI        	13
+.tC 3 "wd8003 Ethernet Driver (wd) Package" C-13  
+.Index: wd package        	13
+.Index: Ethernet, controller interrupts        	14
+.Index: Ethernet, controller interrupts        	15
+.tC 3 "3com IE6(#C503) Ethernet Driver (ie6) Package" C-15  
+.Index: ie6 package        	15

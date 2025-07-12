@@ -1,0 +1,84 @@
+'\"macro stdmacro
+.if n .pH g2.sdget @(#)sdget	40.11 of 6/18/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} sdget 2 "Application Compatibility Package" "\&"
+.if \nX=1 .ds x} sdget 2 "Application Compatibility Package"
+.if \nX=2 .ds x} sdget 2 "" "\&"
+.if \nX=3 .ds x} sdget "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4sdget\f1, \f4sdfree\f1 \- attach and detach a shared data segment
+.SH SYNOPSIS
+\f4cc \f1[\f2flag \f1. . .] \f2file\f1 . . . \f4-lx\f1
+.br
+\f4#include <sys/sd.h>\fP
+.PP
+\f4char *sdget(char *path, int flags, /* long size, int mode */);\fP
+.PP
+\f4int sdfree(char *addr);\fP
+.SH DESCRIPTION
+\f4sdget\fP attaches a shared data segment to the data space of the
+current process.
+The actions performed are controlled by the value
+of \f2flags\f1.
+\f2flags\f1 values are constructed by an
+.SM OR
+of flags from the following list:
+.TP 12
+\f4SD_RDONLY\fP
+Attach the segment for reading only.
+.TP
+\f4SD_WRITE\fP
+Attach the segment for both reading and writing.
+.TP
+\f4SD_CREAT\fP
+If the segment named by \f2path\f1 exists and is not in use (active),
+this flag will have the same effect as creating a segment from scratch.
+Otherwise, the segment is created according to the values of \f2size\f1
+and \f2mode\f1.
+Read and write access to the segment is granted to
+other processes based on the permissions passed in \f2mode\f1, and
+functions the same as those for regular files.
+Execute permission is meaningless.
+The segment is initialized to contain all zeroes.
+.TP
+\f4SD_UNLOCK\fP
+If the segment is created because of this call, the segment will be
+made so that more than one process can be between \f4sdenter\fP and
+\f4sdleave\fP calls.
+.P
+\f4sdfree\fP detaches the current process from the shared data segment
+that is attached at the specified address.
+If the current process
+has done \f4sdenter\fP but not an \f4sdleave\fP for the specified segment,
+\f4sdleave\fP will be done before detaching the segment.
+.P
+When no process remains attached to the segment, the contents of
+that segment disappear, and no process can attach to the segment without
+creating it by using the \f4SD_CREAT\fP flag in \f4sdget\fP.
+\f4errno\f1
+is set to \f4EEXIST\fP if a process tries to create a shared data
+segment that exists and is in use.
+\f4errno\f1 is set to \f4ENOTNAM\fP
+if a process attempts an \f4sdget\fP on a file that exists but is
+not a shared data type.
+.SH DIAGNOSTICS
+On successful completion, the address at which the segment was attached
+is returned.
+Otherwise, \-1 is returned, and \f4errno\f1 is set to
+indicate the error.
+\f4errno\f1 is set to \f4EINVAL\fP if a process
+does an \f4sdget\fP on a shared data segment to which it is already
+attached.
+\f4errno\f1 is set to \f4EEXIST\fP if a process tries to
+create a shared data segment that exists an is in use.
+\f4errno\f1
+is set to \f4ENOTNAM\fP if a process attempts an \f4sdget\f1 on a
+file that exists but is not a shared data type.
+.P
+The mode parameter must be included on the first call of the \f4sdget\fP
+function.
+.SH SEE ALSO
+\f4sdenter\fP(2), \f4sdgetv\fP(2)

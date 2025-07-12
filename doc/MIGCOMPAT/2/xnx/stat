@@ -1,0 +1,239 @@
+'\"macro stdmacro
+.if n .pH g2.stat @(#)stat	40.11 of 6/18/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} stat 2 "Application Compatibility Package" "\&"
+.if \nX=1 .ds x} stat 2 "Application Compatibility Package"
+.if \nX=2 .ds x} stat 2 ""\&"
+.if \nX=3 .ds x} stat ""\&"
+.TH \*(x}
+.SH NAME
+\f4stat\f1, \f4lstat\f1, \f4fstat\f1 \- get file status
+.SH SYNOPSIS
+\f4cc \f1[\f2flag \f1. . .] \f2file\f1 . . . \f4-lx\f1
+.PP
+\f4#include <sys/types.h>\f1
+.br
+\f4#include <sys/stat.h>\f1
+.PP
+\f4int stat (const char \(**path, struct stat \(**buf);
+.PP
+\f4int lstat (const char \(**path, struct stat \(**buf);
+.PP
+\f4int fstat (int fildes, struct stat \(**buf);\f1
+.SH DESCRIPTION
+.I path\^
+points to a
+path name
+naming a file.
+Read, write, or execute permission of the named file is not required,
+but all directories
+listed in the
+path name
+leading to the file must be searchable.
+\f4stat\fP
+obtains information about the named file.
+.PP
+Note that in a Remote File Sharing environment,
+the information returned by \f4stat\fP depends
+on the user/group mapping set up between the
+local and remote computers.
+[See \f4idload\fP(1M).]
+.PP
+\f4lstat\fP obtains file attributes similar to \f4stat\fP,
+except when the named file is a symbolic link; in that case
+\f4lstat\fP returns information about the link,
+while \f4stat\fP returns information about the
+file the link references.
+.PP
+\f4fstat\fP
+obtains information about an open file
+known by the
+file descriptor
+.IR fildes ,
+obtained from a successful
+\f4open\fP,
+\f4creat\fP,
+\f4dup\fP,
+\f4fcntl\fP,
+or
+\f4pipe\fP
+system call.
+.PP
+.I buf\^
+is a pointer to a
+\f4stat\fP
+structure into which information
+is placed concerning the file.
+.PP
+The contents of the structure pointed to by
+.I buf\^
+include the following members:
+.P
+.RS
+.nf
+.ft 4
+.ta 8n 20n
+mode_t	st_mode;	/\(** File mode [see mknod(2)] \(**/
+ino_t	st_ino;	/\(** Inode number \(**/
+dev_t	st_dev;	/\(** ID of device containing \(**/
+		/\(** a directory entry for this file \(**/
+dev_t	st_rdev;	/\(** ID of device \(**/
+		/\(** This entry is defined only for \(**/
+		/\(** character special files \(**/, 
+		/\(** XENIX special named files or block
+		/\(** special files \(**/
+nlink_t	st_nlink;	/\(** Number of links \(**/
+uid_t	st_uid;	/\(** User ID of the file's owner \(**/
+gid_t	st_gid;		/\(** Group ID of the file's group \(**/
+off_t	st_size;	/\(** File size in bytes \(**/
+time_t	st_atime;	/\(** Time of last access \(**/
+time_t	st_mtime;	/\(** Time of last data modification \(**/
+time_t	st_ctime;	/\(** Time of last file status change \(**/
+		/\(** Times measured in seconds since \(**/
+		/\(** 00:00:00 GMT, Jan. 1, 1970 \(**/
+.ft 1
+.fi
+.RE
+.DT
+.bp
+.PP
+.TP 10
+\f4st_mode\f1
+The mode of the file as described in
+\f4mknod\fP(2).
+.TP
+\f4st_ino\f1
+This field uniquely identifies the file in a given
+file system.
+The pair \f4st_ino\fP and \f4st_dev\fP uniquely identifies regular
+files.
+.TP
+\f4st_dev\f1
+This field uniquely identifies the file system
+that contains the file.
+Its value may be used as input to the
+\f4ustat\fP system call to determine
+more information about this file system.
+No other meaning is associated with this value.
+.TP
+\f4st_rdev\f1
+This field should be used only by administrative
+commands.
+It is valid only for block special files or
+character special files or XENIX special named files.
+The \f2st_rdev\f1
+field for block special and character special files
+only has meaning on the system where the file was configured.
+.IP
+If the file is a XENIX special named file,
+it contains the type code [see \f4stat\fP(4) for the XENIX
+semaphore and shared data type code values \f4S_INSEM\fP and \f4S_INSHD\fP].
+.TP
+\f4st_nlink\f1
+This field should be used only by
+administrative commands.
+.TP
+\f4st_uid\f1
+The user
+.SM ID
+of the file's owner.
+.TP
+\f4st_gid\f1
+The group
+.SM ID
+of the file's group.
+.TP
+\f4st_size\f1
+For regular files, this is the address of the end
+of the file.
+For pipes or \s-1FIFO\s0s, this is the
+count of the data currently in the file.
+For block special character special, or XENIX special named files.
+this is not defined.
+.TP
+\f4st_atime\f1
+Time when file data was last accessed.
+Changed by the following \%system calls:
+\f4creat\fP, \f4mknod\fP, \f4pipe\fP, \f4utime\fP, \f4read\fP, 
+\f4creatsem\fP, \f4opensem\fP, \f4sigsem\fP, \f4waitsem\fP,
+\f4sdget\fP and \f4sdfree\fP.
+.TP 10
+\f4st_mtime\f1
+Time when data was last modified.
+Changed by the following system calls:
+\f4creat\fP, \f4mknod\fP, \f4pipe\fP, \f4utime\fP, \f4write\fP.
+.TP 10
+\f4st_ctime\f1
+Time when file status was last changed.
+Changed by the following system calls:
+\f4chmod\fP, \f4chown\fP, \f4creat\fP, \f4link\fP, \f4mknod\fP, \f4pipe\fP,
+\f4unlink\fP, \f4utime\fP, \f4write\fP, \f4creatsem\fP, \f4sdget\fP and
+\f4sdfree\fP.
+.PP
+\f4stat\fP
+and \f4lstat\fP fail if one or more of the following are true:
+.TP 20
+\f4EACCES\fP
+Search permission is denied for a component of the
+path prefix.
+.TP 20
+\f4EBADF\fP
+.I fildes\^
+is not a valid open file descriptor.
+.TP
+\f4EFAULT\fP
+.I buf\^
+or
+.I path\^
+points to an invalid address.
+.TP
+\f4EINTR\fP
+A signal was caught during the \f4stat\fP system call.
+.TP
+\f4ELOOP\fP
+Too many symbolic links were encountered in translating \f2path\f1.
+.TP
+\f4EMULTIHOP\fP
+Components of \f2path\f1 require hopping to multiple
+remote machines.
+.TP
+\f4ENAMETOOLONG\fP
+The length of the \f2path\f1 argument exceeds {\f4PATH_MAX\fP}, or the
+length of a \f2path\f1 component exceeds {\f4NAME_MAX\fP} while
+(_\f4POSIX_NO_TRUNC\fP) is in effect.
+.TP
+\f4ENOENT\fP
+The named file does not exist or is the null pathname.
+.TP
+\f4ENOTDIR\fP
+A component of the
+path prefix
+is not a directory.
+.TP
+\f4ENOLINK\fP
+\f2path\f1 points to a remote machine and the link
+to that machine is no longer active.
+.TP
+\f4EOVERFLOW\fP
+A component is too large to store in the structure pointed to by \f2buf\f1.
+.PP
+\f4fstat\fP
+fails if one or more of the following are true:
+.TP 20
+\f4ENOLINK\fP
+\f2fildes\f1 points to a remote machine and the link
+to that machine is no longer active.
+.TP
+\f4EOVERFLOW\fP
+A component is too large to store in the structure pointed to by \f2buf\f1.
+.SH "SEE ALSO"
+\f4chmod\fP(2), \f4chown\fP(2), \f4creat\fP(2), \f4link\fP(2),
+\f4mknod\fP(2), \f4pipe\fP(2), \f4read\fP(2), \f4time\fP(2), \f4unlink\fP(2),
+\f4utime\fP(2), \f4write\fP(2), \f4stat\fP(5)
+.SH "DIAGNOSTICS"
+Upon successful completion a value of 0 is returned.
+Otherwise, a value of \-1 is returned and
+\f4errno\fP
+is set to indicate the error.

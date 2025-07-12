@@ -1,0 +1,103 @@
+'\"macro stdmacro
+.if n .pH g1a.i258tp @(#)i258tp	40.5 of 5/17/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} i258tp 7iref "System Administration Utilities" "" "\&"
+.if \nX=1 .ds x} i258tp 7iref "System Administration Utilities" ""
+.if \nX=2 .ds x} i258tp 7iref "" "\&"
+.if \nX=3 .ds x} i258tp "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4i258tp\f1 \- iSBC 386/258 peripheral controller tape device driver
+.SH DESCRIPTION
+The \f4i258tp\f1 device driver provides an interface to tape devices
+controlled by the PCI running on an iSBC 386/258 peripheral controller
+board.  The iSBC 386/258 board supports the SCSI device interface for tapes.
+.SH Configuration
+.PP
+The configuration for the \f4i258tp\f1 driver is handled by the same data
+structures as the \f4i258\f1 driver.  The \f4i258\f1 driver must be
+configured into the system in order to configure the \f4i258tp\f1 driver.
+.PP
+\f3Tape Drive Information\f1
+.P
+Tape characteristics are defined in the \f4i258cdrt  i258t00[]\f1
+structure  in the file \f4/etc/conf/pack.d/i258/space.c\f1.  The device
+filenames follow a naming convention that is discussed in the
+\f4td\f1(7iref) man page.
+See \f4tp\f1(7iref) for information about supported
+\f4ioctl\fP calls.
+The device nodes created in
+\f4/dev/rmt\f1 must match the entries in the minor table in the file
+\f4/usr/include/sys/i258.h\f1.
+.P
+\f3Tape Input/Output Buffering\f1
+.P
+The amount of tape input/output buffering is specified by the value of the 
+structure \f4i258tp_buf\f1.  This structure is in the file 
+\f4/etc/conf/pack.d/i258/space.c\f1.
+By default, this driver has tape buffering disabled.
+.P
+\f3Configuring Two Tape Drives\f1
+.P
+The \f4i258tp\f1 driver can support two tape drives.  However, the driver comes configured for only one tape drive.  Do the following to configure the driver 
+for a second tape drive:
+.TP
+1.
+Select a PCI unit number that is not in use.  See the table in the 
+\f4i258(7iref)\f1 man page for a list of PCI unit numbers.
+.TP
+2.
+Edit the file \f4/etc/conf/pack.d/i258/space.c\f1.  Update the structures 
+\f4i258cfg\f1, \f4i258minor\f1, and \f4i258tp_buf\f1.  The following shows an 
+example of these structures updated to support a tape drive with a PCI unit 
+Number of 1.
+.bp
+.RS
+.ft 4
+.nf
+     .
+     .
+i258cfg
+     i258 names
+     i258f00         /*floppy 0*/
+     i258t00         /*tape 1 (was floppy 1*/
+     i258w00         /*wini 0*/
+     .
+     .
+i258minor (0, 1, 0, 0)   /* [79] c0s1 */
+          (0, 1, 1, 0)   /* [80] c0s1n */
+          (0, 1, 2, 0)   /* [81] c0s1nr */
+          (0, 1, 3, 0)   /* [82] c0s1r */
+     .
+     .
+i258tp_buf = {
+     0, 6,
+     0, 1 };
+.fi
+.ft 1
+.RE
+.TP
+3.
+Create the device nodes using the  \f4/etc/mknod\f1 command.  For example:
+.P
+.RS
+.ft 4
+.nf
+/etc/mknod  /dev/rmt/c0s1  c  3  79
+/etc/mknod  /dev/rmt/c0s1n  c  3  80
+/etc/mknod  /dev/rmt/c0s1nr  c  3  81
+/etc/mknod  /dev/rmt/c0s1r  c  3  82
+.fi
+.ft 1
+.RE
+.TP
+4.
+Rebuild the kernel by entering \f4/etc/conf/bin/idbuild\f1.
+.TP
+5.
+Shutdown and reboot the system.
+.SH SEE ALSO
+\f4td\f1(7iref),
+\f4i258\f1(7iref).

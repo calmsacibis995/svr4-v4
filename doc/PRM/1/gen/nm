@@ -1,0 +1,218 @@
+'\"macro stdmacro
+.if n .pH g1.nm  @(#)nm	40.19 of 5/22/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} nm 1 "C Development Set" "\&"
+.if \nX=1 .ds x} nm 1 "C Development Set"
+.if \nX=2 .ds x} nm 1 "" "\&"
+.if \nX=3 .ds x} nm "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4nm\f1 \- print name list of an object file
+.SH SYNOPSIS
+\f4nm\f1
+[ \f4\-oxhvnefurplVT\f1 ]
+\f2files\f1
+.SH DESCRIPTION
+The
+\f4nm\f1
+command
+displays the symbol table of each
+\s-1ELF\s+1 or \s-1COFF\s+1 object file,
+specified by
+.IR file(s) .
+The file
+may be a relocatable or absolute \s-1ELF\s+1 or \s-1COFF\s+1 object file;
+or it may be an archive of relocatable or absolute \s-1ELF\s+1 or \s-1COFF\s+1 object files.
+For each symbol, the following information will be printed:
+.PP
+.TP 9
+\f4Index\f1
+The index of the symbol.
+(The index appears in brackets.) 
+.PP
+.TP 9
+\f4Value\f1
+The value of the symbol is one of the following:
+a section offset for defined symbols in a relocatable file;
+alignment constraints for symbols whose section index is
+\f4SHN_COMMON\f1;
+a virtual address in executable and dynamic library files.
+.PP
+.TP 9
+\f4Size\f1
+The size in bytes of the associated object.
+.nr C 1
+.if '\*p'n3b' .nr C 0
+.if '\*p'm32' .nr C 0
+.if \nC \{\
+.PP
+.TP 9
+\f4Type\f1
+A symbol is of one of the following types:
+\f4NOTYPE\f1 (no type was specified),
+\f4OBJECT\f1 (a data object such as an array or variable),
+\f4FUNC\f1 (a function or other executable code),
+\f4SECTION\f1 (a section symbol), or
+\f4FILE\f1 (name of the source file).
+.PP
+.TP 9
+\f4Bind\f1
+The symbol's binding attributes.
+\f4LOCAL\f1 symbols have a scope limited to the
+object file containing their definition;
+\f4GLOBAL\f1 symbols are visible to all object files being combined;
+and \f4WEAK\f1 symbols are essentially global symbols with
+a lower precedence than \f4GLOBAL\f1.
+.PP
+.TP 9
+\f4Other\f1
+A field reserved for future use, currently containing 0.
+.PP
+.TP 9
+\f4Shndx\f1
+Except for three special values, this is the section header table index
+in relation to which the symbol is defined.
+The following special values exist:
+\f4ABS\f1 indicates the symbol's value will not change
+through relocation;
+\f4COMMON\f1 indicates an unallocated block and the value provides alignment
+constraints;
+and
+\f4UNDEF\f1 indicates an undefined symbol.
+.PP
+.TP 9
+\f4Name\f1
+The name of the symbol.
+.DT
+.br
+.PP
+The output of
+\f4nm\f1
+may be controlled using the following options:
+.PP
+.TP 9
+\f4\-o\f1
+Print the value and size of a symbol
+in octal instead of decimal.
+.PP
+.TP 9
+\f4\-x\f1
+Print the value and size of a symbol
+in hexadecimal instead of decimal.
+.PP
+.TP 9
+\f4\-h\f1
+Do not display the output heading data.
+.PP
+.TP 9
+\f4\-v\f1
+Sort external symbols by value before they are printed.
+.PP
+.TP 9
+\f4\-n\f1
+Sort external symbols by name before they are printed.
+.TP 9
+\f4\-e\f1
+See \s-1NOTES\s0 below.
+.TP 9
+\f4\-f\f1
+See \s-1NOTES\s0 below.
+.TP 9
+\f4\-u\f1
+Print undefined symbols only.
+.TP
+\f4\-r\f1
+Prepend the name of the object file or archive to each output line.
+.TP
+\f4\-p\f1
+Produce easily parsable, terse output.
+Each symbol name is preceded by
+its value (blanks if undefined) and one of
+the letters
+\f4U\f1
+(undefined),
+\f4N\f1
+(symbol has no type),
+\f4D\f1
+(data object symbol),
+\f4T\f1
+(text symbol),
+\f4S\f1
+(section symbol),
+or
+\f4F\f1
+(file symbol).
+If the symbol's binding attribute is \f4LOCAL\f1,
+the key letter is lower case;
+if the symbol's binding attribute is \f4WEAK\f1,
+the key letter is upper case;
+if the
+\f4\-l\f1 modifier is specified, the upper case
+key letter is followed by a \f4*\f1;
+if the symbol's binding attribute is \f4GLOBAL\f1,
+the key letter is upper case.
+.PP
+.TP 9
+\f4\-l\f1
+Distinguish between \f4WEAK\f1 and \f4GLOBAL\f1 symbols
+by appending a * to the key letter for \f4WEAK\f1 symbols.
+.PP
+.TP 9
+\f4\-V\f1
+Print the version of the
+\f4nm\f1 command executing
+on the standard error output.
+.TP 9
+\f4\-T\f1
+See \s-1NOTES\s0 below.
+.DT
+.br
+.PP
+Options may be used in any order, either singly or in combination,
+and may appear anywhere in the command line.
+When conflicting options are specified (such as
+\f4nm -v -n\f1)
+the first is taken and the second ignored with a
+warning message to the user.
+.SH "SEE ALSO"
+\f4as\f1(1),
+\f4cc\f1(1),
+\f4dump\f1(1),
+\f4ld\f1(1),
+\f4a.out\f1(4),
+\f4ar\f1(4)
+.SH NOTES
+.PP
+The following options are obsolete because of
+changes to the object file format and will be
+deleted in a future release.
+.PP
+.TP 9
+\f4\-e\f1
+Print only external and static symbols.
+The symbol table now contains only static
+and external symbols.
+Automatic symbols no longer appear in the symbol table.
+They do appear in the debugging information
+produced by \f4cc \-g\f1,
+which may be examined using \f4dump\f1(1).
+.PP
+.TP 9
+\f4\-f\f1
+Produce full output.
+Redundant symbols (such as .text, .data, and so on) which
+existed previously do not exist and producing full
+output will be identical to the default output.
+.PP
+.TP 9
+\f4\-T\f1
+By default,
+\f4nm\f1
+prints the entire name of the symbols listed.
+Since symbol names have been moved to the last column,
+the problem of overflow is removed and it is no longer necessary to truncate
+the symbol name.
+.\"	@(#)nm.1	6.2 of 9/2/83
+.Ee

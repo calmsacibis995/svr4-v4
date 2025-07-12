@@ -1,0 +1,10 @@
+#ident	"@(#)doctools:index/range.prep	1.1"
+nawk ' # range.prep
+#   Input:  [istart/iend] string (tab) number (tab) [chapter] (tab) [book]
+#   Output: string (tab) [b/e] (tab) number (tab) [chapter] (tab) [book]
+BEGIN		{ FS = OFS = "\t" }
+		{ f2 = "" }
+$1 ~ /^istart/	{ f2 = "b"; sub(/^istart */, "", $1) }
+$1 ~ /^iend/	{ f2 = "e"; sub(/^iend */, "", $1) }
+		{ print $1, f2, $2, $3, $4 }
+' $*

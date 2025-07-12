@@ -1,0 +1,39 @@
+'\"macro stdmacro
+.if n .pH g1.jterm @(#)jterm	40.7 of 5/21/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} jterm 1 "Layers Windowing Utilities" "\&"
+.if \nX=1 .ds x} jterm 1 "Layers Windowing Utilities"
+.if \nX=2 .ds x} jterm 1 "" "\&"
+.if \nX=3 .ds x} jterm "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4jterm\f1 \- reset layer of windowing terminal
+.SH SYNOPSIS
+\f4jterm\f1
+.SH DESCRIPTION
+The
+\f4jterm\fP
+command
+is used to reset a layer of a windowing terminal after 
+downloading a terminal
+program that changes the terminal attributes of the layer.
+It is functional only under \f4layers\fP.
+In practice,
+it is most commonly used to restart
+the default terminal emulator after using an alternate
+one provided with a terminal-specific application package.
+For example, on the AT&T 630 \s-1MTG\s0 terminal,
+after executing the \f4xproof\fP command in a layer, issuing the \f4jterm\fP
+command will restart the default terminal emulator in that layer.
+.SH EXIT STATUS 
+Returns \f40\f1 upon successful completion, \f41\f1 otherwise.
+.SH NOTES
+The layer that is reset is the one attached to standard error \(em 
+that is, the window you are in when you type the
+\f4jterm\fP
+command.
+.SH SEE ALSO
+\f4layers\fP(1) 
+.Ee

@@ -1,0 +1,21 @@
+'\"macro stdmacro
+.if n .pH g1f.reset @(#)reset	40.8 of 4/29/91
+.\" Copyright 1989 AT&T
+.nr X
+.if \nX=0 .ds x} reset 1F "Form and Menu Language Interpreter Utilities" "\&"
+.if \nX=1 .ds x} reset 1F "Form and Menu Language Interpreter Utilities"
+.if \nX=2 .ds x} reset 1F "" "\&"
+.if \nX=3 .ds x} reset "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4reset\f1 \- reset the current form field to its default values
+.SH SYNOPSIS
+\f4reset\f1
+.SH DESCRIPTION
+The \f4reset\f1 function causes the \f4value\f1 descriptor of
+the current field to be re-evaluated, restoring the default value of
+the field if the current value is different.
+The descriptor is re-evaluated even if it has been modified by \f4const\f1.
+.ig
+BUILT-IN FMLI
+..

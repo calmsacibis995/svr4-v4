@@ -1,0 +1,44 @@
+'\"macro stdmacro
+.if n .pH gen.untimeout @(#)untimeout	40.2 of 1/7/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.nr X
+.if \nX=0 .ds x} untimeout D3DK "" "DDI/DKI" "\&"
+.if \nX=1 .ds x} untimeout D3DK "" "DDI/DKI"
+.if \nX=2 .ds x} untimeout D3DK "" "\&"
+.if \nX=3 .ds x} untimeout "" "" "\&"
+.TH \*(x}
+.IX "\f4untimeout\fP(D3DK)"
+.SH NAME
+\f4untimeout\f1 \- cancel previous \f4timeout\f1(D3DK) request
+.SH SYNOPSIS
+.nf
+.na
+\f4#include <sys/types.h>
+.sp 0.5
+void untimeout(int\f2 id\f4);\f1
+.ad
+.fi
+.SH ARGUMENTS
+.RS 0n 10
+.IP "\f2id\f1" 10n
+Identifier returned from a previous call to \f4timeout\f1.
+.RE
+.SH DESCRIPTION
+\f4untimeout\f1 cancels a pending \f4timeout\f1 request.
+If the \f4untimeout\fP is called while the function is running, then there
+is no effect.  The function that runs as a result of a call to
+\f4timeout\fP cannot use \f4untimeout\fP to cancel itself.
+.SH RETURN VALUE
+None.
+.SH LEVEL
+Base or Interrupt.
+.SH NOTES
+Does not sleep.
+.SH SEE ALSO
+.na
+\f4delay\f1(D3DK),
+\f4timeout\f1(D3DK),
+\f4unbufcall\fP(D3DK)
+.ad
+.SH EXAMPLE
+See \f4unbufcall\fP(D3DK) for an example of \f4untimeout\fP.

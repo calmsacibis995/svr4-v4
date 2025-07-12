@@ -1,0 +1,24 @@
+'\"macro stdmacro
+.if n .pH g1.yes @(#)yes	40.7 of 6/18/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} yes 1 "Application Compatibility Package" "\&"
+.if \nX=1 .ds x} yes 1 "Application Compatibility Package"
+.if \nX=2 .ds x} yes 1 "" "\&"
+.if \nX=3 .ds x} yes "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4yes\fP \- print string repeatedly
+.SH SYNOPSIS
+\f4yes\f1 [\f2string\f1]
+.SH DESCRIPTION
+\f4yes\fP repeatedly outputs ``y'', or if a single string argument
+is given, \f2string\f1 is output repeatedly.
+The command continues
+indefinitely unless aborted.
+\f4yes\fP is useful in pipes to commands
+that prompt for input and require a ``y'' response for a yes.
+In this case,
+\f4yes\fP terminates when the command that it pipes to terminates
+so that no infinite loop occurs.

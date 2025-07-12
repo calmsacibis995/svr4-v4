@@ -1,0 +1,49 @@
+'\"macro stdmacro
+.if n .pH 386.outl @(#)outl	40.2 of 1/7/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.nr X
+.if \nX=0 .ds x} outl D3D "" "DDI" "\&"
+.if \nX=1 .ds x} outl D3D "" "DDI"
+.if \nX=2 .ds x} outl D3D "" "\&"
+.if \nX=3 .ds x} outl "" "" "\&"
+.TH \*(x}
+.IX "\f4outl\fP(D3D)"
+.SH NAME 
+\f4outl\f1 \- write a 32 bit long word to a 32 bit I/O port 
+.SH SYNOPSIS
+.nf
+.na
+\f4#include <sys/types.h>
+.sp 0.5
+void outl(int\f2 port, \f4ulong_t \f2 data\f4);\f1
+.ad
+.fi
+.SH ARGUMENTS 
+.RS 0n 10
+.IP "\f2port\f1" 10n
+A valid  32 bit I/O port.
+.IP "\f2data\f1" 10n
+The 32 bit value to be written to the port. 
+.RE
+.SH DESCRIPTION 
+\f4outl\f1 writes a 32 bit long word to a 32 bit I/O port.
+.SH "RETURN VALUE" 
+None.
+.SH LEVEL
+Base or Interrupt.
+.SH NOTES
+Does not sleep.
+.SH "SEE ALSO" 
+.na
+\f4inb\f1(D3D),
+\f4inl\f1(D3D),
+\f4inw\f1(D3D),
+\f4outb\f1(D3D),
+\f4outw\f1(D3D),
+\f4repinsb\f1(D3D),
+\f4repinsd\f1(D3D),
+\f4repinsw\f1(D3D),
+\f4repoutsb\f1(D3D),
+\f4repoutsd\f1(D3D),
+\f4repoutsw\f1(D3D)
+.ad

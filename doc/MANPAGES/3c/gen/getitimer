@@ -1,0 +1,149 @@
+'\"macro stdmacro
+.if n .pH g3c.getitimer @(#)getitimer	40.11 of 1/3/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.\"ident	"@(#)svid_rt:rt_os/getitimer	1.11"
+.\" @(#)getitimer 1.11 89/05/25 SMI; from UCB 4.3
+.\" Copyright (c) 1983 Regents of the University of California.
+.\" All rights reserved.  The Berkeley software License Agreement
+.\" specifies the terms and conditions for redistribution.
+.\"
+.\" Copyright (c) 1988 Sun Microsystems, Inc. - All Rights Reserved.
+.nr X
+.if \nX=0 .ds x} getitimer 3C "" "\&"
+.if \nX=1 .ds x} getitimer 3C ""
+.if \nX=2 .ds x} getitimer 3C "" "\&"
+.if \nX=3 .ds x} getitimer "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4getitimer\f1, \f4setitimer\f1 \- get/set value of interval timer
+.SH SYNOPSIS
+.ft 4
+#include <sys/time.h>
+.ft 1
+.P
+.na
+.nf
+.ft 4
+int getitimer(int which, struct itimerval \(**value);
+.ft 1
+.P
+.ft 4
+int setitimer(int which, struct itimerval \(**value, struct itimerval
+    \(**ovalue);
+.ft 1
+.fi
+.ad
+.SH DESCRIPTION
+.P
+The system provides each process with three interval timers, defined in
+\f4sys/time.h\f1.
+The
+\f4getitimer\f1
+call stores the current value of the timer specified by
+\f2which\f1
+into the structure pointed to by
+\f2value\f1.
+The
+\f4setitimer\f1
+call sets the value of the timer specified by
+\f2which\f1
+to the value specified in the structure pointed to by
+\f2value\f1,
+and if
+\f2ovalue\f1
+is not \f4NULL\f1,
+stores the previous value of the timer in the
+structure pointed to by
+\f2ovalue\f1.
+.P
+A timer value is defined by the
+\f4itimerval\f1
+structure [see \f4gettimeofday\fP(3C) for the definition of
+\f4timeval\f1],
+which includes the following members:
+.P
+.in 5
+.nf
+.ft 4
+struct timeval	it_interval;	/\(** timer interval \(**/
+struct timeval	it_value;		/\(** current value \(**/
+.ft 1
+.fi
+.in 0
+.P
+If
+\f4it_value\f1
+is non-zero, it indicates the time to the next timer expiration.
+If
+\f4it_interval\f1
+is non-zero, it specifies a value to be used in reloading
+\f4it_value\f1
+when the timer expires.
+Setting
+\f4it_value\f1
+to zero disables a timer,
+regardless of the value of \f4it_interval\f1.
+Setting
+\f4it_interval\f1
+to zero disables a timer after its next expiration (assuming
+\f4it_value\f1
+is non-zero).
+.P
+Time values smaller than the resolution of the
+system clock are rounded up to this resolution.
+.P
+The three timers are:
+.TP 18
+\f4ITIMER_REAL\f1
+Decrements in real time. 
+A
+\f4SIGALRM\f1
+signal is delivered when this timer expires.
+.TP
+\f4ITIMER_VIRTUAL\f1
+Decrements in process virtual time.
+It runs only when the process is executing. 
+A
+\f4SIGVTALRM\f1
+signal is delivered when it expires.
+.TP
+\f4ITIMER_PROF\f1
+Decrements both in process virtual time and
+when the system is running on behalf of the process. 
+It is designed to be used by interpreters in statistically
+profiling the execution of interpreted programs.
+Each time the
+\f4ITIMER_PROF\f1
+timer expires, the
+\f4SIGPROF\f1
+signal is delivered.
+Because this signal may interrupt in-progress
+system calls, programs using this timer must be prepared to
+restart interrupted system calls.
+.SH "SEE ALSO"
+.na
+\f4alarm\fP(2), \f4gettimeofday\f1(3C).
+.ad
+.SH "DIAGNOSTICS"
+If the calls succeed, a value of 0 is returned.
+If an error occurs, the value \-1 is returned, and an
+error code is placed in the global variable
+\f4errno\f1.
+.P
+Under the following conditions,
+the functions \f4getitimer\f1 and \f4setitimer\f1
+fail and set \f4errno\f1 to:
+.TP 10
+\f4EINVAL\f1
+The specified number of seconds is greater than 100,000,000,
+the number of microseconds is greater than or equal to 1,000,000,
+or the \f2which\f1 parameter is unrecognized.
+.SH NOTES
+The microseconds field should not be equal to or greater than one second.
+.P
+\f4setitimer\fP is independent of the \f4alarm\fP system call.
+.P
+Do not use \f4setitimer\fP with the \f4sleep\fP routine.
+A \f4sleep\fP following a \f4setitimer\fP
+wipes out knowledge of the user signal handler.

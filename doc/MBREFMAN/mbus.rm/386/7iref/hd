@@ -1,0 +1,121 @@
+'\"macro stdmacro
+.if n .pH g1a.hd @(#)hd	40.10 of 5/17/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} hd 7iref "" "" "\&"
+.if \nX=1 .ds x} hd 7iref "" ""
+.if \nX=2 .ds x} hd 7iref "" "\&"
+.if \nX=3 .ds x} hd "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4hd\f1 \- information for Multibus II hard disk device drivers
+.SH DESCRIPTION
+The i258 device driver can access hard disk drives and supports commands listed
+in this section.  This section contains information required for the i258 device
+ driver to access the hard disk drive.
+.SH Disk Information
+Hard disk device drivers require the Volume Label, Physical Description
+Information (\f4pdinfo\f1), and Volume Table of Contents (\f4vtoc\f1)
+information to access a given hard disk drive.  To allow disks to
+be interchangeable, the information is stored on the disk itself.  All of
+this information is placed on the device during system installation.
+.PP
+.TP 1i
+\f4Volume Label\f1
+The driver reads the volume label to determine disk characteristics and
+to locate the \f4pdinfo\f1.  The volume label is read when the driver first
+opens a device.  For data structure definitions, see \f4ivlab\f1 in the
+file \f4/usr/include/sys/ivlab.h\f1.
+.TP 1i
+\f4pdinfo\f1
+The \f4pdinfo\f1 contains additional device characteristics, and pointers
+to the \f4vtoc\f1 and alternate table.  \f4pdinfo\f1 is read when the
+driver first opens a device.  For data structure definitions, see
+\f4pdinfo\f1 in the file \f4/usr/include/sys/vtoc.h\f1.
+.TP 1i
+\f4vtoc\f1
+The \f4vtoc\f1  contains the partition information required by the driver
+to access the hard disk drive.  \f4vtoc\f1  is read when the driver first
+opens a device.  For data structure definitions, see \f4vtoc\f1 in the
+file \f4/usr/include/sys/vtoc.h\f1.
+.TP 1i
+\f4SW alt inf\f1
+This is the software bad block handling table.  It is in the file
+\f4/usr/include/sys/alttbl.h\f1.
+.TP 1i
+\f4mdl\f1
+Manufacturer's Defect List.  This is the defective track list read from
+the hard disk drive.  It is in the file \f4/usr/include/sys/bbh.h\f1.
+.SH Supported ioctl() Calls
+Following is a list of the supported \f4ioctl\f1() calls provided by
+Multibus hard disk device drivers.  
+.PP
+.TP 1i
+\f4Get Parameters\f1 (\f4V_GETPARMS\f1)
+This command gets configuration parameters for the current device and
+partition, and returns them to the user in the \f4cmdarg\f1 structure.
+The \f4disk_parms\f1 structure is defined in \f4/usr/include/sys/vtoc.h\f1.
+.TP 1i
+\f4Format Track\f1 (\f4V_FORMAT\f1)
+This command causes the specified track to be formatted.  The format
+structure is defined in \f4/usr/include/sys/vtoc.h\f1.
+.TP 1i
+\f4Configure Driver\f1 (\f4V_CONFIG\f1)
+This command  reconfigures the drive with the values passed in the \f4config\f1
+structure defined in \f4/usr/include/sys/vtoc.h\f1.
+.TP 1i
+\f4Configure Driver\f1 (\f4V_REMOUNT\f1)
+This command changes the device state flags so when the next open is issued
+for the device, configuration information is read from the disk and the
+driver's internal tables are reinitialized to reflect the new configuration.
+No partition other than zero can be open, and the user id must be zero
+to execute this command.
+.TP 1i
+\f4Load Volume Label\f1 (\f4V_L_VLAB\f1)
+This command loads the driver's internal volume label with the data
+in the \f4cmdarg\f1 structure.  No partitions other than zero can be open.
+The user id must be superuser.  The structure is defined in
+\f4/usr/include/ivlab.h\f1.
+.TP 1i
+\f4Upload Volume Label\f1 (\f4V_U_VLAB\f1)
+This command loads the user's \f4cmdarg\f1 structure with data from the
+driver's internal volume label.  The structure is defined in
+\f4/usr/include/sys/ivlab.h\f1.
+.TP 1i
+\f4Read Volume Label\f1 (\f4V_R_VLAB\f1)
+This command loads the driver's internal volume label with the data from
+the hard disk.  This command can only be used on partition zero, by user
+id zero, and the disk must contain a valid volume label.  Refer to
+\f4/usr/include/sys/ivlab.h\f1 for the starting byte offset of the volume
+label.
+.TP 1i
+\f4Write Volume Label\f1  (\f4V_W_VLAB\f1)
+This command writes the driver's internal volume label to the
+volume label in the hard disk.  This command can only be used on partition
+zero, by user id zero, and the disk must have a properly formatted track zero.
+.TP 1i
+\f4Load Defect Info\f1 (\f4V_L_MDL\f1)
+This command adds the data in the \f4cmdarg\f1 structure to the
+driver's internal defect list.  Only partition zero may be
+open, and the command may be used only by user id zero.
+.TP 1i
+\f4Upload Defect Info\f1 (\f4V_U_MDL\f1)
+This command returns one entry from the driver's internal defect
+list to the user's \f4cmdarg\f1 structure.
+.TP 1i
+\f4Read Defect List\f1 (\f4V_R_MDL\f1)
+This command loads the driver's internal defect list with the
+data from the hard disk.  The driver must have a valid volume label in
+its tables.  The disk must have a valid defect list on the next to last
+cylander for an ST-506 interface, or on the third from last cylander for
+an ESDI interface.
+.TP 1i
+\f4Write Defect List\f1 (\f4V_W_MDL\f1)
+This command writes the driver's internal defect list to the
+appropriate area of the hard disk.  After the write is complete, the
+internal defect list is cleared to zero.  Only partition zero may be
+open, and the command may be used only by user id zero.  The driver
+must have a valid volume label in its tables.
+.SH SEE ALSO
+\f4i258\f1(7iref).

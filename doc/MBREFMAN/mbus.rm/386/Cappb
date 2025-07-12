@@ -1,0 +1,9 @@
+.if n .pH 386.Cappb @(#)Cappb	40.8
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.BK "Multibus Reference Manual" "" "" ""   
+.\ACRONYM	                  
+.CH "Appendix B" "" "Table of Contents" "B"
+.\CHAPTER	B
+.tC 1 "Information Unique to Multibus Systems" B-1  
+.tC 2 "Volume Label: ivlab Structure" B-1  
+.tC 2 "Manufacturer's Defect List: MDL Structure" B-3  

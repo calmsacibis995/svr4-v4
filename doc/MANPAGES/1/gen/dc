@@ -1,0 +1,220 @@
+'\"macro stdmacro
+.if n .pH g1.dc @(#)dc	40.8 of 4/12/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} dc 1 "User Environment Utilities" "\&"
+.if \nX=1 .ds x} dc 1 "User Environment Utilities"
+.if \nX=2 .ds x} dc 1 "" "\&"
+.if \nX=3 .ds x} dc "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4dc\f1 \- desk calculator
+.SH SYNOPSIS
+\f4dc\f1 [ \f2file\f1 ]
+.SH DESCRIPTION
+\f4dc\fP
+is an arbitrary precision arithmetic package.
+Ordinarily it operates on decimal integers,
+but one may specify an input base, output base,
+and a number of fractional digits to be maintained.
+[\f4bc\fP is a preprocessor for \f4dc\fP
+that provides infix notation and a C-like syntax
+that implements functions.
+\f4bc\fP also provides reasonable control structures
+for programs.
+See \f4bc\fP(1).]
+The overall structure of
+\f4dc\fP
+is
+a stacking (reverse Polish) calculator.
+If an argument is given,
+input is taken from that file until its end,
+then from the standard input.
+The following constructions are recognized:
+.TP 6
+.I number\^
+The value of the number is pushed on the stack.
+A number is an unbroken string of the digits 0\-9.
+It may be preceded by an underscore (\f4_\fP) to input a
+negative number.
+Numbers may contain decimal points.
+.TP
+\f4+ \- / \(** % ^\f1
+The
+top two values on the stack are added
+\f1(\f4+\f1),
+subtracted
+\f1(\f4\-\f1),
+multiplied (\f4\(**\fP),
+divided (\f4/\fP),
+remaindered (\f4%\fP),
+or exponentiated (\f4^\fP).
+The two entries are popped off the stack;
+the result is pushed on the stack in their place.
+Any fractional part of an exponent is ignored.
+.TP
+\f4s\f2x\^\f1
+The
+top of the stack is popped and stored into
+a register named
+.IR x ,
+where
+.I x\^
+may be any character.
+If
+the
+\f4s\f1
+is capitalized,
+.I x\^
+is treated as a stack and the value is pushed on it.
+.TP
+\f4l\f2x\^\f1
+The
+value in register
+.I x\^
+is pushed on the stack.
+The register
+.I x\^
+is not altered.
+All registers start with zero value.
+If the
+\f4l\f1
+is capitalized,
+register
+.I x\^
+is treated as a stack and its top value is popped onto the main stack.
+.TP
+\f4 d\f1
+The
+top value on the stack is duplicated.
+.TP
+\f4 p\f1
+The top value on the stack is printed.
+The top value remains unchanged.
+.TP
+\f4 P\f1
+Interprets the top of the stack as an \s-1ASCII\s0 string,
+removes it, and prints it.
+.TP
+\f4 f\f1
+All values on the stack are printed.
+.TP
+\f4 q\f1
+Exits the program.
+If executing a string, the recursion level is
+popped by two.
+.TP
+\f4 Q\f1
+Exits the program.
+The top value on the stack is popped and the string execution level is popped
+by that value.
+.TP
+\f4 x\f1
+Treats the top element of the stack as a character string
+and executes it as a string of
+\f4dc\fP
+commands.
+.TP
+\f4 X\f1
+Replaces the number on the top of the stack with its scale factor.
+.TP
+\f4 [ .\ .\ . ]\f1
+Puts the bracketed \s-1ASCII\s0 string onto the top of the stack.
+.TP
+\f4<\f2x   \f4>\f2x   \f4=\f2x   \^\f1
+The
+top two elements of the stack are popped and compared.
+Register
+.I x\^
+is evaluated if they obey the stated
+relation.
+.TP
+\f4 v\f1
+Replaces the top element on the stack by its square root.
+Any existing fractional part of the argument is taken
+into account, but otherwise the scale factor is ignored.
+.TP
+\f4 !\f1
+Interprets the rest of the line as a \s-1UNIX\s0 system command.
+.TP
+\f4 c\f1
+All values on the stack are popped.
+.TP
+\f4 i\f1
+The top value on the stack is popped and used as the
+number radix for further input.
+.TP
+\f4 I\f1
+Pushes the input base on the top of the stack.
+.TP
+\f4 o\f1
+The top value on the stack is popped and used as the
+number radix for further output.
+.TP
+\f4 O\f1
+Pushes the output base on the top of the stack.
+.TP
+\f4 k\f1
+The top of the stack is popped, and that value is used as
+a non-negative scale factor:
+the appropriate number of places
+are printed on output,
+and maintained during multiplication, division, and exponentiation.
+The interaction of scale factor,
+input base, and output base will be reasonable if all are changed
+together.
+.TP
+\f4 z\f1
+The stack level is pushed onto the stack.
+.TP
+.SM
+\f4 Z\f1
+Replaces the number on the top of the stack with its length.
+.TP
+\f4 ?\f1
+A line of input is taken from the input source (usually the terminal)
+and executed.
+.TP
+\f4; :\f1
+are used by 
+\f4bc\fP(1)
+for array operations.
+.SH EXAMPLE
+This example prints the first ten values of n!:
+.PP
+.RS
+.ft 4
+.nf
+[la1+dsa\(**pla10>y]sy
+.br
+0sa1
+.br
+lyx
+.fi
+.ft 1
+.RE
+.SH SEE ALSO
+\f4bc\fP(1)
+.SH DIAGNOSTICS
+.PP
+\f4x is unimplemented\f1:
+.I x\^
+is an octal number.
+.PP
+\f4stack empty\f1:
+not enough elements on the stack to do what was asked.
+.PP
+\f4Out of space\f1:
+the free list is exhausted (too many digits).
+.PP
+\f4Out of headers\f1:
+too many numbers being kept around.
+.PP
+\f4Out of pushdown\f1:
+too many items on the stack.
+.PP
+\f4Nesting Depth\f1:
+too many levels of nested execution.
+.\"	@(#)dc.1	6.2 of 9/2/83
+.Ee

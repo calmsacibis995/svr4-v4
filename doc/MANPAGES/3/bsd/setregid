@@ -1,0 +1,126 @@
+'\"macro stdmacro
+.if n .pH g2.setregid @(#)setregid	40.10 of 4/24/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.\" Copyright (c) 1988 Sun Microsystems, Inc. - All Rights Reserved.
+.\"
+.nr X
+.if \nX=0 .ds x} setregid 3 "BSD Compatibility Package" "\&"
+.if \nX=1 .ds x} setregid 3 "BSD Compatibility Package"
+.if \nX=2 .ds x} setregid 3 "" "\&"
+.if \nX=3 .ds x} setregid "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4setregid\f1 \- set real and effective group IDs
+.SH SYNOPSIS
+\f4cc \f1[ \f2flag\f1\. \. \. ] \f2file\f1 \. \. \. \f4\-lucb\f1
+.P
+.ft 4
+.nf
+int setregid(rgid, egid)
+int rgid, egid;
+.fi
+.ft 1
+.SH DESCRIPTION
+\f4setregid\f1
+is used to set the real and effective group
+.SM ID\s0s
+of the calling process.
+If
+.I rgid
+is \-1, the real
+.SM GID
+is not changed; if
+.I egid
+is \-1, the effective
+.SM GID
+is not changed.
+The real and effective
+.SM GID\s0s
+may be set to different values in the same call.
+.P
+If the effective user
+.SM ID
+of the calling process is super-user,
+the real
+.SM GID
+and the effective
+.SM GID
+can be set to any legal value.
+.P
+If the effective user
+.SM ID
+of the calling process is not super-user,
+either the real
+.SM GID
+can be set to the saved set\s-1GID\s0
+from
+\f4execv\f1,
+or the effective
+.SM GID
+can either be set to the saved set\s-1GID\s0
+or the real 
+.SM GID\s0.
+Note: if a set\s-1GID\s0 process sets its effective 
+.SM GID
+to its real
+.SM GID\s0,
+it can still set its effective
+.SM GID
+back to the saved set\s-1GID\s0.
+.P
+In either case, if the real
+.SM GID
+is being changed (that is, if
+.I rgid
+is not \-1), or the effective
+.SM GID
+is being changed to a value not equal to the real 
+.SM GID\s0,
+the saved set\s-1GID\s0
+is set equal to the new effective
+.SM GID\s0.
+.P
+If the real
+.SM GID
+is changed from its current value, the old value is removed from the groups
+access list (see
+\f4getgroups\f1(2))
+if it is present in that list, and the new value is added to the groups access
+list if it is not already present and if this would not cause the number of
+groups in that list to exceed
+\f4NGROUPS\f1,
+as defined in
+\f4/usr/include/sys/param.h\f1.
+.SH "RETURN VALUE"
+Upon successful completion, a value of 0 is returned.
+Otherwise, a value of \-1 is returned and
+\f4errno\f1
+is set to indicate the error.
+.SH ERRORS
+\f4setregid\f1
+will fail and neither of the group
+.SM ID\s0s
+will be changed if:
+.TP 15
+\f4EPERM\fP
+The calling process's effective
+.SM UID
+is not the super-user and a change
+other than changing the real 
+.SM GID
+to the saved set\s-1GID\s0,
+or changing the effective 
+.SM GID
+to the real
+.SM GID
+or the saved
+.SM GID\s0,
+was specified.
+.SH "SEE ALSO"
+\f4setreuid\fP(3)
+.P
+\f4exec\fP(2),
+\f4getuid\fP(2),
+\f4setuid\fP(2)
+in the \f2Programmer's Reference Manual\f1

@@ -1,0 +1,82 @@
+'\"macro stdmacro
+.if n .pH g1.lorder @(#)lorder	@(#)lorder	40.14 of 5/22/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.if t .ds ' \h@.05m@\s+4\v@.333m@\'\v@-.333m@\s-4\h@.05m@
+.if n .ds ' '
+.if t .ds ` \h@.05m@\s+4\v@.333m@\`\v@-.333m@\s-4\h@.05m@
+.if n .ds ` `
+.nr X
+.if \nX=0 .ds x} lorder 1 "C Development Set" "\&"
+.if \nX=1 .ds x} lorder 1 "C Development Set"
+.if \nX=2 .ds x} lorder 1 "" "\&"
+.if \nX=3 .ds x} lorder "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4lorder\f1 \- find ordering relation for an object library
+.SH SYNOPSIS
+\f4\*plorder \f2file\f1 .\ .\ .
+.SH DESCRIPTION
+The input
+is one or more object or library archive
+\f2file\f1s
+[see
+\f4ar\fP(1)].
+The standard output
+is a list of pairs of object file or archive member names;
+the first file of the pair refers to
+external identifiers defined in the second.
+The output may be processed by
+\f4tsort\fP(1)
+to find an ordering of
+a library suitable for one-pass access by
+\f4ld\f1.
+Note that the link editor
+\f4ld\f1
+is capable of multiple passes over an archive in the portable archive format
+[see
+\f4ar\fP(4)]
+and does not require that
+\f4lorder\f1
+be used when building an archive.
+The usage of 
+the
+\f4lorder\f1
+command may, however, allow for a more efficient access of
+the archive during the link edit process.
+.PP
+The following example builds a new library
+from existing
+\f4\&.o\f1
+files.
+.PP
+.RS
+\f4ar \|\-cr \|library \|'\|\*plorder \|\(**.o \|\(bv \|tsort\|'  \f1
+.RE
+.SH FILES
+.TP 22
+\f2TMPDIR\f1/\f4\(**symref\f1
+temporary files
+.TP 22
+\f2TMPDIR\f1/\f4\(**symdef\f1
+temporary files
+.TP 22
+\f2TMPDIR\f1
+usually \f4/var/tmp\f1 but can be redefined by
+setting the environment variable 
+\f4TMPDIR\f1 [see \f4tempnam\f1() in \f4tmpnam\f1(3S)].
+.SH "SEE ALSO"
+\f4ar\fP(1),
+\f4ld\fP(1),
+\f4tsort\fP(1),
+\f4tempnam\fP(3S),
+\f4tmpname\fP(3S),
+\f4ar\fP(4)
+.SH NOTES
+\f4lorder\fP will accept as input any object or archive file,
+regardless of its suffix, provided there is more than
+one input file.
+If there is but a single input file,
+its suffix must be \f4.o\f1.
+.\"	@(#)lorder.1	6.2 of 9/2/83
+.Ee

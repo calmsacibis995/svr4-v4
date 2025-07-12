@@ -1,0 +1,48 @@
+'\"macro stdmacro
+.if n .pH g3c.getpw @(#)getpw	40.12 of 5/22/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} getpw 3C "C Development Set" "\&"
+.if \nX=1 .ds x} getpw 3C "C Development Set"
+.if \nX=2 .ds x} getpw 3C "" "\&"
+.if \nX=3 .ds x} getpw "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4getpw\f1 \- get name from \s-1UID\s0
+.SH SYNOPSIS
+\f4#include <stdlib.h>\f1
+.PP
+\f4int getpw (uid_t uid, char \(**buf);\f1
+.SH DESCRIPTION
+\f4getpw\fP
+searches the password file for
+a user id number that equals
+.IR uid ,
+copies the line of the password file in which
+.I uid\^
+was found into the array pointed to by
+.IR buf ,
+and returns 0.
+\f4getpw\fP
+returns non-zero if
+.IR uid ""
+cannot
+be found.
+.PP
+This routine is included only for compatibility with prior
+systems and should not be used; see
+\f4getpwent\fP(3C)
+for routines to use instead.
+.SH FILES
+\f4/etc/passwd\fP
+.SH "SEE ALSO"
+\f4getpwent\fP(3C).
+.br
+\f4passwd\fP(4) in the \f2System Administrator's Reference Manual\f1.
+.SH DIAGNOSTICS
+\f4getpw\fP
+returns non-zero
+on error.
+.\"	@(#)getpw.3c	6.3 of 10/20/83
+.Ee

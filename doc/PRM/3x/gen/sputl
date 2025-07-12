@@ -1,0 +1,47 @@
+'\"macro stdmacro
+.if n .pH g3x.sputl @(#)sputl	40.7 of 1/3/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} sputl 3X "Specialized Libraries" "\&"
+.if \nX=1 .ds x} sputl 3X "Specialized Libraries"
+.if \nX=2 .ds x} sputl 3X "" "\&"
+.if \nX=3 .ds x} sputl "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4sputl\f1, \f4sgetl\f1 \- access long integer data in a machine-independent fashion
+.SH SYNOPSIS
+\f4cc\f1
+[\f2flag\fP \|.\|.\|.] \f2file\fP \|.\|.\|.
+\f4\-lld\f1
+[\f2library\fP \|.\|.\|.]
+.PP
+\f4#include <ldfcn.h>\f1
+.PP
+.nf
+\f4void sputl (long value, char \(**buffer);\f1
+.PP
+\f4long sgetl (const char \(**buffer);\f1
+.fi
+.SH DESCRIPTION
+\f4sputl\fP
+takes the four bytes of the long integer
+.I value\^
+and places them in memory starting at the address pointed to by 
+.IR buffer .
+The ordering of the bytes is the same across all machines.
+.PP
+\f4sgetl\fP
+retrieves the four bytes in memory starting at the address
+pointed to by 
+.I buffer\^
+and returns the long integer value in the byte ordering of the host machine.
+.PP
+The combination of 
+\f4sputl\fP
+and
+\f4sgetl\fP
+provides a machine-independent way of storing long numeric
+data in a file in binary form without conversion to characters.
+.\"	@(#)sputl.3x	6.3 of 10/20/83
+.Ee

@@ -1,0 +1,293 @@
+'\"macro stdmacro
+.if n .pH 386.tar @(#)tar	40.2 of 6/27/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.nr X
+.if \nX=0 .ds x} tar 1 "Essential Utilities" "\&"
+.if \nX=1 .ds x} tar 1 "Essential Utilities"
+.if \nX=2 .ds x} tar 1 "" "\&"
+.if \nX=3 .ds x} tar "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4tar\f1 \- tape file archiver
+.SH SYNOPSIS
+.nf
+\f4/usr/sbin/tar \-c\f1[\f4vwfbLkFhienAC\f1[\f2#s\f1]] \f2device\f1 \f2block\f1 \f2files\f1 \f2tapesize\f1 \f2incfile\f1 . . .
+\f4/usr/sbin/tar \-c\f1[\f4vwfbLkXhienAC\f1[\f2#s\f1]] \f2device\f1 \f2block\f1 \f2files\f1 \f2tapesize\f1 \f2excfile\f1 . . .
+\f4/usr/sbin/tar \-r\f1[\f4vwfbLkFhienAC\f1[\f2#s\f1]] \f2device\f1 \f2block\f1 \f2files\f1 \f2tapesize\f1 \f2incfile\f1 . . .
+\f4/usr/sbin/tar \-r\f1[\f4vwfbLkXhienAC\f1[\f2#s\f1]] \f2device\f1 \f2block\f1 \f2files\f1 \f2tapesize\f1 \f2excfile\f1 . . .
+\f4/usr/sbin/tar \-t\f1[\f4vfLXien\f1[\f2#s\f1] \f2device\f1 [\f2files\f1 . . .\f1] \f2excfile\f1
+\f4/usr/sbin/tar \-u\f1[\f4vwfbLkXhienAC\f1[\f2#s\f1]] \f2device\f1 \f2block\f1 \f2files\f1 \f2tapesize\f1 \f2excfile\f1 . . .
+\f4/usr/sbin/tar \-u\f1[\f4vwfbLkFhienAC\f1[\f2#s\f1]] \f2device\f1 \f2block\f1 \f2files\f1 \f2tapesize\f1 \f2incfile\f1 . . .
+\f4/usr/sbin/tar \-x\f1[\f4lmovwfLXpienAC\f1[\f2#s\f1]] \f2device\f1 [\f2files .
+. . \f1] \f2excfile\f1
+.fi
+.SH DESCRIPTION
+\f4tar\fP
+saves and restores files
+on magnetic tape.
+Its actions are controlled by
+a string of characters containing
+one option
+(\f4c\fP, \f4r\fP, \f4t\fP, \f4u\fP, or \f4x\fP), and possibly followed by
+one or more modifiers
+(\f4v\f1, \f4w\f1, \f4f\f1, \f4b\f1, \f4L\fP, \f4k\fP, \f4F\fP,
+\f4X\fP, \f4h\fP, \f4i\fP, \f4e\fP, \f4n\fP, \f4A\fP, \f4l\fP,
+\f4m\fP, \f4o\fP, \f4p\fP, and \f2#s\f1).
+Other arguments to the command are
+\f2files\^\fP
+(or directory names)
+specifying which files are to be dumped or restored.
+In all cases, appearance of a directory name refers to
+the files and (recursively) subdirectories of that directory.
+.PP
+The options are as follows:
+.PP
+.TP 8
+\f4-c\fP
+Create a new tape; writing begins at the beginning
+of the tape, instead of after the last file.
+The \f4-c\fP option implies the
+\f4-r\fP
+option.
+.TP
+\f4-r\fP
+Replace.  The named
+\f2files\^\fP
+are written
+on the end of the tape.
+The
+\f4-c\fP
+and
+\f4-u\fP
+options imply the \f4-r\fP option.
+.TP
+\f4-t\fP
+Table.  
+The names and other information for the specified files are listed each 
+time that they occur on the tape.
+The listing is similar to the
+format produced by the \f4ls -l\f1 command [see \f4ls\fP(1)].
+If no
+\f2files\^\fP
+argument is given,
+all the names
+on the tape are listed.
+.TP
+\f4-u\f1
+Update.  The named
+\f2files\^\fP
+are added to the tape if they
+are not already there, or have
+been modified since last written on that tape.
+The \f4-u\fP option implies the
+\f4-r\f1 option.
+.TP
+\f4-x\fP
+Extract.  The named
+\f2files\^\fP
+are extracted from the tape.
+If a named file matches a directory whose contents
+had been written onto the tape,
+this directory is (recursively) extracted.
+Use the file or directory's relative path when appropriate,
+or \f4tar\fP will not find a match.
+The owner, modification time, and mode are restored (if possible).
+If no \f2files\^\fP argument is given,
+the entire contents of the tape is extracted.
+Note that if several files with the same name
+are on the tape, the last one overwrites
+all earlier ones.
+.PP
+The modifiers below may be used 
+in the order shown in the synopsis.
+.PP
+.TP 8
+\f2#s\fP
+This modifier determines the drive on which the tape is mounted
+(replace \f2#\fP with the drive number)
+and the speed of the drive (replace \f2s\fP with \f4l\fP,
+\f4m\fP, or \f4h\fP for low, medium or high).
+The modifier tells \f4tar\fP
+to use a drive other than the default drive,
+or the drive specified with the \f4-f\fP modifier.
+The defaults are listed in \f4/etc/default/tar\fP.
+.TP
+\f4v\fP
+Verbose.
+Normally, \f4tar\fP does its work silently.
+The \f4v\fP (verbose) modifier causes it to
+print the name of each file it treats,
+preceded by the option.
+With the \f4-t\fP option,
+\f4v\fP gives more information about the
+tape entries than just the name.
+.TP
+\f4w\fP
+What.  This modifier causes \f4tar\fP
+to print the action to be taken,
+followed by the name of the file,
+and then wait for your confirmation.
+If a word beginning with \f4y\fP is given,
+the action is performed.
+Any other input means no.
+This is not valid with the
+\f4-t\fP option.
+.TP
+\f4f\fP
+File.  This causes
+\f4tar\fP
+to use the \f2device\fP argument as the
+name of the archive instead of the default.
+If the name of the file is \f4\-\fP,
+\f4tar\fP writes to the standard output or
+reads from the standard input,
+whichever is appropriate.
+Thus, \f4tar\fP can be used as the head or
+tail of a pipeline.
+\f4tar\fP can also be used to move hierarchies
+with the command:
+.PP
+.RS
+.RS
+\f4cd \f2fromdir\fP; tar cf - . | (cd \f2todir\fP; tar xf \-)\f1
+.RE
+.RE
+.PP
+.TP 8
+\f4b\fP
+Blocking Factor.  This modifier causes \f4tar\fP
+to use the \f2block\fP argument as the
+blocking factor for tape records.
+The default is 20.
+This modifier should not be supplied when
+operating on regular archives or block special devices.
+It is mandatory however, when reading archives on
+raw magnetic tape archives (see \f4f\fP above).
+The block size is determined automatically when reading
+tapes created on block special devices
+(options \f4x\fP and \f4t\fP).
+.TP
+\f4l\fP
+Link.  This modifier causes \f4tar\fP
+to complain if it cannot resolve all of the links
+to the files being dumped.
+If the \f4l\fP modifier is not specified,
+no error messages are printed.
+.TP
+\f4m\fP
+Modify.  This modifier causes \f4tar\fP
+to not restore the modification times.
+The modification time 
+of the file will be the time of extraction.
+.TP
+\f4o\fP
+Ownership.  This modifier causes extracted files to take on the
+user and group identifier of the user running the program,
+rather than those on tape.
+This is only valid with the
+\f4-x\fP option.
+.TP
+\f4L\fP
+Follow symbolic links.
+This modifier causes symbolic links to be followed.
+By default, symbolic links are not followed.
+.TP
+\f4k\fP
+This modifier uses the \f2tapesize\fP argument as the size in
+bytes per volume for non-tape devices (such as a floppy drive).
+A value of 0 for \f2tapesize\fP causes multi-volume mode to be
+disabled (interpreted as an infinite volume size).
+This modifier may be used with the
+\f4-c\fP, \f4-r\fP, and \f4-u\fP options.
+.TP
+\f4F\fP
+This modifier uses the \f2incfile\fP argument as a file containing
+a list of named files (or directories) to be included
+on the tape.
+This modifier may only be used with the
+\f4-c\fP, \f4-r\fP, and \f4-u\fP options.
+This modifier may not be used with the \f4X\fP modifier.
+.TP
+\f4X\fP
+This modifier uses the \f2excfile\fP argument as a file containing
+a list of named files (or directories) to be excluded.
+This modifier may not be used with the \f4F\fP modifier.
+.TP
+\f4h\fP
+This modifier causes \f4tar\fP to follow symbolic
+links as if they were normal files or directories.
+Normally \f4tar\fP does not follow symbolic links.
+The \f4h\fP modifier may be used with the
+\f4-c\fP, \f4-r\fP, and \f4-u\fP options.
+.TP
+\f4p\fP
+This modifier restores the named \f2file\fP arguments
+to their original modes,
+ignoring the present value returned by \f4umask\fP
+[see \f4umask\fP(2) in the \f2Programmer's Reference Manual\fP].
+\f4setuid\fP and sticky bit information
+are also restored if the effective user ID is root.
+This modifier may only be used with the \f4-x\fP option.
+.TP
+\f4i\fP
+This modifier causes \f4tar\fP to ignore directory checksum errors.
+.TP
+\f4e\fP
+This modifier causes \f4tar\fP to quit when certain
+minor errors are encountered.
+Otherwise \f4tar\fP will continue when minor errors are encountered.
+.TP
+\f4n\fP
+This modifier must be used when the \f2device\fP argument
+is for a non-tape device (for example, a floppy drive).
+.TP
+\f4A\fP
+This modifier causes absolute pathnames
+for files to be suppressed,
+and may be used with the
+\f4-r\fP, \f4-c\fP, \f4-u\fP, and \f4-x\fP options.
+This causes all pathnames to be interpreted
+as relative to the current working directory.
+.TP
+\f4C\fP
+This modifier, on output, sets a flag indicating that all regular
+files are compressed.  On input, this modifier sets a flag to decompress
+all regular files.
+.PD
+.SH FILES
+.TP
+\f4/etc/default/tar
+.TP
+\f4/tmp/tar\(**\f1
+.TP
+\f4/usr/lib/locale/\f2locale\f4/LC_MESSAGES/uxcore\f1
+language-specific message file [See \f4LANG\fP on \f4environ\f1(5).]
+.SH SEE ALSO
+\f4ar\fP(1), \f4cpio\fP(1), \f4ls\fP(1).
+.br
+\f4umask\fP(2) in the \f2Programmer's Reference Manual\fP.
+.SH DIAGNOSTICS
+Complains about tape read/write errors.
+.br
+Complains if insufficient memory is available to hold
+the link tables.
+.br
+.ne 10
+.SH NOTES
+There is no way to ask for the \f2n\fP-th
+occurrence of a file.
+.P
+The \f4-b\fP modifier should not be used with
+archives that are going to be updated.
+The current magnetic tape driver cannot
+backspace raw magnetic tape.
+If the archive is on a disk file,
+the \f4-b\f1 modifier should not be used at all,
+because updating an archive stored on disk can destroy it.
+.P
+The current limit on file name length is
+100 characters.
+.P
+You cannot restore a mulit-level archive created with
+UNIX System V Release 4 \f4tar\fP on a pre-Release 4 system.
+A false warning message that file permissions have changed will be issued.

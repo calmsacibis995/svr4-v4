@@ -1,0 +1,43 @@
+.if n .pH g7.asy @(#)asy	40.6 of 1/3/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1990 AT&T
+.if \nX=0 .ds x} asy 7 "" "\&"
+.if \nX=1 .ds x} asy 7 ""
+.if \nX=2 .ds x} asy 7 "" "\&"
+.if \nX=3 .ds x} asy "" "" "\&"
+.TH \*(x} "" "386 Computer Only"
+.SH NAME
+\f4asy\f1 \- asynchronous serial port
+.SH DESCRIPTION
+The asy driver supports both the system board serial port and an additional
+serial adapter simultaneously.  Up to two serial ports are supported.  If an
+adapter for a port is not installed, an attempt to
+open it will fail.  The port can be programmed for speed (50\(em19200 baud),
+character length, and parity.  Output speed is always the same as input
+speed.  The port behaves as described in
+\f4termio\f1 (7).
+.PP
+The asynchronous port is a character-at-a-time device for both input and
+output.  This characteristic both limits the bandwidth which can be achieved
+over a line, and increases the interrupt loading on the central processor.
+In particular, file transfer programs such as
+\f4uucp\f1(1)
+may not function well at speeds over 4800 baud.
+.PP
+The baud rates of the serial adapter programmable baud-rate generator do not
+correspond exactly with system baud rates.  In particular, setting B0 will
+cause a disconnect, setting EXTA will set 19200 baud, and setting EXTB will
+set 38400 baud.  It is not possible to directly set 2000, 3600, or 7200 baud.
+The asynchronous ports driver supports line signal (hardware)
+flow control when the device node \f4/dev/tty0?h\f1 is used.
+The \f4/dev/tty0?\f1 ports are software flow control nodes as
+are the \f4/dev/tty0?\f1 nodes.
+.P
+Note:  when adding \f4asy\fP to the \f4mdevice\fP file [see \f4mdevice\fP(4)],
+the number in the \f2Maximum Units\fP field must be 1.
+.SH FILES
+\f4/dev/tty*\f1
+\f4/dev/term/*\f1
+.SH SEE ALSO
+\f4signal\f1(2),
+\f4termio\f1(7).

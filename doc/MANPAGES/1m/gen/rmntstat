@@ -1,0 +1,39 @@
+'\"macro stdmacro
+.if n .pH g1.rmntstat @(#)rmntstat	40.4 of 1/3/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} rmntstat 1M "Remote File Sharing Utilities" "\&"
+.if \nX=1 .ds x} rmntstat 1M "Remote File Sharing Utilities"
+.if \nX=2 .ds x} rmntstat 1M "" "\&"
+.if \nX=3 .ds x} rmntstat "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4rmntstat\f1 \- display mounted resource information
+.SH SYNOPSIS
+\f4rmntstat\f1
+[\f4\-h\f1] [\f2resource\f1]
+.SH DESCRIPTION
+When used with no options, \f4rmntstat\fP displays a list of all
+local Remote File Sharing resources that are remotely 
+mounted, the local path name, and the corresponding clients.
+\f4rmntstat\fP returns the remote mount data regardless of whether a 
+resource is currently advertised; this ensures that resources that have been
+unadvertised but are still remotely mounted are included in the report.
+When a \f2resource\f1 is specified, \f4rmntstat\fP displays the remote
+mount information only for that resource.
+The \f4\-h\f1 option causes header information to be omitted from the display.
+.SH "EXIT STATUS"
+.P
+If no local resources are remotely mounted, \f4rmntstat\fP will return
+a successful exit status.
+.SH ERRORS
+.P
+If \f2resource\f1 (1) does not physically reside on the local machine or
+(2) is an invalid resource name, an error message will be sent to
+standard error.
+.SH "SEE ALSO"
+\f4mount\fP(1M),
+\f4fumount\fP(1M),
+\f4unadv\fP(1M).
+.\"	@(#)rmntstat.1m	6.3 of 9/2/83

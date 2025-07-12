@@ -1,0 +1,49 @@
+'\"macro stdmacro
+.if n .pH g1.jwin @(#)jwin	40.7 of 5/21/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} jwin 1 "Layers Windowing Utilities" "\&"
+.if \nX=1 .ds x} jwin 1 "Layers Windowing Utilities"
+.if \nX=2 .ds x} jwin 1 "" "\&"
+.if \nX=3 .ds x} jwin "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4jwin\f1 \- print size of layer
+.SH SYNOPSIS
+\f4jwin\f1
+.SH DESCRIPTION
+\f4jwin\fP
+is functional only under \f4layers\fP(1) and is used to determine the size of the
+window associated with the current process.
+It prints the width and the height of the window
+in bytes (number of characters across and number of lines, respectively).
+For bit-mapped terminals only, it also prints
+the width and height of the window in bits.
+.ft1
+.SH EXIT STATUS 
+Returns \f40\f1 on successful completion, \f41\f1 otherwise.
+.SH DIAGNOSTICS
+If \f4layers\fP(1) has not been invoked,
+an error message is printed:
+.P
+.RS
+.ft4
+jwin: not mpx
+.ft1
+.RE
+.SH NOTE
+The window whose size is printed is the one attached to standard input;
+that is, the window you are in when you type the
+\f4jwin\fP
+command.
+.SH SEE ALSO
+\f4layers\fP(1)
+.SH EXAMPLE
+.nf
+.ftCW
+jwin
+bytes:  86 25
+bits:   780 406
+.fi
+.Ee

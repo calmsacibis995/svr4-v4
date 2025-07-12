@@ -1,0 +1,247 @@
+'\"macro stdmacro
+.if n .pH g2.getrusage @(#)getrusage	40.12 of 4/24/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.\" Copyright (c) 1980 Regents of the University of California.
+'\" macro stdmacro
+.\" Copyright (c) 1988 Sun Microsystems, Inc. - All Rights Reserved.
+.\"
+.\" All rights reserved.  The Berkeley software License Agreement
+.\" specifies the terms and conditions for redistribution.
+.\"
+.nr X
+.if \nX=0 .ds x} getrusage 3 "BSD Compatibility Package" "\&"
+.if \nX=1 .ds x} getrusage 3 "BSD Compatibility Package"
+.if \nX=2 .ds x} getrusage 3 "" "\&"
+.if \nX=3 .ds x} getrusage "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4getrusage\f1 \- get information about resource utilization
+.SH SYNOPSIS
+.nf
+\f4cc \f1[ \f2flag\f1\. \. \. ] \f2file\f1 \. \. \. \f4\-lucb\f1
+.sp
+.ft 4
+#include <sys/time.h>
+#include <sys/resource.h>
+.P
+.ft 4
+getrusage(who, rusage)
+int who;
+struct rusage *rusage;
+.ft 1
+.fi
+.SH DESCRIPTION
+\f4getrusage\f1
+returns information about the resources utilized by the current
+process, or all its terminated child processes.
+The interpretation for some values reported, such as
+\f4ru_idrss\f1,
+are dependent on the clock tick interval.
+This interval is an implementation dependent value.
+.P
+The
+\f4who\f1
+parameter is one of
+\f4RUSAGE_SELF\f1
+or
+\f4RUSAGE_CHILDREN\f1.
+The buffer to which
+.I rusage
+points will be filled in with
+the following structure:
+.P
+.nf
+.DT
+.ft 4
+\s-1
+struct     rusage {
+.ta .25i 1.9i
+	struct timeval ru_utime;	/* user time used */
+	struct timeval ru_stime;	/* system time used */
+.ta .25i .65i 1.9i
+	int	ru_maxrss;	/* maximum resident set size */
+	int	ru_ixrss;	/* currently 0 */
+	int	ru_idrss;	/* integral resident set size */
+	int	ru_isrss;	/* currently 0 */
+	int	ru_minflt;	/* page faults not requiring physical I/O */
+	int	ru_majflt;	/* page faults requiring physical I/O */
+	int	ru_nswap;	/* swaps */
+	int	ru_inblock;	/* block input operations */
+	int	ru_oublock;	/* block output operations */
+	int	ru_msgsnd;	/* messages sent */
+	int	ru_msgrcv;	/* messages received */
+	int	ru_nsignals;	/* signals received */
+	int	ru_nvcsw;	/* voluntary context switches */
+	int	ru_nivcsw;	/* involuntary context switches */
+};
+.ft 1
+\s0
+.fi
+.P
+The fields are interpreted as follows:
+.TP 15
+\f4ru_utime\f1
+The total amount of time spent executing in user mode.
+Time is given in seconds and microseconds.
+.TP
+\f4ru_stime\f1
+The total amount of time spent executing in system mode.
+Time is given in seconds and microseconds.
+.TP
+\f4ru_maxrss\f1
+The maximum resident set size.
+Size is given in pages (the size of a page, in bytes, is given by the
+\f4getpagesize\f1(3)
+system call).
+Also, see
+.SM NOTES\s0.
+.TP
+\f4ru_ixrss\f1
+Currently returns 0.
+.br
+.ne 5
+.TP
+\f4ru_idrss\f1
+An \(lqintegral\(rq value indicating the amount of memory in use
+by a process while the process is running.
+This value is the sum of the resident set sizes of the
+process running when a clock tick occurs.
+The value is given in pages times clock ticks.
+Note: it does not take sharing into account.
+Also, see
+.SM NOTES\s0.
+.br
+.ne 5
+.TP
+\f4ru_isrss\f1
+Currently returns 0.
+.TP
+\f4ru_minflt\f1
+The number of page faults serviced which did not
+require any physical I/O activity.
+Also, see
+.SM NOTES\s0.
+.TP
+\f4ru_majflt\f1
+The number of page faults serviced which required physical I/O activity.
+This could include page ahead operations by the kernel.
+Also, see
+.SM NOTES\s0.
+.TP
+\f4ru_nswap\f1
+The number of times a process was swapped out of main memory.
+.TP
+\f4ru_inblock\f1
+The number of times the file system had to perform input in
+servicing a
+\f4read\f1(2)
+request.
+.TP
+\f4ru_oublock\f1
+The number of times the file system had to perform output in
+servicing a
+\f4write\f1(2)
+request.
+.TP
+\f4ru_msgsnd\f1
+The number of messages sent over sockets.
+.TP
+\f4ru_msgrcv\f1
+The number of messages received from sockets.
+.TP
+\f4ru_nsignals\f1
+The number of signals delivered.
+.TP
+\f4ru_nvcsw\f1
+The number of times a context switch resulted due to a process
+voluntarily giving up the processor before its time slice was
+completed (usually to await availability of a resource).
+.TP
+\f4ru_nivcsw\f1
+The number of times a context switch resulted due to a higher
+priority process becoming runnable or because the current process
+exceeded its time slice.
+.SH "RETURN VALUE"
+If successful, the value of the appropriate structure
+is filled in, and 0 is returned.
+If the call fails, a \-1 is returned.
+.SH ERRORS
+\f4getrusage\f1 will fail if:
+.TP 10
+\f4EINVAL\fP
+The
+\f4who\f1
+parameter is not a valid value.
+.TP
+\f4EFAULT\fP
+The address specified by the
+\f4rusage\f1
+argument is not in a valid portion of the process's address space.
+.SH SEE ALSO
+\f4sar\fP(1M) in the \f2System Administrator's Reference Manual\f1
+.br
+\f4gettimeofday\fP(3),
+\f4read\fP(2),
+\f4times\fP(2),
+\f4wait\fP(3),
+\f4write\fP(2)
+in the \f2Programmer's Reference Manual\f1
+.SH NOTES
+Only the
+.I timeval
+fields of
+\f4struct rusage\f1
+are supported in this implementation.
+.P
+The numbers
+\f4ru_inblock\f1
+and
+\f4ru_oublock\f1
+account only for real I/O, and are approximate measures at best.
+Data supplied by the caching mechanism is charged only
+to the first process to read and the last process to write the data.
+.P
+The way resident set size is calculated is an approximation,
+and could misrepresent the true resident set size.
+.P
+Page faults can be generated from a variety of sources and for
+a variety of reasons.
+The customary cause for a page fault is a direct reference
+by the program to a page which is not in memory.
+Now, however, the kernel can generate page faults on
+behalf of the user, for example, servicing
+\f4read\f1(2)
+and
+\f4write\f1(2)
+system calls.
+Also, a page fault can be caused by an absent hardware translation
+to a page, even though the page is in physical memory.
+.P
+In addition to hardware detected page faults, the kernel may
+cause pseudo page faults in order to perform some housekeeping.
+For example, the kernel may generate page faults, even if the pages
+exist in physical memory, in order to lock down pages involved
+in a raw I/O request.
+.P
+By definition,
+.I major
+page faults require physical I/O, while
+.I minor
+page faults do not require physical I/O.
+For example, reclaiming the page from the free list would
+avoid I/O and generate a minor page fault.
+More commonly, minor page faults occur during process
+startup as references to pages which are already in memory.
+For example, if an address space faults on some \(lqhot\(rq
+executable or shared library, this results in a minor
+page fault for the address space.
+Also, any one doing a
+\f4read\f1(2)
+or
+\f4write\f1(2)
+to something that is in the page cache will
+get a minor page fault(s) as well.
+.P
+There is no way to obtain information about a child process
+which has not yet terminated.

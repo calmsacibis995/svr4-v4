@@ -1,0 +1,67 @@
+'\"macro stdmacro
+.if n .pH xenix_compat/g1.backup @(#)backup	40.11 of 6/18/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} backup 1 "Application Compatibility Package" "\&"
+.if \nX=1 .ds x} backup 1 "Application Compatibility Package"
+.if \nX=2 .ds x} backup 1 "" "\&"
+.if \nX=3 .ds x} backup "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4backup\f1 \- perform backup functions
+.SH SYNOPSIS
+\f4backup \fP[\f4-t\fP] [\f4-p \fP| \f4-c \fP| \f4-f\fP <\f2files\f1> | \f4-u\fP "<\f2user1\f1> [\f2user2\f1]"] \f4-d\fP <\f2device\f1>
+.br
+\f4backup -h\fP
+.SH DESCRIPTION
+.TP
+\f4-h\fP
+produces a history of backups.
+Tells the user when the last complete
+and incremental/partial backups were done.
+.TP
+\f4-c\fP
+complete backup.
+All files changed since the system was installed are backed up.
+If an incremental/partial backup was done, all files modified
+since that time are backed up,
+otherwise all files modified since the last complete backup are backed up.
+A complete backup must be done before a partial backup.
+.TP
+\f4-f\fP
+backup files specified by the \f2files\fP argument.
+file names may contain characters to be expanded
+(that is, *, .) by the shell.
+The argument must be in quotes.
+.TP
+\f4-u\fP
+backup a user's home directory.
+All files in the user's home directory will be backed up.
+At least one user must be specified but it
+can be more.
+The argument must be in quotes if more than one
+user is specified.
+If the user name is "all",
+then all the user's home directories will be backed up.
+.TP
+\f4-d\fP
+used to specify the device to be used.
+It defaults to \f4/dev/SA/diskette\fP.
+.TP
+\f4-t\fP
+used when the device is a tape.
+This option must be used with the \f4\-d\fP option
+when the tape device is specified.
+.P
+A complete backup must be done before a partial backup can
+be done.
+Raw devices rather than block devices should always be used.
+The program can handle multi-volume backups.
+The program will prompt the user when it is ready for the next
+medium.
+The program will give you an estimated number of floppies/tapes
+that will be needed to do the backup.
+Floppies must be formatted before the backup is done.
+Tapes do not need to be formatted.
+If backup is done to tape, the tape must be rewound.

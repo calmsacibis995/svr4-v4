@@ -1,0 +1,38 @@
+'\"macro stdmacro
+.if n .pH g1a.sync @(#)sync	40.5 of 4/16/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} sync 1M "Essential Utilities" "\&"
+.if \nX=1 .ds x} sync 1M "Essential Utilities"
+.if \nX=2 .ds x} sync 1M "" "\&"
+.if \nX=3 .ds x} sync "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4sync\f1 \- update the super block
+.SH SYNOPSIS
+\f4sync\f1
+.SH DESCRIPTION
+\f4sync\fP
+executes the
+\f4sync\fP
+system primitive.
+If the system is to be stopped,
+\f4sync\fP
+must be called to insure
+file system integrity.
+It will flush all previously unwritten system buffers out to disk,
+thus assuring that all file modifications up to that point will be
+saved.
+See
+\f4sync\fP(2)
+for details.
+.SH NOTE
+If you have done a write to a file on a remote machine
+in a Remote File Sharing environment, you cannot use \f4sync\fP to
+force buffers to be written out to disk on the remote machine.
+\f4sync\fP will only write local buffers to local disks.
+.SH SEE ALSO
+\f4sync\fP(2) in the \f2Programmer's Reference Manual\f1
+.\"	@(#)sync.1	6.2 of 9/2/83
+.Ee

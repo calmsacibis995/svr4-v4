@@ -1,0 +1,166 @@
+'\"macro stdmacro
+.if n .pH g1.lprm @(#)lprm	40.10 of 4/18/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.\" Copyright (c) 1983 Regents of the University of California.
+.\" All rights reserved.  The Berkeley software License Agreement
+.\" specifies the terms and conditions for redistribution.
+.\"
+.nr X
+.if \nX=0 .ds x} lprm 1 "BSD Compatibility Package" "\&"
+.if \nX=1 .ds x} lprm 1 "BSD Compatibility Package" ""
+.if \nX=2 .ds x} lprm 1 "" "\&"
+.if \nX=3 .ds x} lprm "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4lprm\f1 \- remove jobs from the printer queue
+.SH SYNOPSIS
+\f4/usr/ucb/lprm\f1
+[
+\f4\-P\f2printer\f1
+] [
+\f4\-\f1
+] [
+\f2job #\f1 .\ .\ .
+] [
+.I username
+\&.\ .\ .
+]
+.SH DESCRIPTION
+\f4lprm\f1
+removes a job or jobs from a printer's spooling queue.
+Since the spool directory is protected from users, using
+\f4lprm\f1
+is normally the only method by which a user can remove a job.
+.P
+Without any arguments,
+\f4lprm\f1
+deletes the job that is currently active, provided that the user who
+invoked
+\f4lprm\f1
+owns that job.
+.P
+When the privileged user specifies a
+.IR username ,
+\f4lprm\f1
+removes all jobs belonging to that user.
+.P
+You can remove a specific job by supplying its job number as an
+argument, which you can obtain using
+\f4lpq\f1(1).
+For example:
+.P
+.nf
+.RS
+.ta\w'active'u+2n +\w'wendy'u+2n +\w'385'u+2n +\w'standard input'u+16n
+\f4lpq  \-Phost\f1
+\f5host is ready and printing\f1
+\f5Rank Owner   Job     Files   Total Size\f1
+\f5active       wendy   385     standard input  35501 bytes\f1
+\f4lprm \-Phost 385\f1
+.in -0.5i
+.fi
+.RE
+.P
+\f4lprm\f1
+reports the names of any files it removes, and is
+silent if there are no applicable jobs to remove.
+.P
+\f4lprm\f1
+Sends the request to cancel a job to the print spooler,
+\f4LPSCHED\f1.
+.SH OPTIONS
+.TP 10
+\f4\-P\f2printer\f1
+Specify the queue associated with a specific
+printer.
+Otherwise the value of the
+\f4PRINTER\fP
+variable in the environment is used.
+If this variable is unset,
+the queue for the default printer is used.
+.TP
+\f4\-\f1
+Remove all jobs owned by you.
+If invoked by the privileged user, all
+jobs in the spool are removed.
+Job ownership is determined by the
+user's login name and host name on the machine where the
+\f4lpr\f1
+command was executed.
+.SH FILES
+.PD 0
+.TP 20
+\f4/var/spool/lp/*\f1
+spooling directories
+.PD
+.SH "SEE ALSO"
+\f4lpq\fP(1),
+\f4lpr\fP(1)
+.P
+\f4lpsched\fP(1M)\f1
+in the \f2System Administrator's Reference Manual\f1
+.br
+\f4cancel\fP(1)\f1,
+\f4lp\fP(1)\f1
+in the \f2User's Reference Manual\f1
+.SH DIAGNOSTICS
+.TP
+\f4lprm: \f2printer\fP\|: unknown printer\f1
+The
+\f4printer\f1
+was not found in the
+System V
+.SM LP
+database.
+Usually this is a typing mistake; however, it 
+may indicate that the printer does not exist on the system.
+Use
+\f1`\f4lptstat \-p\f1'
+to find the reason.
+.TP
+\f4lprm: error on opening queue to spooler\f1
+The connection to
+\f4lpsched\f1
+on the local machine failed.
+This usually means the printer server started at
+boot time has died or is hung.
+Check if the printer
+spooler daemon 
+\f4/usr/lib/lpsched\f1
+is running.
+.TP
+\f4lprm: Can't send message to the LP print service\f1
+.TP
+\f4lprm: Can't receive message from the LP print service\f1
+These indicate that the
+.SM LP
+print service has been 
+stopped.
+Get help from the system administrator. 
+.TP
+\f4lprm: Received unexpected message from the LP print service\f1
+It is likely there is an error in this software.
+Get help from system administrator.
+.TP 
+\f4lprm: Can't cancel request\f1
+You are not allowed to remove another's request.
+.SH NOTES
+.P
+An active job may be incorrectly identified for removal by an
+\f4lprm\f1
+command issued with no arguments.
+During the interval between an
+\f4lpq\f1(1)
+command and the execution of
+\f4lprm\f1,
+the next job in queue may have become active; that job
+may be removed unintentionally if it is owned by you.
+To avoid this, supply
+\f4lprm\f1
+with the job number to remove when a critical job that
+you own is next in line.
+.P
+Only the privileged user can remove print jobs submitted from another host.
+.P
+\f4lp\f1 is the preferred interface.

@@ -1,0 +1,47 @@
+'\"! tbl | mmdoc
+'\"macro stdmacro
+.if n .pH g3c.mkfifo @(#)mkfifo	40.21 of 5/22/91	1 of 8/5/88
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} mkfifo 3C "C Development Set" "\&"
+.if \nX=1 .ds x} mkfifo 3C "C Development Set"
+.if \nX=2 .ds x} mkfifo 3C "" "\&"
+.if \nX=3 .ds x} mkfifo "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4mkfifo\f1 \- create a new \s-1FIFO\s+1
+.SH SYNOPSIS
+\f4#include <sys/types.h>\f1
+.br
+\f4#include <sys/stat.h>\f1
+.PP
+\f4int mkfifo (const char *path, mode_t mode);\f1
+.SH DESCRIPTION
+The
+\f4mkfifo\fP
+routine creates a new \s-1FIFO\s+1 special file named by the pathname pointed to by
+\f2path\f1.  The mode of the new \s-1FIFO\s+1 is initialized from \f2mode\f1.  The
+file permission bits of the \f2mode\f1 argument are modified by the process's
+file creation mask [see \f4umask\f1(2)].
+.PP
+The \s-1FIFO\s+1's owner id is set to the process's effective user id.
+The \s-1FIFO\s+1's
+group id is set to the process's effective group id,
+or if the \f4S_ISGID\fP bit is set in the parent directory then the
+group id of the \s-1FIFO\s+1 is inherited from the parent.
+.PP
+\f4mkfifo\fP calls the system call \f4mknod\f1
+to make the file.
+.SH SEE ALSO
+.nf
+\f4chmod\fP(2), \f4exec\fP(2), \f4mknod\fP(2), \f4umask\fP(2), \f4fs\fP(4), \f4stat\fP(5). 
+\f4mkdir\fP(1) in the \f2User's Reference Manual\f1.
+.fi
+.SH DIAGNOSTICS
+Upon successful completion a value of 0 is returned.  Otherwise, a value
+of \-1 is returned and \f4errno\f1 is set to indicate the error.
+.SH NOTES
+Bits other than the file permission bits in \f2mode\f1 are ignored.
+.\"	@(#)mkfifo.3c	1 of 9/30/88
+.Ee

@@ -1,0 +1,48 @@
+'\"macro stdmacro
+.if n .pH 386.dma_gb_mode @(#)dma_gb_mode	40.3 of 6/24/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.nr X
+.if \nX=0 .ds x} dma_get_best_mode D3X "" "DDI" "\&"
+.if \nX=1 .ds x} dma_get_best_mode D3X "" "DDI"
+.if \nX=2 .ds x} dma_get_best_mode D3X "" "\&"
+.if \nX=3 .ds x} dma_get_best_mode "" "" "\&"
+.TH \*(x}
+.IX "\f4dma_get_best_mode\fP(D3X)"
+.SH NAME
+\f4dma_get_best_mode\f1 \- determine best transfer mode for DMA command
+.SH SYNOPSIS
+.nf
+.na
+\f4#include <sys/types.h>
+#include <sys/dma.h>
+.sp 0.5
+\f4uchar_t dma_get_best_mode(struct dma_cb \f2*dmacbptr\f4);\f1
+.ad
+.fi
+.SH ARGUMENTS
+.RS 0n 10
+.IP "\f2dmacbptr\f1" 10
+Pointer to a DMA command block.
+.RE
+.SH DESCRIPTION
+\f4dma_get_best_mode\f1 determines the best DMA transfer
+mode to use with the DMA operation specified in the command
+block whose address is given by \f2dmacbptr\fP.
+Prior to the call to \f4dma_get_best_mode\fP,
+all fields of the command block should have been
+initialized except for \f4cycles\fP.
+The \f4cycles\fP field should be initialized using
+the return value from \f4dma_get_best_mode\fP.
+.SH "RETURN VALUE"
+\f4dma_get_best_mode\f1 returns a value
+that specifies the transfer mode.
+This value should be used to set the
+\f4cycles\fP field of the \f4dma_cb\fP(D4X) structure.
+.SH LEVEL
+Base or Interrupt.
+.SH NOTES
+Does not sleep.
+.SH "SEE ALSO"
+.na
+\f4dma_cb\f1(D4X)
+.ad

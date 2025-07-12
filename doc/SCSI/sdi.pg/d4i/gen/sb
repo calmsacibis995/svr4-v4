@@ -1,0 +1,85 @@
+'\"macro stdmacro
+.if n .pH gen.sb @(#)sb	40.1 of 2/22/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.nr X
+.if \nX=0 .ds x} sb D4I SDI "\&"
+.if \nX=1 .ds x} sb D4I SDI
+.if \nX=2 .ds x} sb D4I "" "\&"
+.if \nX=3 .ds x} sb "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4sb\fP \- SCSI block structure
+.SH SYNOPSIS
+\f4#include <sys/sdi.h>\fP
+.SH DESCRIPTION
+This structure defines the SCSI block, which can be either an \f4scb\f1(D4I)
+structure or an \f4sfb\f1(D4I) structure.  The
+\f4sb_type\f1 field indicates whether the \f4sb\f1 structure contains an
+\f4scb\f1 (SCSI control block) or an \f4sfb\f1 (SCSI function block) structure.
+.P
+Use the \f4sb\f1 structure when you call an SDI function that sends a request
+to a SCSI device (either \f4sdi_send\f1(D3I) or \f4sdi_icmd\f1(D3I)).
+.P
+The method for using the \f4sb\f1 structure is:
+.RS 3n
+.IP 1 4n
+Use the \f4sdi_getblk\f1 function to allocate a SCSI block.
+.IP 2
+Set \f4sb_type\f1 appropriately.
+.IP 3
+Assign values to the members of the structure as appropriate.
+.IP 4
+Call the appropriate function to send the data structure.
+.RE
+.P
+See \f4scb\f1(D4I) and \f4sfb\f1(D4I)
+for more information on structure use.
+.SH STRUCTURE MEMBERS
+.ft 4
+.nf
+unsigned long    sb_type;  /* Type of SDI block */
+union{
+  struct scb     b_scb;    /* SCSI control block */
+  struct sfb     b_sfb;    /* SCSI function block */
+}sb_b;
+.fi
+.ft 1
+.P
+The members of this structure are:
+.TP 10n
+\f4sb_type\f1
+indicates whether the \f4sb_b\f1 structure is an \f4scb\f1 or an \f4sfb\f1
+structure.  Values may be:
+.RS 14n
+.TP 15n
+\f4ISCB_TYPE\f1
+\f4sb_b\f1 is an immediate \f4scb\f1 (used with \f4sdi_icmd\f1)
+.TP
+\f4SCB_TYPE\f1
+\f4sb_b\f1 is an \f4scb\f1 (used with \f4sdi_send\f1)
+.TP
+\f4SFB_TYPE\f1
+\f4sb_b\f1 is an \f4sfb\f1 (used with \f4sdi_icmd\f1)
+.RE
+.TP 10n
+\f4b_scb\f1
+the SCSI control block structure
+.TP
+\f4b_sfb\f1
+the SCSI function block structure
+.SH NOTES
+The target driver must only allocate a SCSI block using \f4sdi_getblk\f1(D3I).
+Allocation by any other means causes the computer to panic.
+.P
+If
+one \f4sb\f1 structure is copied, the new structure must be processed with
+\f4sdi_translate\f1(D3I).
+.SH SEE ALSO
+.na
+\f4sdi_getblk\f1(D3I),
+\f4sdi_icmd\f1(D3I),
+\f4sdi_send\f1(D3I),
+\f4sdi_translate\f1(D3I),
+\f4scb\f1(D4I),
+\f4sfb\f1(D4I)
+.ad

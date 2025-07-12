@@ -1,0 +1,63 @@
+'\"macro stdmacro
+.if n .pH g1.ldd @(#)ldd	40.9 of 5/22/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+'\"macro stdmacro
+.nr X
+.if \nX=0 .ds x} ldd 1 "C Development Set" "\&"
+.if \nX=1 .ds x} ldd 1 "C Development Set"
+.if \nX=2 .ds x} ldd 1 "" "\&"
+.if \nX=3 .ds x} ldd "" "" "\&"
+.TH \*(x}
+.if '\*p'' \{\
+.ds N
+.ds p
+.ds P
+.ds l libc.a\}
+.SH NAME
+\f4ldd\fP \- list dynamic dependencies
+.SH SYNOPSIS
+\f4ldd\f1
+[\f4\-d\f1 | \f4\-r\f1] \f2file\f1
+.SH DESCRIPTION
+The \f4ldd\f1 command lists the path names of all
+shared objects that would be loaded as a result
+of executing \f2file\f1.
+If \f2file\f1 is a valid
+executable but does not require any shared objects,
+\f4ldd\f1 will succeed, producing no output.
+.PP
+\f4ldd\f1 may also be used to check the compatibility
+of \f2file\f1 with the shared objects it uses.
+It does
+this by optionally printing warnings for any unresolved
+symbol references that would occur if \f2file\f1 were
+executed.
+Two options govern this mode of \f4ldd\f1:
+.PP
+.TP
+\f4\-d\f1 
+Causes \f4ldd\f1 to check all references to data objects.
+.TP
+\f4\-r\f1
+Causes \f4ldd\f1 to check references to both data objects
+and functions.
+.PP
+Only one of the above options may be given during any single
+invocation of \f4ldd\f1.
+.SH "SEE ALSO"
+\f4cc\f1(1), \f4ld\f1(1)
+.br
+The ``C Compilation System'' chapter in
+the \f2Programmer's Guide: ANSI C and Programming Support Tools\f1
+.SH DIAGNOSTICS
+\f4ldd\f1 prints its record of shared object path names to \f4stdout\f1.
+The optional list of symbol resolution problems are printed to \f4stderr\f1.
+If \f2file\f1 is not an executable file or cannot be opened
+for reading, a non-zero exit status is returned.
+.SH NOTES
+\f4ldd\f1 doesn't list shared objects explicitly attached
+via \f4dlopen\f1(3X).
+.PP
+\f4ldd\f1 uses the same algorithm as
+the dynamic linker to locate shared objects.

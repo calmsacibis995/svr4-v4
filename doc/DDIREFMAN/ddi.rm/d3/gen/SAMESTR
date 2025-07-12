@@ -1,0 +1,48 @@
+'\"macro stdmacro
+.if n .pH gen.SAMESTR @(#)SAMESTR	40.2 of 1/7/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.nr X
+.if \nX=0 .ds x} SAMESTR D3DK "STREAMS" "DDI/DKI" "\&"
+.if \nX=1 .ds x} SAMESTR D3DK "STREAMS" "DDI/DKI"
+.if \nX=2 .ds x} SAMESTR D3DK "" "\&"
+.if \nX=3 .ds x} SAMESTR "" "" "\&"
+.TH \*(x}
+.IX "\f4SAMESTR\fP(D3DK)"
+.SH NAME
+\f4SAMESTR\f1 \- test if next queue is same type
+.SH SYNOPSIS
+.nf
+.na
+\f4#include <sys/stream.h>
+.sp 0.5
+int SAMESTR(queue_t *\f2q\f4);\f1
+.ad
+.fi
+.SH ARGUMENTS
+.RS 0n 10
+.IP "\f2q\f1" 10n
+Pointer to the queue.
+.RE
+.SH DESCRIPTION
+The \f4SAMESTR\f1 function 
+is used to see if the next queue in a stream (if it exists)
+is the same type as the current
+queue (that is, both are read queues
+or both are write queues).  This can be used to determine the
+point in a STREAMS-based pipe where a read queue is linked to a write
+queue.
+.SH RETURN VALUE
+\f4SAMESTR\f1 returns 1 if the next queue is the same type as
+the current queue.
+It returns 0 if the next queue does not exist or if it is not
+the same type.
+.SH LEVEL
+Base or Interrupt.
+.SH NOTES
+Does not sleep.
+.SH SEE ALSO
+.na
+\f4OTHERQ\f1(D3DK)
+.ad
+.SH EXAMPLE 
+See the \f4put\f1(D2DK) manual page for an example of \f4SAMESTR\f1.

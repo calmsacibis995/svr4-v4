@@ -1,0 +1,73 @@
+'\"macro stdmacro
+.if n .pH gen.WR @(#)WR	40.2 of 1/7/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.nr X
+.if \nX=0 .ds x} WR D3DK "STREAMS" "DDI/DKI" "\&"
+.if \nX=1 .ds x} WR D3DK "STREAMS" "DDI/DKI"
+.if \nX=2 .ds x} WR D3DK "" "\&"
+.if \nX=3 .ds x} WR "" "" "\&"
+.TH \*(x}
+.IX "\f4WR\fP(D3DK)"
+.SH NAME
+\f4WR\f1 \- get a pointer to the write queue
+.SH SYNOPSIS
+.nf
+.na
+\f4#include <sys/stream.h>
+#include <sys/ddi.h>
+.sp 0.5
+queue_t *WR(queue_t *\f2q\f4);\f1
+.ad
+.fi
+.SH ARGUMENTS
+.RS 0n 10
+.IP "\f2q\f1" 10n
+Pointer to the read queue whose write queue is to be
+returned.
+.RE
+.SH DESCRIPTION
+The \f4WR\f1 function accepts a read queue pointer as an argument and
+returns a pointer to the write queue of the same module.
+.SH "RETURN VALUE" 
+The pointer to the write queue.
+.SH LEVEL 
+Base or Interrupt.
+.SH NOTES
+Does not sleep.
+.sp 0.5
+Make sure the argument to this function is a pointer to a
+read queue. \f4WR\f1 will not check the queue type, and a system
+panic could result if the pointer is not the right type.
+.SH "SEE ALSO" 
+.na
+\f4OTHERQ\f1(D3DK),
+\f4RD\f1(D3DK)
+.ad
+.SH EXAMPLE 
+.IX "\f4WR\fP(D3DK), example"
+.P
+In a STREAMS \f4open\fP(D2DK) routine, the driver or module is passed
+a pointer to the read queue.  The driver or module can store a
+pointer to a private data structure in
+the \f4q_ptr\f1 field of both the read and write queues if it
+needs to identify the data structures from its \f4put\fP(D2DK) or \f4srv\fP(D2DK) routines.
+.ne 4
+.P
+.nf
+.ft 4
+.ps 7
+.vs 9
+ 1  extern struct xxx_dev[];
+    ...
+ 2  xxxopen(queue_t *q, dev_t *devp, int flag, int sflag, cred_t *crp)
+ 3  {
+	...
+ 3	q->q_ptr = (caddr_t)&xxx_dev[getminor(*devp)];
+ 4	WR(q)->q_ptr = (caddr_t)&xxx_dev[getminor(*devp)];
+	...
+ 5  }
+.vs
+.ps
+.ft 1
+.fi
+.P

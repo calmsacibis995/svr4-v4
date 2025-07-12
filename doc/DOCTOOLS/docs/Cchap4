@@ -1,0 +1,573 @@
+.if n .pH doctools.Cchap4 @(#)Cchap4	40.2
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.PM "DN" "FINAL COPY"
+.BK "Documenter's Tool Set User's Guide" "Release 1.0" "" ""   
+.\ACRONYM	                  
+.CH "Guide Macros" "" "Table of Contents" "4"
+.\CHAPTER	4
+.tC 1 "Introduction" 4-1  
+.Index: guide macros       	1
+.Index: introduction, guide macros      	1
+.tC L "Figure 4-1:\0" "The Guide Macros" 4-1
+.Index: guide macros       	1
+.Index: guide macros, listing      	1
+.tC 1 "Book and Chapter Information" 4-2  
+.tC 2 "The \&.BK Macro" 4-2  
+.Index: \&.BK macro       	2
+.Index: macro, \&.BK       	2
+.Index: guide macros, book information     	2
+.Index: book information macro, \&.BK     	2
+.tC 3 "Name" 4-2  
+.tC 3 "Synopsis" 4-2  
+.tC 3 "Description" 4-2  
+.tC 3 "Examples" 4-2  
+.tC 2 "The \&.CH Macro" 4-4  
+.Index: \&.CH macro       	4
+.Index: macro, \&.CH       	4
+.Index: guide macros, chapter information     	4
+.Index: chapter information macro, \&.CH     	4
+.tC 3 "Name" 4-4  
+.tC 3 "Synopsis" 4-4  
+.tC 3 "Description" 4-5  
+.tC 3 "Examples" 4-5  
+.tC 1 "Chapter Sections" 4-7  
+.Index: chapter sections, heading macros     	7
+.Index: guide macros, chapter sections     	7
+.Index: heading macros       	7
+.tC 2 "The \&.H Macro" 4-7  
+.Index: \&.H macro       	7
+.Index: macro, \&.H       	7
+.Index: guide macros, chapter sections     	7
+.Index: chapter heading macro, \&.H     	7
+.tC 3 "Name" 4-7  
+.tC 3 "Synopsis" 4-7  
+.tC 3 "Description" 4-7  
+.tC 3 "Examples" 4-8  
+.tC 1 "Admonitions" 4-10  
+.Index: admonition macros       	10
+.Index: macros, admonitions       	10
+.tC 2 "The \&.AB Macro" 4-10  
+.Index: \&.AB macro       	10
+.Index: macro, \&.AB       	10
+.Index: guide macros, admonition begin     	10
+.Index: admonition begin macro, \&.AB     	10
+.tC 3 "Name" 4-10  
+.tC 3 "Synopsis" 4-10  
+.tC 3 "Description" 4-10  
+.tC 3 "Examples" 4-10  
+.tC 2 "The \&.AC Macro" 4-12  
+.Index: \&.AC macro       	12
+.Index: macro, \&.AC       	12
+.Index: guide macros, admonition close     	12
+.Index: admonition close macro, \&.AC     	12
+.tC 3 "Name" 4-12  
+.tC 3 "Synopsis" 4-12  
+.tC 3 "Description" 4-12  
+.tC 3 "Examples" 4-12  
+.tC 1 "Screens and Boxes" 4-13  
+.Index: screen macros       	13
+.Index: box macros       	13
+.Index: macros, screens       	13
+.Index: macros, boxes       	13
+.tC 2 "The \&.SS Macro" 4-13  
+.Index: \&.SS macro       	13
+.Index: macro, \&.SS       	13
+.Index: guide macros, screen start     	13
+.Index: screen start macro, \&.SS     	13
+.tC 3 "Name" 4-13  
+.tC 3 "Synopsis" 4-13  
+.tC 3 "Description" 4-13  
+.tC 3 "Examples" 4-14  
+.tC 2 "The \&.SE Macro" 4-17  
+.Index: \&.SE macro       	17
+.Index: macro, \&.SE       	17
+.Index: guide macros, screen end     	17
+.Index: screen end macro, \&.SE     	17
+.tC 3 "Name" 4-17  
+.tC 3 "Synopsis" 4-17  
+.tC 3 "Description" 4-17  
+.tC 3 "Examples" 4-17  
+.tC 2 "The \&.BB Macro" 4-17  
+.Index: \&.BB macro       	17
+.Index: macro, \&.BB       	17
+.Index: guide macros, box begin     	17
+.Index: box begin macro, \&.BB     	17
+.tC 3 "Name" 4-17  
+.tC 3 "Synopsis" 4-17  
+.tC 3 "Description" 4-18  
+.tC 3 "Examples" 4-18  
+.tC 2 "The \&.BC Macro" 4-19  
+.Index: \&.BC macro       	19
+.Index: macro, \&.BC       	19
+.Index: guide macros, box close     	19
+.Index: box close macro, \&.BC     	19
+.tC 3 "Name" 4-19  
+.tC 3 "Synopsis" 4-20  
+.tC 3 "Description" 4-20  
+.tC 3 "Examples" 4-20  
+.tC 1 "Legends" 4-21  
+.Index: legends        	21
+.Index: figure legends       	21
+.Index: table legends       	21
+.tC 2 "The \&.FG Macro" 4-21  
+.Index: \&.FG macro       	21
+.Index: macro, \&.FG       	21
+.Index: guide macros, figure legends     	21
+.Index: figure legend macro, \&.FG     	21
+.tC 3 "Name" 4-21  
+.tC 3 "Synopsis" 4-21  
+.tC 3 "Description" 4-21  
+.tC 3 "Examples" 4-22  
+.tC L "Figure 4-2:\0" "A Typical Marbles Error Message" 4-23
+.tC L "Figure 4-3:\0" "A Function that Counts Marbles" 4-24
+.tC 2 "The \&.TB Macro" 4-24  
+.Index: \&.TB macro       	24
+.Index: macro, \&.TB       	24
+.Index: guide macros, table legends     	24
+.Index: table legend macro, \&.TB     	24
+.tC 3 "Name" 4-24  
+.tC 3 "Synopsis" 4-24  
+.tC 3 "Description" 4-25  
+.tC 3 "Examples" 4-25  
+.tC 1 "Displays" 4-26  
+.Index: display macros       	26
+.tC 2 "The \&.DS Macro" 4-26  
+.Index: \&.DS macro       	26
+.Index: macro, \&.DS       	26
+.Index: guide macros, display start     	26
+.Index: display start macro, \&.DS     	26
+.tC 3 "Name" 4-26  
+.tC 3 "Synopsis" 4-26  
+.tC 3 "Description" 4-26  
+.tC 3 "Examples" 4-27  
+.tC 2 "The \&.DE Macro" 4-28  
+.Index: \&.DE macro       	28
+.Index: macro, \&.DE       	28
+.Index: guide macros, display end     	28
+.Index: display end macro, \&.DE     	28
+.tC 3 "Name" 4-28  
+.tC 3 "Synopsis" 4-28  
+.tC 3 "Description" 4-28  
+.tC 3 "Examples" 4-28  
+.tC 1 "Lists" 4-29  
+.Index: lists        	29
+.Index: auto-incrementing lists       	29
+.Index: number lists       	29
+.Index: alphabetic lists       	29
+.Index: bullet lists       	29
+.Index: dash lists       	29
+.Index: variable lists       	29
+.tC 2 "The \&.AL Macro" 4-29  
+.Index: \&.AL macro       	29
+.Index: macro, \&.AL       	29
+.Index: guide macros, auto-incrementing list start    	29
+.Index: auto-incrementing list start macro, \&.AL    	29
+.tC 3 "Name" 4-29  
+.tC 3 "Synopsis" 4-29  
+.tC 3 "Description" 4-30  
+.tC L "Table 4-1:\0" "Auto-Incrementing List Types" 4-30
+.tC 3 "Examples" 4-30  
+.tC 2 "The \&.BL Macro" 4-32  
+.Index: \&.BL macro       	32
+.Index: macro, \&.BL       	32
+.Index: guide macros, bullet list start    	32
+.Index: bullet list start macro, \&.BL    	32
+.tC 3 "Name" 4-32  
+.tC 3 "Synopsis" 4-32  
+.tC 3 "Description" 4-32  
+.tC 3 "Example" 4-33  
+.tC 2 "The \&.DL Macro" 4-34  
+.Index: \&.DL macro       	34
+.Index: macro, \&.DL       	34
+.Index: guide macros, dash list start    	34
+.Index: dash list start macro, \&.DL    	34
+.tC 3 "Name" 4-34  
+.tC 3 "Synopsis" 4-34  
+.tC 3 "Description" 4-34  
+.tC 3 "Example" 4-35  
+.tC 2 "The \&.VL Macro" 4-35  
+.Index: \&.VL macro       	35
+.Index: macro, \&.VL       	35
+.Index: guide macros, variable list start    	35
+.Index: variable list start macro, \&.VL    	35
+.tC 3 "Name" 4-35  
+.tC 3 "Synopsis" 4-35  
+.tC 3 "Description" 4-36  
+.tC 3 "Examples" 4-37  
+.tC 2 "The \&.LI Macro" 4-38  
+.Index: \&.LI macro       	38
+.Index: macro, \&.LI       	38
+.Index: guide macros, list items     	38
+.Index: list item macro, \&.LI     	38
+.tC 3 "Name" 4-38  
+.tC 3 "Synopsis" 4-38  
+.tC 3 "Description" 4-39  
+.tC 3 "Examples" 4-39  
+.tC 2 "The \&.LE Macro" 4-40  
+.Index: \&.LE macro       	40
+.Index: macro, \&.LE       	40
+.Index: guide macros, list end     	40
+.Index: list end macro, \&.LE     	40
+.tC 3 "Name" 4-40  
+.tC 3 "Synopsis" 4-40  
+.tC 3 "Description" 4-40  
+.tC 3 "Examples" 4-40  
+.tC 1 "Specialized Displays and Special Text Elements" 4-41  
+.Index: specialized displays       	41
+.Index: special text elements      	41
+.Index: text markup       	41
+.tC 2 "The \&.CO Macro" 4-42  
+.Index: \&.CO macro       	42
+.Index: macro, \&.CO       	42
+.Index: guide macros, computer output     	42
+.Index: computer output macro, \&.CO     	42
+.tC 3 "Name" 4-42  
+.tC 3 "Synopsis" 4-42  
+.tC 3 "Description" 4-42  
+.tC 3 "Examples" 4-42  
+.tC 2 "The \&.UI Macro" 4-43  
+.Index: \&.UI macro       	43
+.Index: macro, \&.UI       	43
+.Index: guide macros, user input     	43
+.Index: user input macro, \&.UI     	43
+.tC 3 "Name" 4-43  
+.tC 3 "Synopsis" 4-43  
+.tC 3 "Description" 4-44  
+.tC 3 "Examples" 4-44  
+.tC 2 "The \&.PC Macro" 4-45  
+.Index: \&.PC macro       	45
+.Index: macro, \&.PC       	45
+.Index: guide macros, program code     	45
+.Index: program code macro, \&.PC     	45
+.tC 3 "Name" 4-45  
+.tC 3 "Synopsis" 4-45  
+.tC 3 "Description" 4-45  
+.tC 3 "Examples" 4-45  
+.tC 2 "The \&.SF Macro" 4-46  
+.Index: \&.SF macro       	46
+.Index: macro, \&.SF       	46
+.Index: guide macros, standard format     	46
+.Index: standard format macro, \&.SF     	46
+.tC 3 "Name" 4-46  
+.tC 3 "Synopsis" 4-46  
+.tC 3 "Description" 4-46  
+.tC 3 "Examples" 4-46  
+.tC 2 "The \&.CN Macro" 4-47  
+.Index: \&.CN macro       	47
+.Index: macro, \&.CN       	47
+.Index: guide macros, command name     	47
+.Index: command name macro, \&.CN     	47
+.tC 3 "Name" 4-47  
+.tC 3 "Synopsis" 4-47  
+.tC 3 "Description" 4-47  
+.tC 3 "Example" 4-47  
+.tC 2 "The \&.SB Macro" 4-48  
+.Index: \&.SB macro       	48
+.Index: macro, \&.SB       	48
+.Index: guide macros, substitutable element     	48
+.Index: substitutable element macro, \&.SB     	48
+.tC 3 "Name" 4-48  
+.tC 3 "Synopsis" 4-48  
+.tC 3 "Description" 4-48  
+.tC 3 "Example" 4-48  
+.tC 2 "The \&.EV Macro" 4-49  
+.Index: \&.EV macro       	49
+.Index: macro, \&.EV       	49
+.Index: guide macros, environment variable     	49
+.Index: environment variable macro, \&.EV     	49
+.tC 3 "Name" 4-49  
+.tC 3 "Synopsis" 4-49  
+.tC 3 "Description" 4-49  
+.tC 3 "Example" 4-49  
+.tC 2 "The \&.BT Macro" 4-50  
+.Index: \&.BT macro       	50
+.Index: macro, \&.BT       	50
+.Index: guide macros, book title     	50
+.Index: book title macro, \&.BT     	50
+.tC 3 "Name" 4-50  
+.tC 3 "Synopsis" 4-50  
+.tC 3 "Description" 4-50  
+.tC 3 "Example" 4-50  
+.tC 2 "The \&.CT Macro" 4-51  
+.Index: \&.CT macro       	51
+.Index: macro, \&.CT       	51
+.Index: guide macros, chapter title     	51
+.Index: chapter title macro, \&.CT     	51
+.tC 3 "Name" 4-51  
+.tC 3 "Synopsis" 4-51  
+.tC 3 "Description" 4-51  
+.tC 3 "Example" 4-51  
+.tC 2 "The \&.ST Macro" 4-52  
+.Index: \&.ST macro       	52
+.Index: macro, \&.ST       	52
+.Index: guide macros, section title     	52
+.Index: section title macro, \&.ST     	52
+.tC 3 "Name" 4-52  
+.tC 3 "Synopsis" 4-52  
+.tC 3 "Description" 4-52  
+.tC 3 "Example" 4-52  
+.tC 1 "Two-Column Formatting" 4-53  
+.Index: two-column formatting       	53
+.Index: 2-column formatting       	53
+.tC 2 "The \&.2C Macro" 4-53  
+.Index: \&.2C macro       	53
+.Index: macro, \&.2C       	53
+.Index: guide macros, two-column start     	53
+.Index: two-column start macro, \&.2C     	53
+.tC 3 "Name" 4-53  
+.tC 3 "Synopsis" 4-53  
+.tC 3 "Description" 4-53  
+.tC 3 "Example" 4-53  
+.tC 2 "The \&.1C Macro" 4-54  
+.Index: \&.1C macro       	54
+.Index: macro, \&.1C       	54
+.Index: guide macros, one-column start     	54
+.Index: one-column start macro, \&.1C     	54
+.tC 3 "Name" 4-54  
+.tC 3 "Synopsis" 4-55  
+.tC 3 "Description" 4-55  
+.tC 3 "Examples" 4-55  
+.tC 2 "The \&.2S Macro" 4-55  
+.Index: \&.2S macro       	55
+.Index: macro, \&.2S       	55
+.Index: guide macros, staggered two-column start    	55
+.Index: staggered two-column start macro, \&.2S    	55
+.tC 3 "Name" 4-55  
+.tC 3 "Synopsis" 4-55  
+.tC 3 "Description" 4-55  
+.tC 3 "Examples" 4-56  
+.tC 2 "The \&.2E Macro" 4-58  
+.Index: \&.2E macro       	58
+.Index: macro, \&.2E       	58
+.Index: guide macros, staggered two-column end    	58
+.Index: staggered two-column end macro, \&.CH    	58
+.tC 3 "Name" 4-58  
+.tC 3 "Synopsis" 4-58  
+.tC 3 "Description" 4-58  
+.tC 3 "Examples" 4-58  
+.tC 2 "The \&.1B Macro" 4-59  
+.Index: \&.1B macro       	59
+.Index: macro, \&.1B       	59
+.Index: guide macros, column1 start     	59
+.Index: column1 start macro, \&.1B     	59
+.tC 3 "Name" 4-59  
+.tC 3 "Synopsis" 4-59  
+.tC 3 "Description" 4-59  
+.tC 3 "Examples" 4-59  
+.tC 2 "The \&.2B Macro" 4-59  
+.Index: \&.2B macro       	59
+.Index: macro, \&.2B       	59
+.Index: guide macros, column2 start     	59
+.Index: column2 start macro, \&.2B     	59
+.tC 3 "Name" 4-59  
+.tC 3 "Synopsis" 4-59  
+.tC 3 "Description" 4-59  
+.tC 3 "Examples" 4-60  
+.tC 1 "Paragraphs and Spacing" 4-61  
+.Index: paragraphs        	61
+.Index: spacing        	61
+.tC 2 "The \&.P Macro" 4-61  
+.Index: \&.P macro       	61
+.Index: macro, \&.P       	61
+.Index: guide macros, paragraph start     	61
+.Index: paragraph start macro, \&.P     	61
+.tC 3 "Name" 4-61  
+.tC 3 "Synopsis" 4-61  
+.tC 3 "Description" 4-61  
+.tC 3 "Example" 4-61  
+.tC 2 "The \&.PD Macro" 4-61  
+.Index: \&.PD macro       	61
+.Index: macro, \&.PD       	61
+.Index: guide macros, list item spacing    	61
+.Index: spacing, list items      	61
+.Index: list item spacing macro, \&.PD    	61
+.tC 3 "Name" 4-61  
+.tC 3 "Synopsis" 4-61  
+.tC 3 "Description" 4-62  
+.tC 3 "Example" 4-62  
+.tC 2 "The \&.SP Macro" 4-62  
+.Index: \&.SP macro       	62
+.Index: macro, \&.SP       	62
+.Index: guide macros, space down     	62
+.Index: spacing macro, \&.SP      	62
+.tC 3 "Name" 4-62  
+.tC 3 "Synopsis" 4-63  
+.tC 3 "Description" 4-63  
+.tC 3 "Example" 4-63  
+.tC 2 "The \&.NE Macro" 4-64  
+.Index: \&.NE macro       	64
+.Index: macro, \&.NE       	64
+.Index: guide macros, need space     	64
+.Index: need space macro, \&.NE     	64
+.tC 3 "Name" 4-64  
+.tC 3 "Synopsis" 4-64  
+.tC 3 "Description" 4-64  
+.tC 3 "Example" 4-65  
+.tC 2 "The \&.SK Macro" 4-65  
+.Index: \&.SK macro       	65
+.Index: macro, \&.SK       	65
+.Index: guide macros, skip page     	65
+.Index: skip page macro, \&.SK     	65
+.tC 3 "Name" 4-65  
+.tC 3 "Synopsis" 4-65  
+.tC 3 "Description" 4-66  
+.tC 3 "Example" 4-66  
+.tC 1 "Preprocessing" 4-67  
+.Index: preprocessing macros       	67
+.Index: version control macros      	67
+.tC 2 "The \&.VS Macro" 4-67  
+.Index: \&.VS macro       	67
+.Index: macro, \&.VS       	67
+.Index: guide macros, version start     	67
+.Index: version start macro, \&.VS     	67
+.tC 3 "Name" 4-67  
+.tC 3 "Synopsis" 4-67  
+.tC 3 "Description" 4-67  
+.tC 3 "Examples" 4-67  
+.tC 2 "The \&.VE Macro" 4-70  
+.Index: \&.VE macro       	70
+.Index: macro, \&.VE       	70
+.Index: guide macros, version end     	70
+.Index: version end macro, \&.VE     	70
+.tC 3 "Name" 4-70  
+.tC 3 "Synopsis" 4-70  
+.tC 3 "Description" 4-70  
+.tC 3 "Example" 4-70  
+.tC 2 "The \&.RP Macro" 4-70  
+.Index: \&.RP macro       	70
+.Index: macro, \&.RP       	70
+.Index: guide macros, reference pointer     	70
+.Index: guide macros, page referencing     	70
+.Index: reference pointer macro, \&.RP     	70
+.Index: page referencing macro, \&.RP     	70
+.tC 3 "Name" 4-70  
+.tC 3 "Synopsis" 4-70  
+.tC 3 "Description" 4-71  
+.tC 3 "Example" 4-71  
+.tC 2 "The \&.SO Macro" 4-72  
+.Index: \&.SO macro       	72
+.Index: macro, \&.SO       	72
+.Index: guide macros, file inclusion     	72
+.Index: guide macros, file sourcing     	72
+.Index: file sourcing macro, \&.SO     	72
+.Index: file inclusion macro, \&.SO     	72
+.tC 3 "Name" 4-72  
+.tC 3 "Synopsis" 4-72  
+.tC 3 "Description" 4-72  
+.tC 3 "Example" 4-73  
+.tC 1 "PostScript File Inclusion" 4-74  
+.tC 2 "The \&.BP Macro" 4-74  
+.Index: \&.BP macro       	74
+.Index: macro, \&.BP       	74
+.Index: guide macros, begin PostScript picture    	74
+.Index: begin PostScript picture macro, \&.BP    	74
+.Index: PostScript picture begin macro, \&.BP    	74
+.tC 3 "Name" 4-74  
+.tC 3 "Synopsis" 4-74  
+.tC 3 "Description" 4-75  
+.tC 3 "Example" 4-76  
+.tC 2 "The \&.EP Macro" 4-76  
+.Index: \&.EP macro       	76
+.Index: macro, \&.EP       	76
+.Index: guide macros, end PostScript picture text   	76
+.Index: end PostScript picture macro, \&.EP    	76
+.Index: PostScript picture end macro, \&.EP    	76
+.tC 3 "Name" 4-76  
+.tC 3 "Synopsis" 4-76  
+.tC 3 "Description" 4-76  
+.tC 3 "Example" 4-76  
+.tC 1 "Key Representations" 4-77  
+.Index: key representations       	77
+.tC 2 "The \&.HK Macro" 4-77  
+.Index: \&.HK macro       	77
+.Index: macro, \&.HK       	77
+.Index: guide macros, hard keys     	77
+.Index: hard key macro, \&.HK     	77
+.tC 3 "Name" 4-77  
+.tC 3 "Synopsis" 4-77  
+.tC 3 "Description" 4-77  
+.tC 3 "Example" 4-78  
+.tC 1 "Folio Format" 4-79  
+.Index: folio format       	79
+.Index: page-numbering format       	79
+.tC 2 "The \&.NF Macro" 4-79  
+.Index: \&.NF macro       	79
+.Index: macro, \&.NF       	79
+.Index: guide macros, folio format     	79
+.Index: folio format macro, \&.NF     	79
+.tC 3 "Name" 4-79  
+.tC 3 "Synopsis" 4-79  
+.tC 3 "Description" 4-79  
+.tC 3 "Example" 4-79  
+.tC 1 "Text Size" 4-80  
+.Index: text size       	80
+.tC 2 "The \&.SM Macro" 4-80  
+.Index: \&.SM macro       	80
+.Index: macro, \&.SM       	80
+.Index: guide macros, reduced text size    	80
+.Index: reduced text size macro, \&.SM    	80
+.tC 3 "Name" 4-80  
+.tC 3 "Synopsis" 4-80  
+.tC 3 "Description" 4-80  
+.tC 3 "Example" 4-80  
+.tC 1 "Tab Distance" 4-81  
+.Index: tab stops       	81
+.tC 2 "The \&.DT Macro" 4-81  
+.Index: \&.DT macro       	81
+.Index: macro, \&.DT       	81
+.Index: guide macros, tab stop distance    	81
+.Index: tab distance macro, \&.CH     	81
+.tC 3 "Name" 4-81  
+.tC 3 "Synopsis" 4-81  
+.tC 3 "Description" 4-81  
+.tC 3 "Example" 4-81  
+.tC 1 "Proprietary Markings and Draft Notices" 4-82  
+.Index: proprietary markings       	82
+.Index: draft notices       	82
+.tC 2 "The \&.PM Macro" 4-82  
+.Index: \&.PM macro       	82
+.Index: macro, \&.PM       	82
+.Index: guide macros, proprietary markings     	82
+.Index: guide macros, draft notices     	82
+.Index: proprietary markings macro, \&.PM     	82
+.Index: draft notices macro, \&.PM     	82
+.tC 3 "Name" 4-82  
+.tC 3 "Synopsis" 4-82  
+.tC 3 "Description" 4-82  
+.tC 3 "Example" 4-82  
+.tC 1 "Fonts" 4-84  
+.Index: fonts        	84
+.tC 2 "The \&.I, \&.B, and \&.R Macros" 4-84  
+.Index: \&.I macro       	84
+.Index: macro, \&.I       	84
+.Index: guide macros, italic text     	84
+.Index: italic text macro, \&.I     	84
+.Index: \&.B macro       	84
+.Index: macro, \&.B       	84
+.Index: guide macros, bold text     	84
+.Index: bold text macro, \&.B     	84
+.Index: \&.R macro       	84
+.Index: macro, \&.R       	84
+.Index: guide macros, regular text     	84
+.Index: regular text macro, \&.R     	84
+.tC 3 "Name" 4-84  
+.tC 3 "Synopsis" 4-84  
+.tC 3 "Description" 4-84  
+.tC 3 "Example" 4-85  
+.tC 2 "Font Requests" 4-85  
+.Index: font requests       	85
+.tC 3 "Name" 4-85  
+.Index: \ef1 font request      	85
+.Index: \ef2 font request      	85
+.Index: \ef3 font request      	85
+.Index: \ef4 font request      	85
+.Index: \ef5 font request      	85
+.Index: \&.ft1 font request      	85
+.Index: \&.ft2 font request      	85
+.Index: \&.ft3 font request      	85
+.Index: \&.ft4 font request      	85
+.Index: \&.ft5 font request      	85
+.Index: guide macros, font requests     	85
+.tC 3 "Synopsis" 4-86  
+.tC 3 "Description" 4-86  
+.tC 3 "Examples" 4-87  

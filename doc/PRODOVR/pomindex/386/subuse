@@ -1,0 +1,99 @@
+'\"!  tbl | mmdoc
+.if n .pH prod_ovr.subuse @(#)subuse	40.9
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1990 AT&T
+.\" Copyright 1989, 1990 AT&T
+.tr ~
+.BK "Product Overview and Master Index"
+.CH "Master Subject Index" "3"
+.H 1 "Using the Subject Index"
+Entries in the index point to guide material and\/or
+manual pages.
+Manual pages are concise, comprehensive reference information
+that was written with the expectation that readers are
+somewhat familiar with the material.
+Guide
+information is more explanatory and procedural.
+.sp
+The example below illustrates an entry for the term \f4find\fP(1).
+The word \f4find\fP is printed in constant width typeface because
+it is a literal; that is,
+it is either typed in by the user or
+printed out by the system.
+The index includes both literal and non-literal entries.
+.sp
+.ps -1
+\s-1\fHEXAMPLE\fP\s+1~~~~~~~~~~~~~~~~~~~~~~~~~~\f4find\fP(1)~~\s-2\fHSAG 5: 40, 8: 4, 6; URM\fP\s+2
+.sp
+.ps +1
+Whenever you see a number in parentheses following an entry, such as (1)
+in the example above, it indicates that there is a manual page for
+that term.
+In these cases, at least one of the references
+is given without chapter and page numbers, pointing to the book where
+the manual page can be found.
+In the example, the \s-2\fHURM\fP\s0 contains the \f4find\fP(1) manual page.
+Manual pages are arranged alphabetically in numbered sections and
+therefore no chapter and page numbers apply to them.
+Simply go to the referenced book and look for the term alphabetically
+in the appropriate section.
+.sp
+References to guide material appear in the index as follows:
+.sp
+.ps -3
+		     \s+1\f2index entry\fP\s-1   \fHBOOK ACRONYM   CHAPTER: PAGE-PAGE\fP
+
+.ps +3
+.sp
+In the above example, \s-3\fHSAG 5: 40, 8: 4, 6\fP\s+3 indicates that there is guide
+information on \f4find\fP in the \f2System Administrator's Guide\fP,
+chapter 5, page 40 and chapter 8, pages 4 and 6.
+.sp
+If you see a letter where a chapter number is usually
+given, it means that information is located in
+an appendix with that alphabetic name.
+.H 2 "Book Acronyms Used in the Master Index"
+.VL
+.LI "ACG"
+Programmer's Guide:  Application Compatibility
+.LI "BSD"
+Programmer's Guide:  BSD System Compatibility
+.LI "CPG"
+Programmer's Guide: ANSI C and Programming Support Tools
+.LI "CHAR"
+Programmer's Guide: Character User Interface
+.LI "CTG"
+ANSI C Transition Guide
+.LI "DDRM"
+Device Driver Interface\/Driver-Kernel Interface (DDI\/DKI) Reference Manual
+.LI "IG"
+Installation Guide
+.LI "ISDG"
+Integrated Software Development Guide
+.LI "MG"
+Migration Guide
+.LI "NI"
+Programmer's Guide: Networking Interfaces
+.LI "NUAG"
+Network User's and Administrator's Guide
+.LI "PRM"
+Programmer's Reference Manual
+.LI "PSX"
+Programmer's Guide: POSIX Conformance
+.LI "SAG"
+System Administrator's Guide
+.LI "SARM"
+System Administrator's Reference Manual
+.LI "SCSI"
+Programmer's Guide: SCSI Driver Interface
+.LI "SN"
+Software Notes
+.LI "STRM"
+Programmer's Guide: STREAMS
+.LI "UG"
+User's Guide
+.LI "URM"
+User's Reference Manual
+.LE
+Note that the ACG, BSD, and MG acronyms refer to sections within the
+.BT "Migration and Compatibility Guide" .

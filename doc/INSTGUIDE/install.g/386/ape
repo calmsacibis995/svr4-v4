@@ -1,0 +1,48 @@
+.if n .pH 386.ape @(#)ape	40.1.1.1
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.BK "Installation Guide" "System V Release 4"
+.CH "Copying Diskettes" "E"
+.H 1 "Copying Diskettes"
+This appendix describes how to make a copy of the boot and base system
+.IX "boot diskettes, copying"
+.IX "diskettes, copying boot"
+diskettes for backup purposes. A running UNIX Release 4 system is required
+to do this copy procedure. We recommend that you make backup copies.
+.P
+The procedure is to copy the contents of the diskette onto the hard disk, then 
+copy them from the hard disk onto another diskette. The following steps outline the procedure:
+.AB N
+The boot and installation diskettes are write-protected, either 
+with tabs (5.25 inch diskettes) or sliding widgets (3.5 inch diskettes).
+Do not write-enable the diskettes.
+.AC
+.AL 1
+.LI
+Insert the diskette to be copied into drive 0.
+.LI
+Change directories to the directory where you want the data copied. 
+.LI
+Copy the contents of the diskette to a file in the current directory by typing:
+.DS
+.ft 4
+dd if=/dev/rdsk/f0t of=disk.xxx bs=15360
+.ft 1
+.DE
+where xxx is a different extension for each diskette you are copying.
+.LI
+Remove the diskette from the drive.
+.LI
+Insert a similarly formatted, write-enabled diskette into drive 0.
+.LI
+To copy the file in the current directory to the diskette, type:
+.DS
+.ft 4
+dd if=disk.xxx of=/dev/rdsk/f0t bs=15360
+.ft 1
+.DE
+where xxx is a different extension for each disk you are copying.
+.LI
+When this is done, remove the diskette and write-protect it, then label it.
+.LI
+Repeat Steps 1 through 7 for as many diskettes as you want to copy.
+.LE

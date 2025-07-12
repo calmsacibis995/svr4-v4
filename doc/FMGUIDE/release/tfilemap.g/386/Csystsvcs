@@ -1,0 +1,41 @@
+.if n .pH 386.Csystsvcs @(#)Csystsvcs	40.5
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.BK "Technology File Mapping Guide" "" "" ""   
+.\ACRONYM	                  
+.CH "System Services and Libraries" "" "Table of Contents" "4"
+.\CHAPTER	4
+.tC 1 "File System Services" 4-1  
+.tC 2 "File Directory Functions" 4-2  
+.tC 2 "File Status Functions" 4-3  
+.tC 2 "File Creation & Removal Functions" 4-3  
+.tC 2 "File System Functions" 4-4  
+.tC 1 "I/O System Services" 4-5  
+.tC 2 "File Descriptor Functions" 4-6  
+.tC 2 "Data Transfer Functions" 4-6  
+.tC 2 "I/O Control Functions" 4-7  
+.tC 2 "TTY Control Functions" 4-7  
+.tC 1 "Memory System Services" 4-8  
+.tC 2 "Virtual Memory Functions" 4-9  
+.tC 2 "Memory Control Functions" 4-9  
+.tC 1 "Process System Services" 4-10  
+.tC 2 "Process Execution & Control Functions" 4-12  
+.tC 2 "Process Status & Resource Functions" 4-13  
+.tC 2 "Inter-Process Communication" 4-15  
+.tC 2 "Kernel System Functions" 4-15  
+.tC 1 "\f(HBC\fP Language Libraries" 4-16  
+.tC 2 "Run-Time Loader Library" 4-16  
+.tC 2 "Standard I/O Library" 4-16  
+.tC 2 "Character and String Handling Library" 4-17  
+.tC 2 "Searching and Sorting Library" 4-20  
+.tC 2 "Wide Character Library" 4-20  
+.tC 2 "Mathematical Library" 4-20  
+.tC 2 "Floating-point Library" 4-22  
+.tC 2 "Miscellaneous Library" 4-22  
+.tC 1 "Real-Time System Facilities" 4-24  
+.tC 2 "User-controlled Process Scheduling" 4-25  
+.tC 2 "High-Resolution Timing Services" 4-25  
+.tC 2 "Real-Time System Commands" 4-26  
+.tC 1 "Extended Terminal Interface (ETI)" 4-27  
+.tC 2 "Character Terminal Interface (\&\f4curses\fP) Library" 4-29  
+.tC 2 "Forms, Menus & Panels Library" 4-29  
+.tC 2 "Terminal Information (\&\f4terminfo\fP) Utilities" 4-29  

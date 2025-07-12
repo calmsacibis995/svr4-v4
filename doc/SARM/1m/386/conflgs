@@ -1,0 +1,116 @@
+'\"macro stdmacro
+.if n .pH g1a.conflgs @(#)conflgs	40.5 of 5/31/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+'\"macro stdmacro
+.if n .pH gla.ff @(#)ff xx.x of xx/xx/xx
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.if \nX=0 .ds x} conflgs 1M "Remote File Sharing Utilities" "\&"
+.if \nX=1 .ds x} conflgs 1M "Remote File Sharing Utilities"
+.if \nX=2 .ds x} conflgs 1M "" "\&"
+.if \nX=3 .ds x} conflgs "" "" "\&
+.nr X
+.TH \*(x} "" "386 Computer Only"
+.SH NAME
+\f4conflgs\f1 \- change and display console flags
+.SH SYNOPSIS
+\f4/etc/conflgs\f1
+[\f4\-a\f1 0|1]
+[\f4\-c\f1 0|1]
+[\f4\-m\f1 0|1]
+[\f4\-r\f1 0|1]
+[\f4\-b baud\f1]
+or
+\f4/etc/conflgs\f1
+[\f4\-c\f1 0|1]
+[\f4\-m\f1 0|1]
+.SH DESCRIPTION
+\f4conflgs\f1
+allows the remote console and console flags to be set and displayed.
+It can be used to enable or disable the remote console capability.
+\f4conflgs\f1  allows console redirection
+(diagnostics and bootstrap input/output)
+to the second serial port to be enabled or disabled.
+Note that
+\f4conflgs\f1
+does not control what device is used as console \(em this is determined
+by whether or not the system is equipped with an integral console
+and by the COM2CONS tunable parameter.
+The console message flag and remote console message flag,
+which determine whether or not system error messages
+are directed to the console or remote console,
+can also be temporarily changed with
+\f4conflgs\f1.
+.TP 8
+\f4\-a\f1 0|1
+disable (0) or enable (1) diagnostics and bootstrap redirection
+to the second serial port.
+If enabled and the second serial port is used as
+the console, the baud rate specified with the
+\f4\-b\f1
+option determines the baud rate used for the console.
+If the second serial port is used as the console
+but console redirection to the second serial port is disabled,
+the console baud rate is 9600.
+.TP
+\f4\-r\f1 0|1
+disable (0) or enable (1) the remote console feature.
+This controls console redirection to the first serial port
+and sets the remote console enable flag (RCEF).
+The baud rate specified with the
+\f4\-b\f1
+option determines the baud rate used for the remote console.
+.TP
+\f4\-c\f1 0|1
+disable (0) or enable (1) sending system error messages to the console.
+This change only lasts until the system is rebooted.
+To permanently have system error messages directed to the console,
+change the CMF tunable parameter.
+.TP
+\f4\-m\f1 0|1
+disable (0) or enable (1) sending system error messages to the remote console.
+This change only lasts until the system is rebooted.
+The RCEF must be turned on before this flag for console messages to
+be seen on the remote console.
+On some systems,  the RCEF is considered on
+and the remote console baud rate is fixed at 1200.
+To permanently have system error messages directed to the remote console,
+change the RCMF tunable parameter.
+.PP
+If the
+\f4\-a\f1
+and/or
+\f4\-r\f1
+option is used, the
+\f4\-b baud\f1
+option can be used to set the baud rate of the first or second serial port
+to \f4baud\f1.
+\f4baud\f1 can be 1200 or 9600.
+If the
+\f4\-b\f1
+option is not specified when enabling console redirection to
+the first or second serial port
+a default baud rate of 1200 is used.
+The baud rate specifies the baud rate to be used during
+diagnostics, bootstrap, and system initialization \- until the multi-user state
+is reached.
+It does not take effect until the next system reboot or \f2init S\f1.
+.PP
+The    
+\f4\-a\f1
+\f4\-r\f1,
+and
+\f4\-b\f1
+options may or or may not be provided on all 386 machines.
+.PP
+The values of all the console flags are always displayed after the
+requested changes are made.
+.PP
+Note that the BIOS 
+setup utility can also be used to change the whether or not
+console redirection to the first or second serial ports is enabled
+and their baud rates.
+.PP
+.SH SEE ALSO
+\f4idtune\f1(1M),
+\f4init\f1(1M),

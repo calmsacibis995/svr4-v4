@@ -1,0 +1,57 @@
+'\"!  tbl | mmdoc
+'\"macro stdmacro
+.if n .pH gen.iovec @(#)iovec	40.3 of 6/24/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.nr X
+.if \nX=0 .ds x} iovec D4DK "" "DDI/DKI" "\&"
+.if \nX=1 .ds x} iovec D4DK "" "DDI/DKI"
+.if \nX=2 .ds x} iovec D4DK "" "\&"
+.if \nX=3 .ds x} iovec "" "" "\&"
+.TH \*(x}
+.IX "\f4iovec\fP(D4DK)"
+.IX "block I/O, \f4iovec\fP(D4DK)"
+.SH NAME
+\f4iovec\fP \- data storage structure for I/O using \f4uio\fP(D4DK)
+.SH SYNOPSIS
+.nf
+\f4#include <sys/types.h>
+#include <sys/uio.h>\fP
+.ad
+.fi
+.SH DESCRIPTION
+An \f4iovec\fP structure describes a data storage area for transfer in a
+\f4uio\fP structure.
+Conceptually, it may be thought of as a base address
+and length specification.
+.SH STRUCTURE MEMBERS
+.TS
+lf4p8 2 lf4p8 2 lf4p8.
+caddr_t	iov_base;	/* base address of the data storage area */
+int	iov_len;	/* size of the data storage area in bytes */
+.TE
+.P
+The driver may only set \f4iovec\fP structure members to initialize
+them for a data transfer for which the driver created the
+\f4iovec\fP structure.
+The driver must not otherwise change \f4iovec\fP structure members.
+However, drivers may read them.
+The \f4iovec\fP structure members available to the driver are:
+.P
+\f4iov_base\fP contains the address for a range of memory to or from
+which data are transferred.
+.P
+\f4iov_len\fP contains the number of bytes of data to be transferred
+to or from the range of memory starting at \f4iov_base\fP.
+.SH NOTES
+A separate interface does not currently exist for allocating
+\f4iovec\fP(D4DK) structures when the driver needs to create them itself.
+Therefore, the driver may either use \f4kmem_zalloc\fP(D3DK) to allocate them,
+or allocate them statically.
+.SH SEE ALSO
+.na
+\f4physiock\fP(D3D),
+\f4uiomove\fP(D3DK),
+\f4ureadc\fP(D3DK),
+\f4uwritec\fP(D3DK),
+\f4uio\fP(D4DK)
+.ad

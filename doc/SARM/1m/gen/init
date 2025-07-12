@@ -1,0 +1,394 @@
+'\"macro stdmacro
+.if n .pH g1a.init @(#)init	40.13.2.1 of 3/19/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} init 1M "Essential Utilities" "\&"
+.if \nX=1 .ds x} init 1M "Essential Utilities"
+.if \nX=2 .ds x} init 1M "" "\&"
+.if \nX=3 .ds x} init "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4init\f1, \f4telinit\f1 \- process control initialization
+.SH SYNOPSIS
+\f4/sbin/init\f1
+\f1[\|\f40123456SsQqabc\f1\|]
+.PP
+\f4/sbin/telinit\f1
+\f1[\|\f40123456SsQqabc\f1\|]
+.SH DESCRIPTION
+.SS init
+\f4init\fP
+is a general process spawner.
+Its primary role is to create
+processes from information stored in the file
+\f4/etc/inittab\f1
+[see
+\f4inittab\fP(4)].
+.PP
+At any given time, the system is in one of eight possible run levels.
+A run level is a software configuration of the system
+under which only a selected group of processes exist.
+The processes spawned by
+\f4init\fP
+for each of these run levels is defined in
+\f4/etc/inittab\f1.
+\f4init\fP
+can be in one of eight run levels,
+\f40\-6\f1
+and \f4S\f1 or \f4s\f1
+(run levels \f4S\f1 and \f4s\f1 are identical).
+The run level changes when a privileged user runs
+\f4/sbin/init\f2.\f1
+This user-spawned
+\f4init\fP
+sends appropriate signals to the original
+\f4init\fP
+spawned by the operating system when the system was
+booted, telling it which run level to change to.
+.PP
+The following are the arguments to \f4init\fP.
+.PP
+.RS
+.TP 7
+\f40\f1
+shut the machine down so it is safe to remove the power.
+Have the machine remove power if it can.
+.TP 7
+\f41\f1
+put the system in system administrator
+mode.
+All file systems are mounted.
+Only a small set of essential kernel
+processes are left running.
+This mode is for administrative tasks such as installing optional
+utility packages.
+All files are accessible and no users are logged in on the system.
+.TP 7
+\f42\f1
+put the system in multi-user mode.
+All multi-user environment terminal processes
+and daemons are spawned.
+This state is commonly referred to as the
+multi-user
+state.
+.TP 7
+\f43\f1
+start the remote file sharing processes and daemons.
+Mount and advertise remote resources.
+Run level \f43\f1 extends multi-user
+mode and is known as the
+remote-file-sharing state.
+.TP 7
+\f44\f1
+is available to be defined as an alternative
+multi-user environment configuration.
+It is not necessary for system operation and is usually not used.
+.TP 7
+\f45\f1
+Stop the
+.SM UNIX
+system and go to the firmware monitor.
+.TP
+\f46\f1
+Stop the
+.SM UNIX
+system and reboot to the state defined by the
+\f4initdefault\f1 entry in
+\f4/etc/inittab\f1.
+.TP 7
+\f4a\f1,\f4b\f1,\f4c\f1
+process only those
+\f4/etc/inittab\f1
+entries having the \f4a\f1,
+\f4b\f1,
+or
+\f4c\f1
+run level set.
+These are pseudo-states, which may be defined to run certain commands,
+but which do not cause the current run level to change.
+.TP 7
+\f4Q\f1,\f4q\f1
+re-examine
+\f4/etc/inittab\f1.
+.TP 7
+\f4S\f1,\f4s\f1
+enter single-user mode.
+When this occurs, the terminal which executed this command becomes the
+system console.
+This is the only run level that doesn't require the existence of
+a properly formatted
+\f4/etc/inittab\f1
+file.
+If this file does not exist,
+then by default the only legal run level that
+\f4init\fP
+can enter is the single-user mode.
+When the system comes up to \f4S\fP or \f4s\fP,
+file systems for users' files are not mounted and only
+essential kernel processes are running.
+When the system comes down to \f4S\fP or \f4s\fP,
+all mounted file systems remain mounted, and all processes started by
+\f4init\fP that should
+only be running in multi-user mode are killed.
+In addition, any process that has a \f4utmp\fP
+entry will be killed.
+This last condition insures that all port monitors started by the SAC
+are killed and all services started by these port monitors, including
+\f4ttymon\fP login services, are killed.
+Other processes not started directly by \f4init\fP will remain running.
+For example, \f4cron\fP remains running.
+.RE
+.PP
+When a
+.SM
+UNIX
+system is booted,
+\f4init\fP
+is invoked and the following occurs.
+First,
+\f4init\fP
+looks in
+\f4/etc/inittab\f1
+for the
+\f4initdefault\f1
+entry
+[see \f4inittab\f1(4)].
+If there is one, \f4init\fP
+will usually use the run level specified in that entry as the initial
+run level to enter.
+If there is no \f4initdefault\f1 entry in
+\f4/etc/inittab,\f1
+\f4init\fP
+requests that the user enter a run level from the
+virtual system console.
+If an \f4S\f1 or \f4s\f1 is entered, \f4init\fP goes to the
+single-user state.
+In the single-user state the virtual console terminal
+is assigned to the user's terminal and
+is opened for reading and writing.
+The command
+\f4/sbin/su\f1
+is invoked and a
+message is generated on the physical console
+saying where the virtual console has been relocated.
+Use either \f4init\fP or \f4telinit\fP, to signal \f4init\f1
+to change the run level of the system.
+Note that if the shell is terminated (via an end-of-file),
+\f4init\fP
+will only re-initialize to the single-user
+state if the \f4/etc/inittab\f1 file does not exist.
+.PP
+If a
+\f40\f1
+through
+\f46\f1
+is entered, \f4init\fP
+enters the corresponding run level.
+Run levels
+\f40\f1,
+\f45\f1,
+and
+\f46\f1
+are reserved states for shutting the system down.
+Run levels
+\f42\f1,
+\f43\f1,
+and
+\f44\f1
+are available as multi-user operating states.
+.PP
+If this is the first time since power up that
+\f4init\fP
+has entered a run level
+other than single-user state,
+\f4init\fP first scans
+\f4/etc/inittab\f1
+for \f4boot\f1 and \f4bootwait\f1 entries
+[see \f4inittab\fP(4)].
+These entries are performed before any other processing of
+\f4/etc/inittab\f1
+takes place, providing that the run level entered matches that of the entry.
+In this way any special initialization of the
+operating system, such as mounting
+file systems, can take place before users are allowed onto
+the system.
+\f4init\fP
+then scans
+\f4/etc/inittab\f1
+and executes all other entries
+that are to be processed for that run level.
+.PP
+To spawn each process in
+\f4/etc/inittab\f1,
+\f4init\fP
+reads each entry and for each entry that should be
+respawned, it forks a child process.
+After it has spawned all of the processes specified by
+\f4/etc/inittab\f1,
+\f4init\fP
+waits for one of its descendant processes to die,
+a powerfail signal, or a
+signal from another
+\f4init\fP or \f4telinit\fP process
+to change the system's run level.
+When one of these conditions occurs,
+\f4init\fP
+re-examines
+\f4/etc/inittab\f1.
+New entries can be added to
+\f4/etc/inittab\f1
+at any time; however,
+\f4init\fP
+still waits for one of the above three conditions to occur
+before re-examining \f4/etc/inittab\f1.
+To get around this,
+\f4init Q\fP
+or
+\f4init q\fP
+command wakes
+\f4init\fP
+to re-examine
+\f4/etc/inittab\f1
+immediately.
+.PP
+When
+\f4init\fP
+comes up at boot time and whenever the system changes from
+the single-user state to another run state, \f4init\f1 sets the
+\f4ioctl\fP(2)
+states of the virtual console to those modes saved in the
+file \f4/etc/ioctl.syscon\f1.
+This file is written by \f4init\fP whenever the
+single-user state is entered.
+.br
+.ne4
+.PP
+When a run level change request is made
+\f4init\fP
+sends the warning signal (\f4\s-1SIGTERM\s+1\fP) to all processes that are
+undefined in the target run level.
+\f4init\fP
+waits five seconds before forcibly terminating these processes via
+the kill signal (\f4\s-1SIGKILL\s+1\fP).
+.PP
+When \f4init\fP
+receives a signal telling it that a
+process it spawned has died, it records the fact
+and the reason it died
+in
+\f4/var/adm/utmp\f1 and
+\f4/var/adm/wtmp\f1 
+if it exists [see
+\f4who\f1(1)].
+A history of the processes spawned is kept in
+\f4/var/adm/wtmp.\f1
+.PP
+If \f4init\fP receives a
+\f4powerfail\f1
+signal
+\f1(\f4\s-1SIGPWR\s+1\f1)
+it scans
+\f4/etc/inittab\f1
+for special entries of the type
+\f4powerfail\f1
+and
+\f4powerwait\f1.
+These entries are
+invoked (if the run levels permit) before any further processing
+takes place.
+In this way
+\f4init\fP
+can perform various cleanup and recording functions
+during the powerdown of the operating system.
+.SS telinit
+\f4telinit\fP,
+which is linked to
+\f4/sbin/init\f1,
+is used to direct the actions of
+\f4init\fP.
+It takes a one-character argument and signals \f4init\fP
+to take the appropriate action.
+.SH FILES
+\f4/etc/inittab\f1
+.br
+\f4/var/adm/utmp\f1
+.br
+\f4/var/adm/wtmp\f1
+.br
+\f4/etc/ioctl.syscon\f1
+.br
+\f4/dev/console\f1
+.SH "SEE ALSO"
+\f4ttymon\fP(1M),
+\f4shutdown\fP(1M),
+\f4inittab\fP(4),
+\f4utmp\fP(4),
+\f4utmpx\fP(4),
+\f4termio\fP(7).
+.br
+\f4login\fP(1),
+\f4sh\fP(1),
+\f4stty\fP(1),
+\f4who\fP(1) in the
+\f2User's Reference Manual\f1.
+.br
+\f4kill\fP(2) in the
+\f2Programmer's Reference Manual\f1.
+.SH "DIAGNOSTICS"
+If \f4init\fP
+finds that it is respawning an entry from
+\f4/etc/inittab\f1
+more than ten times in two minutes, it will assume that
+there is an error in the command string in the entry,
+and generate an error message on the system console.
+It will then refuse to respawn this entry until either
+five minutes has elapsed or it receives a signal from
+a user-spawned
+\f4init\fP
+or
+\f4telinit\f1.
+This prevents
+\f4init\fP
+from eating up system resources when someone makes a
+typographical error in the
+\f4inittab\fP
+file or a program is removed that is referenced in
+\f4/etc/inittab\f1.
+.PP
+When attempting to boot the system, failure of
+\f4init\fP
+to prompt for a new run level may be because
+the virtual system console
+is linked to a device other than the physical system console.
+.SH NOTES
+\f4init\fP
+and
+\f4telinit\fP
+can be run only by a privileged user.
+.PP
+The
+\f4S\f1
+or
+\f4s\f1
+state must not be used indiscriminately in the \f4/etc/inittab\f1 file.
+A good rule to follow when modifying this file is to avoid adding this
+state to any line other than the \f4initdefault\f1.
+.P
+If a default state is not specified in the \f4initdefault\fP
+entry in \f4/etc/inittab\fP,
+state \f46\fP is entered.
+Consequently, the system will loop, that is, it will go to firmware
+and reboot continuously.
+.P
+If the \f4utmp\fP file cannot be created when booting the system,
+the system will boot to state ``\f4s\fP'' regardless of
+the state specified in the \f2initdefault\fP entry in
+\f4/etc/inittab\fP.
+This can happen if the \f4/var\fP filesystem is not accessible.
+.P
+In the event of a file table overflow condition, \f4init\fP uses the file
+descriptor associated with \f4/etc/inittab\fR that was retained from the
+last time it accessed the file.
+This prevents \f4init\fP from going into single user mode when it cannot
+obtain a file descriptor to open \f4/etc/inittab\fR.

@@ -1,0 +1,71 @@
+'\"macro stdmacro
+.if n .pH g3e.elf_getshdr @(#)elf_getshdr	40.13 of 5/1/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.\"#ident	"@(#)ci5-doc:req/libelf/getshdr.man	1.3"
+.nr X
+.if \nX=0 .ds x} elf_getshdr 3E "ELF Library" "\&"
+.if \nX=1 .ds x} elf_getshdr 3E "ELF Library"
+.if \nX=2 .ds x} elf_getshdr 3E "" "\&"
+.if \nX=3 .ds x} elf_getshdr "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4elf_getshdr\f1: \f4elf32_getshdr\f1 \- retrieve class-dependent section header
+.SH SYNOPSIS
+\f4cc\f1
+[\f2flag\fP \|.\|.\|.] \f2file\fP \|.\|.\|.
+\f4\-lelf\f1
+[\f2library\fP \|.\|.\|.]
+.PP
+.nf
+.na
+.ft 4
+#include <libelf.h>
+.sp 0.5
+Elf32_Shdr \(**elf32_getshdr(Elf_Scn \(**scn);
+.ft 1
+.ad
+.fi
+.SH DESCRIPTION
+For a 32-bit class file,
+\f4elf32_getshdr\fP
+returns a pointer to a section header for the section descriptor
+.IR scn .
+Otherwise, the file is not a 32-bit class file,
+.I scn
+was null, or an error occurred;
+\f4elf32_getshdr\fP
+then returns null.
+.P
+The header includes the following members.
+.P
+.RS .5i
+.DT
+.nf
+.ft 4
+.ta 8u*\w' 'u +8u*\w' 'u +8u*\w' 'u +8u*\w' 'u +8u*\w' 'u +8u*\w' 'u
+.ne 15
+	Elf32_Word	sh_name;
+	Elf32_Word	sh_type;
+	Elf32_Word	sh_flags;
+	Elf32_Addr	sh_addr;
+	Elf32_Off	sh_offset;
+	Elf32_Word	sh_size;
+	Elf32_Word	sh_link;
+	Elf32_Word	sh_info;
+	Elf32_Word	sh_addralign;
+	Elf32_Word	sh_entsize;
+.fi
+.RE
+.P
+If the program is building a new file, it is responsible
+for creating the file's
+.SM ELF
+header
+before creating sections.
+.SH "SEE ALSO"
+.na
+\f4elf\fP(3E),
+\f4elf_flag\fP(3E),
+\f4elf_getscn\fP(3E),
+f4elf_strptr\fP(3E).

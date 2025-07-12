@@ -1,0 +1,95 @@
+.if n .pH 386.Cchap9 @(#)Cchap9	40.6
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.BK "Software Notes" "" "" ""   
+.\ACRONYM	                  
+.CH "Application Notes" "" "Table of Contents" "9"
+.\CHAPTER	9
+.Index: application notes        	0
+.tC 1 "Applications for Intel386 Architecture Processors" 9-1  
+.tC 1 "General Application Notes" 9-2  
+.tC 2 "Terminal Information (terminfo/termcap)" 9-2  
+.Index: terminal information        	2
+.Index: \f4terminfo\fP file        	2
+.Index: \f4termcap\fP file        	2
+.Index: \f4profile\fP file        	2
+.Index: console        	2
+.Index: TERM variable        	2
+.Index: TERMCAP variable        	2
+.Index: TERMINFO variable        	2
+.Index: Uniplex II Plus 7.0 for SCO        	2
+.Index: UNIFY ACCELL        	2
+.Index: Informix 4GL 1.10,        	2
+.tC 2 "Installation (custom, installpkg, tar, pkgadd, cpio)" 9-3  
+.Index: installation        	3
+.Index: \f4custom\fP(1M) command        	3
+.Index: \f4installpkg\fP(1M) command        	3
+.Index: \f4tar\fP(1) command        	3
+.Index: \f4pkgadd\fP(1M) command        	3
+.Index: \f4cpio\fP(1) command        	3
+.Index: \f4pkginfo\fP(1) command        	3
+.Index: installation, remote terminal        	3
+.Index: root login        	3
+.Index: \f4ulimit\f1(1) command        	3
+.Index: \f4custom\fP(1M) command        	3
+.Index: \f4uname\fP(1) command        	3
+.Index: SCOMPAT variable        	3
+.Index: \f4tar\fP(1) command        	3
+.Index: SCO C-ISAM        	4
+.Index: Access Technology 20/20 Release 2.3        	4
+.Index: \f4cpio\fP(1) command        	4
+.Index: PATH variable        	4
+.Index: MicroFocus COBOL/2        	4
+.Index: Framemaker for SCO        	4
+.tC 2 "Keyboard and Function Keys (mapstr, mapkey)" 9-5  
+.Index: \f4mapstr\fP(1M) command        	5
+.Index: \f4mapkey\fP(1M) command        	5
+.Index: UNIFY ACCELL        	5
+.Index: \f4mapstr\fP(1M) command        	5
+.Index: ioctl function        	5
+.Index: \f4scompat\fP(1) command        	5
+.Index: \f4mapkey\fP(1M) command        	6
+.Index: \f4keyboard\f1(7) device        	6
+.Index: \f4stty\f1 command        	6
+.Index: UNIFY ACCELL        	6
+.tC 2 "Executables" 9-7  
+.Index: executables, Object Module Format        	7
+.Index: executables, i386 pure segmented executables        	7
+.Index: \f4cvtomflib\f1(1M)        	7
+.Index: Informix-4GL 1.10        	7
+.Index: \f4cvtomf\f1(1M)        	7
+.Index: \f4masm\fP command        	7
+.Index: MicroFocus VS COBOL        	7
+.Index: MicroFocus COBOL/2        	7
+.Index: COFF        	7
+.Index: ELF        	7
+.tC 2 "Shared libraries" 9-7  
+.Index: shared libraries        	7
+.Index: \f4fixshlib\f1 command        	7
+.Index: Uniplex II Plus 7.0 for SCO        	7
+.tC 2 "root Login" 9-8  
+.Index: AutoCAD        	8
+.tC 2 "Devices (/dev)" 9-8  
+.Index: devices        	8
+.Index: diskette devices        	8
+.tC 2 "PATH variable" 9-8  
+.Index: PATH variable        	8
+.Index: \f4awk\fP(1) command        	8
+.Index: \f4cc\fP(1) command        	8
+.tC 2 "Shells" 9-9  
+.Index: Sybase 4.0 SQL        	9
+.tC 2 "Graphical Applications (X, OPEN LOOK)" 9-9  
+.Index: OPEN LOOK        	9
+.Index: Uniplex II Plus 7.0 for SCO        	9
+.Index: Framemaker for SCO        	9
+.Index: X terminals        	9
+.Index: inet utilities        	9
+.Index: DISPLAY variable        	10
+.tC 2 "Printing" 9-10  
+.Index: printing        	10
+.Index: postscript        	10
+.Index: Framemaker for SCO        	10
+.Index: Microsoft Word 5.01c        	10
+.tC 2 "Communications" 9-10  
+.Index: modems        	10
+.tC 2 "Virtual Terminals" 9-11  
+.Index: virtual terminals        	11

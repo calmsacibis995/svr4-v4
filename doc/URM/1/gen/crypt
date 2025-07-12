@@ -1,0 +1,133 @@
+'\"macro stdmacro
+.if n .pH g1.crypt @(#)crypt	40.8 of 5/23/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} crypt 1 "Encryption Utilities" "\&"
+.if \nX=1 .ds x} crypt 1 "Encryption Utilities"
+.if \nX=2 .ds x} crypt 1 "" "\&"
+.if \nX=3 .ds x} crypt "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4crypt\f1 \- encode/decode
+.SH SYNOPSIS
+\f4crypt\f1
+[ \f2password\f1 ]
+.br
+\f4crypt [\-k]\f1
+.SH DESCRIPTION
+\f4crypt\fP
+reads from the standard input and writes
+on the standard output.
+The
+\f2password\f1
+is a key that selects a particular transformation.
+If no
+argument
+is given,
+\f4crypt\fP
+demands a key from the terminal and turns
+off printing while the key is being typed in.
+If the 
+\f4\-k\f1
+option is used, 
+\f4crypt\fP
+will use the key assigned to the 
+environment variable \f4CRYPTKEY\f1.
+\f4crypt\fP
+encrypts and decrypts with the same key:
+.PP
+.RS
+.ft 4
+crypt \|key \|<clear \|>cypher
+.br
+crypt \|key \|<cypher \|\(bv \|pr
+.ft 1
+.RE
+.PP
+Files encrypted by
+\f4crypt\fP
+are compatible with those treated by the editors
+\f4ed\fP(1),
+\f4edit\fP(1),
+\f4ex\fP(1),
+and
+\f4vi\fP(1)
+in encryption mode.
+.PP
+The security of encrypted files depends on three factors:
+the fundamental method must be hard to solve;
+direct search of the key space must be infeasible;
+``sneak paths'' by which keys or clear text can become
+visible must be minimized.
+.PP
+\f4crypt\fP
+implements a one-rotor machine designed along the lines
+of the German Enigma, but with a 256-element rotor.
+Methods of attack on such machines are known, but not widely;
+moreover the amount of work required is likely to be large.
+.PP
+The transformation of a key into the internal
+settings of the machine is deliberately designed to
+be expensive, that is, to take a substantial fraction of
+a second to compute.
+However,
+if keys are restricted to (say)
+three lower-case letters,
+then encrypted files can be read by expending only
+a substantial fraction of
+five minutes of machine time.
+.PP
+If the key is an argument to the
+\f4crypt\fP
+command,
+it is potentially visible to users executing
+\f4ps\fP(1)
+or a derivative.
+.ig
+To minimize this possibility,
+\f4crypt\fP
+takes care to destroy any record of the key
+immediately upon entry.
+..
+The choice of keys and key security
+are the most vulnerable aspect of
+\f4crypt\fP.
+.SH FILES
+.ta 1i
+\f4/dev/tty\f1	for typed key
+.DT
+.SH SEE ALSO
+\f4ed\fP(1),
+\f4edit\fP(1),
+\f4ex\fP(1),
+\f4makekey\fP(1),
+\f4nroff\fP(1),
+\f4pg\fP(1),
+\f4ps\fP(1),
+\f4stty\fP(1),
+\f4vi\fP(1)
+.SH NOTES
+This command is provided with the Encryption Utilities,
+which is only available in the United States.
+If two or more files encrypted with the same key are concatenated
+and an attempt is made to decrypt the result, only the
+contents of the first of the original files will be decrypted correctly.
+.P
+If output is piped to
+\f4nroff\f1\^
+and the encryption key is
+not
+given on the command line then do not pipe
+\f4crypt\fP
+through
+\f4pg\fP(1)
+or any other program that changes the
+\f4tty\^\f1
+settings.
+Doing so may cause
+\f4crypt\fP
+to leave terminal modes in a strange state
+[see
+\f4stty\fP(1)].
+.\"	@(#)crypt.1	6.3 of 9/2/83

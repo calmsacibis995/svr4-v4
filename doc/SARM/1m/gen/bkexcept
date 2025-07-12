@@ -1,0 +1,255 @@
+.if n .pH g1a.bkexcept @(#)bkexcept @(#)bkexcept	40.17.1.1 of 1/3/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} bkexcept 1M "System Administration Utilities" "\&"
+.if \nX=1 .ds x} bkexcept 1M "System Administration Utilities"
+.if \nX=2 .ds x} bkexcept 1M "" "\&"
+.if \nX=3 .ds x} bkexcept "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4bkexcept\f1 \- change or display an exception list
+for incremental backups
+.SH SYNOPSIS
+\f4bkexcept\f1 [\f4\-t \f2file\f1] [\f4\-d \f2patterns\f1]
+.br
+\f4bkexcept\f1 [\f4\-t \f2file\f1] \f4\-a|\-r \f2patterns\f1 
+.br
+\f4bkexcept \-C \f1[\f2files\f1] 
+.SH DESCRIPTION
+The \f4bkexcept\fP command
+displays a list of patterns describing files that are to be excluded
+when backup operations occur using
+\f4incfile\f1.
+The list is known as the ``exception list.''
+.P
+\f4bkexcept\fP
+may be executed only by a user with superuser privilege.
+.P
+\f4bkexcept \-a\f1
+adds patterns to the list.
+.P
+\f4bkexcept \-d\f1
+displays patterns from the list.
+.P
+\f4bkexcept \-r\f1
+removes patterns from the list.
+.SS Patterns
+Patterns describe individual pathnames or sets of pathnames.
+Patterns must conform to 
+pathname naming conventions specified 
+under \f3\s-1DEFINITIONS\s+1\f1 
+on the \f4intro\f1(2) page.
+A pattern is taken as a filename and is interpreted
+in the manner of \f4cpio\f1.
+A pattern can include the shell special characters 
+\f4\(**\f1, \f4?\f1,
+and \f4[]\f1.
+Asterisk (\f4\(**\f1) 
+and question mark (\f4?\f1) will match 
+period (\f4.\f1) and slash(\f4/\f1).
+Because these are shell special characters, they must be
+escaped on the command line.
+.PP
+There are three general methods of specifying entries to
+the exception list:
+.RS 3
+.TP 3
+\-
+To specify all files under a particular directory, specify the
+directory name (and any desired subdirectories) followed by
+an asterisk:
+.in +2m
+.sp .5
+\f4/\f2directory\f4/\f2subdirectories\f4/\(**\f1
+.in -2m
+.sp .5
+.TP
+\-
+To specify all instances of a filename
+regardless of its location,
+specify the filename preceded by an asterisk:
+.sp .5
+.in +2m
+\f4\(**/\f2filename\f1
+.in -2m
+.sp .5
+.TP
+\-
+To specify one instance of a particular file, specify the entire
+pathname to the file:
+.sp .5
+.in +2m
+\f4/\f2directory\f4/\f2subdirectories\f4/\f2filename\f1
+.in -2m
+.sp .5
+.RE
+.PP
+If
+.I pattern
+is a dash (\f4\-\f1),
+standard input is read for a list of patterns (one per line
+until \s-1EOF\s+1) to be added or deleted.
+.SS Compatibility
+Prior versions of the backup service created exception lists
+using \f4ed\f1 syntax.
+\f4bkexcept \-C\f1
+provides a translation facility for exception lists
+created by \f4ed\f1.
+The translation is not perfect; not all
+\f4ed\f1
+patterns have equivalents in
+\f4cpio\f1.
+For those patterns that
+have no automatic translation,
+an attempt at translation is made, and the translated version is
+flagged with the word \f4QUESTIONABLE.\f1
+The exception list translation is directed to standard output.
+Redirect the standard output to a translation file,
+review the contents of the translation file (correcting entries
+that were not translated properly and deleting the
+\f4QUESTIONABLE\f1 flags),
+and then use the resulting file as input to a subsequent
+\f4bkexcept \-a\f1.
+For example, if the translated file was named \f4checkfile\f1
+the \f4\-a\f1 option would appear as follows:
+.RS
+\f4bkexcept \-a \- < checkfile\f1
+.RE
+.SS Options
+.TP
+\f4\-t \f2file\f1
+The filename used in place of the default file.
+.TP
+\f4-a \f2pattern...\f1 
+Adds \f2pattern\f1 to the exception list where
+\f2pattern\f1 is one or more patterns
+(comma-separated or blank-separated
+and enclosed in quotes)
+describing sets of paths.
+.TP
+\f4\-d \f2pattern...\f1
+Displays entries in the exception list.
+If \f2pattern\f1 begins with a slash (/), \f4\-d\f1
+displays all entries whose names begin with
+\f2pattern\f1.
+If \f2pattern\f1 does not begin with a slash, \f4\-d\f1
+displays all entries that include
+\f2pattern\f1 anywhere in the entry.
+If \f2pattern\f1 is a dash (\f4\-\f1), input is taken from
+standard input.  \f2pattern\f1 is not a pattern -- it matches
+patterns.
+\f2pattern\f1 \f4a\(**b\f1 matches \f4/a\(**b\f1 but does not match
+\f4/adb\f1.
+For files containing a carriage return, a null exception list
+is returned.
+For files of zero length (no characters), an error is returned (search
+of table failed).
+.IP "" 7
+The entries are displayed in \s-1ASCII\s+1 collating sequence order
+(special characters, numbers, then alphabetical order).
+.TP
+\f4\-r \f2pattern...\f1
+Removes \f2pattern\f1 from the exception list.
+\f2pattern\f1 is one or a list of patterns
+(comma-separated or blank-separated
+and enclosed in quotes)
+describing sets of paths.
+\f2pattern\f1 must be an exact match of an entry in
+the exception list for \f2pattern\f1 to be removed.
+Patterns that are removed are echoed to standard output, \f4stdout\f1.
+.TP
+\f4\-C \f1[\f2file\f1s]
+Displays on standard output the translation of each
+\f2file\f1 (a prior version's exception list) to the new syntax.
+Each \f2file\f1 contains \f4ed\f1 patterns, one per line.
+.IP "" 7
+If \f2file\f1 is omitted, the default \s-1UNIX\s+1 exception
+list, \f4/etc/save.d/except\f1, is translated.
+If \f2file\f1 is a dash (\-), input is taken from
+standard input, one per line.
+.SH DIAGNOSTICS 
+The exit codes for the \f4bkexcept\fP command are the following:
+.PP
+\f40\f1 = the task completed successfully
+.br
+\f41\f1 = one or more parameters to \f4bkexcept\fP are invalid
+.br
+\f42\f1 = an error has occurred, causing \f4bkexcept\fP to fail to
+      complete \f2all\f1 portions of its task
+.SH EXAMPLES
+Example 1:
+.RS 10
+\f4bkexcept \-a /tmp/\(**,/var/tmp/\(**,/usr/rje/\(**,\(**/trash,\fP
+.RE
+.sp .5
+adds the four sets of files to the exception list,
+(all files under \f4/tmp\f1,
+all files under \f4/var/tmp\f1,
+all files under \f4/usr/rje\f1,
+and any file on the system named \f4trash\f1).
+.P
+Example 2:
+.RS 10
+\f4bkexcept \-d /tmp\f1
+.RE
+.sp .5
+displays the following patterns from those added to the
+exception list in Example 1.
+.RS 10
+\f4/tmp/\(**\f1
+.sp .25
+\f4bkexcept \-d tmp\f1
+.RE
+.sp .5
+displays the following patterns from those added to the
+exception list in Example 1.
+.RS 10
+\f4/tmp/\(**, /var/tmp/\(**\f1
+.RE
+.sp .5
+displays one per line, with a heading.
+.P
+Example 3:
+.RS 10
+\f4bkexcept \-r /var/tmp/\(**,/usr/rje/\(**\f1
+.RE
+.sp .5
+removes the two patterns from the exception list.
+.P
+Example 4:
+.RS 10
+\f4bkexcept \-C /save.d/old.except > trans.except\f1
+.RE
+.sp .5
+translates the file
+\f4/save.d/old.except\f1
+from its \f4ed\f1 format to \f4cpio\f1 format and sends the translations
+to the file \f4trans.except\f1. 
+The translations of \f4/save.d/old.except\f1
+may be added to the current exception
+list by using \f4bkexcept \-a\f1 as follows:
+.sp .5
+.RS 10
+\f4bkexcept \-a \- < trans.except\f1
+.RE
+.SH FILES
+.TP 1.75i
+\f4/etc/bkup/bkexcept.tab\f1
+the default exception list
+for \s-1UNIX System V Release 4.0\s+1.
+.TP
+\f4/etc/save.d/except\f1
+the default exception list 
+for \s-1UNIX\s+1 pre-\s-1System V Release 4.0\s+1.
+.SH SEE ALSO
+\f4backup\fP(1M), \f4incfile\fP(1M).
+.br
+\f4cpio\fP(1), \f4ed\fP(1), \f4sh\fP(1)
+in the \f2User's Reference Manual\f1.
+.br
+\f4intro\fP(2)
+in the \f2Programmer's Reference Manual\f1.
+.br
+``The Backup Service''chapter in 
+the \f2System Administrator's Guide\f1.

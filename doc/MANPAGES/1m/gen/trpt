@@ -1,0 +1,122 @@
+'\"macro stdmacro
+.if n .pH g1a.trpt @(#)trpt	40.9 of 5/21/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} trpt 1M "Internet Utilities" "\&"
+.if \nX=1 .ds x} trpt 1M "Internet Utilities"
+.if \nX=2 .ds x} trpt 1M "" "\&"
+.if \nX=3 .ds x} trpt "" "" "\&"
+.TH \*(x}
+.UC 5
+.SH NAME
+\f4trpt\f1 \- transliterate protocol trace
+.SH SYNOPSIS
+\f4trpt\f1
+[
+\f4\-afjst\f1
+] [
+\f4\-p \f2hex-address\f1 ]
+[
+.I system
+[
+.I core
+] ]
+.SH DESCRIPTION
+\f4trpt\f1
+interrogates the buffer of
+.SM TCP
+trace records created
+when a socket is marked for \*(lqdebugging\*(rq [see
+\f4getsockopt\f1(3N)],
+and prints a readable description of these records.
+When no options are supplied,
+\f4trpt\f1
+prints all the trace records found in the system
+grouped according to
+.SM TCP
+connection protocol control
+block (\s-1PCB\s0).  The following options may be used to
+alter this behavior.
+.SH OPTIONS
+.TP
+\f4\-a\f1
+In addition to the normal output,
+print the values of the source and destination
+addresses for each packet recorded.
+.TP
+\f4\-f\f1
+Follow the trace as it occurs, waiting a
+short time for additional records
+each time the end of the log is reached.
+.TP
+\f4\-j\f1
+Just give a list of the protocol control block
+addresses for which there are trace records.
+.TP
+\f4\-s\f1
+In addition to the normal output,
+print a detailed description of the packet
+sequencing information.
+.TP
+\f4\-t\f1
+In addition to the normal output,
+print the values for all timers at each
+point in the trace.
+.TP
+\f4\-p \f2hex-address\f1
+Show only trace records associated with the protocol
+control block, the address of which follows.
+.LP
+The recommended use of
+\f4trpt\f1
+is as follows.
+Isolate the problem and enable debugging on the
+\f4socket\f1(s)
+involved in the connection.
+Find the address of the protocol control blocks
+associated with the sockets using the
+\f4\-A\f1
+option to
+\f4netstat\f1(1M).
+Then run
+\f4trpt\f1
+with the
+\f4\-p\f1
+option, supplying the associated
+protocol control block addresses.
+The
+\f4\-f\f1
+option can be used to follow the trace log once the trace is located.
+If there are
+many sockets using the debugging option, the
+\f4\-j\f1
+option may be useful in checking to see if
+any trace records are present for the socket in
+question.
+.LP
+If debugging is being performed on a system or
+core file other than the default, the last two
+arguments may be used to supplant the defaults.
+.SH FILES
+.PD 0
+.TP 20
+\f4/stand/unix\f1
+.TP
+\f4/dev/kmem\f1
+.PD
+.SH "SEE ALSO"
+\f4netstat\f1(1M),
+\f4getsockopt\f1(3N)
+.SH DIAGNOSTICS
+.TP
+\f4no namelist\f1
+When the system image does not
+contain the proper symbols to find the trace buffer;
+others which should be self explanatory.
+.SH NOTES
+Should also print the data for each input or output,
+but this is not saved in the trace record.
+.LP
+The output format is inscrutable and should be described
+here.

@@ -1,0 +1,574 @@
+'\"macro stdmacro
+.if n .pH rn.cscope @(#)cscope	40.18 of 5/22/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} cscope 1 "Enhanced Programming Utilities" "\&"
+.if \nX=1 .ds x} cscope 1 "Enhanced Programming Utilities"
+.if \nX=2 .ds x} cscope 1 "" "\&"
+.if \nX=3 .ds x} cscope "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4cscope\f1 \- interactively examine a C program
+.SH SYNOPSIS
+\f4cscope [\f2options\f4] \f2files\f1 .\ .\ . 
+.SH DESCRIPTION
+\f4cscope\fP
+is an interactive screen-oriented tool that allows the user to 
+browse through C source files for specified elements of code.
+.PP
+By default,
+\f4cscope\fP
+examines the C (\f4.c\f1 and \f4.h\f1), \f4lex\fP (\f4.l\f1),
+and \f4yacc\fP (\f4.y\f1) source files in the current directory.
+\f4cscope\fP may also be invoked for source files named on
+the command line.
+In either case, \f4cscope\fP searches the 
+standard directories for \f4#include\f1 files that it does not
+find in the current directory.
+\f4cscope\fP uses a symbol cross-reference,
+\f4cscope.out\f1 by default,
+to locate functions, function calls, macros,
+variables, and preprocessor symbols in the files.
+.PP
+\f4cscope\fP
+builds the symbol cross-reference 
+the first time it is used on the source files
+for the program being browsed.
+On a subsequent invocation,
+\f4cscope\fP rebuilds the cross-reference only if a source file has changed
+or the list of source files is different.
+When the cross-reference is rebuilt,
+the data for the unchanged files are
+copied from the old cross-reference, which makes rebuilding faster
+than the initial build.
+.PP
+The following options can appear in any combination:
+.TP 15
+\f4\-b\f1
+Build the cross-reference only.
+.TP
+\f4\-C\f1
+Ignore letter case when searching.
+.TP
+\f4\-c\f1
+Use only ASCII characters in the cross-reference file,
+that is, do not compress the data.
+.TP
+\f4\-d\f1
+Do not update the cross-reference.
+.TP
+\f4\-e\f1
+Suppress the \f4^e\f1 command prompt between files.
+.TP
+\f4\-f \f2reffile\f1
+Use \f2reffile\f1 as the cross-reference file name instead of the default
+\f4cscope.out\f1.
+.TP
+\f4\-I \f2incdir\f1
+Look in \f2incdir\f1
+(before looking in \f2INCDIR\f1, the standard
+place for header files, normally \f4/usr/include\f1)
+for any \f4#include\f1 files whose
+names do not begin with \f4/\f1 and
+that are not specified on the command line or in
+\f2namefile\f1 below.
+(The \f4#include\f1 files may be 
+specified with either double quotes or angle brackets.)
+The \f2incdir\f1 directory is searched in addition to the current
+directory (which is searched first) and the standard list
+(which is searched last).
+If more than one occurrence of \f4\-I\f1 appears, 
+the directories are searched in the order they
+appear on the command line.
+.TP
+\f4\-i \f2namefile\f1
+Browse through all source files whose names are listed
+in \f2namefile\f1 (file names separated by spaces, tabs, or
+new-lines) instead of the default
+(\f4cscope.files\f1).
+If this option is specified, \f4cscope\fP ignores
+any files appearing on the command line.
+.TP
+\f4\-L\f1
+Do a single search with line-oriented output when
+used with the \f4\-\f2num pattern\f1 option.
+.TP
+\f4\-l\f1
+Line-oriented interface
+(see ``Line-Oriented Interface'' below).
+.TP
+\f4\-\f2num pattern\f1
+Go to input field \f2num\f1
+(counting from 0)
+and find \f2pattern\f1.
+.TP
+\f4\-P \f2path\f1
+Prepend \f2path\f1 to relative file names in a pre-built cross-reference
+file so you do not have to change to the directory where
+the cross-reference file was built.
+This option is only valid with the \f4\-d\f1 option.
+.TP
+\f4\-p \f2n\f1
+Display the last \f2n\f1 file path components instead
+of the default (1).
+Use 0 to not display the file name at all.
+.TP
+\f4\-s \f2dir\f1
+Look in \f2dir\f1 for additional source files.
+This option is ignored if source files are given on the command line.
+.TP
+\f4\-T\f1
+Use only the first eight characters to match against C symbols.
+A regular expression containing special characters other than
+a period (\|.\|) will not match any symbol
+if its minimum length is greater
+than eight characters.
+.TP
+\f4\-U\f1
+Do not check file time stamps
+(assume that no files have changed).
+.TP
+\f4\-u\f1
+Unconditionally build the cross-reference file
+(assume that all files have changed).
+.TP
+\f4\-V\f1
+Print on the first line of screen the
+version number of \f4cscope\fP.
+.PP
+The \f4\-I\f1, \f4\-p\f1, and \f4\-T\f1 options
+can also be in the \f4cscope.files\f1 file.
+.SS Requesting the Initial Search
+After the cross-reference is ready,
+\f4cscope\fP
+will display this menu:
+.PP
+.RS
+.ft 5
+Find this C symbol:
+.br
+Find this function definition:
+.br
+Find functions called by this function:
+.br
+Find functions calling this function:
+.br
+Find this text string:
+.br
+Change this text string:
+.br
+Find this egrep pattern:
+.br
+Find this file:
+.br
+Find files #including this file:
+.ft
+.RE
+.PP
+Press the
+\f4TAB\f1
+key repeatedly to move to the desired input field,
+type the text to search for, and then press the
+\f4RETURN\f1 key.
+.PP
+.SS Issuing Subsequent Requests 
+If the search is successful,
+any of these single-character commands can be used:
+.PP
+.PD 0
+.TP 11
+\f4\&1-9\f1
+Edit the file referenced by the given line number.
+.TP
+\f4SPACE\f1
+Display next set of matching lines.
+.TP
+\f4+\f1
+Display next set of matching lines.
+.TP
+\f4\(mi\f1
+Display previous set of matching lines.
+.TP
+\f4^e\f1
+Edit displayed files in order.
+.TP
+\f4>\f1
+Append the displayed list of lines to a file.
+.TP
+\f4|\f1
+Pipe all lines to a shell command.
+.PD
+.PP
+At any time these single-character commands can also be used:
+.PP
+.PD 0
+.TP 11
+\f4TAB\f1
+Move to next input field.
+.TP
+\f4RETURN\f1
+Move to next input field.
+.TP
+\f4^n\f1
+Move to next input field.
+.TP
+\f4^p\f1
+Move to previous input field.
+.TP
+\f4^y\f1
+Search with the last text typed.
+.TP
+\f4^b\f1
+Move to previous input field and search pattern.
+.TP
+\f4^f\f1
+Move to next input field and search pattern.
+.TP
+\f4^c\f1
+Toggle ignore/use letter case when searching.
+(When ignoring letter case,
+search for \f4FILE\f1 will match \f4File\f1 and \f4file\f1.)
+.TP
+\f4^r\f1
+Rebuild the cross-reference.
+.TP
+\f4!\f1
+Start an interactive shell (type
+\f4^d\f1
+to return to \f4cscope\fP).
+.TP
+\f4^l\f1
+Redraw the screen.
+.TP
+\f4?\f1
+Give help information about \f4cscope\fP commands.
+.TP
+\f4^d\f1
+Exit \f4cscope\fP.
+.PD
+.PP
+Note:  If the first character of the text to be searched for
+matches one of the above commands,
+escape it by typing 
+a \\ (backslash) first.
+.PP
+.SS Substituting New Text for Old Text
+After the text to be changed has been typed,
+\f4cscope\fP will prompt for the new text,
+and then it will display the lines containing the old text.
+Select the lines to be changed with these single-character commands:
+.PP
+.PD 0
+.TP 11
+\f41-9\f1
+Mark or unmark the line to be changed.
+.TP
+\f4\(**\f1
+Mark or unmark all displayed lines to be changed.
+.TP
+\f4SPACE\f1
+Display next set of lines.
+.TP
+\f4+\f1
+Display next set of lines.
+.TP
+\f4\(mi\f1
+Display previous set of lines.
+.TP
+\f4a\f1
+Mark all lines to be changed.
+.TP
+\f4^d\f1
+Change the marked lines and exit.
+.TP
+\f4ESCAPE\f1
+Exit without changing the marked lines.
+.TP
+\f4!\f1
+Start an interactive shell (type
+\f4^d\f1
+to return to \f4cscope\fP).
+.TP
+\f4^l\f1
+Redraw the screen.
+.TP
+\f4?\f1
+Give help information about \f4cscope\fP commands.
+.SS Special Keys
+If your terminal has arrow keys that work in \f4vi\f1(1),
+you can use them to move around the input fields.
+The up-arrow key is useful to move to the previous input
+field instead of using the \f4TAB\f1 key repeatedly.
+If you have \f4CLEAR\f1, \f4NEXT\f1, or \f4PREV\f1 keys
+they will act as the
+\f4^l\f1,
+\f4+\f1,
+and
+\f4\-\f1
+commands, respectively.
+.SS Line-Oriented Interface
+The \f4\-l\f1 option lets you use \f4cscope\f1 where
+a screen-oriented interface would not be useful,
+for example, from another screen-oriented program.
+.sp .5
+.br
+.ne 1i
+\f4cscope\f1 will prompt with \f4>>\f1
+when it is ready for an input line
+starting with the field number
+(counting from 0)
+immediately followed by the search pattern,
+for example, \f4lmain\f1 finds
+the definition of the \f4main\f1 function.
+.sp .5
+If you just want a single search,
+instead of the \f4\-l\f1 option
+use the \f4\-L\f1 and \f4\-\f2num \f2pattern\f1 options,
+and you won't get the \f4>>\f1 prompt.
+.sp .5
+For \f4\-l\f1, \f4cscope\f1 outputs the number of reference lines
+.sp .2
+.RS 15
+\f4cscope: 2 lines\f1
+.RE
+.sp .2
+For each reference found,
+\f4cscope\f1 outputs a line
+consisting of the file name, function name,
+line number, and line text,
+separated by spaces, for example,
+.sp .2
+.RS 15
+\f4main.c main 161 main(argc, argv)\f1
+.RE
+.sp .2
+Note that the editor is not called
+to display a single reference,
+unlike the screen-oriented interface.
+.sp .5
+You can use the \f4r\f1 command to rebuild the database.
+.sp .5
+\f4cscope\f1 will quit when it detects end-of-file,
+or when the first character of
+an input line is \f4^d\f1 or \f4q\f1.
+.PD
+.SH ENVIRONMENT VARIABLES
+.TP 15
+.PD 0
+\f4EDITOR\f1
+Preferred editor, which defaults to 
+\f4vi\fP(1).
+.TP
+\f4INCLUDEDIRS\f1
+Colon-separated list of directories to search
+for \f4#include\f1 files.
+.TP
+\f4HOME\f1
+Home directory, which is automatically set at login.
+.TP
+\f4SHELL\f1
+Preferred shell, which defaults to
+\f4sh\fP(1).
+.TP
+\f4SOURCEDIRS\f1
+Colon-separated list of directories to search
+for additional source files.
+.TP
+\f4TERM\f1
+Terminal type, which must be a screen terminal.
+.TP
+\f4TERMINFO\f1
+Terminal information directory full path name.
+If your terminal is not in the standard \f4terminfo\f1 directory,
+see \f4curses\f1(3X) and \f4terminfo\f1(4) for
+how to make your own terminal description.
+.TP
+\f4TMPDIR\f1
+Temporary file directory,
+which defaults to \f4/var/tmp\f1.
+.TP
+\f4VIEWER\f1
+Preferred file display program
+[such as \f4pg\fP],
+which overrides \f4EDITOR\f1 (see above).
+.TP
+\f4VPATH\f1
+A colon-separated list of directories,
+each of which has the
+same directory structure below it.
+If \f4VPATH\f1 is set,
+\f4cscope\fP searches for 
+source files 
+in the directories specified;
+if it is not set,
+\f4cscope\fP searches 
+only in the current directory.
+.SH FILES
+.TP 15
+\f4cscope.files\f1
+Default files containing
+\f4\-I\f1,
+\f4\-p\f1,
+and
+\f4\-T\f1
+options and the list of source files
+(overridden by the
+\f4\-i\f1 option).
+.TP
+\f4cscope.out\f1
+Symbol cross-reference file, which is put in the home directory if
+it cannot be created in the current directory.
+.TP
+\f4ncscope.out\f1
+Temporary file containing new cross-reference before it replaces the old
+cross-reference.
+.TP
+\f2INCDIR\f1
+Standard directory for
+\f4#include\f1
+files
+(usually \f4/usr/include\f1).
+.SH "SEE ALSO"
+The ``\f4cscope\f1'' chapter in the
+\f2Programmer's Guide: ANSI C and Programming Support Tools\f1
+.P
+\f4curses\f1 and \f4terminfo\f1 in the
+\f2Programmer's Guide: Character User Interface (FMLI and ETI)\f1
+.SH NOTES
+\f4cscope\fP
+recognizes function definitions of the form:
+.PP
+.RS
+\f2fname blank\f1 \f4(\f2 args \f4)\f2 white \f2arg_decs\f1 \f2white \f4{\f1
+.RE
+.PP
+where:
+.TP 11
+\f2fname\f1
+is the function name
+.TP
+\f2blank\f1
+is zero or more spaces or tabs, not including newlines
+.TP
+\f2args\f1
+is any string that does not contain a \f4"\f1 or a newline
+.TP
+\f2white\f1
+is zero or more spaces, tabs, or newlines
+.TP
+\f2arg_decs\f1
+are zero or more argument declarations (\f2arg_decs\f1 may
+include comments and white space)
+.PP
+It is not necessary for a function declaration
+to start at the beginning of a line.
+The return type may precede the function name;
+\f4cscope\fP will still recognize the declaration.
+Function definitions that deviate from this form will not be
+recognized by \f4cscope\fP.
+.PP
+The \f4Function\f1 column of the search output
+for the menu option \f4Find functions called by this function:\f1
+input field will only display the first
+function called in the line,
+that is, for this function
+.sp .2
+.RS 6
+.nf
+.ft4
+e()
+{
+	return (f() + g());
+}
+.ft1
+.fi
+.RE
+.sp .2
+the display would be
+.sp .2
+.RS 6
+.nf
+.ft4
+Functions called by this function: e
+
+File Function Line
+a.c  f	3 return(f() + g());
+.ft1
+.fi
+.RE
+.PP
+Occasionally, a function definition or call may not be recognized
+because of braces inside \f4#if\f1 statements.
+Similarly, the use of a variable may be
+incorrectly recognized as a definition.
+.PP
+A \f4typedef\f1 name preceding a preprocessor statement
+will be incorrectly recognized as a global definition,
+for example,
+.sp .2
+.RS 6
+.nf
+.ft4
+LDFILE \(**
+#if AR16WR
+.ft1
+.fi
+.RE
+.PP
+Preprocessor statements can also prevent
+the recognition of a global definition, e.g.,
+.sp .2
+.RS 6
+.nf
+.ft4
+char flag
+#ifdef ALLOCATE_STORAGE
+	= -1
+#endif
+;
+.ft1
+.fi
+.RE
+.PP
+A function declaration inside a function
+is incorrectly recognized as a function call, e.g.,
+.sp .2
+.RS 6
+.nf
+.ft4
+f()
+{
+	void g();
+}
+.ft1
+.fi
+.RE
+is incorrectly recognized as a call to \f4g()\f1.
+.PP
+\f4cscope\f1 recognizes C++ classes by
+looking for the class keyword,
+but doesn't recognize that a \f4struct\f1 is also a class,
+so it doesn't recognize inline member function definitions
+in a structure.
+It also doesn't expect the class keyword in a \f4typedef\f1,
+so it incorrectly recognizes \f4X\f1 as a definition in
+.sp .2
+.RS 6
+.ft4
+typedef class X \(** Y;
+.ft1
+.RE
+.PP
+It also doesn't recognize operator function definitions
+.sp .2
+.RS 6
+.nf
+.ft4
+Bool Feature::operator==(const Feature & other)
+{
+	...
+}
+.ft1
+.fi
+.RE

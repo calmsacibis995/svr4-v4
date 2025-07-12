@@ -1,0 +1,10 @@
+.if n .pH 386.app.mbus @(#)app.mbus	40.2
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.BK "DDI/DKI Reference Manual"
+.CH "Appendix B: Multibus II DDI Extensions" B
+.H 1 "Appendix B: Multibus II DDI Extensions"
+This section includes the DDI-only functions that apply to Multibus II bus
+architectures.  These functions are grouped into two functional areas: those
+that apply to the Multibus II Interconnect Space and those that apply to the
+Multibus II Transport\-Kernel Interface.  For further information, see the
+.BT "INTEL System V/386 Multibus II Transport Protocol Specification and Designer's Guide" .

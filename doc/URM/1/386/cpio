@@ -1,0 +1,462 @@
+'\"macro stdmacro
+.if n .pH g1.cpio @(#)cpio	40.12 of 6/16/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+'\"macro stdmacro
+.if n .pH g1.cpio @(#)cpio	40.19 of 9/20/89
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.nr X
+.if \nX=0 .ds x} cpio 1 "Essential Utilities" "\&"
+.if \nX=1 .ds x} cpio 1 "Essential Utilities"
+.if \nX=2 .ds x} cpio 1 "" "\&"
+.if \nX=3 .ds x} cpio "" "" "\&"
+.nr X
+.nr X
+.TH \*(x} "" "386 Computer Only"
+.SH NAME
+\f4cpio\f1 \- copy file archives in and out
+.SH SYNOPSIS
+\f4cpio \-i\f1\|[\|\f4bBcdfkmrsStuvV6KT\f1\|] [\f4\-C \f2bufsize\f1\|]
+[\|\f4\-E\f2 file\f1\]
+[\|\f4\-H\f2 hdr\f1\]
+[\|\f4\-I \f2file\f1\| [\f4\-M \f2message\f1]\|]
+.DS
+	[\f4\-R \f2ID\f1]\|] [\|\f2pattern . . . \f1\|]
+.DE
+.PP
+\f4cpio \-o\f1\|[\|\f4aABcLvVKT\f1\|] [\|\f4\-C \f2bufsize\f1\|]
+[\|\f4\-H\f2 hdr\f1\]
+[\|\f4\-O \f2file\f1\| [\f4\-M \f2message\f1]\|]
+.PP
+\f4cpio\f1
+\f4\-p\f1\|[\f4\|adlLmuvVKT\f1\|]
+[\f4\-R \f2ID\f1]\|]
+\f2directory\fP
+.SH DESCRIPTION
+The \f4\-i\f1, \f4\-o\f1, and \f4\-p\f1 options
+select the action to be performed.
+The following list describes each of the actions
+(which are mutually exclusive).
+.PP
+\f4cpio \-i\f1
+(copy in) extracts files from the standard input,
+which is assumed to be the product of a previous
+\f4cpio \-o\f1.
+Only files with names that match
+.I patterns\^
+are selected.
+.I patterns\^
+are regular expressions given in the filename-generating notation of
+\f4sh\fP(1).
+In
+.IR patterns ,
+meta-characters
+\f4?\f1,
+\f4\(**\f1,
+and
+\f4[\f1 . . . \f4]\f1
+match the slash (\f4/\fP)
+character, and backslash (\f4\e\fP)
+is an escape character.
+A \f4!\f1 meta-character means \f2not\f1.
+(For example, the \f4!abc*\f1 pattern would exclude all files that
+begin with \f4abc\f1.)
+Multiple
+.I patterns\^
+may be specified and if no
+.I patterns\^
+are specified, the default for
+.I patterns\^
+is
+\f4\(**\f1
+(that is, select all files).
+Each pattern must be enclosed in double quotes;
+otherwise, the name of a file in the current directory might be used.
+Extracted files are conditionally created and copied 
+into the current directory tree based on the options described below.
+The permissions of the files will be those of the previous \f4cpio \-o\f1.
+Owner and group permissions will be the same as the current user
+unless the current user is super-user.
+If this is true, owner
+and group permissions will be the same as those resulting
+from the previous \f4cpio \-o\f1.
+.PP
+NOTE: If \f4cpio \-i\f1 tries to create
+a file that already exists
+and the existing file
+is the same age or younger (newer),
+\f4cpio\f1 will output a warning message
+and not replace the file.
+(The \f4\-u\f1 option can be used to overwrite, unconditionally,
+the existing file.)
+If file names are given as absolute pathnames to
+\f4cpio -o\fP,
+then when the files are restored via
+\f4cpio -i\fP, they will be written to their original directories regardless
+of the current directory.
+This behavior can be circumvented by using the
+\f4-r\fP
+option.
+.P
+\f4cpio \-o\f1 (copy out)
+reads the standard input to obtain a list of path names
+and copies those files onto the standard output
+together with path name and status information.
+.P
+\f4cpio \-p\f1 (pass)
+reads the standard input to obtain a list of path names
+of files that are conditionally created and copied into the destination
+\f2directory\fP
+tree based on the options described below.
+.PP
+The meanings of the available options are
+.PP
+.TP
+\f4\-a\f1
+Reset access times of input files after they have been copied.
+Access times are not reset for linked files when
+\f4cpio \-pla\f1
+is specified (mutually exclusive with \f4\-m\f1).
+.TP
+\f4\-A\f1
+Append files to an archive.
+The \f4\-A\f1 option requires 
+the \f4\-O\f1 option.
+Valid only with archives that are files,
+or that are on floppy diskettes or hard disk partitions.
+.TP
+\f4\-b\f1
+Reverse the order of the bytes within each word.
+(Use only with the \f4\-i\f1 option.)
+.TP
+\f4\-B\f1
+Input/output is to be blocked 5,120 bytes to the record.
+The default buffer size is device dependent when this
+and the \f4\-C\f1 options are not used.
+.TP
+\f4\-c\f1
+Read or write header information in
+\s-1ASCII\s+1
+character
+form for portability.
+Always use this option 
+(or the \f4\-H \f1 option)
+when the origin and the destination machines are different types
+(mutually exclusive with \f4\-H\f1 and \f4\-6\f1).
+(The \f4\-c\f1 option implies expanded device numbers.)
+.TP
+\f4\-C\f2 bufsize\f1
+Input/output is to be blocked \f2bufsize\f1 bytes to the record,
+where \f2bufsize\f1 is replaced by a positive integer.
+The default buffer size is device dependent
+when this and \f4\-B\f1 options are not used.
+.TP
+\f4\-d\f1
+Directories
+are to be created as needed.
+.TP
+\f4\-E \f2file\f1
+Specify an input file (\f2file\f1)
+that contains a list of filenames
+to be extracted from the archive (one filename per line).
+.TP
+\f4\-f\f1
+Copy in all files
+except those in
+.I patterns.\^
+(See the paragraph on \f4cpio \-i\f1 for a description of \f2patterns\f1.)
+.TP
+\f4\-H\f2 hdr\f1
+Read or write header information in \f2hdr\f1 format.
+Always use this option or the \f4\-c\f1 option 
+when the origin and the destination machines
+are different types
+(mutually exclusive with \f4\-c\f1 and \f4\-6\f1).
+Valid values for \f2hdr\f1 are:
+.RS
+.TP 16
+\f4crc\f1 or \f4CRC\f1
+\s-1ASCII\s+1 header with expanded device numbers and
+an additional per-file checksum
+.TP 16
+\f4ustar\f1 or \f4USTAR\f1
+IEEE/P1003 Data Interchange Standard header and format
+.TP 16
+\f4tar\f1 or \f4TAR\f1
+\f4tar\f1 header and format
+.TP 16
+\f4odc\f1
+\s-1ASCII\s+1 header with small device numbers
+.RE
+.TP
+\f4\-I \f2file\f1
+Read the contents of \f2file\f1 as an input archive.
+If \f2file\f1 is a character special device, and the current
+medium has been completely read, replace the medium and press
+\s-1RETURN\s+1 to continue to the next medium.
+This option is used only with the \f4\-i\f1 option.
+.TP
+\f4\-k\f1
+Attempt to skip corrupted file headers and I/O errors that may be encountered.
+If you want to copy files from a medium that is corrupted or out of
+sequence, this option lets you read only those files with good headers.
+(For \f4cpio\fP archives that contain other \f4cpio\f1 archives, if an
+error is encountered \f4cpio\fP may terminate prematurely.
+\f4cpio\fP will find the next good header, which may be one for
+a smaller archive, and terminate when the smaller archive's trailer is encountered.)
+Used only with the \f4\-i\f1 option.
+.TP
+\f4\-l\f1
+Whenever possible,
+link files rather than copying them.
+(Usable only with the \f4\-p\f1 option.)
+.TP
+\f4\-L\f1
+Follow symbolic links.
+The default is not to follow symbolic links.
+.TP
+\f4\-m\f1
+Retain previous file modification time.
+This option is ineffective on directories that are being copied
+(mutually exclusive with \f4\-a\f1).
+.TP
+\f4\-M \f2message\f1\f1
+Define a \f2message\fP to use when switching media.
+When you use the \f4\-O\f1 or \f4\-I\f1 options and specify
+a character special device, you can use this option to define
+the message that is printed when you reach the end of the medium.
+One \f4%d\f1 can be placed in \f2message\fP to print the sequence
+number of the next medium needed to continue.
+.TP
+\f4\-O \f2file\f1\f1
+Direct the output of
+\f4cpio\fP
+to \f2file\f1.
+If \f2file\f1 is a character special device and the current medium
+is full, replace the medium and press \s-1RETURN\s+1 to
+continue to the next medium.
+Use only with the \f4\-o\f1 option.
+.TP
+\f4\-r\f1
+Interactively rename files.
+If the user presses the \s-1RETURN\s+1 key alone, the file is skipped.
+If the user types a ``.'' the original pathname will be retained.
+(Not available with \f4cpio \-p\f1.)
+.TP
+\f4\-R\f2 \s-1ID\s+1\f1
+Reassign ownership and group information for each file 
+to user \f2\s-1ID\s+1\f1 
+(\f2\s-1ID\s+1\f1 must be a valid user \s-1ID\s+1
+from \f4/etc/passwd\f1).
+This option is valid only for the super-user.
+.TP
+\f4\-s\f1
+Swap bytes within each half word.
+.TP
+\f4\-S\f1
+Swap halfwords within each word.
+.TP
+\f4\-t\f1
+Print a table of contents of the input.
+No files are created
+(mutually exclusive with
+\f4\-V\f1).
+.TP
+\f4\-u\f1
+Copy
+unconditionally
+(normally, an older file will not replace a newer file with the same name).
+.TP
+\f4\-v\f1
+Verbose: causes a list of file names to be printed.
+When used with the
+\f4\-t\f1
+option, the table of contents looks like the output of an
+\f4ls \-l\f1
+command [see \f4ls\f1(1)].
+.TP
+\f4\-V\f1
+Special Verbose:
+print a dot for each file read or written.
+Useful to assure the user that \f4cpio\f1 is working without
+printing out all file names.
+.TP
+\f4\-K\f1
+1K Blocks:
+force the blocking size to be a multiple of 1K.
+.TP
+\f4\-T\f1
+Truncate:
+truncate long file names to 14 characters.
+.TP
+\f4\-6\f1
+Process a \s-1UNIX\s+1 System Sixth Edition archive format file.
+Use only with the \f4\-i\f1 option
+(mutually exclusive with \f4\-c\f1 and \f4\-H\f1)).
+.P
+NOTE: 
+\f4cpio\fP assumes four-byte words.
+.br
+.ne5
+.PP
+If, when writing to a character device
+\f1(\f4\-o\f1)
+or reading from a character device
+\f1(\f4\-i\f1),
+\f4cpio\fP reaches the end of a medium 
+(such as the end of a diskette),
+and the \f4\-O\f1 and \f4\-I\f1 options aren't used,
+\f4cpio\fP will print the following message:
+.PP
+.RS
+.ft 4
+If you want to go on, type device/file name when ready.
+.ft 1
+.RE
+.PP
+To continue, you must replace the medium and type the character
+special device name
+(\f4/dev/rdsk/f0\f1
+for example) and
+press \s-1RETURN\s+1.
+You may want to continue by directing \f4cpio\fP to
+use a different device.
+For example, if you have two floppy drives 
+you may want to switch between them 
+so \f4cpio\fP can proceed while you are changing the floppies.
+(Simply pressing \s-1RETURN\s+1
+causes the \f4cpio\fP process to exit.)
+.SH EXAMPLES
+The following examples show three uses of \f4cpio\fP.
+.PP
+When standard input is directed through a pipe to  
+\f4cpio \-o\f1,
+it groups the files so they can be directed (>) to a single file
+(\f4../newfile\f1).
+The \f4\-c\f1 option insures that 
+the file will be portable to other machines
+(as would the \f4\-H\f1 option).
+Instead of \f4ls\fP(1),
+you could use
+\f4find\fP(1),
+\f4echo\fP(1),
+\f4cat\fP(1),
+and so on, to pipe a list of names to \f4cpio\fP.
+You could direct the output to a device instead of a file.
+.PP
+.RS
+\f4ls \|\(bv \|cpio \|\-oc \|> ../newfile\f1
+.RE
+.PP
+\f4cpio \-i\f1
+uses the output file of 
+\f4cpio \-o\f1
+(directed through a pipe with \f4cat\f1 in the example below), extracts those 
+files that match
+the patterns
+\f1(\f4memo/a1\f1,
+\f4memo/b\(**\f1),
+creates directories below the current directory as needed
+\f1(\f4\-d\f1
+option), and places the files in the appropriate directories.
+The \f4\-c\f1 option is used if the input file was created with
+a portable header.
+If no patterns were given, all files from
+\f4newfile\f1
+would be placed in the directory.
+.PP
+.RS
+\f4cat newfile \|\(bv \|cpio \|\-icd "memo/a1" "memo/b\(**"\f1
+.RE
+.PP
+\f4cpio \-p\f1 takes the file names piped to it and copies 
+or links (\f4\-l\f1 option)
+those files to another directory (\f4newdir\f1 in the example below).
+The
+\f4\-d\f1
+option
+says to create directories as needed.
+The
+\f4\-m\f1
+option says retain the
+modification time.
+(It is important to use the
+\f4\-depth \f1
+option of
+\f4find\fP(1)
+to generate path names for
+\f4cpio\fP.
+This eliminates problems 
+\f4cpio\fP could have trying to create files under read-only directories.)
+The destination directory, \f4newdir\f1, must exist.
+.PP
+.RS
+\f4find . \-depth \-print \|\(bv \|cpio \|\-pdlmv \|newdir\f1
+.RE
+.PP
+Note that when you use \f4cpio\fP in conjunction with \f4find\fP,
+if you use the \f4\-L\f1 option with \f4cpio\fP
+then you must use the \f4\-follow\f1 option with \f4find\fP
+and vice versa.
+Otherwise there will be undesirable results.
+.\"	Commented out for 3B 2 manual-->Inapplicable.
+.\".PP
+.\"NOTE: For multi-reel archives, dismount the old volume, mount the
+.\"new one, and continue to the next tape by typing
+.\"the name of the next device (probably the same as the first reel).
+.\"To stop, simply type a carriage return, and cpio will end.
+.SH SEE ALSO
+\f4ar\fP(1), \f4cat\fP(1), \f4echo\fP(1), \f4find\fP(1), \f4ls\fP(1), \f4tar\fP(1)
+.br
+\f4archives\fP(4)
+in the \f2System Administrator's Reference Manual\f1
+.SH NOTES
+An archive created with the \f4\-c\f1 option on a System V Release 4
+system cannot be read on System V Release 3.2 systems, or earlier.
+Use the \f4\-H odc\f1 option,
+which is equivalent to the header created by the \f4\-c\f1 option
+in earlier System V releases, if the \f4cpio\f1 image will be read
+on a pre-System V Release 4 system.
+.PP
+System V Releases prior to Release 4 do not recognize symbolic links.
+The result of copying in a symbolic link on an older release
+will be a regular file that contains the pathname of the
+referenced file.
+.PP
+Path names are restricted to 256 characters for the binary (the default)
+and\p
+.br
+\f4\-H odc\f1
+header formats.
+Otherwise, path names are restricted to 1024 characters.
+.PP
+Only the super-user can copy special files.
+.PP
+Blocks are reported in 512-byte quantities.
+.PP
+If a file has \f4000\fP permissions, 
+contains more than 0 characters of data,
+and the user is not root, 
+the file will not be saved or restored.
+.P
+When attempting to redirect \f4stdin\fP or \f4stdout\fP from or to a
+character or block special device (for example, \f4/dev/diskette\fP),
+an error message ``\f4Cannot read from device\fP''
+or ``\f4Cannot write to device\fP,''
+does not necessarily indicate that a true I/O error has occurred.
+More likely, the user does not have access to that device,
+and should request that the system administrator allocate
+that device for the user [see \f4admalloc\fP(1M)].
+.P
+Prior to Release 4, the default buffer size was 512 bytes.
+Beginning with Release 4,
+the default buffer size is optimized for the device and
+using the \f4-C\fP option to specify a different block size may cause
+\f4cpio\fP to fail.
+Therefore, care must be taken when choosing the block size.
+For example, for floppy disks,
+\f2bufsize\f1 must be a multiple of 512 (one floppy sector).
+To avoid wasting space on streaming tape drives, use the
+\f4-C\fP option with an appropriate block size.
+.\"	@(#)cpio.1	6.3 of 9/2/83
+.Ee

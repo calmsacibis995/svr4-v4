@@ -1,0 +1,40 @@
+'\"macro stdmacro
+.if n .pH g2.setpgrp @(#)setpgrp	40.16 of 1/3/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} setpgrp 2 "" "\&"
+.if \nX=1 .ds x} setpgrp 2 ""
+.if \nX=2 .ds x} setpgrp 2 "" "\&"
+.if \nX=3 .ds x} setpgrp "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4setpgrp\f1 \- set process group \s-1ID\s+1
+.SH SYNOPSIS
+\f4#include <sys/types.h>\f1
+.br
+\f4#include <unistd.h>\f1
+.PP
+\f4pid_t setpgrp (void);\f1
+.SH DESCRIPTION
+If the calling process is not already a session leader,
+\f4setpgrp\fP
+sets the process group
+.SM ID
+and session
+.SM ID
+of the calling process to the process
+.SM ID
+of the calling process, and releases the calling process's controlling terminal.
+.SH SEE ALSO
+\f4intro\fP(2),
+\f4exec\fP(2), \f4fork\fP(2), \f4getpid\fP(2),
+\f4kill\fP(2), \f4setsid\fP(2), \f4signal\fP(2).
+.SH DIAGNOSTICS
+\f4setpgrp\fP
+returns the value of the new process group
+.SM ID\*S.
+.SH NOTES
+\f4setpgrp\fP will be phased out in favor of the \f4setsid\fP(2) function.
+.\"	@(#)setpgrp.2	6.2 of 9/6/83
+.Ee

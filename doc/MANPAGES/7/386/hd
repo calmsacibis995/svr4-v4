@@ -1,0 +1,490 @@
+.if n .pH g7.hd @(#)hd	40.10 of 1/3/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.dsT \t
+.nr X
+.if \nX=0 .ds x} hd 7 "" "\&"
+.if \nX=1 .ds x} hd 7 ""
+.if \nX=2 .ds x} hd 7 "" "\&"
+.if \nX=3 .ds x} hd "" "" "\&"
+.TH \*(x} "" "386 Computer Only"
+.SH NAME
+\f4hd\f1 \- hard (fixed) disk
+.SH DESCRIPTION
+The hard disk driver supports 
+handle up to two hard disk drives and 
+two diskette drives.  The drive characteristics are read from the
+CMOS RAM at boot time; these characteristics are defined during
+system setup by using the
+.I setup
+program on the AT Diagnostics diskette.  The driver determines the layout of
+the disk dynamically, as described below.  It provides block and character
+(raw) access to the individual partitions of the disk, as well as the entire
+physical disk.
+.PP
+The minor device number of the device being accessed determines how the drive
+is treated:  the low-order 4 bits determine the partition (0\(em15), and the
+fifth bit determines the drive number (0 or 1).
+Partition 0 represents the entire UNIX system partition
+(as defined by the \f2fdisk\f1 table).
+Other partitions are defined by information in the
+volume table of contents (VTOC).
+When accessing
+partition 0, other partition boundaries are ignored, and no bad block mapping
+occurs.  Thus, the user must take care when using the disk in this way.
+.PP
+The full fixed disk is partitioned at two levels: first, sections of the disk
+to be used by different operating systems are described by the
+\f4fdisk\f1
+table
+contained in the first block of the disk.  Second, the UNIX system
+sections of the
+disk are further partitioned according to information contained in the VTOC,
+which may be located in any block.  [The VTOC is currently in the
+30th sector of the UNIX system partition.]
+block on the second track of the disk; see
+\f4mkpart\f1 (1M).]
+The VTOC also contains information about the non-UNIX system partitions described
+in the
+\f4fdisk\f1
+table.
+When the disk device is opened, the VTOC is read by the driver and is used to
+fill out its tables of logical disks, assigned by minor device number.
+.PP
+Each partition in the
+\f4fdisk\f1
+table is specified as to its type (e.g., DOS,
+UNIX system, or other).  A partition (file system) is usable by the UNIX system only if its
+type is correct (e.g., a DOS partition is not usable by the UNIX system, except as a
+.I raw,
+non-file system device.)
+.PP
+On each drive, sector 0 contains the primary bootstrap and the
+\f4fdisk\f1
+table.
+The first 29 sectors of the UNIX system partition contain the
+first-stage and second-stage bootstraps.  The 30th sector
+contains the pdinfo and VTOC table.  Sectors 31-34 contain
+the bad block and track mapping tables.  As many sectors as
+needed, beginning with the 35th sector, are used for
+alternate tracks and sectors.
+.PP
+The
+\f4fdisk\f1
+table indicates which of the partitions is the 'active', or
+bootable, partition.  When the machine is booted, the primary boot code
+looks in the
+\f4fdisk\f1
+table for the active partition and jumps to
+sector 0 of that partition to find the first-stage bootstrap.  If the
+first-stage bootstrap is over one sector in length, it is the
+responsibility
+of the first-stage bootstrap to understand this.  Note that both the first
+cylinder (containing the
+\f4fdisk\f1
+table, first-stage bootstrap, VTOC, and
+alternate sectors) and the first track of the active partition (containing
+the first-stage bootstrap) can only be accessed using partition 0, since
+these tracks are normally not considered part of any other
+partition in the VTOC.
+.PP
+Bad sectors are mapped out by the driver as follows:  The bad block
+map is read by the driver when the drive is first opened.  The map is an
+array of pairs of numbers, representing a bad sector and its assigned
+alternate, each entry being an absolute sector number, starting with 0 for
+the first sector of the disk.
+.PP
+Before each I/O operation, the driver looks through the map to determine if
+any sector in the requested transfer is bad.  If there is a bad sector within
+the request, all the I/O up to the bad sector is done, then the bad sector is
+remapped, and finally the I/O following the bad sector is done.
+.PP
+Note that this scheme requires running
+\f4mkpart\f1 (1M)
+before bringing up the system from the hard disk for the first time.  The
+\f4mkpart\f1
+program will attempt to optionally write and then read every sector on the
+disk, looking for sectors where this operation fails.  All bad sectors will
+be placed in alternates map, which is built by
+\f4mkpart\f1
+and installed on the disk at the same time that the VTOC is installed.  If
+this verification pass is not done, however, the system will still work.
+Since the driver will notice that the table is empty, it will not attempt to
+map bad sectors.
+.PP
+In the event that a disk develops bad blocks once the system is running,
+\f4mkpart\f1
+may run (with the
+\f4-A\f1
+option) to add the new bad blocks to the map.  However,
+the user may have to restore the file system from the last full dump,
+depending on where the bad block occurred.
+.SS Ioctl Calls
+.TP
+\f4V_CONFIG\f1
+This call is used by
+\f4mkpart\f1
+to reconfigure the drive, so that the drive configuration matches the
+parameters specified in the
+\f4/etc/partitions\f1
+file.  This is useful because the disk type read from the CMOS
+RAM is limited to one of 23 types defined in a table in the system BIOS.  If
+the disk installed on the system does not exactly match one of the table
+entries, the machine is set up using the closest table entry, and
+\f4mkpart\f1
+will tell the driver the true disk parameters (as defined by the
+\f4/etc/partitions\f1
+file) by using the \f4V_CONFIG\f1 \f4ioctl\f1.  The argument to the \f4ioctl\f1 is the address
+of one of the following structures, defined in
+\f4<sys/vtoc.h>\f1,
+containing the
+new configuration parameters:
+.nf
+.ta 4m 8m 12m 16m 20m 24m 28m 32m 36m 40m 44m 48m 52m 56m 60m
+.IP
+\f4
+union io_arg {
+\*Tstruct {
+\*T\*Tushort\*Tncyl;\*T/* number of cylinders */
+\*T\*Tunchar\*Tnhead;\*T/* heads/cylinder */
+\*T\*Tunchar\*Tnsec;\*T/* sectors/track */
+\*T\*Tushort\*Tsecsiz;\*T/* bytes/sector */
+\*T} ia_cd;
+}
+\f1
+.fi
+.DT
+.IP
+Note that it is not possible to change the sector size on the hard disk, and
+that an attempt to do so will result in the \f4ioctl\f1 failing,  with
+\f4errno\f1
+set to \f4EINVAL\f1.
+.TP
+\f4V_REMOUNT\f1
+This call is used to force the driver to re-read the VTOC on the next open
+of the drive.   It will fail if any partition other than partition 0 is
+currently open, since changing the partition table information is potentially
+disastrous for a process using the partition.  This is used by
+\f4mkpart\f1
+when it changes the VTOC, so that the driver will update its internal tables.
+.TP
+.\" \f4V_ADDBAD\f1
+.\" This call is used to tell the driver about a bad sector.  If the new bad
+.\" sector is an assigned alternate, the \f4ioctl\f1 fails with
+.\" \f4errno\f1
+.\" set to \f4EINVAL\f1; if
+.\" it is an unassigned alternate, it is removed from the alternates map; if
+.\" neither of these is true, it is assigned an alternate and added to the map.
+.\" The argument to the \f4ioctl\f1 is the address of one of the following structures,
+.\" defined in
+.\" \f4<sys/vtoc.h>\f1,
+.\" with the first two fields filled in; the third field
+.\" is filled in by the \f4ioctl\f1 and returned to the user:
+.\" .nf
+.\" .ta 4m 8m 12m 16m 20m 24m 28m 32m 36m 40m 44m 48m 52m 56m 60m
+.\" .IP
+.\" \f4
+.\" union io_arg {
+.\" \*Tstruct {
+.\" \*T\*Tushort\*Tflags;\*T\*T/* currently not used */
+.\" \*T\*Tdaddr_t\*Tbad_sector;\*T/* bad sector number */
+.\" \*T\*Tdaddr_t\*Tnew_sector;\*T/* RETURNED alternate
+.\" \*T\*T\*T\*T		assigned */
+.\" \*T} ia_abs;
+.\" }
+.\" \f1
+.\" .fi
+.\" .DT
+.TP
+\f4V_GETPARMS\f1
+This call is used to get information about the current drive configuration.
+The argument to the \f4ioctl\f1 is the address of one of the following structures,
+defined in
+\f4<sys/vtoc.h>\f1,
+which will be filled in by the \f4ioctl\f1:
+.nf
+.ta 4m 8m 12m 16m 20m 24m 28m 32m 36m 40m 44m 48m 52m 56m 60m
+.IP
+\f4
+struct disk_parms {
+\*Tchar\*Tdp_type;\*T/* Disk type (see below) */
+\*Tunchar\*Tdp_heads;\*T/* Number of heads */
+\*Tushort\*Tdp_cyls;\*T/* Number of cylinders */
+\*Tunchar\*Tdp_sectors;\*T/* Number of sectors/track */
+\*Tushort\*Tdp_secsiz;\*T/* Number of bytes/sector */
+\*Tushort\*Tdp_ptag;\*T/* Partition tag */
+\*Tushort\*Tdp_pflag;\*T/* Partition flag */
+\*Tdaddr_t\*Tdp_pstartsec;\*T/* Starting absolute sector
+\*T\*T			number */
+\*Tdaddr_t\*Tdp_pnumsec;\*T/* Number of sectors */
+}
+
+/* Disk types */
+#define\*TDPT_WINI\*T1\*T/* Winchester disk */
+#define\*TDPT_FLOPPY\*T2\*T/* Floppy */
+#define\*TDPT_OTHER\*T3\*T/* Other type of disk */
+#define\*TDPT_NOTDISK\*T0\*T/* Not a disk device */
+
+/* Partition tag */
+#define\*TV_BOOT\*T\*T1\*T/* bootable partition */
+#define\*TV_ROOT\*T\*T2\*T/* root filesystem */
+#define\*TV_SWAP\*T\*T3\*T/* swap filesystem */
+#define\*TV_USR\*T\*T4\*T/* usr filesystem */
+#define\*TV_BACKUP\*T5\*T/* entire disk */
+#define\*TV_ALTS\*T\*T6\*T/* alternate sectors */
+#define\*TV_OTHER\*T\*T7\*T/* non-UNIX system partition */
+
+/* Partition flag */
+#define\*TV_UNMNT\*T\*T0x001\*T/* unmountable partition */
+#define\*TV_RONLY\*T\*T0x010\*T/* read only partition */
+#define\*TV_OPEN\*T\*T0x100\*T/* partition open */
+#define\*TV_VALID\*T\*T0x200\*T/* partition valid to use */
+\f1
+.fi
+.DT
+.IP
+For the hard disk driver, the disk type will always be DPT_WINI.  Since the
+structure returned by \f4V_GETPARMS\f1 is the same for both the diskette and hard
+disk drivers, programs may be written to understand either one.
+.TP
+\f4V_FORMAT\f1
+This call is used to format tracks on a disk.  The argument passed to the
+\f4ioctl\f1 is the address of one of the following structures, defined in
+\f4<sys/vtoc.h>\f1,
+containing the starting track, number of tracks, and
+interleave factor:
+.nf
+.ta 4m 8m 12m 16m 20m 24m 28m 32m 36m 40m 44m 48m 52m 56m 60m
+.IP
+\f4
+union io_arg {
+\*Tstruct {
+\*T\*Tushort\*Tstart_trk;\*T/* first track */
+\*T\*Tushort\*Tnum_trks;\*T/* number of tracks
+\*T\*T\*T\*T\*T\*Tto format */
+\*T\*Tushort\*Tintlv;\*T\*T/* interleave factor */
+\*T} ia_fmt;
+}
+\f1
+.fi
+.DT
+.IP
+Note that the file descriptor argument to the \f4ioctl\f1 must refer to the
+character (raw) special device for the desired drive, and the file must have
+been opened in exclusive mode (i.e., O_EXCL).
+.TP
+\f4GETALTTBL\f1
+.IP
+This call returns the four pieces of alternates information. The four
+pieces are the sanity value, the version number, the bad track table,
+and the bad sector.  The alt_info structure is defined in
+\f4<sys/alttbl.h>\f1.
+.br
+.ne10
+.nf
+.ta 4m 8m 12m 16m 20m
+\f4
+struct alt_info {   /* table length should be multiple of 512 */
+	long    alt_sanity;       /* to validate correctness */
+	ushort  alt_version;      /* to corroborate vintage */
+	ushort  alt_pad;          /* padding for alignment */
+	struct alt_table alt_trk; /* bad track table */
+	struct alt_table alt_sec; /* bad sector table */
+}; \f1
+.fi
+.sp .5
+.TP
+\f4V_VERIFY\f1
+.IP
+This call has a dual purpose. Its primary role is to do 
+a read verify of any portion of the disk. The desired start sector
+is placed in abs_sec, and the desired number of sectors is placed
+in num_sec. If an error occurs it is placed in err_code. The other
+purpose of the routine is to do timings of the read verify. This task
+is accomplised by setting the time_flg. The time required to do the
+verify is then placed in deltatime. The vfy_io structure is defined in
+\f4<sys/vtoc.h>\f1.
+		     
+.nf
+.ta 4m 8m 12m 16m 20m
+\f4
+union	vfy_io	{
+	struct	{
+		daddr_t abs_sec;
+			/* absolute sector number */
+		ushort  num_sec;
+			/* number of sectors to verify   */
+		ushort  time_flg;
+			/* flag to time the operation */
+	}vfy_in;
+	struct	{
+		time_t  deltatime;
+			/* duration of operation */
+		ushort  err_code;
+			/* reason for failure    */
+
+	}vfy_out;
+};   \f1
+.fi
+.TP
+\f4V_PDLOC\f1 
+.IP
+This call simply returns the logical sector address of the PDinfo structure.
+The value is returned in pdloc.
+.nf
+.ta 4m 8m 12m 16m 20m
+.sp .5
+     \f4unsigned long       pdloc; \f1
+.sp .5
+.fi
+.TP
+\f4V_RDABS\f1
+.IP
+This call is used as a method of reading any sector on the hard disk.
+Only users with root privilege can freely access any sector. Users who
+do not have root privilege can access the partition table (sector 0) or
+the boot slice (to allow access to the vtoc). The logical sector address
+is placed abs_sec. The 512 bytes of sector information are returned in
+abs_buf. The absio structure is defined in \f4<sys/vtoc.h>\f1.
+.nf
+.ta 4m 8m 12m 16m 20m
+.IP
+\f4
+struct absio {
+	daddr_t	abs_sec;
+		/* Absolute sector number (from 0) */
+	char	*abs_buf;
+		/* Sector buffer */
+};      \f1
+.fi
+.TP
+\f4V_WRABS\f1
+.IP
+This call is used to write 512 bytes to any sector on the disk. Only
+users with root privilege can make use of the call. The logical sector
+location to be written to is placed in abs_sec. The 512 bytes of data
+to be written are placed in abs_buf. The absio structure is defined in
+\f4<sys/vtoc.h>\f1.
+.nf
+.ta 4m 8m 12m 16m 20m
+\f4
+struct absio {
+	daddr_t	abs_sec;
+		/* Absolute sector number (from 0) */
+	char	*abs_buf;
+		/* Sector buffer */
+};   \f1
+.fi
+.SS Partitions
+.PP
+The
+\f4fdisk\f1
+table allows partitions to be assigned at cylinder boundaries;
+however, the VTOC will allow partitions to start on track boundaries.  This
+is used in the bootable UNIX system partition to make the first track (containing
+the bootstrap code) not be an actual part of the partition.  The
+\f4fdisk\f1
+table allows at most four partitions on a fixed disk, but the VTOC allows the
+UNIX system portion to be divided into at most 16 partitions.  Each partition is
+identified by a minor device number; the mapping from partition to minor
+device number is made at the time the disk is first accessed, and is
+determined by the
+\f4/etc/partitions\f1
+file.  This mapping will remain the same until the
+\f4/etc/partitions\f1
+file is changed and the
+\f4mkpart\f1
+program rerun.
+.br
+.ne 5v
+.PP
+Attempts to open file systems for which there are no partitions will fail
+(non-existent device).  Likewise, attempts to mount [see
+\f4 mount\f1 (8)]
+partitions that do not
+contain UNIX file systems will fail.
+.SH FILES
+\f4/dev/dsk/0s0, \.\.\.\f1
+.br
+\f4/dev/rdsk/0s0, \.\.\\f1.
+.SH SEE ALSO
+\f4fdisk\f1(1M),
+\f4mkpart\f1(1M),
+\f4ioctl\f1(2),
+\f4fs\f1(4),
+\f4fd\f1(7).
+.SH DIAGNOSTICS
+The driver will retry failed transfers up to ten times depending on the error
+type.  Certain errors are not retried.  The driver will display an
+appropriate message upon encountering an error during the transfer.  Error
+types that are retried are indicated in the table below.  Errors from the
+fixed disk controller are displayed as follows:
+.nf
+.IP
+HD error: drive \f2n\f1, cyl \f2c\f1, head \f2h\f1, sector \f2s\f1: \f2drive error message\f1
+HD controller: \f2controller error message\f1
+.fi
+.PP
+The first message occurs on an error after a transfer has begun, where
+\f2n\f1 is the drive where the error occurred,
+\f2c\f1 is the cylinder, \f2h\f1
+is the head, and \f2s\f1 is the sector being read or written.  The
+.I drive error message
+is one of the messages appearing in the following list:
+.TP
+\f4Track 0 not found\f1
+The disk may not be formatted properly.
+.TP
+\f4Uncorrectable data read error\f1
+The controller detected a CRC error when attempting to read the requested
+block.
+.TP
+\f4Data address mark not found\f1
+The disk may not be formatted properly.
+.TP
+\f4Sector not found\f1
+The disk may not be formatted properly.
+.TP
+\f4Command aborted\f1
+The controller did not complete execution of a command.
+.TP
+\f4Bad track flag detected\f1
+The block requested has been marked bad, but does not appear in the bad block
+map.
+.PP
+The second message occurs when there is a controller error during the setup
+for, or actual transfer of, a block.
+The controller error message
+is one of the messages appearing in the following list:
+.TP 1.15i
+\f4command aborted\f1
+The controller failed to complete the requested command.
+.TP 1.15i
+\f4write fault\f1
+The controller detected some error on the hard disk drive.
+.TP 1.15i
+\f4stays busy\f1
+During an attempt to access the controller, a timeout occurred.
+.ne 5
+.PP
+There is one additional message which indicates a
+controller-corrected error occurred:
+.sp .5
+.nf
+\f4NOTE: Soft read error corrected by ECC algorithm: unit n, sector s\f1
+.fi
+.PP
+where \f2n\f1 is the drive where the error occurred,
+and \f2s\f1 is the sector
+being read.  This warning indicates that the controller's error-correction
+algorithm successfully recovered from an error.  This may be a symptom of a
+sector going bad.  If this message appears several times for the same sector,
+that sector should probably be marked bad.
+.SH NOTES
+The VTOC and alternate sector mapping scheme requires that no bad sectors
+occur in cylinder 0.
+The \f4mkpart\f1
+program will issue a fatal error message when it attempts to configure a
+drive where there are bad sectors in the first cylinder.  Also, since the
+second-stage bootstrap must be installed on the first track of the bootable
+partition, this track must also contain no bad sectors.

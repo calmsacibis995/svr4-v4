@@ -1,0 +1,37 @@
+'\"macro stdmacro
+.if n .pH g4.su @(#)su	40.5 of 1/3/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+'\"macro stdmacro
+.if n .pH g1a.su @(#)su	30.4 of 12/25/85
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.if \nX=0 .ds x} su 4 "" "\&"
+.if \nX=1 .ds x} su 4 ""
+.if \nX=2 .ds x} su 4 "" "\&"
+.if \nX=3 .ds x} su 4 "" "" "\&"
+.nr X
+.TH \*(x} "" "386 Computer Only"
+.SH NAME
+\f4su\f1
+.SH DESCRIPTION
+Options for the \f4su\f1 program can be set or changed with keywords in
+\f4/etc/default/su\f1.  The following keywords are recognized by \f4su\f1.
+.TP
+\f4SULOG\fP=\f2filename\fP
+Indicates where \f4su\f1 attempts (successful or unsuccessful) are logged.
+.TP
+\f4CONSOLE\fP=\f2device\fP
+If the user is executing a \f4su\f1 to root on a device that is not
+specified by the CONSOLE, a "printf" will appear on the CONSOLE to inform the
+user that someone is attempting to \f4su\f1 to \f4root\f1.
+.TP
+\f4PATH\fP=\f2PATH_STUFF\fP
+The user's path will be set to this string when attempting to \f2su\f1 to non-root. 
+The default is ":\f4/bin:/usr/bin\f1".
+.TP
+\f4SUPATH\fP=\f2PATH_STUFF\fP
+This is the user's path when trying to \f4su\f1 to root.  The default is
+":\f4/bin:/etc:/usr/bin\f1".
+.SH FILES
+\f4/etc/default/su\f1
+.Ee

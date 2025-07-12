@@ -1,0 +1,45 @@
+'\"macro stdmacro
+.if n .pH g1a.rmnttry @(#)rmnttry	40.7 of 1/3/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} rmnttry 1M "Remote File Sharing Utilities" "\&"
+.if \nX=1 .ds x} rmnttry 1M "Remote File Sharing Utilities"
+.if \nX=2 .ds x} rmnttry 1M "" "\&"
+.if \nX=3 .ds x} rmnttry "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4rmnttry\f1 \- attempt to mount queued remote resources
+.SH SYNOPSIS
+\f4/etc/rfs/rmnttry\f1 [\f2resource\f1 ...]
+.SH DESCRIPTION
+\f4rmnttry\f1 sequences through the pending mount requests stored
+in \f4/etc/rfs/rmnttab\f1, trying to mount each resource.  If
+a mount succeeds, the resource entry is removed from the
+\f4/etc/rfs/rmnttab\f1 file.
+.P
+If one or more resource names are supplied, mounts are attempted
+only for those resources, rather than for all pending mounts.
+Mounts are not attempted for resources not present in the
+\f4/etc/rfs/rmnttab\f1 file (see \f4rmount\f1\s-1(1M)\s+1).
+If a mount invoked from \f4rmnttry\f1 takes over 3 minutes to
+complete, \f4rmnttry\f1 aborts the mount and issues a warning
+message.
+.P
+\f4rmnttry\f1 is typically invoked from a cron entry in \f4/var/spool/cron/crontabs/root\f1
+to attempt mounting queued resources at periodic intervals.  The default
+strategy is to attempt mounts at 15 minute intervals.  The cron entry for this
+is:
+.SP
+.IP "" 10
+\f510,25,40,55 * * * * /etc/rfs/rmnttry >/dev/null\f1
+.RE
+.SH FILES
+\f5/etc/rfs/rmnttab\f1	pending mount requests
+.SH "SEE ALSO"
+\f4mount\fP(1M), \f4rmount\fP(1M), \f4rumount\fP(1M), \f4mnttab\fP(4).
+.br
+\f4crontab\fP(1) in the \f2User's Reference Manual\f1.
+.SH DIAGNOSTICS
+An exit code of 0 is returned if all requested mounts succeeded, 1 is
+returned if one or more mounts failed, and 2 is returned for bad usage.

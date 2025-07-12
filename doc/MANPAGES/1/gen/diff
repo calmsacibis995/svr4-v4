@@ -1,0 +1,310 @@
+'\"macro stdmacro
+.if n .pH g1.diff @(#)diff	40.11.1.1 of 1/3/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} diff 1 "Essential Utilities" "\&"
+.if \nX=1 .ds x} diff 1 "Essential Utilities"
+.if \nX=2 .ds x} diff 1 "" "\&"
+.if \nX=3 .ds x} diff "" "" "\&"
+.TH \*(x}
+.\" @(#)diff.1 1.4 88/10/17 SMI;
+.\" Copyright (c) 1988 Sun Microsystems, Inc - All Rights Reserved.
+.SH NAME
+\f4diff\f1 \- differential file comparator
+.SH SYNOPSIS
+\f4diff\f1
+[
+\f4\-bitw\f1
+]
+[
+\f4\-c\f1\||\|\f4\-e\f1\||\|\f4\-f\f1
+\f1|\|\f4\-h\f1\||\|\f4\-n\f1
+]
+.I "filename1 filename2"
+.br
+\f4diff\f1
+[
+\f4\-bitw\f1
+]
+[
+\f4\-C\f2 number\f1
+]
+.I "filename1 filename2"
+.br
+\f4diff\f1
+[
+\f4\-bitw\f1
+]
+[
+\f4\-D\f2 string\f1
+]
+.I "filename1 filename2"
+.br
+\f4diff\f1
+[
+\f4\-bitw\f1
+]
+[
+\f4\-c\f1\||\|\f4\-e\f1\||
+\f4\-f\f1\||\|\f4\-h\f1\||\|\f4\-n\|\f1
+]
+\f1[\f4\-l\f1]
+\f1[\f4\-r\f1]
+\f1[\f4\-s\f1]
+[
+\f4\-S\f2 name\f1
+] 
+.I directory1
+.I directory2
+.SH DESCRIPTION
+\f4diff\fP
+tells what lines must be changed in two files to bring them
+into agreement.
+If
+.I filename1\^
+.RI ( filename2 )
+is
+\f4\-\f1,
+the standard input is used.
+If
+.I filename1\^
+.RI ( filename2 )
+is a directory, then a file in that directory with the name
+.I filename2\^
+.RI ( filename1 )
+is used.
+The normal output contains lines of these forms:
+.IP "" 5
+.I n1\^
+\f4a\f1
+.I n3,n4\^
+.br
+.I n1,n2\^
+\f4d\f1
+.I n3\^
+.br
+.I n1,n2\^
+\f4c\f1
+.I n3,n4\^
+.PP
+These lines resemble
+\f4ed\fP
+commands to convert
+.I filename1\^
+into
+.IR filename2 .
+The numbers after the letters pertain to
+.IR filename2 .
+In fact, by exchanging
+\f4a\f1
+for
+\f4d\f1
+and reading backward one may ascertain equally how to convert 
+.I filename2\^
+into
+.IR filename1 .
+As in 
+\f4ed\fP,
+identical pairs, where
+.I n1\^
+=
+.I n2\^
+or
+.I n3\^
+=
+.IR n4 ,
+are abbreviated as a single number.
+.PP
+Following each of these lines come all the lines that are
+affected in the first file flagged by \f4<\fP, 
+then all the lines that are affected in the second file
+flagged by \f4>\fP.
+.TP
+\f4\-b\f1
+Ignores trailing blanks (spaces and tabs) and treats 
+other strings of blanks as equivalent.
+.TP
+\f4\-i\f1
+Ignores the case of letters; for example,
+\f1`\f4A\f1'
+will compare equal to
+\f1`\f4a\f1'.
+.TP
+\f4\-t\f1
+Expands
+.SM TAB
+characters in output lines.
+Normal or
+\f4\-c\f1
+output adds character(s) to the
+front of each line that may adversely affect the indentation
+of the original source lines and make the output lines difficult
+to interpret.
+This option will preserve the original source's indentation.
+.TP
+\f4\-w\f1
+Ignores all blanks (\s-1SPACE\s+1
+and
+.SM TAB
+characters)
+and treats all other strings of blanks as
+equivalent;
+for example,
+\f1`\f4if\ (\ a\ =\|=\ b\ )\f1'
+will compare equal to
+\f1`\f4if(a=\|=b)\f1'.
+.PP
+The following options are mutually exclusive:
+.TP
+\f4\-c\f1
+Produces a listing of differences
+with three lines of context.
+With this option output format is modified slightly:
+output begins with identification of the files
+involved and their creation dates, then each
+change is separated by a line with a dozen 
+\f4*\f1's.
+The lines removed from
+.I filename1
+are marked with '\(em'; those added to
+.I filename2
+are marked '\|+\|'.
+Lines that are changed from one file to the
+other are marked in both files with '\|!\|'.
+.TP
+\f4\-C\f2 number\f1
+Produces a listing of differences identical
+to that produced by
+\f4\-c\f1
+with
+.I number
+lines of context.
+.TP
+\f4\-e\f1
+Produces a script of
+.IR a,
+.IR c ,
+and 
+.I d\^
+commands for the editor
+\f4ed\fP,
+which will recreate
+.I filename2\^
+from
+.IR filename1 .
+In connection with
+\f4\-e\f1,
+the following shell program may help maintain
+multiple versions of a file.
+Only an ancestral file ($1) and a chain of 
+version-to-version
+\f4ed\fP
+scripts ($2,$3,...) made by
+\f4diff\fP
+need be on hand.
+A ``latest version'' appears on
+the standard output.
+.IP "" 5
+\f4(shift; cat $\(**; echo \(fm1,$p\(fm) \(bv ed \- $1\f1
+.PP
+Except in rare circumstances,
+\f4diff\fP
+finds a smallest sufficient set of file
+differences.
+.TP
+\f4\-f\f1
+Produces a similar script,
+not useful with
+\f4ed\fP,
+in the opposite order.
+.TP
+\f4\-h\f1
+Does a fast, half-hearted job.
+It works only when changed stretches are short
+and well separated,
+but does work on files of unlimited length.
+Options 
+\f4\-e\f1
+and
+\f4\-f\f1
+are unavailable with
+\f4\-h\f1.
+.TP
+\f4\-n\f1
+Produces a script similar to
+\f4\-e\f1,
+but in the opposite order and with a count
+of changed lines on each insert or delete
+command.
+.TP
+\f4\-D\f2 string\f1
+Creates a merged version of
+.I filename1
+and
+.I filename2
+with C preprocessor controls
+included so that a compilation of the result without
+defining
+.I string
+is equivalent to compiling
+.IR filename1 ,
+while defining
+.I string
+will yield
+.IR filename2 .
+.PP
+The following options are used for
+comparing directories:
+.TP
+\f4\-l\f1
+Produce output in long format.
+Before the \f4diff\f1, each text file
+is piped through
+\f4pr\f1(1)
+to paginate it.
+Other differences
+are remembered and summarized after all text file
+differences are reported.
+.TP
+\f4\-r\f1
+Applies
+\f4diff\f1
+recursively to common subdirectories
+encountered.
+.TP
+\f4\-s\f1
+Reports files that are the
+identical; these would not otherwise
+be mentioned.
+.TP
+\f4\-S\f2 name\f1
+Starts a directory
+\f4diff\f1
+in the middle, beginning with the
+file
+.IR name .
+.SH FILES
+\f4/tmp/d?????\f1
+.br
+\f4/usr/lib/diffh for 
+\f4\-h\f1
+.br
+\f4/usr/bin/pr\f1
+.SH "SEE ALSO"
+\f4bdiff\fP(1), \f4cmp\fP(1), \f4comm\fP(1), \f4ed\fP(1), \f4pr\fP(1).
+.SH DIAGNOSTICS
+Exit status is 0 for no differences, 1 for some differences, 2 for trouble.
+.SH NOTES
+Editing scripts produced under the
+\f4\-e\f1 or
+\f4\-f\f1 option are naive about
+creating lines consisting of a single period (\f4.\fP).
+.P
+\f4Missing newline at end of file X\f1
+.br
+indicates that the last line of file X did not have a new-line.
+If the lines are different, they will be flagged and output;
+although the output will seem to indicate they are the same.
+.\"	@(#)diff.1	6.2 of 9/2/83
+.Ee

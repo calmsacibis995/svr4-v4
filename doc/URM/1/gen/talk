@@ -1,0 +1,95 @@
+'\"macro stdmacro
+.if n .pH g1.talk @(#)talk	40.10 of 5/29/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} talk 1 "Internet Utilities" "\&"
+.if \nX=1 .ds x} talk 1 "Internet Utilities"
+.if \nX=2 .ds x} talk 1 "" "\&"
+.if \nX=3 .ds x} talk "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4talk\f1 \- talk to another user
+.SH SYNOPSIS
+\f4talk\f1
+.I username
+[
+.I ttyname
+]
+.SH DESCRIPTION
+.LP
+\f4talk\f1
+is a visual communication program that
+copies lines from your terminal
+to that of a user on the same or on another host.
+.I username
+is that user's login name.
+.LP
+The program is architecture dependent; it works only 
+between machines of the same architecture.
+.LP
+If you want to talk to a user who is logged in more
+than once, the
+.I ttyname
+argument may be used to indicate the appropriate terminal name.
+.LP
+When first called,
+\f4talk\f1
+sends the message:
+.P
+.RS
+\f4Message from TalkDaemon@ \f2her_machine\fP at \f2time .\|.\|.\f1
+.br
+\f4talk: connection requested by \f2your_name\fP@\f2your_machine\f1
+.br
+\f4talk: respond with: talk \f2your_name\fP@\f2your_machine\f1
+.RE
+.LP
+to the user you want to talk to.
+At this point, the recipient of the
+message should reply by typing:
+.IP
+\f4talk \f2your_name\f4@\f2your_machine\f1
+.LP
+It does not matter from which machine the
+recipient replies, as long as the login name
+is the same.
+Once communication is established, the two
+parties may type simultaneously,
+with their output appearing in separate windows.
+Typing
+CTRL-l
+redraws the screen,
+while your erase, kill, and word kill
+characters will work in
+\f4talk\f1
+as normal.
+To exit, just type your interrupt character;
+\f4talk\f1
+then moves the cursor to the bottom
+of the screen and restores the terminal.
+.LP
+Permission to talk may be denied or granted by use of the
+\f4mesg\f1(1)
+command.
+At the outset talking is allowed.
+Certain commands, such as
+\f4pr\f1(1),
+disallow messages in order to prevent messy output.
+.LP
+.SH FILES
+.PD 0
+.TP 20
+\f4/etc/hosts\f1
+to find the recipient's machine
+.TP
+\f4/var/adm/utmp\f1
+to find the recipient's tty
+.PD
+.SH "SEE ALSO"
+\f4mail\f1(1),
+\f4mesg\f1(1),
+\f4pr\f1(1),
+\f4who\f1(1),
+\f4write\f1(1),
+\f4talkd\f1(1M)

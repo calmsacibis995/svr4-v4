@@ -1,0 +1,124 @@
+'\"macro stdmacro
+.if n .pH g1m.shutdown @(#)shutdown	40.8 of 4/18/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.\" @(#)shutdown.8 1.20 88/03/01 SMI; from UCB 4.3
+.\" Copyright (c) 1980 Regents of the University of California.
+.\" All rights reserved.  The Berkeley software License Agreement
+.\" specifies the terms and conditions for redistribution.
+.\"
+.nr X
+.if \nX=0 .ds x} shutdown 1M "BSD Compatibility Package" "\&"
+.if \nX=1 .ds x} shutdown 1M "BSD Compatibility Package"
+.if \nX=2 .ds x} shutdown 1M "" "\&"
+.if \nX=3 .ds x} shutdown "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4shutdown\f1 \- close down the system at a given time
+.SH SYNOPSIS
+\f4/usr/ucb/shutdown\f1
+[
+\f4\-fhknr\f1
+]
+.I time
+[
+.I warning-message
+\&.\|.\|.
+]
+.SH DESCRIPTION
+.IX  "shutdown command"  ""  "\fLshutdown\fP \(em shut down multiuser operation"
+\f4shutdown\f1
+provides an automated procedure to notify users when the
+system is to be shut down.
+.I time
+specifies when
+\f4shutdown\f1
+will bring the system down; it may be the word
+\f4now\f1
+(indicating an immediate shutdown),
+or it may specify a future time in one of two formats:
+\f4+\f2number\f1
+and
+\f2hour\f4:\f2min.\f1
+The first form brings the system down in
+.I number
+minutes, and the second brings the system down
+at the time of day indicated in 24-hour notation.
+.P
+At intervals that get closer as the apocalypse approaches,
+warning messages are displayed at terminals of all logged-in users,
+and of users who have remote mounts on that machine.
+Five minutes before shutdown,
+or immediately if shutdown is in less than 5 minutes,
+logins are disabled by creating
+\f4/etc/nologin\f1
+and writing a message there.
+If this file exists when a user attempts to log in,
+\f4login\f1(1M)
+prints its contents and exits.
+The file is removed just before
+\f4shutdown\f1
+exits.
+.P
+At shutdown time a message is written to the system log daemon,
+\f4syslogd\f1(1M),
+containing the time of shutdown,
+the instigator of the shutdown, and the reason.
+Then a terminate signal is sent to
+\f4init\f1,
+which brings the system down to single-user mode.
+.P
+The time of the shutdown and the warning message are placed in
+\f4/etc/nologin\f1,
+which should be used to inform the users as to when the system
+will be back up, and why it is going down (or anything else).
+.SH OPTIONS
+As an alternative to the above procedure, these options can be
+specified:
+.TP
+\f4\-f\f1
+Arrange, in the manner of
+\f4fastboot\f1(1M),
+that when the system is rebooted, the file systems will not
+be checked.
+.TP
+\f4\-h\f1
+Execute
+\f4halt\f1(1M).
+.TP
+\f4\-k\f1
+Simulate shutdown of the system.
+Do not actually shut down the system.
+.TP
+\f4\-n\f1
+Prevent the normal
+\f4sync\f1(2)
+before stopping.
+.TP
+\f4\-r\f1
+Execute
+\f4reboot\f1(1M).
+.SH FILES
+.PD 0
+.TP 20
+\f4/etc/nologin\f1
+tells login not to let anyone log in
+.TP
+\f4/etc/xtab\f1
+list of remote hosts that have mounted this host
+.PD
+.SH "SEE ALSO"
+\f4fastboot\fP(1M),
+\f4halt\fP(1M),
+\f4reboot\fP(1M),
+\f4syslogd\fP(1M)
+.P
+\f4login\fP(1)
+in the \f2User's Reference Manual\f1
+.br
+\f4sync\fP(2)
+in the \f2Programmer's Reference Manual\f1
+.SH NOTES
+Only allows you to bring the system down between
+\f4now\f1 and 23:59 if
+you use the absolute time for shutdown.

@@ -1,0 +1,117 @@
+.\" @(#)getservent 40.10 91/05/17 SMI; from UCB 4.3
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.\" Copyright (c) 1988 Sun Microsystems, Inc. - All Rights Reserved.
+.\" Copyright (c) 1983 Regents of the University of California.
+.\" All rights reserved.  The Berkeley software License Agreement
+.\" specifies the terms and conditions for redistribution.
+.nr X
+.if \nX=0 .ds x} getservent 3N "" "\&"
+.if \nX=1 .ds x} getservent 3N ""
+.if \nX=2 .ds x} getservent 3N "" "\&"
+.if \nX=3 .ds x} getservent "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4getservent, getservbyport, getservbyname, setservent, endservent\fP \- get service entry
+.SH SYNOPSIS
+.nf
+.ft 4
+.\"please check the location of the following include file
+#include <netdb.h>
+.sp .5
+struct servent *getservent(void);
+.sp .5
+struct servent *getservbyname(char *name, *proto);
+.sp .5
+struct servent *getservbyport(int port, char *proto);
+.sp .5
+int setservent(int stayopen);
+.sp .5
+int endservent(void);
+.fi
+.SH DESCRIPTION
+\f4getservent\fP,
+\f2getservbyname\fP,
+and
+\f2getservbyport\fP
+each return a pointer to an object with the
+following structure containing the broken-out
+fields of a line in the network services data base,
+\f4/etc/services\fP.
+.P
+The \f4servent\fP structure includes the following members:
+.RS
+.ft 4
+.nf
+char   \(**s_name;        /* official name of service */
+char   \(**\(**s_aliases;    /* alias list */
+int    s_port;         /* port service resides at */
+char   \(**s_proto;       /* protocol to use */
+.ft 1
+.fi
+.RE
+.P
+The members of this structure are:
+.RS
+.TP 0.75i
+\f2s_name\fP
+The official name of the service.
+.TP
+\f2s_aliases\fP
+A zero terminated list of alternate names for the service.
+.TP
+\f2s_port\fP
+The port number at which the service resides.
+Port numbers are returned in network short byte order.
+.TP
+\f2s_proto\fP
+The name of the protocol to use when contacting the
+service.
+.RE
+.P
+\f4getservent\fP
+reads the next line of the file, opening the file if necessary.
+.P
+\f4setservent\fP
+opens and rewinds the file.
+If the
+\f2stayopen\fP
+flag is non-zero,
+the net data base will not be closed after each call to
+\f4getservent\fP
+(either directly, or indirectly through one of
+the other \*(lqgetserv\*(rq calls).
+.P
+\f4endservent\fP
+closes the file.
+.P
+\f4getservbyname\fP
+and
+\f4getservbyport\fP
+sequentially search from the beginning
+of the file until a matching
+protocol name or port number is found, or until 
+\f4EOF\fP
+is encountered.
+If a protocol name is also supplied (non-\f4NULL\fP),
+searches must also match the protocol.
+.SH FILES
+.PD 0
+.TP 20
+\f4/etc/services\fP
+.PD
+.SH "SEE ALSO"
+\f4getprotoent\fP(3N),
+\f4services\fP(4)
+.SH DIAGNOSTICS
+.P
+A
+\f4NULL\fP
+pointer is returned on 
+\f4EOF\fP
+or error.
+.P
+All information is contained in a static area
+so it must be copied if it is to be saved.
+Expecting port numbers to fit in a 32 bit
+quantity is probably naive.

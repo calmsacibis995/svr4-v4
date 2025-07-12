@@ -1,0 +1,36 @@
+'\"macro stdmacro
+.if n .pH g1a.mpc @(#)mpc	40.5 of 5/17/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} mpc 7iref "System Administration Utilities" "" "\&"
+.if \nX=1 .ds x} mpc 7iref "System Administration Utilities" ""
+.if \nX=2 .ds x} mpc 7iref "" "\&"
+.if \nX=3 .ds x} mpc "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4mpc\f1 \-  MPC device driver
+.SH DESCRIPTION
+The \f4mpc\f1 driver handles the internal low level interface between the
+\f4ics\f1(7iref) and \f4mps\f1(7iref) interface and the actual message
+passing coprocessor (MPC) hardware of a Multibus II CPU board.
+.PP
+To configure the \f4mpc\f1 driver, modify the following variables in the
+\f4/etc/conf/pack.d/mpc/space.c\f1 file:
+.PP
+.TP 20
+\f2impc_base\f1
+Contains the base I/O port address for the MPC chip.
+.TP
+\f2impc_fs_enabled\f1
+Contains a flag indicating whether or not the MPC fail-safe mechanism should
+be used.  It is strongly recommended that the fail-safe mechanism be enabled.
+.PP
+There are no \f4ioctls\f1 for the \f4mpc\f1 driver.  The \f4mpc\f1 driver
+is used to support the internal interface required by the \f4mps\f1(7iref)
+driver.
+.SH FILES
+\f4/etc/conf/pack.d/mpc/space.c\f1       configuration information
+.SH SEE ALSO
+\f4ics\f1(7iref),
+\f4mps\f1(7iref).

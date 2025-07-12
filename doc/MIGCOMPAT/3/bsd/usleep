@@ -1,0 +1,57 @@
+.\" @(#)usleep 40.4 91/04/24 SMI; from UCB 6.3 5/15/86
+'\" macro stdmacro
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.\" Copyright (c) 1988 Sun Microsystems, Inc. - All Rights Reserved.
+.\"
+.\" Copyright (c) 1980 Regents of the University of California.
+.\" All rights reserved.  The Berkeley software License Agreement
+.\" specifies the terms and conditions for redistribution.
+.\"
+.nr X
+.if \nX=0 .ds x} usleep 3 "BSD Compatibility Package" "\&"
+.if \nX=1 .ds x} usleep 3 "BSD Compatibility Package"
+.if \nX=2 .ds x} usleep 3 "" "\&"
+.if \nX=3 .ds x} usleep "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4usleep\f1 \- suspend execution for interval in microseconds
+.SH SYNOPSIS
+\f4cc \f1[ \f2flag\f1\. \. \. ] \f2file\f1 \. \. \.  \f4\-lucb\f1
+.P
+.nf
+.ft 4
+usleep(useconds)
+unsigned useconds;
+.ft 1
+.fi
+.SH DESCRIPTION
+.P
+Suspend the current process for the number
+of microseconds specified by the argument.
+The actual suspension time may be an arbitrary
+amount longer because of other activity in the system,
+or because of the time spent in processing the call.
+.P
+The routine is implemented by setting an interval timer
+and pausing until it occurs.
+The previous state of this timer is saved and restored.
+If the sleep time exceeds the time to the
+expiration of the previous timer,
+the process sleeps only until the signal
+would have occurred, and the
+signal is sent a short time later.
+.P
+This routine is implemented using
+\f4setitimer\f1
+[see
+\f4getitimer\f1(2)];
+it requires eight system calls each time it is invoked.
+.SH "SEE ALSO"
+\f4sigpause\fP(3),
+\f4sleep\fP(3),
+\f4ualarm\fP(3)
+.P
+\f4getitimer\fP(3),
+\f4alarm\fP(2)
+in the \f2Programmer's Reference Manual\f1

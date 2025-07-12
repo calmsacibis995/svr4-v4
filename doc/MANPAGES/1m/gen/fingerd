@@ -1,0 +1,94 @@
+'\"macro stdmacro
+.if n .pH g1a.fingerd @(#)fingerd	40.9 of 5/21/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} fingerd 1M "Internet Utilities" "\&"
+.if \nX=1 .ds x} fingerd 1M "Internet Utilities"
+.if \nX=2 .ds x} fingerd 1M "" "\&"
+.if \nX=3 .ds x} fingerd "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4fingerd\f1, \f4in.fingerd\f1 \- remote user information server
+.SH SYNOPSIS
+\f4in.fingerd\f1
+.SH DESCRIPTION
+\f4fingerd\f1
+implements the server side of the Name/Finger protocol,
+specified in
+.SM RFC
+742.
+The Name/Finger protocol provides a remote interface to programs
+which display information on system status and individual users.
+The protocol imposes little structure on the format of the
+exchange between client and server.
+The client provides a single command line to the finger
+server which returns a printable reply.
+.LP
+\f4fingerd\f1
+waits for connections on
+.SM TCP
+port 79.
+Once connected it reads a single command line
+terminated by a <\s-1RETURN-LINE-FEED\s0> which is passed to
+\f4finger\f1(1).
+\f4fingerd\f1
+closes its connections as soon as the output is finished.
+.LP
+If the line is null (only a
+.SM RETURN-LINEFEED
+is sent) then
+\f4finger\f1
+returns a default report that lists all users logged into
+the system at that moment.
+.LP
+If a user name is specified (for instance,
+\f4eric\f1<\s-1RETURN-LINE-FEED\s0>) then the
+response lists more extended information for only that particular user,
+whether logged in or not.
+Allowable \(lqnames\(rq in the command line include both \(lqlogin names\(rq
+and \(lquser names\(rq.
+If a name is ambiguous, all possible derivations are returned.
+.SH FILES
+.PD 0
+.TP 20
+\f4/var/utmp\f1
+who is logged in
+.TP
+\f4/etc/passwd\f1
+for users' names
+.TP
+\f4/var/adm/lastlog\f1
+last login times
+.TP
+\f4$HOME/.\|plan\f1
+plans
+.TP
+\f4$HOME/.\|project\f1
+projects
+.PD
+.SH SEE ALSO
+\f4finger\f1(1)
+.LP
+Harrenstien, Ken,
+.IR \s-1NAME/FINGER\s0 ,
+\s-1RFC\s0 742,
+Network Information Center,
+.SM SRI
+International, Menlo Park, Calif.,
+December 1977
+.SH NOTES
+Connecting directly to the server from a
+.SM TIP
+or an equally narrow-minded
+.SM TELNET\s0-protocol
+user program can result
+in meaningless attempts at option negotiation being sent to the
+server, which will foul up the command line interpretation.
+\f4fingerd\f1
+should be taught to filter out
+.SM IAC\s0's
+and perhaps even respond
+negatively (\s-1IAC\s0
+.I will not)
+to all option commands received.

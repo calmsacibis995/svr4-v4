@@ -1,0 +1,51 @@
+'\"macro stdmacro
+.if n .pH gen.print @(#)print	40.3 of 6/24/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.nr X
+.if \nX=0 .ds x} print D2DK "" "DDI/DKI" "\&"
+.if \nX=1 .ds x} print D2DK "" "DDI/DKI"
+.if \nX=2 .ds x} print D2DK "" "\&"
+.if \nX=3 .ds x} print "" "" "\&"
+.TH \*(x}
+.IX "\f4print\fP(D2DK)"
+.SH "NAME"
+\f4print\fP \- display a driver message on the system console
+.SH "SYNOPSIS"
+.nf
+.na
+\f4#include <sys/types.h>
+#include <sys/errno.h>
+.sp 0.5
+int \f2prefix\fPprint(dev_t \f2dev, \fPchar *\f2str\fP);\f1
+.ad
+.fi
+.SH "ARGUMENTS"
+.RS 0n
+.IP \f2dev\fP 10n
+Device number.
+.IP \f2str\fP 10n
+Pointer to a NULL-terminated character string describing the problem.
+.RE
+.SH "DESCRIPTION"
+The
+\f4print\fP routine is called indirectly by the
+kernel for the block
+device when the kernel has detected an exceptional condition (such as
+out of space) in the device.
+The driver should print the message on the console along with
+any driver-specific information.
+To display the message on the console,
+the driver should use the \f4cmn_err\fP(D3DK) function.
+.IX "\f4cmn_err\fP(D3DK)"
+.SH NOTES
+This entry point is optional.
+.sp 0.5
+The driver should not try to interpret the text string passed to it.
+.sp 0.5
+The driver's \f4print\fP routine should not call any functions that sleep.
+.SH "RETURN VALUE"
+Ignored.
+.SH "SEE ALSO"
+.na
+\f4cmn_err\fP(D3DK)
+.ad

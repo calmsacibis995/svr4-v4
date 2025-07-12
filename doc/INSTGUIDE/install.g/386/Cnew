@@ -1,0 +1,117 @@
+.if n .pH 386.Cnew @(#)Cnew	40.1.1.1
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.BK "Installation Guide" "System V Release 4" "" ""   
+.\ACRONYM	                  
+.CH "New Installation" "" "Table of Contents" "2"
+.\CHAPTER	2
+.tC 1 "Introduction" 2-1  
+.tC 1 "Installation Procedure (New Installation)" 2-2  
+.tC 2 "Boot from Diskette" 2-2  
+.Index: boot diskettes        	2
+.Index: diskettes, boot        	2
+.Index: memory, check        	2
+.Index: memory, RAM support        	2
+.Index: troubleshooting, boot problems      	3
+.Index: rebooting the system      	3
+.Index: error messages       	3
+.Index: tape drive, cable      	3
+.Index: rebooting the system      	3
+.Index: aborting installation        	3
+.Index: installation, aborting        	3
+.Index: diskette, base system        	3
+.Index: rebooting the system        	4
+.tC 2 "Selecting Packages" 2-5  
+.Index: packages, BASIC        	5
+.Index: packages, NETWORK        	5
+.Index: packages, EXTENDED        	5
+.Index: packages, DEVELOPMENT        	5
+.Index: packages, HARDWARE        	5
+.Index: ed package        	5
+.Index: terminf package        	5
+.Index: termcap package        	5
+.Index: windowing package        	5
+.Index: mouse package        	5
+.Index: fmli package        	5
+.Index: oam package        	5
+.Index: lp package        	5
+.Index: acp package        	5
+.Index: nsu package        	5
+.Index: dfs package        	5
+.Index: rpc package        	5
+.Index: inet package        	5
+.Index: nfs package        	5
+.Index: rfs package        	5
+.Index: scde package        	5
+.Index: compat package        	5
+.Index: face package        	5
+.Index: wd package        	5
+.Index: imx586 package        	5
+.Index: ie6 package        	5
+.Index: qt package        	5
+.Index: optional slices        	5
+.Index: DOS, partition        	5
+.Index: partition, DOS        	5
+.Index: memory, 100 MB        	5
+.Index: hard disk, 80 MB        	5
+.Index: hard disk, planning layout        	5
+.Index: hard disk, 320 MB        	5
+.Index: optional slices, selecting        	5
+.Index: Ethernet, driver packages        	5
+.tC 3 "The Package Selection Questions" 2-5  
+.Index: packages, installing        	6
+.Index: packages, selecting        	6
+.tC 2 "Partitioning the Hard Disk" 2-8  
+.Index: partition, UNIX        	8
+.Index: hard disk, primary        	8
+.Index: hard disk, partitioning        	8
+.Index: disk space, allocating        	8
+.Index: filesystem        	8
+.Index: diskadd command        	8
+.Index: hard disk, secondary        	8
+.Index: disk, 0       	8
+.Index: disk, 1       	8
+.Index: partitioning, changing the default        	9
+.Index: DOS, partition        	9
+.Index: active partition        	9
+.Index: partition, active        	9
+.Index: partition, DOS        	9
+.Index: DOS, Merge        	9
+.Index: partition, DOS        	9
+.tC 2 "Selecting the Filesystem Types for Required Filesystems" 2-10  
+.Index: filesystem, ufs type        	10
+.Index: filesystem, s5 type        	10
+.Index: filesystem, s52k type        	10
+.tC 2 "Selecting Optional Disk Slices" 2-10  
+.Index: optional slices, selecting        	10
+.Index: slices, selecting optional        	10
+.Index: /dev/dump        	11
+.Index: optional slices        	11
+.tC L "Table 2-1:\0" "Optional Filesystems and Devices" 2-11
+.tC 2 "Surface Analysis" 2-12  
+.Index: surface analysis, SCSI        	12
+.Index: surface analysis, non-SCSI        	12
+.tC 2 "Recommended Disk Configuration" 2-13  
+.Index: disk, default configuration        	13
+.Index: filesystem, creating        	13
+.Index: kernel        	14
+.Index: device nodes, creating        	14
+.Index: rebooting the system        	14
+.tC 2 "Install Base System" 2-14  
+.Index: istart Base System, copying files to disk  	14
+.Index: troubleshooting, tape drive/controller problems        	15
+.Index: error messages        	15
+.Index: tape drive, cable        	15
+.Index: tape controller, jumper        	15
+.Index: shutdown        	16
+.Index: iend Base System, copying files to disk  	16
+.Index: password, root        	16
+.Index: password, install        	16
+.Index: root password        	16
+.Index: install password        	16
+.tC 2 "Assigning Passwords and the System Name" 2-16  
+.Index: password, root        	17
+.Index: password, install        	17
+.Index: system, name        	17
+.tC 2 "Installing Optional Packages" 2-18  
+.Index: packages, installation questions        	18
+.tC 2 "Installing Add-on Packages" 2-19  

@@ -1,0 +1,436 @@
+'\"macro stdmacro
+.if n .pH g1.ps @(#)ps	40.5 of 3/14/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+'\"macro stdmacro
+.if n .pH g1.ps @(#)ps	40.10 of 9/20/89
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.nr X
+.if \nX=0 .ds x} ps 1 "Essential Utilities" "\&"
+.if \nX=1 .ds x} ps 1 "Essential Utilities"
+.if \nX=2 .ds x} ps 1 "" "\&"
+.if \nX=3 .ds x} ps "" "" "\&"
+.nr X
+.nr X
+.TH \*(x} "" "386 Computer Only"
+.SH NAME
+\f4ps\f1 \- report process status
+.SH SYNOPSIS
+\f4ps\f1
+[
+.I options
+]
+.SH DESCRIPTION
+\f4ps\fP
+prints information about active processes.
+Without \f2options\f1,
+\f4ps\fP
+prints information about processes associated
+with the controlling terminal.
+The output contains
+only the process \s-1ID\s+1,
+terminal identifier, cumulative execution time,
+and the command name.
+Otherwise, the information that is displayed
+is controlled by the \f2options\f1.
+.PP
+Some options accept lists as arguments.
+Items in a list can be either separated by commas or else enclosed
+in double quotes and separated by commas or spaces.
+Values for
+\f2proclist\f1 and \f2grplist\f1
+must be numeric.
+.PP
+The \f2options\fP are:
+.PP
+.PD 0
+.TP 12
+\f4\-e\f1
+Print information about \f4e\f1very process now running.
+.TP
+\f4\-d\f1
+Print information about all processes except session leaders.
+.TP
+\f4\-a\f1
+Print information about \f4a\f1ll processes most frequently requested:
+all those except session
+leaders and processes not associated with a terminal.
+.TP
+\f4\-j\f1
+Print session ID and process group ID.
+.TP
+\f4\-f\f1
+Generate a \f4f\f1ull listing.
+(See below for significance of columns in a full listing.)
+.TP
+\f4\-l\f1
+Generate a \f4l\f1ong listing.
+(See below.)
+.TP
+\f4\-c\f1
+Print information in a format that reflects scheduler properties as described in
+\f4priocntl\fP(1).
+The
+\f4\-c\f1
+option affects the output of the
+\f4\-f\f1
+and
+\f4\-l\f1
+options, as described below.
+'\".TP
+'\".BI \-c " corefile\^"
+'\"Use the file
+'\".I corefile\^
+'\"in place of
+'\".BR /dev/mem .
+'\" Ron Gomes says he is removing the -n option (mail sent on 10/7/88).
+'\".TP
+'\".BI \-n " name\^"
+'\"Valid only for users with a real user id of \f2root\f1 or a real
+'\"group id of \f2sys\f1.  Takes argument signifying an alternate
+'\"system
+'\".I name\^
+'\"in place of
+'\"\f4/stand/unix\fP.
+.TP
+\f4\-t\f2 termlist\^\f1
+List only process data
+associated with the terminal given in \f2termlist\f1.
+Terminal identifiers may be specified
+in one of two forms:  the device's
+file name (e.g., \f4tty04\fP) or, if the device's file name starts
+with \f4tty\fP, just the digit identifier (e.g., \f404\fP).
+.TP
+\f4\-p\f2 proclist\^\f1
+List only process data
+whose process
+.SM ID
+numbers are given
+in \f2proclist\f1.
+.TP
+\f4\-u\f2 uidlist\^\f1
+List only process data
+whose user
+.SM ID
+number or login name is given in
+.IR uidlist .
+In the listing, the numerical user
+.SM ID
+will be printed
+unless you give the
+\f4\-f\f1
+option, which prints
+the login name.
+.TP
+\f4\-g\f2 grplist\^\f1
+List only process data
+whose group leader's \s-1ID\s+1 number(s) appears in \f2grplist\f1.
+(A group leader is a process whose process \s-1ID\s+1 number is identical
+to its process group \s-1ID\s+1 number.  
+.TP
+\f4\-s\f2 sesslist\^\f1
+List information on all session leaders 
+whose IDs appear in \f2sesslist\f1. 
+.PD
+.PP
+Under the
+\f4\-f\f1
+option,
+\f4ps\fP
+tries to determine the command name
+and arguments given when the process was created
+by examining the user block.
+Failing this, the command name
+is printed, as it would have appeared without the \f4\-f\f1 option,
+in square brackets.
+.PP
+The column headings and the meaning of the columns in a
+\f4ps\fP
+listing
+are given below; the letters
+\f4f\f1
+and
+\f4l\f1
+indicate the
+option (\f4f\f1ull or \f4l\f1ong, respectively)
+that causes the corresponding heading to appear;
+\f4all\f1
+means that the heading
+always appears.
+Note that these two options determine
+only
+what information is provided for a process; they do not
+determine which processes will be listed.
+.ta .65i
+.TP 16
+\f4F\f1	(l)
+Flags (hexadecimal and additive) associated with the process
+'''.PP
+'''.RS 19
+'''\s-13B2 COMPUTER\s+1
+'''.RE
+.PP
+.RS 19
+.PD 0
+.TP 6
+00
+Process has terminated: process table entry now available.
+.TP 6
+01
+A system process: always in primary memory.
+.TP 6
+02
+Parent is tracing process.
+.TP 6
+04
+Tracing parent's signal has stopped process:
+parent is waiting [\f4ptrace\fP(2)].
+'\"  Applies to 3B20A only
+'\".TP 6
+'\"08
+'\"Process cannot be awakened by signal
+'\".TP 6
+'\"10
+'\"Process is currently in primary memory
+'\".TP 6
+'\"20
+'\"Process currently in primary memory:
+'\"locked until an event completes
+.TP 6
+08
+Process is currently in primary memory.
+.TP 6
+10
+Process currently in primary memory:
+locked until an event completes.
+.PD
+.RE
+'''	Comment out VAX info; may be useful to some MRD customers
+'''.PP
+'''.RS 19
+'''\s-1VAX PROCESSOR\s+1
+'''.RE
+'''.PP
+'''.RS 19
+'''.PD 0
+'''.TP 6
+'''00
+'''Process has terminated: process table entry now available.
+'''.TP 6
+'''01
+'''Process currently in primary memory.
+'''.TP 6
+'''02
+'''A system process: always in primary memory.
+'''.TP 6
+'''04
+'''Process is currently in primary memory:
+'''locked until an event completes.
+'''.TP 6
+'''08
+'''Should not occur on this system.
+'''.TP 6
+'''10
+'''Parent is tracing process.
+'''.TP 6
+'''20
+'''Tracing parent's signal has stopped process:
+'''parent is waiting [\f4ptrace\fP(2)].
+'''.RE
+.TP 16
+\f4S\f1	(l)
+The state of the process:
+.PP
+.RS 19
+.PD 0
+.TP 6
+O
+Process is running on a processor. 
+'''\s-13B2\s+1 Computer: Process is running on a processor. 
+'''.br
+'''\s-1VAX\s+1 processor: Should not occur on this system.
+.TP 6
+S
+Sleeping: process is waiting for an event to complete.
+.TP 6
+R
+Runnable: process is on run queue.
+.TP 6
+I
+Idle: process is being created.
+.TP 6
+Z
+Zombie state: process terminated
+and parent not waiting.
+.TP 6
+T
+Traced: process stopped by a signal
+because parent is tracing it.
+.TP 6
+X
+\s-1SXBRK\s+1 state: process is waiting for more primary memory.
+.RE
+.PD
+.ta0.7i
+.TP 17
+\f4UID\f1	(f,\^l)
+The user
+.SM ID
+number of the process owner
+(the login name is printed under the
+\f4\-f\f1
+option).
+.TP 17
+\f4PID\f1	(all)
+The process
+.SM ID
+of the process (this datum is necessary in order to kill a process).
+.TP 17
+\f4PPID\f1	(f,\^l)
+The process
+.SM ID
+of the parent process.
+.TP 17
+\f4C\f1	(f,\^l)
+Processor utilization for scheduling.
+Not printed when the
+\f4\-c\f1
+option is used.
+.TP 17
+\f4CLS\f1	(f,\^l)
+Scheduling class.
+Printed only when the
+\f4\-c\f1
+option is used.
+.TP 17
+\f4PRI\f1	(\^l\^)
+The priority of the process.
+Without the
+\f4\-c\f1
+option, higher numbers mean lower priority.
+With the
+\f4\-c\f1
+option, higher numbers mean higher priority.
+.TP 17
+\f4NI\f1	(\^l\^)
+Nice value, used in priority computation.
+Not printed when the
+\f4\-c\f1
+option is used.
+Only processes in the time-sharing class have a nice value.
+.TP 17
+\f4ADDR\f1	(\^l\^)
+The memory address of the process.
+'\" Line below commented out until Steve Carter confirms its validity, which,
+'\" he says, is in doubt (4-10-85).
+'\"(a pointer to the segment table array on the \s-13B20\s+1 computer).
+.TP 17
+\f4SZ\f1	(\^l\^)
+The size (in pages or clicks) of the swappable process's image in main memory.
+.TP 17
+\f4WCHAN\f1	(\^l\^)
+The address of an event for which the process is sleeping,
+or in \s-1SXBRK\s+1 state,
+(if blank, the process is running).
+.TP 17
+\f4STIME\f1	(f)
+The starting time of the process, given in hours, minutes,
+and seconds.
+(A process begun more than twenty-four hours before the \f4ps\fP inquiry is
+executed is given in months and days.)
+.TP 17
+\f4TTY\f1	(all)
+The controlling terminal for the process
+(the message, \f4?\f1, is printed when there is no controlling terminal).
+.TP 17
+\f4TIME\f1	(all)
+The cumulative execution time for the process.
+.TP 17
+\f4COMMAND\f1	(all)
+The command name (the full command name and its arguments are printed under the
+\f4\-f\f1
+option).
+.DT
+.PD
+.PP
+A process that has exited and has a parent, but has not
+yet been waited for by the parent, is marked
+\f4<defunct>\f1.
+.SH FILES
+.PD 0
+.DT
+.TP 15
+\f4/dev\fP
+\0\0
+.TP 15
+\f4/dev/sxt/*\fP
+\0\0
+.TP 15
+\f4/dev/tty*\fP
+\0\0
+.TP 15
+\f4/dev/xt/*\fP
+terminal (``tty'') names searcher files
+.TP 15
+\f4/dev/kmem\fP
+kernel virtual memory
+.TP 15
+\f4/dev/swap\fP
+the default swap device
+.TP 15
+\f4/dev/mem\fP
+memory
+.TP 15
+\f4/etc/passwd\fP
+\s-1UID\s+1 information supplier
+.TP 15
+\f4/etc/ps_data\fP
+internal data structure
+'\".TP 15
+'\"\f4/stand/unix\fP
+'\"system namelist
+.PD
+.SH SEE ALSO
+\f4kill\fP(1), \f4nice\fP(1), \f4priocntl\fP(1).
+.br
+\f4getty\fP(1M) in the \f2System Administrator's Reference Manual\f1.
+.SH NOTES
+Things can change while
+\f4ps\fP
+is running; the snap-shot it gives is true only for a
+split-second, and it may not be accurate by the time you see it.
+Some data printed for defunct processes is irrelevant.
+.PP
+If no
+\f2termlist\f1, \f2proclist\f1,
+\f2uidlist\f1, or \f2grplist\f1
+is specified,
+\f4ps\fP
+checks
+\f4stdin\f1, \f4stdout\f1, and \f4stderr\f1
+in that order, looking for the controlling terminal
+and will attempt to report on processes associated with
+the controlling terminal.
+In this situation, if \f4stdin\f1, \f4stdout\f1, and \f4stderr\f1
+are all redirected,
+\f4ps\fP
+will not find a controlling terminal, so there will be no report.
+.PP
+On a heavily loaded system,
+\f4ps\fP may report an
+\f4lseek\fP
+error and exit.
+\f4ps\fP may seek to an invalid user area address:
+having obtained the address of a process' user area,
+\f4ps\fP may not be able to seek to that address before the
+process exits and the address becomes invalid.
+.PP
+\f4ps \-ef\f1 may not report the actual start of a tty login
+session, but rather an earlier time, when a getty was last
+respawned on the tty line.
+'\".PP
+'\"If the user specifies the \f4\-n\f1 flag, the real and effective
+'\"UID/GID will be set to the real UID/GID of the user invoking
+'\"\f4ps\fP.
+'\"	@(#)ps.1	6.3 of 9/2/83
+.Ee

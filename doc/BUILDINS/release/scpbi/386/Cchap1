@@ -1,0 +1,55 @@
+.if n .pH 386.Cchap1 @(#)Cchap1	40.24.1.1
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.BK "Source Code Product Build Instructions" "" "" ""   
+.\ACRONYM	                  
+.CH "Source Code Product Build Instructions" "" "Table of Contents" "1"
+.\CHAPTER	1
+.tC 1 "Contents of the Tape" 1-1  
+.tC 1 "Dependency Notes" 1-3  
+.tC 2 "Hardware Dependencies" 1-3  
+.tC 3 "Hardware Options for Installation" 1-3  
+.tC 3 "Memory Requirements" 1-3  
+.tC 3 "Space Requirements" 1-3  
+.tC L "Figure 1-1:\0" "Setup and Build Space Requirements" 1-4
+.tC 2 "Software Dependencies" 1-4  
+.tC 2 "Time Dependencies" 1-4  
+.tC 2 "Shell Dependencies" 1-5  
+.tC 1 "Building Binary from Source" 1-6  
+.tC 2 "Source Installation" 1-6  
+.tC 2 "Building on UNIX System V/386 Release 4" 1-7  
+.tC 3 "Environmental Changes" 1-7  
+.tC 3 "Swap Space Changing" 1-7  
+.tC 2 "Building the Release" 1-7  
+.tC L "Figure 1-2:\0" "Source Code Build Defines" 1-9
+.tC 2 "Populating the Build Tree" 1-9  
+.tC 3 "Architecture Specific Builds" 1-9  
+.tC L "Figure 1-3:\0" "Make Argument Maps Into" 1-10
+.tC 2 "Build Only the Foundation Set" 1-10  
+.tC 2 "Build Only the Standard C Development Environment" 1-10  
+.tC 2 "Build Only the Add-ons" 1-11  
+.tC 2 "Build Only the UNIX Operating System Kernel" 1-13  
+.tC 1 "Packaging the Binary Output" 1-14  
+.tC 2 "Packaging on Floppy Disks" 1-14  
+.tC 2 "Packaging on Cartridge Tape" 1-16  
+.tC 1 "Freeing Disk Space" 1-17  
+.tC 3 "To clean up space in the kernel build tree" 1-17  
+.tC 3 "To clean up space in the proto build tree" 1-17  
+.tC 3 "To clean up space in /tmp (the add-on floppy images)" 1-17  
+.tC 3 "To clean up space in other places" 1-17  
+.tC 1 "Warning Messages" 1-18  
+.tC L "Figure 1-4:\0" "Acceptable Warning Messages" 1-18
+.tC 1 "Building Other Bus Architectures" 1-21  
+.tC 2 "Multibus" 1-21  
+.tC 3 "Space Requirements" 1-21  
+.tC 3 "Building the Release" 1-21  
+.tC 3 "Build Only the Foundation Set" 1-21  
+.tC 3 "Build the Standard C Development Environment and Add-ons" 1-22  
+.tC 3 "Build Only the Operating System Kernel" 1-22  
+.tC 3 "Packaging the Binary Output on Cartridge Tape" 1-22  
+.tC 3 "Free Disk Space" 1-23  
+.tC 1 "Using Other C Software Development Sets" 1-24  
+.tC 2 "Using UNIX System V/386 Release 3.2 Version 2.2 and C Software Development Set Version 4.1.6 or 4.1.5" 1-24  
+.tC 1 "File Listings " 1-26  
+.tC 2 "Foundation Set File Listing" 1-26  
+.tC 2 "Software Development Set File Listing" 1-26  
+.tC 2 "Documentation File Listing" 1-26  

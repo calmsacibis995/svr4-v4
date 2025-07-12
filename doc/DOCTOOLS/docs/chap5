@@ -1,0 +1,290 @@
+.if n .pH doctools.chap5 @(#)chap5	40.2
+.\" @(#) SCCS File: chap5; ID:1.6; DATED:1/5/90
+.\"
+.\"     Copyright (c) 1989 AT&T   
+.\"     All Rights Reserved       
+.\"
+.\"                  AT&T - PROPRIETARY
+.\"     THIS DOCUMENT CONTAINS PROPRIETARY INFORMATION OF
+.\"     AT&T AND IS NOT TO BE DISCLOSED OR USED EXCEPT IN
+.\"        ACCORDANCE WITH APPLICABLE AGREEMENTS.
+.\" 
+.\"
+.\"   Documenter's Tool Set User's Guide
+.\"   Written by: J.R. Okin SF E-308 attunix!jro 201-522-5105
+.\"
+.\"
+.PM DN "FINAL COPY"
+.BK "Documenter's Tool Set User's Guide" "Release 1.0"
+.CH "File Type Macro: Collection Files" 5
+.H 1 "Introduction"
+.IX collection files
+.IX files types
+DOCTOOLS recognizes a fourth file type: a collection file.
+Unlike manual page source files, guide source files,
+and memoranda source files,
+a collection file contains a list of file names
+that you want processed together as a single job.
+For example, you could use a collection file to 
+list all the files that compose a book; you could then
+print the book, from cover to cover, in a single
+step by specifying only the collection file name to
+.UI format .
+.P
+As you will see in the next section,
+the structure of collection files is simple
+but distinctive.
+Common to all collection files is the
+.UI \&.FT
+macro.
+The
+.UI \&.FT
+macro marks a file as a collection file which,
+in turn, enables
+.UI format
+to process collection files differently than manual page
+files, guide files, and memoranda files.
+.H 1 "Collection File Structure"
+.IX collection file structure
+A collection file consists of the
+.UI \&.FT
+.IX \&.FT macro
+.IX collection file macro, \&.FT
+macro followed by a list of file names, one per line,
+in their order of printing.
+Figure 5-1 shows a collection file for a book 
+containing chapters 1, 2, and 3, appendix A,
+and associated table of contents files.
+The
+.UI MasterToc
+file contains the master table of contents for the book;
+.IX master table of contents file
+therefore it is listed first.
+Also, preceding each chapter file is its associated
+chapter table of contents file; for example,
+file
+.UI chap1
+is preceded by file
+.UI Cchap1 ,
+which was created when
+.UI chap1
+was processed through
+.UI format
+with the
+.UI -c
+option.
+.IX book collection file
+.FG "A Collection File for a Book"
+.DS I UI
+\&.FT
+MasterToc
+Cchap1
+chap1
+Cchap2
+chap2
+Cchap3
+chap3
+CappA
+.DE
+When you process the collection file through
+.UI format ,
+confirmation mail listing the files that were found in the collection
+will be sent to you upon completion.
+.P
+If you are using a collection file
+to record all the files that compose a book
+so that you can process the book in one step, as shown
+above, you might find it useful to include the
+.UI \&.BK
+macro to specify the title of the book.
+This will help in two ways: it will immediately
+identify which book the collection file is used to print;
+and it will be used in the confirmation mail to further
+identify which collection file
+.UI format
+processed.
+Figure 5-2 includes a
+.UI \&.BK
+in a collection file.
+.H 2 "The \&.FT Macro"
+As shown in Figure 5-1, the
+.UI \&.FT
+macro identifies a file as a collection file
+so that
+.UI format
+knows how to process it.
+There are no arguments to the macro.
+Its sole use is to act as a file type marker,
+indicating to
+.UI format
+to process the file as a collection.
+.P
+You can put the
+.UI \&.FT
+macro anywhere in the collection file.
+However, it is good practice to put it at
+or towards the top of the file so that others
+will easily recognize the file as a collection file.
+.H 2 "Delta Numbers"
+.IX delta numbers
+.IX SCCS files
+Chapter 2 describes how
+.UI format
+can print files that are stored under a Source
+Code Control System (SCCS).
+It is possible in a collection file to specify exactly which version
+of a file you want to process for a file stored under
+SCCS.
+By default, the top delta (the most recently stored version) of
+a file will be processed by
+.UI format .
+However, if you follow the file name with a TAB and a
+valid delta number,
+.UI format
+will process the specified version of the file.
+Figure 5-2 shows how the collection file shown in Figure 5-1
+might appear if delta numbers were specified.
+.FG "A Collection File with Delta Numbers"
+.DS I UI
+\&.BK "Marbling User's Guide"
+\&.FT
+marbles/src/MasterToc	20.4
+marbles/src/Cchap1	20.1
+marbles/src/chap1	20.8
+marbles/src/Cchap2	20.1
+marbles/src/chap2	20.6
+marbles/src/Cchap3	20.1
+marbles/src/chap3	20.3
+marbles/src/CappA	20.2
+.DE
+The path preceding the file names is there to
+illustrate that these files, unlike the ones in 
+Figure 5-1, will be found in a source code
+directory tree.
+This directory tree could be anything; it could
+even be in your local file system.
+What actually happens is that
+.UI format
+first looks for a file, such as MasterToc,
+in the named directory, or in your local directory
+if there is no path specified, as shown in Figure 5-1.
+If it does not find it there, it precedes
+the named path with a source code path defined
+in an environment variable called
+.UI SCCSSRC .
+.IX SCCSSRC environment variable
+.IX environment variable, SCCSSRC
+.UI format
+then looks for a source file called
+.UI s.MasterToc
+in
+.UI $SCCSSRC/marbles/src ;
+and, if you specified a delta number, that particular
+version will be printed.
+See chapter 2 for more information on printing
+SCCS files.
+.P
+Including delta numbers in a collection file provides
+you with a simple and effective mechanism for printing and recording
+the exact contents of a book.
+For example, it you use a collection file to print
+the final version for release 2.0 of a user's guide,
+and six months later you need to reprint all or part of
+it or you need to ship those particular files to a
+customer so that they can reprint the book, you have
+retained all the information you need in the collection
+file to meet these requests.
+Even if you are now printing
+release 3.0, you have stored the delta numbers of all
+the files that composed release 2.0.
+Moreover, you could use that very collection file
+to reprint or recreate that earlier release in
+a single step.
+.H 1 "Collection File Types"
+.IX collection file types
+A collection file can list source files of
+all four types: manual page files, guide files,
+memoranda files, and even other collection files.
+Also, you can mix file types in a collection file.
+For example, a reference manual containing mostly
+manual page files might also contain some guide
+files for introductory material, table of contents,
+and the like.
+Even though these two file types process differently,
+.UI format
+automatically processes each file according to its
+file type so that any differences remain transparent to you.
+.P
+In addition to processing groups of files in one step,
+collection files also enable you to create
+a permuted index and table of contents for a book
+of manual pages and to create a master table of contents
+for a book of guide files.
+These collection files are described in the next two sections.
+.H 2 "Manual Page Collection Files"
+.IX manual page collection files
+Reference manuals often begin with a permuted index
+and table of contents to simplify the process
+of locating a manual page.
+To create a permuted index file and a table of contents
+.IX permuted index
+.IX reference manual table of contents
+file for a book of manual pages, you need
+to create a collection file listing all the manual pages
+for the book in their printing order.
+You would then process the collection file with
+.UI format
+using the
+.UI \-c
+option.
+The
+.UI \-c
+option indicates to
+.UI format
+that you do not want to print all the files in the collection
+file; instead, you want
+.UI format
+to create and print a permuted index file and a table of
+contents file.
+The information needed to create these
+files is taken from the listed manual page files.
+Two files will be created and printed:
+\f4PI\f1.\f2collection-file-name\f1 for the permuted index and
+\f4TC\f1.\f2collection-file-name\f1 for the table of contents.
+.P
+You can use the same collection file to create
+the permuted index and table of contents files as you
+would use to print the book; files that are not manual
+pages, such as an introductory chapter, will be ignored.
+.H 2 "Master Table of Contents Collection Files"
+Just as you can create a table of contents file for
+a reference manual, you can create a master table
+of contents file for a guide.
+Instead of listing manual pages in your collection file,
+however, you would list the chapter table of contents
+files in their printing order, as shown in Figure 5-3.
+.FG "A Sample Master Table of Contents Collection File"
+.DS I UI
+\&.BK "Master Toc for Marbling User's Guide"
+\&.FT
+Cchap1
+Cchap2
+Cchap3
+CappA
+.DE
+When you process this collection file with
+.UI format
+and use the
+.UI \-c
+option,
+.UI format
+will create and print a file called
+.UI MasterToc .
+The
+.UI MasterToc
+file is a subset of the headings found in the
+.IX master table of contents
+chapter table of contents file and it includes
+a table of all figure and table legends
+found in the book.
+.\" EOF

@@ -1,0 +1,119 @@
+'\"macro stdmacro
+.if n .pH g1a.rfstart @(#)rfstart	40.11.1.4 of 5/6/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} rfstart 1M "Remote File Sharing Utilities" "\&"
+.if \nX=1 .ds x} rfstart 1M "Remote File Sharing Utilities"
+.if \nX=2 .ds x} rfstart 1M "" "\&"
+.if \nX=3 .ds x} rfstart "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4rfstart\f1 \- start Remote File Sharing
+.SH SYNOPSIS
+\f4rfstart\f1
+[\f4\-v\f1] [\f4\-p\f2 primary_addr\f1]
+.SH DESCRIPTION
+\f4rfstart\f1 starts Remote File Sharing and defines an authentication
+level for incoming requests.
+[This command can only be used
+after the domain name server is set up and your computer's
+domain name and network specification have been defined using \f4dname\f1(1M).]
+.IP \-v 8
+Specifies that verification of all clients is required in response to
+initial incoming mount requests; any host not in  the file
+\f4/etc/rfs/auth.info/\f2domain\f1/passwd for the
+\f4domain\f1 they belong to, will not be allowed to mount resources from
+your host.
+If \f4\-v\f1 is not specified, hosts named in
+\f2domain\f1/passwd will be verified.
+Other hosts will be allowed
+to connect without verification.
+.IP \-p\ \f2primary_addr\f1 8
+Indicates the primary domain name server for your domain.
+\f2primary_addr\f1 can specify any of the following:
+the network address of\p
+.br
+the primary name server for a domain (\f2addr\f1);
+a list of address tuples when RFS is used over multiple transport providers
+(\f2transport1:addr1,transport2:addr2, \f1. . .).
+An example of each type
+of specification follows:
+.sp .5
+.RS 8
+\f4\-p \f2addr\f1
+.br
+\f4\-p \f2transport1:addr1,transport2:addr2, \f1. . .
+.RE
+.PP
+If the \f4\-p\f1 option is not specified, the address of the
+domain name server is taken from the associated \f4rfmaster\f1 files.
+The \f4\-p \f2addr\f1 specification is valid only when one transport
+provider is being used.
+See the \f4rfmaster\f1(1M) manual page for
+a description of the valid address syntax.
+.P
+If the host password has not been set, \f4rfstart\f1
+will prompt for a password.
+The password prompting process must
+match the password entered for your machine at the primary
+domain name server [see \f4rfadmin\f1(1M)].
+If you remove the \f4loc.passwd\f1 file or change domains, you will
+also have to reenter the password.
+.P
+Also, when \f4rfstart\f1 is run on a domain name server, entries
+in the
+\f4rfmaster\f1(4)
+file are syntactically validated.
+.P
+This command is restricted to the super-user.
+.SH "ERRORS"
+If syntax errors are found when validating an
+\f4rfmaster\f1(4)
+file, a warning describing each error will be sent to standard error.
+.P
+An error message will be sent to standard error if any of the
+following conditions are true:
+.sp .5
+.nf
+	1.  remote file sharing is already running
+	2.  there is no communications network
+	3.  a domain name server cannot be found
+	4.  a domain name server does not recognize the machine
+	5.  the command is run without super-user privileges
+.fi
+.P
+Remote file sharing will not start if a host password in
+\f4/etc/rfs/\f2<transport>\f4/loc.passwd\f1 is corrupted.
+If you suspect this
+has happened, remove the file and run \f4rfstart\f1 again to
+reenter your password.
+.P
+Note: \f4rfstart\f1 will not fail if your host password does not match
+the password on the domain name server.
+You will simply receive a warning message.
+However, if you try to mount a resource
+from the primary, or any other host that validates your password, the
+mount will fail if your password does not match the one that the host has
+listed for your machine.
+.SH FILES
+.ft 4
+.nf
+/etc/rfs/<transport>/rfmaster
+/etc/rfs/<transport>/loc.passwd
+.fi
+.ft
+.SH "SEE ALSO"
+\f4share\fP(1M),
+\f4dname\fP(1M),
+\f4idload\fP(1M),
+\f4mount\fP(1M),
+\f4rfadmin\fP(1M),
+\f4rfstop\fP(1M),
+\f4unshare\fP(1M)
+.br
+\f4rfmaster\fP(4) in the \f2Programmer's Reference Manual\f1
+.SH "NOTES"
+You must run \f4idload\fP(1M) to put any non-default user and group 
+mappings into place.
+.Ee

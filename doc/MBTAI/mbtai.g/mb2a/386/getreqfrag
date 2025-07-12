@@ -1,0 +1,121 @@
+'\"macro stdmacro
+.if n .pH mb2a.getreqfrag @(#)getreqfrag	40.8 of 5/15/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} mb2a_getreqfrag 3tai "" "\&"
+.if \nX=1 .ds x} mb2a_getreqfrag 3tai ""
+.if \nX=2 .ds x} mb2a_getreqfrag 3tai "" "\&"
+.if \nX=3 .ds x} mb2a_getreqfrag "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4mb2a_getreqfrag\f1 \- Receives a data fragment of a request message
+in asynchronous mode.
+.SH SYNOPSIS
+.ft 4
+.nf
+#include <sys/types.h>
+#include <sys/mb2taiusr.h>
+int mb2a_getreqfrag(fd, socketidptr, tid, fraglen, reference)
+int fd;
+mb2_socket *socketidptr;
+unsigned char tid;
+unsigned long fraglen;
+unsigned long reference;
+.fi
+.SH DESCRIPTION
+This routine is used to receive fragments of the data portion of a
+request message that was fragmented.
+It is called after a request message
+requiring fragmentation (\f4MB2_REQFRAG_MSG\f1) has been received from
+\f4mb2a_receive\f1.
+.TP .9i
+\f4fd\f1
+specifies an asynchronous mode file descriptor referencing
+an open port.
+.TP .9i
+\f4socketidptr\f1
+is a pointer to an \f4mb2_socket\f1 structure.
+.TP .9i
+\f4tid\f1
+is the transaction ID.
+.TP .9i
+\f4fraglen\f1
+identifies the length of the data portion fragment to
+be received.
+.TP .9i
+\f4reference\f1
+corresponds to a value returned when the fragment
+has been received.
+.P
+To receive a fragment of the data portion of a request message,
+(determined by an \f4MB2_REQFRAG_MSG\f1),
+\f4fraglen\f1 must have a value greater than 0.
+.P
+A NULL fragment can be received if \f4fraglen\f1 is 0.
+.P
+The \f4socketid\f1 must specify the socket ID of the destination socket.
+.P
+The \f4tid\f1 must contain the transaction ID identifying the transaction that
+corresponds to the received request message requiring fragmentation.
+.P
+The call returns when the request fragment message has been sent out or
+has been queued to be sent out.
+The actual fragment must be received later
+using the \f4mb2a_receive\f1 routine.
+The reference specified in this call will be
+returned when the corresponding fragment message is returned.
+.P
+If the fragment of the data portion of the request message does not
+arrive in the timeout interval specified when the port is opened or a transport
+error occurs, \f4mb2a_getreqfrag\f1 fails and
+\f4errno\fP will be set to \f4ETIME\fP.
+.P
+\f4mb2a_getreqfrag\f1 fails and \f4errno\f1 is set to \f4EAGAIN\f1 if internal flow
+conditions (discussed in Appendix A) do not permit the sending of the fragment
+message.
+.P
+\f4mb2a_getreqfrag\f1 blocks when waiting for the availability of buffers, if
+there are adequate buffers, until buffers become available.
+.P
+Upon successful completion of the routine, a value of 0 is returned.
+A value of -1 is returned and an \f4errno\f1 is set if there were errors.
+The following is a list of applicable errors for this routine.
+.TP .7i
+\f4EAGAIN\f1
+send or receive side flow control limit has
+been reached.
+.TP .7i
+\f4EAGAIN\f1
+buffers could not be allocated for message to
+be sent.
+.TP .7i
+\f4EBADF\f1
+\f4fd\f1 is not a valid file descriptor.
+.TP .7i
+\f4EFAULT\f1
+\f4ctlbuf\f1, \f4databuf\f1 or \f4socketid\f1 points outside the
+allocated address space.
+.TP .7i
+\f4EINTR\f1
+a signal was caught during the \f4mb2a_getreqfrag\f1
+call.
+.TP .7i
+\f4EINVAL\f1
+an invalid value was specified in one of the
+argument buffers.
+.TP .7i
+\f4ENOSTR\f1
+\f4fd\f1 is not a file descriptor to a Multibus II
+transport endpoint.
+.TP .7i
+\f4ENXIO\f1
+a hardware error condition was generated when sending
+or receiving the message.
+.TP .7i
+\f4ERANGE\f1
+the size of the control or the data part of the
+message is outside the range of the minimum/ maximum allowable message size.
+.SH SEE ALSO
+\f4getmsg\f1(2), \f4putmsg\f1(2), \f4mb2a_receive\f1(3tai),
+\f4mb2a_openport\f1(3tai)

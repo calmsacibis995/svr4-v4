@@ -1,0 +1,216 @@
+'\"macro stdmacro
+.if n .pH g5.langinfo @(#)langinfo	40.8.1.2 of 4/12/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} langinfo 5 "" "\&"
+.if \nX=1 .ds x} langinfo 5 ""
+.if \nX=2 .ds x} langinfo 5 "" "\&"
+.if \nX=3 .ds x} langinfo "" "" "\&"
+.TH \*(x}
+.SH "NAME"
+\f4langinfo\fP \- language information constants
+.SH "SYNOPSIS"
+\f4#include <langinfo.h>\fP
+.SH "DESCRIPTION"
+This header file contains the constants used to identify items of 
+langinfo
+data.
+The mode of
+.I items
+is given in
+\f4nl_types\fP.
+.P
+.in +10
+.TP 15
+\f4DAY_1\fP
+Locale's equivalent of 'sunday'
+.TP 15
+\f4DAY_2\fP
+Locale's equivalent of 'monday'
+.TP 15
+\f4DAY_3\fP
+Locale's equivalent of 'tuesday'
+.TP 15
+\f4DAY_4\fP
+Locale's equivalent of 'wednesday'
+.TP 15
+\f4DAY_5\fP
+Locale's equivalent of 'thursday'
+.TP 15
+\f4DAY_6\fP
+Locale's equivalent of 'friday'
+.TP 15
+\f4DAY_7\fP
+Locale's equivalent of 'saturday'
+.TP 15
+\f4ABDAY_1\fP
+Locale's equivalent of 'sun'
+.TP 15
+\f4ABDAY_2\fP
+Locale's equivalent of 'mon'
+.TP 15
+\f4ABDAY_3\fP
+Locale's equivalent of 'tue'
+.TP 15
+\f4ABDAY_4\fP
+Locale's equivalent of 'wed'
+.TP 15
+\f4ABDAY_5\fP
+Locale's equivalent of 'thur'
+.TP 15
+\f4ABDAY_6\fP
+Locale's equivalent of 'fri'
+.TP 15
+\f4ABDAY_7\fP
+Locale's equivalent of 'sat'
+.TP 15
+\f4MON_1\fP
+Locale's equivalent of 'january'
+.TP 15
+\f4MON_2\fP
+Locale's equivalent of 'febuary'
+.TP 15
+\f4MON_3\fP
+Locale's equivalent of 'march'
+.TP 15
+\f4MON_4\fP
+Locale's equivalent of 'april'
+.TP 15
+\f4MON_5\fP
+Locale's equivalent of 'may'
+.TP 15
+\f4MON_6\fP
+Locale's equivalent of 'june'
+.TP 15
+\f4MON_7\fP
+Locale's equivalent of 'july'
+.TP 15
+\f4MON_8\fP
+Locale's equivalent of 'august'
+.TP 15
+\f4MON_9\fP
+Locale's equivalent of 'september'
+.TP 15
+\f4MON_10\fP
+Locale's equivalent of 'october'
+.TP 15
+\f4MON_11\fP
+Locale's equivalent of 'november'
+.TP 15
+\f4MON_12\fP
+Locale's equivalent of 'december'
+.TP 15
+\f4ABMON_1\fP
+Locale's equivalent of 'jan'
+.TP 15
+\f4ABMON_2\fP
+Locale's equivalent of 'feb'
+.TP 15
+\f4ABMON_3\fP
+Locale's equivalent of 'mar'
+.TP 15
+\f4ABMON_4\fP
+Locale's equivalent of 'apr'
+.TP 15
+\f4ABMON_5\fP
+Locale's equivalent of 'may'
+.TP 15
+\f4ABMON_6\fP
+Locale's equivalent of 'jun'
+.TP 15
+\f4ABMON_7\fP
+Locale's equivalent of 'jul'
+.TP 15
+\f4ABMON_8\fP
+Locale's equivalent of 'aug'
+.TP 15
+\f4ABMON_9\fP
+Locale's equivalent of 'sep'
+.TP 15
+\f4ABMON_10\fP
+Locale's equivalent of 'oct'
+.TP 15
+\f4ABMON_11\fP
+Locale's equivalent of 'nov'
+.TP 15
+\f4ABMON_12\fP
+Locale's equivalent of 'dec'
+.TP 15
+\f4RADIXCHAR\fP
+Locale's equivalent of '.'
+.TP 15
+\f4THOUSEP\fP
+Locale's equivalent of ','
+.TP 15
+\f4YESSTR\fP
+Locale's equivalent of 'yes'
+.TP 15
+\f4NOSTR\fP
+Locale's equivalent of 'no'
+.TP 15
+\f4CRNCYSTR\fP
+Locale's currency symbol
+.TP 15
+\f4D_T_FMT\fP
+Locale's default format for date and time
+.TP 15
+\f4D_FMT\fP
+Locale's default format for the date
+.TP 15
+\f4T_FMT\fP
+Locale's default format for the time
+.TP 15
+\f4AM_STR\fP
+Locale's equivalent of 'AM'
+.TP 15
+\f4PM_STR\fP
+Locale's equivalent of 'PM'
+.in -10
+.P
+This information is retrived by
+\f4nl_langinfo\fP.
+.P
+The items 
+\f4CRNCYSTR\fP, \f4RADIXCHAR\fP
+and
+\f4THOUSEP\fP
+are extracted from the fields
+\f4currency_symbol\fP,
+\f4decimal_point\fP
+and
+\f4thousands_sep\fP
+in the structure returned by
+\f4localeconv\fP.
+.PP
+The items 
+\f4T_FMT\fP,
+\f4D_FMT\fP,
+\f4D_T_FMT\fP,
+\f4YESSTR\fP
+and
+\f4NOSTR\fP
+are retrived from a special message catalog named 
+\f4Xopen_info\fP
+which should be generated for each locale supported and installed
+in the appropriate directory [see \f4gettxt\fP(3C) and \f4mkmsgs\fP(1M)].
+This catalog should have the messages in the order
+\f4T_FMT\fP,
+\f4D_FMT\fP,
+\f4D_T_FMT\fP,
+\f4YESSTR\fP
+and
+\f4NOSTR\fP.
+.PP
+All other items are as returned by \f4strftime\fP.
+.SH "SEE ALSO"
+\f4gettxt\fP(3C),
+\f4localeconv\fP(3C),
+\f4nl_langinfo\fP(3C),
+\f4strftime\fP(3C),
+\f4cftime\fP(4),
+\f4nl_types\fP(5)
+.br
+\f4chrtbl\f1(1), \f4mkmsgs\fP(1M)
+in the \f2System Administrator's Reference Manual\f1
+.Ee

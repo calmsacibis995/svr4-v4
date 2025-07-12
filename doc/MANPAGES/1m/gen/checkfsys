@@ -1,0 +1,74 @@
+'\"macro stdmacro
+.if n .pH g1a.checkfsys @(#)checkfsys @(#)checkfsys	40.10
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} checkfsys 1M "Essential Utilities" "\&"
+.if \nX=1 .ds x} checkfsys 1M "Essential Utilities"
+.if \nX=2 .ds x} checkfsys 1M "" "\&"
+.if \nX=3 .ds x} checkfsys "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4checkfsys\f1 \- check a file system
+.SH SYNOPSIS
+.nf
+\f4checkfsys\f1
+.fi
+.SH DESCRIPTION
+The \f4checkfsys\f1 command allows you to check for and
+optionally repair a damaged file system.
+The command invokes a visual interface (the check task
+available through the \f4sysadm\f1 command).
+The initial prompt allows you to select the
+device that contains the filesystem.
+Then you are asked to
+specify the type of checking.
+The following choices are available:
+.TP
+\f4check only\f1
+Check the file system.
+No repairs are attempted.
+.TP
+\f4interactive fix\f1
+Repair the file system interactively.
+You are informed about each instance of damage and asked
+if it should be repaired.
+.TP
+\f4automatic fix\f1
+Repair the file system automatically.
+The program applies a
+standard repair to each instance of damage.
+.TP
+The identical function is available under the \f4sysadm\fP menu:
+.sp
+\f4sysadm check\f1
+.SH NOTES
+While automatic and interactive checks are generally successful, they
+can occasionally lose a file or a file's name.
+Files with content
+but without names are put in the \f2file-system/\f1\f4lost+found\f1
+directory.
+.P
+If it is important not to lose data, check the file system
+first to see if it appears to be damaged.
+If it does,
+use one of the repair options of the task.
+.SH DIAGNOSTICS
+The \f4checkfsys\f1 command exits with one of the following values:
+.TP
+\f40\f1
+Normal exit.
+.TP
+\f42\f1
+Invalid command syntax.
+A usage message is displayed.
+.TP
+\f47\f1
+The visual interface for this
+command is not available because it cannot invoke \f4fmli\fP.
+(The FMLI package is not installed or is corrupted.)
+.SH SEE ALSO
+\f4fsck\f1(1M),
+\f4makefsys\f1(1M),
+\f4mountfsys\f1(1M),
+\f4sysadm\f1(1M)

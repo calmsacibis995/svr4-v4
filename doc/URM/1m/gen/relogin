@@ -1,0 +1,87 @@
+'\"macro stdmacro
+.if n .pH g1a.relogin @(#)relogin	40.17 of 5/21/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} relogin 1M "Layers Windowing Utilities" "\&"
+.if \nX=1 .ds x} relogin 1M "Layers Windowing Utilities"
+.if \nX=2 .ds x} relogin 1M "" "\&"
+.if \nX=3 .ds x} relogin "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4relogin\f1 \- rename login entry to show current layer
+.SH SYNOPSIS
+\f4 /usr/lib/layersys/relogin\f1
+\f1[\f4\-s\f1]
+[\f2line\f1]
+.SH DESCRIPTION
+The
+\f4relogin\fP
+command
+changes the terminal \f2line\fP field of a user's
+\f4utmp\fP
+entry to the name of the windowing terminal layer
+attached to standard input.
+\f4write\fP
+messages sent to this user are directed to this layer.
+In addition,
+the
+\f4who\f1
+command will show the user associated with this layer.
+\f4relogin\fP
+may only be invoked under
+\f4layers\fP.
+.PP
+\f4relogin\fP
+is invoked automatically by
+\f4layers\fP
+to set the
+\f4utmp\fP
+entry to the terminal line of the first layer created upon startup,
+and to reset the
+\f4utmp\fP
+entry to the real line on termination.
+It may be invoked by a user to designate a different layer
+to receive
+\f4write\fP
+messages.
+.sp .5
+.TP 8
+\f4\-s\f1
+Suppress error messages.
+.TP
+\f2line\fP
+Specifies which
+\f4utmp\fP
+entry to change.
+The
+\f4utmp\fP
+file is searched for an entry with the specified
+\f2line\fP
+field.
+That field is changed to the line associated with the standard input.
+(To learn what lines are associated with a given user, say jdoe,
+type \f4ps -f -u jdoe\f1 and note the values shown in the
+\f4TTY\f1
+field [see \f4ps\fP(1)]).
+.SH FILES
+.PD 0
+.TP "\w'/var/adm/utmp     'u"
+\f4/var/adm/utmp\fP
+database of users versus terminals
+.PD
+.SH SEE ALSO
+\f4layers\fP(1),
+\f4mesg\fP(1),
+\f4ps\fP(1),
+\f4who\fP(1),
+\f4write\fP(1),
+in the \f2User's Reference Manual\f1
+.br
+\f4utmp\fP(4)
+.SH DIAGNOSTICS
+Returns \f40\fP upon successful completion, \f41\fP otherwise.
+.SH NOTES
+\f4relogin\fP will fail, if \f2line\fP does not belong to the user issuing the 
+\f4relogin\fP command or standard input is not associated with a terminal.
+.Ee

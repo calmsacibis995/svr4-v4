@@ -1,0 +1,219 @@
+'\"macro stdmacro
+.if n .pH g1.cdc @(#)cdc	40.16 of 5/22/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} cdc 1 "Enhanced Programming Utilities" "\&"
+.if \nX=1 .ds x} cdc 1 "Enhanced Programming Utilities"
+.if \nX=2 .ds x} cdc 1 "" "\&"
+.if \nX=3 .ds x} cdc "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4cdc\f1 \- change the delta comment of an \s-1SCCS\s+1 delta
+.SH SYNOPSIS
+.na
+\f4cdc \-r
+\f2SID\f1
+[\f4\-m\f4[\f2mrlist\f4]
+]
+[
+\f4\-y\f4[\f2comment\f4]
+]
+\f2file\f1 . . .
+.ad
+.SH DESCRIPTION
+\f4cdc\fP
+changes the
+delta comment,
+for the \s-1SID\s+1 (\s-1SCCS\s+1 identification string) specified by the
+\f4\-r\f1
+keyletter,
+of each
+named \s-1SCCS\s+1 file.
+.PP
+The delta comment is the Modification Request (\s-1MR\s+1) and comment
+information normally specified via the
+\f4\-m\f1
+and
+\f4\-y\f1
+keyletters of the
+\f4delta\fP
+command.
+.PP
+If
+\f2file\f1
+is a directory,
+\f4cdc\fP
+behaves as though each file in the directory were
+specified as a named file,
+except that non-\s-1SCCS\s+1 files
+(last component of the path name does not begin with \f4s.\f1)
+and unreadable files
+are silently ignored.
+If a name of
+\f4\-\f1
+is given, the standard input is read (see the
+.SM NOTES
+section)
+and each line of the standard input is taken to be the name of an \s-1SCCS\s+1 file
+to be processed.
+.PP
+Arguments to
+\f4cdc\fP,
+which may appear in any order, consist of
+keyletter
+arguments and file names.
+.PP
+All the described
+keyletter
+arguments apply independently to each named file:
+.RS 3
+.TP 12
+\f4\-r\f2\s-1SID\s+1\f1
+Used
+to specify the \f2S\f1CCS \f2ID\f1entification
+(\s-1SID\s+1)
+string
+of a delta for
+which the delta comment is to be changed.
+.TP
+\f4\-m\f2mrlist\f1
+If
+the \s-1SCCS\s+1 file has the
+\f4v\f1
+flag set
+[see
+\f4admin\fP(1)]
+then a
+list of \s-1MR\s+1 numbers to be added and/or deleted in
+the delta comment of
+the \s-1SID\s+1 specified by the
+\f4\-r\f1
+keyletter
+may
+be supplied.
+A null \s-1MR\s+1 list has no effect.
+.IP
+\f2mrlist\f1
+entries are added to the list of \s-1MR\s+1s in the same manner as that of
+\f4delta\fP.
+In order to delete an \s-1MR\s+1, precede the \s-1MR\s+1 number
+with the character \f4!\f1 (see the
+.SM EXAMPLES
+section).
+If the \s-1MR\s+1 to be deleted is currently in the list of \s-1MR\s+1s, it is
+removed
+and changed into a comment line.
+A list of all deleted \s-1MR\s+1s is placed in the comment section
+of the delta comment and preceded by a comment line stating
+that they were deleted.
+.IP
+If
+\f4\-m\f1
+is not used and the standard input is a terminal, the prompt
+\f4\s-1MR\s+1s?\f1
+is issued on the standard output before the standard input
+is read; if the standard input is not a terminal, no prompt is issued.
+The \f4\s-1MR\s+1s?\f1 prompt always precedes the \f4comments?\f1 prompt
+(see
+\f4\-y\f1
+keyletter).
+.IP
+\f2mrlist\f1
+entries in a list are separated by blanks and/or tab characters.
+An unescaped new-line character terminates the \s-1MR\s+1 list.
+.IP
+Note that if the
+\f4v\f1
+flag has a value
+[see
+\f4admin\fP(1)],
+it is taken to be the name of a program (or shell procedure) that validates
+the correctness of the \s-1MR\s+1 numbers.
+If a non-zero exit status is returned from the \s-1MR\s+1 number validation program,
+\f4cdc\fP
+terminates
+and the delta comment remains unchanged.
+.TP
+\f4\-y\f1[comment]
+Arbitrary
+text used to replace the \f2comment\^\f1(s) already existing
+for the delta specified by the
+\f4\-r\f1
+keyletter.
+The previous comments are kept and preceded by a comment
+line stating that they were changed.
+A null \f2comment\^\f1 has no effect.
+.IP
+If
+\f4\-y\f1
+is not specified and the standard input is a terminal, the
+prompt \f4comments?\f1 is issued on the standard output before
+the standard input is read;
+if the standard input is not a terminal, no prompt is issued.
+An unescaped new-line character terminates the \f2comment\^\f1 text.
+.RE
+.i0
+.PP
+If you made the delta and have the appropriate file permissions,
+you can change its delta comment.
+If you own the file and directory you can modify the delta comment.
+.SH EXAMPLES
+.RS 2
+.ft 4
+.na
+cdc \-r1.6 \-m"bl88-12345 !bl87-54321 bl89-00001" \-ytrouble s.file
+.ad
+.ft 1
+.RE
+.PP
+adds bl88-12345 and bl89-00001 to the \s-1MR\s+1 list, removes bl87-54321
+from the \s-1MR\s+1 list, and adds the comment \f4trouble\f1 to delta 1\f4.\f16
+of \f4s.file\f1.
+.PP
+Entering:
+.sp .5
+.RS
+.ft 4
+.nf
+cdc \-r1.6 s.file
+MRs? !bl87-54321 bl88-12345 bl89-00001
+comments? trouble
+.fi
+.ft 1
+.RE
+.PP
+produces the same result.
+.DT
+.SH FILES
+.PD 0
+.TP 10
+x-file
+[see
+\f4delta\fP(1)]
+.TP
+z-file
+[see
+\f4delta\fP(1)]
+.PD
+.SH SEE ALSO
+\f4admin\fP(1),
+\f4delta\fP(1),
+\f4get\fP(1),
+\f4help\fP(1),
+\f4prs\fP(1),
+\f4sccsfile\fP(4)
+.SH DIAGNOSTICS
+Use
+\f4help\fP
+for explanations.
+.SH NOTES
+If \s-1SCCS\s+1 file names are supplied to the
+\f4cdc\fP
+command via the standard input
+(\f4\-\f1 on the command line),
+then the
+\f4\-m\f1
+and
+\f4\-y\f1
+keyletters must also be used.

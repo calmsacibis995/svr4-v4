@@ -1,0 +1,266 @@
+'\"macro stdmacro
+.if n .pH g1a.ots @(#)ots	40.8 of 5/17/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} ots 7iref "System Administration Utilities" "" "\&"
+.if \nX=1 .ds x} ots 7iref "System Administration Utilities" ""
+.if \nX=2 .ds x} ots 7iref "" "\&"
+.if \nX=3 .ds x} ots "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4ots\f1 \- System V/386 Release 4.0 OSI Transport Service (ots) device driver 
+.SH DESCRIPTION
+The \f4ots\f1 driver is a STREAMS device driver that allows applications
+executing on separate Multibus II processors to establish connections and
+exchange data messages with one another.  \f4ots\f1 can also be used
+between applications on the same processor.  Applications access the
+driver through the UNIX Transport Interface (also known as the
+Transport Layer Interface or TLI).  Both virtual circuit (VC) and
+datagram services are provided by \f4ots\f1.  The  \f4ots\f1 driver
+only supports message exchange between processors in the same
+Multibus II system.
+.PP
+TLI applications normally call the \f4t_open\f1() function as the first
+step in initialization of transport endpoints.   Alternatively, the
+\f4n_connect\f1() or \f4n_accept\f1() SV-OpenNET NSI library calls may be
+used to perform this initialization.  A successful \f4t_open\f1 call
+returns a file descriptor that references a STREAMS path to the transport
+provider and typically, an allocated endpoint structure.  The first
+argument to \f4t_open\f1 is a path name that identifies the agent that
+will provide the transport service.
+.PP
+As a transport provider, the \f4ots\f1 driver maintains a table of
+endpoint structures indexed by minor number.  Elements of this table
+may be allocated and used exclusively or may be shared by TLI applications.
+Applications target the \f4ots\f1 driver in one of two ways.  First, the
+application may supply the device nodes \f4/dev/ots-vc\f1 or
+\f4/dev/ots-dg\f1 as the \f4t_open\f1 path name.  This action routes
+the call through the clone device driver.  The clone driver finds an
+available \f4ots\f1 minor number and associated endpoint structure for
+the application to use.  When \f4/dev/ots-vc\f1 is selected, the driver
+allocates a virtual circuit endpoint.  Access to the driver through
+\f4/dev/ots-dg\f1 causes the allocation of a datagram endpoint.
+Alternatively, the application may access the driver directly by 
+supplying the \f4t_open\f1 path name \f4/dev/ots-\f2xx\f1 where \f2xx\f1
+represents a digit from the set 01 through the maximum number of configured
+endpoints plus one (31 by default).  This way, applications can target
+specific endpoints and share them with other applications, if desired.
+Though available as a transport endpoint, the path name assigned to minor
+device 0 (\f4/dev/ots-00\f1) is typically reserved for driver
+administration and control and should NOT be used by normal TLI
+applications (This is in contrast to the path name used by the
+Ethernet driver-- \f4/dev/iso-tp4\f1).
+.PP
+Some TLI commands, such as \f4t_bind\f1() and \f4t_connect\f1(), target
+a local or remote endpoint via a "driver-ready" transport address.
+The address on the listener side of a connection must be externally known
+and typically is obtained by the TLI application from a name server.
+This name server translates a name of a transport service endpoint into
+a binary format usable by the driver.  The transport address expected by
+\f4ots\f1 is a Multibus II socket.  The binary format of the socket is a
+double word consisting of the host ID in the high-order word and port ID
+in the low-order word.  The host ID identifies the processor on which the
+transport endpoint resides.  The port ID identifies the transport service
+executing on that processor.  Port ID's utilized by the \f4ots\f1 driver
+range in value between 0x300 and 0x4FF.  The following table defines
+those ports within this range that target well-known services, are
+available for use by custom TLI applications and are reserved for
+exclusive use by \f4ots\f1.
+.PP
+.TS
+center,box;
+c | l.
+\f3Port ID\f1	\f3Description\f1
+_
+0x300	System V/386 general listener service
+0x301	System V/386 terminal login service
+0x302 to 0x3FF	User-defined well-know ports
+0x400	SV-OpenNET NFA Server
+0x401	SV-OpenNET NFA Consumer
+0x402	SV-OpenNET Virtual Terminal Server
+0x403	SV-OpenNET Virtual Terminal Consumer
+0x404 to 0x41F	Reserved for future SV-OpenNET services
+0x420 to 0x4FF	Reserved by SV-ots driver
+.TE
+.PP
+By convention, the host ID is typically set to the processor's slot number
+within the Multibus II backplane.  The \f4ots\f1 driver uses the host ID
+to distinguish local from remote addresses.  If the host ID portion of
+a socket is the same as the processor's slot ID, the referenced address
+is assumed local.  When the driver receives a connection request that
+targets a local listening endpoint, it routes the request back up the
+listening stream.  This action generates no bus activity.  Thus, the \f4ots\f1
+driver may be used for message exchange between TLI applications executing
+on the same processor.
+.PP
+The \f4ots\f1 driver recognizes the following protocol options which
+the transport user may retrieve, verify, or modify via \f4t_optmgmt()\f1:
+.PP
+.TP 11
+\f4OPT_COTS\f1
+Connection-Oriented Transport Service (i.e. virtual circuit service).
+This option can NOT be modified by a TLI application.  The service is
+automatically assigned when the device \f4/dev/ots-vc\f1 is opened.  VC
+service on an endpoint is indicated if bit 1 is set in the option field.
+.TP 11
+\f4OPT_EXP\f1
+Expedited message delivery service.  This is selected by setting bit 2
+in the option field.
+.TP 11
+\f4OPT_ORD\f1
+Orderly disconnect or release on a virtual circuit.  This is selected by
+setting bit 3 in the option field.
+.TP 11
+\f4OPT_CLTS\f1
+Connectionless Transport Service (i.e. datagram service).  This option
+cannot be modified by a TLI application.  The service is automatically
+assigned when the device \f4/dev/ots-dg\f1 is opened.  Datagram service
+on an endpoint is indicated if bit 4 is set in the option field.
+.PP
+The option field is a double word and can contain any logical combination
+of the above bit fields.  These macros are defined in the header file
+\f4/usr/include/sys/otsuser.h\f1.
+.SS Configuration
+Configuration and tunable parameters for the \f4ots\f1 driver are defined
+in \f4/etc/conf/pack.d/ots/space.c\f1.  In order to change the driver
+configuration, this file must be edited and the kernel regenerated.
+These parameters are described below:
+.PP
+.TP 18
+\f4NVC\f1
+Maximum number of Virtual Circuits endpoints supported by the \f4ots\f1 driver.
+The default is 25.  With this default, virtual circuit endpoints can be
+accessed directly via the device nodes \f4/dev/ots-01\f1 through
+\f4/dev/ots-25\f1.
+.TP
+\f4NDG\f1
+Maximum number of Datagram endpoints that the \f4ots\f1 driver supports.
+The default is 5.  Assuming default values for \f4NVC\f1 and
+\f4NDG\f1, datagram endpoints can be accessed directly via the device nodes
+\f4/dev/ots-26\f1 and \f4/dev/ots-30\f1.
+.TP
+\f4MAX_PEND\f1
+Maximum number of concurrent connection indications the \f4ots\f1 driver
+will accept on a listening endpoint.  The default is 5.
+.TP
+\f4TSDU_SIZE\f1
+A value greater than zero specifies the maximum size of a transport
+service data unit (\f4TSDU\f1 or a message); a value of zero specifies
+that the \f4ots\f1 driver will not support the concept of a \f4TSDU\f1.
+The default value is 64 Kbytes.  The largest value which may be configured
+is 16 Megabytes.
+.TP
+\f4ETSDU_SIZE\f1
+A value greater than zero specifies the maximum size of an expedited
+transport service data unit (\f4ETSDU\f1); a value of zero specifies that
+the transport provider does not support the concept of an \f4ETSDU\f1.
+The default value is 0 bytes.  The largest value which may be configured
+is 4096 bytes.
+.TP
+\f4CDATA_SIZE\f1
+A value greater than zero specifies the maximum amount of data that may
+be associated with the connection establishment functions.  The default
+is 64 bytes.  The largest value which may be configured is 512 bytes.
+.TP
+\f4DDATA_SIZE\f1
+Maximum amount of data that may be associated with disconnect requests.
+The default is 64 bytes.  The largest value which may be configured is 512
+bytes.
+.TP
+\f4DATAGRAM_SIZE\f1
+The maximum size of a datagram that may be sent by the transport user.
+The default and the largest value which may be configured is 4096 bytes.
+.TP
+\f4OTI_RD_HIWAT\f1
+When the total number of characters in all the messages queued at the
+driver's upstream queue exceeds \f4OTI_RD_HIWAT\f1 (1024 bytes by default), the
+driver will stop receiving messages from remote endpoints.
+.TP
+\f4OTI_RD_LOWAT\f1
+When the total number of characters in all the messages queued falls below
+\f4OTI_RD_LOWAT\f1 (512 bytes by default), the driver will again start
+receiving messages.
+.TP
+\f4OTI_WR_HIWAT\f1
+When the total number of characters in all the messages queued at the
+driver's downstream queue exceeds \f4OTI_RD_HIWAT\f1 (1024 bytes by
+default) STREAMS blocks messages directed downstream.
+.TP
+\f4OTI_WR_LOWAT\f1
+When the total number of characters in all the messages queued falls
+below \f4OTI_RD_LOWAT\f1 (512 bytes by default), STREAMS enables any
+downstream queue that had been blocked.
+.TP
+\f4U_VCDEFAULTS\f1
+This subset of driver options is applied to every newly initialized VC
+endpoint.  Options are defined by bit fields in the file
+\f4/usr/include/sys/otsuser.h\f1.
+.TP
+\f4U_DGDEFAULTS\f1
+This subset of driver options is applied to every newly initialized
+datagram endpoint.  Options are defined by bit fields in the file
+\f4/usr/include/sys/otsuser.h\f1.
+.PP
+If the total number of configured endpoints (\f4NVC\f1 + \f4NDG\f1) is
+increased, device nodes for the additional endpoints should be created.
+This is done automatically by adding entries to the \f4/etc/conf/node.d/ots\f1.
+.PP
+Under heavy loads, the \f4ots\f1 driver is potentially an intensive user
+of System V/386 Transport-Kernel Interface resources.  Depending on the
+use of the \f4ots\f1 driver, more space may need to be allocated for
+specific Transport-Kernel Interface tables and other data structures.
+Table sizes for the Transport-Kernel Interface module are defined as
+\f4/etc/conf/pack.d/mpc/space.c\f1 in the configuration file.  The
+following parameters should be increased two times (2X) the number of
+endpoints configured in \f4/etc/conf/pack.d/ots/space.c\f1.
+.PP
+.TS
+center,box;
+c | c
+l | l.
+.sp .25
+\f3Parameter\f1	\f3Description\f1
+.sp .25
+_
+.sp .25
+MAX_PORT	Maximum number of open ports
+MAX_TRAN	Maximum number of outstanding transactions
+.sp .25
+.TE
+.SH EXAMPLE
+The following commands can be used to setup \f4ots\f1 as a network listener
+for RFS.
+.PP
+.nf
+.ft 4
+  nlsadmin -i ots-vc
+  nlsadmin -a 105 -c /usr/net/servers/rfs/rfsetup 
+                  -y "RFS server" ots-vc
+  nlsadmin -l "\ex00030500" ots-vc
+.ft 1
+.fi
+.PP
+This example assumes the Multibus II processor on which the listener is
+being setup is located in slot 5 of the Multibus II backplane.  Thus, the
+host ID is 0x0005.  Because the port id assigned, the general listener
+service is 0x0300 and the socket address for this particular service is
+the double-word, 0x00050300.  However, because the address is stored by
+the name server listener service (nls) as a character string, the
+socket's words, and the bytes within these words must be swapped.
+.SH FILES
+.TP 40
+\f4/etc/conf/pack.d/ots/space.c\f1
+\f4ots\f1 driver configuration file
+.TP
+\f4/etc/conf/pack.d/ots/Driver.o\f1
+\f4ots\f1 driver object file
+.TP
+\f4/etc/conf/node.d/ots\f1
+\f4ots\f1 driver device node definition file
+.TP
+\f4/etc/conf/sdevice.d/ots\f1
+\f4ots\f1 driver system device entry
+.TP
+\f4/usr/include/sys/otsuser.h\f1
+\f4ots\f1 driver user data structures

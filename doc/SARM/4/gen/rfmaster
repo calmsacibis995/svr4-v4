@@ -1,0 +1,105 @@
+'\"macro stdmacro
+.if n .pH g4.rfmaster @(#)rfmaster	40.17 of 5/6/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} rfmaster 4 "RFS" "\&"
+.if \nX=1 .ds x} rfmaster 4 "RFS"
+.if \nX=2 .ds x} rfmaster 4 "" "\&"
+.if \nX=3 .ds x} rfmaster "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4rfmaster\f1 \- Remote File Sharing name server master file
+.SH DESCRIPTION
+Each transport provider used by Remote File Sharing has an
+associated \f4rfmaster\f1 file that identifies the primary and
+secondary name servers for that transport provider.
+The \f4rfmaster\f1 file
+.SM ASCII
+contains a series of records, each terminated by a newline;
+a record may be extended over more than one line by escaping
+the newline character with a backslash (``\f4\\\fP'').
+The fields in each record are separated by one or more tabs or spaces.
+Each record has three fields:
+.P
+.RS
+\f2name	type	data\f1
+.RE
+.P
+The \f2type\f1 field, which defines the meaning of the \f2name\f1 and \f2data\f1
+fields, has three possible values.
+These values can appear in
+upper case or lower case:
+.IP \f4p\f1 6
+The \f4p\f1 type defines the primary domain name server.
+For this type, \f2name\f1 is the domain name and \f2data\f1
+is the full host name of the machine that is the primary name server.
+The full host name is specified as \f2domain.nodename\f1.
+There can be only one primary name server per domain.
+.IP \f4s\f1 6
+The \f4s\f1 type defines a secondary name server for a domain.
+\f2name\f1 and \f2data\f1 are the same as for the \f4p\f1 type.
+The order of the \f4s\f1 entries in the \f4rfmaster\f1 file determines the
+order in which secondary name servers take over when the current domain
+name server fails.
+.IP \f4a\f1 6
+The \f4a\f1 type defines a network address for a machine.
+\f2name\f1 is the full domain name for the machine and \f2data\f1 is the
+network address of the machine.
+The network address can be in plain
+.SM ASCII
+text or it can be
+preceded by a \f4\ex\fP or \f4\eX\fP to be interpreted as hexadecimal notation.
+(See the documentation for the particular
+network you are using to determine the network addresses you need.)
+.P
+If a line in the \f4rfmaster\f1 file begins with a 
+\f4#\f1 character, 
+the entire line is treated as a comment.
+.P
+There are at least two lines in the \f4rfmaster\f1 file per domain name server:
+one \f4p\f1 and one \f4a\f1 line, to define the primary and its network 
+address.
+.P
+This file is created and maintained on the primary domain name server.
+When a machine other than the primary tries to start Remote File Sharing,
+this file is read to determine the address of the primary.
+If the
+associated \f4rfmaster\f1 for a transport provider
+is missing, use \f4rfstart \-p\f1 to identify the primary for
+that transport provider.
+After that, a copy of the primary's \f4rfmaster\f1
+file is automatically placed on the machine.
+.P
+Domains not served by the primary can also be listed in the \f4rfmaster\f1 file.
+By adding primary, secondary, and address information for other
+domains on a network, machines served by the primary will be able to
+share resources with machines in other domains.
+.br
+.ne 2i
+.P
+A primary name server may be a primary for more than one domain.
+However, the secondaries must then also be the same for each domain
+served by the primary.
+There is an \f4rfmaster\f1 file for each transport provider.
+.SH EXAMPLES
+An example of an \f4rfmaster\f1 file is shown below.
+(The network
+address examples, \f4comp1.serve\f1 and \f4comp2.serve\f1, are 
+.SM STARLAN
+network addresses.)
+.P
+.RS
+.ft 4
+.nf
+ccs		p	ccs.comp1
+ccs		s	ccs.comp2
+ccs.comp2	a	comp2.serve
+ccs.comp1	a	comp1.serve
+.fi
+.ft 1
+.RE
+.SH FILES
+\f4/etc/rfs/\f2<transport>\f4/rfmaster\f1
+.SH "SEE ALSO"
+\f4rfstart\f1(1M) in the \f2System Administrator's Reference Manual\f1

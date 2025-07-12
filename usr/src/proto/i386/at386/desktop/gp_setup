@@ -1,0 +1,112 @@
+#ident	"@(#)proto:i386/at386/desktop/gp_setup	1.1"
+DONE=0
+ARG0=`basename $0`
+stty erase '^H'
+echo "Do you wish to configure the system now? \c" >/dev/console 
+read ans </dev/console
+case $ans in
+	y*|Y*) break;DONE=1;;
+	*|'') exit;;
+esac
+while [ 1 ]
+do
+	cat >/dev/console <<!!
+
+Please enter a System Name for this system.  This will set the "node" name
+and the "system" name.  This name will be used for uucp(1) and networking.
+!!
+	echo "Enter System Name: \c"  >/dev/console
+	read node </dev/console
+	if [ "$node" = "" -o "$node" = "unix" ];then 
+		echo "Please choose another name, it cannot be unix or nothing.\n"  >/dev/console
+     	continue
+	fi
+	# Count the newline character
+	if [ `echo "$node" | wc -c | sed -e 's/ //g'` -gt 9 ];then
+		echo "The name cannot exceed 8 characters.\n"  >/dev/console
+		continue
+	fi
+
+	uname -S "$node"
+	if [ $? = 0 ];then
+		break
+	fi
+	echo "Please choose another name\n"  >/dev/console
+done
+UNAME=`uname -n`
+
+Xhosts=n
+if [ -f /etc/X0.hosts ]
+then
+	Xhosts=y
+	if [ $ARG0 = inetconfig ];then
+		echo "\nThe file /etc/X0.hosts already exists."
+		echo "Do you wish to overwrite (y/n) [n] ? \c"
+		read Xhosts
+	fi
+	case $Xhosts in
+		y*|Y*) echo "$UNAME" >/etc/X0.hosts ;;
+	esac
+else
+	echo "$UNAME" >/etc/X0.hosts
+fi
+
+echo "$UNAME" >/etc/systemid
+echo "$UNAME" >/etc/nodename
+echo "$UNAME $UNAME" >/etc/net/ticlts/hosts
+echo "$UNAME $UNAME" >/etc/net/ticots/hosts
+echo "$UNAME $UNAME" >/etc/net/ticotsord/hosts
+
+#	if the admin knows the ip address, put it in /etc/hosts
+#
+MSG1="Do you want to initialize the IP address for host ${UNAME}? (y,n,?)  \c"
+MSG2="
+The IP address is the address by which host ${UNAME} will be known 
+on the Internet. These addresses must be administered by a central authority 
+on your network. IP addresses are written as four decimal integers,
+separated by decimal points (e.g., 128.10.2.70).
+
+Do you want to initialize the IP address for host ${UNAME}? (y,n)  \c" 
+
+echo "$MSG1" >/dev/console
+read ans </dev/console
+if [ "${ans}" = '?' ];then
+	echo "$MSG2" >/dev/console
+	read ans </dev/console
+
+fi
+if [ "${ans}" = "y" ];then
+	echo "\nEnter the IP address for host ${UNAME}:\c" >/dev/console
+	read ipaddr </dev/console
+	# syntax checking too difficult here
+	if [ ! -z "${ipaddr}" ];then
+		echo "${ipaddr}\t${UNAME}" >>/etc/hosts
+		echo "\nAdded \"${ipaddr}\t${UNAME}\" to /etc/hosts"
+
+	fi
+	sacadm -k -p tcp >/dev/null 2>&1 
+	sacadm -r -p tcp >/dev/null 2>&1 
+	mv  /etc/saf/tcp/_pmtab /tmp/_pmtab
+	grep -v ACE /tmp/_pmtab >/etc/saf/tcp/_pmtab
+	# set up the tcp listener for tcp
+	if [ -n "${ipaddr}" ];then
+		`sacadm -a -p tcp -t listen -c "/usr/lib/saf/listen tcp" \
+			-v4 -y"tcp listener"`
+		echo ${ipaddr}|awk -F. ' { 
+			printf "obase=16\n%d\n%d\n%d\n%d\nquit\n", \
+				$1,$2,$3,$4 }' > /tmp/bc.file
+		for hex in `bc /tmp/bc.file`
+		do
+			c=`expr "$hex" : '.*'`
+			if [ "$c" -eq 1 ];then
+				NEWSTRING=${NEWSTRING:-}0${hex}
+			else
+				NEWSTRING=${NEWSTRING:-}${hex}
+			fi
+		done
+	else
+		NEWSTRING="***IP Hex addr***"
+	fi
+	echo "0::root:reserved:reserved:reserved:\x02000ACE${NEWSTRING}::c::/usr/lib/saf/nlps_server #NLPS SERVER\n" >>/etc/saf/tcp/_pmtab
+fi
+mv /etc/rc2.d/S10setup /usr/lbin/inetconfig

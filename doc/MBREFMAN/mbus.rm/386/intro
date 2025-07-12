@@ -1,0 +1,85 @@
+.if n .pH 386.intro @(#)intro	40.15 of 5/17/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.BK "Multibus Reference Manual"
+.CH "Manual Overview" 1
+.H 1 "Manual Overview"
+This manual lists and describes commands and device drivers Intel
+Corporation has added to the UNIX System V/386 Release 4 operating
+system for Multibus II support.
+These commands and drivers have been added to support the Intel
+installation procedures for over-install and add-on products, to make
+system administration simpler, and to interface with Intel devices.
+.P
+This manual is designed to supplement the following UNIX\(rg
+System V/386 Release 4 documents:
+.BT "Programmer's Reference Manual" ,
+.BT "User's Reference Manual" ,
+and the
+.BT "System Administrators Reference Manual" .
+.P
+This manual is divided into eight chapters and three appendices:
+.VL .75i 0.2i
+.LI "Chapter 1.  Introduction"
+Provides a manual overview, explains the organization, and describes
+notational conventions.
+.LI "Chapter 2.  Commands"
+Alphabetically lists UNIX System V/386 Release 4 Multibus II commands.
+.LI "Chapter 3.  Functions and Libraries"
+Lists UNIX System V/386 Release 4 Multibus II functions that make up the
+Interconnect Space Application Interface.
+.LI "Chapter 4.  File Formats"
+Lists UNIX System V/386 Release 4 Multibus II file formats.
+.\" .LI "Chapter 5.  Device Drivers"
+.\" Provides information for UNIX System V/386 Release 4 Multibus II devices.
+.LI "Chapter 5.  Device Drivers"
+Alphabetically lists and describes the UNIX System V/386 Release 4 Multibus II device drivers.
+.LI "Chapter 6.  System Maintenance Commands"
+Alphabetically lists UNIX System V/386 Release 4 system maintenance commands.
+.LI "Chapter 7.  Static Bad Block Handling"
+Describes those routines that compensate for the unusable blocks of a
+hard disk drive.
+.LI "Appendix A.  iSBX\(tm 279 Window Interface"
+.LI "Appendix B.  Information Unique to Multibus II Systems"
+.LI "Appendix C.  Related Publications"
+.LE
+.H 2 Organization
+All entries are based on a format common to other UNIX reference manuals.
+Not every section appears for every command.
+.BL
+.LI
+The NAME section gives the name(s) of the entry and briefly states its purpose.
+.LI
+The SYNOPSIS section summarizes the use of the command.
+.LI
+The DESCRIPTION section describes the way the program works.
+.LI
+The EXAMPLES section gives examples of usage, where appropriate.
+.LI
+The FILES section lists files that are built into or affected by the command.
+.LI
+The NOTES section provides additional information regarding the use of
+the command.
+.LI
+The SEE ALSO section provides a list of other relevant commands.
+.LE
+.H 2 "Notational Conventions"
+The following notational conventions are used throughout this manual:
+.VL
+.LI \f4input\f1
+User input, such as commands, command options, command arguments,
+directory names, and file names appear in constant width.
+In user-entry instructions, \f4Enter wd:\f1 means type the characters
+wd, then press <RETURN>.
+.LI \f4output\f1
+System output, such as prompt signs and responses to commands, appear in
+constant width type.
+.LI \f2variable\f1
+Names of variables to which values must be assigned (such as filename)
+appear in italic.
+.LI "command (#) or (# iref)"
+Refers to a command, library call, or system call.
+A command name followed by (#) refers to a command in the UNIX
+System V manual set, or (# iref) refers to other references that
+are in this manual.
+.LE

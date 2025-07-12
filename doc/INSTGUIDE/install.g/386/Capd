@@ -1,0 +1,27 @@
+.if n .pH 386.Capd @(#)Capd	40.1.1.1
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.BK "Installation Guide" "System V Release 4" "" ""   
+.\ACRONYM	                  
+.CH "Installing Packages" "" "Table of Contents" "D"
+.\CHAPTER	D
+.tC 1 "Introduction" D-1  
+.Index: ADD.base.pkg command        	1
+.Index: packages, installing        	1
+.Index: pkgadd command        	1
+.Index: packages, SVR3.2       	1
+.Index: pkgrm command       	1
+.tC 1 "Installing UNIX System Packages From Tape" D-2  
+.Index: packages, UNIX System        	2
+.Index: UNIX System packages        	2
+.Index: packages, selecting        	2
+.Index: packages, dependencies        	2
+.Index: pkginfo command        	2
+.Index: ADD.base.pkg command       	2
+.tC 1 "Installing Add-on Packages From Diskette" D-4  
+.Index: pkgadd command        	4
+.Index: packages, selecting        	4
+.Index: troubleshooting, package install failure        	5
+.Index: pkgrm command        	5
+.Index: pkginfo command        	5
+.Index: rebooting the system        	5
+.Index: shutdown        	5

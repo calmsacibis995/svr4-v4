@@ -1,0 +1,40 @@
+'\"macro stdmacro
+.if n .pH 386.mps_get_dmab @(#)mps_get_dmab	40.5 of 7/1/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.nr X
+.if \nX=0 .ds x} mps_get_dmabuf D3D "Multibus II" "DDI" "\&"
+.if \nX=1 .ds x} mps_get_dmabuf D3D "Multibus II" "DDI" "\&"
+.if \nX=2 .ds x} mps_get_dmabuf D3D "" "\&"
+.if \nX=3 .ds x} mps_get_dmabuf "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4mps_get_dmabuf\f1 \- returns a pointer to a list of data buffer descriptors.
+.SH SYNOPSIS
+.nf
+\f4#include <sys/mps.h>
+struct dma_buf *mps_get_dmabuf(\f2count\fP, \f2flag\fP)
+unsigned int	count;
+int flag;\f1
+.fi
+.SH ARGUMENTS
+.TP 11
+\f2count\f1
+the number of dma buffer descriptors required.
+.TP 11
+\f2flag\f1
+determines whether the routine sleeps while waiting for resources.
+Valid values are \f4DMA_SLEEP\f1 or \f4DMA_NOSLEEP\f1.
+.SH DESCRIPTION
+The \f4mps_get_dmabuf\f1 function returns a pointer to a linked list
+of (\f2count\f1 number of) data buffer descriptors.
+The list is
+terminated by NULL in the \f2db_next\f1 field of the data buffer.
+.SH RETURN VALUE
+If \f2count\f1 number of data buffer descriptors cannot be allocated, and
+\f2flag\f1 = \f4DMA_NOSLEEP\f1, a NULL descriptor is returned.
+Otherwise, if \f2flag\f1 = \f4DMA_SLEEP\f1, the routine blocks until
+\f2count\f1 data buffer descriptors can be allocated.
+.SH LEVEL
+Base or Interrupt with DMA_NOSLEEP
+.SH SEE ALSO
+\f4mps_free_dmabuf\f1(D3D)

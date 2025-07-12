@@ -1,0 +1,45 @@
+'\"macro stdmacro
+.if n .pH g3x.dlerror 'ident	"@(#)dlerror	40.10"'
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} dlerror 3X "C Development Set" "\&"
+.if \nX=1 .ds x} dlerror 3X "C Development Set"
+.if \nX=2 .ds x} dlerror 3X "" "\&"
+.if \nX=3 .ds x} dlerror "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4dlerror\f1 \- get diagnostic information
+.SH SYNOPSIS
+\f4cc\f1
+[\f2flag\fP \|.\|.\|.] \f2file\fP \|.\|.\|.
+\f4\-ldl\f1
+[\f2library\fP \|.\|.\|.]
+.PP
+\f4#include <dlfcn.h>\f1
+.PP
+\f4char \(**dlerror(void);\f1
+.SH DESCRIPTION
+\f4dlerror\^\f1
+returns a null-terminated character string (with no trailing newline)
+that describes the last error that occurred during dynamic linking
+processing.  If no dynamic linking errors have occurred since the last
+invocation of
+\f4dlerror\f1,
+\f4dlerror\^\f1
+returns \f4NULL\f1.  Thus, invoking 
+\f4dlerror\f1
+a second time, immediately following a prior invocation, results in
+\f4NULL\f1 being returned.
+.SH SEE ALSO
+\f4dlclose\f1(3X),
+\f4dlopen\f1(3X),
+\f4dlsym\f1(3X)
+.SH NOTES
+The messages returned by 
+\f4dlerror\^\f1
+may reside in a static buffer that is overwritten on each call to
+\f4dlerror\f1.
+Application code should not write to this buffer.
+Programs wishing to preserve an error message should make their
+own copies of that message. 

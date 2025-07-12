@@ -1,0 +1,421 @@
+'\"macro stdmacro
+.if n .pH g1.ctrace @(#)ctrace	40.13.1.3 of 4/12/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} ctrace 1 "Advanced C Utilities" "\&"
+.if \nX=1 .ds x} ctrace 1 "Advanced C Utilities"
+.if \nX=2 .ds x} ctrace 1 "" "\&"
+.if \nX=3 .ds x} ctrace "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4ctrace\f1 \- C program debugger
+.SH SYNOPSIS
+\f4ctrace\f1 [\f2options\fP] [\f2file\fP]
+.SH DESCRIPTION
+.ad b
+The \f4ctrace\fP command allows the user to monitor the sequential
+execution of a C program as each program statement executes.
+The effect is similar to executing a shell procedure with the \f4\-x\f1 option.
+\f4ctrace\fP reads the C program in \f2file\f1 (or from standard
+input if the user does not specify \f2file\f1), inserts statements to print
+the text of each executable statement and the values of all
+variables referenced or modified,
+and writes the modified program to the standard output.
+The output of \f4ctrace\fP must be placed into a temporary
+file because the \f4cc\fP(1) command does not allow the
+use of a pipe.
+This file can then be compiled and executed.
+.P
+As each statement in the program executes, it will be listed at the
+terminal, followed by the name and value of any variables referenced or
+modified in the statement; these variable names and values will be
+followed by any output from the statement.
+Loops in the trace output are detected and tracing is stopped until the
+loop is exited or a different sequence of statements within the loop is
+executed.
+A warning message is printed after each 1000 loop cycles to
+help the user detect infinite loops.
+The trace output goes to the standard output so the user 
+can put it into a file for examination with an editor or the
+\f4bfs\fP(1) or \f4tail\fP(1) commands.
+.P
+The options commonly used are:
+.P
+.PD 0
+.TP 14
+\f4\-f\f2 functions\^\f1
+Trace only these
+.I functions.
+.TP
+\f4\-v\f2 functions\^\f1
+Trace all but these
+.I functions.
+.PD
+.P
+The user may want to add to the default formats for printing variables.
+Long and pointer variables are always printed as signed integers.
+Pointers to character arrays are also printed as strings if appropriate.
+\f4char\f1,
+\f4short\f1,
+and
+\f4int\f1
+variables are also printed as signed integers and, if
+appropriate, as characters.
+\f4double\f1 variables are printed as floating point numbers in scientific notation.
+.ig
+String arguments to the
+.IR string (3C)
+functions and return values from
+\f4fgets\fP(3S),
+\f4gets\fP(3S),
+and
+\f4sprintf\fP(3S)
+are printed as strings.
+..
+The user can request that variables be printed in additional formats,
+if appropriate, with these options:
+.P
+.PD 0
+.TP 7
+\f4\-o\f1
+Octal
+.TP
+\f4\-x\f1
+Hexadecimal
+.TP
+\f4\-u\f1
+Unsigned
+.TP
+\f4\-e\f1
+Floating point
+.PD
+.P
+These options are used only in special circumstances:
+.P
+.PD 0
+.TP 7
+\f4\-l\f2 n\^\f1
+Check
+.I n
+consecutively executed statements for looping trace output, instead of the
+default of 20.
+Use 0 to get all the trace output from loops.
+.TP
+\f4\-s\f1
+Suppress redundant trace output from simple assignment statements and
+string copy function calls.
+This option can hide a bug caused by use of the = operator in place of the
+== operator.
+.TP
+\f4\-t\f2 n\^\f1
+Trace
+.I n
+variables per statement instead of the default of 10
+(the maximum number is 20).
+The diagnostics section explains when to use this option.
+.TP
+\f4\-P\f1
+Preprocess the input before tracing it.
+The user can also use the
+\f4\-D\f1,
+\f4\-I\f1,
+and
+\f4\-U\f1
+\f4cc\fP(1)
+options.
+.TP
+\f4\-p\f2 string\^\f1
+Change the trace print function from the default of \f4printf\f1.
+For example, \f4fprintf(stderr\f1, would send the trace to the standard error
+output.
+.TP
+\f4\-r\f2 f\f1
+Use file
+.I f
+in place of the
+\f4runtime.c\f1
+trace function package.
+This replacement lets the user change the entire print function,
+instead of just the name and leading arguments (see the
+\f4\-p\f1
+option).
+.TP
+\f4\-V\f1
+Prints version information on the standard error.
+.TP
+\f4\-Q\f1\f2arg\f1
+If \f2arg\f1 is \f4y\f1, identification information about \f4ctrace\f1 will
+be added to the output files.
+This can be useful for software administration.
+Giving \f4n\f1 for \f2arg\f1 explicitly asks for no such information,
+which is the default behavior.
+.PD
+.SH EXAMPLE
+If the file \f4lc.c\f1 contains this C program:
+.sp
+.DS I
+.nf
+.in +.5i
+\f4 1 #include <stdio.h>
+ 2 main()	/\(** count lines in input \(**/
+ 3 {
+ 4 	int c, nl;
+ 5 
+ 6 	nl = 0;
+ 7 	while ((c = getchar()) != EOF)
+ 8 		if (c = '\\n')
+ 9 			++nl;
+10 	printf("%d\\n", nl);
+11 }  \f1
+.in -.5i
+.fi
+.DE
+.PP
+these commands and test data are entered:
+.PP
+.DS I
+.nf
+.in +.5i
+\f4cc lc.c
+a.out
+1
+(cntl-d)  \f1
+.fi
+.in -.5i
+.DE
+.PP
+the program will be compiled and executed.
+The output of the program will be the number \f42\f1, which is
+incorrect because there is only one line in the test data.
+The error in this program is common, but subtle.
+If the user invokes \f4ctrace\fP with these commands:
+.PP
+.DS I
+.in +.5i
+.nf
+\f4ctrace lc.c >temp.c
+cc temp.c
+a.out  \f1
+.fi
+.in -.5i
+.DE
+.PP
+the output will be:
+.PP
+.DS I
+.in +.5i
+.nf
+\f4 2 main()
+ 6 	nl = 0;
+    	/\(** nl == 0 \(**/  
+ 7 	while ((c = getchar()) != EOF)  \f1
+.fi
+.in -.5i
+.DE
+.PP
+The program is now waiting for input.
+If the user enters the same test data as before, the output will be:
+.PP
+.DS I
+.in +.5i
+.nf
+\f4   	/\(** c == 49 or '1' \(**/
+ 8 		if (c = '\\n')
+    		/\(** c == 10 or '\\n' \(**/  
+ 9 			++nl;
+   			/\(** nl == 1 \(**/
+ 7 	while ((c = getchar()) != EOF)
+   	/\(** c == 10 or '\\n' \(**/
+ 8 		if (c = '\\n')
+    		/\(** c == 10 or '\\n' \(**/  
+ 9 			++nl;
+   			/\(** nl == 2 \(**/
+ 7 	while ((c = getchar()) != EOF)  \f1
+.fi
+.in -.5i
+.DE
+.PP
+If an end-of-file character (cntl-d) is entered, the final output
+will be:
+.PP
+.DS I
+.in +.5i
+.nf
+\f4   	/\(** c == -1 \(**/
+10 	printf("%d\\n", nl);
+   	/\(** nl == 2 \(**/2
+	\* return \*  \f1
+.fi
+.in -.5i
+.DE
+.PP
+Note the information printed out at the end of the trace line
+for the \f4nl\f1 variable following line 10.
+Also note the \f4return\f1 comment added by \f4ctrace\fP at the end of the 
+trace output.
+This shows the implicit return at the terminating brace in the function.
+.P
+The trace output shows that variable \f4c\f1
+is assigned the value '\f41\f1' in
+line 7, but in line 8 it has the value '\f4\\n\f1'.
+Once user attention is drawn to this \f4if\f1 statement,
+he or she will probably realize that the assignment operator (\f4=\f1)
+was used in place of the equality operator (\f4==\f1).
+This error can easily be missed during code reading.
+.SH EXECUTION-TIME TRACE CONTROL
+The default operation for
+\f4ctrace\fP
+is to trace the entire program file, unless the
+\f4\-f\f1
+or
+\f4\-v\f1
+options are used to trace specific functions.
+The default operation does not give the user statement-by-statement
+control of the tracing, nor
+does it let the user turn the tracing off and on when executing the traced
+program.
+.P
+The user can do both of these by adding
+\f4ctroff\f1()
+and
+\f4ctron\f1()
+function calls to the program to turn the tracing off and on,
+respectively, at execution time.
+Thus, complex criteria can be arbitrarily coded for trace control with
+\f4if\f1
+statements, and this code can even be conditionally included because 
+\f4ctrace\fP
+defines the
+\f4CTRACE \f1
+preprocessor variable.
+For example:
+.RS
+.br
+.sp
+\f4#ifdef CTRACE
+.br
+	if (c == '!' && i > 1000)
+.br
+		ctron();
+.br
+#endif \f1
+.br
+.sp
+.RE
+These functions can also be called from
+\f4sdb\fP(1)
+if they are compiled with the
+\f4\-g\f1 option.
+For example, to trace all but lines 7 to 10 in the main function, enter:
+.RS
+.br
+.sp
+\f4sdb a.out
+.br
+main:7b ctroff()
+.br
+main:11b ctron()
+.br
+r  \f1
+.br
+.sp
+.RE
+The trace can be turned off and on by setting static variable
+\f4tr_ct_\f1
+to
+\f40\f1
+and
+\f41\f1,
+respectively.
+This on/off option is useful if a user is using a debugger that can not
+call these functions directly.
+.SH FILES
+\f4/usr/ccs/lib/ctrace/runtime.c\f1		run-time trace package
+.SH SEE ALSO
+\f4sdb\fP(1),
+\f4ctype\fP(3C),
+\f4fclose\fP(3S),
+\f4printf\fP(3S),
+\f4string\fP(3C)
+.br
+\f4bfs\fP(1), \f4tail\fP(1) in the \f2User's Reference Manual\f1
+.SH DIAGNOSTICS
+This section contains diagnostic messages from both
+\f4ctrace\fP
+and
+\f4cc\fP(1),
+since the traced code often gets some
+\f4cc\fP
+warning messages.
+The user can get
+\f4cc\fP
+error messages in some rare cases, all of which can be avoided.
+.P
+.SS ctrace Diagnostics
+\f4warning: some variables are not traced in this statement\f1
+.RS
+Only 10 variables are traced in a statement to prevent the C compiler
+"out of tree space; simplify expression" error.
+Use the \f4\-t\f1 option to increase this number.
+.RE
+.P
+\f4warning: statement too long to trace\f1
+.RS
+This statement is over 400 characters long.
+Make sure that tabs are used to indent the code, not spaces.
+.RE
+.P
+\f4cannot handle preprocessor code, use \-P option\f1
+.RS
+This is usually caused by \f4#ifdef\f1/\f4#endif\f1 preprocessor statements in the
+middle of a C statement, or by a semicolon at the end of a \f4#define\f1
+preprocessor statement.
+.RE
+.P
+\f4'if ... else if' sequence too long\f1
+.RS
+Split the sequence by removing an \f4else\f1 from the middle.
+.RE
+.P
+\f4possible syntax error, try \-P option\f1
+.RS
+Use the
+\f4\-P\f1
+option to preprocess the
+\f4ctrace\fP
+input, along with any appropriate
+\f4\-D\f1,
+\f4\-I\f1,
+and
+\f4\-U\f1
+preprocessor options.
+.RE
+.SH NOTES
+Defining a function with the same name as a system function
+may cause a syntax error if the number of arguments is changed.
+Just use a different name.
+.P
+\f4ctrace\fP assumes that \f4BADMAG\f1 is a preprocessor macro, and that
+\f4EOF\f1 and \f4NULL\f1 are #defined constants.
+Declaring any of these to be variables, e.g., "\f4int EOF\f1;", will cause a
+syntax error.
+.P
+Pointer values are always treated as pointers to character strings.
+.P
+\f4ctrace\fP does not know about the components of aggregates like structures,
+unions, and arrays.
+It cannot choose a format to print all the
+components of an aggregate when an assignment is made to the entire
+aggregate.
+\f4ctrace\fP may choose to print the address of an aggregate
+or use the wrong format (e.g., \f43.149050e-311\f1 for a structure with two integer
+members) when printing the value of an aggregate.
+.P
+The loop trace output elimination is done separately for each file of a
+multi-file program.
+Separate output elimination can result in functions
+called from a loop still being traced, or the elimination of trace output
+from one function in a file until another in the same file is called.
+.Ee
+

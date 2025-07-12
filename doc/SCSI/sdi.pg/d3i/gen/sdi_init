@@ -1,0 +1,50 @@
+'\"macro stdmacro
+.if n .pH d3i.sdi_init @(#)sdi_init	40.8 of 3/18/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} sdi_init D3I SDI
+.if \nX=1 .ds x} sdi_init D3I SDI
+.if \nX=2 .ds x} sdi_init D3I "" "\&"
+.if \nX=3 .ds x} sdi_init "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4sdi_init\fP \- initialize the SCSI host adapter
+.SH SYNOPSIS
+.nf
+.ft 4
+extern int sdi_started;
+.sp .5
+void 
+sdi_init();
+.ft 1
+.fi
+.SH DESCRIPTION
+.P
+\f4sdi_init\f1 initializes the host adapter to accept SDI functions.  The
+\f4sdi_started\f1 flag is provided so that a target driver can determine if
+another target driver may have already called \f4sdi_init\f1.  If
+\f4sdi_started\f1 is zero, \f4sdi_init\f1 must be called.
+.SH RETURN VALUE
+None
+.SH LEVEL
+Base Only
+.SH EXAMPLE
+This example shows the sequence of instructions used to test \f4sdi_started\f1
+and call \f4sdi_init\f1.
+.P
+.ft 4
+.nf
+   extern int sdi_started
+   ...
+   /* Check to see if the Host Adapter driver has
+    * already been started.
+    */
+   if( !sdi_started )
+   {
+           /* Call the Host Adapter driver init routine */
+           sdi_init();
+   }
+   ...
+.fi
+.ft 1

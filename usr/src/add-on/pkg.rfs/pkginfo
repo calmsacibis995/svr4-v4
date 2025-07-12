@@ -1,0 +1,15 @@
+#ident	"@(#)pkg.rfs:pkg.rfs/pkginfo	1.1.2.2"
+
+# RFS pkginfo
+
+PKG="rfs"
+NAME="RFS Utilities"
+ARCH="i386"
+VERSION="1"
+VENDOR="USL"
+RELEASE="4.0"
+CATEGORY="system,utilities"
+CLASSES=""
+BASEDIR=""
+MAXINST="1"
+PREDEPEND="rfs"

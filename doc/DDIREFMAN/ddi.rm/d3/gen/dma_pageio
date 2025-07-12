@@ -1,0 +1,112 @@
+'\"macro stdmacro
+.if n .pH 386.dma_pageio @(#)dma_pageio	40.3 of 3/26/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.nr X
+.if \nX=0 .ds x} dma_pageio D3D "" "DDI" "\&"
+.if \nX=1 .ds x} dma_pageio D3D "" "DDI"
+.if \nX=2 .ds x} dma_pageio D3D "" "\&"
+.if \nX=3 .ds x} dma_pageio "" "" "\&"
+.TH \*(x}
+.IX "\f4dma_pageio\fP(D3D)"
+.SH NAME
+\f4dma_pageio\fP \- break up an I/O request into manageable units
+.SH SYNOPSIS
+.nf
+\f4#include <sys/buf.h>
+.sp 0.5
+void dma_pageio(void (*\f2strat\fP)(), buf_t *\f2bp\fP);\f1
+.fi
+.SH ARGUMENTS
+.PD .25
+.TP .4i
+\f2strat\fP
+Address of the \f4strategy\fP(D2DK) routine to call to complete the I/O
+transfer.
+.TP
+\f2bp\fP
+Pointer to the buffer header structure.
+.PD
+.SH DESCRIPTION
+\f4dma_pageio\f1 breaks up a data transfer request from \f4physiock\f1(D3DK)
+into units of contiguous memory.
+This function enhances the
+capabilities of the direct memory access controller (DMAC).
+.IX DMA (Direct Memory Access)
+.IX "Direct Memory Access (DMA)"
+.P
+.SH RETURN VALUE
+None.
+.SH LEVEL
+Base Only.
+.SH NOTES
+Can sleep.
+.sp 0.5
+When the transfer completes, any allocated buffers are freed.
+.sp 0.5
+The interrupt priority level is not maintained across calls to \f4dma_pageio\fP.
+.SH SEE ALSO
+.na
+\f4read\fP(D2DK),
+\f4strategy\fP(D2DK),
+\f4write\fP(D2DK),
+\f4physiock\fP(D3DK),
+\f4buf\fP(D4DK)
+.ad
+.SH EXAMPLE
+The following example shows how \f4dma_pageio\f1 is used when reading
+or writing disk data.
+The driver's \f4read\fP(D2DK) and \f4write\fP(D4DK) entry points
+use \f4physiock\fP to check the validity of the I/O and perform the data transfer.
+The \f4strategy\fP(D2DK) routine passed to \f4physiock\fP just calls
+\f4dma_pageio\fP to perform the data transfer one page at a time.
+.bp
+.nf
+.ft 4
+.ps 7
+.vs 9
+ 1  struct dsize {
+ 2	daddr_t nblocks;	/* number of blocks in disk partition */
+ 3	int cyloff;		/* starting cylinder # of partition */
+ 4  } my_sizes[2] = {
+ 5	20448, 21,		/* partition 0 = cyl 21-305 */
+ 6	21888, 1		/* partition 1 = cyl  1-305 */
+ 7  };
+
+ 8  int
+ 9  my_read(dev, uiop, crp)
+10	dev_t dev;
+11	uio_t *uiop;
+12	cred_t *crp;
+13  {
+14	register int nblks;
+
+15	nblks = my_sizes[getminor(dev)].nblocks;
+16	return(physiock(my_breakup, 0, dev, B_READ, nblks, uiop)); 
+17  }
+
+18  int
+19  my_write(dev, uiop, crp)
+20	dev_t dev;
+21	uio_t *uiop;
+22	cred_t *crp;
+23  {
+24	register int nblks;
+
+25	nblks = my_sizes[getminor(dev)].nblocks;
+26	return(physiock(my_breakup, 0, dev, B_WRITE, nblks, uiop));
+27  }
+
+28  static void
+29  my_breakup(bp)
+30	register buf_t *bp;
+31  {
+32	dma_pageio(my_strategy, bp);
+33  }
+.vs
+.ps
+.ft 1
+.fi
+.IX "\f4buf\fP(D4DK), example"
+.IX "\f4dma_pageio\fP(D3D), example"
+.IX "\f4getminor\fP(D3DK), example"
+.IX "\f4physiock\fP(D3DK), example"

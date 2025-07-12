@@ -1,0 +1,98 @@
+'\"macro stdmacro
+.if n .pH g1a.tunefs @(#)tunefs	40.10.1.3 of 4/18/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} tunefs 1M "UFS" "\&"
+.if \nX=1 .ds x} tunefs 1M "UFS"
+.if \nX=2 .ds x} tunefs 1M "" "\&"
+.if \nX=3 .ds x} tunefs "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4tunefs\f1 \- tune up an existing file system
+.SH SYNOPSIS
+\f4tunefs\f1
+[\f4\-a\f2 maxcontig\f1]
+[\f4\-d\f2 rotdelay\f1]
+[\f4\-e\f2 maxbpg\f1]
+[\f4\-m\f2 minfree\f1]
+[\f4-o [s | space | t | time]\fP]
+.IR special\  |\  filesystem
+.SH DESCRIPTION
+.LP
+\f4tunefs\f1
+is designed to change the dynamic parameters
+of a file system which affect the layout policies.
+The file system must be unmounted before using \f4tunefs\f1.
+The parameters which are to be changed are indicated
+by the options given below:
+.LP
+The options are:
+.TP .85i
+\f4\-a\f2 maxcontig\f1
+Specify the maximum number of contiguous
+blocks that will be laid out before forcing
+a rotational delay (see
+\f4\-d\f1
+below).
+The default value is one,
+since most device drivers require
+an interrupt per disk transfer.
+Device drivers that can chain several buffers
+together in a single transfer should set this to the
+maximum chain length.
+.TP
+\f4\-d\f2 rotdelay\f1
+Specify the expected time (in milliseconds)
+to service a transfer completion
+interrupt and initiate a new transfer on the
+same disk.
+It is used to decide how much rotational spacing to
+place between successive blocks in a file.
+.TP
+\f4\-e\f2 maxbpg\f1
+Indicate the maximum number of blocks any single
+file can allocate out of a cylinder group before
+it is forced to begin allocating blocks from
+another cylinder group.
+Typically this value is set to approximately
+one quarter of the total blocks in a cylinder group.
+The intent is to prevent any single file from using
+up all the blocks in a single cylinder group,
+thus degrading access times for all files
+subsequently allocated in that cylinder group.
+The effect of this limit is to cause big files to
+do long seeks more frequently than if they were
+allowed to allocate all the blocks in a cylinder
+group before seeking elsewhere.
+For file systems with exclusively large files,
+this parameter should be set higher.
+.TP
+\f4\-m\f2 minfree\f1
+Specify the percentage of space held back from
+normal users;
+the minimum free space threshold.
+The default value used is 10%.
+This value can be set to zero,
+however up to a factor of three
+in throughput will be lost over the
+performance obtained at a 10% threshold.
+Note:
+if the value is raised above the current usage level,
+users will be unable to allocate files until enough
+files have been deleted to get under the higher
+threshold.
+.TP
+\f4-o [s | space | t | time]\fP
+Change optimization strategy for the file system.
+\f4s\fP and \f4space\fP are interchangeable, and \f4t\fP and \f4time\fP 
+are interchangeable.
+.sp .5
+\f4s\fP or \f4space\fP - conserve space.
+.br
+\f4t\fP or \f4time\fP - attempt to organize file layout to minimize access time.
+.P
+Generally one should optimize for time unless the file system
+is over 90% full.
+.SH "SEE ALSO"
+\f4mkfs\fP(1M)

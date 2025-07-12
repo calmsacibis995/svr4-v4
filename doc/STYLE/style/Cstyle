@@ -1,0 +1,237 @@
+.if n .pH style.Cstyle @(#)Cstyle	41.2
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.BK "USL Documentation Style Guide" "" "" ""   
+.\ACRONYM	                  
+.CH "USL Documentation Style Guide" "" "Table of Contents" ""
+.\CHAPTER	
+.tC 1 "Introduction" 1  
+.tC 1 "Writing Style" 2  
+.tC 2 "Addressing the Reader" 2  
+.Index: tone        	2
+.Index: contractions        	2
+.Index: person        	2
+.tC 2 "Tense, Mood, and Voice" 2  
+.Index: tense (of verbs)      	2
+.Index: mood (of verbs)      	2
+.Index: voice        	3
+.Index: passive voice       	3
+.tC 2 "Sexist Language" 3  
+.Index: istart sexist language      	3
+.Index: iend sexist language      	4
+.tC 2 "Emphasis" 4  
+.Index: emphasis        	4
+.tC 2 "Use of ``That'' and ``Which''" 4  
+.Index: ``that,'' use of      	4
+.Index: ``which,'' use of      	4
+.tC 1 "Rules for Entering Text" 6  
+.Index: fonts        	6
+.Index: page breaks       	6
+.Index: break (page)       	6
+.Index: widows        	6
+.tC 2 "Changing Fonts" 6  
+.Index: fonts        	6
+.Index: legends, fonts in      	6
+.Index: captions (see legends)      	6
+.tC 2 "Document-Specific Strings" 7  
+.Index: strings (\f4troff\fP)       	7
+.tC 2 "Escaping troff Special Characters" 7  
+.Index: special characters (\f4troff\fP)      	7
+.tC 2 "Hyphenation" 8  
+.Index: hyphenation        	8
+.tC 2 "Long Headings" 8  
+.tC 1 "Lists" 9  
+.Index: istart lists       	9
+.Index: numbered lists       	9
+.Index: bullet lists       	9
+.Index: variable lists       	9
+.Index: dashed lists       	9
+.Index: variable lists       	9
+.Index: nested lists       	9
+.Index: punctuation, of lists      	9
+.Index: iend lists       	9
+.tC 1 "Punctuation" 10  
+.Index: istart punctuation       	10
+.tC 2 "Dashes, Hyphens, and Minus Signs" 10  
+.Index: istart dashes       	10
+.Index: hyphen        	10
+.Index: en dash       	10
+.Index: em dash       	10
+.Index: minus sign       	10
+.tC L "Table 1:\0" "Dashes, Hyphens, and Minus Signs" 10
+.Index: iend dashes       	10
+.tC 2 "Ellipses" 10  
+.Index: istart ellipses       	10
+.Index: iend ellipses       	11
+.tC 2 "Lists" 11  
+.Index: lists        	11
+.tC 2 "Parentheses" 12  
+.Index: parentheses, nesting       	12
+.tC 2 "Punctuation after Literal I/O in Running Text" 12  
+.tC 2 "Quotation Marks" 12  
+.Index: quotation marks       	12
+.Index: emphasis        	13
+.Index: irony        	13
+.Index: slang        	13
+.Index: iend punctuation       	13
+.tC 1 "Spelling and Distinctive Treatment of Words" 14  
+.Index: istart spelling       	14
+.tC 2 "Abbreviations" 14  
+.Index: abbreviations        	14
+.Index: time designations       	14
+.Index: time zones       	14
+.tC 2 "Capitalization" 15  
+.Index: istart capitalization       	15
+.Index: titles, capitalization in      	15
+.Index: headings, capitalization in      	15
+.Index: titles, capitalization in      	15
+.Index: headings, capitalization in      	15
+.Index: legends, capitalization in      	15
+.Index: computer text, capitalization of     	15
+.Index: iend capitalization       	15
+.tC 2 "Command Names Used as Verbs" 16  
+.tC 2 "Keyboard Keys and Control Characters" 16  
+.Index: istart keyboard keys      	16
+.tC L "Table 2:\0" "Spellings for Generic Keyboard Designations" 16
+.Index: function keys       	17
+.Index: control characters       	17
+.Index: graphic characters (ASCII)      	17
+.Index: iend keyboard keys      	18
+.tC 2 "Special Coinages and Local Spelling" 19  
+.tC L "Table 3:\0" "Special Coinages and Local Spelling" 19
+.tC 2 "Numbers" 20  
+.Index: numbers        	20
+.tC 2 "Possessives" 20  
+.Index: possessives        	20
+.tC 2 "Preferred Words and Phrases" 20  
+.Index: preferred phrases       	20
+.Index: words and phrases, preferred     	20
+.Index: iend spelling       	21
+.tC 1 "Computer Text" 22  
+.Index: istart computer text      	22
+.Index: literal I/O (see computer text)    	22
+.tC 2 "Markup for Computer Text" 22  
+.tC L "Table 4:\0" "Markup for Computer Text" 22
+.Index: fonts        	22
+.Index: user input       	22
+.Index: legends, computer text      	23
+.Index: computer output       	23
+.Index: substitutable text       	23
+.Index: syntactic notation, font for     	23
+.Index: titles, fonts in      	23
+.Index: headings, fonts in      	23
+.Index: legends, fonts in      	23
+.Index: fonts        	23
+.Index: filenames        	24
+.Index: environment variables       	24
+.Index: function, names       	24
+.Index: synopsis lines       	24
+.Index: istart command line markup and syntax   	24
+.Index: backslash        	24
+.tC 2 "Standard Rules of Command Syntax" 25  
+.Index: syntax, command       	25
+.Index: istart options (command line)     	25
+.Index: iend command line markup and syntax   	26
+.Index: iend computer text      	26
+.Index: iend options (command line)     	26
+.tC 1 "Figures, Tables, Screens, and Displays" 27  
+.tC 2 "Figures" 27  
+.Index: istart illustrations       	27
+.Index: istart figures       	27
+.Index: istart pictures       	27
+.Index: figure references       	27
+.Index: legends, figure       	27
+.Index: \f4pic\fP input       	27
+.tC L "Figure 1:\0" "Process Flow Diagram" 27
+.Index: iend illustrations       	27
+.Index: iend figures       	27
+.Index: iend pictures       	27
+.tC 2 "Tables" 28  
+.Index: istart tables       	28
+.Index: legends, table       	28
+.Index: iend tables       	28
+.tC 2 "Screens" 29  
+.Index: istart screen displays      	29
+.Index: istart displays, screen      	29
+.Index: istart terminal screen displays     	29
+.Index: legends, screen       	29
+.Index: program listings       	30
+.Index: line numbers (in code listings)    	30
+.Index: iend screen displays      	30
+.Index: iend displays, screen      	30
+.Index: iend terminal screen displays     	30
+.tC 2 "Displays" 30  
+.Index: istart displays       	30
+.Index: iend displays       	31
+.tC 1 "Notes and Cautions" 32  
+.Index: istart admonishments       	32
+.Index: caution (in guides)      	32
+.Index: note (in guides)      	32
+.Index: iend admonishments       	32
+.tC 1 "References" 33  
+.Index: istart references       	33
+.Index: istart cross-references       	33
+.Index: book references       	33
+.Index: chapter references       	33
+.Index: section references       	33
+.tC L "Table 5:\0" "Markup for References to Books, Chapters, or Sections" 33
+.Index: manual page reference      	34
+.Index: command references       	34
+.Index: function, references       	34
+.Index: system call references      	34
+.Index: volume numbers       	35
+.Index: issue numbers       	35
+.Index: UNIX, references to releases of    	35
+.Index: iend references       	35
+.Index: iend cross-references       	35
+.tC 1 "Front and Back Matter" 36  
+.Index: istart front matter      	36
+.Index: istart back matter      	36
+.Index: iend front matter      	36
+.Index: iend back matter      	36
+.tC 2 "Title Page" 36  
+.Index: title page       	36
+.tC 2 "Back of Title Page" 37  
+.Index: back of title page     	37
+.Index: copyrights        	37
+.Index: trademarks        	37
+.tC 2 "Tables of Contents" 37  
+.Index: tables of contents      	37
+.tC 2 "Glossaries" 37  
+.Index: glossaries        	37
+.tC 2 "Indexes" 37  
+.Index: indexes        	37
+.tC 2 "Trademarks" 38  
+.Index: istart trademarks       	38
+.Index: UNIX, rules for use of the word  	38
+.Index: iend trademarks       	38
+.tC 1 "Production" 39  
+.Index: Writer's Workbench       	39
+.Index: page breaks       	39
+.Index: break (page)       	39
+.Index: widows        	39
+.tC 1 "Appendix: Style Guidelines for Release 4.1 Enhanced Security" 40  
+.Index: istart Enhanced Security      	40
+.tC 2 "Product Names" 40  
+.Index: UNIX, references to releases of    	40
+.tC 2 "Enhanced Security Utilities" 41  
+.Index: security (see Enhanced Security)     	41
+.Index: ES (see Enhanced Security)     	41
+.Index: istart Enhanced Security, Enhanced Security Utilities   	41
+.tC 3 "Overview" 41  
+.tC 3 "Access Permissions" 41  
+.Index: istart superuser permissions      	41
+.Index: istart privileges       	41
+.Index: istart Enhanced Security, privileges     	41
+.Index: iend Enhanced Security, privileges     	42
+.Index: iend privileges       	42
+.Index: iend superuser permissions      	42
+.tC 3 "Version Macros" 42  
+.Index: istart version macros      	42
+.Index: istart Enhanced Security, version macros    	42
+.Index: Enhanced Security, B1 and B2 levels   	42
+.Index: iend Enhanced Security, version macros    	43
+.Index: iend version macros      	43
+.Index: iend Enhanced Security, Enhanced Security Utilities   	43
+.Index: iend Enhanced Security      	43
+.tC 1 "Bibliography" 44  
+.tC 1 "Index" 45  

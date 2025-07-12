@@ -1,0 +1,16 @@
+#ident	"@(#)pkg.pcieth:postinstall	1.1"
+#	@(#)postinstall	1.1	1/23/91 21:50:37
+#	Copyright 1991  Locus Computing Corporation
+
+pkginfo -q inet && {
+	#	pciconsvr.eth requires a -B when used with the "inet" package.
+	cd /usr/pci/bin
+	sed -e '
+		s/^bcastOpt=/bcastOpt=-B/
+	' < pcistart >/tmp/pcistart	&&
+		cp /tmp/pcistart .	&&	# same mode, owner and group
+		rm -f /tmp/pcistart	&&
+		exit 0
+	exit 1
+}
+exit 0

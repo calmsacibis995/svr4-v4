@@ -1,0 +1,265 @@
+'\"macro stdmacro
+.if n .pH g1m.lpc @(#)lpc	40.10 of 4/18/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.\" Copyright (c) 1983 Regents of the University of California.
+.\" All rights reserved.  The Berkeley software License Agreement
+.\" specifies the terms and conditions for redistribution.
+.\"
+.\" Copyright (c) 1988 Sun Microsystems, Inc. - All Rights Reserved.
+.\"
+.nr X
+.if \nX=0 .ds x} lpc 1M "BSD Compatibility Package" "\&"
+.if \nX=1 .ds x} lpc 1M "BSD Compatibility Package" ""
+.if \nX=2 .ds x} lpc 1M "" "\&"
+.if \nX=3 .ds x} lpc "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4lpc\f1 \- line printer control program
+.SH SYNOPSIS
+\f4/usr/ucb/lpc\f1
+[
+.I command
+[
+.IR parameter .\|.\|.
+] ]
+.SH DESCRIPTION
+.P
+\f4lpc\f1
+controls the operation of the printer, or of multiple printers.
+\f4lpc\f1
+commands can be used to start or stop a printer, disable or enable
+a printer's spooling queue, rearrange the order of jobs in a queue,
+or display the status of each printer\(em\&along with its
+spooling queue and printer daemon.
+.P
+With no arguments,
+\f4lpc\f1
+runs interactively, prompting with
+\f1`\f4lpc>\f1'.
+If arguments are supplied,
+\f4lpc\f1
+interprets the first as a
+.I command
+to execute; each subsequent argument is taken as a
+.I parameter
+for that command.
+The standard input can be redirected so that
+\f4lpc\f1
+reads commands from a file.
+.P
+Commands may be abbreviated to an unambiguous substring.
+Note: the
+.I printer
+parameter is specified just by the name of the printer (as
+\f4lw\f1),
+not as you would specify it to
+\f4lpr\f1(1)
+or
+\f4lpq\f1(1)
+(not as
+\f4\-Plw\f1).
+.PD 0
+.HP
+\f4?\f1
+.RI [ command ]\|.\|.\|.
+.br
+.HP
+\f4help\f1
+.RI [ command ]\|.\|.\|.
+.br
+Display a short description of each
+command specified in the argument list,
+or, if no arguments are given, a list of the recognized commands.
+.PD
+.HP
+\f4abort\f1
+\f1[\|\f4all\f1\||
+.RI [\| printer  \|.\|.\|.\|]\|]
+.br
+Terminate an active spooling daemon on the local host immediately and
+then disable printing (preventing new daemons from being started by
+\f4lpr\f1(1))
+for the specified printers.
+The
+\f4abort\f1
+command can only be used by the privileged user.
+.HP
+\f4clean\f1
+\f1[\|\f4all\f1\||
+.RI [\| printer  \|.\|.\|.\|]\|]
+.br
+Remove all files created in the spool directory by the daemon
+from the specified printer queue(s) on the local machine.
+The
+\f4clean\f1
+command can only be used by the privileged user.
+.HP
+\f4disable\f1
+\f1[\|\f4all\f1\||
+.RI [\| printer  \|.\|.\|.\|]\|]
+.br
+Turn the specified printer queues off.
+This prevents new
+printer jobs from being entered into the queue by
+\f4lpr\f1(1).
+The
+\f4disable\f1
+command can only be used by the privileged user.
+.HP
+\f4down\f1
+\f1[\|\f4all\f1\||
+.RI [\| printer  \|.\|.\|.\|]\|]
+.RI [ message ]
+.br
+Turn the specified printer queue off, disable printing and put
+.I message
+in the printer status file.
+The message does not need to be quoted, the
+remaining arguments are treated like
+\f4echo\f1(1).
+This is normally used to take a printer down and let others know why
+\f1(\f4lpq\f1(1)
+indicates that the printer is down, as does the
+\f4status\f1
+command).
+.HP
+\f4enable\f1
+\f1[\|\f4all\f1\||
+.RI [\| printer  \|.\|.\|.\|]\|]
+.br
+Enable spooling on the local queue for the listed printers, so that
+\f4lpr\f1(1)
+can put new jobs in the spool queue.
+The
+\f4enable\f1
+command can only be used by the privileged user.
+.TP
+\f4exit\f1
+.PD 0
+.TP
+\f4quit\f1
+Exit from
+\f4lpc\f1.
+.PD
+.HP
+\f4restart\f1
+\f1[\|\f4all\f1\||
+.RI [\| printer  \|.\|.\|.\|]\|]
+.br
+Attempt to start a new printer daemon.
+This is useful when some abnormal
+condition causes the daemon to
+die unexpectedly leaving jobs in the queue.
+This command can be run by any user.
+.HP
+\f4start\f1
+\f1[\|\f4all\f1\||
+.RI [\| printer  \|.\|.\|.\|]\|]
+.br
+Enable printing and start a spooling
+daemon for the listed printers.
+The
+\f4start\f1
+command can only be used by the privileged user.
+.HP
+\f4status\f1
+\f1[\|\f4all\f1\||
+.RI [\| printer  \|.\|.\|.\|]\|]
+.br
+Display the status of daemons and queues on the local machine.
+This command can be run by any user.
+.HP
+\f4stop\f1
+\f1[\|\f4all\f1\||
+.RI [\| printer  \|.\|.\|.\|]\|]
+.br
+Stop a spooling daemon after the current
+job completes and disable printing.
+The
+\f4stop\f1
+command can only be used by the privileged user.
+.HP
+\f4topq\f1
+.I printer
+.RI [\| job# \|.\|.\|.\|]
+.RI [\| user \|.\|.\|.\|]
+.br
+Move the print job(s) specified by
+.I job#
+or those job(s) belonging to
+.I user
+to the top (head) of the printer queue.
+The
+\f4topq\f1
+command can only be used by the privileged user.
+.HP
+\f4up\f1
+\f1[\|\f4all\f1\||
+.RI [\| printer  \|.\|.\|.\|]\|]
+Enable everything and start a new printer daemon.
+Undoes the
+effects of
+\f4down\f1.
+.SH FILES
+\f4/var/spool/lp/*\f1
+.br
+\f4/var/spool/lp/system/pstatus\f1
+.SH "SEE ALSO"
+\f4lpq\fP(1),
+\f4lpr\fP(1),
+\f4lprm\fP(1)
+.P
+\f4echo\fP(1)
+in the \f2User's Reference Manual\f1
+.br
+\f4lpsched\fP(1M)
+in the \f2System Administrator's Reference Manual\f1
+.SH DIAGNOSTICS
+.TP
+\f4?Ambiguous command\f1
+The abbreviation you typed matches more than one command.
+.TP
+\f4?Invalid command\f1
+You typed a command or abbreviation that was not recognized.
+.TP
+\f4?Privileged command\f1
+You used a command can be executed only by the privileged
+user.
+.TP
+\f4lpc: \f2printer\fP\|: unknown printer to the print service\f1
+The
+\f4printer\f1
+was not found in the
+System V
+.SM LP
+database.
+Usually this is a typing mistake; however, it 
+may indicate that the printer does not exist on the system.
+Use
+\f1`\f4lptstat \-p\f1'
+to find the reason.
+.TP
+\f4lpc: error on opening queue to spooler\f1
+The connection to
+\f4lpsched\f1
+on the local machine failed.
+This usually means the printer server started at
+boot time has died or is hung.
+Check if the printer
+spooler daemon 
+\f4/usr/lib/lp/lpsched\f1
+is running.
+.TP
+\f4lpc: Can't send message to LP print service\f1
+.TP
+\f4lpc: Can't receive message from LP print service\f1
+These indicate that the
+.SM LP
+print service has been 
+stopped.
+Get help from the system administrator.
+.TP
+\f4lpc: Received unexpected message from LP print service\f1
+It is likely there is an error in this software.
+Get help from system administrator.

@@ -1,0 +1,13 @@
+#ident	"@(#)pkg.oam:pkginfo	1.2.2.2"
+
+PKG="oam"
+PREDEPEND="oam"
+NAME="Operations, Administration, and Maintenance"
+ARCH="i386"
+RELEASE="4.0"
+VERSION="1"
+VENDOR="USL"
+
+CLASSES=""
+ORDER="foundation OAM_basic OAM_extended OAMmif"
+CATEGORY="application"

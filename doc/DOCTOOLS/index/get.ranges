@@ -1,0 +1,52 @@
+#ident	"@(#)doctools:index/get.ranges	1.1"
+nawk ' # get.ranges
+#   Input: sort key (tab) index term (tab) [b/e] (tab) number (tab) [chapter] (tab) [book]
+#             $1              $2             $3          $4            $5             $6
+#   Output: sort key (tab) index term (tab) number [(space) number] (tab) [chapter] (tab) [book]
+function error(s) {
+	print s " near pp " startnum "-" endnum " chap " $5, $6| "cat 1>&2"
+}
+function init() {
+	sortkey = $1
+	term = $2
+	chap = $5
+	book = $6
+
+	startnum = endnum = $4
+	inrange = 0; if ($3 == "b") inrange = 1
+	if ($3 == "e") {
+		error("unmatched iend for " sortkey)
+		startnum = "XXX"
+	}
+}
+function dump() {
+	if (inrange) {
+		error("unmatched istart for " sortkey)
+		endnum = "XXX"
+	}
+	if (NR == 1) return
+	if (endnum == startnum) print sortkey, term, startnum, chap, book
+	else  print sortkey, term, startnum " " endnum, chap, book
+}
+
+BEGIN	      { FS = OFS = "\t" }
+(sortkey != $1) ||
+(term != $2) ||
+(chap != $5) ||
+(book != $6)  { dump(); init(); next }
+	      {	if (inrange) {
+			if ($3 == "b") error("multiple istarts for " sortkey)
+			if ($3 == "e") { endnum = $4; inrange = 0 }
+		} else {
+			if ($3 == "e") {
+				error("unmatched iend for " sortkey)
+				startnum = "XXX"
+			}
+			if ($4 <= endnum+1) {
+				endnum = $4
+				if ($3 == "b") inrange = 1
+			} else { dump(); init() }
+		}
+	      }
+END	      {	NR = 2; dump() }	
+' $*

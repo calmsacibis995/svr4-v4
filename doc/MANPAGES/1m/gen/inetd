@@ -1,0 +1,89 @@
+'\"macro stdmacro
+.if n .pH g1a.inetd @(#)inetd	40.9 of 5/21/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} inetd 1M "Internet Utilities" "\&"
+.if \nX=1 .ds x} inetd 1M "Internet Utilities"
+.if \nX=2 .ds x} inetd 1M "" "\&"
+.if \nX=3 .ds x} inetd "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4inetd\f1 \- Internet services daemon
+.SH SYNOPSIS
+\f4inetd\f1
+[
+\f4\-d\f1
+] [ 
+\f4\-s\f1
+] [ 
+.I configuration-file
+]
+.SH DESCRIPTION
+\f4inetd\f1,
+the Internet services daemon, is normally run at boot time by the
+Service Access Facility (SAF).  When started,
+\f4inetd\f1
+reads its configuration information from
+.IR configuration-file ,
+the default being
+\f4/etc/inetd.conf\f1.
+See
+\f4inetd.conf\f1(4)
+for more information on the format of this file.
+It listens for connections on the Internet addresses of the
+services that its configuration file specifies.
+When a connection is found, it invokes the server daemon specified by
+that configuration file for the service requested. 
+Once a server process exits, \f4inetd\f1 continues to 
+listen on the socket.
+.LP
+The \f4\-s\f1 option allows you to run \f4inetd\f1 ``stand-alone,''
+outside the Service Access Facility (SAF).
+.LP
+Rather than having several daemon
+processes with sparsely distributed requests each running concurrently,
+\f4inetd\f1
+reduces the load on the system by invoking Internet servers only as
+they are needed.
+.LP
+\f4inetd\f1
+itself provides a number of simple TCP-based services.
+These include 
+\f4echo\f1,
+\f4discard\f1,
+\f4chargen\f1
+(character generator),
+\f4daytime\f1
+(human readable time), and
+\f4time\f1
+(machine readable time, in the form of the number of seconds since
+midnight, January 1, 1900).
+For
+details of these services, consult the appropriate RFC, as listed below,
+from the Network Information Center.
+.PP
+\f4inetd\f1
+rereads its configuration file whenever it receives a hangup signal,
+\f4SIGHUP\f1.
+New services can be activated, and existing services deleted or modified in
+between whenever the file is reread.
+.SH SEE ALSO
+.nf
+\f4comsat\f1(1M), \f4ftpd\f1(1M), \f4rexecd\f1(1M), \f4rlogind\f1(1M), \f4rshd\f1(1M), \f4telnetd\f1(1M),
+\f4tftpd\f1(1M), \f4inetd.conf\f1(4)
+.LP
+Postel, Jon, ``Echo Protocol,'' RFC 862, Network Information Center,
+SRI International, Menlo Park, Calif., May 1983
+.LP
+Postel, Jon, ``Discard Protocol,'' RFC 863, Network Information Center,
+SRI International, Menlo Park, Calif., May 1983
+.LP
+Postel, Jon, ``Character Generater Protocol,'' RFC 864, Network Information
+Center, SRI International, Menlo Park, Calif., May 1983
+.LP
+Postel, Jon, ``Daytime Protocol,'' RFC 867, Network Information Center,
+SRI International, Menlo Park, Calif., May 1983
+.LP
+Postel, Jon, and Ken Harrenstien, ``Time Protocol,'' RFC 868,
+Network Information Center, SRI International, Menlo Park, Calif., May 1983

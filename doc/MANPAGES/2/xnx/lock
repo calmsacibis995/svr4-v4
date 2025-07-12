@@ -1,0 +1,25 @@
+'\"macro stdmacro
+.if n .pH g2.lock @(#)lock	40.9 of 6/18/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} lock 2 "Application Compatibility Package" "\&"
+.if \nX=1 .ds x} lock 2 "Application Compatibility Package"
+.if \nX=2 .ds x} lock 2 "" "\&"
+.if \nX=3 .ds x} lock "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4lock\f1 \- lock a process in primary memory
+.SH SYNOPSIS
+\f4cc \f1[\f2flag \f1. . .] \f2file\f1 . . . -\f4lx\fP
+.br
+\f4int lock(flag);\f1
+.SH DESCRIPTION
+If the \f2flag\f1 argument is nonzero, the process
+executing this call will not be swapped unless it
+is required to grow.
+If the argument is zero, the process is unlocked.
+This call may only be executed by the super-user.
+If someone other than the super-user tries to
+execute this call, a value of \-1 is returned and the
+\f4errno\f1 is set to \f4EPERM\fP.

@@ -1,0 +1,58 @@
+'\"macro stdmacro
+.if n .pH g1a.ccifree @(#)ccifree	40.7 of 5/17/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} ccifree 1iref "System Administration Utilities" "" "\&"
+.if \nX=1 .ds x} ccifree 1iref "System Administration Utilities" ""
+.if \nX=2 .ds x} ccifree 1iref "" "\&"
+.if \nX=3 .ds x} ccifree "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4ccifree\f1 \- frees a line discipline program on the communications controller.
+.SH SYNOPSIS
+\f4/usr/lib/cci/ccifree\f1 [\f4\-p \f2portid\f1] \f2slot-ID line-discipline-ID\f1
+.SH DESCRIPTION
+\f4ccifree\f1 frees the memory used by a line discipline program which was
+previously downloaded to the communications controller using the
+\f4cciload\f1(1iref) command. This command must be issued only after
+the host has unbound all the lines bound to the line discipline on the
+controller using the \f4cciunbind\f1(1iref) commands.  This program sends
+a \f4CCI_Free\f1 message to the CCI server on the controller.
+.P
+Command line options are:
+.PP
+.TP 
+\f4\-p\f1 \f2n\f1
+Set the Multibus II Transport source Portid to n instead of the default
+value 0x1ff.
+.PP
+The CCI server will only release the memory used for the line discipline
+program when all hosts that have issued \f4CCI_Create\f1 messages for the
+script have issued corresponding \f4CCI_Free\f1 messages.
+.PP
+The host can issue a \f4CCI_Free\f1 message any time after it has issued a
+\f4CCI_Create\f1 message.  If it is used before the host receives a response to
+the \f4CCI_Create\f1 message, it will be used to cancel the previously issued
+\f4CCI_Create\f1 message.  In this case, there will be an error response to
+the \f4CCI_Create\f1 message followed by the response to the \f4CCI_Free\f1 message.
+.PP
+The  \f2line-discipline-ID\f1 specified is associated with a line
+discipline on the CCI server.  The  \f2line-discipline-ID\f1 can range
+from 0 to 255.  The communications controller hosting the CCI server is
+selected by specifying its Multibus II iPSB \f2slot-ID\f1.
+.SH FILES
+\f4/usr/lib/cci/ccifree\f1
+.SH SEE ALSO
+\f4ccisrvinfo\f1(1iref),
+\f4ccildlist\f1(1iref),
+\f4ccilinfo\f1(1iref),
+\f4ccisubinfo\f1(1iref),
+\f4ccildinfo\f1(1iref),
+\f4ccibind\f1(1iref),
+\f4cciunbind\f1(1iref),
+\f4cciload\f1(1iref),
+\f4cciattach\f1(1iref),
+\f4ccidetach\f1(1iref),
+\f4cciswitch\f1(1iref),
+\f4cci\f1(7iref).

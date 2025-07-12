@@ -1,0 +1,111 @@
+'\"!  tbl | mmdoc
+'\"macro stdmacro
+.if n .pH 386.vidi @(#)vidi	40.4 of 6/3/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.nr X
+.if \nX=0 .ds x} vidi 1 "" "\&"
+.if \nX=1 .ds x} vidi 1 ""
+.if \nX=2 .ds x} vidi 1 "" "\&"
+.if \nX=3 .ds x} vidi "" "" "\&"
+.TH \*(x}
+.SH NAME
+vidi \- sets the font and video mode for a video device
+.SH Syntax
+\f4vidi\fP [\f4-d\fP] [\f4-f\fP \f2fontfile\fP] \f2font\fP
+.sp
+vidi mode
+.SH DESCRIPTION
+\f4vidi\fP has two functions:
+it loads/extracts a font or sets the video mode for
+the current standard input device.
+Without arguments, it lists
+the all of the valid video mode and font commands.
+.SS "Font Options"
+Some video cards support changeable character fonts.
+Available fonts are \f4font8x8\fP, \f4font8x14\fP, and \f4font8x16\fP.
+The font options are used as follows:
+.TP 25
+\f4vidi \f2font\fP
+loads \f2font\fP from \f4/usr/lib/vidi/\f2font\fP.
+.TP
+\f4vidi -d \f2font\fP
+writes \f2font\fP to the standard output.
+.TP
+\f4vidi -d -f \f2font fontfile\fP
+writes \f2font\fP to \f2fontfile\fP.
+.TP
+\f4vidi -f \f2fontfile font\fP
+loads \f2font\fP from \f2fontfile\fP instead of default directory.
+.SS "Mode Options"
+\f4vidi\fP also sets the mode of the video adapter connected
+to the standard input.
+The modes are:
+.sp
+.TP 10
+\f4mono\fP
+move current screen to the monochrome adapter.
+.TP
+\f4cga\fP
+move current screen to the Color Graphics adapter.
+.TP
+\f4ega\fP
+move current screen to the Enhanced Graphics adapter.
+.TP
+\f4vga\fP
+move current screen to the Video Graphics adapter.
+.TP
+\f4internal\fP
+activate the internal monitor on portable with a plasma screen.
+.TP
+\f4external\fP
+activate the external monitor on portable with a plasma screen.
+.SS "Text and Graphics Modes"
+The following tables list the available modes.
+.P
+.TS
+box, expand;
+c s s s s
+l c c c l
+lf4 n n l l.
+Text Modes
+_
+Mode	Cols	Rows	Font	Adapter
+_
+.sp
+c40x25	40	25	8x8	\s-1CGA (EGA VGA)\s+1
+e40x25	40	25	8x14	\s-1EGA (VGA)\s+1
+v40x25	40	25	8x16	\s-1VGA\s+1
+m80x25	80	25	8x14	\s-1MONO (EGA_MONO VGA_MONO)\s+1
+c80x25	80	25	8x8	\s-1CGA (EGA VGA)\s+1
+em80x25	80	25	8x14	\s-1EGA_MONO (VGA_MONO)\s+1
+e80x25	80	25	8x14	\s-1EGA (VGA)\s+1
+vm80x25	80	25	8x16	\s-1VGA_MONO\s+1
+v80x25	80	25	8x16	\s-1VGA\s+1
+e80x43	80	43	8x14	\s-1EGA (VGA)\s+1
+.TE
+.sp 2
+.TS
+expand, box;
+c s s
+l l l
+lf4 l n.
+Graphics Modes
+_
+Mode	Pixel Resolution	Colors
+_
+mode5	320x200	4
+mode6	640x200	2
+modeD	320x200	16
+modeE	640x200	16
+modeF	640x350	2 (mono)
+mode10	640x350	16
+mode11	640x480	2
+mode12	640x480	16
+mode13	320x200	256
+att640	640x400	16
+att800x600	800x600	16
+att640x400	640x400	256
+.TE
+.SH NOTES
+The \f4internal\fP and \f4external\fP commands do not work with
+all types of portables.

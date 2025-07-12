@@ -1,0 +1,122 @@
+'\"macro stdmacro
+.if n .pH g3c.setjmp @(#)setjmp	40.14 of 5/22/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} setjmp 3C "C Development Set" "\&"
+.if \nX=1 .ds x} setjmp 3C "C Development Set"
+.if \nX=2 .ds x} setjmp 3C "" "\&"
+.if \nX=3 .ds x} setjmp "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4setjmp\f1, \f4longjmp\f1 \- non-local goto
+.SH SYNOPSIS
+.nf
+\f4#include <setjmp.h>\f1
+.PP
+\f4int setjmp (jmp_buf env);\f1
+.PP
+\f4void longjmp (jmp_buf env, int val);\f1
+.SH DESCRIPTION
+These functions are useful for dealing with errors 
+and interrupts encountered in
+a low-level subroutine of a program.
+.PP
+\f4setjmp\fP
+saves its stack environment in
+\f4env\fP
+(whose type,
+.IR jmp_buf ,
+is defined in the
+\f4<setjmp.h>\f1\^
+header file) for later use by
+\f4longjmp\fP.
+It returns the value 0.
+.PP
+\f4longjmp\fP
+restores the environment saved by the last call of
+\f4setjmp\fP
+with the corresponding
+\f4env\fP
+argument.
+After
+\f4longjmp\fP
+is completed, program execution
+continues as if the corresponding call of 
+\f4setjmp\fP
+had just returned the value
+\f4val\fP.
+(The caller of 
+\f4setjmp\fP
+must not have returned in the interim.)
+\f4longjmp\fP
+cannot cause
+\f4setjmp\fP
+to return the value 0.  If
+\f4longjmp\fP
+is invoked with a second argument of 0,
+\f4setjmp\fP
+will return 1.
+At the time of the second return from
+\f4setjmp\fP,
+all external and static variables have
+values as of the time
+\f4longjmp\fP
+is called (see example).
+The values of register and automatic variables are undefined.
+.PP
+Register or automatic variables whose value must
+be relied upon must be declared as \f4volatile\f1.
+.SH EXAMPLE
+.nf
+\f4\&#include <stdio.h>
+\f4\&#include <stdlib.h>
+\f4\&#include <setjmp.h>
+.sp
+jmp_buf env;
+int i = 0;
+main ()
+{
+    void exit();
+
+    if(setjmp(env) != 0) {
+       (void) printf("value of i on 2nd return from setjmp: %d\\n", i);
+       exit(0);
+    }
+    (void) printf("value of i on 1st return from setjmp: %d\\n", i);
+    i = 1;
+    g();
+    /\(** NOTREACHED \(**/
+}
+g()
+{
+    longjmp(env, 1);
+    /\(** NOTREACHED \(**/
+}\f1
+.fi
+.PP
+If the \f4a.out\fP resulting from this C language code is run, the 
+output will be:
+.RS
+.sp .5
+\f4value of i on 1st return from setjmp:\^0 \f1
+.sp .5
+\f4value of i on 2nd return from setjmp:\^1 \f1
+.RE
+.SH SEE ALSO
+\f4signal\fP(2), \f4sigsetjmp\f1(3C).
+.SH NOTES
+If
+\f4longjmp\fP
+is called even though
+\f4env\fP
+was never primed by a call to
+\f4setjmp\fP,
+or when the last such call was in a function that has since returned,
+absolute chaos is guaranteed.
+.\"	@(#)setjmp.3c	6.2 of 10/20/83
+
+
+.Ee
+
+

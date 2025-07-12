@@ -1,0 +1,62 @@
+'\"!  tbl | mmdoc
+'\"macro stdmacro
+.if n .pH g3x.form_f_new @(#)form_f_new	40.5 of 4/10/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.\" ident	"@(#)svid_ti:ti_lib/form_f_new	1.2"
+.nr X
+.if \nX=0 .ds x} form_field_new 3X "" "\&"
+.if \nX=1 .ds x} form_field_new 3X ""
+.if \nX=2 .ds x} form_field_new 3X "" "\&"
+.if \nX=3 .ds x} form_field_new "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4form_field_new\f1: \f4 new_field\f1, \f4dup_field\f1, \f4link_field\f1, \f4free_field,\f1 \- create and destroy \f4forms\fP fields
+.SH SYNOPSIS
+.nf
+.ft 4
+#include <form.h>
+.sp
+FIELD *new_field(int r, int c, int frow, int fcol,
+	int nrow, int ncol);
+.sp 0.5
+FIELD *dup_field(FIELD *field, int frow, int fcol);
+.sp 0.5
+FIELD *link_field(FIELD *field, int frow, int fcol);
+.sp 0.5
+int free_field(FIELD *field);
+.ft 1
+.fi
+.SH DESCRIPTION
+\f4new_field\fP creates a new field with \f2r\f1 rows and \f2c\f1 columns,
+starting at \f2frow\f1, \f2fcol\f1, in the subwindow of a form.
+\f2nrow\f1 is the number of off-screen rows and \f2nbuf\f1 is the
+number of additional working buffers.
+This routine returns a pointer to the new field.
+.PP
+\f4dup_field\fP duplicates \f2field\f1 at the specified location.
+All field attributes are duplicated, including the current
+contents of the field buffers.
+.PP
+\f4link_field\fP also duplicates \f2field\f1 at the specified location.
+However, unlike \f4dup_field\f1, the new field
+shares the field buffers with the original field.
+After creation, the attributes of the new field can be
+changed without affecting the original field.
+.PP
+\f4free_field\fP frees the storage allocated for \f2field\f1.
+.SH RETURN VALUE
+Routines that return pointers return \f4NULL\fP on error.
+\f4free_field\fP returns one of the following:
+.TS
+lfCWw(1.25i)1 c1 l .
+E_OK	\-	The function returned successfully.
+E_CONNECTED	\-	The field is already connected to a form.
+E_SYSTEM_ERROR	\-	System error.
+E_BAD_ARGUMENT	\-	An argument is incorrect.
+.TE
+.SH NOTES
+The header file \f4<form.h>\f1 automatically includes the header files
+\f4<eti.h>\fP and \f4<curses.h>\fP.
+.SH SEE ALSO
+\f4forms\fP(3X)

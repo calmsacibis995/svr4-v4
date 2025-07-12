@@ -1,0 +1,32 @@
+'\"macro stdmacro
+.if n .pH g7.tty @(#)tty	40.5 of 4/11/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} tty 7 "" "\&"
+.if \nX=1 .ds x} tty 7 ""
+.if \nX=2 .ds x} tty 7 "" "\&"
+.if \nX=3 .ds x} tty "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4tty\f1 \- controlling terminal interface
+.SH DESCRIPTION
+The file \f4/dev/tty\fP is,
+in each process, a synonym
+for the control terminal associated with the process group of that process,
+if any.
+It is useful for programs or shell sequences that wish to
+be sure of writing messages on the terminal
+no matter how output has been redirected.
+It can also be used for programs that demand the name of a file
+for output, when typed output is desired
+and it is tiresome to find out what terminal
+is currently in use.
+.SH FILES
+\f4/dev/tty
+.br
+/dev/tty*\fP
+.SH SEE ALSO
+\f4console\fP(7), \f4ports\fP(7)
+.\"	@(#)tty.7	6.2 of 9/6/83
+.Ee

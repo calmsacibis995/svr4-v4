@@ -1,0 +1,58 @@
+'\"macro stdmacro
+.if n .pH g1.ypmatch @(#)ypmatch	40.6 of 5/16/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.\" @(#)ypmatch.1 1.9 89/09/28 SMI;
+.\" Copyright (c) 1988 Sun Microsystems, Inc. - All Rights Reserved.
+.nr X
+.if \nX=0 .ds x} ypmatch 1 "" "\&"
+.if \nX=1 .ds x} ypmatch 1 ""
+.if \nX=2 .ds x} ypmatch 1 "" "\&"
+.if \nX=3 .ds x} ypmatch "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4ypmatch\f1 \- print the value of one or more keys from the 
+NIS map
+.SH SYNOPSIS
+\f4ypmatch\f1
+[
+\f4\-d\f1
+\f2ypdomain\f1
+] [
+\f4\-k\f1
+]
+\f2key\f1.\|.\|.
+\f2mname\f1
+.SH DESCRIPTION
+.P
+\f4ypmatch\f1
+prints the values associated with one or more keys from the
+\s-1NIS\s0
+name services map specified by
+\f2mname\f1,
+which may be either a
+\f2mapname\f1
+or an map nickname.
+.P
+Multiple keys can be specified;
+the same map will be searched for all keys.
+The keys must be exact values insofar as
+capitalization and length are concerned.
+No pattern matching is available.
+If a key is not matched, a diagnostic message is produced.
+.P
+The following options are available:
+.TP 16
+\f4\-d \f2ypdomain\f1
+Specify a domain other than the default domain.
+.TP
+\f4\-k\f1
+Before printing the value of a key,
+print the key itself, followed by a colon
+(``\f4:\fP'').
+This is useful only if the keys are not duplicated in the
+values, or so many keys were specified that
+the output could be confusing.
+.SH "SEE ALSO"
+\f4ypcat\f1(1),
+\f4ypfiles\f1(4)

@@ -1,0 +1,41 @@
+'\"macro stdmacro
+.if n .pH g1a.i410 @(#)i410	40.6 of 5/17/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} i410 7iref "System Administration Utilities" "" "\&"
+.if \nX=1 .ds x} i410 7iref "System Administration Utilities" ""
+.if \nX=2 .ds x} i410 7iref "" "\&"
+.if \nX=3 .ds x} i410 "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4i410\f1 \- iSBC 186/410 serial communications controller device driver
+.SH DESCRIPTION
+The \f4i410\f1 device driver performs recognition and initialization of
+iSBC 186/410 serial communications controller boards at system boot-up.
+.PP
+At boot time, the number of iSBC 186/410 serial communications controller
+boards present in the Multibus II system is determined.  If any are
+present, they are examined to determine if they are booting properly.
+Information describing the state of any iSBC 186/410 serial
+communications controller boards in the system is displayed on the
+console at boot-time.
+.SH FILES
+.TP 2.25i
+\f4/etc/conf/cf.d/mdevice\f1
+\f4mdevice\f1 entries
+.TP 
+\f4/etc/conf/sdevice.d/i410\f1
+\f4sdevice\f1 entries
+.TP
+\f4/etc/conf/pack.d/i410/Driver.o\f1
+\f4i410\f1 device driver object module
+.TP
+\f4/usr/include/sys/ics.h\f1
+interconnect space definitions
+.TP
+\f4/etc/conf/pack.d/i410/space.c\f1
+\f4i410\f1 specific declarations and initialization
+.SH SEE ALSO
+\f4atcs\f1(7iref),
+\f4cci\f1(7iref).

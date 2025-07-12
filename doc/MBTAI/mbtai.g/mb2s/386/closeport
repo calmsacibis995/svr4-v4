@@ -1,0 +1,55 @@
+'\"macro stdmacro
+.if n .pH mb2s.closeport @(#)closeport	40.7 of 1/9/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} mb2s_closeport 3tai "" "\&"
+.if \nX=1 .ds x} mb2s_closeport 3tai ""
+.if \nX=2 .ds x} mb2s_closeport 3tai "" "\&"
+.if \nX=3 .ds x} mb2s_closeport "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4mb2s_closeport\f1 \- Closes a synchronous \f4Multibus II\f1 transport
+endpoint.
+.SH SYNOPSIS
+.ft 4
+.nf
+#include <sys/types.h>
+#include <sys/mb2taiusr.h>
+int mb2s_closeport (fd)
+int fd;
+.ft
+.fi
+.SH DESCRIPTION
+The \f4mb2s_closeport\f1 function is invoked to close a synchronous
+\f4Multibus II\f1 transport endpoint.
+\f4fd\f1
+must be a file descriptor obtained from a
+call to \f4mb2s_openport\f1.
+The \f4mb2s_closeport\f1 function unbinds the endpoint
+from the associated port ID, frees the port ID if it is in the range of
+dynamically allocated port ID's, and issues a close for that file descriptor.
+.P
+Upon successful completion of the routine, a value of 0 is returned.
+A value of
+\%\f4-1\f1
+is returned and an \f4errno\fP is set if there were errors.
+The
+following is a list of applicable errors for this routine.
+.TP 10
+\f4EBADF\f1
+\f4fd\f1
+does not correspond to an open \f4Multibus II\fP transport
+endpoint.
+.TP
+\f4ENOSTR\f1
+a stream is not associated with
+\f4fd\f1 .
+.TP
+\f4EINTR\f1
+a signal was caught during the close operation.
+.TP
+\f4EIO\f1
+an error occured during a STREAMS close.
+.SH SEE ALSO
+\f4close\f1(2), \f4getmsg\f1(2), \f4putmsg\f1(2), \f4mb2s_openport\f1(3tai)

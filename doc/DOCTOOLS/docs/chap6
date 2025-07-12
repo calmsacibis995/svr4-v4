@@ -1,0 +1,638 @@
+.if n .pH doctools.chap6 @(#)chap6	40.2
+.\" @(#) SCCS File: chap6; ID:1.2; DATED:1/5/90
+.\"
+.\"     Copyright (c) 1989 AT&T   
+.\"     All Rights Reserved       
+.\"
+.\" SCCS path name:	/doc/DMG/Projects/Indexing/sccs/docs/s.index.guide
+.\" SCCS version SID:	1.5
+.\" Date this version:	89/06/07
+.\" Time this version:	10:35:33
+.\"
+.\"                  AT&T - PROPRIETARY
+.\"     THIS DOCUMENT CONTAINS PROPRIETARY INFORMATION OF
+.\"     AT&T AND IS NOT TO BE DISCLOSED OR USED EXCEPT IN
+.\"        ACCORDANCE WITH APPLICABLE AGREEMENTS.
+.\" 
+.\"
+.\"   Documenter's Tool Set User's Guide
+.\"   Chapter on Indexing
+.de SM
+\s-1\\$1\s0\\$2
+..
+.de Te
+``\\$1''\\$2
+..
+.PM DN "FINAL COPY"
+.BK "Documenter's Tool Set User's Guide" "Release 1.0"
+.CH "How to Produce an Index" 6
+.H 1 "Introduction"
+Here's what you have to do to produce an index using DOCTOOLS:
+.AL
+.LI
+Decide which terms to index.
+.LI
+Mark the terms in the document source file.
+.LI
+Run the
+.UI format
+command to produce the combined source file for the index and table of contents.
+.LI
+Run the
+.UI index
+command to produce the index source file.
+.LI
+Run the
+.UI format
+command to print the index from the index source file.
+.LE
+.H 1 "Deciding Which Terms to Index"
+Deciding which terms to index is the most important and most difficult
+part of producing an index.
+To produce a good index you must understand the subject matter
+and you must have a feel for the way people will use the index.
+For descriptions of commands that can
+help identify terms that might be useful in an index, see
+.UI subj (1)
+in the
+.BT "Documenter's Workbench\(tm Technical Discussion and Reference Manual" ,
+and
+.UI diversity
+and
+.UI topic
+in the
+.BT "Writer's Workbench\(tm Software User's Guide" .
+See the
+.ST "Practical Pointers"
+section below for other suggestions.
+See the
+.BT "Chicago Manual of Style"
+for a general discussion of indexing.
+.H 1 "Marking the Terms to Be Indexed"
+Use the DOCTOOLS
+macro
+.UI \&.IX
+to mark terms to be indexed.
+This macro must be inserted in the
+source files of the document you are indexing.
+The macro comes with or without an explicit sort key.
+The short form, without a sort key, works for most terms.
+There are a couple of strange cases, however, that the short form
+cannot handle.
+Therefore, the macro comes in a more general form, with an explicit sort key,
+which can handle any term you wish to index.
+.H 2 "Short Form of the \*(I{.IX\*(}I Macro"
+For most terms, you can use the short form of the
+.UI \&.IX
+macro.
+Include a line of the form
+.DS I UI
+\&.IX \f2term to be indexed\fP
+.DE
+in the
+document
+source file immediately following a term you wish to index.
+The term to be indexed may contain any printable
+.SM ASCII
+characters, any
+.UI troff
+escape sequences that change font or point size,
+and any
+.UI troff
+one-character escape sequences (such as
+.UI \ee ,
+.UI \eu ,
+and
+.UI \ed ).
+.P
+For example, the following lines cause the terms
+.Te "\f4cat\fP command"
+and
+.Te "IE\u\s-2\&3\s0\d"
+to appear in the index:
+.DS I UI
+\&.IX \ef4cat\efP command
+\&.IX IE\eu\es\-2\e&3\es0\ed
+.DE
+.H 2 "Terms That the Short Form Cannot Handle"
+This section describes the cases that the short form of the
+.UI \&.IX
+macro cannot handle.
+.H 3 "Multi-Character Escape Sequences"
+The short form of the
+macro cannot handle multi-character
+.UI troff
+escape sequences (except for font and point size requests).
+Examples of escape sequences that the short form cannot handle are
+the special characters (such as
+.UI \e(eq
+and
+.UI \e(mi ),
+the bracket building function
+.UI \eb ,
+the line drawing functions
+.UI \el
+and
+.UI \eL ,
+and the local motion functions
+.UI \ev
+and
+.UI \eh .
+The characters in these requests confuse the sort that the indexing tools do.
+.H 3 "Terms Identical Except for Case"
+The short form of the macro cannot handle
+terms that have the same spelling except for their
+mix of upper and lower case.
+When the indexing programs sort the terms to be indexed,
+they fold upper case into lower case.
+If they did not, all upper case terms would appear 
+in the index before any lower case terms.
+The sort is done first on the term and then on the page number.
+Therefore, if the index is to contain references to the term
+.Te "memory"
+on pages 50 and 74, and to the term
+.Te "MEMORY"
+on pages 63 and 77, the sort comes out like this using the short form of the macro:
+.DS I
+memory\0\050
+MEMORY\0\063
+memory\0\074
+MEMORY\0\077
+.DE
+The subsequent step of collapsing identical terms
+and gathering their page references into a single list cannot deal
+with this sequence.
+It takes these as four separate terms, because each term is different
+from the one before it.
+So the index comes out just as the sort did,
+and it is incorrect.
+.H 2 "General Form of the \*(I{.IX\*(}I Macro"
+The general form of the
+.UI "\&.IX"
+macro can handle the problems mentioned in the previous section.
+If you include a line of the form
+.DS I UI
+\&.IX \f2term to be indexed\fP %\f2sort key\fP
+.DE
+in your document, the indexing software sorts using the
+.SB "sort key" ,
+but only the
+.SB "term to be indexed"
+appears in the index.
+In this general form of the macro, the term may contain any
+.UI troff
+escape sequences;
+and the sort key allows you to avoid problems with
+upper and lower case, as explained below.
+.P
+To be able to use the sort key effectively, you should understand
+how terms are sorted in the index.
+Terms are sorted with upper-case folded onto lower-case.
+A space sorts before all alphanumerics;
+this implies that a string sorts before all longer strings of which it is the initial segment.
+If the following terms appeared in the index, this is how they would sort:
+.DS I
+null
+null attribute
+null value
+nullify
+nulls
+.DE
+.P
+Here is how an explicit sort key can handle the problems
+mentioned in the previous section:
+.P
+For
+.UI troff
+escape sequences that take an argument, leave the escape sequences out
+of the sort key.
+The following line prints the term
+.Te "T\v'.2m'\h'-0.4n'E\v'-.2m'\h'-0.3n'X"
+in the index and sorts it as
+.Te "TEX" :
+.DS I UI
+\&.IX T\ev'.2m'\eh'-0.4n'E\ev'-.2m'\eh'-0.3n'X %TEX
+.DE 
+.P
+For mixes of upper and lower case that sort incorrectly,
+use the sort key to sort the terms in the order you want.
+For example, for the terms
+.Te "memory"
+and
+.Te "MEMORY,"
+you could use the line:
+.DS I UI
+\&.IX memory %memory1
+.DE
+in all places in the document where you want to index
+.Te memory.
+Now all references to the term
+.Te memory
+are handled as if they were spelled
+.Te memory1,
+so they are indexed separately following
+.Te MEMORY.
+All appearances of the terms and their sort keys must be
+entered on the
+.UI \&.IX
+lines in exactly the same way for the sort to be consistent.
+.P
+Multi-word terms can be handled in an analogous way.
+If you did not use an explicit sort key,
+an index might sort terms like this based on page numbers:
+.DS I
+CREATE DATABASE statement
+create database statement
+CREATE DATABASE statement
+create device
+CREATE index statement
+create INDEX statement
+CREATE index statement
+.DE
+.P
+Because the first two words of some of these terms match except for case,
+you can no longer index them correctly using an explicit sort key that manipulates
+only the first word;
+you must include at least the first two words in the sort key.
+For example, if you used an explicit sort key such as
+.UI create1 ,
+all the lower-case terms would
+sort following all the upper case terms, which is incorrect.
+The sort keys for the lower-case terms have to be something like
+.UI "create database1 statement"
+and
+.UI "create index1 statement" .
+.H 2 "Special Effects"
+The primary function of the indexing tools is to
+alphabetize index terms and combine the page references for each term.
+This section describes a few extra features the tools support.
+.H 3 "Subindexing"
+.IX istart subindexing
+.IX istart index, subindexing
+Terms that contain a comma produce subindexing.
+The part of the term before the first comma is taken as the index term;
+the part following the first comma is taken as a modifier of that term.
+Therefore, terms identical up to their first comma are indexed as one term,
+with the material after the comma indented to show the relationship.
+For example, the following terms are indexed together:
+.DS I UI
+\&.IX boolean expressions
+\&.IX boolean expressions, compiling
+\&.IX boolean expressions, constants in
+\&.IX boolean expressions, evaluating
+.DE
+For terms you wish to group together in the index,
+make them identical up to a comma.
+Here is an example of how subindexing appears in a printed index:
+.DS I
+\&boolean expressions  \f32\fP: 10\-12, \f35\fP: 80\-92
+\&\0\0 compiling  \f35\fP: 87\-90
+\&\0\0 constants in  \f35\fP: 81
+\&\0\0 evaluating  \f35\fP: 85
+.DE
+.P
+The tools support only a single level of subindexing.
+An
+.UI \&.IX
+line with subindexing may contain an explicit sort key.
+.IX iend subindexing
+.IX iend index, subindexing
+.H 3 "Cross References"
+.IX istart cross references (in an index)
+.IX istart index, cross references
+The indexing tools support two kinds of cross references in an index.
+First, if the term is always entered in the following format,
+page references are not printed.
+.DS I UI
+\&.IX \f2index term 1\fP (see \f2index term 2\fP)
+.DE
+In place of the page references,
+.CO "(see \f2index term 2\fP)"
+is printed.
+Use this form of cross-reference when terms are synonymous.
+.P
+Second, if the term is always entered in the following format, 
+the cross reference is printed at the end of the page references.
+.DS I UI
+\&.IX \f2index term 1\fP (see also \f2index term 2\fP)
+.DE
+Use this form of cross-reference to direct readers to related entries.
+.P
+Here are examples of cross-references in a source file:
+.DS I UI
+\&.IX ACM (see Association for Computing Machinery)
+\&.IX directory (see also file)
+.DE
+.P
+Here is how the lines in the printed index might appear:
+.DS I
+\&ACM (see Association for Computing Machinery)  
+\&directory  \f31\fP: 5, 18, 45, 354, \f32\fP: 113, 115-116, 118 (see also file)
+.DE
+.IX iend cross references (in an index)
+.IX iend index, cross references
+.H 3 "Explicit Range of Pages"
+.IX istart range of pages (in an index)
+.IX istart index, range of pages
+If you insert several
+.UI \&.IX
+lines for the same term and the occurrences happen to fall
+on contiguous pages in a document, the indexing tools
+combine the page references into a single reference to a range of pages.
+.P
+To ask explicitly for a reference to a range of pages,
+mark the beginning of the range with a line of the form
+.DS I UI
+\&.IX istart \f2term to be indexed\fP [ %\f2sort key\fP ]
+.DE
+and the end of the range with a line of the form
+.DS I UI
+\&.IX iend \f2term to be indexed\fP [ %\f2sort key\fP ]
+.DE
+.P
+Ranges for different terms may be nested or overlapped.
+A single term may have more than one range, but its ranges may not be
+nested or overlapped.
+A term with a missing
+.UI istart
+or
+.UI iend
+appears in the index with
+.UI XXX
+in place of the missing page reference; the
+.UI index
+command prints an error message for each missing
+.UI istart
+or
+.UI iend
+it finds.
+.IX iend range of pages (in an index)
+.IX iend index, range of pages
+.H 3 "Master Index"
+.IX istart master index
+.IX istart index, master
+A master index is an index that refers to more than one book.
+A master index contains book acronyms as well as chapter and page numbers.
+The indexing software gets these acronyms from the fourth argument of the
+.UI \&.BK
+macro.
+.P
+Here are some sample
+.UI \&.BK
+lines:
+.DS I UI
+\&.BK "System Administrator's Guide" "" "" "SAG"
+\&.BK "User's Guide" "" "" "UG"
+.DE
+.P
+To produce a master index, insert the
+.UI \&.IX
+lines as usual.
+Then use the
+.UI \-m
+option of the
+.UI index
+command as described below.
+.IX iend master index
+.IX iend index, master
+.H 1 "Producing the File for the Index and Table of Contents"
+After you mark the terms to be indexed with the
+.UI \&.IX
+macro, use the
+.UI -c
+option of
+.UI format
+to collect the index terms and their page numbers.
+.DS I UI
+format -c -d \f2dest  file1\fP
+format -c -d \f2dest  file2\fP
+\&. . .
+.DE
+When you use the
+.UI -c
+option ,
+.UI format
+writes the terms to be indexed and their page numbers to
+the table of contents file, which is named
+.UI "C\f2file\fP" ,
+where
+.SB file
+is the name of the original source file.
+.P
+The
+.SB dest
+option specifies the printer destination.
+If you wish to generate an index (or a table of contents) without printing a chapter,
+you may specify a destination of
+.UI null .
+.H 1 "Producing the Index Source File"
+.IX istart index, index command
+To produce the index itself, run the
+.UI index
+command, which takes as input the table of contents files produced by
+.UI format ,
+and writes the index as output.
+(Beware of other commands named
+.UI index .)
+The format of the
+.UI index
+command is
+.DS I UI
+index [ \-m ] C\f2file1\fP C\f2file2\fP . . .
+.DE
+where the
+.UI C\f2files\fP
+are the table of contents files produced by the
+.UI -c
+option of
+.UI format .
+.UI index
+writes to its standard output a file containing the index and the
+markup to print it using
+.UI format .
+You may produce an index for a single chapter by running the command
+with a single filename as argument.
+Produce an index for an entire book by running the command
+with an argument list containing the names of the
+table of contents files for all the chapters in the book.
+The order of the files on the command line is irrelevant.
+.P
+The
+.UI \-m
+option produces a master index (an index with book acronyms);
+without this option, the index contains only chapter and page numbers.
+Produce a master index by running the
+.UI index
+command with an argument list containing the names
+of all the chapters of all the books to be indexed.
+.P
+It is almost always convenient to save the index source file,
+so use a command of the form
+.DS I UI
+index [ \-m ] C\f2file1\fP C\f2file2\fP . . . > \f2index\fP
+.DE
+.IX iend index, index command
+This command writes the index to a file \f2index\fP.
+This file is easy to decipher,
+so it is simple to change the index by editing the file.
+For example, you may wish to insert page breaks;
+and for a master index you need an introduction
+explaining book acronyms.
+Whenever possible, however, make changes in the original
+document source files so that future versions of the index
+don't need to be edited.
+.ig
+	.P
+	For example, to produce an index for a book with chapters named
+	.UI chap1 ,
+	.UI chap2 ,
+	and
+	.UI appa ,
+	assuming you had already run
+	.UI format
+	to produce the table of contents files,
+	use the command:
+	.DS I UI
+	index Cchap1 Cchap2 Cappa > Ibook
+	.DE
+..
+.H 1 "Printing the Index"
+To print the index, use
+.UI format
+on the index source file you just created.
+For example, the following command prints the index on destination
+.UI apple :
+.DS I UI
+format -d apple \f2index\fP
+.DE
+.H 1 "Practical Pointers"
+This section contains some extremely basic suggestions for producing consistent, useful indexes.
+.P
+You can get many of the most important index entries from section and chapter headers:
+it is often appropriate to put an
+.UI istart
+line at the beginning of a section and an
+.UI iend
+line at the end.
+This information is redundant with the table of contents,
+but an index, because it is alphabetized,
+is often easier to search than a table of contents.
+.P
+It is important to specify a term
+in exactly the same way each time it is indexed.
+As an index covers more material and as more writers are involved,
+inconsistency becomes more of a problem.
+Master indexes are especially troublesome.
+Whoever inserts the
+.UI \&.IX
+lines should have consistent conventions for:
+.BL
+.LI
+capitalization
+.LI
+pluralization
+.LI
+.UI troff
+requests, especially font changes
+(for example, the index tools take the terms
+.UI \ef4cat\ef1
+and
+.UI \ef4cat\efP 
+as different terms, even though
+they appear the same in print)
+.LE
+.P
+A good rule of thumb is to have many terms in an index,
+but to index only important discussions of each term.
+The reason for having many terms is simply to make it easy for
+users to find whatever they are looking for.
+The reason for indexing only important discussions is to save users
+the trouble of looking at places in the text where
+there is no important information on a term.
+.P
+When it seems useful, rotate multi-word terms so they appear
+in more than one place in the index.
+For example, wherever you have
+.UI "\&.IX constant \%declarations" ,
+you should probably also have
+.UI "\&.IX declarations, constant" .
+.P
+For terms that have many references and for terms that have several subentries,
+you can use a cross reference instead of indexing all appearances of all rotations.
+For example, if a book or chapter has several scattered references to the process scheduler,
+you might enter them all as
+.UI "\&.IX scheduler" ,
+and insert just one cross-reference
+.UI "\&.IX process scheduler (see scheduler)" .
+.P
+You can eliminate wasted space in an index by combining
+terms that appear near each other both in the source document and in the index.
+Here is an example of wasted space:
+.DS I
+constants
+\0\0boolean  17
+\0\0numeric  17
+\0\0string  17
+.DE
+If constant boolean expressions, constant numbers, and constant strings
+are discussed in three consecutive paragraphs, for example,
+use just one index reference to constants, perhaps with an
+.UI istart
+before and an
+.UI iend
+after the three paragraphs.
+It is probably also a good idea to use separate rotated
+entries for each paragraph to refer to the three different topics
+from different places in the index:
+.DS I UI
+\&.IX string constants
+\&.IX numeric constants
+\&.IX boolean constants
+.DE 
+.H 1 "Summary"
+Here is a summary of the steps you must take to produce an index.
+.AL
+.LI
+Decide which terms you wish to index.
+.LI
+Put an
+.UI \&.IX
+line in the document source files for each reference
+you wish to appear in the index.
+.LI
+Run the command
+.DS I UI
+format -c -d \f2dest  file\fP
+.DE
+for each of the source files.
+This produces the table of contents file,
+\f4C\f2file\f1,
+for each file.
+The
+.UI \-d
+option specifies the printer destination for the chapter; use
+.UI null
+to generate the
+\f4C\f2file\f1,
+without printing the chapter.
+.LI
+Run the command
+.DS I UI
+index [ \-m ] C\f2file1\fP C\f2file2\fP . . . > \f2index\fP
+.DE
+to create a file
+.SB index
+that contains the source for the index.
+Include on the command line the names of the table of contents files
+for all the chapters to be indexed.
+The
+.UI \-m
+option produces a master index.
+.LI
+Run the command
+.DS I UI
+format -d \f2dest  index\fP
+.DE
+to print the index on printer
+.SB dest .
+.LE

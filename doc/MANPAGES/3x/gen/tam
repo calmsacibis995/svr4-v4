@@ -1,0 +1,639 @@
+'\"macro stdmacro
+.if n .pH g3x.tam @(#)tam	40.12 of 4/11/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} tam 3X "" "\&"
+.if \nX=1 .ds x} tam 3X ""
+.if \nX=2 .ds x} tam 3X "" "\&"
+.if \nX=3 .ds x} tam "" "" "\&"
+.TH \*(x}
+.ds s Extended Terminal Interface
+.ds S ETI
+.SH NAME
+\f4tam\f1 \- \s-1TAM\s+1 transition libraries
+.SH SYNOPSIS
+\f4#include <tam.h>\f1
+.PP
+\f4cc\f1
+\f4-I\f1
+\f4/usr/include/tam\f1
+[ \f2flags\f1 ] \f2files\f1
+\f4\-ltam\f1
+\f4\-lcurses\f1
+[ \f2libraries\f1 ]
+.SH DESCRIPTION
+These routines are used to port
+UNIX PC
+character-based
+\s-1TAM\s+1 programs to the
+3B processor line
+so that they will run
+using any terminal supported by
+\f4curses\fP(3X), the low-level \*S library.
+Once a
+\s-1TAM\s+1 program has been changed to remove machine-specific
+code, it can be recompiled with the standard \s-1TAM\s+1
+header file <\f4tam.h\f1> and linked with the \s-1TAM\s+1
+transition and \f4curses\fP(3X) libraries.
+.P
+Note that \s-1TAM\s0 will probably not be supported in future releases.
+.SH FUNCTIONS
+The following is a list of \s-1TAM\s+1 routines supplied
+in the transition library.  Those routines marked with a
+dagger (\(dg) are macros and do not return a value.
+For a complete description of each routine,
+see the \s-1UNIX PC\s0 \f2UNIX System V User's Manual\f1
+under the entries indicated.
+.PP
+.PD 0
+.TP 2.75i
+\f4addch (c)\(dg	\f1
+See \f4curses\fP(3X).
+.PP
+\f4char c;\f1
+.PD
+.PP
+\f4addstr (s)\(dg\f1
+.br
+\f4char \(**s;\f1
+.PP
+.PD 0
+.TP 2.75i
+\f4int adf_gttok (ptr, tbl)	\f1
+See \f4paste\fP(3X).
+.PP
+\f4char \(**ptr;\f1
+.PP
+\f4struct s_kwtbl \(**tbl;\f1
+.PD
+.PP
+\f4char \(**adf_gtwrd (sptr, dptr)\f1
+.br
+\f4char \(**sptr, \(**dptr;\f1
+.PP
+\f4char \(**adf_gtxcd (sptr, dptr)\f1
+.br
+\f4char \(**sptr, \(**dptr;\f1
+.PP
+.TP 2.75i
+.PD 0
+\f4int attroff (attrs)\f1
+See \f4curses\fP(3X).
+.PP
+\f4long attrs;\f1
+.PD
+.PP
+\f4int attron(attrs)\f1
+.br
+\f4long attrs;\f1
+.PP
+\f4int baudrate()\f1
+.PP
+\f4int beep()\f1
+.PP
+\f4int cbreak()\f1
+.PP
+\f4int clear()\f1
+.PP
+\f4clearok (dummy, dummy)\(dg\f1
+.br
+\f4int dummy;\f1
+.PP
+\f4int clrtobot()\f1
+.PP
+\f4int clrtoeol()\f1
+.PP
+\f4int delch()\f1
+.PP
+\f4int deleteln()\f1
+.PP
+\f4int echo()\f1
+.PP
+\f4int endwin()\f1
+.PP
+\f4erase()\(dg\f1
+.PP
+.TP 2.75i
+\f4int exhelp (hfile, htitle).	\f1
+See \f4message\f1(3T).
+.PP
+\f4char \(**hfile, \(**htitle;\f1
+.PD
+.PP
+.PD 0
+.TP 2.75i
+\f4int fixterm()\f1
+See \f4curses\fP(3X).
+.PD
+.PP
+\f4flash()\(dg\f1
+.PP
+\f4int flushinp()\f1
+.PP
+.PD 0
+.TP 2.75i
+\f4int form (form, op)	\f1
+See \f4form\fP(3X).
+.PP
+\f4form_t \(**form;\f1
+.PP
+\f4int op;\f1
+.PD
+.PP
+.PD 0
+.TP 2.75i
+\f4int getch()	\f1
+See \f4curses\fP(3X).
+.PD
+.PP
+\f4getyx(win, r, c)\(dg\f1
+.br
+\f4int win, r, c;\f1
+.PP
+\f4int initscr()\f1
+.PP
+\f4int insch(ch)\f1
+.br
+\f4char ch;\f1
+.PP
+\f4int insertln()\f1
+.PP
+.PD 0
+.TP 2.75i
+\f4int iswind()	\f1
+See \f4tam\fP(3X); always returns 0.
+.PD
+.PP
+.PD 0
+.TP 2.75i
+\f4char \(**kcodemap (code).	\f1
+See \f4curses\fP(3X).
+.PP
+\f4unsigned char code;\f1
+.PD 
+.PP
+\f4int keypad (dummy, flag)\f1
+.br
+\f4int dummy, flag;\f1
+.PP
+\f4leaveok (dummy, dummy)\(dg\f1
+.br
+\f4int dummy;\f1
+.PP
+.PD 0
+.TP 2.75i
+\f4int menu (menu, op)	\f1
+See \f4menu\fP(3X).
+.PP
+\f4menu_t \(**menu;\f1
+.PP
+\f4int op;\f1
+.PD
+.PP
+.PD 0
+.TP 2.75i
+\f4int message (mtype, hfile, htitle, format [, arg ...]	\f1
+See \f4message\f1(3X).
+.PP
+\f4int mtype;\f1
+.PP
+\f4char \(**hfile, \(**htitle, \(**format;\f1
+.PD
+.PP
+.PD 0
+.TP 2.75i
+\f4move(r, c)\(dg	\f1
+See \f4curses\fP(3X).
+.PP
+\f4int r, c;\f1
+.PD
+.PP
+\f4mvaddch (r, c, ch)\(dg\f1
+.br
+\f4int r, c;\f1
+.br
+\f4char ch;\f1
+.PP
+\f4mvaddstr (r, c, s)\(dg\f1
+.br
+\f4int r, c;\f1
+.br
+\f4char \(**s;\f1
+.PP
+\f4unsigned long mvinch(r, c)\f1
+.br
+\f4int r, c;\f1
+.PP
+.PD 0
+.TP 2.75i
+\f4nl()\(dg	\f1
+Not supported
+.PD
+.PP
+\f4int nocbreak()\f1
+.PP
+\f4int nodelay (dummy, bool)\f1
+.br
+\f4int dummy, bool;\f1
+.PP
+\f4int noecho()\f1
+.PP
+.PD 0
+.TP 2.75i
+\f4nonl()\(dg	\f1
+NOT SUPPORTED
+.PD
+.PP
+.PD 0
+.TP 2.75i
+\f4int pb_check (stream)	\f1
+See \f4paste\fP(3X).
+.PP
+\f4FILE \(**stream;\f1
+.PD
+.PP
+\f4int pb_empty (stream)\f1
+.br
+\f4FILE \(**stream;\f1
+.PP
+\f4int pb_gbuf (ptr, n, fn, stream)\f1
+.br
+\f4char \(**ptr;\f1
+.br
+\f4int n;\f1
+.br
+\f4int (*fn) ();\f1
+.br
+\f4FILE \(**stream;\f1
+.PP
+\f4char \(**pb_gets (ptr, n, stream)\f1
+.br
+\f4char \(**ptr;\f1
+.br
+\f4int n;\f1
+.br
+\f4FILE \(**stream;\f1
+.PP
+\f4char \(**pb_name()\f1
+.PP
+\f4FILE \(**pb_open()\f1
+.PP
+\f4int pb_puts (ptr, stream)\f1
+.br
+\f4char \(**ptr;\f1
+.br
+\f4FILE \(**stream;\f1
+.PP
+\f4int pb_seek (stream)\f1
+.br
+\f4FILE \(**stream;\f1
+.PP
+\f4int pb_weof (stream)\f1
+.br
+\f4FILE \(**stream;\f1
+.PP
+.PD 0
+.TP 2.75i
+\f4int printw (fmt[, arg1 ... argn])	\f1
+See \f4curses\fP(3X).
+.PP
+\f4char \(**fmt;\f1
+.PD
+.PP
+\f4refresh()\(dg\f1
+.PP
+\f4int resetterm()\f1
+.PP
+\f4int resetty()\f1
+.PP
+\f4int savetty()\f1
+.PP
+.PD 0
+.TP 2.75i
+\f4int track (w, trk, op, butptr, whyptr)	\f1
+See \f2wgetc().
+.PP
+\f4int w, op, \(**butptr, \(**whyptr;\f1
+.PP
+\f4track_t \(**trk;\f1
+.PD
+.PP
+.PD 0
+.TP 2.75i
+\f4int wcmd (wn, cp)	\f1
+See \f4tam\fP(3X). Outputs a null-
+.TP 2.75i
+\f4short wn;	\f1
+terminated string to the entry/
+.TP 2.75i
+\f4char \(**cp;\f1
+echo line.
+.PD
+.PP
+.PD 0
+.TP 2.75i
+\f4int wcreate (row, col, height, width, flags)	\f1
+Creates a window.
+.PP
+\f4short row, col, height, width;\f1
+.PP
+\f4unsigned short flags;\f1
+.PD
+.PP
+.PD 0
+.TP 2.75i
+\f4int wdelete (wn)	\f1
+Deletes the specified window.
+.PP
+\f4short wn;\f1
+.PD
+.PP
+.PD 0
+.TP 2.75i
+\f4void wexit(ret)	\f1
+See \f4tam\fP(3X).
+.PP
+\f4int ret;\f1
+.PD
+.PP
+\f4int wgetc (wn)\f1
+.br
+\f4short wn;\f1
+.PP
+.PD 0
+.TP 2.75i
+\f4int wgetmouse (wn, ms)	\f1
+no-op; returns 0.
+.PP
+\f4short wn;\f1
+.PP
+\f4struct umdata \(**ms;\f1
+.PD
+.PP
+.PD 0
+.TP 2.75i
+\f4int wgetpos (wn, rowp, colp)	\f1
+Gets the current position (row,
+.TP 2.75i
+\f4short wn;	\f1
+column) of the cursor in the
+.TP 2.75i
+\f4int \(**rowp, \(**colp;\f1
+specified window (\f2wn\f1).
+.PD
+.PP
+.PD 0
+.TP 2.75i
+\f4int wgetsel()	\f1
+Returns the currently selected
+.br
+window.
+.PD 
+.PP
+.PD 0
+.TP 2.75i
+\f4int wgetstat (wn, wstatp)	\f1
+Returns the information in
+.TP 2.75i
+\f4short wn;\f1
+WSTAT for a window.
+.PP
+\f4WSTAT \(**wstatp;\f1
+.PD
+.PP
+.PD 0
+.TP 2.75i
+\f4int wgoto (wn, row, col)	\f1
+Moves the window's cursor to
+.TP 2.75i
+\f4short wn, row, col;\f1
+a specified row, column.
+.PD
+.PP
+.PD 0
+.TP 2.75i
+\f4void wicoff (wn, row, col, icp)	\f1
+no-op. returns 0.
+.PP
+\f4short wn, row, col;\f1
+.PP
+\f4struct icon \(**icp;\f1
+.PD
+.PP
+.PD 0
+.TP 2.75i
+\f4void wicon (wn, row, col, icp)	\f1
+no-op. returns 0.
+.PP
+\f4short wn, row, col;\f1
+.PP
+\f4struct icon \(**icp;\f1
+.PD
+.PP
+.PD 0
+.TP 2.75i
+\f4int wind (type, height, width, flags, pfont)	\f1
+See \f2wind\f1(3X).
+.PP
+\f4int type, height, width;\f1
+.PP
+\f4short flags;\f1
+.PP
+\f4char \(**pfont[\|];\f1
+.PD
+.PP
+.PD 0
+.TP 2.75i
+\f4void winit()	\f1
+Sets up the process for window access.  See \f4tam\fP(3X).
+.PD
+.PP
+.PD 0
+.TP 2.75i
+\f4int wlabel (wn, cp)	\f1
+Outputs a null-terminated
+.TP 2.75i
+\f4short wn;\f1
+string to the window label
+.TP 2.75i
+\f4char \(**cp;\f1
+area.
+.PD
+.PP
+\f4int wndelay (wn, bool)\f1
+.br
+\f4int wn, bool;\f1
+.PP
+.PD 0
+.TP 2.75i
+\f4void wnl (wn, flag)\f1
+.TP 2.75i
+\f4short wn;\f1
+.TP 2.75i
+\f4int flag;\f1
+.PD
+.PP
+.PD 0
+.TP 2.75i
+\f4int wpostwait()	\f1
+Reverses the effects of \f2wprexec\f1().
+.PD
+.PP
+.PD 0
+.TP 2.75i
+\f4int wprexec()	\f1
+Performs the appropriate
+actions for passing
+a window to a child process.
+.PD
+.PP
+\f4int wprintf (wn, fmt[, arg1 ... argn])\f1
+.br
+\f4short wn;\f1
+.br
+\f4char \(**fmt;\f1
+.PP
+.PD 0
+.TP 2.75i
+\f4int wprompt (wn, cp)	\f1
+Outputs a null-terminated
+.TP 2.75i
+\f4short wn;\f1
+string to the prompt line.
+.TP 2.75i
+\f4char \(**cp;\f1
+.PD
+.PP
+.PD 0
+.TP 2.75i
+\f4int wputc (wn, c)	\f1
+Outputs a character
+.TP 2.75i
+\f4short wn;\f1
+to a window (\f2wn\f1).
+.PP
+\f4char c;\f1
+.PD
+.PP
+.PD 0
+.TP 2.75i
+\f4int wputs (wn, cp)	\f1
+Outputs a character string
+.TP 2.75i
+\f4short wn;\f1
+to a window.
+.PP
+\f4char \(**cp;\f1
+.PD
+.PP
+.PD 0
+.TP 2.75i
+\f4int wrastop (w, srcbase, srcwidth, dstbase  \f1
+NOT SUPPORTED.
+.RS .75i
+.PP
+\f4dstwidth, srcx, srcy, dstx,\f1
+.PP
+\f4dsty, width, height, srcop,\f1
+.PP
+\f4dstop, pattern)\f1
+.RE
+.PD
+.PP
+\f4int w;\f1
+.br
+\f4unsigned short \(**srcbase, \(**dstbase, \(**pattern;\f1
+.br
+\f4unsigned short srcwidth, dswidth, width, height;\f1
+.br
+\f4unsigned short srcx, srcy, dstx, dsty;\f1
+.br
+\f4char srcop, dstop;\f1
+.PP
+.PD 0
+.TP 2.75i
+\f4int wreadmouse (wn, xp, yp, bp, rp)	\f1
+no-op; returns 0.
+.PP
+\f4short wn;\f1
+.PP
+\f4int \(**xp, \(**yp, \(**bp, \(**rp;\f1
+.PD
+.PP
+.PD 0
+.TP 2.75i
+\f4int wrefresh (wn)\f1
+Flushes all output
+.TP 2.75i
+\f4short wn;\f1
+to the window.
+.PD
+.PP
+.PD 0
+.TP 2.75i
+\f4int wselect (wn)	\f1
+Selects the specified window
+.TP 2.75i
+\f4short wn;\f1
+as the current or active one.
+.PD
+.PP
+.PD 0
+.TP 2.75i
+\f4int wsetmouse (wn, ms)	\f1
+no-op; returns 0.
+.PP
+\f4short wn;\f1
+.PP
+\f4struct umdata \(**ms;\f1
+.PD
+.PP
+.PD 0
+.TP 2.75i
+\f4int wsetstat (wn, wstatp)	\f1
+Sets the status for a window.
+.PP
+\f4short wn;\f1
+.PP
+\f4WSTAT \(**wstatp;\f1
+.PD
+.PP
+.PD 0
+.TP 2.75i
+\f4int wslk (wn, 0, slong1, slong2, sshort)	\f1
+Writes a null-terminated string
+.TP 2.75i
+\f4short wn;	\f1
+to a set of screen-labeled keys.
+.TP 2.75i
+\f4char \(**slong1, \(**slong2, \(**sshort;\f1
+.PD
+.PP
+.PD 0
+.TP 2.75i
+\f4int wslk (wn, kn, llabel, slabel)	\f1
+Writes a null-terminated string
+.TP 2.75i
+\f4short wn, kn;	\f1
+to a screen-labeled key.  The
+.TP 2.75i
+\f4char \(**llabel, \(**slabel;	\f1
+alternate form writes all the
+.br
+screen-labeled keys at once
+.br
+more efficiently.
+.PD
+.PP
+.PD 0
+.TP 2.75i
+\f4int wuser (wn, cp)	\f1
+Not supported
+.PP
+\f4short wn;\f1
+.PP
+\f4char \(**cp;\f1
+.PD
+.SH SEE ALSO
+\f4curses\fP(3X)

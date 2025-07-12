@@ -1,0 +1,293 @@
+'\"macro stdmacro
+.if n .pH g1a.ftpd @(#)ftpd	40.7.1.4 of 3/15/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} ftpd 1M "TCP/IP" "\&"
+.if \nX=1 .ds x} ftpd 1M "TCP/IP"
+.if \nX=2 .ds x} ftpd 1M "" "\&"
+.if \nX=3 .ds x} ftpd "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4ftpd\f1 \- file transfer protocol server
+.SH SYNOPSIS
+\f4in.ftpd\f1
+[
+\f4\-dl\f1
+] [
+\f4\-t\f2timeout\f1
+]
+.SH DESCRIPTION
+\f4ftpd\f1
+is the
+Internet File Transfer Protocol (\s-1FTP\s0)
+server process.
+The server is invoked by the Internet daemon
+\f4inetd\f1(1M)
+each time a connection to the
+.SM FTP
+service [see
+\f4services\f1(4)]
+is made, with the connection available as descriptor 0.
+.LP
+Inactive connections are timed out after 90 seconds.
+.LP
+The following options are available:
+.TP
+\f4-d\f1
+Write Debugging information into the system log.
+.TP
+\f4-l\f1
+Write each FTP session into the system log.
+.TP
+\f4\-t\f2timeout\f1
+Set the inactivity timeout period to
+\f2timeout\f1,
+in seconds.
+The
+.SM FTP
+server will timeout an inactive session after 15 minutes.
+.SS Requests
+.LP
+The
+.SM FTP
+server currently supports the following
+.SM FTP
+requests;
+case is not distinguished.
+.LP
+.TP 10
+\f3Request\f1
+\f3Description\f1
+.TP
+\f4ABOR\f1
+abort previous command
+.TP
+\f4ACCT\f1
+specify account (ignored)
+.TP
+\f4ALLO\f1
+allocate storage (vacuously)
+.TP
+\f4APPE\f1
+append to a file
+.TP
+\f4CDUP\f1
+change to parent of current working directory
+.TP
+\f4CWD\f1
+change working directory
+.TP
+\f4DELE\f1
+delete a file
+.TP
+\f4HELP\f1
+give help information
+.TP
+\f4LIST\f1
+give list files in a directory (\f4ls \-lg\f1)
+.TP
+\f4MKD\f1
+make a directory
+.TP
+\f4MODE\f1
+specify data transfer
+.I mode
+.TP
+\f4NLST\f1
+give name list of files in directory (\f4ls\f1)
+.TP
+\f4NOOP\f1
+do nothing
+.TP
+\f4PASS\f1
+specify password
+.TP
+\f4PASV\f1
+prepare for server-to-server transfer
+.TP
+\f4PORT\f1
+specify data connection port
+.TP
+\f4PWD\f1
+print the current working directory
+.TP
+\f4QUIT\f1
+terminate session
+.TP
+\f4RETR\f1
+retrieve a file
+.TP
+\f4RMD\f1
+remove a directory
+.TP
+\f4RNFR\f1
+specify rename-from file name
+.TP
+\f4RNTO\f1
+specify rename-to file name
+.TP
+\f4STOR\f1
+store a file
+.TP
+\f4STOU\f1
+store a file with a unique name
+.TP
+\f4STRU\f1
+specify data transfer
+.I structure
+.TP
+\f4TYPE\f1
+specify data transfer
+.I type
+.TP
+\f4USER\f1
+specify user name
+.TP
+\f4XCUP\f1
+change to parent of current working directory
+.TP
+\f4XCWD\f1
+change working directory
+.TP
+\f4XMKD\f1
+make a directory
+.TP
+\f4XPWD\f1
+print the current working directory
+.TP
+\f4XRMD\f1
+remove a directory
+.LP
+The remaining
+.SM FTP
+requests specified in
+.SM RFC
+959 are recognized, but not implemented.
+.LP
+The
+.SM FTP
+server will abort an active file transfer only when the
+\f4ABOR\f1
+command is preceded by a Telnet \(lqInterrupt Process\(rq (IP)
+signal and a Telnet \(lqSynch\(rq signal in the command Telnet stream,
+as described in
+.SM RFC
+959.
+.LP
+\f4ftpd\f1
+interprets file names according to the \(lqglobbing\(rq
+conventions used by
+\f4sh\f1(1).
+This allows users to utilize the metacharacters:
+\f4* ? [ ] { } ~\f1
+.LP
+\f4ftpd\f1
+authenticates users according to four rules.
+.TP
+1)
+The user name must be in the password data base,
+\f4/etc/passwd\f1,
+and not have a null password.  In this case a password
+must be provided by the client before any file operations
+may be performed.
+.TP
+2)
+If the user name appears in the file
+\f4/etc/ftpusers\f1, \f4ftp\f1 access is denied.
+.TP
+3)
+\f4ftp\f1 access is denied unless the
+user's shell (from \f4/etc/passwd\f1) is listed in the file 
+\f4/etc/shells\f1, 
+or the user's shell is one of the following:
+.nf
+\f4/bin/sh
+/bin/ksh
+/bin/csh
+/usr/bin/sh
+/usr/bin/ksh
+/usr/bin/csh\f1
+.fi
+.TP
+4)
+If the user name is \(lqanonymous\(rq or \(lqftp\(rq, an
+anonymous
+.SM FTP
+account must be present in the password
+file (user \(lqftp\(rq).  In this case the user is allowed
+to log in by specifying any password (by convention this
+is given as the client host's name).
+.LP
+In the last case,
+\f4ftpd\f1
+takes special measures to restrict the client's access privileges.
+The server performs a
+\f4chroot\f1(2)
+command to the home directory of the \(lqftp\(rq user.
+In order that system security is not breached, it is recommended
+that the \(lqftp\(rq subtree be constructed with care;  the following
+rules are recommended.
+.TP 8
+\f2home_directory\f1
+Make the home directory owned by \f4ftp\f1 and unwritable by anyone.
+.TP 8
+\f2home_directory\f4/usr/bin\f1
+Make this directory owned by the super-user and unwritable by
+anyone.  The program
+\f4ls\f1(1)
+must be present to support the list commands.  This
+program should have mode 111.
+.TP 8
+\f2home_directory\f4/etc\f1
+Make this directory owned by the super-user and unwritable by
+anyone.  Copies of the files
+\f4passwd\f1(4), \f4group\f1(4), and \f4netconfig\f1
+must be present for the
+\f4ls\f1
+command to work properly.  These files should be mode 444.
+.TP 8
+\f2home_directory\f4/pub\f1
+Make this directory mode 777 and owned by \f4ftp\f1.  Users
+should then place files which are to be accessible via the
+anonymous account in this directory.
+.TP 8
+\f2home_directory\f4/dev\f1
+Make this directory owned by the super-user and unwritable
+by anyone.  Change directories to this directory and do the
+following:
+.LP
+.nf
+.ft 4
+FTP="`grep ^ftp: /etc/passwd | cut -d: -f6`"
+MAJORMINOR="`ls -l /dev/tcp | nawk '{ gsub(/,/, ""); print $5, $6}'`
+mknod $FTP/dev/tcp c $MAJORMINOR
+chmod 666 $FTP/dev/tcp
+.fi
+.ft 1
+.SH "SEE ALSO"
+\f4ftp\f1(1),
+\f4getsockopt\f1(3N),
+\f4passwd\f1(4),
+\f4services\f1(4).
+.LP
+Postel, Jon, and Joyce Reynolds,
+.I File Transfer Protocol (\s-1FTP\s0),
+\s-1RFC\s0
+959, Network Information Center,
+.SM SRI
+International, Menlo Park, Calif.,
+October 1985.
+.SH NOTES
+The anonymous account is inherently dangerous
+and should be avoided when possible.
+.LP
+The server must run as the super-user to create sockets with privileged
+port numbers.  It maintains an effective user ID of the logged in user,
+changing to user ID 0 only when binding addresses to sockets.
+The possible security holes have been extensively scrutinized, but are
+possibly incomplete.
+.LP
+\f4/etc/ftpusers\f1 contains a list of users 
+who cannot access the system; the format of the file is
+one username per line.

@@ -1,0 +1,140 @@
+'\"macro stdmacro
+.if n .pH g1.timex @(#)timex	40.9.1.1 of 1/26/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} timex 1 "System Performance Analysis Utilities" "\&"
+.if \nX=1 .ds x} timex 1 "System Performance Analysis Utilities"
+.if \nX=2 .ds x} timex 1 "" "\&"
+.if \nX=3 .ds x} timex "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4timex\f1 \- time a command; report process data and system activity
+.SH SYNOPSIS
+\f4timex\f1
+[
+.I options
+]
+.I command
+.SH DESCRIPTION
+The given
+.I command\^
+is executed;
+the elapsed time, user time and system time
+spent in execution are reported in seconds.
+Optionally, process accounting data for the
+.I command
+and all its children can be listed or summarized,
+and total system activity during the execution interval
+can be reported.
+.P
+The output of
+\f4timex\fP
+is written on standard error.
+\f4timex\fP returns an exit status of \f41\fP if it is used incorrectly, 
+if it is unable to fork, or if it cannot execute \f2command\fP.
+Otherwise, \f4timex\fP returns the exit status of \f2command\fP.
+.P
+The
+.I options
+are:
+.TP .4i
+\f4\-p\f1
+List process accounting records for
+.I command
+and all its children.
+This option works only if the process accounting software is installed.
+Suboptions 
+\f4f\f1,
+\f4h\f1,
+\f4k\f1,
+\f4m\f1,
+\f4r\f1,
+and
+\f4t\f1
+modify the data items reported.
+The options are as follows:
+.PP
+.RS 10
+.IP \f4\-f\f1 6
+Print the
+\f4fork\fP(2)/ exec(2)
+flag and system exit status columns in the output.
+.IP \f4\-h\f1 6
+Instead of mean memory size,
+show the fraction of total available
+.SM CPU
+time consumed by the process
+during its execution.
+This ``hog factor'' is computed as (total\p
+.br
+\s-1CPU\s+1\ time)/(elapsed\ time).
+.IP \f4\-k\f1 6
+Instead of memory size, show total kcore-minutes.
+.IP \f4\-m\f1 6
+Show mean core size (the default).
+.IP \f4\-r\f1 6
+Show
+.SM CPU
+factor (user time/(system-time + user-time).
+.IP \f4\-t\f1 6
+Show separate system and user
+.SM CPU
+times.
+The number of blocks read or written and the number
+of characters transferred are always reported.
+.RE
+.TP .4i
+\f4\-o\f1
+Report the total number of blocks read or written and
+total characters transferred by 
+.I command 
+and all its children.
+This option works only if the process accounting software is installed.
+.TP .4i
+\f4\-s\f1
+Report total system activity (not just that due to 
+.IR command )
+that occurred during the execution interval of
+.IR command .
+All the data items listed in 
+\f4sar\fP(1)
+are reported.
+.SH "SEE ALSO"
+\f4time\fP(1),
+\f4sar\fP(1).
+.br
+\f4times\fP(2) in the \f2Programmer's Reference Manual\f1.
+.SH NOTES
+Process records associated with
+.I command
+are selected from the accounting file
+\f4/var/adm/pacct\f1
+by inference, since process genealogy is not available.
+Background processes having the same user \s-1ID\s0,
+terminal \s-1ID\s0, and execution time window will be spuriously included.
+.br
+.ne 6
+.SH EXAMPLES
+A simple example:
+.PP
+.RS
+.ft 4
+timex \-ops\ sleep 60
+.ft 1
+.RE
+.PP
+A terminal session of arbitrary complexity can be measured
+by timing a sub-shell:
+.RS
+.PP
+.ft 4
+timex \-opskmt\ sh
+.ft 1
+.RS
+.PP
+.I "session commands"
+.RE
+.SM EOT
+.RE
+

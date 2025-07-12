@@ -1,0 +1,6 @@
+#ident	"@(#)master:kdb-util/mdev	1.1.2.1"
+#if MB2
+kdb-util	Is	ios	kdb	0	0	0	1	-1
+#else
+kdb-util	-	ios	kdb	0	0	0	1	-1
+#endif

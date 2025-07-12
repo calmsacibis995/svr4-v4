@@ -1,0 +1,10 @@
+#ident	"@(#)doctools:index/add.dash	1.1"
+nawk ' # add.dash - add dash in page ranges
+#  (add.dash replaces reroman when there are no roman numbers.)
+#
+#   Input:  sort key (tab) index term (tab) num1 [(space) num2] (tab) [chapter] (tab) [book]
+#              $1             $2                  $3                       $4             $5
+#   Output: sort key (tab) index term (tab) num1 [-num2] (tab) [chapter] (tab) [book]
+BEGIN	{ FS = OFS = "\t" }
+	{ sub(/ /, "\\-", $3); print }
+' $*

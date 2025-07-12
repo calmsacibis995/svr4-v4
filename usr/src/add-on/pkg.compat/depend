@@ -1,0 +1,3 @@
+#ident	"@(#)pkg.compat:depend	1.1.1.1"
+P  nsu		Networking Support Utilities
+P  sys		System Header Files

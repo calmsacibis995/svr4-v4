@@ -1,0 +1,44 @@
+'\"macro stdmacro
+.if n .pH gen.qenable @(#)qenable	40.2 of 1/7/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.nr X
+.if \nX=0 .ds x} qenable D3DK "STREAMS" "DDI/DKI" "\&"
+.if \nX=1 .ds x} qenable D3DK "STREAMS" "DDI/DKI"
+.if \nX=2 .ds x} qenable D3DK "" "\&"
+.if \nX=3 .ds x} qenable "" "" "\&"
+.TH \*(x}
+.IX "\f4qenable\fP(D3DK)"
+.SH NAME
+\f4qenable\f1 \- schedule a queue's service routine to be run
+.SH SYNOPSIS
+.nf
+.na
+\f4#include <sys/stream.h>
+.sp 0.5
+void qenable(queue_t *\f2q\f4);\f1
+.ad
+.fi
+.SH ARGUMENTS
+.RS 0n 10
+.IP "\f2q\f1" 10n
+Pointer to the queue.
+.RE
+.SH DESCRIPTION
+\f4qenable\f1 puts the queue pointed to by \f2q\f1 on the linked
+list of those whose service routines are
+ready to be called by the STREAMS scheduler.  \f4qenable\fP works
+regardless of whether the service routine has been disabled by
+a previous call to \f4noenable\fP(D3DK).
+.SH RETURN VALUE
+None.
+.SH LEVEL
+Base or Interrupt.
+.SH NOTES
+Does not sleep.
+.SH SEE ALSO
+\f4srv\fP(D2DK),
+\f4enableok\fP(D3DK),
+\f4noenable\fP(D3DK),
+\f4queue\fP(D4DK)
+.SH EXAMPLE
+See \f4enableok\f1(D3DK) for an example of the \f4qenable\f1.

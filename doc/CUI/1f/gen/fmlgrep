@@ -1,0 +1,95 @@
+'\"macro stdmacro
+.if n .pH g1f.fmlgrep @(#)fmlgrep	40.15 of 4/12/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} fmlgrep 1F "" "\&"
+.if \nX=1 .ds x} fmlgrep 1F ""
+.if \nX=2 .ds x} fmlgrep 1F "" "\&"
+.if \nX=3 .ds x} fmlgrep "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4fmlgrep\f1 \- search a file for a pattern
+.SH SYNOPSIS
+\f4fmlgrep\f1
+[\f2options\f1] \f2limited_regular_expression\f1 [\f2file\f1 .\ .\ .]
+.SH DESCRIPTION
+\f4fmlgrep\f1 searches \f2file\f1 for a pattern
+and prints all lines that contain that pattern.
+The
+\f4fmlgrep\f1
+function uses limited regular expressions
+(expressions that have string values that use a subset
+of the possible alphanumeric and special characters)
+like those used with \f4ed\f1(1) to match the patterns.
+It uses a compact non-deterministic algorithm.
+.PP
+Be careful when using FMLI special characters (for example, \f4$, \(ga, \(aa, "\f1)
+in \f2limited_regular_expression\f1.
+It is safest to enclose the entire \f2limited_regular_expression\f1
+in single quotes
+\f4\&\(fm \^.\^.\^.\^ \(fm \|\f1.
+.PP
+If \f2file\f1 is not specified, \f4fmlgrep\f1 assumes standard input.
+Normally, each line matched is copied to standard output.
+The file name is printed before each line matched
+if there is more than one input file.
+.PP
+Command line options are:
+.PP
+.PD 0
+.TP 6
+\f4-b\f1
+Precede each line by the block number on which it was found.
+This can be useful in locating block numbers by context
+(first block is 0).
+.TP
+\f4-c\f1
+Print only a count of the lines that contain the pattern.
+.TP
+\f4-i\f1
+Ignore upper/lower case distinction during comparisons.
+.TP
+\f4-l\f1
+Print only the names of files with matching lines,
+separated by new-lines.
+Does not repeat the names of files
+when the pattern is found more than once.
+.TP
+\f4-n\f1
+Precede each line by its line number in the file (first line is 1).
+.TP
+\f4-s\f1
+Suppress error messages about nonexistent or unreadable files.
+.TP
+\f4-v\f1
+Print all lines except those that contain the pattern.
+.PD
+.SH DIAGNOSTICS
+\f4fmlgrep\f1 returns the following exit values:
+.nf
+.sp
+0  if the pattern is found (that is, TRUE)
+1  if the pattern is not found (that is, FALSE)
+2  if an invalid expression was used or \f2file\f1 is inaccessible
+.sp
+.fi
+.SH NOTES
+Lines are limited to \s-1BUFSIZ\s+1 characters;
+longer lines are truncated.
+\s-1BUFSIZ\s+1 is defined in
+\f4/usr/include/stdio.h\f1.
+.PP
+If there is a line with embedded nulls,
+\f4fmlgrep\f1
+will only match up to the first null;
+if it matches, it will print the entire line.
+.SH SEE ALSO
+\f4fmlcut\f1(1F)
+.br
+\f4ed\f1(1),
+\f4egrep\f1(1),
+\f4fgrep\f1(1),
+\f4grep\f1(1) in the \f2UNIX System V Programmer's Reference Manual\f1
+.\"	@(#)fmlgrep.1	6.2 of 9/2/83
+.Ee

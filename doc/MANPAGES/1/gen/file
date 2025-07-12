@@ -1,0 +1,91 @@
+'\"macro stdmacro
+.if n .pH g1.file @(#)file	40.13.1.1 of 1/3/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} file 1 "Essential Utilities" "\&"
+.if \nX=1 .ds x} file 1 "Essential Utilities"
+.if \nX=2 .ds x} file 1 "" "\&"
+.if \nX=3 .ds x} file "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4file\f1 \- determine file type
+.SH SYNOPSIS
+\f4file\f1
+[\f4\-h\f1]
+[\f4\-m\f1
+\f2mfile\f1]
+[\f4\-f\f1
+\f2ffile\f1]
+\f2arg\f1 \|.\|.\|.
+.br
+\f4file\f1
+[\f4\-h\f1]
+[\f4\-m\f1
+\f2mfile\f1]
+\f4\-f\f1
+\f2ffile\f1
+.br
+\f4file\f1
+\f4\-c\f1
+[\f4\-m\f1
+\f2mfile\f1]
+.SH DESCRIPTION
+\f4file\fP
+performs a series of tests on each file supplied by \f2arg\fP
+and, optionally, on each file supplied in \f2ffile\fP
+in an attempt to classify it.
+If \f2arg\f1 appears to be a text file,
+\f4file\fP
+examines the first 512 bytes
+and tries to guess its programming language.
+If \f2arg\f1 is an executable
+\f4a.out\f1,
+\f4file\fP
+prints the version stamp, provided it is greater than 0.
+If \f2arg\f1 is a symbolic link, by default the link is followed
+and \f4file\f1 tests the file that the symbolic link references.
+.PP
+.TP .6i
+\f4\-c\f1
+Check the magic file for format errors.
+For reasons of efficiency, this validation is normally not carried out.
+.TP
+\f4\-f\f2 ffile\f1
+\f2ffile\fP
+contains the names
+of the files to be examined.
+.TP
+\f4\-h\f1
+Do not follow symbolic links.
+.TP
+\f4\-m\f2 mfile\f1
+Use \f2mfile\f1 as an alternate magic file,
+instead of \f4/etc/magic\f1.
+.PP
+\f4file\fP
+uses
+\f4/etc/magic\f1
+to identify files that have a magic number.
+A magic number is a numeric or string constant that indicates the file type.
+Commentary at the beginning of
+\f4/etc/magic\f1
+explains its format.
+.SH FILES
+\f4/etc/magic\f1
+.SH SEE ALSO
+\f4filehdr\^\f1(4) in the \f2System Administrator's Reference Manual\f1.
+.SH DIAGNOSTICS
+If the
+\f4\-h\fP
+option is specified and
+\f2arg\fP
+is a symbolic link,
+\f4file\f1 prints the error message:
+.PP
+.RS
+.ft 4
+symbolic link to \f2arg\fP
+.ft 1
+.RE
+.Ee

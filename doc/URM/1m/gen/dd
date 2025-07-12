@@ -1,0 +1,253 @@
+'\"macro stdmacro
+.if n .pH g1a.dd @(#)dd	40.6.1.1 of 1/3/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} dd 1M "Essential Utilities" "\&"
+.if \nX=1 .ds x} dd 1M "Essential Utilities"
+.if \nX=2 .ds x} dd 1M "" "\&"
+.if \nX=3 .ds x} dd "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4dd\f1 \- convert and copy a file
+.SH SYNOPSIS
+\f4dd\f1
+[option=value] ...
+.SH DESCRIPTION
+\f4dd\fP
+copies the specified input file
+to the specified output with
+possible conversions.
+The standard input and output are used by default.
+The input and output block sizes may be
+specified to take advantage of raw physical I/O.
+.PP
+.br
+.ns
+.TP "\w'\f4conv=.\|.\|.\ ,\ .\|.\|.\ \ \fP'u"
+.I option\^
+\f4values\fP
+.br
+.ns
+.TP
+\f4if=\f2file\^\f1
+input file name; standard input is default
+.br
+.ns
+.TP
+\f4of=\f2file\^\f1
+output file name; standard output is default
+.br
+.ns
+.TP
+\f4ibs=\f2n\^\f1
+input block size
+.I n\^
+bytes (default 512)
+.br
+.ns
+.TP
+\f4obs=\f2n\^\f1
+output block size
+.I n\^
+bytes (default 512)
+.br
+.ns
+.TP
+\f4bs=\f2n\^\f1
+set both input and output block size,
+superseding
+.I ibs\^
+and
+.IR obs ;
+also, if no conversion is specified,
+preserve the input block size instead of packing short blocks
+into the output buffer
+(this is particularly efficient since no in-core copy need be done)
+.br
+.ns
+.TP
+\f4cbs=\f2n\^\f1
+conversion buffer size (logical record length)
+.br
+.ns
+.TP
+\f4files=\f2n\^\f1
+copy and concatenate
+.IR n ""
+input files before terminating (makes sense only
+where input is a magnetic tape or similar device)
+.br
+.ns
+.TP
+\f4skip=\f2n\^\f1
+skip
+.IR n ""
+input blocks before starting copy (appropriate for magnetic
+tape, where
+.I iseek
+is undefined)
+.br
+.ns
+.TP
+\f4iseek=\f2n\^\f1
+seek
+.I n\^
+blocks from beginning of input file before copying (appropriate
+for disk files, where
+.I skip
+can be incredibly slow)
+.br
+.ns
+.TP
+\f4oseek=\f2n\^\f1
+seek
+.I n\^
+blocks from beginning of output file before copying
+.br
+.ns
+.TP
+\f4seek=\f2n\^\f1
+identical to
+.IR oseek ","
+retained for backward compatibility
+.br
+.ns
+.TP
+\f4count=\f2n\^\f1
+copy only
+.IR n ""
+input blocks
+.br
+.ns
+.TP
+\f4conv=ascii\f1
+convert \s-1EBCDIC\s0 to \s-1ASCII\s0
+.br
+.ns
+.RS "\w'\f4conv=\fP'u"
+.TP "\w'\f4.\|.\|.\ ,\ .\|.\|.\ \ \fP'u"
+\f4ebcdic\f1
+convert \s-1ASCII\s0 to \s-1EBCDIC\s0
+.br
+.ns
+.TP
+\f4ibm\f1
+slightly different map of \s-1ASCII\s0 to \s-1EBCDIC\s0
+.br
+.ns
+.TP
+\f4block\f1
+convert new-line terminated \s-1ASCII\s0 records to fixed length
+.br
+.ns
+.TP
+\f4unblock\f1
+convert fixed length \s-1ASCII\s0 records to new-line terminated records
+.br
+.ns
+.TP
+\f4lcase\f1
+map alphabetics to lower case
+.br
+.ns
+.TP
+\f4ucase\f1
+map alphabetics to upper case
+.br
+.ns
+.TP
+\f4swab\f1
+swap every pair of bytes
+.br
+.ns
+.TP
+\f4noerror\f1
+do not stop processing on an error (limit of 5 consecutive errors)
+.br
+.ns
+.TP
+\f4sync\f1
+pad every input block to
+.I  ibs\^
+.br
+.ns
+.TP
+\f4.\|.\|. , .\|.\|.\f1
+several comma-separated conversions
+.RE
+.PP
+.fi
+Where sizes are specified,
+a number of bytes is expected.
+A number may end with
+\f4k\f1,
+\f4b\f1,
+or
+\f4w\f1
+to specify multiplication by
+1024, 512, or 2, respectively;
+a pair of numbers may be separated by
+\f4x\f1
+to indicate multiplication.
+.PP
+.I cbs\^
+is used only if
+\f4ascii\fP,
+.IR unblock\^ ,
+.IR ebcdic\^ ,
+.IR ibm\^ ,
+or
+.I block\^
+conversion is specified.
+In the first two cases,
+.I cbs\^
+characters are copied into the conversion buffer, any specified
+character mapping is done,
+trailing blanks are trimmed and a new-line is added
+before sending the line to the output.
+In the latter three cases, characters are read into the
+conversion buffer and blanks are added to make up an
+output record of size
+.IR cbs .
+If
+.I cbs\^
+is unspecified or zero, the
+\f4ascii\fP,
+.IR ebcdic\^ ,
+and
+.I ibm\^
+options convert the character set without changing the block
+structure of the input file; the
+.I unblock\^
+and
+.I block\^
+options become a simple file copy.
+.PP
+After completion,
+\f4dd\fP
+reports the number of whole and partial input and output blocks.
+.SH EXAMPLE
+This command will read an \s-1EBCDIC\s0 tape blocked ten 80-byte
+\s-1EBCDIC\s0 card images per tape block into the \s-1ASCII\s0 file \f2x\f1:
+.P
+\f4dd  if=/dev/rmt/0h  of=x  ibs=800  obs=8k  cbs=80  conv=ascii,lcase\f1
+.PP
+Note the use of raw magnetic tape.
+\f4dd\f1
+is especially suited to I/O on the raw
+physical devices because it allows reading
+and writing in arbitrary block sizes.
+.SH "SEE ALSO"
+\f4cp\fP(1)
+.SH NOTES
+Do not use \f4dd\f1 to copy files between filesystems having
+different block sizes.
+.PP
+Using a  blocked device to copy a file will result in extra
+nulls being added to the file to pad the final block to the
+block boundary.
+.SH DIAGNOSTICS
+.IR "f+p records in(out)" "	numbers of full and partial blocks read(written)"
+.\"	@(#)dd.1	6.2 of 9/2/83
+.Ee

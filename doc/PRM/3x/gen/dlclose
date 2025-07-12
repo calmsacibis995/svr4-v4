@@ -1,0 +1,74 @@
+'\"macro stdmacro
+.if n .pH g3x.dlclose 'ident	"@(#)dlclose	40.8"'
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} dlclose 3X "C Development Set" "\&"
+.if \nX=1 .ds x} dlclose 3X "C Development Set"
+.if \nX=2 .ds x} dlclose 3X "" "\&"
+.if \nX=3 .ds x} dlclose "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4dlclose\f1 \- close a shared object
+.SH SYNOPSIS
+\f4cc\f1
+[\f2flag\fP \|.\|.\|.] \f2file\fP \|.\|.\|.
+\f4\-ldl\f1
+[\f2library\fP \|.\|.\|.]
+.PP
+\f4#include <dlfcn.h>\f1
+.PP
+\f4int dlclose(void \(**handle);\f1
+.SH DESCRIPTION
+\f4dlclose\^\f1
+disassociates a shared object previously opened by
+\f4dlopen\f1
+from the current process.  Once an object has been
+closed using
+\f4dlclose\f1,
+its symbols are no longer available to
+\f4dlsym\f1.
+All objects loaded automatically as a result of invoking
+\f4dlopen\^\f1
+on the referenced object [see
+\f4dlopen\f1(3X)]
+are also closed.
+.I handle\^
+is the value returned by a previous invocation of
+\f4dlopen\f1.
+.SH SEE ALSO
+\f4dlerror\f1(3X),
+\f4dlopen\f1(3X),
+\f4dlsym\f1(3X)
+.SH DIAGNOSTICS
+If the referenced object was successfully closed,
+\f4dlclose\^\f1
+returns 0.  If the object could not be closed, or if
+.I handle
+does not refer to an open object, 
+\f4dlclose\f1
+returns a non-0 value.  More detailed diagnostic information is
+available through
+\f4dlerror\f1.
+.SH NOTES
+A successful invocation of 
+\f4dlclose\^\f1
+does not guarantee that the objects associated with
+.I handle\^
+have actually been removed from the address space of the process.
+Objects loaded by one invocation of 
+\f4dlopen\^\f1
+may also be loaded by another invocation of 
+\f4dlopen\f1.
+The same object may also be opened multiple times.
+An object is not removed from the address space until
+all references to that object through an explicit
+\f4dlopen\^\f1
+invocation have been closed and 
+all other objects implicitly referencing that object have also
+been closed.
+.PP
+Once an object has been closed by
+\f4dlclose\f1,
+referencing symbols contained in that object can cause
+undefined behavior.

@@ -1,0 +1,16 @@
+.if n .pH 386.Cdoctape @(#)Cdoctape	40.8
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.BK "Read Me First" "" "" ""   
+.\ACRONYM	                  
+.CH "The Documentation Tape" "" "Table of Contents" "2"
+.\CHAPTER	2
+.tC 1 "Introduction" 2-1  
+.tC 2 "Prerequisites" 2-1  
+.tC 1 "Copying Documentation Files from the Tape" 2-2  
+.tC L "Table 2-1:\0" "Directory Contents" 2-3
+.tC 1 "Installing DOCTOOLS" 2-5  
+.tC 2 "Memorandum Macros (MM)" 2-6  
+.tC 2 "PostScript Language and DOCTOOLS Software" 2-6  
+.tC 1 "Using DOCTOOLS to Print Documents" 2-7  
+.tC 2 "Printing Documents from Collection Files" 2-7  
+.tC 2 "Example" 2-7  

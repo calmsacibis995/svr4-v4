@@ -1,0 +1,50 @@
+'\"macro stdmacro
+.if n .pH 386.dma_stop @(#)dma_stop	40.3 of 6/24/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.nr X
+.if \nX=0 .ds x} dma_stop D3X "" "DDI" "\&"
+.if \nX=1 .ds x} dma_stop D3X "" "DDI"
+.if \nX=2 .ds x} dma_stop D3X "" "\&"
+.if \nX=3 .ds x} dma_stop "" "" "\&"
+.TH \*(x}
+.IX "\f4dma_stop\fP(D3X)"
+.SH NAME 
+\f4dma_stop\f1 \- stop software-initiated DMA operation on a channel and release it
+.SH SYNOPSIS
+.nf
+.na
+\f4#include <sys/dma.h>
+.sp 0.5
+\f4void dma_stop(int \f2chan\f4);\f1
+.ad
+.fi
+.SH ARGUMENTS 
+.RS 0n 10
+.IP "chan\f1" 10n
+Channel on which DMA operation is to be stopped.
+.RE
+.SH DESCRIPTION 
+\f4dma_stop\f1 stops a software-initiated DMA
+operation in progress on the channel \f2chan\fP.
+The channel is then released and made available
+for other use.
+.SH "RETURN VALUE"
+None.
+.SH LEVEL
+Base or Interrupt.
+.SH NOTES
+Does not sleep.
+.sp 0.5
+The caller must ensure that it is acting on behalf of
+the channel owner, and that it makes sense to release the
+channel.
+.P
+The caller must ensure that the channel is currently
+in use for software-initiated DMA transfers rather
+than hardware-initiated transfers.
+.SH "SEE ALSO" 
+.na
+\f4dma_swsetup\fP(D3X),
+\f4dma_swstart\f1(D3X),
+\f4dma_cb\fP(D4X)
+.ad

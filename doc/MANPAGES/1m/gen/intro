@@ -1,0 +1,114 @@
+'\"macro stdmacro
+.if n .pH g1a.intro @(#)intro	40.8 of 1/3/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} intro 1M "" "\&"
+.if \nX=1 .ds x} intro 1M ""
+.if \nX=2 .ds x} intro 1M "" "\&"
+.if \nX=3 .ds x} intro "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4intro\f1 \- introduction to maintenance commands and application programs
+.SH DESCRIPTION
+This section describes, in alphabetical order, commands
+that are used chiefly for system maintenance and administration purposes.
+The commands in this section should be used along with those
+listed in Section 1 of the
+\f2User's Reference Manual\f1
+and Sections 1, 2, 3, 4, and 5
+of the
+\f2Programmer's Reference Manual\f1.
+References of the form
+\f2name\f1(1), (2), (3), (4) and (5)
+refer to entries in the above manuals.
+References of the form
+.IR name (1M),
+.IR name (7)
+or 
+.IR name (8)
+refer to entries in this manual.
+.PP
+Because of command restructuring for the Virtual File System
+architecture, there are several instances of
+multiple manual pages with the same name.
+For example, there are four manual pages called
+\f4mount\fP(1M).
+In each such case the first of the multiple
+pages describes the syntax and options of the
+generic command, that is, those options applicable
+to all FSTypes (file system types).
+The succeeding pages describe the functionality
+of the FSType-specific modules of the command.
+These pages all display the name of the FSType
+to which they pertain centered and in parentheses
+at the top of the page.
+Note that the administrator should not attempt to
+call these modules directly.
+The generic command provides a common interface
+to all of them.
+Thus the FSType-specific manual pages should not be viewed
+as describing distinct commands, but rather as
+detailing those aspects of a command
+that are specific to a particular FSType.
+.SH COMMAND SYNTAX
+Unless otherwise noted, commands described in this section accept options and
+other arguments according to the following syntax:
+.P
+.RS
+.I name
+.RI [ option ( s )]
+.RI [ cmdarg ( s )]
+.RE
+where:
+.TP 13
+.I name
+The name of an executable file
+.TP
+.I option\^
+\f4\-\f1
+.IR noargletter ( s )
+or,
+.br
+\f4\-\f1
+.IR argletter <\|> optarg
+.br
+where <\|> is optional white space
+.TP
+.I noargletter\^
+A single letter representing an option without an argument
+.TP
+.I argletter\^
+A single letter representing an option requiring an argument
+.TP
+.I optarg\^
+Argument (character string) satisfying preceding
+.IR argletter
+.TP
+.I cmdarg\^
+Pathname (or other command argument)
+.I not\^
+beginning with
+\f4\-\f1
+or,
+\f4\-\f1
+by itself indicating the standard input
+.SH SEE ALSO
+\f4getopt\fP(1)
+in the
+\f2User's Reference Manual\f1.
+.br
+\f4getopt\fP(3C) in the
+\f2Programmer's Reference Manual\f1.
+.SH DIAGNOSTICS
+Upon termination, each command returns
+0 for normal termination and non-zero
+to indicate troubles such as erroneous parameters, bad or inaccessible data,
+or other inability to cope with the task at hand.
+It is called variously ``exit code,'' ``exit status,'' or
+``return code,'' and is described only where special
+conventions are involved.
+.SH NOTES
+Unfortunately, not all commands adhere to the standard syntax.
+.\"	@(#)intro.1m	6.2 of 9/2/83
+

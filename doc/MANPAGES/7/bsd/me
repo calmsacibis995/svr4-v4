@@ -1,0 +1,299 @@
+'\"macro stdmacro
+.if n .pH g7.me @(#)me	40.7 of 4/23/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} me 7 "BSD Compatibility Package" "\&"
+.if \nX=1 .ds x} me 7 "BSD Compatibility Package"
+.if \nX=2 .ds x} me 7 "" "\&"
+.if \nX=3 .ds x} me "" "" "\&"
+.TH \*(x}
+.\" Copyright (c) 1980 Regents of the University of California.
+.\" All rights reserved.  The Berkeley software License Agreement
+.\" specifies the terms and conditions for redistribution.
+.\"
+.hc %
+.SH NAME
+\f4me\f1 \- macros for formatting papers
+.SH SYNOPSIS
+\f4nroff \-me\f1
+[
+.I options
+]
+.IR filename \|.\|.\|.
+.br
+\f4troff \-me\f1
+[
+.I options
+]
+.IR filename \|.\|.\|.
+.SH DESCRIPTION
+This package of
+\f4nroff\f1
+and
+\f4troff\f1
+macro definitions provides a canned formatting
+facility for tech%nical papers in various formats.
+When producing 2-column output on a terminal, filter
+the output through
+.IR  col (1).
+.P
+The macro requests are defined below.
+Many
+\f4nroff\f1
+and
+\f4troff\f1
+requests are unsafe in conjunction with
+this package, however, these requests may be used with
+impunity after the first .pp:
+.nf
+.IP
+.ta \w'.sz +n  'u
+\&\f4.bp\f1	begin new page
+\&\f4.br\f1	break output line here
+\&\f4.sp\f1 n	insert n spacing lines
+\&\f4.ls\f1 n	(line spacing) n=1 single, n=2 double space
+\&\f4.na\f1	no alignment of right margin
+\&\f4.ce\f1 n	center next n lines
+\&\f4.ul\f1 n	underline next n lines
+\&\f4.sz\f1 +n	add n to point size
+.fi
+.P
+Output of the
+\f4eqn,\f1
+\f4meqn,\f1
+\f4mefer,\f1
+and
+\f4tbl\f1(1)
+preprocessors
+for equations and tables is acceptable as input.
+.SH REQUESTS
+.tr &.
+In the following list,
+\*(lqinitialization\*(rq
+refers to the first \f4.pp,\f1 \f4.lp\f1, \f4.ip\f1, \f4.np\f1, \f4.sh\f1,
+or \f4.uh\f1 macro.
+This list is incomplete.
+.P
+.RS 3
+.TS
+c1 c1 c2 l2w(3.i)
+c1 c1 c2 l2w(3.i)
+l1 c1 l2 l2w(3.i).
+Request	Initial	Cause	Explanation
+	Value	Break
+.sp .5
+\&\f4.(c\f1	-	yes	Begin centered block
+\&\f4.(d\f1	-	no	Begin delayed text
+\&\f4.(f\f1	-	no	Begin footnote
+\&\f4.(l\f1	-	yes	Begin list
+\&\f4.(q\f1	-	yes	Begin major quote
+\&\f4.(x\f2x\f1 	-	no	Begin indexed item in index \f2x\f1
+\&\f4.(z\f1	-	no	Begin floating keep
+\&\f4.)c\f1	-	yes	End centered block
+\&\f4.)d\f1	-	yes	End delayed text
+\&\f4.)f\f1	-	yes	End footnote
+\&\f4.)l\f1	-	yes	End list
+\&\f4.)q\f1	-	yes	End major quote
+\&\f4.)x\f1	-	yes	End index item
+\&\f4.)z\f1	-	yes	End floating keep
+.TE
+.RE
+.br
+.ne 6
+.RS 3
+.TS
+c2 c1 c2 l2w(3.2i)
+c2 c1 c2 l2w(3.2i)
+l2 c1 l2 l2w(3.2i).
+Request	Initial	Cause	Explanation
+	Value	Break
+.sp .5
+\&\f4.++\f1 \f2m H\f1 	-	no	T{
+Define paper section.
+\f2m\f1 defines the part of the paper, and can be
+\f4C\f1
+(chapter),
+\f4A\f1
+(appendix),
+\f4P\f1
+(preliminary, for instance, abstract, table of contents, etc.),
+\f4B\f1
+(bibliography),
+\f4RC\f1
+(chapters renumbered from page one each chapter),
+or
+\f4RA\f1
+(appendix renumbered from page one).
+T}
+\&\f4.+c \f2T\f1 	-	yes	T{
+Begin chapter (or appendix, etc., as
+set by \f4.++\f1).
+.I T
+is the chapter title.
+T}
+\&\f4.1c\f1	1	yes	One column format on a new page.
+\&\f4.2c\f1	1	yes	Two column format.
+\&\f4.EN\f1	-	yes	Space after equation produced by \f4eqn\f1 or \f4meqn\f1.
+\&\f4.EQ\f1 \f2x y\f1 	-	yes	T{
+Precede equation; break out and add space.
+Equation number is
+.IR y .
+The optional argument
+.I x
+may be
+.I I
+to indent equation (default),
+.I L
+to left-adjust the equation, or
+.I C
+to center the equation.
+T}
+\&\f4.GE\f1	-	yes	End \f2gremlin\fP picture.
+\&\f4.GS\f1	-	yes	Begin \f2gremlin\fP picture.
+\&\f4.PE\f1	-	yes	End \f4pic\f1 picture.
+\&\f4.PS\f1	-	yes	Begin \f4pic\f1 picture.
+\&\f4.TE\f1	-	yes	End table.
+\&\f4.TH\f1	-	yes	End heading section of table.
+\&\f4.TS\f1 \f2x\f1	-	yes	T{
+Begin table; if
+.I x
+is
+.I H
+table has repeated heading.
+T}
+\&\f4.ac\f1 \f2A N\f1 	-	no	T{
+Set up for
+.SM ACM
+style output.
+.I A
+is the Author's name(s),
+.I N
+is the total number of pages.
+Must be given before the first initialization.
+T}
+\&\f4.b\f1 \f2x\f1 	no	no	T{
+Print
+.I x
+in boldface; if no argument switch to boldface.
+T}
+\&\f4.ba\f1 \f2+n\f1 	0	yes	T{
+Augments the base indent by
+.I n.
+This indent is used to set the indent on regular text
+(like paragraphs).
+T}
+\&\f4.bc\f1	no	yes	Begin new column
+\&\f4.bi\f1 \f2x\f1 	no	no	T{
+Print
+.I x
+in bold italics (nofill only)
+T}
+\&\f4.bu\f1	-	yes	Begin bulleted paragraph
+\&\f4.bx\f1 \f2x\f1	no	no	Print \f2x\f1 in a box (nofill only).
+\&\f4.ef\f1  \f2\'x\'y\'z\f1	\'\'\'\'\'	no	T{
+Set even footer to
+.I x
+.I y
+.I z
+T}
+\&\f4.eh\f1 \f2\'x\'y\'z\f1	\'\'\'\'\'	no	T{
+Set even header to
+.I x
+.I y
+.I z
+T}
+\&\f4.fo\f1 \f2\'x\'y\'z\f1	\'\'\'\'\'	no	T{
+Set footer to
+.I x
+.I y
+.I z
+T}
+\&\f4.hx\f1	-	no	Suppress headers and footers on next page.
+\&\f4.he\f1 \f2\'x\'y\'z\f1	\'\'\'\'\'	no	Set header to x  y  z
+\&\f4.hl\f1	-	yes	Draw a horizontal line
+\&\f4.i\f1 \f2x\f1 	no	no	T{
+Italicize
+.I x;
+if
+.I x
+missing, italic text follows.
+T}
+\&\f4.ip\f1 \f2x y\f1 	no	yes	T{
+Start indented paragraph,
+with hanging tag
+.IR x .
+Indentation is
+.I y
+ens (default 5).
+T}
+\&\f4.lp\f1	yes	yes	Start left-blocked paragraph.
+.TE
+.RE
+.br
+.ne 6
+.RS 3
+.TS
+c2 c1 c2 l2w(3.2i)
+c2 c1 c2 l2w(3.2i)
+l2 c1 l2 l2w(3.2i).
+Request	Initial	Cause	Explanation
+	Value	Break
+.sp .5
+\&\f4.lo\f1	-	no	T{
+Read in a file of local macros of the form
+\f4\&.*\f2x.\f1
+Must be given before initialization.
+T}
+\&\f4.np\f1	1	yes	Start numbered paragraph.
+\&\f4.of\f1 \f2\'x\'y\'z\f1	\'\'\'\'\'	no	Set odd footer to x  y  z
+\&\f4.oh\f1 \f2\'x\'y\'z\f1	\'\'\'\'\'	no	Set odd header to x  y  z
+\&\f4.pd\f1	-	yes	Print delayed text.
+\&\f4.pp\f1	no	yes	Begin paragraph.  First line indented.
+\&\f4.r\f1	yes	no	Roman text follows.
+\&\f4.re\f1	-	no	Reset tabs to default values.
+\&\f4.sc\f1	no	no	T{
+Read in a file of special characters
+and diacritical marks.
+Must be given before initialization.
+T}
+\&\f4.sh\f1 \f2n x\f1 	-	yes	T{
+Section head follows, font automatically bold.
+.I n
+is level of section,
+.I x
+is title of section.
+T}
+\&\f4.sk\f1	no	no	T{
+Leave the next page blank.
+Only one page is remembered ahead.
+T}
+\&\f4.sm\f1 \f2x	-	no	Set \f2x\f1 in a smaller pointsize.
+\&\f4.sz\f1 \f2+n\f1 	10p	no	Augment the point size by \f2n\f1 points.
+\&\f4.th\f1	no	no	T{
+Produce the paper in thesis format.
+Must be given before initialization.
+T}
+\&\f4.tp\f1	no	yes	Begin title page.
+\&\f4.u\f1 \f2x\f1	-	no	T{
+Underline argument (even in
+\f4troff\f1).
+(Nofill only).
+T}
+\&\f4.uh\f1	-	yes	Like .sh but unnumbered.
+\&\f4.xp\f1 \f2x\f1 	-	no	Print index \f2x\f1.
+.TE
+.RE
+.SH FILES
+.PD 0
+.TP 20
+\f4/usr/ucblib/doctools/tmac/e\f1
+.TP
+\f4/usr/ucblib/doctools/tmac/*.me\f1
+.PD
+.SH "SEE ALSO"
+\f4eqn\fP(1),
+\f4nroff\fP(1),
+\f4troff\fP(1),
+\f4refer\fP(1),
+\f4tbl\fP(1)

@@ -1,0 +1,439 @@
+.if n .pH 386.shelcmds @(#)shelcmds	40.9
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.BK "Technology File Mapping Guide"
+.CH "Shells, Commands & Utilities" 5
+.H 1 "Encryption Facilities"
+The Encryption Facilities provide an encryption mechanism for protecting information.
+These facilities provide additional protection beyond that obtained through login-ids, passwords, and permission modes.
+The Encryption Facilities are used by the \f4crypt\fP command, as well as in the editors \f4ed\fP, \f4edit\fP, \f4ex\fP, and \f4vi\fP.
+New in SVR4 are DES encryption facilities, which are used by Remote Procedure Call \f4rpc\fP.
+.P
+Export regulations restrict distribution of the Encryption Facilities package only to licensees within the United States and forbid export to other countries.
+.P
+For more information, see the \f4crypt(1)\f1, \f4ed(1)\f1, \f4edit(1)\f1, \f4ex(1)\f1 and \f4vi(1)\f1 manual pages in the \f2User's Reference Manual\f1.
+.H 2 "Encryption Library"
+.XS I N
+.DS
+\f4lib/libc/port/gen/crypt.c
+lib/libcrypt/*
+lib/libgen/isencrypt.c\fP
+.DE
+.XF
+.H 2 "Encryption Commands"
+.XS I N
+.DS
+\f4cmd/crypt/*
+cmd/makekey/*\fP
+.DE
+.XF
+.H 1 "Localization Facilities"
+SVR4 provides several new features that facilitate localization of application programs.
+SVR4 conforms to all ANSI X3J11 international conventions, which provides basic programming facilities for developing international programs.
+This includes the ability to set the locale of a program so that it can use locale specific date and time formats and character classification information.
+Functions and library routines provide information in formats consistent with local conventions, and system facilities are modified to work properly with multibyte character sets.
+The locale routines handle localization, character classification, and translation functions, as well as multi-byte character and string conversions that support internationalization.
+Other routines affecting internationalization include date and time routines that keep track of the local time and time zones and which change the format of date strings, depending on locale.
+In addition, SVR4 provides a message library facility that lets programs print messages in different languages without recompilation.
+.H 2 "Localization Library"
+.XS I N
+.DS
+\f4lib/libc/port/gen/_loc_data.c
+lib/libc/port/gen/_locale.c
+lib/libc/port/gen/_locale.h
+lib/libc/port/gen/colldata.c
+lib/libc/port/gen/colldata.h
+lib/libc/port/gen/fmtmsg.c
+lib/libc/port/gen/gettxt.c
+lib/libc/port/gen/localeconv.c
+lib/libc/port/gen/nl_langinfo.c
+lib/libc/port/gen/setlocale.c\fP
+.DE
+.XF
+.XK
+.H 2 "Localization and Message String Handling Utilities"
+.XS I N
+.DS
+\f4cmd/exstr/*
+cmd/gencat/*
+cmd/gettxt/*
+cmd/iconv/*
+cmd/localedef/*
+cmd/mkmsgs/*
+cmd/srchtxt/*
+cmd/zdump/*
+cmd/zic/*\fP
+.DE
+.XF
+.H 1 "Command Line Interpreters"
+The Shell acts as the primary user-interface for UNIX System V.
+The Shell accepts input from the user and interprets it as commands to the operating system.
+The Shell works both as an interactive command line interpreter and as a powerful programming language.
+.P
+As a command line interpreter, the Shell executes commands read from a terminal or from a file.  The Shell can also modify the environment in which commands run.
+Files containing commands may be created, allowing users to build their own commands.
+These newly defined commands can have the same status as existing
+system commands because users can define the search-order of
+directories in the file-system to find commands.
+This allows environments to reflect the requirements or style of an individual user or group of users.
+.P
+As a programming language, the Shell offers several features found in algorithmic languages: string-valued variables, parameter passing, and control-flow primitives (including iteration and branching).
+Constructs such as \f4while\fP\^, \f4if\fP\^, \f4for\fP, and \f4case\fP are available.
+Shell commands resemble function calls in high-level languages (like C).
+String-valued parameters, typically file-names or flags, may be passed to the command.
+The output from an arbitrary command may be used as a string, enabling arithmetic and other facilities not provided by the Shell to be accessed as commands.
+Two-way communication is possible between the Shell and commands.
+A return code is set by commands and may be used to determine the flow of control, and the standard output from a command may be used as input to the Shell.
+Users can redirect command input and output and can invoke processes that communicate through pipes.
+.H 2 "Bourne Shell (\^\f4sh\fP\^)"
+.P
+.XS I N
+.DS
+\f4cmd/sh/*\fP
+.DE
+.XF
+.XK
+.H 2 "C Shell (\^\f4csh\fP\^)"
+.P
+.XS I N
+.DS
+\f4cmd/csh/*\fP
+.DE
+.XF
+.XK
+.H 2 "Korn Shell (\^\f4ksh\fP\^)"
+The Korn Shell is a popular command interpreter for the UNIX System
+that provides compatibility with the standard UNIX System V shell, plus additional
+capabilities, including command line editing, command history, powerful
+alias and function capabilities, and more.
+.P
+.XS I N
+.DS
+\f4cmd/ksh/*\fP
+.DE
+.XF
+.XK
+.H 2 "Shell Layers (\^\f4shl\fP\^)"
+.P
+.XS I N
+.DS
+\f4cmd/shl/*\fP
+.DE
+.XF
+.ig
+.XK
+.HU "Job-control Shell (\^\f4jsh\fP\^)"
+Job control is a popular feature of the BSD operating system and an optional part of the IEEE P1003.1 POSIX standard.  
+Job control allows a user to stop and later resume a job, whether it is executing in the foreground or the background.
+Job control also allows a user to move jobs back and forth between the background and the foreground.
+.P
+With job control a user can:
+.BL
+.LI
+stop a foreground job in order to perform a more pressing task
+.LI
+put a foreground job in the background
+.LI
+stop a job to satisfy a need of the job, such as looking up data for input or changing the name of an input file to match what was misspelled on the command line.
+.LE 1
+Job control capabilities are available through an optional shell called the job control shell (\^\f4jsh\fP\^).
+For more information about job control, see the \f2User's Guide\f1.
+.P
+.XS I N
+.CW
+.CN
+.XF
+..
+.H 1 "Core System Utilities"
+Core System Utilities contains Basic and Advanced commands and utilities drawn from the ``User Environment'' and ``Core Commands and Utilities'' packages in previous releases.
+This includes the most essential and commonly-used commands, including installation and configuration management utilities, as well as message management and monitoring utilities.
+Core System Utilities also include commands to do the following:
+.BL
+.LI
+Perform mathematical calculations.
+.LI
+Check or change the executing environment of commands.
+.LI
+Schedule commands to be executed at a later time.
+.LI
+Interact with more than one session from any terminal and switch easily between these virtual layers, as if logged in from several terminals simultaneously (this feature works with any terminal, whereas the Windowing Utilities package works only with terminals that have specific capabilities, such as the AT&T 630 MTG, a dot-matrix display terminal).
+.LE 1
+For additional information about Core System Utilities package and how to use them, see the \f2User's Guide\f1, the ``Essential Utilities'' manual pages in the \f2User's Reference Manual\f1, and the \f2System Administrator's Reference Manual\f1.
+.H 2 "Basic Commands & Utilities"
+Basic Commands and Utilities are included in the Basic Utilities (\*(CfBU\*(Cx) section of SVID3.
+.P
+.in +.25i
+.DS
+\f4cmd/banner/*
+cmd/basename/*
+cmd/cal/*
+cmd/calendar/*
+cmd/cat/*
+cmd/chmod/*
+cmd/cmp/*
+cmd/cpio/*
+cmd/cpiopc/*
+cmd/date/*
+cmd/diff/*
+cmd/dirname/*
+cmd/du/*
+cmd/echo/*
+cmd/expr/*
+cmd/false/*
+cmd/file/*
+cmd/find/*
+cmd/fold/*
+cmd/kill/*
+cmd/line/*
+cmd/ls/*
+cmd/mkdir/*
+cmd/mkfifo/*
+cmd/mv/*
+cmd/nohup/*
+cmd/pg/*
+cmd/pr/*
+cmd/ps/*
+cmd/pwd/*
+cmd/rm/*
+cmd/rmdir/*
+cmd/sleep/*
+cmd/sort/*
+cmd/streams/strcmd/*
+cmd/tee/*
+cmd/true/*
+cmd/uname/*
+cmd/wc/*\fP
+.DE
+.in -.25i
+.XK
+.H 2 "Advanced Commands & Utilities"
+Advanced Commands and Utilities are included in the Advanced Utilities (\*(CfAU\*(Cx) section of SVID3.
+.P
+.XS I N
+.DS
+arch/mbus/cmd/ckperms/* 	
+cmd/bc/*
+cmd/chgrp/*
+cmd/chown/*
+cmd/cron/*
+cmd/dc/*
+cmd/dd/*
+cmd/factor/*
+cmd/getopt/*
+cmd/groups/*
+cmd/id/*
+cmd/logname/*
+cmd/mesg/*
+cmd/newgrp/*
+cmd/news/*
+cmd/passwd/*
+cmd/strings/*
+cmd/su/*
+cmd/tabs/*
+cmd/tar/*
+cmd/tty/*
+cmd/units/*
+cmd/wall/*
+cmd/who/*
+cmd/write/*
+.DE
+.XF
+.H 1 "Directory & File Management Utilities"
+The Directory & File Management Utilities package consists of more than twenty-five commands that provide enhanced file and directory manipulation capabilities.
+With these commands, a user can do the following:
+.BL
+.LI
+search directories or files
+.LI
+compare the contents of directories or files
+.LI
+manipulate the contents of files
+.LE 1
+For more information, see the \f2User's Guide\f1 and the ``Directory & File Management Utilities'' manual pages in the \f2User's Reference Manual\f1.
+.P
+The Directory & File Management Utilities are divided into two sections: Basic and Advanced (to conform with the SVID \*(CfBU\*(Cx and \*(CfAU\*(Cx categories).
+.H 2 "Basic File Management Utilities"
+.XS I N
+.DS
+\f4cmd/awk/*
+cmd/col/*
+cmd/comm/*
+cmd/compress/*
+cmd/cut/*
+cmd/diff3/*
+cmd/fmt/*
+cmd/grep/*
+cmd/head/*
+cmd/nl/*
+cmd/oawk/*
+cmd/pack/*
+cmd/paste/*
+cmd/split/*
+cmd/sum/*
+cmd/tail/*
+cmd/touch/*
+cmd/tr/*
+cmd/uniq/*
+cmd/unpack/*\fP
+.DE
+.XF
+.XK
+.H 2 "Advanced File Management Utilities"
+.XS I N
+.DS
+\f4cmd/bdiff/*
+cmd/bfs/*
+cmd/csplit/*
+cmd/dircmp/*
+cmd/egrep/*
+cmd/fgrep/*
+cmd/join/*
+cmd/more/*
+cmd/newform/*
+cmd/od/*
+cmd/sdiff/*\fP
+.DE
+.XF
+.H 1 "Text Processing Utilities"
+The Text Processing Utilities include the following Technology Groups:
+.BL
+.LI
+Spell Checking Utilities
+.LI
+Basic Text Editing Utilities
+.LI
+Advanced Text Editing Utilities
+.LE
+.H 2 "Spell Checking Utilities"
+The Spell Checking Utilities package contains a program and dictionary files that enable a user to check for misspelled words in a file.
+The performance of \f4spell\fP can be monitored by reviewing a file that contains a history of misspelled words.
+.P
+For more information, see the Spell Checking Utilities manual pages in the \f2User's Reference Manual\f1.
+.P
+.XS I N
+.DS
+\f4cmd/checkeq/*
+cmd/deroff/*
+cmd/spell/*\fP
+.DE
+.XF
+.H 2 "Basic Text Editing Utilities"
+.P
+.XS I N
+.DS
+\f4cmd/ed/*
+cmd/sed/*\fP
+.DE
+.XF
+.XK
+.H 2 "Advanced Text Editing Utilities"
+The Advanced Text Editing Utilities package provides three related editors: two line editors (\f4edit\fP and \f4ex\fP) and a screen editor (\f4vi\fP).
+The \f4edit\fP editor is mainly for novice users.
+The \f4ex\fP editor is an advanced version of \f4edit\fP and is for experienced users.
+The \f4vi\fP editor is intended for all users;
+it allows the user to view a screen of text at one time and move the terminal's cursor directly to any position in the file.
+.P
+For more information, see the ``Editing Utilities'' manual pages in the \f2User's Reference Manual\f1.
+.P
+.XS I N
+.DS
+\f4cmd/vi/*\fP
+.DE
+.XF
+.H 1 "Printing Facilities"
+The Line Printer (LP) Spooling Utilities package provides the temporary storing (spooling) of data until it can be printed.
+With LP spooling, print requests can be entered at a terminal and printing can take place without tying up the terminal.
+Spooling also enables many users to efficiently share a printer (or several printers).
+Line printer PostScript\*(Rg filtering is also available.
+.P
+The commands in this package can perform the following functions:
+.BL
+.LI
+customize the system so that it will spool to a group of line printers
+.LI
+group printers into logical classes to maximize the throughput of the printers
+.LI
+queue print requests, thus allowing a print request (job) to get printed on the next available printer in the appropriate class
+.LI
+cancel print requests so a job that is no longer needed will not be printed
+.LI
+start and stop the LP spooling software from processing requests
+.LI
+change the configuration of printers
+.LI
+find the status of the LP scheduler
+.LI
+restart any printing that was not completed when the system was powered down
+.LI
+connect multiple computers (running either SVR4 or SunOS) into a network so that the users of one computer can use any of the printers connected to the other computers in the network
+.LE 1
+For information about using this package, see the \f2User's Guide\f1 and the \f2User's Reference Manual\f1.
+For information about administering this package, see the \f2System Administrator's Guide\f1 and the \f2System Administrator's Reference Manual\f1.
+.XK
+.H 2 "Line Printer Spooling Utilities"
+.XS I N
+.DS
+\f4cmd/lp.admin/*
+cmd/lp/cmd/*
+cmd/lp/common.mk
+cmd/lp/crontab/*
+cmd/lp/etc/*
+cmd/lp/include/*
+cmd/lp/lib/*
+cmd/lp/lp.mk
+cmd/lp/model/*
+cmd/lp/terminfo/*\fP
+.DE
+.XF
+.XK
+.H 2 "Line Printer PostScript Filters"
+.XS I N
+.DS
+\f4cmd/lp/filter/*\fP
+.DE
+.XF
+.H 1 "Plotting Facilities"
+UNIX System V Plotting Facilities include commands and library routines used by the System Performance Analysis Utilities (SPAU).
+.H 2 "Plotting Library"
+.XS I N
+.DS
+\f4lib/libplot/*\fP
+.DE
+.XF
+.H 2 "Plotting Commands"
+.XS I N
+.DS
+\f4cmd/graph/*
+cmd/spline/*
+cmd/tplot/*\fP
+.DE
+.XF
+.H 1 "Character User Interfaces"
+.H 2 "Form & Menu Language Interpreter (FMLI)"
+An earlier release of UNIX System V introduced the Form and Menu Language Interpreter (FMLI)\(ema high-level language interpreter that allows developers to write user-friendly interfaces to their applications.
+UNIX System V Release 4.0 provides extensions to the Form and Menu Language, including a way to interrupt executables, a conditional statement (if-then-else), new built-in functions (\f4test\fP and \f4expr\fP), as well as other improvements that give FMLI programmers more control over the appearance and behavior of their application interface.
+.P
+For more information about FMLI, see the \f2Programmer's Guide: Character User Interfaces (FMLI and ETI)\f1.
+.P
+.XS I N
+.DS
+\f4cmd/fmli/*\fP
+.DE
+.XF
+.XK
+.H 2 "Framed Access Command Environment (FACE)"
+Framed Access Command Environment (FACE) is a package
+intended for non-expert computer users.
+It provides a character-based menu interface to the UNIX system.
+FACE allows a user to see the UNIX system through frames containing menus and forms.
+It provides a hierarchy of forms and menus through which a user can execute basic UNIX system commands for file editing and text manipulation.
+It also includes tools for creating a menu of services through which a user can access application packages.
+In SVR4, FACE has been enhanced to be more consistent with the version of FACE developed for UNIX System V/386 Release 3.2, and adding applications to FACE has been made easier.
+.P
+See the \f2User's Guide\f1 for more information about FACE and a tutorial that explains how to use FACE.
+.P
+.XS I N
+.DS
+\f4cmd/face/*
+cmd/oamintf/xx/*\fP
+.DE
+.XF

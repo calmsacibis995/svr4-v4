@@ -1,0 +1,289 @@
+'\"macro stdmacro
+.if n .pH g1c.uucp @(#)uucp	40.6.1.1 of 1/3/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} uucp 1C "Basic Networking Utilities" "\&"
+.if \nX=1 .ds x} uucp 1C "Basic Networking Utilities"
+.if \nX=2 .ds x} uucp 1C "" "\&"
+.if \nX=3 .ds x} uucp "" "" "\&"
+.TH \*(x}
+'\" t
+.SH NAME
+\f4uucp\f1, \f4uulog\f1, \f4uuname\f1 \- \s-1UNIX\s+1-to-\s-1UNIX\s+1 system copy
+.SH SYNOPSIS
+\f4uucp\f1
+[ \f2options\f1 ]
+\f4source-files destination-file\fP
+.br
+\f4uulog\f1
+[ \f2options\f1 ] 
+\f4system\fP
+.br
+\f4uuname\f1
+[ \f2options\f1 ]
+.SH DESCRIPTION
+.SS uucp
+\f4uucp\fP
+copies files named by the
+.I source-file\^
+arguments to the
+.I destination-file\^
+argument.
+A source file name may be a patname on your machine, or, may
+have the form:
+.PP
+.RS
+\f2system-name\f4!\f2pathname\f1
+.RE
+.PP
+where
+.I system-name\^
+is taken from a list of system names that
+\f4uucp\fP
+knows about.
+The destination
+.I system-name\^
+may also include a list of system names such as
+.PP
+.RS
+\f2system-name\f4!\f2system-name\f4!...!\f2system-name\f4!\f2pathname\f1
+.RE
+.PP
+In this case, an attempt is made to send the file, via the specified route,
+to the destination.
+Care should be taken to ensure that intermediate nodes in the
+route are willing to forward information
+(see \s-1NOTES\s0 below for restrictions).
+.PP
+The shell metacharacters
+\f4?\f1,
+\f4\(**\f1
+and
+\f4[\|.\|.\|.\|]\f1
+appearing in
+.I pathname\^
+will be expanded on the appropriate system.
+.PP
+Path names may be one of:
+.PP
+.RS
+.TP 5
+(1)
+a full pathname;
+.TP 5
+(2)
+a pathname preceded by
+\f(CW~\f2user\f1
+where
+.I user\^
+is a login name on the specified system
+and is replaced by that user's login directory;
+.TP 5
+(3)
+a pathname preceded by
+\f(CW~\f1/\f2destination\f1
+where
+.I destination\^
+is appended to
+\f4/var/spool/uucppublic\f1;
+(NOTE:  This destination will be treated as a file name unless
+more than one file is being transferred by this request or
+the destination is already a directory.
+To ensure that it is a directory, follow the destination with a '/'.
+For example \f(CW~\f1/\f2dan\f1/ as the destination will make the directory
+/var/spool/uucppublic/dan if it does not exist and put the requested file(s)
+in that directory).
+.TP 5
+(4)
+anything else is prefixed by the current directory.
+.RE
+.PP
+If the result is an erroneous pathname for the remote system,
+the copy will fail.
+If the
+.I destination-file\^
+is a directory, the last part of the
+.I source-file\^
+name is used.
+.ig
+If a simple
+.I ~user\^
+destination is inaccessible to 
+\f4uucp\fP,
+data is copied to a spool directory and the user
+is notified by
+\f4mail\fP(1).
+..
+.PP
+\f4uucp\fP
+removes execute permissions across the transmission
+and gives 0666 read and write permissions (see
+\f4chmod\fP(2)).
+.PP
+The following options are interpreted by
+\f4uucp\fP:
+.TP 10
+\f4\-c\f1
+Do not copy local file to the spool directory for transfer to the remote
+machine (default).
+.TP
+\f4\-C\f1
+Force the copy of local files to the spool directory for transfer.
+.TP
+\f4\-d\f1
+Make all necessary directories for the file copy (default).
+.TP
+\f4\-f\f1
+Do not make intermediate directories for the file copy.
+.TP
+\f4\-g\f2grade\f1
+\f2grade\f1 can be either a single letter/number or a string of alphanumeric
+characters defining a service grade.
+The
+\f4uuglist\f1
+command can determine whether it is appropriate to use the single letter/number
+or a string of alphanumeric characters as a service grade.
+The output from the uuglist command will be a list of service grades that
+are available or a message that says to use a single letter/number as a 
+grade of service.
+.TP
+\f4\-j\f1
+Output the \f4uucp\fP job identification
+string on the standard output.
+This job identification can be used by
+\f4uustat\fP
+to obtain the status of a \f4uucp\fP job
+or to terminate a \f4uucp\fP job.  It is valid as long as the
+job remains queued on the local system.
+.TP
+\f4\-m\f1
+Send mail to the requester when the copy is
+completed.
+.TP
+\f4\-n\f2user\^\f1
+Notify
+.I user\^
+on the remote system that a file was sent.
+.TP
+\f4\-r\f1
+Do not start the file transfer, just queue the job.
+.TP
+\f4\-s\f2file\^\f1
+Report status of the transfer to
+.I file.\^
+This option overrides the \f4\-m\f1 option.
+.TP
+\f4\-x\f2debug_level\f1
+Produce debugging output on standard output.
+\f2debug_level\f1 is a number between 0 and 9;
+as it increases to 9, more detailed debugging information is given.
+This option may not be available on all systems.
+.SS uulog
+.PP
+\f4uulog\fP
+queries a log file
+of 
+\f4uucp\fP
+or
+\f4uuxqt\fP
+transactions in file
+\f4/var/uucp/.Log/uucico/\f4system\fP
+or
+\f4/var/uucp/.Log/uuxqt/\f2system.\f1
+.ne 3
+.PP
+These options cause 
+\f4uulog\fP
+to print logging information:
+.TP 10
+\f4\-s\f2sys\f1
+Print information about file transfer work involving system \f2sys\f1.
+.TP
+\f4\-f\f4system\fP
+Does a "\f4tail \-f\f1" of the file transfer log for \f4system\fP.
+(You must hit \s-1BREAK\s0 to exit this function.)
+.PP
+Other options used in conjunction with the above options are:
+.TP 10
+\f4\-x\f1
+Look in the \f4uuxqt\fP log file for the given system.
+.TP
+\f4\-\f2number\f1
+Indicates that a "tail" command of
+.I number
+lines should be executed.
+.SS uuname
+.PP
+\f4uuname\fP
+lists the names of systems known to \f4uucp\fP.
+\f4uuname\fP recognizes the following options:
+.TP 10
+\f4\-c\f1
+Returns the names of systems known to \f4cu\fP.
+(The two lists are the same, unless your machine is using
+different \f2Systems\f1 files for \f4cu\fP and \f4uucp\fP.
+See the \f2Sysfiles\f1 file.)
+.TP
+\f4\-l\f1
+Return the local system name.
+.SH FILES
+.ta1.5i
+/var/spool/uucp	spool directories
+.br
+/var/spool/uucppublic/\(**	public directory for receiving and
+.br
+	sending
+.br
+/usr/lib/uucp/\(**	other program files
+.br
+/etc/uucp/\(**	other data files
+.br
+.SH SEE ALSO
+\f4mail\fP(1),
+\f4uuglist\fP(1C),
+\f4uustat\fP(1C),
+\f4uux\fP(1C),
+\f4uuxqt\fP(1M).
+.br
+\f4chmod\fP(2) in the \f2Programmer's Reference Manual\f1.
+.br
+.ne 5
+.SH NOTES
+For security reasons, the domain of remotely accessible files may
+be severely restricted.
+You will very likely not be able to access files by pathname;
+ask a responsible person on the remote system to
+send them to you.
+For the same reasons you will probably not be able
+to send files to arbitrary pathnames.
+As distributed, the remotely accessible files are
+those whose names begin
+\f4/var/spool/uucppublic\f1
+(equivalent to
+\f4~/\f1).
+.PP
+All files received by
+\f4uucp\fP
+will be owned by
+\f4uucp\fP.
+.br
+.P
+The \f4\-m\fP option will only work sending files or receiving
+a single file.
+Receiving multiple files specified by special shell
+characters \f4? \(** \|[\|.\|.\|.\|]\fP will not activate
+the \f4\-m\fP option.
+.P
+The forwarding of files through other systems may not be compatible
+with the previous version of \f4uucp\fP.  If forwarding is used, all
+systems in the route must have compatible versions of \f4uucp\fP.
+.SH NOTES
+Protected files and files that are in protected directories that
+are owned by the requester can be sent by
+\f4uucp\fP.
+However, if the requester is root, and the directory is not searchable
+by "other" or the file is not readable by "other", the request will
+fail.
+.\"	@(#)
+.Ee

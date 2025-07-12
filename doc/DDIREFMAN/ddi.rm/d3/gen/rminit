@@ -1,0 +1,67 @@
+'\"macro stdmacro
+.if n .pH gen.rminit @(#)rminit	40.2 of 1/7/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.nr X
+.if \nX=0 .ds x} rminit D3K "" "DKI" "\&"
+.if \nX=1 .ds x} rminit D3K "" "DKI"
+.if \nX=2 .ds x} rminit D3K "" "\&"
+.if \nX=3 .ds x} rminit "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4rminit\f1 \- initialize a private space management map
+.IX "\f4rminit\fP(D3K)"
+.SH SYNOPSIS
+.nf
+.na
+\f4#include <sys/map.h>
+#include <sys/ddi.h>
+.sp 0.5
+void rminit(struct map *\f2mp\f4, unsigned long \f2mapsize\f4);\f1
+.ad
+.fi
+.SH ARGUMENTS
+.RS 0n 10
+.IP "\f2mp\f1" 10n
+Pointer to the map describing the private space.
+.IP "\f2mapsize\f1" 10n
+Number of entries in the map table.
+.RE
+.SH DESCRIPTION
+The \f4rminit\f1 function initializes a private space management
+map structure that can
+be used for the allocation of space.
+.P
+Although \f4rminit\f1 initializes the map structure
+itself, it does not allocate the space that the map will manage.
+This space must be allocated separately and must be added to the
+map using \f4rmfree\fP(D3DK) prior to attempting to allocate space
+from the map using \f4rmalloc\fP(D3DK).
+.P
+The system maintains the map list structure by size and index.
+The caller places whatever semantics on the units of size are appropriate
+for the type of space being managed.
+For example, units may be byte
+addresses, pages of memory, or blocks.
+The elements of the map
+are sorted by index.
+.SH RETURN VALUE
+None.
+.SH LEVEL
+Base or Interrupt.
+.SH NOTES
+Does not sleep.
+.sp 0.5
+The map array must be initialized to zero before calling
+\f4rminit\f1.
+.sp 0.5
+Three map entries are reserved for use by the system and are not available
+for general map use.  Therefore, \f2mapsize\fP must be greater than three.
+.SH SEE ALSO
+.na
+\f4rmalloc\f1(D3DK),
+\f4rmwant\f1(D3K),
+\f4rmfree\f1(D3DK),
+\f4rmsetwant\f1(D3K)
+.ad
+.SH EXAMPLE
+See \f4rmalloc\f1(D3DK).

@@ -1,0 +1,89 @@
+'\"macro stdmacro
+.if n .pH g1a.df_ufs @(#)df_ufs	40.8.1.3 of 5/10/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} df 1M "UFS" "\&"
+.if \nX=1 .ds x} df 1M "UFS"
+.if \nX=2 .ds x} df 1M "" "\&"
+.if \nX=3 .ds x} df "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4df\fP (ufs) \- report free disk space on \f4ufs\fP file systems
+.SH SYNOPSIS
+\f4df\f1
+[
+\f4\-F ufs\f1
+]
+[
+\f2generic_options\f1
+]
+[
+\f4\-o i\f1
+]
+[\f2directory\fP |\| \f2special\fP]
+.SH DESCRIPTION
+.I generic_options
+are options supported by the generic \f4df\f1 command.
+.PP
+\f4df\f1
+displays the amount of disk space occupied by
+\f4ufs \f1
+file systems, the amount of used and available space,
+and how much of the file system's total capacity has been used.
+.P
+Note that the amount of space reported as
+used and available
+is less than the amount of space in the file system;
+this is because the system
+reserves a fraction of the space
+in the file system to allow its file
+system allocation routines to work well.
+The amount reserved is typically about 10%;
+this may be adjusted using
+\f4tunefs\f1(1M).
+When all the space on the file system except for this
+reserve is in use, only the super-user can allocate new
+files and data blocks to existing files.
+When the file system is overallocated in this way,
+\f4df\f1
+may report that the file system is more than 100% utilized.
+.P
+The options are:
+.PP
+.TP
+\f4\-F ufs\f1
+Specifies the \f4ufs\f1-FSType.
+.TP
+\f4\-o\f1
+Specify
+\f4ufs\f1
+file system specific options.
+The available option is:
+.RS
+.TP
+\f4i\f1
+Report the number of used and free inodes.
+May not be used with \f2generic_options\fP.
+.RE
+.SH NOTES
+\f4df\fP calculates its results differently for mounted and unmounted
+file systems.
+For mounted systems the 10% reserved space mentioned above is
+included in the number of kilobytes used.
+For unmounted systems the 10% reservation is not included in
+the number of kilobytes used.
+.P
+The \f4-b\fP and \f4-e\fP options override the \f4-t\fP option.
+.SH FILES
+.PD 0
+.TP 20
+\f4/etc/mnttab\f1
+list of file systems currently mounted
+.PD
+.SH SEE ALSO
+generic \f4df\f1(1M),
+\f4du\f1(1M),
+\f4quot\f1(1M),
+\f4tunefs\f1(1M),
+\f4mnttab\f1(4)

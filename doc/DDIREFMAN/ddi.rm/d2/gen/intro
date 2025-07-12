@@ -1,0 +1,49 @@
+'\"macro stdmacro
+.if n .pH 386.intro2 @(#)intro	40.2 of 1/7/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.nr X
+.if \nX=0 .ds x} intro D2DK "" "DDI/DKI" "\&"
+.if \nX=1 .ds x} intro D2DK "" "DDI/DKI"
+.if \nX=2 .ds x} intro D2DK "" "\&"
+.if \nX=3 .ds x} intro "" "" "\&"
+.TH \*(x}
+.IX "\f4intro\fP(D2DK)"
+.IX istart "DDI/DKI (Device Driver Interface/Driver\(enKernel Interface), driver entry point routines"
+.SH NAME
+\f4intro\fP \- introduction to driver entry point routines
+.SH SYNOPSIS
+.nf
+\f4#include <sys/types.h>
+#include <sys/ddi.h>
+.fi
+.SH DESCRIPTION
+This section describes the routines a developer needs to include
+in a device driver.  These routines are called "entry point
+routines" because they provide the interfaces that the kernel needs
+from drivers.  The kernel calls them when needed.  Some are called
+at well-defined times, such as system start up and system shut down.
+Others are called as a result of I/O-related system calls or external
+events, such as interrupts from peripheral devices.
+.P
+Each driver is organized into two logical parts: the base level and
+the interrupt level.
+The base level interacts with the kernel and the device
+on behalf of processes performing
+I/O operations.  The interrupt level interacts with the device and
+the kernel as a
+result of an event such as data arrival, and usually cannot be associated with
+any particular process.
+.P
+Each driver is uniquely identified by a prefix string specified in its
+configuration file.
+The name of all the driver-supplied routines and global variables
+should begin with this prefix.  This will reduce the chance of a symbol collision
+with another driver.  Any private routines defined by a driver that are not entry point
+routines should be declared as \f4static\fP.  Also, any global variables that
+are private to the driver should be declared as \f4static\fP.
+.IX iend STREAMS entry points
+.IX iend driver, entry points
+.IX iend "DDI/DKI (Device Driver Interface/Driver\(enKernel Interface), driver entry point routines"
+.ig
+	null section helps create MasterToc
+..

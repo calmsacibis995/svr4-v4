@@ -1,0 +1,202 @@
+'\"macro stdmacro
+.if n .pH gen.open @(#)open	40.2 of 1/7/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.nr X
+.if \nX=0 .ds x} open D2DK "" "DDI/DKI" "\&"
+.if \nX=1 .ds x} open D2DK "" "DDI/DKI"
+.if \nX=2 .ds x} open D2DK "" "\&"
+.if \nX=3 .ds x} open "" "" "\&"
+.TH \*(x}
+.IX "\f4open\fP(D2DK)"
+.SH "NAME"
+\f4open\fP \- gain access to a device
+.SH "SYNOPSIS    [Block and Character]"
+.nf
+.na
+\f4#include <sys/types.h>
+#include <sys/file.h>
+#include <sys/errno.h>
+#include <sys/open.h>
+#include <sys/cred.h>
+.sp 0.5
+int \f2prefix\fPopen(dev_t *\f2devp, \fPint \f2oflag, \fPint \f2otyp, \fPcred_t *\f2crp\fP);\f1
+.ad
+.fi
+.SH "ARGUMENTS"
+.TP .6i
+\f2devp\fP
+Pointer to a device number.
+.TP
+\f2oflag\fP
+Information passed from the user
+that instructs the driver on
+how to open the file.  The bit settings for the flag are found in
+\f4file.h\fP.  Valid settings are:
+.RS .6i
+.TP .75i
+\f4FEXCL\fP
+Interpreted in a driver-dependent manner.  Some drivers interpret this flag
+to mean open the device with exclusive access (fail all other attempts to open
+the device.)
+.TP
+\f4FNDELAY\fP
+Open the device and return immediately without sleeping (do not block
+the open even if there is a problem.) 
+.TP
+\f4FNONBLOCK\fP
+Open the device and return immediately without sleeping (do not block
+the open even if there is a problem.) 
+.TP
+\f4FREAD\fP
+Open the device with read access permission.
+.TP
+\f4FWRITE\fP
+Open the device with write access permission.
+.RE
+.TP .6i
+\f2otyp\fP
+Parameter supplied so that the driver can determine how many
+times a device was opened and for what reasons.
+All flags are defined in \f4open.h\fP.  The values are
+mutually exclusive.
+.RS .6i
+.TP .75i
+\f4OTYP_BLK\fP
+Open occurred through block interface for the device.
+.TP 
+\f4OTYP_CHR\fP
+Open occurred through the raw/character interface for the device.
+.TP
+\f4OTYP_LYR\fP
+Open a layered device.
+This flag is used when one driver
+calls another driver's \f4open\fP routine.
+.RE
+.TP .6i
+\f2crp\fP
+Pointer to the user credential structure.
+.SH "SYNOPSIS     [STREAMS]"
+.nf
+.na
+\f4#include <sys/types.h>
+#include <sys/file.h>
+#include <sys/stream.h>
+#include <sys/errno.h>
+#include <sys/cred.h>
+.sp 0.5
+int \f2prefix\fPopen(queue_t *\f2q, \fPdev_t *\f2devp, \fPint \f2oflag, \fPint \f2sflag, \fPcred_t *\f2crp\fP);\f1
+.ad
+.fi
+.SH "ARGUMENTS     [STREAMS]"
+.TP .6i
+\f2q\fP
+Pointer to the queue used to reference the
+read side of the driver.
+.TP
+\f2devp\fP
+Pointer to a device number.  For modules, \f2devp\fP always points to the
+device number associated with the driver at the end (tail) of the stream.
+.TP
+\f2oflag\fP
+Open flags.  Valid values are the same as those listed above.
+.TP
+\f2sflag\fP
+STREAMS flag.  Values are mutually exclusive and are given as follows:
+.P
+.RS .6i
+.TP .75i
+\f4CLONEOPEN\fP
+Indicates a clone open (see below.)
+If the driver supports cloning, it must assign and 
+return a device number of an unused device by changing the value of the device number
+to which \f2devp\fP points.
+.TP
+\f4MODOPEN\fP
+Indicates that an \f4open\fP routine is being called
+for a module, not a driver.  This is useful in detecting
+configuration errors and in determining how the driver is
+being used, since STREAMS drivers can also be configured
+as STREAMS modules.
+.TP
+0
+Indicates a driver is being opened directly, without cloning.
+.RE
+.TP .6i
+\f2crp\fP
+Pointer to the user credential structure.
+.SH "DESCRIPTION"
+The driver's \f4open\fP routine is called to prepare a device for further
+access.  It is called by the kernel during an \f4open\fP(2)
+or a \f4mount\fP(2) of the device special file.  For non-STREAMS drivers,
+it can also be called
+from another (layered) driver.  The STREAMS module \f4open\fP
+routine is called by the kernel during an \f4I_PUSH ioctl\fP(2) or an autopush-style
+open [see \f4autopush\fP(1M)].
+.P
+The \f4open\fP routine could perform any of the following general
+functions, depending on the type of device and the service provided:
+.P
+.PD 0.2v
+.IP
+enable interrupts
+.IP
+allocate buffers or other resources needed to use the device
+.IP
+lock an unsharable device
+.IP
+notify the device of the open
+.IP
+change the device number if this is a clone open
+.PD
+.P
+The \f4open\fP routine should verify that the minor number component of
+\f2devp\fP is valid, that the type of access requested by \f2otyp\fP
+and \f2oflag\fP is appropriate for the device, and, if required,
+check permissions using the user credentials pointed to by \f2crp\fP [see \f4drv_priv\fP(D3DK)].
+.P
+For STREAMS drivers and modules, the \f4open\fP routine is called with
+interrupts blocked from all STREAMS devices.  If the driver sets stream head
+options by sending an \f4M_SETOPTS\fP message upstream from the \f4open\fP routine,
+then the changes are guaranteed to take effect when the system call completes.
+.P
+Cloning is the process of the driver selecting an unused device for
+the user.  It eliminates the need to poll many devices when looking for an
+unused one.
+Both STREAMS and Non-STREAMS drivers may implement cloning
+behavior by changing the device number pointed to by \f2devp\fP.
+A driver may designate certain minor devices as special clone entry points
+into the driver.  When these are opened, the driver searches for an
+unused device and returns the new device number by changing the value
+of the device number to which \f2devp\fP points.  Both the major device number
+and the minor device number can be changed, although usually just the minor number
+is changed.  The major number is only changed when the clone controls more than
+one device.
+.P
+Using this method of cloning, a STREAMS driver will never see \f2sflag\fP set
+to \f4CLONEOPEN\fP.
+A different method makes use of this flag.
+STREAMS drivers can take advantage of a special driver, known as the
+\f2clone driver\fP, to perform clone opens.  This frees the driver from having to
+reserve special minors for the clone entry points.  Here, the device node is
+actually that of the clone driver (the major number is the major number from the
+clone driver and the minor number is the major number from the real driver.)
+When the clone driver is opened, it will call the real driver
+open routine with \f2sflag\fP set to \f4CLONEOPEN\fP.
+.SH NOTES
+This entry point is required in all drivers.
+.sp 0.5
+The \f4open\fP routine has user context and can sleep.  However, STREAMS drivers
+and modules must sleep such that signals do not cause the sleep
+to longjump [see \f4sleep\fP(D3K)].
+.sp 0.5
+Support of cloning is optional.
+.SH "RETURN VALUE"
+The \f4open\fP routine should return 0 for success,
+or the appropriate error number.
+.SH "SEE ALSO"
+.na
+\f4close\fP(D2DK),
+\f4drv_priv\fP(D3DK),
+\f4queue\fP(D4DK),
+\f4errnos\fP(D5DK)
+.ad

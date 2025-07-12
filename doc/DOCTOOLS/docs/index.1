@@ -1,0 +1,292 @@
+'\"macro stdmacro
+.if n .pH doctools.index.1 @(#)index.1	40.2 of 5/15/91
+.\" @(#) SCCS File: index.1; ID:1.2; DATED:1/5/90
+.\"
+.\"     Copyright (c) 1989 AT&T   
+.\"     All Rights Reserved       
+.\"
+.\"     THIS IS UNPUBLISHED PROPRIETARY SOURCE CODE OF AT&T   
+.\"     The copyright notice above does not evidence any     
+.\"     actual or intended publication of such source code.  
+.\"
+.\"
+.\"
+.PM DN "FINAL COPY"
+.nr X
+.if \nX=0 .ds x} index 1 "" "Documenter's Tool Set" "\&"
+.if \nX=1 .ds x} index 1 "" "Documenter's Tool Set"
+.if \nX=2 .ds x} index 1 "" "\&"
+.if \nX=3 .ds x} index "" "" "\&"
+.TH \*(x}
+.SH NAME
+\&\f4index\fP \- produce an index using DOCTOOLS
+.SH SYNOPSIS
+\&\f4index\fP
+[
+\&\f4\-m\fP
+]
+.I Cfiles
+.SH DESCRIPTION
+\&\f4index\fP
+produces an alphabetical index for a book or a set of books.
+Input files are table of contents files produced by the
+\&\f4format\fP
+command.
+\&\f4index\fP
+writes to its standard output 
+the index, marked up to be printed with the
+\&\f4format\fP
+command.
+.PP
+.I Cfiles
+contain information for tables of contents as well as indexes.
+A
+.I Cfile
+is produced by the \&\f4\-c\fP option of the \&\f4format\fP command.
+.PP
+The \&\f4\-m\fP
+option produces a master index\(emthat is,
+an index for more than one book.
+.PP
+To produce an index, you must use the
+\&\f4format\fP
+macro
+\&\f4\&.IX\fP
+in your document source files.
+.PP
+Most terms can be indexed with the short form of the macro: insert a line of the form
+.P
+.RS
+.ft 4
+.nf
+\&.IX \f2term to be indexed\fP
+.fi
+.ft 1
+.RE
+.P
+immediately following each occurrence to be indexed.
+The term to be indexed may contain any printable
+.SM ASCII
+characters,
+any requests to change font or point size, and any one-character
+\&\f4troff\fP
+escape sequences that do not take an argument.
+The term may not contain multi-character
+\&\f4troff\fP
+requests such as input names for special characters
+(such as
+\&\f4\e(hy\fP
+and
+\&\f4\e(bu\fP)
+or
+escape sequences that take an argument
+(such as the line drawing and local motion requests
+\&\f4\eh\fP,
+\&\f4\el\fP,
+\&\f4\eL\fP,
+and
+\&\f4\ev\fP).
+.PP
+The short form of the
+\&\f4\&.IX\fP
+macro works for most terms.
+However, a couple of cases require the more general form
+of the macro, which specifies an explicit sort key:
+multi-character
+\&\f4troff\fP
+requests and
+terms that are identical except for upper- and lower-case differences.
+In these cases, insert a line of the form
+.P
+.RS
+.ft 4
+.nf
+\&.IX \f2term to be indexed\fP %\f2sort key\fP
+.fi
+.ft 1
+.RE
+.P
+immediately following each occurrence to be indexed.
+The term is sorted using the
+.IR "sort key" ,
+but printed as specified in
+.IR "term to be indexed" .
+When a sort key is included, the term to be indexed may contain any
+\&\f4troff\fP
+escape sequences, including multi-character requests.
+For example, to print the term
+T\v'.2m'\h'-0.3n'E\v'-.2m'\h'-0.3n'X
+in the index and have it sort as
+TEX,
+use the line
+.P
+.RS
+.ft 4
+.nf
+\&.IX T\ev'.2m'\eh'-0.3n'E\ev'-.2m'\eh'-0.3n'X %TEX
+.fi
+.ft 1
+.RE
+.P
+Terms are sorted with upper case letters folded onto lower case.
+Therefore, terms identical except for case must have distinct sort keys.
+To index the terms
+\&\f4memory\fP
+and
+\&\f4MEMORY\fP,
+for example, you may use 
+.P
+.RS
+.ft 4
+.nf
+\&.IX memory %memory1
+.fi
+.ft 1
+.RE
+.P
+for each appearance of the term
+\&\f4memory\fP
+you wish to index.
+Because the terms are now distinct even when case is ignored,
+they are sorted consistently.
+.PP
+An extended discussion may be indexed as a range of pages by
+marking the beginning of the discussion with a line of the form
+.P
+.RS
+.ft 4
+.nf
+\&.IX istart \f2term to be indexed\fP [ %\f2sort key\fP ]
+.fi
+.ft 1
+.RE
+.P
+and the end of the discussion with a line of the form
+.P
+.RS
+.ft 4
+.nf
+\&.IX iend \f2term to be indexed\fP [ %\f2sort key\fP ]
+.fi
+.ft 1
+.RE
+.P
+Terms that contain a comma produce subindexing.
+The part of the term before the comma is taken as the term;
+the part following the comma is taken as a modifier of that term.
+When the index is printed,
+the material after the comma is indented under the main term to show the relationship.
+For example, the following terms are all indexed together:
+.P
+.RS
+.ft 4
+.nf
+\&.IX boolean expressions
+\&.IX boolean expressions, compiling
+\&.IX boolean expressions, constants in
+\&.IX boolean expressions, evaluating
+.fi
+.ft 1
+.RE
+.P
+.PP
+\&\f4index\fP
+handles two kinds of cross references:
+.P
+.RS
+.ft 4
+.nf
+\&.IX \f2index term 1\fP (see \f2index term 2\fP)
+\&.IX \f2index term 1\fP (see also \f2index term 2\fP)
+.fi
+.ft 1
+.RE
+.P
+For the first form,
+page references are not printed.
+(They are presumably to be found under
+.IR "index term 2" .)
+In place of the page references,
+\&\f4(see \f2index term 2\&\f4)\f1
+is printed.
+For the second form, the cross reference is printed at the end of the page references to
+.IR "index term 1" .
+.PP
+To print an index, insert
+\&\f4\&.IX\fP
+lines in the document source files,
+format the files using \&\f4format \-c\fP and save the
+\f2Cfiles\fP,
+run the
+.I Cfiles
+through
+\&\f4index\fP
+to produce the index source file,
+then print the index using
+\&\f4format\fP.
+For example, the following commands generate and print
+the index for a book 
+\&\f4pguide\fP,
+whose source is in files
+\&\f4chap1\fP,
+\&\f4chap2\fP,
+and
+\&\f4chapa\fP:
+.P
+.RS
+.ft 4
+.nf
+format -c -d null chap1
+format -c -d null chap2
+format -c -d null chapa
+index Cchap1 Cchap2 Cchapa > index.pguide
+format -d apple index.pguide
+.fi
+.ft 1
+.RE
+.P
+The null printer destinations mean that
+\&\f4format\fP
+creates the
+.I Cfiles
+but does not print the chapters.
+The 
+\&\f4index\fP
+command writes the index to the file
+\&\f4index.pguide\fP.
+The final
+\&\f4format\fP
+command prints the index on the \&\f4apple\fP printer.
+.PP
+To print a master index for
+\&\f4pguide\fP
+and another book
+\&\f4aguide\fP,
+which has three chapters, run the commands above for
+\&\f4pguide\fP.
+Then run the following commands to produce the index for
+\&\f4aguide\fP:
+.P
+.RS
+.ft 4
+.nf
+format -c -d null chap1
+format -c -d null chap2
+format -c -d null chap3
+index Cchap1 Cchap2 Cchap3 > index.aguide
+.fi
+.ft 1
+.RE
+.P
+Finally run the following commands to produce and print the master index:
+.P
+.RS
+.ft 4
+.nf
+index -m index.pguide index.aguide > index.master
+format -d apple index.master
+.fi
+.ft 1
+.RE
+.SH SEE ALSO
+\&\f4format\fP(1)

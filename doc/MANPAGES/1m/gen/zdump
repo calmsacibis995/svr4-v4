@@ -1,0 +1,62 @@
+'\"macro stdmacro
+.if n .pH g1a.zdump @(#)zdump	40.7 of 4/16/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.\" @(#)zdump.1M 1.2 89/09/01 SMI; from Arthur Olson
+'\" macro stdmacro
+.\" Copyright (c) 1988 Sun Microsystems, Inc. - All Rights Reserved.
+.\"
+.nr X
+.if \nX=0 .ds x} zdump 1M "User Environment Utilities" "\&"
+.if \nX=1 .ds x} zdump 1M "User Environment Utilities"
+.if \nX=2 .ds x} zdump 1M "" "\&"
+.if \nX=3 .ds x} zdump "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4zdump\f1 \- time zone dumper
+.SH SYNOPSIS
+\f4zdump\f1
+[
+\f4\-v\f1
+] [
+\f4\-c\f1
+\f2cutoffyear\f1
+] [
+\f2zonename\f1 .\ .\ . ]
+.SH DESCRIPTION
+The \f4zdump\f1
+command prints the current time in each
+\f2zonename\f1
+named on the command line.
+.P
+The following options are available:
+.TP 0.8i
+\f4\-v\f1
+For each
+\f2zonename\f1
+on the command line, print the current time,
+the time at the lowest possible time value,
+the time one day after the lowest possible time value,
+the times both one second before and exactly at
+each time at which the rules for computing local time change,
+the time at the highest possible time value,
+and the time at one day less than the highest possible time value.
+Each line ends with
+\f4isdst=1\f1
+if the given time is Daylight Saving Time or
+\f4isdst=0\f1
+otherwise.
+.TP
+\f4\-c \f2cutoffyear\f1
+Cut off the verbose output near the start of the year
+.IR cutoffyear .
+.SH FILES
+.PD 0
+.TP 1.5i
+\f4/usr/lib/locale/TZ\f1
+standard zone information directory
+.PD
+.SH "SEE ALSO"
+\f4zic\fP(1M),
+\f4ctime\fP(3C)
+.\" \f4tzfile\fP(4)

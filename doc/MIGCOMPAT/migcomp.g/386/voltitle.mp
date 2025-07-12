@@ -1,0 +1,22 @@
+.if n .pH 386.voltitlepage @(#)voltitle.mp	40.1
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Title page file
+.nrNF 1
+
+.rs
+.ft\*(@e
+.ps24
+.vs24
+.nf
+.sp|4.2i
+.in3i
+UNIX\v'-0.1i'\s-8\(rg\s0\v'0.1i' System V/386
+Release 4 Version 4
+.ft\*(@d
+.sp0.25
+.ps20
+.vs20
+Migration and
+Compatibility Guide
+(Manual Pages)
+.\" EOF

@@ -1,0 +1,678 @@
+.if n .pH g1a.bkreg @(#)bkreg @(#)bkreg	40.17.1.2 of 3/22/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} bkreg 1M "System Administration Utilities" "\&"
+.if \nX=1 .ds x} bkreg 1M "System Administration Utilities"
+.if \nX=2 .ds x} bkreg 1M "" "\&"
+.if \nX=3 .ds x} bkreg "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4bkreg\f1 \- change or display the contents of a backup register
+.SH SYNOPSIS
+.TP
+\f4bkreg
+\f4\-p \f2period\f1 [\f4\-w\f2 cweek\f1] [\f4\-t\f2 table\f1]
+.TP
+\f4bkreg
+\f4\-a \f2tag \f4\-o \f2orig \f4\-c \f2weeks\f1:\f2days\f1|\f4demand
+\-d\f2 ddev\f1
+\-m \f2method\f1|\f4migration
+.br
+[\f4\-b\f2 moptions\f1]
+[\f4\-t\f2 table\f1]
+[\f4\-D\f2 depend\f1]
+[\f4\-P\f2 prio\f1]
+.TP
+\f4bkreg
+\f4\-e \f2tag\f1 [\f4-o \f2orig\f1]
+[\f4\-c \f2weeks\f1:\f2days\f1|\f4demand\f1]
+[\f4\-m \f2method\f1|\f4migration\f1]
+[\f4\-d\f2 ddev\f1]
+[\f4\-t\f2 table\f1]
+[\f4\-b\f2 moptions\f1]
+[\f4\-D\f2 depend\f1]
+[\f4\-P\f2 prio\f1]
+.TP
+\f4bkreg
+\f4\-r \f2tag\f1 [\f4\-t\f2 table\f1]
+.TP
+\f4bkreg
+\f1[\f4\-A|\-O|\-R\f1]
+[\f4\-hsv\f1]
+\f1[\f4\-t\f2 table\f1]
+[\f4\-c\f2 weeks\f1[:\f2days\f1]|\f4demand\f1]
+.TP
+\f4bkreg
+\f4\-C\f2 fields \f1[\f4\-hv\f1]
+\f1[\f4\-t\f2 table\f1]
+[\f4\-c\f2 weeks\f1[:\f2days\f1]|\f4demand\f1]
+[\f4\-f\f2 c\f1]
+.SH DESCRIPTION	
+A backup register is a file containing descriptions of backup operations
+to be performed on a \s-1UNIX\s+1 system.
+The default backup register is located in
+\f4/etc/bkup/bkreg.tab\f1.
+Other backup registers may be created.
+.P
+The \f4bkreg\f1 command
+may be executed only by a user with superuser privilege.
+.P
+Each entry
+in a backup register describes backup operations to be performed
+on a given disk object (called the originating object)
+for some set of days and weeks during a rotation period.
+There may be several register entries for an object,
+but only one entry may specify backup operations for an object on
+a specific day and week of the rotation period.
+The entry describes the object,
+the backup method to be used to archive the object,
+and the destination volumes to be used to store the archive.
+Each entry has a unique
+\f2tag\f1 that identifies it.
+\f2Tag\f1s must conform to file naming conventions.
+.SS Rotation Period
+Backups are performed in a rotation period specified in weeks.
+When the end of a rotation period is reached,
+a new period begins.
+Rotation periods begin on Sundays.
+The default rotation period is one week.
+.SS Originating Objects
+An originating object is either a raw data partition or a filesystem.
+An originating object is described by its originating
+object name, its device name, and optional volume
+labels.
+.P
+Several backup operations for different originating objects
+may be active concurrently by specifying priorities and
+dependencies.
+During a backup session,
+higher priority backup operations 
+are attempted before lower priority backup operations.
+All backup operations of a given priority may proceed concurrently
+unless dependencies are specified.
+If one backup is declared to be dependent on others, it will not
+be started until all of its antecedents have completed successfully.
+.SS Destination Devices
+Each backup archive is written to a set of storage volumes
+inserted into a destination device.
+A destination device can have destination device group, a
+destination device name, media characteristics, and volume
+labels.
+Default characteristics for a medium (as specified in the
+device table)
+may be overridden (see the ``Device Management'' chapter in
+the \f2System Administrator's Guide\fP).
+.SS Backup Methods
+An originating object is backed up to a destination
+device archive using a method.
+The method determines the amount of information backed up and the
+representation of that information.
+Different methods may be used for a given
+originating object on different days of the rotation.
+Each method accepts a set of options
+that are specific to the method.
+.P
+Several default methods are provided with the Backup service.
+Others methods may be added by a \s-1UNIX\s+1 system site.
+For descriptions of the default methods, see
+\f4incfile\f1(1M),
+\f4ffile\f1(1M),
+\f4fdisk\f1(1M),
+\f4fimage\f1(1M),
+and
+\f4fdp\f1(1M).
+.P
+A backup archive may be migrated to a
+different destination by specifying
+\f4migration\f1
+as the backup method.
+The device name of the originating object for a migration
+must have been the destination device for a previously
+successful backup operation.
+This form of backup does not re-archive the originating object.
+It copies an archive from one destination to another,
+updating the backup service's databases so that
+restores can still be done automatically.
+.SS Register Validations
+There are items in a single backup register
+entry and items across register entries
+that must be consistent for the backup service to conduct a
+backup session correctly.
+Some of these consistencies are checked at the time the backup register
+is created or changed.
+Others can be checked only at the time the backup register is used
+by
+\f4backup\f1(1M).
+See \f4backup\f1(1M) for a complete list of validations.
+.PP
+.SS Modes
+The \f4bkreg\fP command has two modes:
+changing the contents of a backup register and
+displaying the contents of a backup register.
+.SS Changing Contents
+.TP .75i
+\f4bkreg \-p\f1
+changes the rotation period for a backup register.
+The default rotation period is one week.
+.TP
+\f4bkreg \-a\f1
+adds an entry to a backup register.
+This option requires other options to be specified.
+These are listed below under \f3Options\f1.
+.TP
+\f4bkreg \-e\f1
+edits an existing entry in a backup register.
+.TP
+\f4bkreg \-r\f1
+removes an existing entry from a backup register.
+.SS Displaying Contents
+.TP .75i
+\f4bkreg \-C\f1
+produces a customized display of the contents of a backup register.
+.TP
+\f4bkreg \f1[\f4\-A|\-R|\-O\f1]
+produces a summary display of the contents of a backup register.
+.SS Options
+.TP
+\f4\-a\f1
+Adds a new entry to the default backup register.
+Options required with \f4\-a\f1 are:  \f2tag, originating device, weeks:days,
+destination device\f1, and \f2method\f1.
+If other options are not specified, the following defaults are used:
+the default backup register is used,
+no method options are specified,
+the priority is 0, and
+no dependencies exist between entries.
+.TP
+\f4\-b\f2 moptions\f1
+Each backup method supports a specific set of options that modify its
+behavior.
+.I moptions
+is specified as a list of options
+that are blank-separated and enclosed in quotes.
+The argument string provided here is passed to
+the method exactly as entered, without modification.
+For lists of valid options,
+see ``The Backup Service'' chapter in
+the \f2System Administrator's Guide\f1
+and the following entries in this book:
+\f4fdisk\fP(1M),
+\f4fdp\fP(1M),
+\f4ffile\fP(1M),
+\f4fimage\fP(1M),
+and
+\f4incfile\fP(1M).
+.TP
+\f4\-c\f2 weeks:days|\f4demand\f1
+Sets the week(s) and day(s) of the rotation period during which a backup
+entry should be performed or for which a display should be generated.
+.br
+.I weeks
+is a set of numbers including 1 and 52.
+The value of
+.I weeks
+cannot be greater than the value of
+\f4\-p\f2period.\f1
+.I weeks
+is specified as a combination of lists or ranges
+(either comma-separated or
+blank-separated and enclosed in quotes).
+An example set of weeks is
+.sp .5
+.in 1i
+\f4``1 3-10,13''\fP
+.in
+.sp .5
+indicating the first week, each of the third through
+tenth weeks, and the thirteenth week of the rotation period.
+.IP
+.I days
+is a set of numbers between 0 (Sunday) and 6 (Saturday).
+In addition, \f2days\f1 are specified as 
+a combination of lists or ranges 
+(either comma-separated or
+blank-separated and enclosed in quotes).
+.IP
+\f4demand\f1
+indicates that an entry is used only when explicitly requested by
+.sp .5
+.in 1i
+\f4backup \-c demand\f1
+.in
+.TP
+\f4\-d\f2 ddev\f1
+Specifies
+.I ddev
+as the destination device for the backup operation.
+.I ddev
+is of the form:
+.sp .5
+.in 1i
+\f4[\f2dgroup\fP][:[\f2ddevice\fP][:\f2dchar\fP][:\f2dmname\fP]]\f1
+.in
+.sp .5
+where either \f2dgroup\f1 or \f2ddevice\f1
+must be specified and \f2dchar\f1 and \f2dmname\f1 are
+optional.
+(Both \f2dgroup\f1 and \f2ddev\f1 may be specified together.)
+Colons delineate field boundaries and must be included
+as indicated above.
+.IP
+.I dgroup
+is the device group
+for the destination device.
+[See \f4devgroup.tab\f1(4).]
+If omitted,
+.I ddevice
+must be specified.
+.IP
+.I ddevice
+is the device name of a specific destination device.
+[See \f4device.tab\f1(4).]
+If omitted, \f2dgroup\f1 must be specified and any
+available device in
+.I dgroup
+may be used.
+.IP
+.I dchar
+describes media characteristics.
+If specified, they override the
+default characteristics for the device and group.
+.I dchar
+is of the form:
+.sp .5
+.in 1i
+\f4keyword=\f2value\f1
+.in
+.sp .5
+where \f4keyword\f1 is a valid device characteristic keyword
+(as it appears in the device table.)
+.I dchar
+entries may be separated by commas or blanks.
+If separated by blanks, the entire string of arguments to
+.I ddev
+must be enclosed in quotes.
+.IP
+.I dlabels
+is a list of volume names
+of the destination volumes.
+The list of
+.I dlabels
+must be either comma-separated or blank-separated.
+If blank-separated, the entire
+.I ddev
+argument must be surrounded by quotes.
+Each
+\f2dlabel\f1 corresponds to a \f2volumename\f1
+specified on the \f4labelit\f1 command.
+If
+.I dlabels
+is omitted, \f4backup\f1 and \f4restore\f1
+do not validate the volume labels on this entry.
+.TP
+\f4\-e\f1
+Edits an existing entry.
+If any of the options
+\f4\-b\f1,
+\f4\-c\f1,
+\f4\-d\f1,
+\f4\-m\f1,
+\f4\-o\f1,
+\f4\-D\f1,
+or
+\f4\-P\f1
+are present, they replace the current settings for the specified entry in the register.
+.TP
+\f4\-f \f2c\f1
+Overrides the default output field separator.
+\f2c\fP is the character that will
+appear as the field separator on the display output.
+The default output field separator is colon (\f4:\fP).
+.TP
+\f4\-h\f1
+Suppresses headers when generating displays.
+.TP
+\f4\-m\f2 method|\f4migration\f1
+Performs the backup using the specified
+.I method.
+Default methods are:
+\f4incfile\f1,
+\f4ffile\f1,
+\f4fdisk\f1,
+\f4fimage\f1,
+and
+\f4fdp\f1.
+If the method to be used 
+is not a default method, it
+must appear as the executable file
+in the standard method directory 
+\f4/etc/bkup/method\f1.
+\f4migration\f1
+indicates that the
+value of \f2orig\fP
+(following the \f4-o\fP option)
+matches the value of
+.I ddev
+during a prior backup operation.
+The originating object is not rearchived;
+it is simply copied to the
+location specified by \f2ddev\fP
+(following the \f4-d\fP option).
+The backup history (if any) and tables of contents (if any)
+are updated to reflect the changed destination for the original archive.
+.TP
+\f4\-o\f2 orig\f1
+Specifies
+.I orig
+as the originating object for
+the backup operation.
+\f2orig\f1 is specified in the following format:
+.sp .5
+.in 1i
+\f2oname\f4:\f2odevice\f4[:\f2omname\f4]\f1
+.in
+.sp .5
+where
+.I oname
+is the name of an originating object.
+For file system partitions, it is the nodename on which
+the file system is usually mounted,
+\f4mount\f1.
+For data partitions, it is any valid path name.
+This value is provided to the backup method
+and validated by
+\f4backup\f1.
+The default data partition backup methods,
+\f4fdp\f1 and \f4fdisk\f1,
+do not validate this name.
+.IP
+.I odevice
+is the device name for the originating object.
+In all cases, it is a raw disk partition device name.
+For AT&T 3B2 computers, this name is 
+specified in the following format:
+\f4/dev/rdsk/c?d?s?\f1.
+.IP
+.I olabel
+is the volume label for the originating object.
+For file system partitions, it corresponds to the
+.I volumename
+displayed by the \f4labelit\f1 command.
+A data partition may have an associated volume name
+that appears nowhere except on 
+the outside of the volume (where it is taped);
+\f4getvol\f1
+may be used to have an operator validate the name.
+.IP
+On AT&T 3B2 computers, the special data partition
+\f4/dev/rdsk/c?d?s6\f1
+names an entire disk and is used
+when disk formatting or repartitioning is
+done to reference the disk's
+volume table of contents (\s-1VTOC\s+1).
+[See \f4fmthard\f1(1M) and \f4prtvtoc\f1(1M).]
+\f4backup\f1
+validates this special full disk partition
+with the disk volume name specified when the disk was partitioned.
+[See \f4fmthard\f1(1M).]
+If the disk volume name is omitted,
+\f4backup\f1
+does not validate the volume labels for this originating object.
+.TP
+\f4\-p\f2 period\f1
+Sets the rotation period (in weeks) for the backup register to
+.IR period .
+The minimum value is 1; the maximum value is 52.
+By default the current week of the rotation is set to 1.
+.TP
+\f4\-r\f1
+Removes the specified entries from the register.
+.TP
+\f4\-s\f1
+Suppresses wrap-around behavior when generating displays.
+Normal behavior is to wrap long values within each field.
+.TP
+\f4\-t\f2 table\f1
+Uses \f2table\f1 instead of the default register,
+\f4bkreg.tab\f1.
+.TP
+\f4\-v\f1
+Generates displays using (vertical) columns
+instead of (horizontal) rows.
+This allows more information to be displayed
+without encountering problems displaying long lines.
+.TP
+\f4\-w\f2 cweek\f1
+Overrides the default behavior by
+setting the current week of the rotation period to
+.IR cweek .
+.IR cweek
+is an integer between 1 and the value of \f2period\f1.
+The default is \f41\f1.
+.TP
+\f4\-A\f1
+Displays a report describing all fields in the register.
+The display produced by
+this option is best suited as input to a filter,
+since in horizontal mode it produces extremely long lines.
+.TP
+\f4\-C\f2 fields\f1
+Generates a display of the contents of a backup register,
+limiting the display to the specified fields.
+The output is a set of lines, one per register entry.
+Each line consists of the desired fields, separated by a field separator
+character.
+.I fields
+is a
+list of field names
+(either comma-separated or
+blank-separated and enclosed in quotes)
+for the fields desired.
+The valid field names are \f4period, cweek, tag, oname, odevice, olabel,
+weeks, days, method, moptions, prio, depend, dgroup, ddevice, dchar,\f1
+and \f4dlabel\f1.
+.TP
+\f4\-D\f2 depend\f1
+Specifies a set of backup operations that must 
+be completed successfully before
+this operation may begin.
+\f2depend\f1 is a list of \f2tag\f1(s)
+(either comma-separated or
+blank-separated and enclosed in quotes)
+naming the antecedent backup operations.
+.TP
+\f4\-f\f2 c\f1
+Overrides the default output field separator.
+\f2c\f1 is the character
+that will appear as the field separator on the display output.
+The default output field separator is colon (":").
+.TP
+\f4\-O\f1
+Displays a summary of all originating objects with entries in the register.
+.TP
+\f4\-P\f2 prio\f1
+Sets a priority of
+.IR prio
+for this backup operation.
+The default priority is 0; the highest priority is 100.
+All backup operations with the same priority may run
+simultaneously, unless the priority is 0.  All backups with
+priority 0 run sequentially in an unspecified order.
+.TP
+\f4\-R\f1
+Displays a summary of all destination devices with
+entries in the register.
+.SH DIAGNOSTICS
+The exit codes for \f4bkreg\fP are the following:
+.PP
+\f40\f1 = the task completed successfully
+.br
+\f41\f1 = one or more parameters to \f4bkreg\fP are invalid
+.br
+\f42\f1 = an error has occurred, causing \f4bkreg\fP to fail to
+      complete \f2all\f1 portions of its task
+.PP
+Errors are reported on standard error if any of the following occurs:
+.nr IP 0 1
+.IP \\n+(IP. 5
+The \f4tag\f1 specified in
+\f4bkreg\fP \-e
+or
+\f4bkreg\fP \-r
+does not exist in the backup register.
+.IP \\n+(IP. 5
+The tag specified in
+\f4bkreg \-a\f1
+already exists in the register.
+.SH EXAMPLES
+.P
+Example 1:
+.PP
+.RS
+\f4bkreg \-p 15 \-w 3\fP
+.RE
+.PP
+establishes a 15-week rotation period in the default
+backup register and sets the current week to
+the 3rd week of the rotation period.
+.P
+Example 2:
+.PP
+.RS
+.nf
+\f4bkreg \-a acct5 \-t wklybu.tab \\
+.br
+\-o /usr:/dev/rdsk/c1d0s2:usr \-c "2 4-6 8 10:0,2,5" \\
+.br
+\-m incfile \-b -txE \\
+.br
+\-d diskette:capacity=1404:acctwkly1,acctwkly2,acctwkly3 \\\fP
+.fi
+.RE
+.PP
+adds an entry named \f2acct5\f1 to the backup register named
+\f4wklybu.tab\f1.
+If \f4wklybu.tab\f1 does not already exist, it will be created.
+The originating object to be backed up is the \f4/usr\f1
+file system on the \f4/dev/rdsk/c1d0s2\f1 device which is known
+as \f4usr\f1.
+The backup will be
+performed each Sunday, Tuesday, and Friday of the second,
+fourth through sixth, eighth, and tenth weeks of the
+rotation period using the \f4incfile\f1 (incremental
+file) method.
+The method options specify that
+a table of contents will be created on additional media
+instead of in the backup history log, the exception list
+is to be ignored, and an estimate of the number of volumes for the
+archive is to be provided before performing the backup.
+The backup will be done to the next available diskette
+device using the three diskette volumes \f4acctwkly1,
+\f4acctwkly2,\f1 and \f4acctwkly3\f1.
+These volumes have a capacity of 1404 blocks each.
+.P
+.br
+.ne 1i
+Example 3:
+.PP
+.RS
+.nf
+\f4bkreg \-e services2 \-t wklybu.tab \\
+.br
+\-o /back:/dev/rdsk/c1d0s8:back \-m migration \\
+.br
+\-c demand \-d ctape:/dev/rdsk/c4d0s3\f1 \\
+.fi
+.RE
+.PP
+changes the specifications for the backup operation named
+\f4services2\f1 on the backup table \f4wklybu.tab\f1 so
+that whenever the command \f4backup \-c demand\f1 is executed,
+the backup that was performed to the destination
+device \f4back:dev/rdsk/c1d0s2:back\f1 will be migrated from that
+device (now serving as the originating device) to a cartridge tape.
+.bp
+Example 4:
+.PP
+.RS
+\f4bkreg \-e pubsfri \-P 10 \-D develfri,marketfri,acctfri\f1
+.RE
+.PP
+changes the priority level for the backup operation named
+\f4pubsfri\f1 to 10 and makes this backup operation dependent
+on the three backup operations
+\f4develfri, marketfri,\f1 and \f4acctfri\f1.
+The \f4pubsfri\f1 operation 
+will be done only after
+all backup operations with priorities greater than 10 have
+begun and after 
+the
+\f4develfri\f1, \f4marketfri\f1, and \f4acctfri\f1
+operations have been completed successfully.
+.sp
+.br
+.ne 1i
+Example 5:
+.PP
+.RS
+.br
+\f4bkreg \-c 1-8:0-6\f1
+.RE
+.PP
+provides the default display of the
+contents of the default backup
+register, for all weekdays for the first through eighth
+weeks of the rotation period.
+The information in the register 
+will be displayed in the following format:
+.sp
+.ft 4
+Rotation Period = 10    Current Week = 4
+.sp 3
+Originating Device: / /dev/root
+.P
+.nf
+.ft 4
+Tag       Weeks   Days   Method   Options   Pri   Dgroup
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+rootdai   1-8     1-6    incfile                  diskette
+rootsp    1-8     0      ffile    -bxt      20    ctape
+.sp
+Originating Device:  /usr /dev/dsk/c1d0s2
+.sp
+Tag       Weeks   Days   Method   Options   Pri   Dgroup
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+usrdai    1-8     1-5    incfile                  diskette
+usrsp     1-8     0      ffile    -bxt      15    ctape
+.ft
+.SH FILES
+.PD 0
+.TP 1.5i
+\f4/etc/bkup/method/\(**\f1
+.TP
+\f4/etc/bkup/bkreg.tab\f1
+describes the backup policy
+established by the administrator
+.TP
+\f4/etc/dgroup.tab\f1
+lists logical groupings
+of devices as determined by the administrator
+.TP
+\f4/etc/device.tab\f1
+describes specific devices
+and their attributes
+.SH SEE ALSO
+\f4backup\f1(1M),
+\f4fdisk\f1(1M),
+\f4fdp\f1(1M),
+\f4incfile\f1(1M),
+\f4ffile\f1(1M),
+\f4fimage\f1(1M),
+\f4fmthard\f1(1M),
+\f4getvol\f1(1M),
+\f4labelit\f1(1M),
+\f4mkfs\f1(1M),
+\f4mount\f1(1M),
+\f4prtvtoc\f1(1M),
+\f4restore\f1(1M)

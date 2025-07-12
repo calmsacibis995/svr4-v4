@@ -1,0 +1,182 @@
+'\"macro stdmacro
+.if n .pH g1.troff @(#)troff	40.7 of 4/18/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.\" Copyright (c) 1988 Sun Microsystems, Inc. - All Rights Reserved.
+.\"
+.nr X
+.if \nX=0 .ds x} troff 1 "BSD Compatibility Package" "\&"
+.if \nX=1 .ds x} troff 1 "BSD Compatibility Package"
+.if \nX=2 .ds x} troff 1 "" "\&"
+.if \nX=3 .ds x} troff "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4troff\f1 \- typeset or format documents
+.SH SYNOPSIS
+\f4/usr/ucb/troff\f1 [ \f4\-afiz\f1 ] [ \f4\-F\f2dir\f1 ] [ \f4\-m\f2name\f1 ]
+[ \f4\-n\f2N\f1 ] [ \f4\-o\f2list\f1 ] [ \f4\-r\f2aN\f1 ] [ \f4\-s\f2N\f1 ]
+.br
+                   [ \f4\-T\f2dest\f1 ] [ \f4\-u\f2N\f1 ] [ \f2filename\f1 ] .\ .\ .
+.SH DESCRIPTION
+\f4troff\f1
+formats text in the 
+\f2filename\f1s.
+Input to 
+\f4troff\f1
+is expected to consist of text
+interspersed with formatting requests and macros.
+If no
+\f2filename\f1
+argument is present,
+\f4troff\f1
+reads standard input.
+A
+\f4\-\f1
+as a
+.IR filename
+argument indicates that standard input
+is to be read at that point in the list of input files;
+\f4troff\f1
+reads the files named ahead of the
+\f4\-\f1
+in the arguments list,
+then text from the standard input,
+and then text from the files named after the
+\f4\-\f1.
+.PP
+The following options may appear in any order,
+but they all must appear before the first
+.IR filename .
+.TP 0.6i
+\f4\-a\f1
+Send a printable approximation of the formatted output
+to the standard output file.
+.TP
+\f4\-f\f1
+Do not print a trailer after the final page of output
+or cause the postprocessor to relinquish control of the device.
+.TP
+\f4\-i\f1
+Read the standard input after the input files are exhausted.
+.TP
+\f4\-z\f1
+Suppress formatted output.
+Only diagnostic messages and messages output using the
+\f4\&.tm\f1
+request are output.
+.TP
+\f4\-F\f2dir\f1
+Search the directory
+\f2dir\f1
+for font width tables
+instead of the system-dependent default directory.
+.TP
+\f4\-m\f2name\f1
+Prepend the macro file
+\f4/usr/lib/tmac/tmac.\f2name\f1
+to the input
+.IR filename s.
+Note: most references to macro packages include 
+the leading
+\f4m\f1
+as part of the name;
+for example, the
+\f4man\f1
+macro package resides in
+\f4/usr/lib/tmac/tmac.an\f1.
+.TP
+\f4\-n\f2N\f1
+Number first generated page
+.IR N .
+.TP
+\f4\-o\f2list\f1
+Print only pages whose page numbers appear in the comma-separated
+\f2list\f1
+of numbers and ranges.
+A range
+\f2N\f4\-\f2M\f1
+means pages
+\f2N\f1
+through
+.IR M ;
+an initial
+\f4\-\f2N\f1
+means from the beginning to page
+.IR N ;
+and a final
+\f2N\f4\-\f1
+means from
+\f2N\f1
+to the end.
+.TP
+\f4\-r\f2aN\f1
+Set register
+\f2a\f1
+(one-character) to
+.IR N .
+.TP
+\f4\-s\f2N\f1
+Stop the phototypesetter every
+\f2N\f1
+pages.
+On some devices,
+\f4troff\f1
+produces a trailer so you can change cassettes;
+resume by pressing the typesetter's start button.
+.TP
+\f4\-T\f2dest\f1
+Prepare output for typesetter
+.IR dest .
+The following values can be supplied for
+.IR dest :
+.RS
+.RS
+.PD 0
+.TP
+\f4202\f1
+Mergenthaler Linotron 202. 
+This is the default value.
+.TP
+\f4cat\f1
+Graphics Systems C/A/T.
+.TP
+\f4aps\f1
+Autologic \s-1APS\s0-5.
+.RE
+.RE
+.PD
+.TP
+\f4\-u\f2N\f1
+Set the emboldening factor for the font mounted in position 3 to
+.IR N .
+If
+\f2N\f1
+is missing,
+then set the emboldening factor to 0.
+.SH FILES
+.TP 38
+\f4/tmp/trtmp\f1
+temporary file
+.TP
+\f4/usr/ucblib/doctools/tmac/tmac.*\f1
+standard macro files
+.TP
+\f4/usr/ucblib/doctools/font/*\f1
+font width tables for alternate mounted
+\f4troff\f1
+fonts
+.SH "SEE ALSO"
+\f4checknr\fP(1)\f1,
+\f4chmod\fP(1)\f1,
+\f4eqn\fP(1)\f1,
+\f4lpd\fP(1M)\f1,
+\f4lpr\fP(1)\f1,
+\f4nroff\fP(1)\f1,
+\f4tbl\fP(1)\f1,
+\f4man\fP(7)\f1,
+\f4me\fP(7)\f1,
+\f4ms\fP(7)\f1
+.P
+\f4chmod\fP(1)\f1,
+\f4col\fP(1)\f1
+in the \f2User's Reference Manual\f1

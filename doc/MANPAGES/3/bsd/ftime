@@ -1,0 +1,57 @@
+'\"macro stdmacro
+.if n .pH g3C.time @(#)ftime	40.10 of 4/19/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.\" Copyright (c) 1988 Sun Microsystems, Inc. - All Rights Reserved.
+.\"
+.nr X
+.if \nX=0 .ds x} ftime 3C "BSD Compatibility Package" "\&"
+.if \nX=1 .ds x} ftime 3C "BSD Compatibility Package"
+.if \nX=2 .ds x} ftime 3C "" "\&"
+.if \nX=3 .ds x} ftime "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4ftime\f1 \- get date and time
+.SH SYNOPSIS
+.nf
+\f4cc \f1[ \f2flag\f1\. \. \. ] \f2file\f1 \. \. \. \f4\-lucb\f1
+.P
+\f4#include <sys/types.h>\f1
+\f4#include <sys/timeb.h>\f1
+.P
+\f4ftime(tp)\f1
+\f4struct timeb *tp;\f1
+.fi
+.SH DESCRIPTION
+The
+\f4ftime\f1
+entry fills in a structure pointed to by its argument,
+as defined by
+\f4<sys/timeb.h>\f1:
+.RS
+.ta .5i +\w'unsigned 'u
+.nf
+.ft 4
+struct timeb
+{
+	time_t	time;
+	unsigned short millitm;
+	short	timezone;
+	short	dstflag;
+};
+.ft 1
+.fi
+.RE
+.P
+The structure contains the time since the epoch in seconds,
+up to 1000 milliseconds of more-precise interval,
+the local time zone (measured in minutes of time westward from Greenwich),
+and a flag that, if nonzero, indicates that
+Daylight Saving time applies locally during the appropriate part of the year.
+.SH "SEE ALSO"
+\f4date\fP(1)
+in the \f2User's Reference Manual\f1
+.br
+\f4gettimeofday\fP(2),
+\f4ctime\fP(3)
+in the \f2Programmer's Reference Manual\f1

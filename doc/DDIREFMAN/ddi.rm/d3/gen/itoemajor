@@ -1,0 +1,54 @@
+'\"macro stdmacro
+.if n .pH gen.itoemajor @(#)itoemajor	40.2 of 1/7/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.nr X
+.if \nX=0 .ds x} itoemajor D3DK "" "DDI/DKI" "\&"
+.if \nX=1 .ds x} itoemajor D3DK "" "DDI/DKI"
+.if \nX=2 .ds x} itoemajor D3DK "" "\&"
+.if \nX=3 .ds x} itoemajor "" "" "\&"
+.TH \*(x}
+.IX "\f4itoemajor\fP(D3DK)"
+.SH NAME
+\f4itoemajor\f1 \- convert internal to external major device number
+.IX "major device number"
+.SH SYNOPSIS
+.nf
+.na
+\f4#include <sys/types.h>
+#include <sys/ddi.h>
+.sp 0.5
+major_t itoemajor(major_t \f2imaj, \f4major_t \f2prevemaj\f4);\f1
+.ad
+.fi
+.SH ARGUMENTS
+.RS 0n 10
+.IP "\f2imaj\f1" 10n
+Internal major number.
+.IP "\f2prevemaj\f1" 10n
+Most recently obtained external major number (or \f4NODEV\f1,
+if this is the first
+time the function has been called).
+.RE
+.SH DESCRIPTION
+\f4itoemajor\f1 converts the internal major number to the external major
+number.  The external-to-internal major number mapping can be
+many-to-one, and so any internal major number may correspond to more than
+one external major number.  By repeatedly invoking this function and
+passing the most recent external major number obtained, the driver can
+obtain all possible external major number values.
+See \f4getemajor\fP(D3DK) for an explanation of external and internal major numbers.
+.SH RETURN VALUE
+External major number, or \f4NODEV\f1, if all have been searched.
+.SH LEVEL
+Base or Interrupt.
+.SH NOTES
+Does not sleep.
+.SH SEE ALSO
+.na
+\f4etoimajor\f1(D3DK),
+\f4getemajor\f1(D3DK),
+\f4geteminor\f1(D3DK),
+\f4getmajor\f1(D3DK),
+\f4getminor\f1(D3DK),
+\f4makedevice\f1(D3DK)
+.ad

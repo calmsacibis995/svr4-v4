@@ -1,0 +1,68 @@
+'\"macro stdmacro
+.if n .pH gen.esballoc @(#)esballoc	40.2 of 1/7/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.nr X
+.if \nX=0 .ds x} esballoc D3DK "STREAMS" "DDI/DKI" "\&"
+.if \nX=1 .ds x} esballoc D3DK "STREAMS" "DDI/DKI"
+.if \nX=2 .ds x} esballoc D3DK "" "\&"
+.if \nX=3 .ds x} esballoc "" "" "\&"
+.TH \*(x}
+.IX "\f4esballoc\fP(D3DK)"
+.SH NAME
+\f4esballoc\f1 \- allocate a message block using an externally-supplied buffer
+.SH SYNOPSIS
+.nf
+.na
+\f4#include <sys/types.h>
+#include <sys/stream.h>
+.sp 0.5
+mblk_t *esballoc(uchar_t *\f2base, \f4int \f2size, \f4int \f2pri, \f4frtn_t *\f2fr_rtnp\f4);\f1
+.ad
+.fi
+.SH ARGUMENTS
+.RS 0n 10
+.IP "\f2base\f1" 10n
+Address of driver-supplied data buffer.
+.IP "\f2size\f1" 10n
+Number of bytes in data buffer.
+.IP "\f2pri\f1" 10n
+Priority of allocation request (used to allocate the message and data blocks.)
+Valid values are \f4BPRI_LO\fP, \f4BPRI_MED\fP, and \f4BPRI_HI\fP.
+.IP "\f2fr_rtnp\f1" 10n
+Pointer to the free-routine data structure.
+.RE
+.SH DESCRIPTION
+\f4esballoc\f1 creates a STREAMS message and attaches a driver-supplied
+data buffer in place of a STREAMS data buffer.
+It allocates a message and data block header only.
+The driver-supplied data buffer, pointed to by \f2base\f1, is used as the
+data buffer for the message.
+.P
+When \f4freeb\f1(D3DK) is called to free the message, on the last reference to the
+message, the driver's
+free-routine, specified by the \f4free_func\fP field in the \f4free_rtn\fP(D4DK)
+structure, is called with one argument, specified by the \f4free_arg\fP field,
+to free the data buffer.
+.P
+Instead of requiring a specific number of arguments, the \f4free_arg\f1
+field is defined of type \f4char *\f1.
+This way, the driver can pass a pointer to a structure if more than one
+argument is needed.
+.P
+When the \f4free_func\f1 function runs, interrupts from all STREAMS devices will be
+blocked.  It has no user context and may not call any routine that sleeps.
+The function may not access any dynamically allocated data structures that
+might no longer exist when it runs.
+.SH RETURN VALUE
+On success, a pointer to the newly allocated message block is returned.
+On failure, \f4NULL\f1 is returned.
+.SH LEVEL
+Base or Interrupt.
+.SH NOTES
+Does not sleep.
+.SH SEE ALSO
+.na
+\f4allocb\f1(D3DK),
+\f4freeb\f1(D3DK),
+\f4free_rtn\f1(D4DK)
+.ad

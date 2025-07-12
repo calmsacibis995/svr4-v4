@@ -1,0 +1,490 @@
+'\"!  pic | tbl | mmdoc
+.if n .pH 386.intro @(#)intro	40.4.1.1
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.BK "DDI/DKI Reference Manual" "" "" "DDRM"
+.CH "Introduction"
+.H 1 "Introduction"
+.IX istart DDI/DKI (Device Driver Interface/Driver\(enKernel Interface)
+.IX DKI (Driver\(enKernel Interface) (see DDI/DKI)
+.IX Device Driver Interface (see DDI/DKI)
+.IX Driver\(enKernel Interface (see DDI/DKI)
+The
+.BT "Device Driver Interface/Driver\(enKernel Interface Reference Manual"
+provides reference information needed
+to write device drivers for
+.SM UNIX
+System V Release 4.0 for the Intel 80x86 Architecture environment.
+It describes two device driver interface specifications:  the
+Device Driver Interface (DDI) and the Driver\(enKernel Interface (DKI).
+Drivers written to conform to one or both of these interfaces are
+more likely to be portable to other environments.
+DDI and DKI address different aspects of 
+the compatibility problem\(emtheir differences are summarized in Figure 1.
+.sp -.5
+.FG "Scope of DDI and DKI"
+.PS
+scale=100
+define t1376 |
+[ box invis ht 48 wid 47 with .sw at 0,0
+"\fH\s10\&DKI\f1\s0" at 0,40 ljust
+"\fH\s10\&only\f1\s0" at 0,24 ljust
+"\fH\s10\&(DxK)\f1\s0" at 0,8 ljust
+] |
+
+define t1372 |
+[ box invis ht 32 wid 81 with .sw at 0,0
+"\fH\s10\&supported\f1\s0" at 0,24 ljust
+"\fH\s10\&after SVR4\f1\s0" at 0,8 ljust
+] |
+
+define t1369 |
+[ box invis ht 32 wid 97 with .sw at 0,0
+"\fH\s10\&supported\f1\s0" at 0,24 ljust
+"\fH\s10\&through SVR4\f1\s0" at 0,8 ljust
+] |
+
+define t1393 |
+[ box invis ht 48 wid 69 with .sw at 0,0
+"\fH\s10\&processor\f1\s0" at 0,40 ljust
+"\fH\s10\&specific\f1\s0" at 0,24 ljust
+"\fH\s10\&routines\f1\s0" at 0,8 ljust
+] |
+
+define t1389 |
+[ box invis ht 48 wid 47 with .sw at 0,0
+"\fH\s10\&DDI\f1\s0" at 0,40 ljust
+"\fH\s10\&only\f1\s0" at 0,24 ljust
+"\fH\s10\&(DxD)\f1\s0" at 0,8 ljust
+] |
+
+define t1385 |
+[ box invis ht 48 wid 82 with .sw at 0,0
+"\fH\s10\&processor\f1\s0" at 0,40 ljust
+"\fH\s10\&independent\f1\s0" at 0,24 ljust
+"\fH\s10\&routines\f1\s0" at 0,8 ljust
+] |
+
+define t1381 |
+[ box invis ht 64 wid 58 with .sw at 0,0
+"\fH\s10\&DDI\f1\s0" at 0,56 ljust
+"\fH\s10\&and\f1\s0" at 0,40 ljust
+"\fH\s10\&DKI\f1\s0" at 0,24 ljust
+"\fH\s10\&(DxDK)\f1\s0" at 0,8 ljust
+] |
+
+box invis ht 144 wid 288 with .sw at 0,0
+t1376 with .nw at 208,70
+t1372 with .nw at 100,-2
+t1369 with .nw at 200,-2
+line  from 96,144 to 96,80 
+line  from 192,144 to 96,144 
+line  from 192,80 to 192,144 
+line  from 192,8 to 288,8 
+line  from 192,80 to 288,80 
+.ps 25
+box ht 72 wid 96 with .nw at 96,80 
+.ps
+line  from 288,80 to 288,8 
+t1393 with .nw at 4,138
+t1389 with .nw at 120,138
+t1385 with .nw at 0,70
+t1381 with .nw at 116,74
+.PE
+Each box in Figure 1 represents a different set of interfaces.
+The ``DDI only'' set (indicated throughout this manual with the
+D\f2x\fPD or D\f2x\fPX
+cross-reference code) are processor specific and are intended to be
+supported beyond the current release.
+In addition, the D\f2x\fPX manual pages are platform-specific.
+The DDI described in this manual is specific to UNIX System V for the
+INTEL 80x86 family of processors.
+The ``DKI only'' set
+(D\f2x\fPK cross-reference code) are processor independent,
+but are not guaranteed to be supported in the next release.
+As interfaces are removed from the DDI/DKI, they will be retained
+in the operating system for at least one future release to provide
+compatibility with drivers written to use them.
+.P
+Any driver interfaces not documented in this manual are
+specifically not part of the DDI or DKI.
+For example, the \f4poll\fP, \f4kenter\fP, and \f4kexit\fP entry
+points, documented in the \f2Integrated Software Development Guide\fP,
+are not part of the DDI or DKI, and hence are not
+documented in this guide.
+.P
+Most of the routines, functions, and structures 
+described in this manual are part of both
+the DDI and the DKI (cross-referenced by
+D\f2x\fPDK).
+As Figure 1 shows, drivers written to conform to both
+interfaces are portable to all computers
+supporting
+.SM UNIX
+System V Release 4.0 for the Intel 80x86 Architecture, and they 
+will be compatible through and beyond Release 4.0.
+.P
+However, a driver written to conform to both interfaces is not guaranteed
+to be \f2binary\fP
+compatible with future releases of the operating system.  Binary compatibility
+requires more than just interface definition.  It also requires that values
+for \f4#define\fP's be standardized, for example.  The DDI/DKI is a source code
+interface.  Following it is a necessary, but not sufficient, condition for
+binary compatibility.
+To understand more completely what is meant by ``portable'' and
+``compatible'' for the DDI and DKI, the scope of each interface must be more
+thoroughly explained.
+.H 2 "Porting"
+.IX istart driver, porting
+Software is usually considered portable if it can be adapted to run
+in a different environment at a lower cost than if one were to rewrite
+it. The new environment may include a different processor, 
+operating system, and even the language in which the program
+is written, if a language translator is available.
+More often, however, software is ported between environments that
+share an operating system, processor, and source language.
+The source code is modified to accommodate
+the differences in compilers,
+processors, or releases of the operating system.
+.P
+In the past, device drivers did not port easily for one or more
+of the following reasons:
+.BL
+.LI
+To enhance functionality,
+members had been added to kernel data structures accessed by drivers,
+or the sizes of existing members had been redefined.
+.LI
+The calling or return syntax of kernel functions had changed.
+.LI
+Driver developers did not use existing kernel functions where
+available, or relied on undocumented side effects that were
+not maintained in the next release.
+.LI
+Processor-specific code had been scattered throughout the driver
+when it could have been isolated.
+.LI
+The proper interfaces and rules for their use had never been clearly documented.
+.LE
+.P
+Operating systems are periodically reissued to customers as a way
+to improve performance, fix bugs, and add new features.
+This is probably the most common threat to compatibility encountered
+by developers responsible for maintaining software.
+Another common problem is upgrading hardware.
+As new hardware is developed, customers occasionally
+decide to upgrade to faster, more capable computers of the same family.
+Although they may run the same operating system as those being replaced,
+processor-specific code may prevent the software from porting.
+.IX iend driver, porting
+.H 2 "Scope of Interfaces"
+Although application programs have all of the porting problems
+mentioned, developers attempting to port device drivers have special
+challenges.
+.P
+Device drivers are kernel modules that control data transferred
+to and received from peripheral devices.
+Although drivers are configured into the
+.SM UNIX
+system as part of the kernel,
+they can be developed independently from the rest of the kernel.
+If the goal of achieving complete freedom in modifying the kernel is
+to be reconciled with the goal of compatibility with existing drivers,
+the interaction between drivers and the kernel must be rigorously
+regulated.
+This driver/kernel service interface is one of
+the three distinguishable
+interfaces for a driver, summarized as follows:
+.BL
+.LI
+Driver\(enKernel.
+I/O System calls result in calls to driver entry point routines.
+These make up the kernel-to-driver part of the service interface,
+described in Section 2 of this manual.
+Drivers may call any of the functions described in Section 3.
+These are the driver-to-kernel part of the interface.
+.LI
+Driver\(enHardware.
+Most hardware drivers include an interrupt
+handling entry point, and may also perform direct memory access
+(DMA).  These and other hardware-specific interactions make up
+the driver/hardware interface.
+.LI
+Driver\(enBoot/Configuration Software.
+At boot time, the existence of a driver is made known
+to the system through information in system files, enabling the system
+to include the driver.
+The interaction between the driver and the boot and configuration software
+is the third interface affecting drivers.
+Refer to the section on ID/TP in Chapter 3 of the 
+.BT "ISDG Manual"
+for more information on this.
+.LE
+.H 3 "Scope of the Device Driver Interface (DDI)"
+The primary goal of DDI is to facilitate both source and binary
+portability across successive releases of
+.SM UNIX
+System V on a particular machine.
+Implicit in this goal is an important fact.
+Although there is only one DKI, each processor product has its own DDI.
+Therefore, if a driver is ever to be ported to different hardware, special
+attention must be paid to the machine-specific routines that 
+make up the ``DDI only'' part of a driver.
+These include, but are not confined to,
+the driver/hardware interface (as described in the previous section).
+Some processor-specific functionality also may belong to the driver/kernel
+interface, and may not be easy to locate.
+.P
+To achieve the goal of source and binary
+compatibility, the functions, routines, and structures
+specified in the DDI must be used according to these rules.
+.BL
+.LI
+Drivers cannot access system state structures (for example, \f4u\f1 
+and \f4sysinfo\f1) directly.
+.LI
+For structures external to the driver 
+that may be accessed directly, only the utility
+functions provided in Section 3 of this manual should be used.
+More generally, these functions should be used wherever possible.
+.LI
+The header file \f4ddi.h\f1 must be included
+at the end of the list of system header files.
+This header file ``undefines'' several macros that are
+reimplemented as functions.
+Device driver-specific include files should be listed after \f4ddi.h\f1 to
+insure only the DDI/DKI interface is used by the driver.
+.LE
+.H 3 "Scope of the Driver\(enKernel Interface (DKI)"
+As its name implies, the DKI (Driver\(enKernel Interface) is a
+defined service interface for the entry point routines and utility
+functions specified for communication between the driver and kernel.
+It does not encompass the driver/hardware or the driver/boot software
+interface.
+.P
+Information is exchanged between the driver and kernel in the form
+of data structures.
+The DKI specifies the contents of these structures as well as the calling
+and return syntax of the entry points and utility functions.
+.P
+The intent of the DKI is to promote source portability across implementations of
+.SM UNIX
+System V on different machines, and applies only to System V Release 4.0
+for the Intel 80x86 Architecture.
+Because the DKI applies only to the driver/kernel interface, it must be understood
+that the sections of driver code
+.NE 3
+affecting the hardware and boot/configuration
+interfaces may need to be rewritten, and should be isolated in subroutines
+as much as possible.
+.AB N
+Certain interfaces documented in the DKI are not part of the DDI.
+Driver writers should be aware that the use of these interfaces is
+not guaranteed to be supported beyond System V Release 4.0.
+.AC
+.IX iend DDI/DKI (Device Driver Interface/Driver\(enKernel Interface)
+.H 2 "Audience"
+This manual is for experienced C programmers
+responsible for creating, modifying, or maintaining
+drivers that run on AT&T
+.SM UNIX
+System V Release 4.0 for the Intel 80x86 Architecture and beyond.
+It assumes that the reader is familiar with
+.SM UNIX
+system internals and the advanced capabilities of the C Programming Language.
+.H 2 "How to Use This Manual"
+This manual is organized into an introduction, five reference
+sections, and two appendixes:
+.BL
+.LI
+.CT "Introduction"
+introduces the DDI, DKI, and other driver interfaces,
+lists the notational conventions used in this manual,
+and lists related courses and documents.
+.LI
+.CT "Section 1: Driver Data"
+contains reference pages for all driver-defined data needed by the system.
+.LI
+.CT "Section 2: Driver Entry Point Routines"
+contains reference pages for all driver entry point routines.
+.LI
+.CT "Section 3: Kernel Utility Routines"
+contains reference pages for all kernel functions used in DDI/DKI drivers.
+.LI
+.CT "Section 4: Data Structures"
+contains reference pages for structures used in DDI/DKI drivers.
+.LI
+.CT "Section 5: Kernel Defines"
+contains reference pages for kernel \f4#define\fP's used in DDI/DKI drivers.
+.LI
+.CT "Appendix A: Migration from Release 3.2 to Release 4.0"
+describes the changes to DDI/DKI between Release 3.2
+and Release 4.0 of System V.
+.LI
+.CT "Appendix B: Multibus Extensions"
+describes the extensions to the DDI to support Multibus II.
+.LE
+.H 3 "Organization of Driver Reference Manual"
+Driver reference manual pages are similar to those in the
+.BT "Programmer's Reference Manual" ,
+with the page name followed by a section number in parentheses.
+All driver reference manual entries begin with a ``D''
+to distinguish them as driver reference pages.
+.P
+The manual contains five sections:
+.PD 0
+.VL 0.5 0.2
+.LI D1
+driver data definitions
+.LI D2
+driver entry points
+.LI D3
+kernel functions used by drivers
+.LI D4
+kernel data structures accessed by drivers
+.LI D5
+kernel \f4#define\fP's used by drivers
+.LE
+.PD
+Each section number is suffixed with a letter
+indicating the interfaces covered.
+The suffixes used are:
+.PD 0
+.VL 0.5 0.2
+.LI D
+Device Driver Interface only (DDI)
+.LI K
+Driver\(enKernel Interface only (DKI)
+.LI DK
+both DDI and DKI
+.LI X
+DDI-only Platform-specific Interface
+.LE
+.PD
+For example, \f4open\f1(D2DK) refers to
+the \f4open\f1 entry point routine for a driver, 
+not to the \f4open\f1(2) system call
+documented in the
+.BT "Programmer's Reference Manual" .
+For clarity, the platform-specific manual pages have been kept separate from
+the rest of the DDI/DKI manual pages.
+.P
+Reference pages contain the following headings, where applicable:
+.PD 0
+.BL
+.LI
+NAME  gives the routine's name and a short summary of its purpose.
+.LI
+SYNOPSIS  summarizes the routine's calling and return syntax.
+.LI
+ARGUMENTS  describes each of the routine's arguments.
+.LI
+DESCRIPTION  provides general information about the routine.
+.LI
+STRUCTURE MEMBERS  describes all accessible data structure members.
+.LI
+RETURN VALUE  summarizes the return value from the function.
+.LI
+LEVEL  gives an indication of when the routine can be used.
+.LI
+NOTES  provides restrictions on use and cautionary information.
+.LI
+SEE ALSO  gives sources for further information.
+.LI
+EXAMPLE  provides an example of common usage.
+.LE
+.PD
+.H 3 "Conventions Used in This Manual"
+Table 1 lists the textual conventions used in this manual.
+.br
+.ne 20
+.TB "Textual Conventions Used in This Manual"
+.TS
+center allbox;
+c c c
+l l lw(6.2P).
+Item	Style	Example
+C Reserved Words	\f4Constant Width\f1	\f4typedef\f1
+C \f4typedef\f1 Declarations	\f4Constant Width\f1	\f4caddr_t\f1
+Driver Routines	\f4Constant Width\f1	\f4open\f1 routine
+Error Values	\f4Constant Width	EINTR\f1
+File Names	\f4Constant Width\f1	\f4sys/conf.h\f1
+Flag Names	\f4Constant Width	B_WRITE\f1
+Kernel Macros	\f4Constant Width\f1	\f4minor\f1
+Kernel Functions	\f4Constant Width\f1	\f4kmem_alloc\f1
+Kernel Function Arguments	\f2Italics\f1	\f2bp\f1
+Structure Members	\f4Constant Width\f1	\f4b_addr\f1
+Structure Names	\f4Constant Width	buf\f1 structure\f1
+Symbolic Constants	\f4Constant Width	NULL\f1
+System Calls	\f4Constant Width\f1	\f4ioctl\f1(2)
+C Library Calls	\f4Constant Width\f1	\f4printf\f1(3S)
+Shell Commands	\f4Constant Width\f1	\f4layers\f1(1)
+User-Defined Variable	\f2Italics\f1	\f2prefix\f1\f4close\f1
+.TE
+.H 2 "Related Documentation"
+Several UNIX System V, Release 4 documents are useful for
+device driver development.
+They are listed below.
+.H 4 "Driver Development"
+The
+.BT "Integrated Software Development Guide/386"
+discusses driver development concepts, debugging, performance,
+installation, and other related driver topics for UNIX System V
+Release 4.0 for the Intel 80x86 Architecture environment.
+.H 4 "STREAMS"
+The
+.BT "Programmer's Guide: STREAMS"
+tells how to write drivers and access devices that use the
+.SM STREAMS
+driver interface for character access.
+.P
+The
+.BT "Programmer's Guide: Networking Interfaces"
+provides detailed information, with
+examples, on the Section 3N library that comprises the
+.SM UNIX
+system Transport Level Interface (TLI).
+.P
+The
+.BT "Programmer's Guide: ANSI C and Programming Support Tools"
+includes instructions on using a number of
+.SM UNIX
+utilities, including \f4make\f1 and \s-1SCCS\s0.
+.H 4 "Operating Systems"
+The
+.SM UNIX
+System V reference manuals
+are the standard reference materials for the
+.SM UNIX
+operating system.
+This information is organized into three manuals,
+published separately for each system:
+.BL
+.LI
+The
+.BT "System Administrator's Reference Manual"
+includes information on
+administrative commands (Section 1M),
+special device files (Section 7),
+and system-specific maintenance commands (Section 8).
+.LI
+The
+.BT "Programmer's Reference Manual"
+includes information on
+programming commands (Section 1),
+system calls (Section 2),
+library routines (Section 3),
+file formats (Section 4),
+and miscellaneous topics (Section 5).
+.LI
+The
+.BT "User's Reference Manual"
+includes information on
+.SM UNIX
+system user-level commands
+(Section 1).
+.LE
+.H 4 "Software Packaging"
+The
+.BT "Programmer's Guide: System Services and Application Packaging Tools"
+describes how to write the scripts necessary to install a driver (or
+other software) under the System Administration utility.

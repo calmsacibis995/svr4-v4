@@ -1,0 +1,213 @@
+.if n .pH arefman.intro @(#)intro	40.3
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1990 AT&T
+.BK "System Administrator's Reference Manual"
+.Ch "Introduction"
+.H 1 Introduction
+.hw print-out photo-type-setter
+.tr ~
+This \f2System Administrator's Reference Manual\f1 describes the commands,
+file formats, and miscellaneous facilities used by those who administer
+a \s-1UNIX\s0 System V/386 system.
+.P
+Several closely-related documents contain other
+valuable information:
+.BL
+.LI
+The \f2System Administrator's Guide\f1
+provides procedures for and
+explanations of administrative tasks.
+.LI
+The \f2User's Guide\f1 presents an overview
+of the \s-1UNIX\s0 system and tutorials on how
+to use text editors,
+automate repetitive jobs, and send
+information to others.
+.LI
+The \f2User's Reference Manual\f1 describes the commands
+that constitute the basic software
+running on system.
+.LI
+The \f2Programmer's Guide\f1 presents an
+overview of the \s-1UNIX\s0 system programming environment
+and tutorials on various programming tools.
+.LI
+The \f2Programmer's Reference Manual\f1
+describes the commands, system calls,
+subroutines, libraries, file formats, and miscellaneous facilities
+used by programmers.
+.LE
+.P
+The \f2System Administrator's Reference Manual\f1 is divided into
+five sections:
+.VL .85i .45i
+.LI (1M)
+System Maintenance Commands and Application Programs
+.LI (4)
+File Formats
+.LI (5)
+Miscellaneous Facilities
+.LI (7)
+Special Files
+.LI (8)
+System Maintenance Procedures
+.LE
+.ta .5i 1i 1.5i 2i 2.5i 3i 3.5i 4i 4.5i 5i 5.5i 6i 6.5i
+.P
+Throughout this manual,
+numbers following a command are intended for easy cross-reference.
+A command with a (1M), (7), or (8)
+following it means that the command is in the corresponding section
+of this manual.
+A command with a
+(4) or (5)
+following it means that the command is in the corresponding section of
+this manual and the
+\f2Programmer's Reference Manual\fP.
+A command followed by a (1), (1C), or (1G)
+usually means that it is found in the \f2User's Reference Manual\fP.
+(Section 1 commands appropriate for use by programmers
+are located in the \f2Programmer's Reference Manual\f1.)
+A command with a
+(2) or (3)
+following it means that the command is in the corresponding section of the
+\f2Programmer's Reference Manual\fP.
+.P
+Section~1M, "System Maintenance Commands and Application Programs,"
+contains commands and programs that are used in administering a 
+\s-1UNIX\s+1 system.
+.P
+Section~4,
+"File Formats,"
+documents the structure of particular
+kinds of files.
+For example, the format of \f4/etc/passwd\fP is given
+on \f4passwd\fP(4)
+and the content of \f4/etc/profile\fP is explained
+on \f4profile\fP(4).
+In general, when a C language structure
+corresponds to a file format,
+it can be found in either the \f4/usr/include\fP
+or \f4/usr/include/sys\fP directories.
+.P
+Section~5, "Miscellaneous Facilities," contains a variety of information.
+For example, a table of the octal and hexadecimal equivalents of the
+\s-1ASCII\s0 character set is given on \f4ascii\fP(5),
+shell environmental variables
+(such as \f4\s-1HOME\s0\fP, \f4\s-1PATH\s0\fP, \f4\s-1LANGUAGE\s0\fP, etc.)
+are described on \f4environ\fP(5), and
+names of common \s-1AT&T\s0 terminals are listed on \f4term\fP(5).
+.P
+Section~7,
+"Special Files," discusses the characteristics of
+system files that refer to input/output devices.
+The names in this
+section generally refer to
+device names for the hardware, rather than to the names of
+the special files themselves.
+.P
+Section~8, "System Maintenance Procedures," discusses
+crash recovery, firmware programs, boot procedures, 
+facility descriptions, etc.
+.P
+Each section begins with a page labeled \f4intro\f1.
+Entries following the \f4intro\f1 page are arranged
+alphabetically and may consist of more than one page.
+Some entries describe several routines, commands, etc.
+In such cases, the entry appears only once, alphabetized under
+its "primary" name. 
+(An example of such an entry is \f4mount\f1(1M), which also describes
+the \f4umount\f1 command.)
+The "secondary" commands are listed directly below their associated primary
+command.
+To learn which manual page describes a secondary command,
+locate its name in the middle column of the "Permuted Index"
+and follow across that line to the name of the manual page listed in the right column.
+.P
+All entries are based on a common format,
+not all of whose parts always appear:
+.BL
+.LI
+\f3\s-1NAME\s+1\f1
+gives the name(s) of the entry and
+briefly
+states its purpose.
+.LI
+\f3\s-1SYNOPSIS\s+1\f1
+summarizes the use of the
+program being described.
+A few conventions are used, particularly in
+Section~1M
+(\f2Commands\^\f1):
+.BL
+.LI
+\f4Constant Width\f1
+strings are literals and
+are to be typed just as they appear.
+.LI
+\f2Italic\^\f1 strings usually represent
+substitutable argument
+and program names found elsewhere in the manual.
+(They are
+underlined
+in
+the typed version of the entries.)
+.LI
+Square brackets \f3[\|]\f1 around an argument
+indicate that the argument is optional.
+When an argument is given as
+"name" or "file,"
+it always
+refers to a
+\f2file\^\f1
+name.
+.LI
+Ellipses \f3\^.\|.\|.\^\f1 are used to show that the previous argument
+may be repeated.
+.LE
+.LI
+\f3\s-1DESCRIPTION\s+1\f1
+provides an overview of the command.
+.LI
+\f3\s-1EXAMPLE(S)\s+1\f1
+gives
+example(s) of usage, where appropriate.
+.LI
+\f3\s-1FILES\s+1\f1
+gives the file names that are
+built into the program.
+.LI
+\f3\s-1SEE ALSO\s+1\f1
+offers pointers to related information.
+.LI
+\f3\s-1DIAGNOSTICS\s+1\f1
+discusses
+the diagnostic indications that may be produced.
+Messages that are intended to be self-explanatory
+are not listed.
+.LI
+\f3\s-1NOTES\s+1\f1
+points out potential pitfalls,
+bugs and sometimes deficiencies.
+.LE
+.P
+Preceding Section\ 1 are a "Table of Contents"
+(listing both primary and secondary command entries)
+and a "Permuted Index."
+Each line of the "Table of Contents" contains the name of a manual page
+(with secondary entries, if they exist)
+and an abstract of that page.
+Each line of
+the "Permuted Index"
+represents a permutation (or sorting) of a line from the "Table of Contents"
+into three columns.
+The lines are arranged so that a keyword or phrase begins the middle column.
+Use the "Permuted Index" by searching this middle column for a topic or
+command.
+When you have found the entry you want,
+the right column of that line lists the name of the manual page on which
+information corresponding to that keyword can be found.
+The left column contains the remainder of the permutation that began
+in the middle column.
+.\"	@(#)intro	5.3 of 10/31/83
+.Ee

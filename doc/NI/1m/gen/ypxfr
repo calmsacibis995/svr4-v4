@@ -1,0 +1,178 @@
+'\"macro stdmacro
+.if n .pH g1a.ypxfr @(#)ypxfr	40.5 of 1/3/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.\" @(#)ypxfr.8 1.11 89/09/28 SMI;
+.\" Copyright (c) 1988 Sun Microsystems, Inc. - All Rights Reserved.
+.nr X
+.if \nX=0 .ds x} ypxfr 1M "" "\&"
+.if \nX=1 .ds x} ypxfr 1M ""
+.if \nX=2 .ds x} ypxfr 1M "" "\&"
+.if \nX=3 .ds x} ypxfr "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4ypxfr\fP \- transfer YP map from a YP server to host
+.SH SYNOPSIS
+.P
+\f4/usr/sbin/ypxfr\f1 [ \f4\-c\f1 ] [ \f4\-f\f1 ] [ \f4\-d\f1 \f2ypdomain\f1 ] [ \f4\-h\f1 \f2host\f1 ] [ \f4\-s\f1 \f2ypdomain\f1 ]
+.br
+\0\0\0\0\0\0[ \f4\-C\f1 \f2tid prog server\f1 ] \f2mapname\f1
+.SH DESCRIPTION
+.P
+The
+\f4ypxfr\f1
+command moves a
+\s-1YP\s0
+map in the default domain for the local host
+to the local host by making use of normal
+\s-1YP\s0
+services.
+It creates a temporary map in the directory
+\f4/var/yp/\f2ypdomain\f1
+(this directory must already exist;
+\f2ypdomain\f1
+is the default domain for the local host),
+fills it by enumerating the map's entries,
+fetches the map parameters (master and order number),
+and loads them.
+It then deletes any old versions of the map and moves the
+temporary map to the real
+\f2mapname\f1.
+.P
+If run interactively,
+\f4ypxfr\f1
+writes its output to the terminal.
+However, if it is started without a controlling terminal,
+and if the log file
+\f4/var/yp/ypxfr.log\f1
+exists, it appends all its output to that file. 
+Since
+\f4ypxfr\f1
+is most often run from the privileged user's
+\f4crontab\f1
+file, or by
+\f4ypserv\f1,
+the log file can be used to retain a record
+of what was attempted, and what the results were.
+.P
+For consistency between servers,
+\f4ypxfr\f1
+should be run periodically for every map in the
+\s-1YP\s0
+data base.
+Different maps change
+at different rates: a
+map may not change for months at a time,
+for instance, and may
+therefore be checked only once a day.
+Some maps may change several times per day.
+In such a case, you may want to check hourly
+for updates.
+A
+\f4crontab\f1(1)
+entry can be used to perform periodic updates automatically.
+Rather than having a separate
+\f4crontab\f1
+entry for each map,
+you can group commands to update several maps in a shell script.
+Examples (mnemonically named) are in
+\f4/usr/sbin/yp\f1:
+\f4ypxfr_1perday\f1,
+and
+\f4ypxfr_1perhour\f1.
+They can serve as reasonable first cuts.
+.P
+Refer to
+\f4ypfiles\f1(4)
+and
+\f4ypserv\f1(1M)
+for an overview of the YP
+name service.
+.P
+The following options are available:
+.TP 16
+\f4\-c\f1
+Do not send a \(lqClear current map\(rq request to the local
+\f4ypserv\f1
+process. 
+Use this flag if
+\f4ypserv\f1
+is not running locally at the time you are running
+\f4ypxfr\f1.
+Otherwise,
+\f4ypxfr\f1
+complains that it cannot talk to the local
+\f4ypserv\f1,
+and the transfer fails.
+.TP
+\f4\-f\f1
+Force the transfer to occur even if the version at the master is not
+more recent than the local version.
+.TP
+\f4\-C \f2tid prog server\f1
+This option is
+\f2only\f1
+for use by
+\f4ypserv\f1.
+When
+\f4ypserv\f1
+starts
+\f4ypxfr\f1,
+it specifies that
+\f4ypxfr\f1
+should call back a
+\f4yppush\f1
+process at the host
+\f2server\f1,
+registered as program number
+\f2prog\f1,
+and waiting for a response to transaction
+\f2tid\f1.
+.TP
+\f4\-d \f2ypdomain\f1
+Specify a domain other than the default domain.
+.TP
+\f4\-h \f2host\f1
+Get the map from
+\f2host\f1,
+regardless of what the map says the master is. 
+If
+\f2host\f1
+is not specified,
+\f4ypxfr\f1
+asks the
+\s-1YP\s0
+service for the name of the master, and try to get the
+map from there.
+\f2host\f1
+must be a name.
+.TP
+\f4\-s \f2ypdomain\f1
+Specify a source domain from which to
+transfer a map that should be the same
+across domains.
+.SH FILES
+.TP 35n
+\f4/var/yp/ypxfr.log\fP
+log file
+.TP
+\f4/usr/sbin/yp/ypxfr_1perday\fP
+\f4cron\f1(1M) script to run one transfer per day
+.TP
+\f4/usr/sbin/yp/ypxfr_1perhour\fP
+script for hourly transfers of volatile maps
+.TP
+\f4/var/yp/ypdomain\fP
+\s-1YP\s0
+domain
+.TP
+\f4/usr/spool/cron/crontabs/root\fP
+privileged user's 
+\f4crontab\f1
+file
+.SH "SEE ALSO"
+\f4cron\f1(1M),
+\f4crontab\f1(1),
+\f4ypserv\f1(1M),
+\f4yppush\f1(1M),
+\f4ypfiles\f1(4)

@@ -1,0 +1,79 @@
+'\"macro stdmacro
+.if n .pH g1a.lpusers @(#)lpusers	40.8.1.1 of 1/3/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} lpusers 1M "" "" "\&"
+.if \nX=1 .ds x} lpusers 1M "" ""
+.if \nX=2 .ds x} lpusers 1M "" "" "\&"
+.if \nX=3 .ds x} lpusers 1M "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4lpusers\f1 \- set printing queue priorities
+.SH SYNOPSIS
+\f4lpusers \-d \f2priority-level\f1
+.br
+\f4lpusers \-q \f2priority-level \f4\-u \f2login-\s-1ID\s+1-list\f1
+.br
+\f4lpusers \-u \f2login-\s-1ID\s+1-list\f1
+.br
+\f4lpusers \-q \f2priority-level\f1
+.br
+\f4lpusers \-l\f1
+.SH DESCRIPTION
+The \f4lpusers\f1 command is used 
+to set limits to the queue priority level that can be assigned to 
+jobs submitted by users of the LP print service.
+.PP
+The first form of the command (with \f4\-d\f1) sets the system-wide
+priority default to \f2priority-level\f1, where
+\f2priority-level\f1 is a value of 0 to 39, with 0
+being the highest priority.
+If a user does not specify a priority level with a
+print request [see \f4lp\f1(1)], the default
+priority is used.
+Initially, the default priority level is 20.
+.PP
+The second form of the command (with \f4\-q\f1 and \f4\-u\f1)
+sets the default highest
+\f2priority-level\f1 (\|0\^-\^39\|) that the users in
+\f2login-\s-1ID\s+1-list\f1 can request when submitting a print request.
+The \f2login-\s-1ID\s+1-list\f1 argument may include 
+any or all of the following constructs:
+.TP 1.25i
+\f2login-ID\f1
+A user on any system
+.TP
+\f2system_name\f4!\f2login-ID\f1
+A user on the system \f2system_name\f1
+.TP
+\f2system_name\f4!all\f1
+All users on system \f2system_name\f1
+.TP
+\f4all!\f2login-ID\f1
+A user on all systems
+.TP
+\f4all\f1
+All users on all systems
+.PP
+Users that have been given a limit cannot submit a
+print request with a higher priority level than the
+one assigned, nor can they change a request already
+submitted to have a higher priority.
+Any print requests submitted with priority levels higher than
+allowed will be given the highest priority allowed.
+.PP
+The third form of the command (with \f4\-u\f1) 
+removes any explicit priority level for the specified users.
+.PP
+The fourth form of the command
+(with \f4\-q\f1) sets the default highest
+priority level for all users
+not explicitly covered by the use of the second
+form of this command.
+.PP
+The last form of the command (with \f4\-l\f1) 
+lists the default priority level 
+and the priority limits assigned to users.
+.SH SEE ALSO
+\f4lp\fP(1) in the \f2User's Reference Manual\f1.

@@ -1,0 +1,348 @@
+'\"macro stdmacro
+.if n .pH g1a.pmadm @(#)pmadm	40.21.1.1 of 1/3/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.\".if \nX=0 .ds x} pmadm 1M "Networking Services Architecture" "\&"
+.\".if \nX=1 .ds x} pmadm 1M "Networking Services Architecture"
+.if \nX=0 .ds x} pmadm 1M "Essential Utilities" "\&"
+.if \nX=1 .ds x} pmadm 1M "Essential Utilities"
+.if \nX=2 .ds x} pmadm 1M "" "\&"
+.if \nX=3 .ds x} pmadm "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4pmadm\f1 \- port monitor administration
+.SH SYNOPSIS
+\f4pmadm \-a [\-p \f2pmtag\f4 | \-t \f2type\f4] \-s \f2svctag \f4\-i id \-m \f2pmspecific\f4
+.br
+.in +.5i
+\f4\-v \f2ver\f4 [\-f xu] [\-y \f2comment\f4] [\-z \f2script\fP]
+.in -.5i
+.sp .5
+\f4pmadm \-r \-p \f2pmtag \f4\-s \f2svctag\fP
+.sp .5
+\f4pmadm \-e \-p \f2pmtag \f4\-s \f2svctag\fP 
+.sp .5
+\f4pmadm \-d \-p \f2pmtag \f4\-s \f2svctag\fP 
+.sp .5
+\f4pmadm \-l [\-t \f2type\f4 | \-p \f2pmtag\f4] [\-s \f2svctag\f4]
+.sp .5
+\f4pmadm \-L [\-t \f2type\f4 | \-p \f2pmtag\f4] [\-s \f2svctag\f4]
+.sp .5
+\f4pmadm \-g \-p \f2pmtag\f4 \-s \f2svctag\f4 [\-z \f2script\fP]
+.sp .5
+\f4pmadm \-g \-s \f2svctag \f4\-t \f2type \f4\-z \f2script\f1
+.SH DESCRIPTION
+\f4pmadm\f1 is the administrative command for the lower level
+of the Service Access Facility hierarchy, that is, for service
+administration.
+A port may have only one service associated with it
+although the same service may be available through more than one port.
+In order to uniquely identify an instance of a service the
+\f4pmadm\f1 command must
+identify both the port monitor or port monitors through which the
+service is available (\f4\-p\f1 or \f4\-t\f1) and the service
+(\f4\-s\f1).
+See the option descriptions
+below.
+.P
+\f4pmadm\f1 performs the following functions:
+.sp .5
+.in +.5i
+.nf
+\- add or remove a service
+.sp .25
+\- enable or disable a service
+.sp .25
+\- install or replace a per-service configuration script
+.sp .25
+\- print requested service information
+.fi
+.in -.5i
+.sp .5
+Any user on the system may invoke \f4pmadm\f1 to request
+service status (\f4\-l\f1 or \f4\-L\f1) or to print 
+per-service configuration scripts
+(\f4\-g\f1 without the \f4\-z\f1 option).
+\f4pmadm\f1 with other options
+may be executed only by a privileged user.
+.P
+The options have the following meanings:
+.TP .5i
+\f4\-a\f1
+Add a service.
+\f4pmadm\f1 adds 
+an entry for the new service 
+to
+the port monitor's administrative file.
+Because of the complexity of the options and arguments that follow
+the \f4\-a\f1 option,
+it may be convenient to use a command script or the menu system
+to add
+services.
+If you use the menu system, enter \f4sysadm ports\f1, then
+choose the \f4port_services\f1 option.
+.TP
+\f4\-d\f1
+Disable a service.
+Add \f4x\f1 to the flag field in the entry for the service
+\f2svctag\f1 in the port monitor's administrative file.
+This is the entry used by port monitor \f2pmtag\f1.
+See the \f4\-f\f1 option, below, for a description of the flags
+available.
+.TP
+\f4\-e\f1
+Enable a service.
+Remove \f4x\f1 from the flag field in the entry for the service
+\f2svctag\f1 in the port monitor administrative file.
+This is the entry used by port monitor \f2pmtag\f1.
+See the \f4\-f\f1 option, below, for a description of the flags
+available.
+.TP
+\f4\-f\f1 \f4xu\f1
+The \f4\-f\f1 option
+specifies one or both of the following two flags which are then
+included in the flag
+field of the entry for the new service in the port monitor's
+administrative file.
+If the \f4\-f\f1 option is not included, no flags are set
+and the default conditions prevail.
+By default, a new service is enabled and no \f4utmp\f1 entry
+is created for it.
+A \f4\-f\f1 option without a following argument is illegal.
+.sp .5
+.in +.25i
+\f4x\f1\0\0\0Do not enable the service \f2svctag\f1 available through
+.br
+\0\0\0\0port monitor \f2pmtag\f1.
+.sp .5
+\f4u\f1\0\0\0Create a \f4utmp\f1 entry for service \f2svctag\f1 available through
+.br
+\0\0\0\0port monitor \f2pmtag\f1.
+.in -.25i
+.TP
+\f4\-g\f1
+Print, install, or replace a per-service 
+configuration script.
+The \f4\-g\f1 option with
+a \f4\-p\f1 option and a \f4\-s\f1 option
+prints the per-service configuration script
+for service \f2svctag\f1 available
+through port monitor \f2pmtag\f1.
+The \f4\-g\f1 option with
+a \f4\-p\f1 option, a \f4\-s\f1 option, and a
+\f4\-z\f1 option installs the per-service configuration
+script contained in the file \f2script\fP
+as the per-service
+configuration script for service \f2svctag\f1 available through
+port monitor \f2pmtag\f1.
+The \f4\-g\f1 option
+with a \f4\-s\f1 option, a \f4\-t\f1 option, and a
+\f4\-z\f1 option installs
+the file \f2script\fP as the per-service
+configuration script for service
+\f2svctag\f1 available through any port monitor of type \f2type\f1.
+Other combinations of options with \f4\-g\f1 are invalid.
+.TP
+\f4\-i\f1 \f4id\fP
+\f4id\fP is the identity that is to be assigned to service
+\f2svctag\f1 when it is started.
+\f4id\fP must be an entry in \f4/etc/passwd\f1.
+.TP
+\f4\-l\f1
+The \f4\-l\f1 option requests service information.
+Used by itself and with the options described below it 
+provides a filter for extracting information in several
+different groupings.
+.RS
+.TP .8i
+\f4\-l\f1
+By itself, the \f4\-l\f1 option lists all services on the system.
+.TP
+\f4\-l\f1 \f4\-p\f1 \f2pmtag\f1
+Lists all services available through port monitor \f2pmtag\f1.
+.TP
+\f4\-l\f1 \f4\-s\f1 \f2svctag\f1
+Lists all services with tag \f2svctag\f1.
+.TP
+\f4\-l\f1 \f4\-p\f1 \f2pmtag\f1 \f4\-s\f1 \f2svctag\f1
+Lists service \f2svctag\f1.
+.TP
+\f4\-l\f1 \f4\-t\f1 \f2type\f1
+Lists all services available through port monitors of type \f2type\f1.
+.TP
+\f4\-l\f1 \f4\-t\f1 \f2type\f1 \f4\-s\f1 \f2svctag\f1
+Lists all services
+with tag \f2svctag\f1
+available through a port monitor of
+type \f2type\f1.
+.TP
+Other combinations of options with \f4\-l\f1 are invalid.
+.RE
+.TP .5i
+\f4\-L\f1
+The \f4\-L\f1 option is identical to the \f4\-l\f1
+option except
+that output is printed in a condensed format.
+.TP
+\f4\-m\f1 \f2pmspecific\f1
+\f2pmspecific\f1 is the port monitor-specific portion of the
+port monitor administrative file entry for the service.
+.TP
+\f4\-p\f1 \f2pmtag\f1
+Specifies the tag associated with the port monitor
+through which a service (specified as \f4\-s \f2svctag\f1)
+is available.
+.TP
+\f4\-r\f1
+Remove a service.
+When \f4pmadm\f1 removes a service, 
+the entry for the service is removed
+from the port monitor's administrative file.
+.TP
+\f4\-s\f1 \f2svctag\f1
+Specifies the service tag associated with a given service.
+The service tag is assigned by the system administrator
+and is part of the entry for the service in the port monitor's
+administrative file.
+.TP
+\f4\-t\f1 \f2type\f1
+Specifies the the port monitor type.
+.TP
+\f4\-v\f1 \f2ver\f1
+Specifies the version number of the port monitor
+administrative file.
+The version number may be given as
+.in +.5i
+.sp .5
+.nf
+\f4\-v \`pmspec \-V\`\f1
+.fi
+.sp .5
+.in -.5i
+where \f2pmspec\f1 is the special administrative command
+for port monitor \f2pmtag\f1.
+This special command is \f4ttyadm\f1 for \f4ttymon\f1 and
+\f4nlsadmin\f1 for \f4listen\f1.
+The version stamp of the port monitor is known by
+the command and is returned
+when \f2pmspec\f1 is invoked with a \f4\-V\f1 option.
+.TP
+\f4\-y\f1 \f2comment\f1
+Associate \f2comment\f1 with the
+service
+entry in the port monitor administrative file.
+.TP
+\f4\-z\f1 \f2script\fP
+.br
+Used with the \f4\-g\f1 option to specify the name
+of the file that contains
+the per-service configuration script.
+Modifying a configuration script is a three-step procedure.
+First a copy of the existing script is made (\f4\-g\f1 alone).
+Then the copy is edited.
+Finally, the copy is put in place over the existing script
+(\f4\-g\f1 with \f4\-z\f1).
+.SH OUTPUT
+If successful, \f4pmadm\f1 will exit with a status of \f40\f1.
+If it fails for any reason, it will exit with a nonzero status.
+.P
+Options that request information write the requested information
+to the standard output.
+A request for information using the \f4\-l\f1 option prints
+column headers and
+aligns the information under the appropriate
+headings.
+In this format, a missing field is indicated by a hyphen.
+A request for information in the 
+condensed format
+using the \f4\-L\f1 option
+prints the information in colon-separated fields;
+missing fields are indicated by two successive colons.
+\f4#\f1 is the comment
+character.
+.SH EXAMPLES
+Add a service to a port monitor with tag \f4pmtag\f1.
+Give the service the tag \f4svctag\f1.
+Port
+monitor-specific information is generated by \f4specpm\f1.
+The service defined by \f4svctag\fP will be invoked with identity \f4root\fP.
+.sp .5
+.nf
+.ti +.25i
+\f4pmadm \-a \-p pmtag \-s svctag \-i root \-m \`specpm \-a arg1 \-b arg2\`\0\e
+.br
+.ti +.25i
+\0\0\0\-v \`specpm -V\`\f1
+.fi
+.sp .5
+Add a service with service tag \f4svctag\f1, identity \f4guest\f1,
+and
+port monitor-specific information generated by \f4specpm\f1
+to all port monitors of type \f4type\f1:
+.sp .5
+.nf
+.ti +.25
+\f4pmadm \-a \-s svctag \-i guest \-t type \-m \`specpm \-a arg1 \-b arg2\`\0\e
+.br
+.ti +.25i
+\0\0\0\-v \`specpm -V\`\f1
+.fi
+.sp .5
+Remove the service \f4svctag\fP from port monitor \f4pmtag\fP:
+.sp .5
+.ti +.25i
+\f4pmadm \-r \-p pmtag \-s svctag\f1
+.sp .5
+Enable the service \f4svctag\fP available through port monitor \f4pmtag\fP:
+.sp .5
+.ti +.25i
+\f4pmadm \-e \-p pmtag \-s svctag\f1
+.sp .5
+Disable the service 
+\f4svctag\fP available through port monitor \f4pmtag\fP:
+.sp .5
+.ti +.25i
+\f4pmadm \-d \-p pmtag \-s svctag\f1
+.sp .5
+List status information for all services:
+.sp .5
+.ti +.25i
+\f4pmadm \-l\f1
+.sp .5
+List status information for all services available through the port
+monitor with tag \f4ports\f1:
+.sp .5
+.ti +.25i
+\f4pmadm \-l \-p ports\f1
+.sp .5
+List the same information in condensed format:
+.sp .5
+.ti +.25i
+\f4pmadm \-L \-p ports\f1
+.sp .5
+List status information for all services available through port
+monitors of type \f4listen\f1:
+.sp .5
+.ti +.25i
+\f4pmadm \-l \-t listen\f1
+.sp .5
+Print the per-service
+configuration script associated with the service \f4svctag\f1
+available through port monitor
+\f4pmtag\f1:
+.sp .5
+.ti +.25i
+\f4pmadm \-g \-p pmtag \-s svctag\f1
+.SH FILES
+\f4/etc/saf/\f2pmtag\f4/_config\f1
+.br
+\f4/etc/saf/\f2pmtag\f4/\f2svctag\f1
+.br
+\f4/var/saf/\f2pmtag\f4/*\f1
+.SH "SEE ALSO"
+\f4doconfig\fP(3n),
+\f4sacadm\fP(1M),
+\f4sac\fP(1M).
+.\"	@(#)pmadm.1a	1.4
+.Ee

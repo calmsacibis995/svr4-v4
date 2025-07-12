@@ -1,0 +1,117 @@
+'\"macro stdmacro
+.if n .pH 386.spl @(#)spl	40.2 of 1/7/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.nr X
+.if \nX=0 .ds x} spl D3D "" "DDI" "\&"
+.if \nX=1 .ds x} spl D3D "" "DDI"
+.if \nX=2 .ds x} spl D3D "" "\&"
+.if \nX=3 .ds x} spl "" "" "\&"
+.TH \*(x}
+.IX "\f4spl\fP(D3D)"
+.SH NAME
+\f4spl\f1 \- block/allow interrupts
+.SH SYNOPSIS
+.nf
+.na
+\f4
+.sp 0.5
+int spl0();
+int spl1();	
+int spl4();	
+int spl5();	
+int spl6();	
+int spl7();	
+int splhi();	
+int splstr();	
+int spltty();	
+.sp 0.5
+int splx(int \f2oldlevel\f4);\f1
+.ad
+.fi
+.SH "ARGUMENTS"
+.RS 0n 10
+.IP "\f2oldlevel\f1" 10n
+Previous priority level to be reset (only \f4splx\f1 has an input argument).
+.RE
+.SH DESCRIPTION
+The \f4spl\f1 functions block or allow interrupts.
+When a process is executing code in a driver,
+driver data structures cannot be manipulated by base level code in
+another process as long as the system does not context switch to
+another process.
+Since context switches may only occur during calls to kernel functions
+that sleep, the driver may assume that its data won't be manipulated by
+any other process at base level between such calls.
+Additional action must be taken by the driver, however, to ensure
+exclusive access to data structures that can be manipulated by interrupt
+level code.
+Drivers must use the appropriate \f4spl\f1 function when manipulating such
+data structures to block any interrupts that might manipulate the same data.
+.P
+Hardware devices are assigned to interrupt priority levels depending on
+the type of device.
+Each \f4spl\f1 function that blocks interrupts is associated with some
+machine dependent interrupt priority level and will block all
+interrupts that occur at or below this priority level.
+The selection of the correct \f4spl\f1 function is important.
+The level set must be high enough to protect
+the region of code, but not so high that it unnecessarily
+blocks out interrupts that need to be processed quickly.
+.P
+The \f4spl\f1 functions include the following:
+.RS 4n
+.TP 10n
+\f4spl0\f1
+Restores all interrupts.
+Should only be used by base level code that knows it is not
+nested within any section of protected critical code.
+.TP
+\f4spl1\f1
+Used in context and process switch to protect critical code.
+.TP
+\f4spl4\f1
+Used in character drivers to protect critical code.
+.TP
+\f4spl5\f1
+Used in character drivers to protect critical code.
+.TP
+\f4spl6\f1
+Used in block drivers to protect critical code.
+.TP
+\f4spl7\f1
+Used in any type of driver to mask out all interrupts including the clock,
+and should be used very sparingly.
+.TP
+\f4splhi\f1
+Used in any type of driver to mask out all interrupts including the clock,
+and should be used very sparingly.
+.TP
+\f4spltty\f1
+Used by a TTY driver to protect critical code. 
+\f4spltty\f1 is mapped to \f4splstr\f1.
+.TP
+\f4splstr\f1
+Used to protect STREAMS driver and module critical regions of code.
+This is defined to be high enough to block interrupts from the highest
+priority STREAMS device.
+.TP
+\f4splx\f1
+Used upon completion of a section of protected critical code.  This function
+restores the interrupt level to the previous level specified by its
+argument \f2oldlevel\f1.
+.RE
+.SH RETURN VALUE
+All \f4spl\f1 functions return the previous priority
+level.
+.SH NOTES
+All \f4spl\f1 functions do not sleep.
+.sp 0.5
+When setting a given priority level, the previous level returned should
+be saved and \f4splx\f1 should be used to restore this level upon
+completion of the protected critical section.
+.sp 0.5
+Interrupt level code must never lower the interrupt priority level
+below the level at which the interrupt handler was entered.
+For example, if an interrupt handler is entered at the priority
+level associated with \f4spl6\f1, the handler must not call
+\f4spl0\f1 through \f4spl5\f1.

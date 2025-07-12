@@ -1,0 +1,50 @@
+'\"macro stdmacro
+.if n .pH 386.mps_mk_unsrp @(#)mps_mk_unsrp	40.5 of 7/1/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.nr X
+.if \nX=0 .ds x} mps_mk_unsolrply D3D "Multibus II" "DDI" "\&"
+.if \nX=1 .ds x} mps_mk_unsolrply D3D "Multibus II" "DDI" "\&"
+.if \nX=2 .ds x} mps_mk_unsolrply D3D "" "\&"
+.if \nX=3 .ds x} mps_mk_unsolrply "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4mps_mk_unsolrply\f1 \- constructs a unsolicited reply message to be sent.
+.SH SYNOPSIS
+.nf
+\f4#include <sys/mps.h>
+void mps_mk_unsolrply(\f2mbp\fP, \f2dsocid\fP, \f2tid\fP, \f2dptr\fP, \f2count\fP)
+mps_msgbuf_t		mbp;
+mb2socid_t			dscocid;
+unsigned char		tid;
+unsigned char		*dptr;
+unsigned long		count;\f1
+.fi
+.SH ARGUMENTS
+.TP 11
+\f2mbp\f1
+pointer to message buffer
+.TP 11
+\f2dsocid\f1
+32-bit destination socket id (host id:port id)
+.TP 11
+\f2tid\f1
+8-bit transaction id
+.TP 11
+\f2dptr\f1
+pointer to user data to be sent with the message
+.TP 11
+\f2count\f1
+number of bytes of user data to be sent with the message (Max 20)
+.SH DESCRIPTION
+The \f4mps_mk_unsolrply\f1 function takes a pointer to a message buffer
+and constructs a unsolicited reply message to be sent.
+The message is
+constructed using values supplied as arguments.
+Arguments to this function
+are not checked for valid values.
+.SH RETURN VALUE
+None
+.SH LEVEL
+Base or Interrupt
+.SH SEE ALSO
+\f4mps_mk_solrply\f1(D3D)

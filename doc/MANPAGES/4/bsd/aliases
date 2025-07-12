@@ -1,0 +1,313 @@
+.\" @(#)aliases 40.6 91/05/30 SMI; from UCB 4.2
+'\" macro stdmacro
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.\" Copyright (c) 1988 Sun Microsystems, Inc. - All Rights Reserved.
+.\"
+.hw sendmail
+.nr X
+.if \nX=0 .ds x} aliases 4 "BSD Compatibility Package" "\&"
+.if \nX=1 .ds x} aliases 4 "BSD Compatibility Package"
+.if \nX=2 .ds x} aliases 4 "" "\&"
+.if \nX=3 .ds x} aliases "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4aliases\f1, \f4addresses\f1, \f4forward\f1 \- addresses and aliases for sendmail
+.SH SYNOPSIS
+.P
+.ft 4
+.nf
+/etc/aliases
+/etc/aliases.dir
+/etc/aliases.pag
+~/.forward
+.ft 1
+.fi
+.SH DESCRIPTION
+These files contain mail addresses or aliases, recognized by
+\f4sendmail\f1,
+for the local host:
+.P
+.PD 0
+.TP 20
+\f4/etc/passwd\f1
+Mail addresses (usernames) of local users.
+.TP
+\f4/etc/aliases\f1
+Aliases for the local host, in
+\s-1ASCII\s0
+format.
+This file can be edited to add, update, or delete
+local mail aliases.
+.TP
+\f4/etc/aliases. { dir , pag\f1}
+The aliasing information from
+\f4/etc/aliases\f1,
+in binary,
+\f4dbm\f1
+format for use by
+\f4sendmail\f1.
+The program,
+\f4newaliases\f1, maintains these files.
+.TP
+\f4\u\(ap\d/.forward\f1
+Addresses to which a user's mail is forwarded (see
+\f4Automatic Forwarding\f1,
+below).
+.PD
+.P
+In addition, the Network Information Service (NIS) aliases map
+\f2mail.aliases\f1
+contains addresses and aliases available for use across the network.
+.SS Addresses
+As distributed,
+\f4sendmail\f1
+supports the following types of addresses:
+.SS Local Usernames
+.IP
+\f2username\f1
+.P
+Each local
+\f2username\f1
+is listed in the local host's
+\f4/etc/passwd\f1
+file.
+.SS Local Filenames
+.IP
+\f2pathname\f1
+.P
+Messages addressed to the absolute
+\f2pathname\f1
+of a file are appended to that file.
+.SS Commands
+.IP
+\f4|\^\f2command\f1
+.P
+If the first character of the address is a vertical bar,
+\f1(\f4\||\|\f1),
+\f4sendmail\f1
+pipes the message to the standard input of the
+\f2command\f1
+the bar precedes.
+.SS \s-1DARPA\s0-standard Addresses
+.IP
+\f2username\f4@\f2domain\f1
+.P
+If
+\f2domain\f1
+does not contain any
+`\f4.\f1'
+(dots),
+then it is interpreted as the name of a
+host in the current domain.
+Otherwise, the message is passed to a
+\f2mailhost\f1
+that determines how to get to the specified domain.
+Domains are divided into subdomains separated by
+dots, with the top-level domain on the right.
+Top-level domains include:
+.RS
+.TP
+Commerical organizations.
+.TP
+Educational organizations.
+.TP
+Government organizations.
+.TP
+Military organizations.
+.RE
+.P
+For example, the full address of John Smith could be:
+.IP
+\f4js@jsmachine.Podunk-\s-1U.EDU\f1
+.P
+if he uses the machine named
+\f4jsmachine\f1
+at Podunk University.
+.SS uucp Addresses
+.IP
+\&.\|.\|. [\c
+\f2host\f4!\c\f1
+]\c
+\f2host\f4!\f2username\f1
+.P
+These are sometimes mistakenly referred to as ``Usenet'' addresses.
+\f4uucp\f1
+provides links to numerous sites throughout the world for
+the remote copying of files.
+.P
+Other site-specific forms of addressing can be added by customizing
+the
+\f4sendmail\f1
+configuration file.
+See the
+\f4sendmail\f1(1M)
+for details.
+Standard addresses are recommended.
+.br
+.ne 20
+.SS Aliases
+.SS Local Aliases
+\f4/etc/aliases\f1
+is formatted as a series of lines of the form
+.IP
+\f2aliasname\f4:\f2address\f1[\f4, \f2address\f1]
+.P
+\f2aliasname\f1
+is the name of the alias or alias group, and
+\f2address\f1
+is the address of a recipient in the group.
+Aliases can be nested.
+That is, an
+\f2address\f1
+can be the name of another alias group.
+Because of the way
+\f4sendmail\f1
+performs mapping from upper-case to lower-case, an
+\f2address\f1
+that is the name of another alias group must not contain any
+upper-case letters.
+.P
+Lines beginning with white space are treated as continuation lines
+for the preceding alias.
+Lines beginning with
+\f4#\f1
+are comments.
+.SS Special Aliases
+.P
+An alias of the form:
+.IP
+\f4owner\- aliasname : \f2address\f1
+.P
+directs error-messages resulting from mail to
+\f2aliasname\f1
+to
+\f2address\f1,
+instead of back to the person who sent the
+message.
+.P
+An alias of the form:
+.IP
+\f2aliasname\f4:\f1
+\f4:include:\f2pathname\f1
+.P
+with colons as shown, adds the recipients listed in the file
+\f2pathname\f1
+to the
+\f2aliasname\f1
+alias.
+This allows a private list to be maintained separately from the
+aliases file.
+.SS NIS Domain Aliases
+Normally, the aliases file on the master
+\s-1NIS\s0
+server is used for the
+\f2mail.aliases\f1
+\s-1NIS\s0
+map, which can be made available to every
+\s-1NIS\s0
+client.
+Thus, the
+\f4/etc/aliases*\f1
+files on the various hosts in a network will one day be obsolete.
+Domain-wide\p
+.br
+.ne 3
+aliases should ultimately be resolved into usernames on
+specific hosts.
+For example, if the following were in the domain-wide alias file:
+.IP
+\f4jsmith:js@jsmachine\f1
+.P
+then any
+\s-1NIS\s0
+client could just mail to
+\f4jsmith\f1
+and not have to
+remember the machine and username for John Smith.
+If a
+\s-1NIS\s0
+alias does
+not resolve to an address with a specific host, then the name of the
+\s-1NIS\s0
+domain is used.
+There should be an alias of the domain name for a host
+in this case.
+For example, the alias:
+.IP
+\f4jsmith:root\f1
+.P
+sends mail on a
+\s-1NIS\s0
+client to
+\f4root@podunk-u\f1
+if the name of the
+\s-1NIS\s0
+domain is
+\f4podunk-u\f1.
+.SS Automatic Forwarding
+When an alias (or address) is resolved to the name of a user on the
+local host,
+\f4sendmail\f1
+checks for a
+\f4.forward\f1
+file, owned by the intended recipient, in that user's home directory,
+and with universal read access.
+This file can contain one or more addresses or aliases as described
+above, each of which is sent a copy of the user's mail.
+.P
+Care must be taken to avoid creating addressing loops in the
+\f4.forward\f1
+file.
+When forwarding mail between machines, be sure that the destination
+machine does not return the mail to the sender through
+the operation of any
+\s-1NIS\s0
+aliases.
+Otherwise, copies of
+the message may ``bounce.''
+Usually, the solution is to change the
+\s-1NIS\s0
+alias to direct mail to the proper destination.
+.br
+.ne 8
+.P
+A backslash before a username
+inhibits further aliasing.
+For instance, to invoke the
+\f4vacation\f1
+program, user
+\f4js\f1
+creates a
+\f4.forward\f1
+file that contains the line:
+.IP
+\f4\ejs, "|/usr/ucb/vacation js"\fP
+.P
+so that one copy of the message is sent to the
+user, and another is piped into the
+\f4vacation\f1
+program.
+.if t .ne 5
+.SH FILES
+.PD 0
+.TP 20
+\f4/etc/passwd\f1
+.TP
+\f4/etc/aliases\f1
+.TP
+\f4\u\(ap\d/.forward\f1
+.PD
+.SH "SEE ALSO"
+\f4newaliases\fP(1M),
+\f4sendmail\fP(1M),
+\f4vacation\fP(1),
+\f4dbm\fP(3X)
+.P
+\f4uucp\fP(1C),
+in the \f2User's Reference Manual\f1
+.SH NOTES
+Because of restrictions in
+\f4dbm\f1
+a single alias cannot contain more than about 1000 characters.
+Nested aliases can be used to circumvent this limit.

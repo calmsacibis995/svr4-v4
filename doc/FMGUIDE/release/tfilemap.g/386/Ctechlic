@@ -1,0 +1,24 @@
+.if n .pH 386.Ctechlic @(#)Ctechlic	40.8
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.BK "Technology File Mapping Guide" "" "" ""   
+.\ACRONYM	                  
+.CH "Technology Licensing" "" "Table of Contents" "2"
+.\CHAPTER	2
+.tC 1 "Technology Licensing" 2-1  
+.tC L "Table 2-1:\0" "Technology License Legend" 2-4
+.tC L "Table 2-2:\0" "Operating System Kernel" 2-5
+.tC L "Table 2-3:\0" "System Services & Libraries" 2-6
+.tC L "Table 2-4:\0" "Shells, Commands & Utilities" 2-7
+.tC L "Table 2-5:\0" "System Administration Facilities" 2-8
+.tC L "Table 2-6:\0" "System Compatibility Software" 2-9
+.tC L "Table 2-7:\0" "Programming Tools & Languages" 2-10
+.tC L "Table 2-8:\0" "Networking Software Technology" 2-11
+.tC 2 "Documentation Distribution" 2-12  
+.tC 3 "About Release 4 Documents" 2-12  
+.tC L "Table 2-9:\0" "UNIX System V/386 Documents" 2-13
+.tC 3 "Contents of Release 4 Documents" 2-14  
+.tC 3 "Programming" 2-15  
+.tC 3 "Release-Specific Information" 2-19  
+.tC 2 "POSIX Standardization Option" 2-21  
+.tC 2 "Source Code Exchange" 2-25  
+.tC 2 "Header Files" 2-26  

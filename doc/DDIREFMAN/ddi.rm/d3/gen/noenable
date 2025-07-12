@@ -1,0 +1,52 @@
+'\"macro stdmacro
+.if n .pH gen.noenable @(#)noenable	40.2 of 1/7/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.nr X
+.if \nX=0 .ds x} noenable D3DK "STREAMS" "DDI/DKI" "\&"
+.if \nX=1 .ds x} noenable D3DK "STREAMS" "DDI/DKI"
+.if \nX=2 .ds x} noenable D3DK "" "\&"
+.if \nX=3 .ds x} noenable "" "" "\&"
+.TH \*(x}
+.IX "\f4noenable\fP(D3DK)"
+.SH NAME
+\f4noenable\f1 \- prevent a queue from being scheduled
+.SH SYNOPSIS
+.nf
+.na
+\f4#include <sys/stream.h>
+#include <sys/ddi.h>
+.sp 0.5
+void noenable(queue_t *\f2q\f4);\f1
+.ad
+.fi
+.SH ARGUMENTS
+.RS 0n 10
+.IP "\f2q\f1" 10n
+Pointer to the queue.
+.RE
+.SH DESCRIPTION
+The \f4noenable\f1 function prevents the service routine of
+the queue pointed to by \f2q\f1 from being scheduled
+for service by \f4insq\f1(D3DK), \f4putbq\f1(D3DK), or \f4putq\f1(D3DK), when
+enqueuing a message that is not a high priority message.
+This restriction can be lifted with the \f4enableok\f1(D3DK) function.
+.P
+\f4noenable\fP does not prevent the queue's service routine from being scheduled
+when a high priority message is enqueued, or by
+an explicit call to \f4qenable\fP(D3DK).
+.SH RETURN VALUE
+None.
+.SH LEVEL
+Base or Interrupt.
+.SH NOTES
+Does not sleep.
+.SH SEE ALSO
+.na
+\f4srv\fP(D2DK),
+\f4enableok\f1(D3DK),
+\f4insq\f1(D3DK),
+\f4putbq\f1(D3DK),
+\f4putq\f1(D3DK),
+\f4qenable\f1(D3DK),
+\f4queue\fP(D4DK)
+.ad

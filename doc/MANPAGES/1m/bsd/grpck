@@ -1,0 +1,66 @@
+'\"macro stdmacro
+.if n .pH g1m.grpck @(#)grpck	40.9 of 4/18/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.\" @(#)grpck.8 1.7 88/08/24 SMI; from S5R3
+.nr X
+.if \nX=0 .ds x} grpck 1M "BSD Compatibility Package" "\&"
+.if \nX=1 .ds x} grpck 1M "BSD Compatibility Package"
+.if \nX=2 .ds x} grpck 1M "" "\&"
+.if \nX=3 .ds x} grpck "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4grpck\f1 \- check group database entries
+.SH SYNOPSIS
+\f4/usr/ucb/grpck\f1
+[
+.I filename
+]
+.SH DESCRIPTION
+.P
+\f4grpck\f1
+checks that a file in
+\f4group\f1(4)
+does not contain any errors; it checks the
+\f4/etc/group\f1
+file by default.
+.PP
+This command differs from
+\f4/usr/sbin/grpck\f1
+in its ability to correctly parse
+.SM YP
+entries in
+\f4/etc/passwd.\f1
+.SH FILES
+.PD 0
+.TP 20
+\f4/etc/group\f1
+.PD
+.SH SEE ALSO
+\f4group\fP(4),
+\f4passwd\fP(4)
+in the \f2System Administrator's Reference Manual\f1
+.SH DIAGNOSTICS
+.TP
+\f4Too many/few fields\f1
+An entry in the group file does not have the proper number of
+fields.
+.TP
+\f4No group name\f1
+The group name field of an entry is empty.
+.TP
+\f4Bad character(s) in group name\f1
+The group name in an entry contains characters other than lower-case letters
+and digits.
+.TP
+\f4Invalid GID\f1
+The group
+.SM ID
+field in an entry is not numeric or is greater than 65535.
+.TP
+\f4Null login name\f1
+A login name in the list of login names in an entry is null.
+.TP
+\f4Login name not found in password file\f1
+A login name in the list of login names in an entry is not in the
+password file.

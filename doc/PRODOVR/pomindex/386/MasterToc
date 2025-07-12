@@ -1,0 +1,15 @@
+.if n .pH 386.MasterToc @(#)MasterToc	40.10
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.CH "Table of Contents" "" "" "" Contents
+.BK "Product Overview and Master Index" "" "" ""   
+.tC 1 "Product Overview" "" "Table of Contents" "1"
+.tC 2 "About This Manual" 1-1  
+.tC 2 "Introduction to the UNIX Operating System" 1-2  
+.tC 2 "Introduction to Release 4" 1-8  
+.tC 2 "Product Description" 1-25  
+.tC 1 "Permuted Index" "" "Table of Contents" "2"
+.tC 2 "Using the Permuted Index" 2-1  
+.tC 2 "Permuted Index" 2-6
+.tC 1 "Master Subject Index" "" "Table of Contents" "3"
+.tC 2 "Using the Subject Index" 3-1  
+.tC 2 "Master Subject Index" 3-3

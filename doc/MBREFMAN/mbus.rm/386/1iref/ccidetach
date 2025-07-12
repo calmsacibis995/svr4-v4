@@ -1,0 +1,52 @@
+'\"macro stdmacro
+.if n .pH g1a.ccidetach @(#)ccidetach	40.7 of 5/17/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} ccidetach 1iref "System Administration Utilities" "" "\&"
+.if \nX=1 .ds x} ccidetach 1iref "System Administration Utilities" ""
+.if \nX=2 .ds x} ccidetach 1iref "" "\&"
+.if \nX=3 .ds x} ccidetach "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4ccidetach\f1 \- disassociates this host with a subchannel on a line on
+.br
+the communications controller.
+.SH SYNOPSIS
+\f4/usr/lib/cci/ccidetach\f1 [\f4\-p \f2portid\f1] \f2slot-ID line-number subchannel\f1
+.SH DESCRIPTION
+\f4ccidetach\f1 cancels the association set up between a \f2subchannel\f1 and
+a host on the communications controller.  The host must have sent a
+\f4CCI_Attach\f1 message for the \f2subchannel\f1 using the \f4cciattach\f1(1iref)
+command.  This program sends a \f4CCI_Detach\f1 message to the CCI server.
+.PP
+Command line options are:
+.PP
+.TP
+\f4-p \f2n\f1
+Set the Multibus II Transport source Portid to \f2n\f1 instead of the
+default value 0x1ff.
+.PP
+If there are other hosts queued at the \f2subchannel\f1, the first host
+on the queue is made active on the \f4subchannel\f1.
+.PP
+The  \f2line-number\f1 can range from 0 to \f4MAX_LINES - 1\f1, where
+\f4MAX_LINES\f1 is returned in the \f4ccisrvinfo\f1(1iref) command.  The
+\f4subchannel\f1 can range from 0 to \f4MAX_SUBCHANNELS - 1\f1, where
+\f4MAX_SUBCHANNELS\f1 is returned in the \f4ccibind\f1(1iref) command.
+The communications controller is selected by specifying its Multibus II
+iPSB slot-ID.
+.SH FILES
+\f4/usr/lib/cci/ccidetach \f1
+.SH SEE ALSO
+\f4ccisrvinfo\f1(1iref),
+\f4ccildlist\f1(1iref),
+\f4ccilinfo\f1(1iref),
+\f4ccisubinfo\f1(1iref),
+\f4ccildinfo\f1(1iref),
+\f4ccifree\f1(1iref),
+\f4cciunbind\f1(1iref),
+\f4cciload\f1(1iref),
+\f4cciattach\f1(1iref),
+\f4cciswitch\f1(1iref),
+\f4cci\f1(7iref).

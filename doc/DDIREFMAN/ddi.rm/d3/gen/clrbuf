@@ -1,0 +1,47 @@
+'\"macro stdmacro
+.if n .pH gen.clrbuf @(#)clrbuf	40.2 of 1/7/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.nr X
+.if \nX=0 .ds x} clrbuf D3DK "" "DDI/DKI" "\&"
+.if \nX=1 .ds x} clrbuf D3DK "" "DDI/DKI"
+.if \nX=2 .ds x} clrbuf D3DK "" "\&"
+.if \nX=3 .ds x} clrbuf "" "" "\&"
+.TH \*(x}
+.IX "\f4clrbuf\fP(D3DK)"
+.SH NAME
+\f4clrbuf\f1 \- erase the contents of a buffer
+.SH SYNOPSIS
+.nf
+.na
+\f4#include <sys/types.h>
+#include <sys/buf.h>
+.sp 0.5
+void clrbuf(\f4buf_t *\f2bp\f4);\f1
+.ad
+.fi
+.SH ARGUMENTS
+.RS 0n 10
+.IP "\f2bp\f1" 10n
+Pointer to the buffer header structure.
+.RE
+.SH DESCRIPTION
+The \f4clrbuf\f1 function zeros a buffer and sets the
+\f4b_resid\f1 member of the \f4buf\fP(D4DK) structure to 0.  Zeros
+are placed in the buffer starting at the address specified by \f4b_un.b_addr\f1 
+for a length of \f4b_bcount\f1 bytes.
+.P
+If the buffer has the \f4B_PAGEIO\fP flag set in the \f4b_flags\fP field,
+then \f4clrbuf\fP should not be called until the proper virtual space has
+been allocated by a call to \f4bp_mapin\fP(D3DK).
+.IX "\f4buf\fP(D4DK)"
+.SH "RETURN VALUE"
+None.
+.SH LEVEL
+Base or Interrupt.
+.SH NOTES
+Does not sleep.
+.SH "SEE ALSO"
+.na
+\f4bp_mapin\fP(D3DK),
+\f4buf\f1(D4DK)
+.ad

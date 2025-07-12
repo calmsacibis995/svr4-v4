@@ -1,0 +1,47 @@
+'\"macro stdmacro
+.if n .pH g1.groups @(#)groups	40.8 of 4/18/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.\" @(#)groups.1 1.2 89/01/30 SMI; from UCB 4.1
+.\" Copyright (c) 1988 Sun Microsystems, Inc. - All Rights Reserved.
+.\"
+.nr X
+.if \nX=0 .ds x} groups 1 "BSD Compatibility Package" "\&"
+.if \nX=1 .ds x} groups 1 "BSD Compatibility Package"
+.if \nX=2 .ds x} groups 1 "" "\&"
+.if \nX=3 .ds x} groups "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4groups\f1 \- display a user's group memberships
+.SH SYNOPSIS
+\f4/usr/ucb/groups\f1
+[ \f2user\f1 .\ .\ . ]
+.SH DESCRIPTION
+With no arguments, 
+\f4groups\f1
+displays the groups to which you belong; else it displays the groups
+to which the
+\f4user\f1
+belongs.
+Each user belongs to a group specified in the password file
+\f4/etc/passwd\f1
+and possibly to other groups as specified in the file
+\f4/etc/group\f1.
+If you do not own a file but belong to the group which it is owned
+by then you are granted group access to the file.
+.SH FILES
+.PD 0
+.TP 20
+\f4/etc/passwd\f1
+.TP
+\f4/etc/group\f1
+.PD
+.SH "SEE ALSO"
+\f4getgroups\fP(2)
+in the \f2Programmer's Reference Manual\f1
+.SH NOTES
+This command is obsolescent.
+.\".P
+.\"The groups facility will be changed slightly before 4.2bsd to include
+.\"the notion of accounting groups; this will make an option to this
+.\"command to print the current accounting group desirable.

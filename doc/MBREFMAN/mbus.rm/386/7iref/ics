@@ -1,0 +1,104 @@
+'\"macro stdmacro
+.if n .pH g1a.ics @(#)ics	40.10 of 5/20/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} ics 7iref "System Administration Utilities" "" "\&"
+.if \nX=1 .ds x} ics 7iref "System Administration Utilities" ""
+.if \nX=2 .ds x} ics 7iref "" "\&"
+.if \nX=3 .ds x} ics "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4ics\f1 \-  Interconnect Space device driver
+.SH DESCRIPTION
+The \f4ics\f1 driver handles the interface between Multibus II device
+drivers or applications and Multibus II Interconnect Space as implemented
+by the MPC  component.
+.PP
+To configure the \f4ics\f1 driver, modify the following variables in the
+\f4/etc/conf/pack.d/ics/space.c\f1 file:
+.PP
+.TP 20
+\f2ics_hi_addr\f1
+The I/O port address  for selecting the high-order eight bits of the
+interconnect address.
+.TP
+\f2ics_low_addr\f1
+The I/O port address for selecting the low-order eight bits of the
+interconnect address.
+.TP
+\f2ics_data_addr\f1
+The I/O port address for data to be read or written to the interconnect
+register.
+.TP
+\f2ics_cpu_cfglist\f1
+A list of all board types on which UNIX may be running in the system.
+This list must be terminated with a NULL pointer.
+.TP
+\f2ics_bdev\f1
+A table listing root, swap, pipe, and dump devices for each possible UNIX
+processor in the system.
+.TP
+\f2ics_max_numcpu\f1
+The maximum number of UNIX processor boards permitted in a system.
+This must correspond to the number of entries in the \f4ics_bdev\f1 table.
+.PP
+Following is a list of the supported \f4ioctl\f1() calls provided by the
+\f4ics\f1 driver:
+.PP
+.TP 20
+\f4Read Interconnect Space\f1(\f4ICS_READ_ICS\f1)
+This command reads Interconnect Space.  It takes a pointer to a
+\f4struct ics_rdwr_args\f1 and does the Interconnect Space read operation
+encoded therein.
+.TP
+\f4Write Interconnect Space\f1(\f4ICS_WRITE_ICS\f1)
+This command writes Interconnect Space.  It takes a pointer to a
+\f4struct ics_rdwr_args\f1 and does the Interconnect Space write operation
+encoded therein.
+.TP
+\f4Find Interconnect Space Record\f1(\f4ICS_FIND_REC\f1)
+This command finds a specific Interconnect Space record.  It takes a
+pointer to a \f4struct ics_frec_args\f1 and does the Interconnect Space
+find record operation encoded therein.
+.TP
+\f4Get Current Slot ID\f1(\f4ICS_MY_SLOTID\f1)
+This command returns the slot ID of the current slot.  It takes a pointer
+to an \f4unsigned char\f1 which is set to the Interconnect Space slot id
+of the caller.
+.TP
+\f4Get Current CPU Number\f1(\f4ICS_MY_CPUNUM\f1)
+This command returns the CPU number of  the current UNIX processor.  It
+takes a pointer to an \f4unsigned char\f1 which is set to the Interconnect
+Space CPU number of the caller.  The CPU number is an identifier for this
+particular processor. 
+.TP
+\f4Get Current CPU Number\f1(\f4ICS_MY_CPUNUM\f1)
+This command returns the CPU number of  the current UNIX processor.
+It takes a pointer to an \f4unsigned char\f1 which is set to the
+Interconnect Space CPU number of the caller.  The CPU number is an
+identifier for this particular processor. 
+.PP
+The following is a list of error conditions that may be returned:
+.PP
+.TP 10
+\f4EFAULT\f1
+A memory address used in an ioctl was not a valid data address.
+.TP
+\f4EINVAL\f1
+An Interconnect space address used in an \f4ioctl\f1 was not valid, or an
+invalid \f4ioctl\f1 request was attempted.
+.SH FILES
+.nf
+\f4/usr/include/sys/ics.h          \f1definitions for data structures
+\f4/etc/conf/pack.d/ics/space.c    \f1configuration information
+\f4/etc/conf/pack.d/ics/Driver.o   \f1driver object module
+.fi
+.SH SEE ALSO
+\f2Multibus II Interconnect Interface Specification\f1.
+.br
+\f2Device Driver Interface/Driver-Kernel Interface (DDI/DKI)
+Reference Manual\f1.
+.SH NOTES
+Specifying \f2ics_hi_addr:ics_low_addr\f1 gives the address of the
+interconnect register.

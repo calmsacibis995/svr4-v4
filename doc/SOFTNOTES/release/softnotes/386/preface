@@ -1,0 +1,25 @@
+.if n .pH rn4.preface @(#)preface	40.6
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.BK "Software Notes"
+.CH "Preface "
+.H 1 "Software Notes"
+This document contains important performance, bug and workaround 
+information on UNIX System V/386 Release 4 Version 4.
+The document reflects input and modification requests (MR's) 
+received at the time of release from both USL developers 
+and USL customers.
+The following notes are organized into nine chapters 
+reflecting eight generalized sections of our product plus
+one section on using applications with our product.
+.P
+The special section on applications, called Application Notes,
+describes standard procedures for making sure UNIX System V applications
+run correctly and efficiently.
+Additional information on feature enhancements, performance
+and programming environment changes are provided in the other eight
+chapters.
+.P
+Customers needing more in-depth reference information must consult the
+Master Index and the appropriate reference manuals and user's
+guides in the UNIX System V/386 Release 4 documentation set.

@@ -1,0 +1,68 @@
+'\"macro stdmacro
+.if n .pH g1a.uucheck @(#)uucheck	40.6.1.2 of 1/3/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} uucheck 1M "Basic Networking Utilities" "\&"
+.if \nX=1 .ds x} uucheck 1M "Basic Networking Utilities"
+.if \nX=2 .ds x} uucheck 1M "" "\&"
+.if \nX=3 .ds x} uucheck "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4uucheck\f1 \- check the uucp directories and permissions file
+.SH SYNOPSIS
+\f4/usr/lib/uucp/uucheck\f1 [options]
+.SH DESCRIPTION
+\f4uucheck\fP
+checks for the presence of the \f4uucp\fP system required files and
+directories.
+\f4uucheck\fP also does error checking of the
+\f2Permissions\f1 file (\f4/etc/uucp/Permissions\f1).
+\f4uucheck\fP has the following options:
+.TP 10
+\f4\-v\^\f1
+Give a detailed (verbose) explanation of how the uucp programs will interpret
+the \f2Permissions\f1 file.
+.TP
+\f4\-x\f2debug_level\^\f1
+\f2debug_level\f1 is a number from 0 to 9.  Higher numbers give more detailed
+debugging information.
+.ig
+\" Commenting out stuff that applies only to source licensees:
+\" Note, however,
+\"that compiling
+\".I uucp
+\"with the
+\".B \-DSMALL
+\"option will result in little debugging output.
+..
+.PP
+\f4uucheck\fP is executed during package installation.
+Note that
+\f4uucheck\fP
+can only be used by the super-user or
+\f4uucp\fP.
+.SH FILES
+.nf
+.ft 4
+/etc/uucp/Systems
+/etc/uucp/Permissions
+/etc/uucp/Devices
+/etc/uucp/Limits
+/var/spool/uucp/*
+/var/spool/locks/*
+/var/spool/uucppublic/*
+.fi
+.ft
+.SH "SEE ALSO"
+\f4uucico\fP(1M),
+\f4uusched\fP(1M).
+.br
+\f4uucp\fP(1C),
+\f4uustat\fP(1C),
+\f4uux\fP(1C) in the
+\f2User's Reference Manual\f1.
+.SH BUGS
+The program does not check file/directory modes or some errors
+in the \f2Permissions\f1 file such as duplicate login or machine name.
+.Ee

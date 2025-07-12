@@ -1,0 +1,62 @@
+'\"macro stdmacro
+.if n .pH g1a.fsba @(#)fsba	40.4 of 1/3/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+'\"macro stdmacro
+.if n .pH g1a.fsba @(#)fsba	40.5 of 9/19/89
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.if \nX=0 .ds x} fsba 1M "" "\&"
+.if \nX=1 .ds x} fsba 1M ""
+.if \nX=2 .ds x} fsba 1M "" "\&"
+.if \nX=3 .ds x} fsba "" "" "\&"
+.nr X
+.TH \*(x} "" "386 Computer Only"
+.SH NAME
+\f4fsba\f1 \- file system block analyzer
+.SH SYNOPSIS
+\f4/usr/sbin/fsba\f1
+[ \f4\-b\fP \f2target_block_size\f1 ] \f2file-system1\f1 [ \f2file-system2\f1 ... ]
+.SH DESCRIPTION
+The
+\f4fsba\fP
+command determines the disk space
+required to store the data from an existing file system
+in a new file system with the specified logical block size.
+Each
+.I file-system
+listed on the command line refers to an existing file system and
+should be specified by device name (e.g.,
+\f4/dev/rdsk/c1d0s2\f1).
+.PP
+The
+.I "target_block_size"
+specifies the logical block size in bytes of the new file system.
+Valid target block sizes are 512, 1024, and 2048.
+Default target block size is 1024.
+A block size of 2048 is supported only if the 2K file system
+package is installed.
+.PP
+The
+\f4fsba\fP
+command prints information about how many 512-byte
+disk sectors are allocated to store the data
+in the old (existing) file system and how many would be required
+to store the same data in a new file system with the specified logical block size.
+It also prints the number of allocated
+and free i-nodes for the existing file system.
+.PP
+If the number of free sectors listed for the new file system is
+negative, the data will not fit in the new file system unless the new file
+system is larger than the existing file system.
+The new file system must be made at least as large as the number of sectors
+listed by \f4fsba\f1 as allocated for the new file system.
+The maximum size of the new file system is limited by the size of the disk
+partition used for the new file system.
+.PP
+Note that it is possible to specify a
+.I "target_block_size"
+that is smaller than the logical block size of the existing file system.
+In this case the new file system would require fewer sectors to store
+the data.
+.SH SEE ALSO
+\f4mkfs\fP(1M).

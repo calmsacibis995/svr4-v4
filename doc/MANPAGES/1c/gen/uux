@@ -1,0 +1,239 @@
+'\"macro stdmacro
+.if n .pH g1c.uux @(#)uux	40.8.1.1 of 1/3/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} uux 1C "Basic Networking Utilities" "\&"
+.if \nX=1 .ds x} uux 1C "Basic Networking Utilities"
+.if \nX=2 .ds x} uux 1C "" "\&"
+.if \nX=3 .ds x} uux "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4uux\f1 \- \s-1UNIX\s+1-to-\s-1UNIX\s+1 system command execution
+.SH SYNOPSIS
+\f4uux\f1
+[
+\f2options\f1
+]
+\f4command-string\fP
+.SH DESCRIPTION
+\f4uux\fP
+will gather zero or more files from various systems,
+execute a command on a specified system
+and then send standard output to a file on a specified
+system.
+.P
+NOTE:  For security reasons, most installations
+limit the list of
+commands executable on behalf of an incoming request from
+\f4uux\fP,
+permitting only
+the receipt of mail (see
+\f4mail\fP(1)).
+(Remote execution permissions are defined
+in
+\f4/etc/uucp/Permissions\f1.)
+.PP
+The \f2command-string\fP is made up of one or more arguments that look
+like a shell command line,
+except that the command and file names
+may be prefixed by
+\f2system-name\f4!\f1.\fP\f1
+A null \f2system-name\fP is interpreted as the local system.
+.PP
+File names may be one of:
+.RS
+.TP 5
+(1)
+a full pathname;
+.TP 5
+(2)
+a pathname preceded by
+\f(CW~\f2xxx\f1,
+where
+.I xxx\^
+is a login name on the specified system
+and is replaced by that user's login directory;
+.br
+.TP 5
+(3)
+anything else is prefixed by the current directory.
+.RE
+.PP
+As an example, the command
+.IP
+\f(CWuux "\^!diff sys1!/home/dan/file1 sys2!/a4/dan/file2 > !~/dan/file.diff\^"\f1
+.PP
+will get the \f2file1\fP and \f2file2\fP files
+from the ``sys1'' and ``sys2'' machines,
+execute a
+\f4diff\fP(1)
+command
+and put the results in \f2file.diff\fP in the 
+local
+\f2PUBDIR\f1/dan/ directory.  \f2PUBDIR\f1 is a public directory defined in
+the \f4uucp\fP source.  By default, this directory is
+\f4/var/spool/uucppublic\f1
+.PP
+Any special shell characters such as \f(CW<, >, ;, |\f1 should be quoted either
+by quoting the entire \f2command-string\fP, or quoting the special
+characters as individual arguments.
+.PP
+\f4uux\fP
+will attempt to get all appropriate files to the specified system where
+they will be processed.
+For files that are output files, the file name must be escaped using
+parentheses.
+For example, the command:
+.IP
+\f(CWuux "a!cut -f1 b!/usr/file > c!/usr/file"\f1
+.PP
+gets "/usr/file" from system "b" and sends it to system "a",
+performs a \f4cut\fP command on that file
+and sends the result of the 
+\f4cut\fP
+command to system "c".
+.PP
+\f4uux\fP
+will notify you if the requested command on the remote
+system was disallowed.
+This notification can be turned off by the \f4\-n\fP option.
+The response comes by remote mail from the remote machine.
+.PP
+The following \f2options\fP are interpreted by
+\f4uux\fP:
+.TP 10
+\f4\-\f1
+The standard input to
+\f4uux\fP
+is made the standard input to the
+.IR command-string .
+.TP 10
+\f4\-a\f2name\f1
+Use
+.I name
+as the user job identification replacing the initiator user-id.
+(Notification will be returned to user-id \f2name\f1.)
+.TP 10
+\f4\-b\f1
+Return whatever standard input was provided to the \f4uux\fP command if the exit status is non-zero.
+.TP 10
+\f4\-c\f1
+Do not copy local file to the spool directory for transfer to the remote
+machine (default).
+.TP 10
+\f4\-C\f1
+Force the copy of local files to the spool directory for transfer.
+.TP
+\f4\-g\f2grade\f1
+\f2grade\f1 can be either a single letter, number, or a string of alphanumeric
+characters defining a service grade.
+The \f2uuglist\f1(1C) command determines whether it is appropriate to
+use the single letter, number, or a string of alphanumeric characters
+as a service grade.
+The output from the \f2uuglist\f1 command will be a list of service grades that
+are available or a message that says to use a single letter or number as a 
+grade of service.
+.TP 10
+\f4\-j\f1
+Output the jobid string on the standard output which is
+the job identification.  This job identification can be used by
+\f4uustat\fP(1C)
+to obtain the status 
+or terminate a job.
+.TP 10
+\f4\-n\f1
+Do not notify the user if the command fails.
+.TP 10
+\f4\-p\f1
+Same as \-:
+The standard input to
+\f4uux\fP
+is made the standard input to the
+.IR command-string .
+.TP 10
+\f4\-r\f1
+Do not start the file transfer, just queue the job.
+.TP
+\f4\-s\f2file\f1
+Report status of the transfer in \f2file\f1.
+.TP
+\f4\-x\f2debug_level\f1
+Produce debugging output on the standard output.
+\f2debug_level\f1 is a number between 0 and 9; as it increases to 9, more
+detailed debugging information is given.
+.TP 10
+\f4\-z\f1
+Send success notification to the user.
+.SH FILES
+.nf
+/var/spool/uucp             spool directories
+/etc/uucp/Permissions     remote execution permissions
+/usr/lib/uucp/\(**             other programs
+/etc/uucp/\(**                   other data and programs
+.fi
+.SH NOTES
+Only the first command of a shell pipeline may
+have a
+\f2system-name\f4!\f1.\f1
+All other commands are executed on the system of the first
+command.
+.br
+The use of the shell metacharacter
+\f4\(**\f1
+will probably not do what you want it to do.
+The shell tokens
+\f4<<\f1
+and
+\f4>>\f1
+are not implemented.
+.PP
+The execution of commands on remote systems takes place in an
+execution directory known to the
+\f4uucp\fP
+system.
+All files required for the execution will be put into this
+directory unless they already reside on that machine.
+Therefore, the\p
+.br
+.ne 1i
+simple file name (without path or machine
+reference) must be unique within the
+\f4uux\fP
+request.
+The following command will NOT work:
+.PP
+.RS
+.nf
+uux "a!diff b!/home/dan/xyz c!/home/dan/xyz > !xyz.diff"
+.fi
+.RE
+.br
+.ne 6
+.PP
+but the command
+.PP
+.RS
+.nf
+uux "a!diff a!/home/dan/xyz c!/home/dan/xyz > !xyz.diff"
+.fi
+.RE
+.PP
+will work.
+(If
+\f4diff\fP
+is a permitted command.)
+.PP
+Protected files and files that are in protected directories that are owned
+by the requester can be sent in commands using
+\f4uux\fP.
+However, if the requester is root, and the directory is not searchable
+by "other", the request will fail.
+.SH SEE ALSO
+\f4cut\fP(1),
+\f4mail\fP(1),
+\f4uuglist\fP(1C),
+\f4uucp\fP(1C),
+\f4uustat\fP(1C).
+.\"	@(#)
+.Ee

@@ -1,0 +1,194 @@
+.if n .pH g1a.urestore @(#)urestore @(#)urestore	40.12.1.1 of 1/3/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} urestore 1M "System Administration Utilities" "\&"
+.if \nX=1 .ds x} urestore 1M "System Administration Utilities"
+.if \nX=2 .ds x} urestore 1M "" "\&"
+.if \nX=3 .ds x} urestore "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4urestore\f1 \- request restore of files and directories
+.SH SYNOPSIS
+.P
+\f4urestore\f1 [\f4\-mn\f1] [\f4\-s|v\f1]
+[\f4\-o \f2target\f1]
+[\f4\-d \f2date\f1]
+\f4\-F \f2file ...
+.P
+\f4urestore\f1 [\f4\-mn\f1] [\f4\-s|v\f1]
+[\f4\-o \f2target\f1] [\f4\-d \f2date\f1]
+\f4\-D \f2dir ...
+.P
+\f4urestore \-c \f2jobid\f1
+.SH DESCRIPTION
+\f4urestore\fP
+posts requests for 
+files or directories to be restored
+from system-maintained archives.
+If the appropriate archive containing the
+requested files or directories is on-line,
+the files or directories are restored immediately.
+If not, a request to restore the specified files
+or directories is posted to a restore status table,
+\f4/etc/bkup/rsstatus.tab\fP.
+A restore request that has been posted must later be
+resolved by an operator (see
+\f4rsoper\f1(1M)).
+Each file or directory to be restored
+is assigned a \f4restore\fP job \s-1ID\s+1
+that can be used to monitor the progress of the restore
+(see \f4ursstatus\f1(1M))
+or to cancel it.
+.P
+The user must
+have write permission for the current directory and
+any subdirectories to be traversed in storing the restored files or directories.
+Requests for restores may be made only by the
+user who owned the files or directories
+at the time the archive containing the files or directories was made,
+or by a user with superuser privileges.
+.SS Options
+.TP 10
+\f4-c \f2jobid\f1
+Cancels a previously issued restore request.
+.TP 10
+\f4\-d \f2date\f1
+Restores the filesystem or directory as of
+.IR date .
+(This may or may not be the latest archive.)
+See
+\f4getdate\fP(3C)
+for valid date formats.
+.TP 10
+\f4\-m\f1
+If the restore cannot be carried out immediately,
+this option notifies the invoking user 
+(via \f4mail\fP)
+when the request has been completed.
+.TP 10
+\f4\-n\f1
+Displays a list of all archived versions of the filesystem
+or directory contained in the backup history log
+but does not attempt to restore the filesystem or directory.
+.TP 10
+\f4\-o \f2target\f1
+Instead of restoring 
+directly to the specified file or directory,
+this option replaces the file or directory
+.I target
+with the archive of the specified file or directory.
+.TP 10
+\f4\-s\f1
+While a restore operation is occurring,
+displays a ``.'' for each 100 (512-byte) blocks 
+transferred from the destination device.
+.TP 10
+\f4\-v\f1
+Displays the name of each object as it is restored.
+Only those archiving methods that restore named directories
+and files (\f4incfile, ffile\fP)
+support this option.
+.TP 10
+\f4\-D\f1
+Initiates a restore operation for directories.
+.TP 10
+\f4\-F\f1
+Initiates a restore operation for files.
+.SH DIAGNOSTICS 
+The exit codes for \f4urestore\fP are the following:
+.PP
+\f40\fP = the task completed successfully
+.br
+\f41\fP = one or more parameters to \f4urestore\fP are invalid
+.br
+\f42\fP = an error has occurred, causing \f4urestore\fP to fail to
+      complete \f2all\f1 portions of its task.
+.SH EXAMPLES
+.P
+Example 1:
+.P
+.in 1.0i
+\f4urestore \-m \-F bigfile\fP
+.in 0
+.P
+posts a request to restore the most
+current archived version of the file \f4bigfile\f1.
+If the restore operation cannot
+be carried out immediately, it notifies the invoking user
+when the request has been completed.
+.P
+Example 2:
+.P
+.in 1.0i
+\f4urestore \-c rest-256a,rest-256b\fP
+.in 0
+.P
+cancels restore requests with job \s-1ID\s+1
+numbers \f4rest-256a\f1 and \f4rest-256b\f1.
+.P
+Example 3:
+.P
+.in 1.0i
+\f4urestore \-o /testfiles/myfile.b \-F /testfiles/myfile.a\fP
+.in 0
+.P
+posts a request for the archived file
+\f4/testfiles/myfile.a\fP to
+be restored as
+\f4/testfiles/myfile.b\fP
+.P
+Example 4:
+.P
+.in 1.0i
+\f4urestore \-d "december 1, 1987" \-D /user1 -v\fP
+.in 0
+.P
+posts a request for the archived directory structure
+\f4/user1\f1, with all its files and subdirectories,
+to be restored as of December 1, 1987.
+If the restore is done immediately from an on-line archive,
+the name of each file will be displayed on standard output
+while the restore is underway.
+.P
+Example 5:
+.P
+.in 1.0i
+\f4urestore \-n \-D /pr3/reports\fP
+.in 0
+.P
+requests the system to display
+the backup dates and an \f4ls -l\f1 listing
+from the backup history log
+of all archived versions of the directory 
+\f4/pr3/reports\f1.
+The directory is not restored.
+.SH FILES
+.TS
+l c lw(2.5i).
+\f4/etc/bkup/bkhist.tab\fP	\-	T{
+.na
+contains the labels of
+all volumes that have been used for
+backup operations
+T}
+\f4/etc/bkup/rsstatus.tab\fP	\-	T{
+.na
+contains status information about 
+all restore requests from users
+T}
+\f4/etc/bkup/rsnotify.tab\fP	\-	T{
+.na
+contains the electronic mail address 
+of the operator to be notified
+whenever restore requests require operator intervention
+T}
+.TE
+.SH SEE ALSO
+\f4restore\fP(1M), \f4ursstatus\fP(1M).
+.br
+\f4mail\fP(1) 
+in the \f2User's Reference Manual\fP.
+.br
+\f4getdate\fP(3C)
+in the \f2Programmer's Reference Manual\fP.

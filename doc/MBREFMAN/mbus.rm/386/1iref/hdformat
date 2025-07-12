@@ -1,0 +1,48 @@
+'\"macro stdmacro
+.if n .pH g1a.hdformat @(#)hdformat	40.7 of 5/17/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} hdformat 1iref "System Administration Utilities" "" "\&"
+.if \nX=1 .ds x} hdformat 1iref "System Administration Utilities" ""
+.if \nX=2 .ds x} hdformat 1iref "" "\&"
+.if \nX=3 .ds x} hdformat "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4hdformat\f1 \- low level hard disk formatter.
+.SH SYNOPSIS
+\f4hdformat\f1 [\f4\-c \f2cylinders\f1] [\f4\-d \f2bytes/sector\f1]
+.br
+[\f4\-f \f2heads\f1] [\f4\-s sectors/track\f1] [\f4\-i \f2interleave\f1] \f2character-device\f1
+.SH DESCRIPTION
+The \f4hdformat\f1 command is a low level disk format program.  It formats
+the drive specified by \f2character-device\f1 with instructions to the disk
+driver to map the manufacturer's defect list.  \f4hdformat\f1 formats
+slice zero of the drive and should be used after a valid manufacturer's
+defect list has been installed on the drive  (see \f4mdl\f1(1iref)).
+.PP
+This operation destroys the contents of the specified disk.
+.PP
+Specify character-device as a device file from the \f4/dev\f1 directory.
+.PP
+Command line options are:
+.PP
+.TP
+\f4\-c\f1
+The number of cylinders the drive contains 
+.TP
+\f4\-d\f1
+The bytes per sector or density of the drive 
+.TP
+\f4\-f\f1
+The number of fixed heads the drive contains 
+.TP
+\f4\-s\f1
+Sectors per track of the drive 
+.TP
+\f4\-i\f1
+The interleave of the drive 
+.SH FILES
+\f4/sbin/hdformat\f1
+.SH SEE ALSO
+\f4mdl(1iref)\f1.

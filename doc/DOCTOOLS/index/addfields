@@ -1,0 +1,33 @@
+#ident	"@(#)doctools:index/addfields	1.1"
+#  Add chapter and book fields to index lines.  Input file format:
+#	.\ACRONYM acronym	#  acronym for book title (master index only)
+#	.\CHAPTER n		#  number of this chapter
+#	.Index: index term (tab) page
+#
+#  For non-numeric chapter numbers, make up a phony number for sort.
+#  Assume non-numeric chapters are appendices that sort after numeric chapters.
+#
+nawk '
+BEGIN	{ FS = "\t";  letters = "AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz"; }
+
+$1 == "\.\\ACRONYM"	{
+		gsub (/^[ ]+/, "", $2)
+		gsub (/[ ]+$/, "", $2)
+		book = $2;
+		chap = "";
+		next
+		}
+
+$1 == "\.\\CHAPTER"	{
+		if ($2 + 0)	# chap is numeric
+			chap = $2;
+		else		# non-numeric - make up a number
+			chap = sprintf("%d %s",9000 + index(letters,$2),$2);
+		next
+		}
+
+$1 ~ /^\.Index/	{
+		sub (/^\.Index: /, "", $1);
+		printf ("%s	%s	%s	%s\n", $1, $2, chap, book);
+		}
+' $*

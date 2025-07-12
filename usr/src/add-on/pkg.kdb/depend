@@ -1,0 +1,3 @@
+#ident	"@(#)pkg.kdb:depend	1.3"
+
+P kdb-util	Kernel Debugger Support Utilities

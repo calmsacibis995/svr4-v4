@@ -1,0 +1,309 @@
+'\"macro stdmacro
+.if n .pH g1a.nlsadmin @(#)nlsadmin	40.7.1.1 of 1/3/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} nlsadmin 1M "Networking Support Utilities" "\&"
+.if \nX=1 .ds x} nlsadmin 1M "Networking Support Utilities"
+.if \nX=2 .ds x} nlsadmin 1M "" "\&"
+.if \nX=3 .ds x} nlsadmin 1M "" "\&"
+.TH \*(x}
+.SH NAME
+\f4nlsadmin\f1 \- network listener service administration
+.SH SYNOPSIS
+.nf
+.na
+\f4/usr/sbin/nlsadmin\f1 \f4\-x\f1
+\f4/usr/sbin/nlsadmin\f1 [ \f2options\fP ] \f2net_spec\fP
+\f4/usr/sbin/nlsadmin\f1 [ \f2options\fP ] \f4\-N\fP \f2port_monitor_tag\fP
+\f4/usr/sbin/nlsadmin\f1 \f4\-V\fP
+\f4/usr/sbin/nlsadmin\f1 \f4\-c\fP \f2cmd\f1 | \f4\-o\fP \f2streamname\f1 [ \f4\-p\f1 \f2modules\f1 ] \e
+\0\0\0[ \f4\-A\f1 \f2address\f1 | \f4\-D\fP ] [ \f4\-R\f1 \f2prognum\fP\f4:\f2versnum\fP ]
+.ad
+.fi
+.SH DESCRIPTION
+\f4nlsadmin\f1 is the administrative command
+for the network listener process(es) on a
+machine.
+Each network has at least one instance of the network listener process
+associated with it; each instance (and thus, each network) is configured
+separately.
+The listener process ``listens'' to the network for service requests,
+accepts requests when they arrive, and invokes servers in response to
+those service requests.
+The network listener process may be used with any network (more precisely,
+with any connection-oriented transport provider) that conforms to the
+transport provider specification.
+.PP
+\f4nlsadmin\f1 can establish a listener process for a given network,
+configure the specific attributes of that listener, and start and kill
+the listener process for that network.
+\f4nlsadmin\f1 can also report on the listener processes on a
+machine, either individually (per network) or collectively.
+.PP
+The list below shows how to use \f4nlsadmin\f1.
+In this list, \f2net_spec\f1 represents a particular listener
+process.
+Specifically, \f2net_spec\f1 is the relative path name of the entry
+under \f4/dev\f1 for a given network (that is, a transport provider).
+\f2address\f1 is a transport address on which to listen and is
+interpreted using a syntax that allows for a variety of address formats.
+By default, \f2address\f1 is interpreted as the symbolic ASCII
+representation of the transport address.
+An \f2address\f1 preceded by a \f4\ex\f1 will let you enter an address
+in hexadecimal notation.
+Note that \f2address\f1 must appear as a single word to the shell
+and thus must be quoted if it contains any blanks.
+.PP
+Changes to the list of services provided by the listener or the
+addresses of those services are put into effect immediately.
+.PP
+\f4nlsadmin\fP may be used with
+the following combinations of options and arguments:
+.TP .85i
+\f4nlsadmin\f1
+gives a brief usage message.
+.TP
+\f4nlsadmin\f1 \f4\-x\f1
+reports the status of all of the listener processes installed on this
+machine.
+.TP
+\f4nlsadmin\f1 \f2net_spec\f1
+prints the status of the listener process for \f2net_spec\f1.
+.TP
+\f4nlsadmin\f1 \f4\-q\f1 \f2net_spec\f1
+queries the status of the listener process for the specified
+network, and reflects the result of that query in its exit code.
+If a listener process is active, \f4nlsadmin\fP will exit with a status
+of 0; if no process is active, the exit code will be 1;
+the exit code will be greater than 1 in case of error.
+.TP
+\f4nlsadmin\f1 \f4\-v\f1 \f2net_spec\f1
+prints a verbose report on the servers associated with
+\f2net_spec\f1, giving the service code, status, command, and comment
+for each.
+It also specifies the \f4uid\f1 the server will run as and the list of
+modules to be pushed, if any, before the server is started.
+.TP
+\f4nlsadmin\f1 \f4\-z\f1 \f2service_code \f2net_spec\f1
+prints a report on the server associated with \f2net_spec\f1 that
+has service code \f2service_code\f1, giving the same information as in the
+\f4\-v\f1 option.
+.TP
+\f4nlsadmin\f1 \f4\-q\f1 \f4\-z\f1 \f2service_code \f2net_spec\f1
+queries the status of the service with service code \f2service_code\f1 on
+network \f2net_spec\f1, and exits with a status of 0 if that
+service is enabled, 1 if that service is disabled, and greater
+than 1 in case of error.
+.TP
+\f4nlsadmin \-l \f2address net_spec\f1
+changes or set the transport address on which the listener listens
+(the general listener service).
+This address can be used by remote processes to access the servers
+available through this listener (see the \f4\-a\f1 option, below).
+.IP
+If \f2address\f1 is just a dash ("\f4\-\f1"), \f4nlsadmin\fP will report
+the address currently configured, instead of changing it.
+.IP
+A change of address takes effect immediately.
+.TP
+\f4nlsadmin \-t \f2address net_spec\f1
+changes or sets the address on which the listener listens for
+requests for terminal service but is otherwise similar to the \f4\-l\f1
+option above.
+A terminal service address should not be defined unless the appropriate
+remote login software is available; if such software is available, it
+must be configured as service code 1 (see the \f4\-a\f1 option,
+below).
+.TP
+\f4nlsadmin \-i \f2net_spec\f1
+initializes an instance of the listener for the network specified by
+\f2net_spec\f1; that is, creates and initializes the files
+required by the listener as well as starting that instance of the listener.
+Note that a particular instance of the listener should be
+initialized only once.
+The listener must be initialized before assigning addresses or services.
+.TP
+\f4nlsadmin\f1 \f4\-a \f2service_code\f1 [\f4\-p \f2modules\f1] [\f4\-w\f2 name\f1] \f4\-c\f2 cmd \f4\-y\f2 comment net_spec\f1
+.br
+adds a new service to the list of services available through the
+indicated listener.
+\f2service_code\f1 is the code for the service, \f2cmd\f1 is
+the command to be invoked in response to that service code, comprised of
+the full path name of the server and its arguments, and \f2comment\f1 is
+a brief (free-form) description of the service for use in various
+reports.
+Note that \f2cmd\f1 must appear as a single word to the shell;
+if arguments are required the \f2cmd\f1 and its arguments must be
+enclosed in quotation marks.
+The \f2comment\f1 must also\p
+.bp
+appear as a single word to the
+shell.
+When a service is added, it is initially enabled (see the \f4\-e\f1 and
+\f4\-d\f1 options, below).
+.IP
+Service codes are alphanumeric strings, and are administered by AT&T.
+The numeric service codes 0 through 100 are reserved for internal use
+by the listener.
+Service code 0 is assigned to the nlps server,
+which is the service invoked on the general listening address.
+In particular, code 1 is assigned to the remote login service,
+which is the service automatically invoked for connections to the
+terminal login address.
+.IP
+If the \f4\-p\f1 option is specified, then \f2modules\f1 will be
+interpreted as a list of \s-1STREAMS\s0 modules for the listener to push
+before starting the service being added.
+The modules are pushed in the order they are specified.
+\f2modules\f1 should be a comma-separated list of modules, with no white
+space included.
+.IP
+If the \f4\-w\f1 option is specified, then \f2name\f1 is interpreted as
+the user name from \f4/etc/passwd\f1 that the listener should look up.
+From the user name, the listener obtains the user ID, the group ID(s),
+and the home directory for use by the server.
+If \f4\-w\f1 is not specified, the default is to use the user name
+\f4listen\f1.
+.IP
+A service must explicitly be added to the listener for each network on
+which that service is to be available.
+This operation will normally be performed only when the service is
+installed on a machine, or when populating the list of services for a
+new network.
+.TP
+\f4nlsadmin\f1 \f4\-r\f1 \f2service_code \f2net_spec\f1
+removes the entry for the \f2service_code\f1 from that listener's
+list of services.
+This is normally done only in conjunction with the
+deinstallation of a service from a machine.
+.br
+.ne5
+.TP
+\f4nlsadmin\f1 \f4\-e\f1 \f2service_code \f2net_spec\f1
+.PD 0
+.TP
+\f4nlsadmin\f1 \f4\-d\f1 \f2service_code \f2net_spec\f1
+.PD
+enables or disables (respectively) the service indicated by
+\f2service_code\f1 for the specified network.
+The service must previously have been added to the listener for that
+network (see the \f4\-a\f1 option, above).
+Disabling a service will cause subsequent service requests for that
+service to be denied, but the processes from any prior service requests
+that are still running will continue unaffected.
+.TP
+\f4nlsadmin\f1 \f4\-s\f1 \f2net_spec\f1
+.PD 0
+.TP
+\f4nlsadmin\f1 \f4\-k\f1 \f2net_spec\f1
+.PD
+starts and kills (respectively) the listener process for the
+indicated network.
+These operations will normally be performed as part of the system
+startup and shutdown procedures.
+Before a listener can be started for a particular network, it must first
+have been initialized (see the \f4\-i\f1 option, above).
+When a listener is killed, processes that are still running as a result
+of prior service requests will continue unaffected.
+.PP
+Under the Service Access Facility, it is possible to have multiple 
+instances of the listener on a single \f2net_spec\fP.
+In any of the above commands, the option \f4\-N \f2port_monitor_tag\f1
+may be used in place of the \f2net_spec\fP argument.
+This argument specifies the tag by which 
+an instance of the listener is identified
+by the Service Access Facility.
+If the \f4\-N\fP option is not specified (i.e., the \f2net_spec\fP is
+specified in the invocation), then it will be assumed that the last
+component of the \f2net_spec\fP represents the tag of the listener for
+which the operation is destined.
+In other words, it is assumed that there is at least one listener on
+a designated \f2net_spec\fP, and that its tag is identical to the last
+component of the \f2net_spec\fP.
+This listener may be thought of as the primary, or default, listener for
+a particular \f2net_spec\fP.
+.PP
+\f4nlsadmin\f1 is also used in conjunction with the Service Access
+Facility commands.
+In that capacity, the following combinations of options can be used:
+.TP
+\f4nlsadmin\f1 \f4\-V\f1
+writes the current version number of the listener's administrative
+file to the standard
+output.
+It is used as part of the \f4sacadm\fP command line when \f4sacadm\fP add a 
+port monitor to the system.
+.PP
+\f4nlsadmin\f1 \f4\-c \f2cmd\f1 | \f4\-o\f1 \f2streamname\f1 [\f4\-p\f1 \f2modules\f1] [\f4\-A\f1 \f2address\f1 | \f4\-D\f1 ] \e
+.br
+\0\0\0[ \f4\-R\f1 \f2prognum\f4:\f2versnum\f1 ]
+.PD 0
+.IP
+formats the port monitor-specific information to be used as an
+argument to \f4pmadm\fP(1M).
+.PD
+.IP
+The \f4\-c\f1 option specifies the full path name of the server
+and its arguments.
+\f2cmd\f1 must appear as a single word to the shell,
+and its arguments must therefor be
+surrounded by quotes.
+.IP
+The \f4\-o\f1 option specifies the full path name of a FIFO or
+named \s-1STREAM\s0 through which a standing server is actually
+receiving the connection.
+.IP
+If the \f4\-p\f1 option is specified, then \f2modules\f1 will be
+interpreted as a list of \s-1STREAMS\s0 modules for the listener to push
+before starting the service being added.
+The modules are pushed in the order in which they are specified.
+\f2modules\f1 must be a comma-separated list, with no white
+space included.
+.IP
+If the \f4\-A\f1 option is specified, then \f2address\f1 will be
+interpreted as the server's private address.
+The listener will monitor this address on behalf of the service and will
+dispatch all calls arriving on this address directly to the designated
+service.
+This option may not be used in conjunction with the \f4\-D\fP option.
+.IP
+If the \f4\-D\fP option is specified, then the service is assigned a
+private address dynamically, that is,
+the listener will have the transport provider select the
+address each time the listener begins listening on behalf of this
+service.
+For RPC services, this option will be often be used
+in conjunction with the \f4\-R\fP option to register the
+dynamically assigned address with the rpcbinder.
+This option may not be used in conjunction with the \f4\-A\fP option.
+.IP
+When the \f4\-R\fP option is specified, the service is an RPC service
+whose address, program number, and version number should be registered
+with the rpcbinder for this transport provider.
+This registration is performed each time the listener begins listening
+on behalf of ththe service.
+\f2prognum\fP and \f2versnum\fP are the program number and version
+number, respectively, of the RPC service.
+.PP
+\f4nlsadmin\f1 may be invoked by any user to generate reports but all
+operations that affect a listener's status or configuration are
+restricted to privileged users.
+.P
+The options specific to the Service Access Facility may not be
+mixed with any other options.
+.ig
+.SH ERRORS
+If the command is not run under the proper ID, an error message will be sent
+to standard error and the command will terminate.
+..
+.SH "SEE ALSO"
+\f4listen\fP(1M),
+\f4pmadm\fP(1M),
+\f4rpcbind\fP(1M),
+\f4sacadm\fP(1M)
+.br
+\f2Network Programmer's Guide\fP
+.SH NOTES
+Dynamically assigned addresses are not displayed in 
+reports as statically assigned addresses are.

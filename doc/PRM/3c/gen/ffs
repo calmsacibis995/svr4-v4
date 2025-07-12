@@ -1,0 +1,28 @@
+'\"macro stdmacro
+.if n .pH g3c.ffs @(#)ffs	40.7 of 5/22/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.\" @(#)ffs.3C 1.17 88/02/26 SMI; from UCB 4.2
+'\"! tbl | mmdoc
+'\"macro stdmacro
+.if n .pH g3c.ffs @(#)ffs	31.1 of 4/5/88
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.nr X
+.if \nX=0 .ds x} ffs 3C "C Development Set" "\&"
+.if \nX=1 .ds x} ffs 3C "C Development Set"
+.if \nX=2 .ds x} ffs 3C "" "\&"
+.if \nX=3 .ds x} ffs "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4ffs\f1 \- find first set bit
+.SH SYNOPSIS
+\f4#include <string.h>\f1
+.sp .5
+\f4int ffs(const int i);\f1
+.fi
+.SH DESCRIPTION
+\f4ffs\f1
+finds the first bit set in the argument passed it and returns the index
+of that bit.
+Bits are numbered starting at 1 from the low order bit.
+A return value of zero indicates that the value passed is zero.

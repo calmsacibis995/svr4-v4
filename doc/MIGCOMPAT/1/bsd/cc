@@ -1,0 +1,98 @@
+'\"macro stdmacro
+.if n .pH g1.cc @(#)cc	40.15 of 4/18/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} cc 1 "BSD Compatibility Package" "\&"
+.if \nX=1 .ds x} cc 1 "BSD Compatibility Package"
+.if \nX=2 .ds x} cc 1 "" "\&"
+.if \nX=3 .ds x} cc "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4cc\f1 \- C compiler
+.SH SYNOPSIS
+\f4/usr/ucb/cc\fP
+[
+.I options
+]
+.SH DESCRIPTION
+\f4/usr/ucb/cc\fP is the C compiler for the 
+.SM BSD
+Compatibility Package. 
+\f4/usr/ucb/cc\fP is identical to \f4/usr/bin/cc\fP
+(see \f4cc\fP(1))
+except that
+.SM BSD
+header files are used
+.SM BSD libraries
+are linked
+.I before
+System V libraries.
+.P
+\f4/usr/ucb/cc\fP
+accepts the same options as
+\f4/usr/bin/cc\fP,
+with the following exceptions:
+.TP 0.7i
+\f4\-I \f2dir\f1
+Search
+.I dir
+for included files whose names do not begin with a
+\f1`\f4/\f1\|',
+prior to the usual directories.
+The
+directories fro multiple
+\f4\-I\fP
+options are searched in the order specified.
+The preprocessor first searches for
+\f4#include\fP
+files in the directory containing
+.IR sourcefile ,
+and then in directories named with
+\f4\-I\fP
+options (if any),
+then
+\f4/usr/ucbinclude\fP,
+and finally, in
+\f4/usr/include\fP.
+.TP
+\f4\-L \f2dir\f1
+Add
+.I dir
+to the list of directories searched for libraries by
+\f4/usr/bin/cc\fP.
+This option is passed to \f4/usr/bin/ld\fP.
+Directories specified with this option are searched before
+\f4/usr/ucblib\fP and \f4/usr/lib\fP.
+.TP
+\f4\-Y LU\f1, \f2dir\f1
+Change the default directory used for finding libraries.
+.SH FILES
+.PD 0
+.TP 20
+\f4/usr/ucblib\fP
+.TP
+\f4/usr/lib/ld\fP
+.TP
+\f4/usr/ucblib/libucb.a\fP
+.TP
+\f4/usr/lib/libucb.a\fP
+.PD
+.SH NOTES
+The \f4\-Y LU,\f2dir\f1 option may have unexpected results,
+and should not be used.
+This option is not in the UNIX System V base.
+.SH SEE ALSO
+\f4ld\fP\fP(1)
+.P
+.na
+\f4as\fP\fP(1),
+\f4ar\fP\fP(1),
+\f4cc\fP\fP(1),
+\f4ld\fP\fP(1),
+\f4lorder\fP\fP(1),
+\f4ranlib\fP\fP(1),
+\f4strip\fP\fP(1),
+\f4tsort\fP\fP(1),
+\f4a.out\fP\fP(4)
+in the \f2Programmer's Reference Manual\f1

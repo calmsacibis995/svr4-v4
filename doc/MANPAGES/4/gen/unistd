@@ -1,0 +1,203 @@
+'\"!  tbl | mmdoc
+'\"macro stdmacro
+.if n .pH g4.unistd @(#)unistd	40.9 of 5/1/91
+.\" Copyright 1989 AT&T
+.nr X
+.if \nX=0 .ds x} unistd 4 "" "\&"
+.if \nX=1 .ds x} unistd 4 ""
+.if \nX=2 .ds x} unistd 4 "" "\&"
+.if \nX=3 .ds x} unistd "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4unistd\f1 \- header file for symbolic constants
+.SH SYNOPSIS
+.ft 4
+#include <unistd.h>
+.ft 1
+.SH DESCRIPTION
+.br
+The \f4unistd.h\fP header file defines the symbolic constants and
+structures not already defined or declared in some
+other header file.
+The contents of this file are shown below.
+.P
+The following symbolic constants are defined for the
+\f4access\f1 function [see \f4access\fP(2)]:
+.P
+.PD 0
+.RS
+.IP \f4R_OK\fP 12n
+Test for read permission.
+.IP \f4W_OK\fP
+Test for write permission.
+.IP \f4X_OK\fP
+Test for execute (search) permission.
+.IP \f4F_OK\fP
+Test for existence of file.
+.RE
+.PD
+.P
+The constants \f4F_OK\f1, \f4R_OK\f1, \f4W_OK\f1 and \f4X_OK\f1
+and the expressions
+\f4R_OK\||\|W_OK\f1,
+\f4R_OK\||\|X_OK\f1
+and
+\f4R_OK\||\|W_OK\||\|X_OK\f1
+all have distinct values.
+.P
+Declares the constant
+.RS
+.IP \f4NULL\fP 12n
+null pointer
+.RE
+.P
+The following symbolic constants are defined for the
+\f4lockf\f1 function [see \f4lockf\fP(3C)]:
+.P
+.PD 0
+.RS
+.IP \f4F_ULOCK\fP 12n
+Unlock a previously locked region.
+.IP \f4F_LOCK\fP
+Lock a region for exclusive use.
+.IP \f4F_TLOCK\fP
+Test and lock a region for exclusive use.
+.IP \f4F_TEST\fP
+Test a region for other processes locks.
+.RE
+.PD
+.P
+The following symbolic constants are defined for the
+\f4lseek\f1 [see \f4lseek\fP(2)]
+and
+\f4fcntl\f1 [see \f4fcntl\fP(2)]
+functions (they have distinct values):
+.P
+.PD 0
+.RS
+.IP \f4SEEK_SET\fP 12n
+Set file offset to \f2offset\f1.
+.IP \f4SEEK_CUR\fP
+Set file offset to current plus \f2offset\f1.
+.IP \f4SEEK_END\fP
+Set file offset to \f4EOF\fP plus \f2offset\f1.
+.RE
+.PD
+.P
+The following symbolic constants are defined (with fixed values):
+.P
+.PD 0
+.RS
+.IP \f4_POSIX_VERSION\fP 24n
+Integer value indicating version
+of the POSIX standard.
+.IP \f4_XOPEN_VERSION\fP
+Integer value indicating version of the XPG
+to which system is compliant.
+.RE
+.PD
+.P
+The following symbolic constants are defined to indicate that the
+option is present:
+.P
+.PD 0
+.RS
+.IP \f4_POSIX_JOB_CONTROL\fP 24n
+Implementation supports job control.
+.IP \f4_POSIX_SAVED_IDS\fP
+The \f4exec\fP functions [see \f4exec\fP(2)]
+save the effective user and group.
+.IP \f4_POSIX_VDISABLE\fP
+Terminal special characters
+defined in \f4termios.h\fP [see termio(7)] can be
+disabled using this character.
+.RE
+.PD
+.P
+The following symbolic constants are defined for \f4sysconf\f1
+[see \f4sysconf\fP(3C)]:
+.RS
+.TS
+lf4.
+_SC_ARG_MAX
+_SC_CHILD_MAX
+_SC_CLK_TCK
+_SC_JOB_CONTROL
+_SC_NGROUPS_MAX
+_SC_OPEN_MAX
+_SC_PAGESIZE
+_SC_PASS_MAX
+_SC_SAVED_IDS
+_SC_VERSION
+_SC_XOPEN_VERSION
+.TE
+.RE
+.P
+The following symbolic constants are defined for \f4pathconf\f1
+[see fpathconf(2)]:
+.RS
+.TS
+lf4.
+_PC_CHOWN_RESTRICTED
+_PC_LINK_MAX
+_PC_MAX_CANON
+_PC_MAX_INPUT
+_PC_NAME_MAX
+_PC_NO_TRUNC
+_PC_PATH_MAX
+_PC_PIPE_BUF
+_PC_VDISABLE
+.TE
+.RE
+.P
+The following symbolic constants are defined for file streams:
+.P
+.PD 0
+.RS
+.IP \f4STDIN_FILENO\fP 24n
+File number of \f4stdin\fP.
+It is \f40\f1.
+.IP \f4STDOUT_FILENO\fP
+File number of \f4stout\fP.
+It is \f41\f1.
+.IP \f4STDERR_FILENO\fP
+File number of \f4stderr\fP.
+It is \f42\f1.
+.RE
+.PD
+.P
+The following pathnames are defined:
+.P
+.PD 0
+.RS
+.IP \f4GF_PATH\fP 24n
+Pathname of the group file.
+.IP \f4PF_PATH\fP
+Pathname of the \f4passwd\fP file.
+.RE
+.PD
+.SH NOTES
+.P
+The following values for constants are defined for this release of System V:
+.P
+.PD 0
+.RS
+.IP \f4_POSIX_VERSION\fP 24n
+198808L
+.IP \f4_XOPEN_VERSION\fP
+3
+.RE
+.PD
+.SH "SEE ALSO"
+.na
+\f4access\fP(2),
+\f4exec\fP(2),
+\f4fcntl\fP(2),
+\f4fpathconf\fP(2),
+\f4lseek\fP(2),
+\f4termios\fP(2),
+\f4sysconf\fP(3C),
+\f4group\fP(4),
+\f4passwd\fP(4),
+\f4termio\fP(7)
+.ad

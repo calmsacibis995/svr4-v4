@@ -1,0 +1,12 @@
+#ident	"@(#)pkg.termcap:pkginfo	1.2.1.3"
+
+ARCH="i386"
+CATEGORY="system"
+CLASSES="none"
+MAXINST=1
+NAME="Termcap Compatibility Package"
+PKG="termcap"
+VENDOR="USL"
+VERSION="1"
+RELEASE="4.0"
+PREDEPEND="termcap"

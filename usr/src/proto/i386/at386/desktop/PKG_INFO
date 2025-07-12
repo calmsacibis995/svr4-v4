@@ -1,0 +1,79 @@
+#ident	"@(#)proto:i386/at386/desktop/PKG_INFO	1.1.1.14"
+#
+#	Copyright (c) 1990  Intel Corporation
+#	All Rights Rreserved
+#
+#	INTEL CORPORATION PROPRIETARY INFORMATION
+#
+#	This software is supplied to AT & T under the terms of a license 
+#	agreement with Intel Corporation and may not be copied nor 
+#	disclosed except in accordance with the terms of that agreement.
+#
+
+# some basic variables
+
+RELEASE="4.0"
+VERSION="4"
+SIZE="2360"
+SPOOL="/var/spool/pkg"
+TITLE=\
+"UNIX System V/386 Release $RELEASE Version $VERSION"
+
+# this defines the basic packaging groups
+
+PKG_GROUPS="BASIC NETWORK DEVELOPMENT EXTENDED HARDWARE"
+
+# These are the contents of the basic package groups.
+# Note that these groups are traversed in order, and must be
+# listed in dependency order.
+
+# These are the contents of the basic package groups
+
+BASIC="ed terminf termcap windowing mouse fmli oam lp acp nsu"
+#BASIC="ed terminf termcap windowing mouse fmli oam lp acp nsu geus"
+
+#NETWORK="dfs rpc inet nfs rfs pci pcieth"
+NETWORK="dfs rpc inet nfs rfs "
+
+EXTENDED="compat face"
+#EXTENDED="compat gcontrib face"
+
+DEVELOPMENT="scde"
+#DEVELOPMENT="kdb-util kdb scde gpp"
+
+#set the default for tape on.
+TAPE=${TAPE:-1}
+
+if [ $TAPE -eq 1 ];then
+		HARDWARE="wd imx586 ie6 qt"
+else
+		HARDWARE="wd imx586 ie6"
+fi
+export PKG_GROUPS SPOOL TITLE RELEASE VERSION
+export BASIC HARDWARE NETWORK EXTENDED DEVELOPMENT
+
+# this is a list of complete names for each package mnemonic
+edname="Editing Package"
+terminfname="Terminal Information Utilities" 
+mousename="Mouse Driver Package" 
+fmliname="Form and Menu Language Interpreter" 
+oamname="Operations, Administration, and Maintenance" 
+lpname="LP Print Service" 
+nsuname="Network Support Utilities" 
+acpname="Application Compatibility Package" 
+termcapname="Termcap Compatibility Package"
+windowingname="AT&T Windowing Utilities" 
+inetname="Internet Utilities" 
+dfsname="DFS Utilities" 
+rpcname="Remote Procedure Call Utilities" 
+nfsname="Network File System Utilities"
+rfsname="RFS Utilities"
+pciname="PC-Interface utilities & RS-232 service"
+pciethname="PC-Interface Ethernet service"
+compatname="BSD Compatibility Package" 
+facename="Framed Access Command Environment" 
+scdename="Standard C Development Environment"
+wdname="Western Digital Ethernet Driver" 
+imx586name="Intel IMXLAN586 Ethernet Driver" 
+ie6name="3com IE6(3C503) Ethernet Driver" 
+qtname="Cartridge Tape Utilities"

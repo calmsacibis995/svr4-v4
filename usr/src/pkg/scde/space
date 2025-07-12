@@ -1,0 +1,13 @@
+#ident	"@(#)pkg4.i386:scde/space	1.4"
+/usr/add-on/include                26     0
+/usr/add-on/include/sys            15     0
+/usr/ccs/bin                     1515     0
+/usr/ccs/lib                     3642     0
+/usr/ccs/lib/ctrace                 8     0
+/usr/ccs/lib/help                  35     0
+/usr/ccs/lib/help/lib               4     0
+/usr/ccs/lib/lex                    8     0
+/usr/ccs/lib/libp                 775     0
+/usr/ccs/lib/minabi               511     0
+/usr/include                      304     0
+/usr/lib                           10     0

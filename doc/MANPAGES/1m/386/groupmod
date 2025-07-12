@@ -1,0 +1,83 @@
+'\"macro stdmacro
+.if n .pH g1a.groupmod @(#)groupmod	40.5 of 1/3/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+'\"macro stdmacro
+.if n .pH g1a.groupmod @(#)groupmod	40.10
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.if \nX=0 .ds x} groupmod 1M "Essential Utilities" "\&"
+.if \nX=1 .ds x} groupmod 1M "Essential Utilities"
+.if \nX=2 .ds x} groupmod 1M "" "\&"
+.if \nX=3 .ds x} groupmod "" "" "\&"
+.nr X
+.TH \*(x} "" "386 Computer Only"
+.SH NAME
+\f4groupmod\fP \- modify a group definition on the system
+.SH SYNOPSIS
+.nf
+\f4groupmod \f1[\f4-g \f2gid \f1[\f4-o\f1]] [\f4-n \f2name\f1] \f4group\f1
+.fi
+.SH DESCRIPTION
+The \f4groupmod\f1 command modifies the definition of the
+specified group by modifying the appropriate entry in the \f4/etc/group\fP
+file.
+.P
+The following options are available:
+.TP .5i
+\f4-g\f1 \f2gid\f1
+The group id for the new group.
+This group id must be a
+non-negative decimal integer below \f4MAXUID\f1 as defined in <\f4param.h\fP>.
+The group ID defaults to the next available (unique) number above 
+6000.
+(Group IDs from 0-60000
+are reserved.)
+.TP
+\f4-o\f1
+This option allows the \f2gid\f1 to be duplicated (non-unique).
+.TP
+\f4-n\f1 \f2name\f1
+A string of printable characters that specifies a new name for the group.
+It may not include a colon (:) or newline (\\\\n).
+.TP
+\f2group\f1
+The current name of the group to be modified.
+.SH FILES
+\f4/etc/group\fP
+.SH SEE ALSO
+\f4groupadd\fP(1M),
+\f4groupdel\fP(1M),
+\f4logins\fP(1M),
+\f4useradd\fP(1M),
+\f4userdel\fP(1M),
+\f4usermod\fP(1M),
+\f4users\fP(1).
+.SH DIAGNOSTICS
+The \f4groupmod\f1 command exits with one of the following values:
+.TP
+\f40\f1
+Success.
+.TP
+\f42\f1
+Invalid command syntax.
+A usage message for the \f4groupmod\f1 command is displayed.
+.TP
+\f43\f1
+An invalid argument was provided to an option.
+.TP
+\f44\f1
+\f2gid\f1 is not unique (when the \f4-o\f1 option is not used).
+.TP
+\f46\f1
+\f2group\f1 does not exist.
+.TP
+\f49\f1
+\f2name\f1 already exists as a group name.
+.TP
+\f410\f1
+Cannot update the \f4/etc/group\f1 file.
+
+
+
+
+

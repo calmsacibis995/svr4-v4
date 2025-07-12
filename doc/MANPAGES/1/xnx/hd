@@ -1,0 +1,109 @@
+'\"macro stdmacro
+.if n .pH g1.hd @(#)hd	40.8 of 6/18/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} hd 1 "Application Compatibility Package" "\&"
+.if \nX=1 .ds x} hd 1 "Application Compatibility Package"
+.if \nX=2 .ds x} hd 1 "" "\&"
+.if \nX=3 .ds x} hd "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4hd\fP \- display files in hexadecimal format
+.SH SYNOPSIS
+\f4hd\f1 [-\f2format \f1[\f4-s \f2offset\f1] [\f4-n \f2count\f1] [\f2file\f1]
+.SH DESCRIPTION
+The \f4hd\fP command displays the contents of files in hexadecimal
+octal, decimal and character formats.
+Control over the specification
+of ranges of characters is also available.
+The default behavior is with
+the following flags set: ``-\f4abx -A\fP''.
+This says that addresses
+(file offsets) and bytes are printed in hexadecimal and that 
+characters are also printed.
+If no \f2file\fP argument is given, the
+standard input is read.
+.P
+Options include:
+.TP 10
+\f4-s\fP \f2offset\f1
+Specify the beginning offset in the file where printing is to begin.
+If no `file' argument is given, or if a seek fails because the input
+is a pipe, `offset' bytes are read from the input and discarded.
+Otherwise, a seek error will terminate processing of the current file.
+.IP
+The \f2offset\f1 may be given in decimal, hexadecimal (preceded by
+`\f4Ox\fP'), or octal (preceded by a `0').
+It is optionally followed by
+one of the \%following multipliers: \f4w, l, b,\fP or \f4k\fP; for words 
+(2 bytes), long words (4 bytes), blocks (512 bytes), or \f4K\fP bytes
+(1024 bytes).
+Note that this is the one case where "\f4b\fP" does not
+stand for bytes.
+Since specifying a hexadecimal offset in blocks
+would result in an ambiguous trailing `\f4b\fP', any offset and 
+multiplier may be separated by an asterisk (*).
+.TP
+\f4-n\fP \f2count\f1
+Specify the number of bytes to process.
+The \f2count\f1 is in the same 
+\%format as \f2offset\f1, above.
+.SH Format Flags
+Format flags may specify addresses, characters, bytes, words (2 bytes),
+or longs (4 bytes) to be printed in hexadecimal, decimal, or octal.
+Two special formats may also be indicated: test or \f4ASCII\fP.
+Format and base specifiers amy be freely combined and repeated as desired
+in order to specify different bases (hexadecimal, decimal or octal)
+for different output formats (addresses, characters, etc.).
+All
+format flags appearing in a single argument are applied as appropriate
+to all other flags in that argument.
+.TP 10
+\f4acbwlA\fP
+Output format specifiers for address, characters, bytes, words, longs
+and
+\s-1ASCII\s0,
+respectively.
+Only one base specifier will be used
+for addresses; the address will appear on the first line of output
+that begins each new offset in the input.
+.IP
+The character format prints printable characters unchanged, special
+C escapes as defined in the language, and remaining values
+in the specified base.
+.IP
+The
+.SM ASCII
+format prints all printable characters unchanged, and
+all others as a period (.).
+This format appears to the right of the first
+of other specified output formats.
+A base specifier has no meaning with
+the
+.SM ASCII
+format.
+If no other output format (other than addresses)
+is given, \f4bx\fP is assumed.
+If no base specifier is given, all of
+\f4xdo\fP are used.
+.TP
+\f4xdo\fP
+Output base specifiers for hexadecimal, decimal and octal.
+If no 
+\%format specifier is given, all of \f4acbwl\fP are used.
+.TP
+\f4t\fP
+Print a test file, each line preceded by the address in the file.
+Normally, lines should be terminated by a \f4\en\fP character; but long
+lines will be broken up.
+Control characters in the range 0x00 to 0x1f
+are rpinted as \f4`^@'\fP to `\f4^_\fP'.
+Bytes with the high bit set
+are preceded by a tilde (~) and printed as if the high bit were not set.
+The special characters (^,~,\e) are preceded by a backslash (\e)
+to escape their special meaning.
+As special cases, two values are
+represented numerically as `\e177' and `\e377'.
+This flag will 
+override all output format specifiers except addresses.

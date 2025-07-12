@@ -1,0 +1,279 @@
+'\"macro stdmacro
+.if n .pH g1.dpost @(#)dpost	40.6 of 5/16/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} dpost 1 "LP Print Service" "\&"
+.if \nX=1 .ds x} dpost 1 "LP Print Service"
+.if \nX=2 .ds x} dpost 1 "" "\&"
+.if \nX=3 .ds x} dpost "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4dpost\fP \- \f4troff\fP postprocessor for PostScript printers
+.SH SYNOPSIS
+\f4/usr/lib/lp/postscript/dpost\fP [\f2options\fP] [\f2files\fP]
+.SH DESCRIPTION
+\f4dpost\fP translates
+.I files
+created by \f4troff\fP(1)
+into PostScript and writes the results on the
+standard output.
+If no
+.I files
+are specified, or if \- is one of the input
+.I files,
+the standard input is read.
+The following
+.I options
+are understood:
+.TP 1.0i
+\f4\-c \f2num\f1
+Print
+.I num
+copies of each page.
+By default only one copy is printed.
+.TP 1.0i
+\f4\-e \f2num\f1
+Sets the text encoding level to \f2num\f1.
+The recognized choices are 0, 1, and 2.
+The size of the output file and print time should
+decrease as
+.I num
+increases.
+Level 2 encoding will typically be about 20 percent faster than
+level 0, which is the default and produces output essentially
+identical to previous versions of
+\f4dpost\fP.
+.TP 1.0i
+\f4\-m \f2num\fP
+Magnify each logical page by the factor
+\f2num\fP.
+Pages are scaled uniformly about the origin,
+which is located near the upper left corner of
+each page.
+The default magnification is 1.0.
+.TP 1.0i
+\f4\-n\fP \f2num\fP
+Print
+.I num
+logical pages on each piece of paper,
+where
+.I num
+can be any positive integer.
+By default,
+.I num
+is set to 1.
+.TP 1.0i
+\f4\-o\fP \f2list\fP
+Print those pages for which numbers are given in the comma-separated
+\f2list\fP.
+The list contains single numbers
+.I N
+and ranges
+.IB N1 \- N2.
+A missing
+.I N1
+means the lowest numbered page, a missing
+.I N2
+means the highest.
+.TP 1.0i
+\f4\-p \f2mode\f1
+Print
+.I files
+in either portrait or landscape
+.I mode.
+Only the first character of
+.I mode
+is significant.
+The default
+.I mode
+is portrait.
+.TP 1.0i
+\f4\-w \f2num\f1
+Set the line width used to implement
+.I troff
+graphics commands to
+.I num
+points, where a point is approximately 1/72
+of an inch.
+By default,
+.I num
+is set to 0.3 points.
+.TP 1.0i
+\f4\-x \f2num\f1
+Translate the origin
+.I num
+inches along the positive x axis.
+The default
+coordinate system has the origin fixed near the
+upper left corner of the page, with positive
+x to the right and positive y down the page.
+Positive
+.I num
+moves everything right.
+The default offset is 0 inches.
+.TP 1.0i
+\f4\-y \f2num\f1
+Translate the origin
+.I num
+inches along the positive y axis.
+Positive
+.I num
+moves text up the page.
+The default offset is 0.
+.TP 1.0i
+\f4\-F d\f2ir\f1
+Use
+.I dir
+as the font directory.
+The default
+.I dir
+is \f4/usr/lib/font\f1, and
+.I dpost
+reads binary font files from directory
+\f4/usr/lib/font/devpost\f1.
+.TP 1.0i
+\f4\-H \f2dir\f1
+Use
+.I dir
+as the host resident font directory.
+Files in this directory should be complete PostScript font descriptions,
+and must be assigned a name that corresponds to the appropriate
+two-character
+\f4troff\fP
+font name.
+Each font file is copied to the output file only when needed
+and at most once during each job.
+There is no default directory.
+.TP 1.0i
+\f4\-L \f2file\f1
+Use
+.I file
+as the PostScript prologue
+which, by default, is \f4/usr/lib/postscript/dpost.ps\fP.
+.TP 1.0i
+\f4\-O\fP
+Disables PostScript picture inclusion.
+A recommended option when
+\f4dpost\fP
+is run by a spooler in a networked environment.
+.TP 1.0i
+\f4\-T \f2name\fP
+Use font files for device
+.I name
+as the best description of available PostScript fonts.
+By default,
+.I name
+is set to \f4post\fP and \f4dpost\fP
+reads binary files from \f4/usr/lib/font/devpost\fP.
+.PP
+The
+.I files
+should be prepared by \f4troff\fP.
+The default font files in \f4/usr/lib/font/devpost\fP produce the
+best and most efficient output.
+They assume a resolution of 720 dpi, and can be used
+to format files by adding the
+\f4\-Tpost\fP
+option to the \f4troff\fP call.
+Older versions of the
+\f4eqn\fP and \f4pic\fP
+preprocessors need to know the resolution that
+\f4troff\fP will be using to format the
+.I files.
+If those are the versions installed on your system,
+use the \f4\-r720\fP option with \f4eqn\fP 
+and \f4\-T720\fP with \f4pic\fP.
+.PP
+\f4dpost\fP makes no assumptions about resolutions.
+The first
+\&\f4x res\fP
+command sets the resolution used
+to translate the input
+.I files,
+the \f4DESC.out\fP file,
+usually \f4/usr/lib/font/devpost/DESC.out\fP,
+defines the resolution used in the binary font files,
+and the PostScript prologue is responsible for setting up
+an appropriate user coordinate system.
+.SH EXAMPLES
+.PP
+If the old versions of \f4eqn\fP and \f4pic\fP
+are installed on your system,
+you can obtain the best possible looking output
+by issuing a command line such as the following:
+.PP
+.RS
+\f4pic -T720 \f2file\fP | tbl | eqn -r720 | troff -mm -Tpost | dpost\f1
+.RE
+.PP
+Otherwise,
+.PP
+.RS
+\f4pic \f2file\fP | tbl | eqn | troff -mm -Tpost | dpost\f1
+.RE
+.PP
+should give the best results.
+.SH NOTES
+.PP
+Output files
+often do not conform to Adobe's file structuring conventions.
+Piping the output of \f4dpost\fP
+through \f4postreverse\fP
+should produce a minimally conforming PostScript file.
+.PP
+Although \f4dpost\fP
+can handle files formatted for any device,
+emulation is expensive and
+can easily double the print time and the size of the output file.
+No attempt has been made to implement the character sets
+or fonts available on all devices supported by
+\f4troff\fP.
+Missing characters will be replaced by white space,
+and unrecognized fonts will usually default to one
+of the Times fonts (that is, \f4R\fP, \f4I\fP, \f4B\fP, or \f4BI\fP).
+.PP
+An
+\&\f4x res\fP command 
+must precede the first \&\f4x init\fP command,
+and all the input
+.I files
+should have been prepared for the same output device.
+.PP
+Use of the \f4\-T\fP option is not encouraged.
+Its only purpose is to enable the use of other
+PostScript font and device description files, that perhaps use
+different resolutions, character sets, or fonts.
+.PP
+Although level 0 encoding is the only scheme that has been thoroughly
+tested, level 2 is fast and may be worth a try.
+.SH DIAGNOSTICS
+An exit status of 0 is returned if
+.I files
+have been translated successfully,
+while 2 often indicates a syntax error in the input
+.I files.
+.SH FILES
+.nf
+\f4/usr/lib/font/devpost/*.out
+/usr/lib/font/devpost/charlib/*
+/usr/lib/lp/postscript/dpost.ps
+/usr/lib/lp/postscript/color.ps
+/usr/lib/lp/postscript/draw.ps
+/usr/lib/lp/postscript/forms.ps
+/usr/lib/lp/postscript/ps.requests
+/usr/lib/macros/pictures
+/usr/lib/macros/color\fP
+.fi
+.SH SEE ALSO
+\f4download\fP(1),
+\f4postdaisy\fP(1),
+\f4postdmd\fP(1),
+\f4postio\fP(1),
+\f4postmd\fP(1),
+\f4postprint\fP(1),
+\f4postreverse\fP(1),
+\f4posttek\fP(1),
+\f4troff\fP(1)
+\f4devpost\fP(5),
+\f4troff\fP(5)

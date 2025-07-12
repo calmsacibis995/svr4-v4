@@ -1,0 +1,86 @@
+'\"macro stdmacro
+.if n .pH d3i.sdi_send @(#)sdi_send	40.10 of 3/12/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} sdi_send D3I SDI
+.if \nX=1 .ds x} sdi_send D3I SDI
+.if \nX=2 .ds x} sdi_send D3I "" "\&"
+.if \nX=3 .ds x} sdi_send "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4sdi_send\fP \- send SCSI command to the controller
+.SH SYNOPSIS
+.nf
+.ft 4
+long 
+sdi_send(struct sb *\f2pt\f4);
+.ft 1
+.fi
+.SH ARGUMENT
+.TP 8
+\f2pt\f1
+pointer to the \f4sb\f1 (SCSI block) structure
+.SH DESCRIPTION
+\f4sdi_send\f1 accepts a pointer to an \f4sb\f1 (SCSI block) and sends the
+SCSI command to 
+the controller for routing to a specific SCSI device.  The SCSI block must have
+been allocated from the host adapter pool of SCSI blocks and the addresses
+translated via the \f4sdi_translate\f1 function.  The type field must be
+\f4SCB_TYPE\fP.  Commands sent via this function are executed in the order they are
+received.   
+.IX "SCB_TYPE"
+.SH RETURN VALUE
+\f4SDI_RET_OK\fP return indicates that the request is in progress and
+the target driver interrupt handler will be called.
+\f4SDI_RET_RETRY\fP indicates that SDI cannot accept
+the job at this time, and it should be retried later.  \f4SDI_RET_ERR\fP
+indicates the \f4sb_type\f1 is invalid.  
+When a device is opened for pass through, \f4SDI_RET_RETRY\fP is returned.
+.IX "SDI_RET_OK"
+.IX "SDI_RET_ERR"
+.IX "SDI_RET_RETRY"
+.SH LEVEL
+Base or Interrupt
+.SH "SEE ALSO"
+\f4sdi_icmd\fP(D3I),
+\f4sdi_translate\fP(D3I),
+\f4sb\fP(D4I)
+.SH EXAMPLE
+This example shows how \f4sdi_send\f1 is used.  \f4disksend\f1 is an example
+disk target driver routine that is called internally within the target driver
+to send a command to a device.  It is passed a pointer to an SCSI block.
+.P
+.nf
+.ft 4
+disksend(sb_ptr)
+struct sb *sb_ptr;
+{
+        int sendret;        /* sdi_send return value */ 
+        extern int sendid;  /* timeout ID for retry  */
+        
+        /* Call sdi_send with the SB pointer for the job */
+        if ((sendret = sdi_send(sb_ptr)) != SDI_RET_OK)
+        {
+           /* If sdi_send returned retry, set up a timeout to
+            * submit the job later
+            */
+           if (sendret == SDI_RET_RETRY)
+           {
+              /* Call timeout and save the ID */
+                 sendid = timeout(disksendt, sb_ptr, LATER);
+                 return;
+           }
+.ne 1i
+           else
+           {
+              /* The Host Adapter driver could not process the job.
+               * Print an error message.
+               */
+              cmn_err(CE_WARN, "DISK: Bad SB type to SDI. ");
+              continue;
+           }
+        }
+        ...
+.ft 1
+.fi

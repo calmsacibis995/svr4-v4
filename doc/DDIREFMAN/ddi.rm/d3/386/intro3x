@@ -1,0 +1,28 @@
+'\"macro stdmacro
+.if n .pH 386.intro3x @(#)intro3x	40.2 of 1/7/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.nr X
+.if \nX=0 .ds x} intro D3X "" "DDI" "\&"
+.if \nX=1 .ds x} intro D3X "" "DDI"
+.if \nX=2 .ds x} intro D3X "" "\&"
+.if \nX=3 .ds x} intro "" "" "\&"
+.TH \*(x}
+.IX "\f4intro\fP(D3X)"
+.SH NAME
+\f4intro\fP \- introduction to DMA utility routines
+.SH SYNOPSIS
+.nf
+\f4#include <sys/types.h>
+#include <sys/dma.h>
+#include <sys/ddi.h>\fP
+.fi
+.SH DESCRIPTION
+This section describes the kernel utility functions available for use by device drivers
+that directly program DMA controllers.  Intel 80x86-based implementations that support
+DMA by having drivers directly program DMA controllers support these functions.
+.P
+Unless otherwise stated, any kernel utility routine that sleeps will do so such that
+signals will not interrupt the sleep.
+.ig
+	null section helps create MasterToc
+..

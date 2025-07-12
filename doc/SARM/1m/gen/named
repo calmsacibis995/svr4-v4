@@ -1,0 +1,283 @@
+'\"macro stdmacro
+.if n .pH g1a.named @(#)named	40.12 of 5/29/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} named 1M "Internet Utilities" "\&"
+.if \nX=1 .ds x} named 1M "Internet Utilities"
+.if \nX=2 .ds x} named 1M "" "\&"
+.if \nX=3 .ds x} named "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4named\f1, \f4in.named\f1 \- Internet domain name server
+.SH SYNOPSIS
+\f4in.named\f1 [ \f4\-d \f2level\f1 ] [ \f4\-p \f2port\f1 ] [\|[ \|\f4\-b\f1\| \|] \f2bootfile\f1 ]
+.SH DESCRIPTION
+\f4named\f1
+is the Internet domain name server.
+It is used by hosts on the
+Internet to provide access
+to the Internet distributed naming database.
+See
+.SM RFC
+1034 and
+.SM RFC
+1035 for more details.
+With no arguments
+\f4named\f1
+reads
+\f4/etc/named.boot\f1
+for any initial data, and listens for queries on a privileged port.
+.LP
+The following options are available:
+.TP 12
+\f4\-d \f2level\f1
+Print debugging information.
+.I level
+is a number indicating the level of messages printed.
+.TP
+\f4\-p \f2port\f1
+Use a different
+.I port
+number.
+.TP
+\f4\-b \f2bootfile\f1
+Use
+.I bootfile
+rather than
+\f4/etc/named.boot\f1.
+.SH EXAMPLE
+.RS
+.nf
+.ft 4
+;
+;	boot file for name server
+;
+; type          domain          source file or host
+;
+domain          berkeley.edu
+primary         berkeley.edu    named.db
+secondary       cc.berkeley.edu 10.2.0.78 128.32.0.10
+cache           .               named.ca
+.DT
+.ft 1
+.fi
+.RE
+.LP
+The
+\f4domain\f1
+line specifies that
+\f4berkeley.edu\f1
+is the domain of the given server.
+.LP
+The
+\f4primary\f1
+line states that the file
+\f4named.db\f1
+contains authoritative data for
+\f4berkeley.edu\f1.
+The file
+\f4named.db\f1
+contains data in the master file format, described in
+.SM RFC
+1035, except
+that all domain names are relative to the origin; in this
+case,
+\f4berkeley.edu\f1
+(see below for a more detailed description).
+.LP
+The
+\f4secondary\f1
+line specifies that all authoritative data
+under
+\f4cc.berkeley.edu\f1
+is to be transferred from the name server
+at
+\f410.2.0.78\f1.
+If the transfer fails it will try
+\f4128.32.0.10\f1,
+and continue for up to 10 tries at that address.
+The secondary copy is also authoritative for the domain.
+.LP
+The
+\f4cache\f1
+line specifies that data in
+\f4named.ca\f1
+is to be placed in
+the cache (typically such data as the locations of root domain
+servers).  The file
+\f4named.ca\f1
+is in the same format as
+\f4named.db\f1.
+.LP
+The master file consists of entries of the form:
+.sp .5
+.RS
+\f4$INCLUDE < \f2filename\fP >\f1
+.br
+\f4$ORIGIN < \f2domain\fP >\f1
+.br
+\f4< \f2domain\fP >\f1
+\f4< \f2opt_ttl\fP >\f1
+\f4< \f2opt_class\fP >\f1
+\f4< \f2type\fP >\f1 
+\f4< \f2resource_record_data\fP >\f1
+.br
+.RE
+.LP
+where
+.I domain
+is ``\f4.\f1'' for the root, ``\f4@\f1'' for the current origin, or a standard domain name.
+If
+.I domain
+is a standard domain name that does not end with
+``\f4.\f1'',
+the current origin
+is appended to the domain.  Domain names ending with
+``\f4.\f1''
+are unmodified.
+.LP
+The
+.I opt_ttl
+field is an optional integer number for the time-to-live field.
+It defaults to zero.
+.LP
+The
+.I opt_class
+field is currently one token,
+\f4IN\f1
+for the Internet.
+.LP
+The
+.I type
+field is one of the following tokens; the data expected in the
+.I resource_record_data
+field is in parentheses.
+.RS
+.TP 18
+\f4A\f1
+A host address (dotted quad).
+.TP
+\f4NS\f1
+An authoritative name server (domain).
+.TP
+\f4MX\f1
+A mail exchanger (domain).
+.TP
+\f4CNAME\f1
+The canonical name for an alias (domain).
+.TP
+\f4SOA\f1
+Marks the start of a zone of authority (5 numbers).
+See
+.SM RFC
+1035.
+.TP
+\f4MB\f1
+A mailbox domain name (domain).
+.TP
+\f4MG\f1
+A mail group member (domain).
+.TP
+\f4MR\f1
+A mail rename domain name (domain).
+.TP
+\f4NULL\f1
+A null resource record (no format or data).
+.TP
+\f4WKS\f1
+A well know service description (not implemented yet).
+.TP
+\f4PTR\f1
+A domain name pointer (domain).
+.TP
+\f4HINFO\f1
+Host information (cpu_type OS_type).
+.TP
+\f4MINFO\f1
+Mailbox or mail list information (request_domain error_domain).
+.PD
+.RE
+.SH FILES
+.PD 0
+.TP 30
+\f4/etc/named.boot\f1
+name server configuration boot file
+.TP
+\f4/etc/named.pid\f1
+the process
+.SM ID
+.TP
+\f4/var/tmp/named.run\f1
+debug output
+.TP
+\f4/var/tmp/named_dump.db\f1
+dump of the name servers database
+.PD
+.SH "SEE ALSO"
+\f4kill\f1(1),
+\f4signal\f1(3),
+\f4resolver\f1(3N),
+\f4resolve.conf\f1(4)
+.LP
+Mockapetris, Paul,
+.IR "Domain Names - Concepts and Facilities" ,
+.SM RFC
+1034,
+Network Information Center,
+.SM SRI
+International, Menlo Park, Calif.,
+November 1987
+.LP
+Mockapetris, Paul,
+.IR "Domain Names - Implementation and Specification" ,
+.SM RFC
+1035,
+Network Information Center,
+.SM SRI
+International, Menlo Park, Calif.,
+November 1987
+.LP
+Mockapetris, Paul,
+.IR "Domain System Changes and Observations" ,
+.SM RFC
+973,
+Network Information Center,
+.SM SRI
+International, Menlo Park, Calif.,
+January 1986
+.PP
+Partridge, Craig,
+.IR "Mail Routing and the Domain System" ,
+.SM RFC
+974,
+Network Information Center,
+.SM SRI
+International, Menlo Park, Calif.,
+January 1986
+.br
+.ne 1i
+.SH NOTES
+The following signals have the specified effect when sent to the
+server process using the
+\f4kill\f1(1)
+command.
+.TP 20
+\f4SIGHUP\f1
+Reads 
+\f4/etc/named.boot\f1
+and reloads database.
+.TP
+\f4SIGINT\f1
+Dumps the current database and cache to
+\f4/var/tmp/named_dump.db\f1.
+.TP 
+\f4SIGUSR1\f1
+Turns on debugging; each subsequent
+\f4SIGUSR1\f1
+increments debug level.
+.TP 
+\f4SIGUSR2\f1
+Turns off debugging completely.
+.br
+.ne 20

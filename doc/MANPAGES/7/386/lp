@@ -1,0 +1,50 @@
+'\"macro stdmacro
+.if n .pH g7.lp @(#)lp	40.4 of 1/3/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} lp 7 "" "\&"
+.if \nX=1 .ds x} lp 7 ""
+.if \nX=2 .ds x} lp 7 "" "\&"
+.if \nX=3 .ds x} lp "" "" "\&"
+.nr X
+.TH \*(x} "" "386 Computer Only"
+.SH NAME
+\f4lp\f1 \- parallel port interface
+.SH DESCRIPTION
+The parallel port (lp) driver supports both the primary (monochrome)
+and secondary parallel printer adapters simultaneously.
+Up to two printers are supported.
+If an adapter for a printer is not installed, an attempt to
+.I open
+it will fail.
+The
+.I close
+waits until all output is completed before returning to the user.
+The lp
+driver allows only one process at a time to write to the adapter.
+If it is already busy, an
+.I open
+for writing will return an error.
+However, the driver allows multiple
+.IR open s
+to occur if they are
+.IR read-only .
+.PP
+The parallel printer adapters are character devices.
+The minor device number
+corresponds to the primary or secondary parallel printer adapter.
+Thus,
+minor device 0 corresponds to the primary parallel printer adapter, while
+minor device 1 corresponds to the secondary adapter.
+.PP
+The parallel port behaves as described in
+\f4termio\f1 (7).
+.SH FILES
+\f4/dev/lp*\f1
+.SH ALSO
+\f4stty\f1(1), \f4termio\f1(7).
+.PP
+\f4ioctl\f1(2)
+in the \f2Programmer's Reference Manual\f1.
+.Ee

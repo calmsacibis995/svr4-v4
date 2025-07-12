@@ -1,0 +1,65 @@
+'\"macro stdmacro
+.if n .pH g1a.ccibind @(#)ccibind	40.8 of 5/17/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} ccibind 1iref "System Administration Utilities" "" "\&"
+.if \nX=1 .ds x} ccibind 1iref "System Administration Utilities" ""
+.if \nX=2 .ds x} ccibind 1iref "" "\&"
+.if \nX=3 .ds x} ccibind "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4ccibind\f1 \- binds a line discipline to a line on the communication controller.
+.SH SYNOPSIS
+\f4/usr/lib/cci/ccibind\f1 [\f4\-p \f2portid\f1] \f2slot-ID line-number line-discipline-ID\f1
+.SH DESCRIPTION
+\f4ccibind\f1 associates a line with a previously loaded line discipline
+program on the communications controller.  The line could be either a
+physical serial communications line on the controller or it could be
+used to associate with a job on the controller. The interpretation of
+the line is left to the line discipline program on the controller.
+In addition, this host is registered as a potential user of the line.
+This program sends a \f4CCI_Bind\f1 message to the CCI server.  The response
+to this command will contain the maximum subchannels supported on this
+line by the line discipline and this will be displayed by the command
+on the issuing host.  The host issuing this command must have previously
+issued a \f4CCI_Create\f1 message using the \f4cciload\f1(1iref) command
+to set up the line discipline on the controller.  Otherwise an error will
+be returned from the CCI server.
+.PP
+Command line options are:
+.PP
+.TP
+\f4\-p \f2n\f1
+Set the Multibus II Transport source Portid to \f2n\f1 instead of the
+default value 0x1ff.
+.PP
+A host can bind a line to a \f2line-discipline-ID\f1 only once.  The first
+\f4CCI_Bind\f1 message issued for the line causes a job to be created for the
+line.  Subsequent \f4CCI_Bind\f1 messages from other hosts for the  same line
+and \f2line-discipline-ID\f1 will cause these hosts to be added to the set
+of potential users of the line.  If one of these messages contains a
+\f2line-discipline-ID\f1 that is different from the \f2line-discipline-ID\f1 bound
+to the line, an error response will be returned by the CCI server.
+.PP
+The \f2line-discipline-ID\f1 specified is associated with a line
+discipline image on the controller.  The \f2line-discipline-ID\f1 can
+range from 0 to 255.  The \f2line-number\f1 can range from 0 to
+\f4MAX_LINES - 1\f1, where \f4MAX_LINES\f1 is returned in the \f4ccisrvinfo\f1(1iref)
+command.  The communications controller hosting the CCI server is selected
+by specifying its Multibus II iPSB slot-ID. 
+.SH FILES
+\f4/usr/lib/cci/ccibind\f1
+.SH SEE ALSO
+\f4ccisrvinfo\f1(1iref),
+\f4ccildlist\f1(1iref),
+\f4ccilinfo\f1(1iref),
+\f4ccisubinfo\f1(1iref),
+\f4ccildinfo\f1(1iref),
+\f4ccifree\f1(1iref),
+\f4cciunbind\f1(1iref),
+\f4cciload\f1(1iref),
+\f4cciattach\f1(1iref),
+\f4ccidetach\f1(1iref),
+\f4cciswitch\f1(1iref),
+\f4cci\f1(7iref).

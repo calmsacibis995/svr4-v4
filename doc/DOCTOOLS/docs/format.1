@@ -1,0 +1,139 @@
+'\"!  tbl | mmdoc
+'\"macro stdmacro
+.if n .pH doctools.format.1 @(#)format.1	40.3 of 5/16/91
+.\" @(#) SCCS File: format.1; ID:1.6; DATED:1/5/90
+.\"
+.\"     Copyright (c) 1989 AT&T   
+.\"     All Rights Reserved       
+.\"
+.\"     THIS IS UNPUBLISHED PROPRIETARY SOURCE CODE OF AT&T   
+.\"     The copyright notice above does not evidence any     
+.\"     actual or intended publication of such source code.  
+.\"
+.\"     Manual Page for format
+.\"
+.\"     Written by: J.R. Okin
+.\"                 AT&T Bell Laboratories
+.\"                 Department XT91124000
+.\"                 attunix!jro   201-522-5015
+.\"                   
+.\"
+.\"
+.PM DN "FINAL COPY"
+.nr X
+.if \nX=0 .ds x} format 1 "" "Documenter's Tool Set" "\&"
+.if \nX=1 .ds x} format 1 "" "Documenter's Tool Set"
+.if \nX=2 .ds x} format 1 "" "\&"
+.if \nX=3 .ds x} format "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4format\fP \- format files for printing
+.SH SYNOPSIS 
+\f4format \f1[\f4\-c\f1] [\f4\-d \f2destination\f1] [\f4\-l\f1] [\f4\-m\f1] [\f4\-o \f2pages\f1] [\f4\-p \f2page\f1]
+.br
+.ti+0.45i
+[\f4\-s \f2size\f1] [\f4\-v \f2version\f1] [\f4\-w\f1] [\f2files\f1]
+.SH DESCRIPTION
+The \f4format\fP command processes source text files
+for a specific device, such as a terminal or printer,
+and then sends the processed file(s) to the specified destination.
+For example, the following command will
+process files \f4chap1\fP and \f4chap2\fP and print
+them on destination \f4apple\fP:
+.P
+.RS
+\f4format -d apple chap1 chap2\fP
+.RE
+.P
+The following options are recognized by the \f4format\f1
+command:
+.TP 1.3i
+\f4\-c\&\f1
+save and print chapter/master table of contents for guide
+files, or table of contents and permuted index for manual
+page files.
+.sp0.5
+If the input files named are guide files,
+a chapter table of contents for each text file will be printed;
+and files in the form of \&\f4C\&\f2filename\f1 will be created.
+If the input files named are chapter table of contents files,
+a master table of contents will be printed;
+and a master table of contents
+file, named \&\f4MasterToc\fP, will be created automatically.
+If the input file is a collection file of manual pages,
+a reference manual table of contents and permuted index
+will be printed; and files in the form of
+\f4TC\&.\f2collection-file\f1 and \f4PI\&.\f2collection-file\f1
+will be created.
+.TP
+\f4\-d \&\f2destination\f1
+process job for specified \f2destination\f1.
+Execute \&\f4format\f1 without arguments to see
+a current list of valid destinations.
+Users can define the variable
+.SM \f4DEFDEST\f1
+to set the default destination, overriding the system-defined
+default.
+.TP
+\f4\-l\&\f1
+print job in landscape orientation.
+By default, jobs are printed in portrait orientation.
+.TP
+\f4\-m\&\f1
+send mail when job has printed.
+.TP
+\f4\-o \&\f2pages\f1
+process only specified \f2pages\f1.
+Valid page number specifications are the same as
+those accepted by the \&\f4\-o\f1 flag to
+\&\f4troff\fP, which includes comma-separated page numbers
+(for example, 2,4,8,9), dash-separated page ranges (for example, 2-4,6-10),
+the use of an initial dash to indicate all pages from
+the beginning-of-file to a specified page (for example, -10,13),
+and the use of a final dash to indicate all pages from
+a specified page to end-of-file (2,4,6-).
+.TP
+\f4\-p \&\f2page\f1
+begin page numbering with specified \f2page\f1.
+By default, page numbering begins with 1.
+.TP
+\f4\-s \&\f2size\f1
+process job in specified \f2size\f1, as follows:
+.TS
+tab(:);
+lf3 lf3
+lf4 l.
+T{
+.UL "Size"
+T}:T{
+.UL "Page Dimensions"
+T}
+.sp 0.4
+1:4" by 8.5"
+2:5.5" by 8.5"
+3:7" by 9"
+4:8.5" by 11"
+5:5.38" by 8.27"
+6:5.93" by 9.89"
+7:6.25" by 8.5" (Default)
+.TE
+.TP
+\f4\-v \&\f2version\f1
+process job for specified \f2version\f1.
+This option works in association with the
+\&\f4\&.VS\f1/\f4\&.VE\f1 macros.
+By default, version 1 is processed.
+Use
+\f4\-v all\fP
+to process a job for all versions.
+.TP
+\f4\-w\&\f1
+withhold all screen messages, except errors; send messages via mail.
+.P
+Invoking \&\f4format\f1 without arguments will start
+the command in its interactive mode.
+If only filenames are specified, processing
+will commence with all system defaults.
+.SH "SEE ALSO"
+\f4man\fP(1), \f4mm\fP(1), \f4troff\fP(1)
+.\" EOF

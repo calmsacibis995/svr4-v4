@@ -1,0 +1,61 @@
+'\"macro stdmacro
+.if n .pH g3.mktemp @(#)mkstemp	40.10 of 4/24/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.\" Copyright (c) 1988 Sun Microsystems, Inc. - All Rights Reserved.
+.\"
+.nr X
+.if \nX=0 .ds x} mkstemp 3 "BSD Compatibility Package" "\&"
+.if \nX=1 .ds x} mkstemp 3 "BSD Compatibility Package"
+.if \nX=2 .ds x} mkstemp 3 "" "\&"
+.if \nX=3 .ds x} mkstemp "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4mkstemp\f1 \- make a unique file name
+.SH SYNOPSIS
+.nf
+\f4cc \f1[ \f2flag\f1\. \. \. ] \f2file\f1 \. \. \. \f4\-lucb\f1
+.P
+\f4mkstemp(template)\f1
+\f4char *template;\f1
+.fi
+.SH DESCRIPTION
+\f4mkstemp\f1
+creates a unique file name, typically in a
+temporary filesystem, by replacing
+.I template
+with a unique file name, and returns a file descriptor
+for the template file open for reading and writing.
+The string in
+.I template
+should contain a file name with six trailing \f4X\f1s;
+\f4mkstemp\f1 replaces the \f4X\f1s
+with a letter and the current process
+.SM ID\s0.
+The letter will be chosen so that the resulting
+name does not duplicate an existing file.
+\f4mkstemp\f1 avoids the race between testing whether the
+file exists and opening it for use.
+.SH "SEE ALSO"
+\f4getpid\fP(2),
+\f4open\fP(2),
+\f4tmpfile\fP(3S),
+\f4tmpnam\fP(3S)
+in the \f2Programmer's Reference Manual\f1
+.SH "RETURN VALUE"
+\f4mkstemp\f1 returns \-1 if no suitable file could be created.
+.SH NOTES
+It is possible to run out of letters.
+.PP
+\f4mkstemp\f1
+actually changes the template string which you pass;
+this means that you cannot use the same template
+string more than once \(em you need a fresh
+template for every unique file you want to open.
+.PP
+When \f4mkstemp\f1 is creating a new unique filename it checks
+for the prior existence of a file with that name.
+This means that if you are creating more than one
+unique filename, it is bad practice to use the
+same root template for multiple invocations of
+\f4mkstemp\f1.

@@ -1,0 +1,166 @@
+'\"macro stdmacro
+.if n .pH g4.archives @(#)archives	40.10
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} archives 4 "Essential Utilities" "\&"
+.if \nX=1 .ds x} archives 4 "Essential Utilities"
+.if \nX=2 .ds x} archives 4 "" "\&"
+.if \nX=3 .ds x} archives "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4archives\f1 - device header file
+.SH DESCRIPTION
+.ta 1.1i 1.75i
+.nf
+.ft 4
+.ps -1
+.vs -1
+/* Magic numbers */
+.sp .5
+#define CMN_ASC	0x070701	/* Cpio Magic Number for \-c header */
+#define CMN_BIN	070707		/* Cpio Magic Number for Binary header */
+#define CMN_BBS	0143561		/* Cpio Magic Number for Byte-Swap header */
+#define CMN_CRC	0x070702	/* Cpio Magic Number for CRC header */
+#define CMS_ASC	"070701"	/* Cpio Magic String for \-c header */
+#define CMS_CHR	"070707"	/* Cpio Magic String for odc header */
+#define CMS_CRC	"070702"	/* Cpio Magic String for CRC header */
+#define CMS_LEN	6		/* Cpio Magic String length */
+.sp .5
+/* Various header and field lengths */
+.sp .5
+.ta 1.1i 1.4i
+#define CHRSZ	76		/* \-H odc size minus filename field */
+#define ASCSZ	110		/* \-c and CRC hdr size minus filename field */
+#define TARSZ	512		/* TAR hdr size */
+.sp .5
+#define HNAMLEN	256	/* maximum filename length for binary and odc headers */
+#define EXPNLEN	1024	/* maximum filename length for \-c and CRC headers */
+#define HTIMLEN	2	/* length of modification time field */
+#define HSIZLEN	2	/* length of file size field */
+.sp .5
+/* cpio binary header definition */
+.sp .5
+.ta .25i .75i 2.25i
+struct hdr_cpio {
+	short	h_magic,	/* magic number field */
+		h_dev;	/* file system of file */
+	ushort	h_ino,	/* inode of file */
+		h_mode,	/* modes of file */
+		h_uid,	/* uid of file */
+		h_gid;	/* gid of file */
+	short	h_nlink,	/* number of links to file */
+		h_rdev,	/* maj/min numbers for special files */
+		h_mtime[HTIMLEN],	/* modification time of file */
+		h_namesize,	/* length of filename */
+		h_filesize[HSIZLEN];	/* size of file */
+	char	h_name[HNAMLEN];	/* filename */
+} ;
+.sp .5
+/* cpio \-H odc header format */
+.sp .5
+struct c_hdr {
+	char	c_magic[CMS_LEN],
+		c_dev[6],
+		c_ino[6],
+		c_mode[6],
+		c_uid[6],
+		c_gid[6],
+		c_nlink[6],
+		c_rdev[6],
+		c_mtime[11],
+		c_namesz[6],
+		c_filesz[11],
+		c_name[HNAMLEN];
+} ;
+.sp .5
+/* \-c and CRC header format */
+
+struct Exp_cpio_hdr {
+	char	E_magic[CMS_LEN],
+		E_ino[8],
+		E_mode[8],
+		E_uid[8],
+		E_gid[8],
+		E_nlink[8],
+		E_mtime[8],
+		E_filesize[8],
+		E_maj[8],
+		E_min[8],
+		E_rmaj[8],
+		E_rmin[8],
+		E_namesize[8],
+		E_chksum[8],
+		E_name[EXPNLEN];
+} ;
+
+/* Tar header structure and format */
+
+.ta 1.25i 2.2i
+#define TBLOCK	512	/* length of tar header and data blocks */
+#define TNAMLEN	100	/* maximum length for tar file names */
+#define TMODLEN	8	/* length of mode field */
+#define TUIDLEN	8	/* length of uid field */
+#define TGIDLEN	8	/* length of gid field */
+#define TSIZLEN	12	/* length of size field */
+#define TTIMLEN	12	/* length of modification time field */
+#define TCRCLEN	8	/* length of header checksum field */
+
+/* tar header definition */
+
+.ta .25i .5i 1i 2.2i
+union tblock {
+	char dummy[TBLOCK];
+	struct header {
+		char t_name[TNAMLEN];	/* name of file */
+		char t_mode[TMODLEN];	/* mode of file */
+		char t_uid[TUIDLEN];	/* uid of file */
+		char t_gid[TGIDLEN];	/* gid of file */
+		char t_size[TSIZLEN];	/* size of file in bytes */
+		char t_mtime[TTIMLEN];	/* modification time of file */
+		char t_chksum[TCRCLEN];	/* checksum of header */
+		char t_typeflag;	/* flag to indicate type of file */
+				/* posible numeric values are: */
+				/* 0 regular file, none of the following */
+				/* 1 2nd or multiple link to regular file */
+				/* 2 symbolic link */
+				/* 3 character special file */
+				/* 4 block special file */
+				/* 5 directory */
+				/* 6 FIFO */
+		char t_linkname[TNAMLEN];	/* file this file is linked with */
+		char t_magic[6];	/* magic string always "ustar" */
+		char t_version[2];	/* version strings always "00" */
+		char t_uname[32];	/* owner of file in ASCII */
+		char t_gname[32];	/* group of file in ASCII */
+		char t_devmajor[8];	/* major number for special files */
+		char t_devminor[8];	/* minor number for special files */
+		char t_prefix[155];	/* pathname prefix */
+	} tbuf;
+};
+
+/* volcopy tape label format and structure */
+
+#define VMAGLEN 8
+#define VVOLLEN 6
+#define VFILLEN 464
+
+.ta .25i .75i 2.2i
+struct volcopy_label {
+	char	v_magic[VMAGLEN],
+		v_volume[VVOLLEN],
+		v_reels,
+		v_reel;
+	long	v_time,
+                v_length,
+		v_dens,
+		v_reelblks,	/* u370 added field */
+		v_blksize,	/* u370 added field */
+		v_nblocks;	/* u370 added field */
+	char	v_fill[VFILLEN];
+	long	v_offset;	/* used with -e and -reel options */
+	int	v_type;		/* does tape have nblocks field? */
+} ;
+\f1
+.ps +1
+.vs +1

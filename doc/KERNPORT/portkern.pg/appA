@@ -1,0 +1,2754 @@
+.if n .pH portguide.appA @(#)appA	40.2
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.BK "Programmer's Guide: Porting the Kernel"
+.CH "Appendix A: Data Structures" A
+.H 2 "Data Structures"
+This appendix has data structures and other related information that may be 
+interest to porters.
+See also
+.BT "Programmer's Guide: STREAMS"
+for STREAMS data structures.
+.H 3 "File Identifiers"
+.IX file identifier
+A file system identifier provides a unique identification of a file system
+on a particular machine.
+Stateless remote file systems such as NFS need to construct a handle to identify a 
+remote file.
+This is necessary since the alternative would be to remember the full path name on
+the client and pass it to the server on each file access.
+The server would then have to convert the path name to the \f4vnode\f1 on each file
+access.
+This would be very inefficient.
+Instead, NFS acquires the handle when the file is opened.
+Subsequent accesses use this handle to refer to the file rather than the
+path name.
+The advantage of this is that the \f4vnode\f1 can be found from the handle faster 
+than from the path name.
+The handle has two parts; the \f2fsid\f1 that identifies the file system, and
+the \f2fid\f1 that identifies the particular file in the file system.
+The file identifier, \f2fid\f1, should be unique per a file system on a single
+machine.
+.P
+The data structures  are:
+.SS
+typedef struct {
+	long val[2];		/* file system ID type */
+} fsid_t;
+
+#define	MAXFIDSZ	16
+#define	freefid(fidp) 
+  kmem_free((caddr_t)(fidp), sizeof (struct fid) - MAXFIDSZ + (fidp)->fid_len)
+
+typedef struct fid {
+	u_short	fid_len;		/* length of data in bytes */
+	char	fid_data[MAXFIDSZ];/* data (variable length) */
+} fid_t;
+
+/* S5 and UFS file -  this structure overlays the fid structure */
+
+struct ufid {
+	u_short	ufid_len;		/* matched fid_len */
+	o_ino_t	ufid_ino;		/* i-number */
+	long	ufid_gen;		/* generation number */
+.SE
+For the S5 and UFS file systems, the two \f4long\f1s are the device code and the
+file system type.
+The file system type is an index to the \f4vfssw\f1 array. 
+.P
+There is a file system independent file ID structure used in the independent code.
+Each particular file system overlays this structure with its own more detailed
+structure.
+S5 and UFS use the same structure that has an \f4inode\f1 number and a
+generation number.
+The generation number is required because \f4inode\f1 numbers are reused after
+files are deleted.
+Therefore, the same \f4inode\f1 number in the same file system may refer to different
+files at different times.
+The generation number that is kept in the on-disk \f4inode\f1 is incremented each
+time a file is deleted.
+Therefore, the combination of \f4inode\f1 number and generation number is unique.
+.P
+The routine \f4vop_fid\f1 is used to get a file ID for a file, and the
+routine \f4vfs_vget\f1 is used to get the \f4vnode\f1 for the file given in the
+file ID.
+.H 3 "cred Structure"
+.IX \f4cred\fP structure
+The \f4cred\f1 structure has a process credentials.
+A pointer to the \f4cred\f1 structure is in the \f2p_cred\f1 member of the
+\f4proc\f1 table.
+The structure has a use count and is shared.
+.P
+Initially, the real, effective, and saved user IDs are all equal.
+The same is true for the groups IDs.
+The IDs can be effected in two ways:
+by executing a program with the \f2setuid\f1 and \f2setgid\f1 bits set, or by
+doing a \f4setuid\f1 or \f4setgid\f1 system call.
+.P
+If a super-user does a \f4setuid\f1, the real, effective, and saved user IDs are
+changed to the specified value.
+If a non-super-user does the same, only the effective user ID is changed and it
+can only be changed to the real or saved user ID.
+Otherwise, the \f4errno EPERM\f1 is returned.
+.P
+When a new program is executed, a two step check is made to determine how to
+handle the user ID.
+If the program to be executed has the \f2setuid\f1 bit set and it is not coming
+from a file system that was mounted specifying ``no setuid,'' the target user ID
+is set to the ID of the owner of the file.
+Otherwise, the target user ID is set to the current effective user ID.
+Next, a check is made to see if the user ID should be changed.
+It should be changed if the process is not being traced and the target user ID 
+differs from both the current effective and the current saved user ID.
+If the current effective user ID is root, the change will occur even if the
+process is being traced providing that the other conditions are met.
+.P
+When the user ID is changed, the effective and the save values are set to the
+target value.
+The real user ID, however, is not changed.
+.SS
+/* User credentials.  The size of the cr_groups[] array is configurable
+ * but is the same (ngroups_max) for all cred structures; cr_ngroups
+ * records the number of elements currently in use, not the array size.
+ */
+typedef struct cred {
+	ushort	cr_ref;		/* reference count */
+	ushort	cr_ngroups;	/* number of groups in cr_groups */
+	uid_t	cr_uid;		/* effective user id */
+	gid_t	cr_gid;		/* effective group id */
+	uid_t	cr_ruid;		/* real user id */
+	gid_t	cr_rgid;		/* real group id */
+	uid_t	cr_suid;		/* saved user id (from exec) */
+	gid_t	cr_sgid;		/* saved group id (from exec) */
+	gid_t	cr_groups[1];	/* supplementary group list */
+} cred_t;
+.SE
+.H 2 "Virtual File System"
+.H 3 "statvfs Structure"
+.IX \f4statvfs\f1, structure
+The new system call (implemented in Release 4.0) \f4statvfs\f1 gets information 
+about a mounted file system.
+It replaces the \f4ustat\f1 system call that is still supported for
+compatibility.
+The following structure is returned by \f4statvfs\f1(2):
+.SS
+#define	FSTYPSZ	16
+typedef struct statvfs {
+	u_long	f_bsize;		 /* fundamental file system block size */
+	u_long	f_frsize;		 /* fragment size */
+	u_long	f_blocks;		 /* total # of blocks of f_frsize on fs */
+	u_long	f_bfree;		 /* total # of free blocks of f_frsize */
+	u_long	f_bavail;		 /* # of free blocks avail to non-superuser */
+	u_long	f_files;		 /* total # of file nodes (inodes) */
+	u_long	f_ffree;		 /* total # of free file nodes */
+	u_long	f_favail;		 /* # of free nodes avail to non-superuser */
+	u_long	f_fsid;		 /* file system id (dev for now) */
+	char	f_basetype[FSTYPSZ];/* target fs type name, null-terminated */
+	u_long	f_flag;		 /* bit-mask of flags */
+	u_long	f_namemax;	 /* maximum file name length */
+	char	f_fstr[32];	 /* file system specific string */
+	u_long	f_filler[16];	 /* reserved for future expansion */
+} statvfs_t;
+.SE
+For the S5 file system \f2f_bsize\f1 is 512, 1024, or 2048.
+For the UFS file system \f2f_bsize\f1 is configurable, but defaults to 8192.
+In S5, \f2f_frsize\f1 is always equal to block size; for UFS it is
+configurable, but defaults to 1024.
+\f2f_bavail\f1 equals \f2f_bfree\f1 for the S5 file system.
+For the UFS file system it is configurable percentage of \f2f_blocks\f1 and 
+is reserved by a super-user.
+\f2f_bavail\f1 defaults to 10 %.
+\f2f_favail\f1 is always equal to \f2f_ffree\f1 for the S5 and UFS file systems.
+.P
+The structure member \f2f_flag\f1 can have the following values:
+.IX \f4statvfs\f1, flags
+.BL
+.LI
+\f4ST_RDONLY\f1 - read only file system.
+.LI
+\f4ST_NOSUID\f1 - does not support \f4setuid/setgid\f1 semantics.
+This flag is used by RFS.
+.LI
+\f4ST_NOTRUNC\f1 -  long file names are not truncated.
+Instead \f4ENAMETOOLONG\f1 is returned.
+.LE
+\f2f_namemax\f1 is 14 for S5 and 255 for UFS.
+For S5 \f2f_fstr\f1 contains the file system name and the pack identification
+as two consecutive null-terminated strings.
+.H 3 "stat Structure"
+.IX \f4stat\f1 structure
+The following shows the expanded \f4stat\f1 structure (\f4xstat\f1) and the kernel 
+structure that maps to the \f4xstat\f1 structure:
+.SS
+#if defined(_KERNEL)
+
+/* Expanded stat structure */ 
+struct xstat {
+	dev_t	    st_dev;	/* file system id, same as device code */ 
+	long	    st_pad1[3];	/* reserve for dev expansion, sysid definition */
+	ino_t	    st_ino;	/* inode number */
+	mode_t	    st_mode;	/* type and mode bits */
+	nlink_t	    st_nlink;	/* # of links to this file */
+	uid_t	    st_uid;	/* user id of an owner of this file */
+	gid_t	    st_gid;	/* group id of an owner of this file */
+	dev_t	    st_rdev;	/* actual dev., block & char. spec. files */
+	long	    st_pad2[2];
+	off_t	    st_size;	/* size of a file in bytes */
+	long  	    st_pad3;	/* reserve pad for future off_t expansion */
+	timestruc_t  st_atime;	/* file last accessed */
+	timestruc_t  st_mtime;	/* file last modified */
+	timestruc_t  st_ctime;	/* inode last modified by chown, chgrp, etc */
+	long	    st_blksize;	/* block size in bytes */
+	long	    st_blocks;	/* # of 512 byte blocks */
+	char	    st_fstype[_ST_FSTYPSZ];/* name of a file system type */
+	long	    st_pad4[8];	/* expansion area */
+};
+#else /* !defined(_KERNEL) */
+
+#if !defined(_STYPES)	/* user level 4.0 stat struct */
+
+/* maps to kernel struct xstat */
+struct stat {
+	dev_t	    st_dev;	/* file system id, same as device code *?
+	long	    st_pad1[3];	/* reserved for network id */
+	ino_t	    st_ino;	/* inode number */
+	mode_t	    st_mode;	/* type and mode bits */
+	nlink_t	    st_nlink;	/* # of links to this file */
+	uid_t 	    st_uid;	/* user id of an owner of this file */
+	gid_t 	    st_gid;	/* groups id of an owner of this file */
+	dev_t	    st_rdev;	/* actual dev., block & char. spec. files */
+	long	    st_pad2[2];
+	off_t	    st_size;	/* size of a file in bytes */
+	long	    st_pad3;	/* future off_t expansion */
+	timestruc_t  st_atim;	/* file last accessed */
+	timestruc_t  st_mtim;	/* file last modified */
+	timestruc_t  st_ctim;	/* inode last modified by chown, chgrp, etc */
+	long	    st_blksize;	/* block size in bytes */
+	long	    st_blocks;	/* # of 512 byte blocks */
+	char	    st_fstype[_ST_FSTYPSZ];
+	long	    st_pad4[8];	/* expansion area */
+};
+
+#define st_atime	st_atim.tv_sec
+#define st_mtime	st_mtim.tv_sec
+#define st_ctime	st_ctim.tv_sec
+
+#endif    /* end !defined(_STYPES) */
+#endif    /* end defined(_KERNEL */
+.SE
+\f2st_blksize\f1 is 512, 1024, or 2048 bytes for S5 regular files.
+For S5 and UFS block or character special files \f2st_blksize\f1 is 8192 bytes.
+.H 3 "pathname Structure"
+.IX \f4pathname\f1, structure
+The \f4pathname\f1 structure is part of the interface between the independent
+and dependent virtual file system code.
+It describes a path name during the time the path name is being looked up to 
+find the file which the path name refers to.
+.P
+System calls that operate on path names gather the path name
+from the system call into the \f4pathname\f1 structure and reduce it by
+taking off translated components.
+If a symbolic link is encountered the new path name to be translated is also
+assembled in this structure.
+.P
+By convention \f2pn_buf\f1 is not changed once it has been set to point
+to the underlying storage; routines which manipulate the \f4pathname\f1
+do so by changing \f2pn_path\f1 and \f2pn_pathlen\f1.
+\f2ph_path\f1 is incremented and 
+\f2ph_pathlen\f1 is decremented as each component of the path name is processed.
+\f2pn_pathlen\f1 is redundant since the path name is null-terminated,
+but is provided to make some computations faster.
+.SS  
+typedef struct pathname {
+	char	*pn_buf;		/* underlying storage */
+	char	*pn_path;		/* remaining pathname */
+	u_int	pn_pathlen;	/* remaining length */
+} pathname_t;
+.SE
+.NE 10
+Following operations on the path name can take place (see \f3sys/pathname.h\f1
+for more details):
+.IX \f4pathname\f1, operations
+.BL
+.LI
+\f4pn_alloc\f1 - allocate a buffer for \f4pathname\f1.
+.LI
+\f4pn_get\f1 - allocate a buffer and copy path into it.
+.LI
+\f4pn_set\f1 - set \f4pathname\f1 to a string.
+.LI
+\f4pn_insert\f1 - combine two path names (symbolic link).
+.LI
+\f4pn_getsymlink\f1 - get a symbolic link into \f4pathname\f1.
+.LI
+\f4pn_getcomponent\f1 - get next component of \f4pathname\f1.
+.LI
+\f4pn_setlast\f1 - set \f4pathname\f1 to last component.
+.LI
+\f4pn_skipslash\f1 - skip over slashes.
+.LI
+\f4pn_fixslash\f1  - eliminate trailing slashes.
+.LI
+\f4pn_free\f1 - free the \f4pathname\f1 buffer.
+.LI
+\f4lookuppn\f1 - convert the \f4pathname\f1 buffer to \f4vnode\f1.
+.LI
+\f4lookupname\f1 - convert \f4pathname\f1 to \f4vnode\f1.
+The \f4lookupname\f1 function calls \f4pn_get\f1 to allocate a \f4pathname\f1
+buffer, copy the caller's \f4pathname\f1 into it, and initialize the \f4pathname\f1
+structure to the buffer.
+\f4lookupname\f1 then calls \f4lookuppn\f1 to translate the \f4pathname\f1 and
+then frees up the \f4pathname\f1 buffer and returns.
+.LI
+\f4traverse\f1 - traverse a mount point.
+.LE
+.H 3 "dirent Structure"
+.IX \f4dirent\f1 structure
+The \f4dirent\f1 structure is the file system independent directory entry structure.
+It is returned by the \f4getdents\f1 system call and the \f4readdir\f1 library
+routine.
+In order to use the \f4directory\f1(3C) library package that includes \f4readdir\f1
+one must include the header file \f3sys/dirent.h\f1 that defines \f2DIR\f1.
+The value of \f2DIR*\f1 is returned by \f4opendir\f1.
+.SS
+struct dirent {
+	ino_t		d_ino;		/* inode number of entry */
+	off_t		d_off;		/* offset of disk directory entry */
+	unsigned short	d_reclen;		/* length of this record */
+	char		d_name[1];	/* name of file */
+};
+   
+typedef struct dirent dirent_t;
+.SE
+.H 3 "vnode Structure"
+.IX \f4vnode\fP, structure
+\f4vnode\f1 represents an active file; i.e., a file that is open, a current
+directory, mounted on, or the root of a mounted file system.
+\f4vnode\f1 contains a pointer to the \f4vnodeops\f1 structure and to the
+\f4vfs\f1 for the file system containing this file.
+.SS
+typedef struct vnode {
+	u_short		v_flag;		/* vnode flags (see below) */
+	u_short		v_count;		/* reference count */
+	struct vfs	*v_vfsmountedhere;	/* ptr to vfs mounted here */
+	struct vnodeops	*v_op;		/* vnode operations */
+	struct vfs	*v_vfsp;		/* ptr to containing VFS */
+	struct stdata	*v_stream;	/* associated stream */
+	struct page	*v_pages;		/* vnode pages list */
+	enum vtype	v_type;		/* vnode type */
+	dev_t		v_rdev;		/* device (VCHR, VBLK) */
+	caddr_t		v_data;		/* private data for fs */
+	struct filock	*v_filocks;	/* ptr to filock list */
+	long		v_filler[8];	/* padding */
+} vnode_t;
+.SE
+.NE 10
+.IX \f4vnode\fP, flags
+Various \f4vnode\f1 flags (\f2v_flag\f1) are defined as:
+.BL
+.LI
+\f4VROOT\f1 - this is the root of a file system.
+.LI
+\f4VNOMAP\f1 - the file can't be mapped/faulted.
+This is set by \f3proc\f1, \f3namefs\f1, and \f3fifofs\f1 file systems and by
+\f3rfs\f1 when servers developed prior to Release 4.0 are used.
+.LI
+\f4VDUP\f1 - the file should be duplicated rather than opened.
+There are special considerations for the \f3fd\f1 file system.
+.LI
+\f4VNOSWAP\f1 - the file cannot be used as virtual swap device.
+This is set by \f3rfs\f1 to prevent remote swapping since the system currently
+panics if it gets a swap I/O error.
+.LI
+\f4VNOMOUNT\f1 - the file cannot be covered by mount.
+.LI
+\f4VISSWAP\f1 - this file is being used as a virtual swap device.
+.LE
+.H 4 "vnode Modes"
+.IX \f4vnode\fP, modes
+\f4vnode\f1 modes are the same as \f4S_xxx\f1 entries in \f3stat.h\f1.
+.BL
+.LI
+\f4VSUID\f1 - set user ID on execution.
+.LI
+\f4VSGID\f1 - set group ID on execution.
+.LI
+\f4VSVTX\f1 - save swapped text even after use.
+.LE
+.H 4 "vnode Types"
+.IX \f4vnode\fP, types
+These \f4vnode\f1 types are unrelated to values in on-disk \f4inode\f1s.
+.BL
+.LI
+\f4VNON\f1 = 0, no type is specified.
+.LI
+\f4VREG\f1 = 1, regular file.
+.LI
+\f4VDIR\f1 = 2, directory.
+.LI
+\f4VBLK\f1 = 3, block special file.
+.LI
+\f4VCHR\f1 = 4, character special file.
+.LI
+\f4VLNK\f1 = 5, symbolic link.
+.LI
+\f4VFIFO\f1 = 6, FIFO or a named pipe.
+.LI
+\f4VXNAM\f1 = 7, used with XENIX for \f3xnamfs\f1 file system type.
+.LI
+\f4VBAD\f1 = 8, not used currently.
+.LE
+.H 4 "vattr Structure"
+.IX \f4vnode\fP, \f4vattr\f1 structure
+.IX \f4vattr\fP structure
+The \f4vattr\f1 structure is part of the interface between independent and
+dependent file system code.
+It contains generic file attributes that the dependent code must interpret in terms 
+of its particular file system parameters.
+.P
+The interface functions \f4vop_getattr\f1 and \f4vop_setattr\f1 are used by the
+independent code to get the attributes of a file from the dependent code and to tell
+the dependent code to set or change the attributes of a file.
+.SS
+/*
+ * vnode attributes.  A bit-mask is supplied as part of the
+ * structure to indicate the attributes the caller wants to
+ * set (setattr) or extract (getattr).
+ */
+typedef struct vattr {
+	long	     va_mask;	/* bit-mask of attributes */
+	vtype_t	     va_type;	/* vnode type (for create) */
+	mode_t	     va_mode;	/* file access mode */
+	uid_t	     va_uid;	/* owner user id */
+	gid_t	     va_gid;	/* owner group id */
+	dev_t	     va_fsid;	/* file system id (dev for now) */
+	ino_t	     va_nodeid;	/* node id */
+	nlink_t	     va_nlink;	/* number of references to file */
+	u_long	     va_size0;	/* file size pad (for future use) */
+	u_long	     va_size;	/* file size in bytes */
+	timestruc_t   va_atime;	/* time of last access */
+	timestruc_t   va_mtime;	/* time of last modification */
+	timestruc_t   va_ctime;	/* time file created */
+	dev_t	     va_rdev;	/* device the file represents */
+				/* only for block & character special files */
+	u_long	     va_blksize;   /* fundamental block size */
+	u_long	     va_nblocks;   /* # of blocks allocated */
+				/* includes indirect blocks */
+	u_long	     va_vcode;	/* version code (see below) */
+	long	     va_filler[8]; /* padding */
+} vattr_t;
+.SE
+A version code (\f2va_vcode\f1) is associated with each in-core \f4inode\f1.
+It is used by RFS to maintain cache consistency across \f4close\f1s.
+The value is initialized to 1 when the \f4inode\f1 is read in from disk.
+It is incremented each time the file is modified providing that RFS is running.
+.H 4 "vnode Operations"
+.IX istart \f4vnode\fP, operations
+All \f4vnode\f1 operations return an \f4int\f1 that is either zero or an \f4errno\f1
+from \f3sys/errno.h\f1.
+The following arguments are common to all \f4vnodeops\f1 functions unless
+otherwise noted:
+.BL
+.LI
+\f2vp\f1 - a pointer to the \f4vnode\f1 for the file that is the subject of the
+operation.
+.LI
+\f2cr\f1 - a pointer to the credentials structure from the file table entry.
+These credentials are in effect when the file is opened.
+.LI
+\f2uiop\f1 - a pointer to the \f4uio\f1 structure describing the I/O request.
+.LI
+\f2flag\f1 - the flags from the file table entry.
+.LI
+\f2offset\f1 - the offset from the file table entry.
+.LE
+See \f3sys/vnode.h\f1 for detail definitions of the following \f4vnode\f1 operations:
+.BL
+.LI
+\f4vop_open\f1 - open the file.
+The argument \f2vpp\f1 is a pointer to a pointer to the \f4vnode\f1 for the file
+that is being opened.
+The reason for the indirection is to allow the dependent code to change the
+\f4vnode\f1 that is used for clone devices.
+The exact mechanism depends whether the an old (pre-Release 4.0) style or new
+style driver is involved but the code is in \f4spec_open\f1 and in the
+clone driver itself.
+The argument \f2flag\f1 specifies flags as the second argument to the \f4open\f1
+system call.
+.LI
+\f4vop_close\f1 - close the file.
+The argument \f2vp\f1 is a pointer to the \f4vnode\f1 for the file being closed.
+The argument \f2count\f1 is the reference count from the file table entry.
+.P
+NOTE: It is not clear why some arguments such as \f2flag, count\f1, and \f2offset\f1
+would be needed for a close.
+However, this is a general interface and one can never know what some unusual
+file system types may want to do. 
+.LI
+\f4vop_read\f1 - read from the file.
+.br
+\f4vop_write\f1 - write to the file.
+.P
+The argument \f2ioflag\f1 can be one or both of the flags \f4IO_APPEND\f1 and
+\f4IO_SYNC\f1.
+They are set if \f4FAPPEND\f1 and \f4FSYNC\f1 respectively are set in the
+file table entry.
+The file table flags can be set as a result of \f4open\f1 or \f4fcntl\f1.
+.LI
+\f4vop_ioctl\f1 - do an \f4ioctl\f1 system call.
+The arguments are \f2cmd\f1 and \f2arg\f1; the command and argument from the
+\f4ioctl\f1 system call.
+.LI
+\f4vop_setfl\f1 - called during the \f4fcntl F_SETFL\f1 system call to check
+arguments and process any file system dependent arguments.
+The arguments are \f2oflags\f1 for the current file table entry and \f2nflags\f1
+for the flags that a user is trying to set.
+.LI
+\f4vop_getattr\f1 - get the file attributes.
+.LI
+\f4vop_setattr\f1 - set the file permissions.
+.LI
+\f4vop_access\f1 - check access permissions.
+The argument \f2mode\f1 is the mode (\f4VREAD, VWRITE\f1, or \f4VEXEC\f1) of
+access being checked for.
+The argument \f2flags\f1 is always zero and not used.
+.P
+If the user with the given credentials has the type of access permission
+specified in \f2mode\f1 for the file, zero is returned.
+Otherwise, an error code is returned.
+.LI
+\f4vop_lookup\f1 - look up a file in a directory.
+The arguments are \f2dvp\f1 (a pointer to the \f4vnode\f1 for the directory),
+\f2nm\f1 (the name to look up), \f2vpp\f1 (a pointer to the location in which to
+return a pointer to the \f4vnode\f1 for the file if it is found), \f2pnp\f1
+(a pointer to the complete path name being looked up; this is needed to do
+multi-component lookup), \f2flags\f1 (\f4LOOKUP_DIR\f1; needed if multi-component
+lookup is being done), and \f2rdir\f1 (a pointer to the \f4vnode\f1 of the
+root directory for the process).
+.P
+In general, just a single component is looked up.
+However, it is possible to continue and process multiple components of the
+path name.
+For example, if the first component is a directory that is not mounted on or if the
+mounted file system is of the same type, the lookup routine can continue with the
+next component.
+This is not done by S5 or UFS file systems.
+However, it is done by RFS where each lookup requires going across the network to
+a server.
+RFS will do multi-component lookup when possible.
+.LI
+\f4vop_create\f1 - create a file.
+The arguments are \f2dvp\f1 (a pointer to the \f4vnode\f1 for the directory in
+which the file is to be created), \f2name\f1 (a name of the file to be created),
+\f2vap\f1 (a pointer to the \f4vattr\f1 structure describing the attributes
+the file is being created with), \f2excl\f1 (\f4EXCL\f1 or \f4NONEXCL\f1
+depending on whether this is an exclusive create or not), \f2mode\f1
+(\f4VREAD\f1 and/or \f4VWRITE\f1), and \f2vpp\f1 (a pointer to the location
+where the pointer to the \f4vnode\f1 for the created file is to be returned).
+.LI
+\f4vop_remove\f1 - delete the file.
+The argument \f2nm\f1 is the name of the file to be removed from the
+directory \f2vp\f1.
+.LI
+\f4vop_link\f1 - create a link to a file or a directory.
+.LI
+\f4vop_rename\f1 - rename a file or directory.
+This does the entire rename operation including first deleting the target
+name if it already exists.
+.LI
+\f4vop_mkdir\f1 - create a directory.
+This makes a complete directory including the "." and ".." entries.
+.LI
+\f4vop_rmdir\f1 - delete a directory.
+The arguments are \f2vp\f1 (a pointer to the \f4vnode\f1 for the directory to be
+removed), \f2nm\f1 (the name of the directory being removed), and \f2cdir\f1
+(the current directory of a process; this can't be removed).
+.LI
+\f4vop_readdir\f1 - read directory entries.
+The argument \f2eofp\f1 is an out parameter.
+The dependent code sets it to 1 if it has read to the end of the directory and
+to zero otherwise.
+This function implements the \f4getdents\f1 system call.
+It reformats directory entries from the format specific to the file system type
+to the generic \f4dirent\f1 format returned by \f4getdents\f1.
+.LI
+\f4vop_symlink\f1 - create a symbolic link.
+.LI
+\f4vop_readlink\f1 - read a symbolic link.
+.LI
+\f4vop_fsync\f1 - write out all modified pages of the file followed by the
+\f4inode\f1.
+.LI
+\f4vop_inactive\f1 - the \f4vnode\f1 for the file is no longer being used.
+This is called from \f4vn_rele\f1 when \f4vnode\f1 count goes to zero.
+Any modified pages of the file that have not previously been written out to disk
+will be written out now.
+If the \f4inode\f1 has been modified, it will be written out, too.
+It probably has been modified at least at the access time.
+Then in-core \f4inode\f1 is freed.
+.LI
+\f4vop_fid\f1 - create and return the file ID for the file.
+The file ID consists of the \f4inode\f1 number and the generation number.
+.LI
+\f4vop_rwlock\f1 - set a lock on the \f4vnode\f1.
+.br
+\f4vop_rwunlock\f1 - clear the lock on the \f4vnode\f1.
+.P
+These functions are required in order to allow remote file systems to maintain
+the traditional atomicity of reads and writes provided by UNIX.
+RFS uses this interface and thus guarantees atomic reads and writes.
+NFS does not use this interface and does not guarantee atomicity.
+.P
+On local systems atomicity can be maintained without a locking operation being
+performed by the generic code.
+The dependent code simply locks the \f4vnode\f1 before entering its loop and
+keeps it locked until after completing the entire read or write.
+.P
+On a remote file system, all the data may not be sent in a single message because
+there is a limit to message sizes imposed by the network.
+Therefore, the remote server will have to make multiple \f4vop_read\f1 or
+\f4vop_write\f1 calls corresponding to a single \f4read\f1 or \f4write\f1 system
+call on a client.
+While the read and write cannot be done with a single network message, it is
+possible for the server to know which are the first and last messages.
+Then it can do a \f4vop_rwlock\f1 before calling \f4vop_read\f1 and vop_write\f1
+followed by \f4vop_runlock\f1.
+.P
+The local code also locks the \f4vnode\f1 in the independent code that calls
+\f4vop_rwlock\f1 before calling \f4vop_read, vop_write\f1, and \f4vop_readdir\f1.
+.LI
+\f4vop_seek\f1 - check the validity of a seek address.
+The arguments are \f2ooff\f1 (the current file offset from the file table) and
+\f2noffp\f1 (the offset the user is trying to move to).
+If \f4vop_seek\f1 returns zero, the offset is set to \f2noffp\f1.
+Note that the dependent code could have changed this value from that originally
+supplied by the user.
+.LI
+\f4vop_cmp\f1 - compare two \f4vnode\f1s for equality.
+Normally it just compares the \f4vnode\f1 pointers since there are never two
+copies of the same \f4vnode\f1 in memory at the same time.
+.LI
+\f4vop_frlock\f1 - file and record locking interface.
+.LI
+\f4vop_space\f1 - free file space.
+The arguments are \f2cmd\f1 (\f4F_ALLOCSP\f1 or \f4F_FREESP\f1), and \f2bfp\f1
+(a pointer to a \f4flock\f1 structure that describes the space to be
+allocated or freed).
+.P
+Currently, only \f4F_FREESP\f1 is supported by S5 and UFS file systems.
+.LI
+\f4vop_realvp\f1 - return a pointer to the real \f4vnode\f1 for the file.
+This function is used by the \f3specfs\f1 file system.
+If \f2vp\f1 is a shadow \f4vnode\f1, it returns a pointer to the real \f4vnode\f1
+it is shadowing in \f2vpp\f1.
+Otherwise, it returns \f2vp\f1 in \f2vpp\f1.
+.P
+All \f3specfs\f1 \f4vnode\f1s are shadows for the block or character special
+\f4vnode\f1 originally obtained from the real file system (of type S5, UFS, etc.).
+A \f3fifofs\f1 \f4vnode\f1 for a FIFO is also a shadow.
+.LI
+\f4vop_getpage\f1 - read pages from the file.
+.LI
+\f4vop_putpage\f1 - write pages to the file.
+.LI
+\f4vop_map\f1 - map a region of a file into an address space.
+.LI
+\f4vop_addmap\f1 - create a block number map for use by page fault handler.
+This function is called by segment driver create routines.
+.LI
+\f4vop_delmap\f1 - delete the block map associated with a file.
+.LI
+\f4vop_poll\f1 - implement the \f4poll\f1 system call.
+.LI
+\f4vop_dump\f1 - not currently used or implemented by any file system type.
+.LI
+\f4vop_pathconf\f1 - do the POSIX \f4pathconf\f1 system call.
+The arguments are \f2cmd\f1 and \f2valp\f1 that is an out parameter where the
+value of the requested parameter is to be stored.
+\f2cmd\f1 can take the following values:
+.BL
+.LI
+\f4_PC_LINK_MAX\f1 - maximum number of links that can be made to a file.
+For S5 and UFS this value is 1000.
+.LI
+\f4_PC_MAX_CANON\f1 - maximum number of bytes in a terminal line when canonical
+processing is being done.
+For S5 and UFS this value is 256.
+.LI
+\f4_PC_MAX_INPUT\f1 - maximum number of bytes stored on a terminal input queue.
+For S5 and UFS this value is 512.
+.LI
+\f4_PC_NAME_MAX\f1 - maximum number of characters in a file name.
+The value is 14 for S5 and 255 for UFS.
+.LI
+\f4_PC_PATH_MAX\f1 - maximum number of characters in a path name.
+For S5 and UFS this value is 1024.
+.LI
+\f4_PC_PIPE_BUF\f1 - maximum number of bytes that can be written into a pipe
+with guaranteed atomicity.
+For S5 and UFS this value is 5120.
+.LI
+\f4_PC_NO_TRUNC\f1 - specifies whether the file system is truncating
+long names.
+The value for S5 and UFS is 1 if truncation is prohibited; otherwise zero.
+If truncation is turned off, \f4ENAMETOOLONG\f1 is returned.
+Truncation can be turned on or off at mount time.
+.LI
+\f4_PC_VDISABLE\f1 - value is 1 if the special input characters have been
+configured disabled.
+Special input characters are enabled for S5 and UFS.
+.LI
+\f4_PC_CHOWN_RESTRICTED\f1 - set if \f4chown\f1 has been restricted to
+prohibit users from giving away their files.
+This is a configuration parameter in the kernel master file.
+.LE
+.LE
+.IX iend \f4vnode\fP, operations
+.bp
+.H 4 "vfs Structure"
+.IX \f4vfs\fP, structure
+The \f4vfs\f1 structure represents a mounted file system and it replaces the
+pre-Release 4.0 mount table.
+It is a singly linked list with a pointer to VFS operation structure \f4vfsops\f1.
+.SS
+typedef struct vfs {
+	struct vfs	*vfs_next;	/* next VFS in VFS list */
+	struct vfsops	*vfs_op;		/* operations on VFS */
+	struct vnode	*vfs_vnodecovered;	/* see below */
+	u_long		vfs_flag;		/* flags */
+	u_long		vfs_bsize;	/* native block size */
+	int		vfs_fstype;	/* file system type index */
+	fsid_t		vfs_fsid;		/* file system id */
+	caddr_t		vfs_data;		/* private data */
+	dev_t		vfs_dev;		/* device of mounted VFS */
+	u_long		vfs_bcount;	/* I/O count (accounting) */
+	u_short		vfs_nsubmounts;	/* immediate sub-mount count */
+} vfs_t;
+.SE
+The structure member \f2vfs_vnodecovered\f1 points to the \f4vnode\f1 for the
+directory on which this file system is mounted or NULL if this is the root
+file system.
+.P 
+.IX \f4vfs\fP, flags
+The following flags are in the \f2vfs_flag\f1 member of the \f4vfs\f1 structure:
+.BL
+.LI
+\f4VFS_RDONLY\f1 - set only if the file system is mounted as read only.
+.LI
+\f4VFS_MLOCK\f1 - lock \f4vfs\f1 so that subtree is stable.
+This is used during \f4mount\f1 and \f4unmount\f1.
+.LI
+\f4VFS_MWAIT\f1 - someone is waiting for lock.
+.LI
+\f4VFS_NOSUID\f1 - set if \f4setuid\f1 and \f4setgid\f1 programs are disallowed 
+on this file system.
+It is set as a result of a flag specified on the \f4mount\f1 system call.
+.LI
+\f4VFS_REMOUNT\f1 - indicates that this is a remount of an already mounted
+file system. 
+This is used only by the root file system temporarily during the mount as part
+of the interface between independent and dependent code.
+.LI
+\f4VFS_NOTRUNC\f1 - set as a result of a flag set on the \f4mount\f1 system call if 
+this file system should not truncate long file names.
+It returns \f4ENAMETOOLONG\f1.
+.LI
+\f4VFS_UNLINKABLE\f1 -  allows \f4unlink\f1(2) of the root of a mounted file system.
+This is used only by the \f3namefs\f1 file system that forces an unmount.
+.LE
+.H 4 "mounta Structure"
+.IX \f4mounta\fP, structure
+The \f4mounta\f1 structure has arguments to the \f4mount\f1 system call.
+The structure is as follows:
+.SS
+struct mounta {
+	char	*spec;		/* pointer to a special file */
+	char	*dir;		/* pointer to a directory */
+	int	flags;		/* see below */
+	char	*fstype;		/* file system type */
+	char	*dataptr;		/* pointer to a buffer */
+	int	datalen;		/* length of a buffer */
+};
+.SE
+The structure member \f2spec\f1 is  pointer to the path name of the special
+file to be mounted.
+This may not be a special file if the mount is the \f3namefs\f1 file system.
+\f2dir\f1 is a pointer to the path name of the directory on which to mount the file.
+This may not be a directory if the mount is the \f3namefs\f1 file system.
+The member \f2fstype\f1 is the type of the file system being mounted (character
+string).
+\f2dataptr\f1 is a pointer to a user supplied buffer.
+The content of the buffer is file system type dependent.
+\f2datalen\f1 is the length of the \f2dataptr\f1 buffer in bytes. 
+.P
+\f2flags\f1 can take the following values:
+.IX \f4mounta\fP, flags
+.BL
+.LI
+\f4MS_RDONLY\f1 - mount the file system as read only.
+.LI
+\f4MS_FSS\f1 - pre-Release 4.0 mount.
+\f2dataptr\f1 and \f2datalen\f1 arguments are not supplied.
+.LI
+\f4MS_DATA\f1 - if \f4MS_FSS\f1 or \f4MS_DATA\f1 is not set, the mount is done 
+with only the first three arguments (\f2spec, dir, flags\f1), in which case the 
+type of the file system being mounted is assumed to be the same as the root 
+file system.
+.LI
+\f4MS_NOSUID\f1 - disallows the execution of the \f4setuid\f1 programs on this file
+system.
+If a \f4setuid\f1 program is executed, it will run without the user ID or
+group ID being changed.
+.LI
+\f4MS_REMOUNT\f1 - remount of an existing file.
+.LI
+\f4MS_NOTRUNC\f1 - long file names are not truncated.
+\f4ENAMETOOLONG\f1 is returned.
+.LE
+.NE 15
+.H 4 "vfsops Structure"
+.IX \f4vfsops\fP, structure
+The \f4vfs\f1 operations return an \f4int\f1 that is either zero or an error
+code.
+.SS
+/* Operations supported on virtual file system */
+
+typedef struct vfsops {
+	int	(*vfs_mount)();	/* mount file system */
+	int	(*vfs_unmount)();	/* unmount file system */
+	int	(*vfs_root)();	/* get root vnode */
+	int	(*vfs_statvfs)();	/* get file system statistics */
+	int	(*vfs_sync)();	/* flush fs buffers */
+	int	(*vfs_vget)();	/* get vnode from fid */
+	int	(*vfs_mountroot)();/* mount the root file system */
+	int	(*vfs_swapvp)();	/* return vnode for swap */
+	int	(*vfs_filler[8])();/* for future expansion */
+} vfsops_t;
+
+#define VFS_MOUNT(vfsp, mvp, uap, cr)(*(vfsp)->vfs_op->vfs_mount)(vfsp, mvp, uap, cr)
+#define VFS_UNMOUNT(vfsp, cr)(*(vfsp)->vfs_op->vfs_unmount)(vfsp, cr)
+#define VFS_ROOT(vfsp, vpp)(*(vfsp)->vfs_op->vfs_root)(vfsp, vpp)
+#define VFS_STATVFS(vfsp, sp)(*(vfsp)->vfs_op->vfs_statvfs)(vfsp, sp)
+#define VFS_SYNC(vfsp, flag, cr)(*(vfsp)->vfs_op->vfs_sync)(vfsp, flag, cr)
+#define VFS_VGET(vfsp, vpp, fidp)(*(vfsp)->vfs_op->vfs_vget)(vfsp, vpp, fidp)
+#define VFS_MOUNTROOT(vfsp, init)(*(vfsp)->vfs_op->vfs_mountroot)(vfsp, init)
+#define VFS_SWAPVP(vfsp, vpp, nm)(*(vfsp)->vfs_op->vfs_swapvp)(vfsp, vpp, nm)
+.SE
+The operation \f4vfs_root\f1 returns a pointer to the \f4vnode\f1 for the root
+of the file system.
+It allows delayed binding for those cases where acquiring the root \f4inode\f1
+might be expensive; that is, a remote file system.
+In the operation \f4vfs_sync\f1 the \f2flag\f1 argument is always passed as zero.
+.H 4 "vfssw Structure"
+.IX \f4vfssw\fP structure
+The \f4vfssw\f1 structure is an entry in the file system switch table.
+There is one entry for each configured file system type.
+.SS
+typedef struct vfssw {
+	char		*vsw_name;	/* type name string */
+	int		(*vsw_init)();	/* init routine */
+	struct vfsops	*vsw_vfsops;	/* file system operations vector */
+	long		vsw_flag;		/* flags */
+} vfssw_t;
+.SE
+The \f2vsw_init\f1 is a pointer to the initialization function for the file
+system type.
+The initialization function is called once at system startup.
+.H 4 "vfs Operations"
+These are public \f4vfs\f1 functions:
+.IX \f4vfs\fP operations
+.SS
+extern void	vfs_mountroot();	/* mount the root */
+extern void	vfs_add();	/* add a new vfs to mounted vfs list */
+extern void	vfs_remove();	/* remove a vfs from mounted vfs list */
+extern int	vfs_lock();	/* lock a vfs */
+extern void	vfs_unlock();	/* unlock a vfs */
+extern vfs_t 	*getvfs();	/* return vfs given fsid */
+extern vfs_t 	*vfs_devsearch();	/* find vfs given device */
+extern vfssw_t 	*vfs_getvfssw();	/* find vfssw ptr given fstype name */
+extern u_long	vf_to_stf();	/* map VFS flags to statfs flags */
+extern int	dounmount();	/* unmount a vfs */
+.SE
+The operation \f4vfs_mountroot\f1 is called once during the system startup to
+mount the root file system.
+The root file system is determined by the configuration parameters
+\f2rootfstype\f1 and \f2rootdev\f1.
+It calls the \f4vfs_mountroot\f1 dependent routine and then calls \f4vfs_root\f1
+to get the \f4vnode\f1 for the root directory.
+This is saved in the global variable \f2rootdir\f1.
+.P
+The \f4vfs_add\f1 function is called by \f4mount\f1 and by the dependent
+\f4vfs_mountroot\f1 routines to add this newly created \f4vfs\f1 structure
+to the list of virtual file systems of mounted file systems.
+The head of this list is pointed to by the global variable \f2rootvfs\f1.
+The \f4vfs_add\f1 code ensures that the \f4vfs\f1 for the root file system is
+always the first one on the list. 
+.bp
+.H 3 "User I/O Request Structures"
+.IX \f4uio\f1 structure
+.IX \f4iovec\f1 structure
+The \f4uio\f1 and \f4iovec\f1 structures are used to describe a user's I/O
+request.
+They are used during the processing of \f4read, write, readv\f1, and \f4writev\f1
+system calls.
+During the processing of the system call, the contents of the \f4uio\f1 structure
+is updated to indicate the progress of the I/O transfer.
+.SS
+/*
+ * I/O parameter information.  A uio structure describes the I/O which
+ * is to be performed by an operation.  Typically the data movement will
+ * be performed by a routine such as uiomove(), which updates the uio
+ * structure to reflect what was done.
+ */
+
+typedef struct iovec {
+	caddr_t	iov_base;	/* pointer to a buffer */
+	int	iov_len;	/* length of a buffer in bytes */
+} iovec_t;
+
+typedef struct uio {
+	iovec_t	*uio_iov;		/* pointer to array of iovecs */
+	int	uio_iovcnt;	/* number of iovecs */
+	off_t	uio_offset;	/* file offset */
+	short	uio_segflg;	/* address space (kernel or user) */
+	short	uio_fmode;	/* file mode flags */
+	daddr_t	uio_limit;	/* u-limit (maximum "block" offset) */
+	int	uio_resid;	/* residual count */
+} uio_t;
+.SE
+The value of \f2uio_resid\f1 is initialized with the sum of the \f2iov_len\f1
+values from all the vectors.
+As I/O proceeds the value of \f2uio_offset\f1 is incremented and the value of
+\f2uio_resid\f1 is decremented by the number of bytes transferred.
+On normal completion \f2uio_offset\f1 is the offset to the byte following the
+last byte transfer and \f2uio_resid\f1 is zero.
+.P
+The \f4iovec\f1 structure is used to describe an I/O buffer that is contiguous
+in memory.
+A single read or write operation may have to access multiple such buffers if
+scatter/gather I/O was requested using \f4readv\f1 or \f4writev\f1.
+Therefore, the internal representation of an I/O request in the kernel always
+uses an array of \f4iovec\f1 structures.
+If the request came from a \f4read\f1 or \f4write\f1, there will be only one
+element in the array.
+.bp
+.H 2 "namefs File System"
+.H 3 "namefd Structure"
+.IX \f4namefd\fP structure
+.SS
+/*
+ * This structure is used to pass a file descriptor from user
+ * level to the kernel. It is first used by fattach() and then
+ * by NAMEFS.
+ */
+
+struct namefd {
+	int fd;
+};
+.SE
+.H 3 "namenode Structure"
+.IX \f4namenode\fP, structure
+.SS
+/* Each NAMEFS object is identified by a struct namenode/vnode pair */
+
+struct namenode {
+	struct vnode     nm_vnode;      /* represents mounted file desc.*/
+	ushort           nm_flag;       /* flags defined below */
+	struct vattr     nm_vattr;      /* attributes of mounted file desc.*/
+	struct vnode     *nm_filevp;    /* file desc. prior to mounting */
+	struct file      *nm_filep;     /* file pointer of nm_filevp */
+	struct vnode     *nm_mountpt;   /* mount point prior to mounting */
+	struct namenode  *nm_nextp;     /* next link in the linked list */
+	struct namenode  *nm_backp;     /* back link in linked list */
+};
+.SE
+Valid flags for \f4namenode\f1s are:
+.IX \f4namenode\fP, flags
+.BL
+.LI
+\f4NMLOCK\f1 - the \f4namenode\f1 is locked. 
+.LI
+\f4NMWANT\f1 - a process wants the \f4namenode\f1.
+.LE
+A \f4vnode\f1 is converted to a \f4namenode\f1 and vice versa by using
+macros \f4VTONM\f1 and \f4NMTOV\f1 respectively.
+These macros are defined as follows:
+.br
+.sp
+.nf
+	\f4VTONM(vp) ((struct namenode *) ((vp)->v_data))
+	NMTOV(nm) (&(nm)->nm_vnode)\fP
+.fi
+.bp
+.H 2 "FIFO File System"
+.H 3 "fifonode Structure"
+.IX \f4fifonode\fP, structure
+.SS
+/* Each FIFOFS object is identified by a struct fifonode/vnode pair */
+
+struct fifonode {
+	struct vnode	fn_vnode;   /* represents the fifo/pipe */
+	struct vnode	*fn_mate;   /* the other end of a pipe */
+	struct vnode	*fn_realvp; /* node being shadowed by fifo */
+	ushort		fn_ino;     /* node id for pipes */
+	short		fn_wcnt;    /* number of writers */
+	short		fn_rcnt;    /* number of readers */
+	short		fn_open;    /* open count of node*/
+	struct vnode	*fn_unique; /* new vnode created by connld */
+	ushort		fn_flag;    /* flags as defined below */
+	time_t		fn_atime;   /* creation times for pipe */
+	time_t		fn_mtime;
+	time_t		fn_ctime;
+	struct fifonode	*fn_nextp;  /* next link in the linked list */
+	struct fifonode	*fn_backp;  /* back link in linked list */
+};
+.SE
+Valid flags for \f4fifonode\f1 are:
+.IX \f4fifonode\fP, flags
+.BL
+.LI
+\f4ISPIPE\f1 - \f4fifonode\f1 is that of a pipe.
+.LI
+\f4FIFOLOCK\f1 - \f4fifonode\f1 is locked. 
+.LI
+\f4FIFOSEND\f1 - descriptor at Stream head of a pipe.
+.LI
+\f4FIFOWRITE\f1 -  process is blocked waiting to write.
+.LI
+\f4FIFOWANT\f1 -  a process wants to access the \f4fifonode\f1.
+.LI
+\f4FIFOREAD\f1 - process is blocked waiting to read.
+.LI
+\f4FIFOPASS\f1 - \f4connld\f1 module passed a new \f4vnode\f1 in \f2fn_unique\f1.
+.LE
+Macros to convert a \f4vnode\f1 to a \f4fifonode\f1, and vice versa are:
+.br
+.sp
+.nf
+	\f4VTOF(vp) ((struct fifonode *)((vp)->v_data))
+	FTOV(fp) (&(fp)->fn_vnode)\f1
+.fi
+.H 2 "specfs File System"
+The \f3specfs\f1 file system represents block and character special files.
+It has common code for all local file systems that support devices.
+.H 3 "snode Structure"
+.IX \f4snode\fP, structure
+The \f4snode\f1 represents a special file in any file system.
+There is one \f4snode\f1 for each active special file.
+File systems that support special files use \f4specvp(vp, dev, type, cr)\f1 to 
+convert a normal \f4vnode\f1 to a special \f4vnode\f1 in the \f4lookup()\f1 and
+\f4create()\f1 operations.
+.P
+To handle multiple \f4snode\f1s that represent the same underlying device \f4vnode\f1
+without cache aliasing problems, the \f2s_commonvp\f1 is used to point to the
+common \f4vnode\f1 used for doing data cache.
+If an \f4snode\f1 is created internally by the kernel,
+the \f2s_realvp\f1 field is NULL and \f2s_commonvp\f1 points to \f2s_vnode\f1.
+The other \f4snode\f1s which are created as a result of a lookup of a
+device in a file system have \f2s_realvp\f1 pointing to the \f2vp\f1 which
+represents the device in the file system while the \f2s_commonvp\f1 points
+into the common \f4vnode\f1 for the device in another \f4snode\f1.
+.SS
+struct snode {
+	struct	snode *s_next;	/* hash link - hashed on device */
+	struct	vnode s_vnode;	/* vnode associated with this snode */
+	struct	vnode *s_realvp;	/* vnode for the fs entry (if any) */
+	struct	vnode *s_commonvp;	/* common device vnode */
+	ushort	s_flag;		/* flags, see below */
+	dev_t	s_dev;		/* device the snode represents */
+	dev_t	s_fsid;		/* file system identifier */
+	daddr_t	s_nextr;		/* next byte read offset (read-ahead) */
+	long	s_size;		/* block device size in bytes */
+	time_t   s_atime;		/* time of last access */
+	time_t   s_mtime;		/* time of last modification */
+	time_t   s_ctime;		/* time of last attributes change */
+	int	s_count;		/* count of opened references */
+	long     s_mapcnt;          /* count of mappings of pages */
+	long	s_pad1;		/* reserved for security */
+	long	s_pad2;		/* reserved for security */
+	long	s_pad3;		/* reserved for security */
+	struct proc *s_powns;	/* for vm debugging */
+};
+.SE
+.H 3 "snode Flags"
+.IX \f4snode\fP, flags
+The following are \f4snode\f1 flags:
+.BL
+.LI
+\f4SLOCKED - snode\f1 is locked. 
+.LI
+\f4SUPD\f1 - update device modify time.
+.LI
+\f4SACC\f1 - update device access time.
+.LI
+\f4SWANT\f1 - a process waiting for a lock.
+.LI
+\f4SCHG\f1 - update device change time.
+.LE
+The following shows miscellaneous \f4snode\f1 and \f4vnode\f1 operations:
+.SS
+/* Convert between vnode and snode */
+
+#define	VTOS(vp)	((struct snode *)((vp)->v_data))
+#define	STOV(sp)	(&(sp)->s_vnode)
+
+extern struct proc *curproc;		/* XXX vm debugging */
+
+/* Lock and unlock snodes */
+
+#define SNLOCK(sp) {
+	while ((sp)->s_flag & SLOCKED) {
+		(sp)->s_flag |= SWANT;
+		(void) sleep((caddr_t)(sp), PINOD);
+	}
+	(sp)->s_flag |= SLOCKED; 
+	if (((sp)->s_vnode.v_flag & VISSWAP) != 0) { 
+		curproc->p_swlocks++; 
+		curproc->p_flag |= SSWLOCKS; 
+	}
+	(sp)->s_powns = curproc;
+}
+#define SNUNLOCK(sp) {
+	(sp)->s_flag &= ~SLOCKED; 
+	if (((sp)->s_vnode.v_flag & VISSWAP) != 0) 
+		if (--curproc->p_swlocks == 0) 
+			curproc->p_flag &= ~SSWLOCKS; 
+	if ((sp)->s_flag & SWANT) { 
+		(sp)->s_flag &= ~SWANT; 
+		wakeprocs((caddr_t)(sp), PRMPT); 
+	} 
+	(sp)->s_powns = NULL; 
+}
+
+/* Construct a spec vnode for a given device that shadows a particular
+ * "real" vnode.
+ */
+
+extern struct vnode *specvp();
+
+/* Construct a spec vnode for a given device that shadows nothing */
+
+extern struct vnode *makespecvp();
+
+/* Find any other spec vnode that refers to the same device as another vnode */
+
+extern struct vnode *other_specvp();
+
+/* Convert a device vnode pointer into a common device vnode pointer */
+
+extern struct vnode *common_specvp();
+
+
+/*
+ * Snode lookup.
+ * These routines maintain a table of snodes hashed by dev so
+ * that the snode for a device can be found if it already exists.
+ * NOTE: STABLESIZE must be a power of 2 for STABLEHASH to work!
+ */
+
+#define	STABLESIZE	16
+#define	STABLEHASH(dev)	((getmajor(dev) + getminor(dev)) & (STABLESIZE - 1))
+
+extern struct snode *stable[];
+extern struct vnodeops spec_vnodeops;
+.SE
+.bp
+.H 2 "S5 File System"
+The S5 file system is the traditional UNIX file system.
+It contains files, directories, block and character special files, and FIFOs.
+Symbolic links were added for Release 4.0.
+.H 3 "inode Structure"
+.IX \f4inode\fP, structure
+.SS
+#define	NADDR	13
+#define	NSADDR	(NADDR*sizeof(daddr_t)/sizeof(short))
+
+struct inode {
+	struct	inode *i_forw;	/* forward hash chain link */
+	struct	inode *i_back;	/* backward hash chain link */
+	struct	inode *av_forw;	/* forward free list link */
+	struct	inode *av_back;	/* backward free list link */
+	u_short	i_flag;		/* see below */
+	o_ino_t	i_number;		/* inode number */
+	dev_t	i_dev;		/* device where inode resides */
+	o_mode_t  i_mode;		/* file mode and type */
+	o_uid_t	i_uid;		/* owner */
+	o_gid_t	i_gid;		/* group */
+	o_nlink_t i_nlink;		/* number of links */
+	off_t	i_size;		/* size in bytes */
+	time_t	i_atime;		/* last access time */
+	time_t	i_mtime;		/* last modification time */
+	time_t	i_ctime;		/* last "inode change" time */
+	daddr_t	i_addr[NADDR];	/* block address list */
+	short	i_nilocks;	/* count of recursive ilocks */
+	short	i_owner;		/* proc slot of ilock owner */
+	daddr_t	i_nextr;		/* next byte read offset (read-ahead) */
+	u_char 	i_gen;		/* generation number */
+	long	i_mapcnt;		/* number of mappings of pages */
+	u_long	i_vcode;		/* version code attribute */
+	struct	vnode i_vnode;	/* contains an instance of a vnode */
+	int	*i_map;		/* block list for the corresponding file */
+	dev_t	i_rdev;		/* rdev field for block/char specials */
+};
+
+#define	i_oldrdev	i_addr[0]
+#define i_bcflag	i_addr[1]
+		/* block/char special flag occupies bytes 3-5 in di_addr */
+
+#define NDEVFORMAT  0x1    /* device number stored in new area */
+#define i_major  i_addr[2] /* major component occupies bytes 6-8 in di_addr */
+#define i_minor  i_addr[3] /* minor component occupies bytes 9-11 in di_addr */
+
+typedef struct inode inode_t;
+
+.SE
+The structure member \f2i_addr\f1 is an array of 13 disk block numbers.
+The first 10 are direct blocks.
+They are followed by a single, a double, and a triple indirect block.
+The generation number \f2i_gen\f1 is used to generate unique file IDs and to
+allow clients in a distributed file system to detect that an \f4inode\f1 number has
+been reused on a server.
+\f2i_gen\f1 is only needed by stateless servers.
+The version code \f2i_vcode\f1 is set from a single global system wide counter 
+when a file is created, opened, grown, shrunk, or written.
+It is needed for cache coherency and I/O atomicity in distributed file systems.
+.P
+Flags in \f2i_flag\f1 are:
+.IX \f4inode\fP, flags
+.BL
+.LI
+\f4ILOCKED\f1 - \f4inode\f1 is locked.
+.LI
+\f4IUPD\f1 - file has been modified.
+.LI
+\f4IACC\f1 - \f4inode\f1 access time should be updated.
+.LI
+\f4IWANT\f1 - some process is waiting on the \f4inode\f1 lock.
+.LI
+\f4ICHG\f1 - \f4inode\f1 has been changed.
+.LI
+\f4ISYN\f1 - do synchronous write for \f4inode\f1.
+.LI
+\f4IMOD\f1 - \f4inode\f1 times have been modified.
+.LI
+\f4INOACC\f1 - no access time update in \f4getpage\f1.
+.LI
+\f4ISYNC\f1 - do all block allocation synchronously.
+.LI
+\f4IMODTIME\f1 - modification time already set.
+This is used by \f4s5_setattr\f1 when the modification time is changed to prevent
+it from being changed back after the \f4setattr\f1 completes.
+.LI
+\f4IRWLOCKED\f1 - \f4inode\f1 is read-write locked.
+This is needed to guarantee I/O atomicity on local reads and writes.
+.LE
+.P
+\f4inode\f to \f4vnode\f1, and vice versa, conversion is done with the following
+macros:
+.br
+.sp
+.nf
+	\f4ITOV(ip) ((struct vnode *)&(ip)->i_vnode)
+ 	VTOI(vp) ((struct inode *)(vp)->v_data)\f1
+.fi
+.bp
+.H 4 "inode File Types"
+.IX \f4inode\fP, file types
+.BL
+.LI
+\f4IFMT\f1 -  type of a file.
+.LI
+\f4IFIFO\f1 - FIFO special file. 
+.LI
+\f4IFCHR\f1 - character special file.
+.LI
+\f4IFDIR\f1 - directory.
+.LI
+\f4IFNAM\f1 - XENIX special named file.
+.LI
+\f4IFBLK\f1 - block special file.
+.LI
+\f4IFREG\f1 - regular file.
+.LI
+\f4IFLNK\f1 - symbolic link.
+.LE
+.H 3 "S5 Directory Format"
+.IX S5 directory format
+.SS
+#define	DIRSIZ	14
+struct	direct {
+	o_ino_t	d_ino;		/* s5 inode type */
+	char	d_name[DIRSIZ];
+};
+.SE
+The type \f2o_ino_t\f1 is an unsigned short.
+\f4inode\f1 numbers have been increased to an unsigned short in Release 4.0
+as part of Expanded Fundamental Types.
+However, the \f4inode\f1 number here represents the contents of directories on disk.
+That type cannot be changed without invalidating all existing S5 file system
+types.
+Also note that the file name component \f2d_name\f1 is not guaranteed to be
+NULL terminated.
+.bp
+.H 3 "S5 Super Block"
+.IX super block, structure
+The super block describes the state of a file system; how large is the file system,
+how many files it can store, where to find free space, etc.
+The following is the structure of the super block:
+.SS
+struct filsys {
+	u_short	s_isize;		/* size in blocks of i-list */
+	daddr_t	s_fsize; 		/* size in blocks of entire volume */
+	short	s_nfree;		/* number of addresses in s_free */
+	daddr_t	s_free[NICFREE];	/* free block list */
+		/* S5 inode definition cannot change for EFT */
+	short	s_ninode;		/* number of i-nodes in s_inode */
+	o_ino_t	s_inode[NICINOD];	/* free i-node list */
+	char	s_flock;		/* lock during free list manipulation */
+	char	s_ilock;		/* lock during i-list manipulation */
+	char  	s_fmod; 		/* super block modified flag */
+	char	s_ronly;		/* mounted read-only flag */
+	time_t	s_time; 		/* last super block update */
+	short	s_dinfo[4];	/* device information */
+	daddr_t	s_tfree;		/* total free blocks*/
+	o_ino_t	s_tinode;		/* total free inodes */
+	char	s_fname[6];	/* file system name */
+	char	s_fpack[6];	/* file system pack name */
+	long	s_fill[12];	/* adjust to make sizeof filsys */
+	long	s_state;		/* file system state */
+	long	s_magic;		/* magic number to indicate new file system */
+	long	s_type;		/* type of new file system */
+};
+
+#define FsMAGIC	0xfd187e20	/* s_magic */
+
+#define Fs1b	1	/* 512-byte blocks */
+#define Fs2b	2	/* 1024-byte blocks */
+#define Fs4b	3	/* 2048-byte blocks */
+
+#define	FsOKAY	0x7c269d38	/* s_state: clean */
+#define	FsACTIVE	0x5e72d81a	/* s_state: active */
+#define	FsBAD	0xcb096f43	/* s_state: bad root */
+#define	FsBADBLK	0xbadbc14b	/* s_state: bad block corrupted it */
+.SE
+.bp
+.H 2 "Process Scheduler"
+.IX process scheduler
+The process scheduler is a new feature implemented in Release 4.0.
+It supports multiple scheduling classes (system, time-sharing,
+real-time) by use of switch mechanism.
+The process scheduler is supported by systems calls \f4priocntl\f1 and
+\f4priocntlset\f1.
+.P
+Each process class has its own scheduling policy.
+The class attribute of a process comes from the \f4fork\f1 and \f4exec\f1
+system calls.
+\f4priocntl\f1 is used to dynamically change the class and other scheduling
+parameters associated with a running process or set of processes.
+\f4priocntl\f1 provides an interface for specifying a process or processes to
+which the system call applies to.
+The \f4priocntlset\f1 system call also provides the same functions as
+\f4priocntl\f1, but allows a more generalized way of specifying the processes
+to which the system call applies to.
+.IX \f4priocntl\fP(2)
+.IX \f4priocntlset\fP(2)
+.P
+These system calls have the following commands available
+(see the manual pages for more details):
+.BL
+.LI
+\f4PC_GETCID\f1 - get class ID and class attributes for a specific class name.
+.LI
+\f4PC_GETCLINFO\f1 - get class name and class attributes for a specific class ID.
+.LI
+\f4PC_SETPARMS\f1 - set the scheduling class and the class-specific
+scheduling parameters for a process.
+.LI
+\f4PC_GETPARMS\f1 - get the scheduling class and class-specific parameters
+for a process.
+.LI
+\f4PC_ADMIN\f1 - perform scheduler administrative functions.
+This is used to modify scheduler parameter tables.
+.LE
+.bp
+The data structures are:
+.SS
+#define PC_CLNMSZ		16
+#define PC_CLINFOSZ	(32 / sizeof(long))
+#define PC_CLPARMSZ	(32 / sizeof(long))
+
+/* used by PC_GETCID and PC_GETCLINFO */
+
+typedef struct pcinfo {
+	id_t	pc_cid;			/* class id */
+	char	pc_clname[PC_CLNMSZ];	/* class name */
+	long	pc_clinfo[PC_CLINFOSZ];	/* class information */
+} pcinfo_t;
+
+/* used by PC_SETPARMS abd PC_GETPARMS */
+
+typedef struct pcparms {
+	id_t	pc_cid;			/* process class */
+	long	pc_clparms[PC_CLPARMSZ];    /* class specific parameters */
+} pcparms_t;
+
+/* The following is used by the dispadmin(1M) command for */
+/* scheduler administration and is not for general use. */
+
+typedef struct pcadmin {
+	id_t	pc_cid;
+	caddr_t	pc_cladmin;
+} pcadmin_t;
+.SE
+\f2pc_clparms\f1 is overlaid by a class-specific structure.
+.H 3 "Process Scheduler Queue"
+.IX process scheduler, queue
+The size of the scheduler queue is determined dynamically at startup time.
+The \f4dispinit\f1 routine calls an initialization routine of each configured
+scheduling class.
+Each such routine returns the maximum queue level it uses.
+The maximum level used by any class determines the size of the \f2dispq\f1
+array that is then allocated by \f4dispinit\f1.
+After initialization the size of \f2dispq\f1 is in \f2v.v_nglobpris\f1.
+.P
+Each scheduling class has a separate, configurable mapping to 
+\f2dispq\f1 entries.
+The entries can overlap and they need not be contiguous.
+.P
+.IX process class, system
+The system class consists of system processes that only execute in the kernel;
+for example, \f4sched\f1 (the process swapper), \f4pageout\f1 (the memory
+reclaimer), \f4fsflush\f1 (the file system hardening memory flusher), and
+\f4kmdaemon\f1 (the kernel memory allocator's free pool routine).
+The system class is built into the kernel and is always present.
+It has fixed priorities and no time slicing.
+The system class priorities must map to a contiguous range of \f2dispq\f1
+entries, but where the range is located can be configured.
+.P
+.IX process class, time-sharing
+Other scheduling classes are time-sharing and real-time.
+Time-sharing is divided into two parts internally by the kernel, but from the
+kernel's view point the time-sharing process is running in the same class
+whether in the kernel or user space.
+Only the priority changes.
+As with mapping of class priorities to global priorities, the mapping of user
+and kernel time-sharing priorities to global \f2dispq\f1 priorities is
+configurable.
+.P
+.IX process class, real-time
+The real-time class provides a fixed scheduling for those processes that require
+fast and deterministic response and absolute user/application control of
+scheduling priorities.
+If the real-time class is configured in the system it should have exclusive
+control of the highest range of scheduling priorities on the system to ensure
+CPU service before processes belonging to other class.
+.P
+The following is the format of a dispatcher queue entry:
+.SS
+typedef struct dispq {
+	struct proc	*dq_first;   /* first proc on queue or NULL */
+	struct proc	*dq_last;    /* last proc on queue or NULL */
+	int		dq_sruncnt;  /* # of loaded, runnable procs on queue */
+} dispq_t;
+.SE
+The following are global scheduling variables:
+.IX process scheduler, global variables
+.BL
+.LI
+\f2runrun\f1 - a preemption flag set to cause the current process to be
+preempted at the next opportunity and the highest priority available for running.
+It also causes the loaded process to be run instead.
+The \f2runrun\f1 variable is set whenever the code detects that a context switch is
+or may be necessary.
+It is checked before returning to user level from the kernel and cleared when
+a context switch is actually performed.
+.P
+\f2runrun\f1 is tested just before returning to the user after a system call, 
+interrupt, pages fault, etc., and after stopping for a
+breakpoint or other debugging event.
+.LI
+\f2kprunrun\f1 - a kernel preemption flag that is set by real-time class
+to cause preemption at kernel preemption points.
+.LI
+\f2npwakecnt\f1 - a count of non-preemptive wakeups since the last
+\f4pswtch\f1.
+\f2npwakecnt\f1 prevents trashing on pipes.
+.LI
+\f2curproc\f1 - a pointer to the \f4proc\f1 table entry for the current process.
+.LI
+\f2curpri\f1 - a priority of the current process.
+.LI
+\f2maxrunpri\f1 - the highest priority at which an active queue exists.
+This is set to -1 if there are no processes to run or loaded.
+\f2maxrunpri\f1 is used by \f4pswtch\f1 to quickly find a process to run.
+.LE
+The following are the scheduler global functions:
+.IX process scheduler, global functions
+.SS
+extern boolean_t	dispdeq(proc_t *pp);
+extern int	getcid(char *clname, id_t *cidp);
+extern int	parmsin(pcparms_t *parmsp, proc_t *reqpp, proc_t *targpp);
+extern int	parmsout(pcparms_t *parmsp, proc_t *reqpp, proc_t *targpp);
+extern int	parmsset(pcparms_t *parmsp, proc_t *reqpp, proc_t *targpp);
+extern void	dispinit();
+extern void	getglobpri(pcparms_t *parmsp, int *globprip);
+extern void	parmsget(proc_t *pp, pcparms_t *parmsp);
+extern void	preempt();
+extern void	setbackdq(proc_t *pp);
+extern void	setfrontdq(proc_t *pp);
+extern void	swtch();
+.SE
+.BL
+.LI
+\f4dispdeq\f1 - removes the process from the dispatcher queue if it is on it.
+It updates global information concerning highest priority for which there is
+a process that is ready to run (that is, \f4SRUN\f1 and \f4SLOAD\f1).
+.LI
+\f4getcid\f1 - finds the scheduling class ID (index to the \f4class\f1 table)
+corresponding to the given class name.
+.LI
+\f4parmsin\f1 - validates the legality of the scheduling parameters specified in
+\f4parmsp\f1.
+It calls dependent routine to validate the class dependent part.
+It also validates that the process \f4reapp\f1 can set the parameters of a process
+\f4targpp\f1 as specified.
+\f4parmsin\f1 is used by the code for the \f4priocntl\f1 system call.
+.LI
+\f4parmsout\f1 - reformats scheduling parameters before they are passed to the
+user.
+Real-time routine converts time parameters from internal units to external units.
+Time-sharing routine does nothing.
+.LI
+\f4parmsset\f1 - sets the scheduling parameters for process \f4targpp\f1 to those
+specified by \f4parmsp\f1.
+If \f4reqpp\f1 is not NULL, the check is made to see that it is allowed to change
+the parameters of the process \f4targpp\f1.
+.LI
+\f4dispinit\f1 - the scheduler initialization function.
+It is called once at system startup.
+\f4dispinit\f1 calls the initialization routine for each configured scheduler class.
+It also allocates \f2dispq\f1 and initializes it to empty.
+.LI
+\f4getglobpri\f1 - gets the global scheduling priority associated with the
+specified parameters.
+\f4getglobpri\f1 calls a class dependent routine to actually do it.
+.LI
+\f4parmsget\f1 - gets the scheduling parameters for the specified process into the
+indicated buffer.
+\f4parmsget\f1 calls a class dependent routine to do it.
+.LI
+\f4preempt\f1 - prempts the currently running process.
+It calls a dependent routine to put it back on the correct \f2dispq\f1 queue.
+It also calls \f4pswtch\f1.
+.LI
+\f4setbackdq\f1 - sets the process on the end of the \f2dispq\f1 queue for its
+priority.
+.LI
+\f4setfrontdq\f1 - sets the process on the front of the \f2dispq\f1 queue for its
+priority.
+.LI
+\f4pswtch\f1 - finds the highest priority process that is ready to run and
+dispatches it.
+.LE
+.H 3 "Context Switch"
+.IX context switch
+A context switch may be required in many cases:
+.BL
+.LI
+The priority of a process changes if the process is current and its priority
+is lowered, or the process is not current and its priority is raised above
+\f2maxrunpri\f1.
+.LI
+A process's time quantum expires.
+.LI
+A new process is created (\f4fork\f1).
+.LI
+A sleeping process is awakened and it has a higher priority than \f2maxcurpri\f1.
+.LE
+.bp
+.H 3 "Class"
+There is one class table entry for each configured scheduling class.
+The class table is built by the configuration process \f4cunix\f1.
+An entry for the system class is always the first entry.
+The following are the \f4class\f1 related data structures:
+.IX \f4class\fP, structures
+.SS
+extern int	nclass;		/* number of configured scheduling classes */
+extern char	*initclass;	/* class of init process */
+
+typedef struct class {
+	char	*cl_name;		/* class name */
+	void	(*cl_init)();	/* class specific initialization function */
+	struct classfuncs *cl_funcs;	/* pointer to classfuncs structure */
+} class_t;
+
+extern struct class	class[];	/* the class table */
+
+typedef struct classfuncs {
+	int		(*cl_admin)();
+	int		(*cl_enterclass)();
+	void		(*cl_exitclass)();
+	int		(*cl_fork)();
+	void		(*cl_forkret)();
+	int		(*cl_getclinfo)();
+	void		(*cl_getglobpri)();
+	void		(*cl_parmsget)();
+	int		(*cl_parmsin)();
+	int		(*cl_parmsout)();
+	int		(*cl_parmsset)();
+	void		(*cl_preempt)();
+	int		(*cl_proccmp)();
+	void		(*cl_setrun)();
+	void		(*cl_sleep)();
+	void		(*cl_stop)();
+	void		(*cl_swapin)();
+	void 		(*cl_swapout)();
+	void		(*cl_tick)();
+	void		(*cl_trapret)();	/* Don't move without changing */
+			/* set in ml/ttrap.s */
+	void		(*cl_wakeup)();
+	int		(*cl_filler[11])();
+} classfuncs_t;
+.SE
+All functions that do not return \f4void\f1 return an error code or zero.
+The following list describes the \f4classfuncs\f1 members (see also 
+\f3sys/class.h\f1 for more details) using the time-sharing class in specifying 
+the types of their arguments.
+For other classes, the corresponding argument types would be used.
+.IX \f4classfuncs\fP, functions
+.BL
+.LI
+\f4cl_admin\f1 - handles the \f4priocntl PC_ADMIN\f1 command and allows the
+super-user to replace \f4ts_dptbl\f1 or \f4rt_dptbl\f1.
+.LI
+\f4cl_enterclass\f1 - allocates a class dependent data structure and initializes
+it according to the parameters passed as arguments.
+It adds a process to list processes in the class and places that process on the
+\f2dispq\f1 queue.
+\f4cl_enterclass\f1 is called from \f4fork\f1 when creating the initialization
+process and
+from \f4parmsset\f1 if a new class is different from the current class. 
+.P
+When \f4parmsset\f1 is called to change the class of a process, it will first
+call \f4cl_enterclass\f1 for the new class.
+If this fails, the process is left in the old class.
+Otherwise, \f4parmsset\f1 calls \f4cl_exitclass\f1 and then updates the \f4proc\f1
+table entry to show the new scheduling class of a process.
+.LI
+\f4cl_exitclass\f1 - removes a process from the list of processes in the class
+and frees up the \f4tsproc\f1 and \f4rtproc\f1 object.
+\f4cl_exitclass\f1 is called from \f4parmsset\f1 after a successful return
+from \f4cl_enterclass\f1.
+It is also called from \f4exit\f1 and from \f4fork\f1 if \f4procdup\f1 fails.
+.LI
+\f4cl_fork\f1 - allocates class-specific data structure (\f4tsproc\f1 or
+\f4rtproc\f1) and initializes it from the parent's data.
+It adds a process to the list of processes in the class.
+\f4cl_fork\f1 is called early in \f4fork\f1 (in \f4newproc\f1) during the
+initialization of the child's \f4proc\f1 table entry.
+.LI
+\f4cl_forkret\f1 - arranges for both the parent and child processes to be runnable.
+It places a child process on \f2dispq\f1 ahead of parent so that it runs first to
+break copy-on-write.
+\f4cl_forkret\f1 is called at the end of \f4fork\f1.
+.LI
+\f4cl_getclinfo\f1 - gets class-specific information to return for the
+\f4priocntl PC_GETCLINFO\f1 function.
+.LI
+\f4cl_getglobpri\f1 - gets the global priority index (that is, an index into
+\f2dispq\f1) that the argument class priority maps to.
+.LI
+\f4cl_parmsget\f1 - gets the class specific parameters for a process.
+.LI
+\f4cl_parmsin\f1 - checks the validity of a set of class-specific parameters for
+a process.
+It does any required conversion from external to internal format.
+In time-sharing no conversion is done.
+In real-time time values are converted from nanoseconds to ticks.
+\f4cl_parmsget\f1 also optionally checks the permissions of the calling process
+to set those parameter values for the target.
+.LI
+\f4cl_parmsout\f1 - performs any class-specific modification of a process
+parameters that are required before returning them to a user.
+Modifications are applied to the results of \f4cl_parmsget\f1 by the
+\f4priocntl PC_GETPARMS\f1 function.
+In time-sharing no modification takes places.
+In real-time time from ticks are converted to high-resolution (nanosecond)
+format.
+.LI
+\f4cl_parmsset\f1 - sets a new value for the scheduling parameters of a process.
+.LI
+\f4cl_preempt\f1 - is called when a process is being preempted.
+It determines where it should be requeued and does it.  
+.LI
+\f4cl_proccmp\f1 - compares the priorities of two processes of the class.
+.LI
+\f4cl_setrun\f1 - makes a process runnable; that is, places it on the \f2dispq\f1
+queue.
+\f4cl_setrun\f1 is called from \f4wakeprocs\f1.
+.LI
+\f4cl_sleep\f1 - puts a process to sleep.
+The time-sharing version of this function sets the process's priority to the
+kernel priority indicated by \f4disp\f1.
+The kernel priority is obtained from the \f2ts_kmdpris\f1 which is an integer
+array of \f2ts_maxkmdpri\f1 + 1 entries.
+The priority arguments sleep backwards in the larger values and represent lower
+priorities.
+Therefore, \f4ts_sleep\f1 sets the priority to 
+\f2ts_kmdpris(ts_maxkmdpri - sleeppri\f1).
+The size and contents of the \f2ts_kmdpri\f1 array is configurable.
+It must have at least 40 entries because that is the numerically largest
+kernel sleep priority.
+The kernel sleep priority arguments are the \f4PXXXX\f1 symbols defined in
+\f3sys/param.h\f1. 
+.LI
+\f4cl_stop\f1 - is called to tell the dependent code that a process is about to
+be stopped.
+.LI
+\f4cl_swapin\f1 - is called from \f4sched\f1 to request class to nominate a process
+to swap in.
+\f4sched\f1 calls \f4cl_swapin\f1 for each class and chooses the highest priority
+nominee.
+In general, \f4sched\f1 will not load a process if \f2freemem\f1 (free memory
+count in pages) is too low (<= \f2tune.t_gpgslo\f1).
+However, if there are no loaded and runnable new processes (as indicated by all
+classes having returned \f2*runflagp = 0\f1), it will load a process even with 
+low memory.
+This makes sense since the only alternative is going idle.
+.P
+The time-sharing algorithm returns the highest priority time-sharing process that
+is runnable but not loaded.
+If there is no such process, it returns NULL.
+.P
+Real-time processes can't be unloaded and their u-blocks are also locked in memory.
+Therefore, the real-time code always returns \f2*procpp = 0\f1.
+However, it still runs down the list of real-time processes to see if any are
+runnable and sets \f2runflagp\f1 accordingly.
+.LI
+\f4cl_swapout\f1 - is called from \f4sched\f1 to request class to nominate a
+process for swap out.
+\f4sched\f1 calls \f4cl_swapout\f1 for each class and chooses the lowest priority
+nominee.
+.P
+Time-sharing first looks at all of the loaded processes that are sleeping or
+stopped and chooses the one with the lowest priority.
+If none exists, it looks at runnable loaded processes and chooses the one 
+with the lowest priority.
+If there are no runnable loaded processes, NULL is returned.
+If a process is returned, \f2unloadokp\f1 is set to TRUE.
+.P
+Real-time processes are always loaded.
+Therefore, the real-time process just chooses the lowest priority process that 
+has run at least once since the last time it was unloaded and meets the other
+criteria.
+If none is found, NULL is returned.
+If a process is returned, \f2unloadokp\f1 is set to FALSE.
+.LI
+\f4cl_tick\f1 - is called from \f3clock.c\f1 on every tick.
+It is used to check for time slice expiration.
+\f4cl_tick\f1 decrements the time slice of the currently running process.
+If it goes to zero, \f2runrun\f1 is set to cause a time slice.
+.P
+The time-sharing code will not decrement the time slice if the process is
+running in kernel mode.
+When the time slice expires for a time-sharing process, its priority is changed
+based on the time-sharing dispatcher parameter table.
+.LI
+\f4cl_trapret\f1 - is called just before returning to user mode from kernel.
+Time-sharing checks to see if the process is running at a kernel priority and,
+if so, changes its priority back to its user priority.
+If this new priority is less than \f2maxrunpri\f1 and the global variable
+\f2npwakecnt\f1 is zero, it will set \f2runrun\f1.
+There will be a check of \f2runrun\f1 in \f4trapret\f1 after the return from the
+call of \f4cl_trapret\f1 and \f4swtch\f1 will be called if \f2runrun\f1 is set.
+.P
+The real-time function does nothing.
+.LI
+\f4cl_wakeup\f1 - is called from \f4wakeup\f1 to put a process back on \f2dispq\f1.
+Both the time-sharing and the real-time versions of this function simply put the 
+process on the dispatcher queue.
+Both also ignore \f2preemptflg\f1.
+.P
+The purpose of \f2preemptflg\f1 is for the code doing a wakeup to be able not to
+do a context switch even if the process that is being awakened becomes the highest
+priority process.
+This is done in two cases, pipes and messages.
+In both cases the reason is to avoid trashing.
+Suppose two processes are communicating by a pipe or a message queue and are
+doing one byte writes or sending very small messages.
+The reader is asleep on a \f4read\f1 or \f4msgrcv\f1.
+When a writer does a \f4write\f1 or \f4msgsnd\f1, the reader is awakened.
+Because the reader was sleeping for a while, its priority is probably higher than
+that of the writer, so the reader runs and reads one byte and then goes to sleep
+on the next read and the writer runs again.
+.P
+By avoiding the context switch, the writer will continue to run until the writer
+has written enough to fill the pipe.
+The writer will then sleep on the \f4write\f1 and the reader will run until 
+all the data in the pipe are read.
+.P
+The code in \f4wakeup\f1 increments a counter \f2npwakecnt\f1 each time it is
+called with \f4NOPRMPT\f1.
+This counter is cleared in \f4pswtch\f1.
+Therefore, \f2npwakecnt\f1 counts the number of \f4NOPRMPT\f1 wakeups since the
+last context switch.
+.P
+Time sharing honors the no-preempt protocol even though it ignores the value of
+\f2preemptflg\f1 in \f4ts_wakeup\f1.
+It does it in \f4ts_trapret\f1 where it will not set \f2runrun\f1 if
+\f2npwakecnt\f1 is greater than zero.
+.P
+The real-time class does not honor the no-preempt protocol.
+Since real-time processes have complete control of their priorities, they can avoid
+the problem by ensuring that the writer is at a higher priority than a reader.
+.LE
+.H 3 "Time-sharing"
+.IX time-sharing, structures
+The time-sharing class-specific structure is as follows:
+.SS
+typedef struct tsproc {
+	long	      ts_timeleft;  /* time remaining in procs quantum */
+	short	      ts_cpupri;    /* system controlled component of ts_umdpri */
+	short	      ts_uprilim;   /* user priority limit */
+	short	      ts_upri;      /* user priority */
+	short	      ts_umdpri;    /* user mode priority within ts class */
+	char	      ts_nice;      /* nice value for compatibility */
+	unsigned char   ts_flags;    /* flags defined below */
+	short	      ts_dispwait;  /* number of wall clock seconds since start */
+				 /*   of quantum (not reset upon preemption) */
+	struct proc     *ts_procp;   /* pointer to proc table entry */
+	char	      *ts_pstatp;   /* pointer to p_stat */
+	int	      *ts_pprip;    /* pointer to p_pri */
+	uint	      *ts_pflagp;   /* pointer to p_flag */
+	struct tsproc   *ts_next;    /* link to next tsproc on list */
+	struct tsproc   *ts_prev;   /* link to previous tsproc on list */
+} tsproc_t;
+
+/* flags */
+#define	TSKPRI	0x01		/* proc at kernel mode priority */
+#define	TSBACKQ	0x02		/* proc goes to back of disp q when preempted */
+.SE
+\f2ts_timeleft\f1 is a time (tick) left between clock interrupts.
+This is a machine dependent value; on a 3B2 it is 10 msecs.
+.P
+There are two components of a time-sharing priority; \f2ts_cpupri\f1 that is set 
+by the system and \f2ts_upri\f1 that is set by the user.
+\f2ts_cpupri\f1 must be in the range of zero to \f2ts_maxumdpri\f1 where
+\f2ts_maxumdpri\f1 is the size of the time-sharing dispatcher parameter table (-1).
+This value is configurable.
+Higher values represent higher priorities.
+\f2ts_upri\f1 can have positive and negative values.
+Positive values indicate higher priorities.
+These can be changed using the \f4priocntl\f1 system call, but it cannot be
+increased above \f2ts_uprilim\f1.
+.P
+\f2ts_uprilim\f1 is a limit on the value of the user component of the process
+priority.
+It is initially set to zero.
+It can be changed using the \f4priocntl\f1 system call, but it can be increased
+only by the super-user.
+.P
+\f2ts_umdpri\f1 is the dispatching priority of a process.
+It is formed by adding \f2ts_cpupri\f1 and \f2ts_upri\f1.
+If the sum is greater than \f2ts_maxumdpri\f1, the sum is set to \f2ts_maxumdpri\f1.
+If the sum is less than zero, it is set to zero.
+.P
+The value of \f2ts_dispwait\f1 is set to zero when:
+.BL
+.LI
+a process is first created, 
+.LI
+it enters the time-sharing class from some other class,
+.LI
+it changes its parameters with the \f4priocntl\f1 system call,
+.LI
+its time slice ends, or
+.LI
+it is made runnable after being asleep or stopped.
+.LE
+\f2ts_dispwait\f1 is incremented once per second.
+If the value exceeds a threshold, the priority of a process is changed (normally
+increased).
+.P
+The purpose of \f2ts_dispwait\f1 is to prevent process starvation.
+It measures the time from when the process was first placed at the end of
+\f2dispq\f1 until present.
+It is reset when the process uses its entire quantum or voluntarily sleeps.
+It is not reset when the process is preempted.
+If the process goes too long without receiving its entire quantum, its
+priority is raised.
+.P
+The limit against which \f2ts_dispwait\f1 is compared and the new priority the
+process is moved to, when the limit is reached, are both in the dispatcher
+parameter table and thus both can be configured.
+This means that one can adjust both the length of time until the priority is
+raised and how far it is raised.
+One can even cause the priority to be lowered although this is not recommended.
+.P
+The actual incrementing of \f2ts_dispwait\f1 is done in the function \f4ts_update\f1.
+This function is called once per second using the kernel's timeout mechanism. 
+.P
+The structure members \f2ts_pstatp, ts_pprip\f1, and \f2ts_pflagp\f1 are local
+to the \f4tsproc\f1 structure and are maintained in the \f4proc\f1 table only
+for backward compatibility.
+.P
+The \f4TSKPRI\f1 flag (\f2ts_flags\f1) is set in \f4ts_sleep\f1.
+At the same time, its priority is changed to a time-sharing kernel priority.
+Thus, a time-sharing process does not get a kernel priority until it goes
+to sleep, because the priority is given as the argument to the \f4sleep\f1 call.
+.P
+If \f4TSKPRI\f1 is set, the code that otherwise would change the \f2ts_pprip\f1
+value refrains from doing so, and the \f2ts_timeslice\f1 and \f2ts_dispwait\f1
+updating and resetting are not done for kernel mode processes.
+.P
+The \f4TSBACKQ\f1 flag (\f2ts_flags\f1) is checked in \f4ts_preempt\f1 to 
+determine whether the
+process should be placed on the front or back of the \f2dispq\f1 queue.
+This flag is set in \f4ts_tick\f1 at time slice end.
+It will not be set if a process is preempted because a higher priority process
+becomes runnable.
+.P
+The following shows the structure of the time-sharing dispatcher:
+.SS
+typedef struct tsdpent {
+	int	ts_globpri;	/* global (class independent) priority */
+	long	ts_quantum;	/* time quantum given to procs at this level */
+	short	ts_tqexp;		/* ts_umdpri assigned when proc at this level */
+				/*   exceeds its time quantum */
+	short	ts_slpret;	/* ts_umdpri assigned when proc at this level */
+				/*   returns to user mode after sleeping */
+	short	ts_maxwait;	/* bumped to ts_lwait if more than ts_maxwait */
+				/*   secs elapse before receiving full quantum */
+	short	ts_lwait;		/* ts_umdpri assigned if ts_dispwait exceeds  */
+				/*   ts_maxwait */				
+} tsdpent_t;
+.SE
+The global priority \f2ts_globpri\f1 is the index into \f2dispq\f1.
+It is the value placed in \f2ts_pprip\f1.
+\f2ts_umdpri\f1 of the process is used to index \f2ts_dptbl\f1 to select the
+global priority.
+.P
+When the time slice of a process (\f2ts_tqexp\f1) expires, its current 
+\f2ts_cpupri\f1 value is used to select a \f2ts_dptbl\f1 entry.
+The value of the \f2ts_tqexp\f1 member of this entry becomes a new \f2ts_cpupri\f1
+of the process.
+The new \f2ts_umpdri\f1 is then calculated by adding in the value of the
+process's \f2ts_upri\f1.
+.P
+The code in \f4ts_trapret\f1 checks to see if the process has a kernel priority
+(\f4TSKPRI\f1 flag set).
+If so, \f2ts_slpret\f1 uses the current \f2ts_cpupri\f1 to select a \f2ts_dptbl\f1
+entry.
+The \f2ts_slpret\f1 member is assigned as the new value of \f2ts_cpupri\f1.
+The new \f2ts_umdpri\f1 is then calculated.
+.P
+In \f4ts_update\f1, the \f2ts_dispwait\f1 value of each time-sharing process is
+incremented and compared with the \f2ts_maxwait\f1 value selected by the
+\f2ts_umpri\f1 value of the process.
+If the maximum wait has been reached, the process is given a new \f2ts_cpupri\f1
+value by taking the \f2ts_lwait\f1 member of the \f2ts_dptbl\f1 entry selected 
+using the current value of \f2ts_cpupri\f1.
+The new value of \f2ts_umdpri\f1 is then calculated.
+.bp
+.P
+Time-sharing class-specific structures for the \f4priocntl\f1 system call are:
+.SS
+.IX timesharing, \f4priocntl\f1(2)
+typedef struct tsparms {
+	short	ts_uprilim;	/* user priority limit */
+	short	ts_upri;		/* user priority */
+} tsparms_t;
+
+typedef struct tsinfo {
+	short	ts_maxupri;	/* configured limits of user priority range */
+} tsinfo_t;
+
+#define	TS_NOCHANGE	-32768
+
+/* The following is used by the dispadmin(1M) command for */
+/* scheduler administration and is not for general use. */
+
+typedef struct tsadmin {
+	struct tsdpent	*ts_dpents;
+	short		ts_ndpents;
+	short		ts_cmd;
+} tsadmin_t;
+
+#define	TS_GETDPSIZE	1
+#define	TS_GETDPTBL	2
+#define	TS_SETDPTBL	3
+.SE
+.H 3 " Real-time"
+.IX real-time, structures
+The following is a format of the real-time dispatcher parameter table entry:
+.SS
+typedef struct rtdpent {
+	int	rt_globpri;	/* global (class independent) priority */
+	long	rt_quantum;	/* default quantum associated with this level */
+} rtdpent_t;
+.SE
+The default time quantum is requested by specifying \f4RT_TQDEF\f1 on the
+\f4priocntl\f1 system call.
+.bp
+The real-time class-specific \f4proc\f1 structure is:
+.SS
+typedef struct rtproc {
+	long		rt_pquantum;	/* time quantum given to this proc */
+	long		rt_timeleft;	/* time remaining in procs quantum */
+	short		rt_pri;		/* priority within rt class */
+	ushort		rt_flags;		/* flags defined below */
+	struct proc	*rt_procp;	/* pointer to proc table entry */
+	char		*rt_pstatp;	/* pointer to p_stat */
+	int		*rt_pprip;	/* pointer to p_pri */
+	uint		*rt_pflagp;	/* pointer to p_flag */
+	struct rtproc	*rt_next;		/* link to next rtproc on list */
+	struct rtproc	*rt_prev;		/* link to previous rtproc on list */
+} rtproc_t;
+
+/* Flags */
+#define RTRAN	0x0001		/* process has run since last swap out */
+#define RTBACKQ	0x0002		/* proc goes to back of disp q when preempted */
+
+
+#ifdef _KERNEL
+
+/* Kernel version of real-time class specific parameter structure */
+
+typedef struct rtkparms {
+	short	rt_pri;
+	long	rt_tqntm;
+} rtkparms_t;
+
+#endif	/* _KERNEL */
+.SE
+\f2rt_pquantum\f1 can be set via \f4priocntl\f1.
+The value \f4RT_TQINF\f1 indicates infinite quantum.
+The structure member \f2rt_pri\f1 is only changed via \f4priocntl\f1.
+.P
+The flag \f4RTRAN\f1 is used to ensure that a process is not swapped out
+without having run at least once.
+A real-time process is never actually swapped out in the sense that \f4SLOAD\f1
+and \f4SULOAD\f1 flags are never cleared.
+However, \f4sched\f1 will unload all its pages.
+A real-time process can avoid this by using \f4memcntl\f1 to lock all of its
+memory into core.
+.bp
+Real-time class-specific structures for the \f4priocntl\f1 system call are:
+.SS
+.IX real-time, \f4priocntl\f1(2)
+typedef struct rtparms {
+	short	rt_pri;		/* real-time priority */
+	ulong	rt_tqsecs;	/* seconds in time quantum */
+	long	rt_tqnsecs;	/* additional nanosecs in time quantum */
+} rtparms_t;
+
+typedef struct rtinfo {
+	short	rt_maxpri;	/* maximum configured real-time priority */
+} rtinfo_t;
+
+#define	RT_NOCHANGE	-1
+#define RT_TQINF		-2
+#define RT_TQDEF		-3
+
+/*
+ * The following is used by the dispadmin(1M) command for
+ * scheduler administration and is not for general use.
+ */
+
+typedef struct rtadmin {
+	struct rtdpent	*rt_dpents;
+	short		rt_ndpents;
+	short		rt_cmd;
+} rtadmin_t;
+
+#define	RT_GETDPSIZE	1
+#define	RT_GETDPTBL	2
+#define	RT_SETDPTBL	3
+.SE
+.H 3 "sched Process"
+.IX \f4sched\fP process
+The process 0 is the \f4sched\f1 process.
+It is started at system boot time (called from \f3main.c\f1) and never returns.
+Its function is to unload processes when memory is tight and then reload them at
+a later time.
+One might think that such a function is unnecessary in a paging system but it is
+not a case.
+If the working sets of all runnable and loaded processes are greater than the
+available real memory, the system can get into a trashing situation where it
+spends most of its time doing page I/O.
+The solution is to free all the memory of some processes and to refuse to run
+them for a while (unload them).
+This means that there is enough physical memory to hold the working sets of
+all remaining loaded processes and they will run without excessive paging.
+After a while, some unloaded processes are loaded and some of the loaded processes 
+unloaded so that everyone gets a fair chance to run.
+This is essentially the function of \f4sched\f1.
+.P
+The \f4sched\f1 process will sleep on one of two flag words, \f4runout\f1 and
+\f4runin\f1.
+It sleeps on \f4runout\f1 when it cannot find a process to swap in and 
+\f2freemem\f1 was above the threshold \f2tune.t_gpgslo\f1.
+It sleeps on \f4runin\f1 when it cannot find a process to swap out.
+.P
+The clock interrupt handler checks the status of \f4sched\f1 every second.
+If \f4sched\f1 is sleeping on \f4runin\f1, the clock will wake it up.
+This means that every second \f4sched\f1 gets to check whether someone should
+be swapped out.
+If \f4sched\f1 is sleeping on \f4runout\f1 and either \f2freemem\f1 is less than
+\f2t_gpgslo\f1 or there are unloaded processes, the clock will awaken \f4sched\f1.
+This means that \f4sched\f1 checks for unloaded processes that should be swapped 
+back in and/or to swap processes out if memory is tight.
+.P
+\f4sched\f1 is also awaken from other places.
+If it is sleeping on \f4runin\f1, \f4sleep\f1 will awaken it because the
+process that just went to sleep is a candidate for swapping out.
+If \f4sched\f1 is asleep on \f4runout\f1, \f4wakeup\f1 will awaken it if the 
+process it is awakening is not loaded.
+It also gets awakened by the virtual memory when memory is tight.
+.H 3 "dispadmin Command"
+.IX \f4dispadmin\f1
+The \f4dispadmin\f1 command is used to display or modify \f2ts_dptbl\f1 or
+\f2rt_dptbl\f1.
+Only the super-user can modify the table.
+The size of the table may not be changed, only the values of existing entries.
+The only way to add or delete entries is to modify the configuration files, build
+a new module, and reboot the system.
+.P
+The way to modify the tables is to use \f4dispadmin\f1 to display the table and 
+redirect the output to a file.
+This file can then be edited to make the desired changes.
+Finally, a second execution of the \f4dispadmin\f1 command specifying the
+modified file will effect the changes.
+.P
+The changes to the schedule tables happen on-line when the \f4dispadmin\f1
+command is executed.
+Changing the schedule tables must be done with caution and with knowledge of
+possible consequencies such as system performance degradation.
+.H 2 "Signals and Job Control"
+.IX job control
+Job Control is a feature supported by the BSD UNIX operating system.
+It is also an optional part of the IEEE P1003.1 POSIX standard.
+Job Control breaks a login session into smaller units, jobs.
+Each job consists of one or more cooperating processes.
+One job, the foreground job, is given a complete access to the controlling terminal.
+The other jobs, background jobs, are denied read access to the controlling terminal
+and are given conditional write and \f4ioctl\f1 access to it.
+.P
+Job Control is managed by the following signals:
+.IX job control, signals
+.BL
+.LI
+\f4SIGSTOP\f1 - a user requests process to stop.
+.LI
+\f4SIGTSTP\f1 - a user requests process group to stop (control-Z).
+.LI
+\f4SIGCONT\f1 - continue process group.
+.LI
+\f4SIGTTIN\f1 - background process group is attempting to read from the
+controlling terminal.
+.LI
+\f4SIGTTOU\f1 - background process group is attempting to write or modify the
+controlling terminal.
+.LE
+For BSD compatibility, the following signals are new in Release 4.0:
+.BL
+.LI
+\f4SIGCHLD\f1 - alias of \f4SIGCLD\f1, child status change.
+.LI
+\f4SIGIO\f1 - alias of \f4SIGPOLL\f1, pollable event occurred.
+This signal supports sockets.
+.LI
+\f4SIGURG\f1 - urgent socket condition. 
+.LI
+\f4SIGXFSZ\f1 - file size limit exceeded.
+.LI
+\f4SIGXCPU\f1 - CPU limit exceeded.
+.LE
+The \f4sigset\f1 operations operate on the following structure:
+.IX \f4sigset\f1 operations
+.IX job control, \f4sigset\f1 operations
+.SS
+typedef struct {			/* signal set type */
+	unsigned long	sigbits[4];
+} sigset_t;
+.SE
+The kernel counterparts of the \f4sigset\f1 operations are on the
+structure \f4k_sigset_t\f1.
+The operations are (see \f3sys/signal.h\f1 for more details):
+.BL
+.LI
+\f4sigemptyset\f1 - make the empty signal set.
+.LI
+\f4sigfillset\f1 - make the full signal set.
+.LI
+\f4sigaddset\f1 - add a signal to the signal set.
+.LI
+\f4sigdelset\f1 - delete a signal from the signal set.
+.LI
+\f4sigismember\f1 - return 1 if a signal is the signal set, 0 otherwise.
+.LE
+The following is a format of the \f4sigaction\f1 structure:
+.SS
+.IX \f4sigaction\f1, structure
+struct sigaction {
+	int sa_flags;		/* see below */
+	void (*sa_handler)();	/* signal disposition */
+	sigset_t sa_mask;		/* signals to block while handler is active */
+	int sa_resv[2];
+};
+.SE
+The structure member \f2sa_flags\f1 can take the following values:
+.IX \f4sigaction\f1, flags
+.BL
+.LI
+\f4SA_ONSTACK\f1 - use an alternate signal stack (see \f4sigaltstack\f1).
+.LI
+\f4SA_RESETHAND\f1 - reset a signal disposition to \f4SIG_DFL\f1 when a signal
+is caught.
+.LI
+\f4SA_RESTART\f1 - a system call interrupted by a caught signal is restarted.
+Only the \f4read, write, fcntl, ioctl, wait\f1, and \f4waitid\f1 system calls
+can be restarted.
+.LI
+\f4SA_SIGINFO\f1 - pass a handler, in addition to a signal, a pointer to the
+structure \f4siginfo\f1 and the structure \f4u_context\f1.
+.LI
+\f4SA_NODEFER\f1 - don't hold a signal while an instance is being handled.
+.LI
+\f4SA_NOCLDWAIT\f1 - if a signal is \f4SIGCHLD\f1, don't create zombies for the
+existing children.
+.LI
+\f4SA_NOCLDSTOP\f1 - if a signal is \f4SIGCHLD\f1, don't signal the process when
+children stop or continue.
+.LE
+.SS
+.IX \f4sigaltstack\f1, structure
+struct sigaltstack {
+	char	*ss_sp;		/* lowest address of a stack */
+	int	ss_size;		/* stack size */
+	int	ss_flags;		/* see below */
+};
+typedef struck sigaltstack stack_t;
+.SE
+\f2ss_flags\f1 may be:
+.IX \f4sigaltstack\f1, flags
+.BL
+.LI
+\f4SS_DISABLE\f1 - as an in-parameter, ignore \f2ss_sp\f1 and \f2ss_size\f1, and
+disable the stack.
+As an out-parameter, stack is disabled.
+.LI
+\f4SS_ONSTACK\f1 - out-parameter only, a process is executing on an alternate stack.
+.LE
+The format of the \f4siginfo\f1 structure is:
+.SS
+.IX \f4siginfo\f1 structure
+/* SIGILL signal codes */
+
+#define	ILL_ILLOPC	1	/* illegal opcode */
+#define	ILL_ILLOPN	2	/* illegal operand */
+#define	ILL_ILLADR	3	/* illegal addressing mode */
+#define	ILL_ILLTRP	4	/* illegal trap */
+#define	ILL_PRVOPC	5	/* privileged opcode */
+#define	ILL_PRVREG	6	/* privileged register */
+#define	ILL_COPROC	7	/* co-processor */
+#define	ILL_BADSTK	8	/* bad stack */
+#define NSIGILL		8
+
+/* SIGFPE signal codes */
+
+#define	FPE_INTDIV	1	/* integer divide by zero */
+#define	FPE_INTOVF	2	/* integer overflow */
+#define	FPE_FLTDIV	3	/* floating point divide by zero */
+#define	FPE_FLTOVF	4	/* floating point overflow */
+#define	FPE_FLTUND	5	/* floating point underflow */
+#define	FPE_FLTRES	6	/* floating point inexact result */
+#define	FPE_FLTINV	7	/* invalid floating point operation */
+#define	FPE_FLTSUB	8	/* subscript out of range */
+#define NSIGFPE		8
+
+/* SIGSEGV signal codes */
+
+#define	SEGV_MAPERR	1	/* address not mapped to object */
+#define	SEGV_ACCERR	2	/* invalid permissions */
+#define NSIGSEGV		2
+
+/* SIGBUS signal codes */
+
+#define	BUS_ADRALN	1	/* invalid address alignment */
+#define	BUS_ADRERR	2	/* non-existent physical address */
+#define	BUS_OBJERR	3	/* object specific hardware error */
+#define NSIGBUS		3
+
+/* SIGTRAP signal codes */
+
+#define	TRAP_BRKPT	1	/* process breakpoint */
+#define	TRAP_TRACE	2	/* process trace */
+#define	NSIGTRAP		2
+
+/* SIGCLD signal codes */
+
+#define	CLD_EXITED	1	/* child has exited */
+#define	CLD_KILLED	2	/* child was killed */
+#define	CLD_DUMPED	3	/* child has core dumped */
+#define	CLD_TRAPPED	4	/* traced child has stopped */
+#define	CLD_STOPPED	5	/* child has stopped on signal */
+#define	CLD_CONTINUED	6	/* stopped child has continued */
+#define NSIGCLD		6
+
+/* SIGPOLL signal codes */
+
+#define	POLL_IN	1	/* input available */
+#define	POLL_OUT	2	/* output buffers available */
+#define	POLL_MSG	3	/* output buffers available */
+#define	POLL_ERR	4	/* I/O error */
+#define	POLL_PRI	5	/* high priority input available */
+#define	POLL_HUP	6	/* device disconnected */
+#define NSIGPOLL	6
+
+#define SI_MAXSZ	128
+#define SI_PAD	((SI_MAXSZ / sizeof(int)) - 3)
+
+typedef struct siginfo {
+	int	si_signo;		/* signal from signal.h */
+	int 	si_code;		/* see codes */
+	int	si_errno;		/* error from errno.h */
+
+	union {
+		int	_pad[SI_PAD];	/* for future growth */
+		struct {			/* kill(), SIGCLD */
+			pid_t	_pid;	/* process ID */
+			union {
+				struct {
+					uid_t	_uid;
+				} _kill;
+				struct {
+					clock_t _utime;
+					int	_status;
+					clock_t _stime;
+				} _cld;
+			} _pdata;
+		} _proc;			
+
+		struct {	/* SIGSEGV, SIGBUS, SIGILL and SIGFPE */
+			caddr_t	_addr;	/* faulting address */
+		} _fault;
+
+		struct {			/* SIGPOLL, SIGXFSZ */
+		/* fd not currently available for SIGPOLL */
+			int	_fd;	/* file descriptor */
+			long	_band;
+		} _file;
+
+	} _data;
+} siginfo_t;
+.SE
+A non-positive value of \f2si_code\f1 implies that a signal was generated
+by a user process and the \f4siginfo\f1 structure also includes \f2si_pid\f1
+(process ID of a sending process) and \f2si_uid\f1 (user ID of a sending process). 
+Otherwise, \f2si_code\f1 contains a specific reason for a signal.
+.P
+The \f4ucontext\f1 structure is as follows:
+.SS
+.IX \f4ucontext\f1 structure
+typedef struct {
+	gregset_t	gregs;		/* general register set */
+	fpregset_t	fpregs;	/* floating point register set */
+} mcontext_t;
+
+typedef struct ucontext {
+	u_long		uc_flags;		/* see below */
+	struct ucontext	*uc_link;		/* context to resume when this context
+					/* returns, or NULL if main context */
+	sigset_t   	uc_sigmask;	/* signals blocked for this context */
+	stack_t 		uc_stack;		/* stack currently in use */
+	mcontext_t 	uc_mcontext;	/* saved machine registers */
+	long		uc_filler[23];
+} ucontext_t;
+
+#define GETCONTEXT	0
+#define SETCONTEXT	1
+
+/* Following uc_flags implementation dependent flags, that should be hidden
+ * from the user interface, defining which elements of ucontext are valid, 
+ * and should be restored on call to setcontext
+ */
+#define	UC_SIGMASK	001
+#define	UC_STACK		002
+#define	UC_CPU		004
+#define	UC_MAU		010
+#define	UC_MCONTEXT	(UC_CPU|UC_MAU)
+#define	UC_ALL		(UC_SIGMASK|UC_STACK|UC_MCONTEXT)
+	/* UC_ALL specifies the default context */
+.SE
+The following are new Release 4.0 system calls relating to Job Control and
+signals (see manual pages for more details):
+.IX job control, system calls
+.BL
+.LI
+\f4setsid\f1 - if the calling process is not already a process group leader,
+set the process group ID and session ID of the calling process to the process
+ID of the calling process.
+Also, release the controlling terminal.
+.LI
+\f4setpgid\f1 - set the process group ID of a process with ID \f2pid\f1 to
+\f2pgid\f1.
+.LI
+\f4sigaction\f1 - set and get an action to take on receipt of a signal.
+.LI
+\f4sigaltstack\f1 - set or get a signal alternate stack context.
+.LI
+\f4sigpending\f1 - examine blocked and pending signals.
+.LI
+\f4sigsuspend\f1 - replace the deferred signal mask with a set of signals and suspend
+the process until a signal is received.
+.LI
+\f4sigprocmask\f1 - change or examine the set of deferred signals.
+.LI
+\f4sigsend\f1 - send a signal to all processes specified by \f2id\f1 and \f2idtype\f1.
+.LI
+\f4waitid\f1 - suspend the calling process until one of its children changes state.
+.LE
+The kernel stores information about sessions in the \f4sess\f1 structure that is
+shared among all members of a session and allows dynamic allocation of a
+controlling terminal.
+The \f4sess\f1 structure format is:
+.SS
+.IX \f4sess\f1, structure
+typedef struct sess {
+	short s_ref; 		/* reference count */
+	short s_mode;		/* /sess current permissions */
+	uid_t s_uid;		/* /sess current user ID */
+	gid_t s_gid;		/* /sess current group ID */
+	ulong s_ctime;		/* /sess change time */
+	dev_t s_dev;		/* tty's device number */
+	struct vnode *s_vp;	/* tty's vnode */
+	struct pid *s_sidp;	/* session ID info */
+	struct cred *s_cred;	/* allocation credentials */
+} sess_t;
+
+#define s_sid s_sidp->pid_id
+
+extern sess_t session0;
+.SE
+.bp
+Operations on the \f4sess\f1 structure are
+(more details are given in \f3sys/session.h\f1):
+.IX \f4sess\f1, operations
+.BL
+.LI
+\f4SESS_HOLD\f1 - increment a reference count (\f2s_ref\f1).
+.LI
+\f4SESS_RELE\f1 - decrement a reference count.
+.LI
+\f4sess_create\f1 - release the session structure of a current process, allocate
+a new structure, and bind the structure to the process.
+.LI
+\f4freectty\f1 - signal the current foreground process and all processes sleeping
+on the controlling terminal.
+Also, close the device.
+.LI
+\f4cttydev\f1 - return the device number (\f2s_dev\f1) of the controlling
+terminal.
+.LI
+\f4alloctty\f1 - allocate a controlling terminal.
+.LI
+\f4hascttyperm\f1 - check current permissions against the permissions of the session.
+.LE
+Structure members for Job Control in the \f4proc\f1 structure are:
+.BL
+.LI
+\f2p_sessp\f1 - a pointer to the \f4sess\f1 structure.
+.LI
+\f2p_ignore\f1 - mask of signals to ignore when generated.
+.LI
+\f2p_siginfo\f1 - mask of signals to deliver with \f4siginfo\f1 structures.
+.LI
+\f2p_pglink\f1 - a pointer to a process group hash chain link.
+.LI
+\f2p_sigqueue\f1 - a pointer to a queued \f4siginfo\f1 structures.
+.LI
+\f2p_curinfo\f1 - a pointer to a \f4siginfo\f1 structure of a current signal.
+.LI
+\f2p_pidp\f1 - a pointer to a \f4pid\f1 structure for a process ID.
+.LI
+\f2p_pgidp\f1 - a pointer to a \f4pid\f1 structure for a process group ID.
+.LE
+See \f3sys/proc.h\f1 for a complete \f4proc\f1 structure.
+.bp
+.P
+The \f4pid\f1 structure has process ID information.
+Its format is as follows:
+.SS
+.IX \f4pid\f1, structure
+struct pid {
+	unsigned int pid_prinactive :1;
+	unsigned int pid_pgorphaned :1;
+	unsigned int pid_ref :6;
+	unsigned int pid_prslot :24;
+	pid_t pid_id;
+	struct proc *pid_pglink;
+	struct pid *pid_link;
+};
+
+extern struct pid pid0;
+
+#define p_pgrp p_pgidp->pid_id
+#define p_pid  p_pidp->pid_id
+#define p_slot p_pidp->pid_prslot
+#define p_detached p_pgidp->pid_pgorphaned
+.SE
+The structure member \f2pid_prinactive\f1 indicates that no process is using 
+this \f4pid\f1 structure.
+\f2pid_pgorphaned\f1 indicates that a process group with this ID is orphaned.
+\f2pid_ref\f1 is a reference count.
+\f2pid_prslot\f1 is a process slot of a process with this ID.
+It is used for \f3procfs\f1 directory entry allocation.
+The structure member \f2pid_id\f1 is a process ID.
+\f2pid_pglink\f1 is a head of a list of process group members.
+\f2pid_link\f1 links the process ID into hash bucket.
+.P
+The following operations can be done on the \f4pid\f1 structures:
+.IX \f4pid\f1, operations
+.BL
+.LI
+\f4PID_HOLD\f1 - increment a reference count (\f2pid_ref\f1).
+.LI
+\f4pid_init\f1 - one-time, system startup initialization of the \f4pid\f1
+structures and process slots.
+.LI
+\f4PID_RELE\f1 - decrement a reference count.
+.LI
+\f4pid_assign\f1 - assign a \f4pid\f1 structure for process creation.
+.LI
+\f4pid_exit\f1 - leave the process group and session, freeing \f4prp->p_pidp\f1
+and the associated process table slot.
+.LI
+\f4pid_entry\f1 - return a pointer to the process in the denoted process slot.
+.LI
+\f4prfind\f1 - return a pointer to the process with ID \f2pid\f1.
+.LI
+\f4pgfind\f1 - return a list of processes whose process group ID is \f2pgid\f1.
+.LI
+\f4prsignal\f1 - send the specified signal to a specified process.
+.LI
+\f4pgsignal\f1 - send a specified signal to the process group ID headed by 
+\f2pidp\f1.
+.LI
+\f4pgjoin\f1 - add a process to the process group headed by \f2pidp\f1.
+.LI
+\f4pgcreate\f1 - create a singleton process group.
+.LI
+\f4pgexit\f1 - leave a process group denoted by \f4prp->p_pgidp\f1, possibly 
+releasing the \f4pid\f1 structure heading the group, or orphaning the group.
+.LI
+\f4pgdetach\f1 - the denoted process is existing; for any groups that this will
+orphan, set \f2pid_pgorphaned\f1.
+If the group is stopped for Job Control, send hangup and continue signals
+to the group.
+.LI
+\f4pgmembers\f1 - return 1 if \f2pgid\f1 is the process group ID of a process
+group that has a member other than the leader.
+Return 0 otherwise.
+.LI
+\f4signal\f1 - maintained only for driver compatibility; see \f4pgsignal\f1.
+.LE
+.H 2 "exec"
+\f4exec\f1 creates a new process image.
+\f4exec\f1 switch has a new architecture (new in Release 4.0) that supports 
+multiple object file formats.
+The supported formats are \f4elf\f1 (dynamic linking), \f4coff\f1 (common object
+file format), and \f4intp\f1 (#! interpretation).
+Data structures are (see \f3sys/exec.h\f1 for more details):
+.SS
+.IX \f4exec\f1, structures
+struct uarg {
+	caddr_t estkstart;	/* start of execution stack image */
+	int     estksize;	/* size of execution stack image */
+	u_int   estkhflag;	/* flag for HAT */
+	int     stringsize;/* sum of argsize, envsize, and prefixsize */
+	int     argsize;	/* size of argument list in bytes */
+	int     envsize;	/* size of environment in bytes */
+	int     argc;	/* # of arguments passed to a new program */
+	int     envc;	/* # of env. variables passed */
+	int     prefixc;	/* intp argument prefix invisible to psargs */
+	int     prefixsize;/* size of interpreter name and arg. to it */
+	caddr_t *prefixp;	/* pointer to interpreter */
+	int     auxsize;	/* size of auxiliary info for dynamic linker */
+	addr_t  stacklow;	/* low address stack */
+	caddr_t stackend;	/* initial value of stack pointer */
+	char    **argp;	/* pointer to arguments */
+	char    **envp;	/* pointer to environment */
+	char    *fname;	/* path name of new program */
+	int     traceinval;/* see below */
+};
+
+typedef struct execenv {
+	caddr_t ex_brkbase; /* initial end of data segment */
+	short   ex_magic;   /* magic number of a.out type */
+	vnode_t *ex_vp;     /* vnode for a.out */
+} execenv_t; 
+
+struct execsw {
+	short *exec_magic;     /* points to type-specific object file */
+	int   (*exec_func)();  /* function for type-specific exec-time setup */
+	int   (*exec_core)();  /* type-specific function to generate a core file */
+};
+
+extern int nexectype;	/* number of elements in execsw */
+extern struct execsw execsw[];
+
+typedef struct exhdmap {
+	struct exhdmap *nextmap;	/* link in chain from exhd */
+	off_t	curbase;		/* MAXBSIZE-aligned offset of cached data */
+	off_t	curoff;		/* PAGESIZE-aligned offset of cached data */
+	int	cureoff;		/* PAGESIZE-aligned offset of end of data */
+	caddr_t	bndrycasep;	/* boundary conditions  - see below */
+	long	bndrycasesz;	/* size of data */
+	struct fbuf *fbufp;	/* pointer to fbuf (seg_kmap) structure */
+	int	keepcnt;		/* reference count */
+} exhdmap_t;
+.SE
+The structure \f4uarg\f1 is a user argument structure that stores information
+describing a new execution image, used as a pseudo global context for efficiency.
+For \f4intp\f1 programs, the structure member \f2prefixc\f1 is 2 if the
+interpreter is passed an argument, 1 otherwise.
+If a new program is \f4setuid\f1 or \f4setgid\f1 and the process is traced
+via \f4PROCFS\f1 and does not have read permissions on a new
+\f4a.out\f1, the \f3/proc\f1 \f4vnode\f1 is invalidated (\f2traceinval\f1).
+.P
+The structure \f4execenv\f1 is used for process image initialization.
+.P
+The structure \f4exhdmap\f1 populates the \f4a.out\f1 header cache.
+\f2bndrycasep\f1 boundary conditions are:
+.BL
+.LI
+Data are not long-aligned.
+.LI
+Data straddles other cached data.
+.LI
+Data are a writable copy made on request.
+.LE
+In the above cases, \f2bndrycasep\f1 points to storage allocated for a copy of 
+a mapping.
+.H 2 "RFS File System"
+The Remote File Sharing (RFS) file system supports the full UNIX file system
+semantics in a network environment and provides:
+.BL
+.LI
+read/write atomicity,
+.LI
+single system-image file consistency,
+.LI
+append writes,
+.LI
+file and record locking, and
+.LI
+remote devices.
+.LE
+The UNIX System V Release 4.0 RFS also conforms to VFS and \f4vnode\f1s, supports
+virtual memory interface, and also supports UNIX System V Release 3.0 protocol.
+.H 3 "RFS vnodes"
+.IX \f4vnode\f1, RFS
+RFS is based on a client-server model.
+The kernel on a client machine issues a request that results in a response from
+an \f4rf_server\f1 process on a server machine.
+A request is generated when control enters the RFS file system module.
+This happens when an operation is applied to an RFS \f4vnode\f1.
+.P
+The private data portion of an RFS client \f4vnode\f1 is an object called a
+send descriptor (SD).
+.IX RFS, send descriptor
+It is one end of a communication channel to the server, and contains information
+that is forwarded to the server identifying the file of interest.
+Send descriptors are not only the RFS part of a client \f4vnode\f1, they are also the
+send end of any RFS communication channel.
+.P
+The server represents client file references by a structure called a receive
+descriptor (RD).
+.IX RFS, receive descriptor
+The receive descriptor holds a reference to a server \f4vnode\f1 on behalf of
+RFS clients.
+RDs, like SDs, are not limited to use as file references.
+A receive descriptor is at the receive end of any RFS communication channel.
+.P
+When a client forwards a file system operation to the server, the server first
+validates the operation's parameters, applies the operation to the server
+\f4vnode\f1, and then sends the client a response.
+.P
+RFS assumes reliable virtual circuits over STREAMS.
+Send and receive descriptors are handled by the RFS circuit manager that is a
+STREAMS module.
+.IX RFS, circuit manager
+The circuit manager assumes that it is talking to another STREAMS module that
+conforms to the Transport Provider Interface that is a kernel interface similar
+to the user level Transport Layer Interface.
+As a result, RFS is protocol independent.
+.P
+Release 4.0 operates over multiple transport providers simultaneously (for example,
+TCP and Starlan).
+The user level RFS name server was modified to accomplish this.
+The RFS kernel didn't have to change to support this new feature.
+.H 3 "Read/Write Protocol"
+.IX RFS, read/write protocol
+Since reads and writes can move large amounts of data, they can involve many
+network messages.
+Server \f4vnode\f1s are held locked over all transfers to preserve I/O atomicity.
+.P
+The read protocol is as follows:
+.BL
+.LI
+The client sends an \f4rf_read\f1 request.
+.LI
+The server sends zero or more \f4rf_copyout\f1 responses with data.
+No handshaking from the client is required.
+.LI
+The server sends the last of the data in an \f4rf_read\f1 response bracketing the
+client request.
+.LE
+The write protocol is as follows:
+.BL
+.LI
+The client sends and \f4rf_write\f1s request with as much data as will fit in the
+RFS message.
+.LI
+The server requests the balance from the client.
+.LI
+The client responds with \f4rf_copyin\f1 messages, which require
+no handshaking from the server.
+.LI
+After all data have been written, the server sends a bracketing \f4rf_write\f1
+response.
+.LE
+.H 3 "Client Data Cache"
+.IX RFS, data cache
+RFS clients cache regular file data in the global cache in order to gain
+performance.
+With cooperation from server native file systems, the RFS client cache
+protocol guarantees that data retrieved from the cache by \f4VOP_READ\f1
+reflects exactly the server file data at any time of access, if the file is
+not updated through mappings.
+\f4VOP_WRITE\f1s are written through the cache to the server.
+.P
+The consistency protocol works as follows:
+.BL
+.LI
+Cache operation is enabled for clients until a process starts updating the file.
+.LI
+When an update occurs, the server machine suspends the update and informs all
+other clients that have current references to the file to disable their caches.
+.LI
+The update is allowed to proceed.
+.LI
+Until the cache is re-enabled, client reads and writes will bypass the cache and
+go directly to the server.
+.LE
+The cache is re-enabled when a tunable interval expires after a write, or when there
+are no more writable references to the file.
+Cache re-enable messages have no network overhead, because they are piggybacked
+on responses to clients.
+.P
+RFS uses the page cache (much like pre-Release 4.0 buffer cache) to look up and
+lock pages without faulting and then requests from the server needed data.
+Doing the page cache guarantees I/O atomicity and also avoids unnecessary
+network overhead.

@@ -1,0 +1,69 @@
+'\"!  tbl | mmdoc
+'\"macro stdmacro
+.if n .pH gen.datab @(#)datab	40.4 of 7/1/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.nr X
+.if \nX=0 .ds x} datab D4DK "STREAMS" "DDI/DKI" "\&"
+.if \nX=1 .ds x} datab D4DK "STREAMS" "DDI/DKI"
+.if \nX=2 .ds x} datab D4DK "" "\&"
+.if \nX=3 .ds x} datab "" "" "\&"
+.TH \*(x}
+.IX "\f4datab\fP(D4DK)"
+.SH NAME
+\f4datab\fP \- STREAMS data block structure
+.SH SYNOPSIS
+.nf
+\f4#include <sys/types.h>
+#include <sys/stream.h>\fP
+.fi
+.ad
+.SH DESCRIPTION
+The \f4datab\fP structure describes the
+data of a STREAMS message.
+The actual
+data contained in a STREAMS message is stored in a data buffer pointed
+to by this structure. A message block structure [\f4msgb\fP(D4DK)]
+includes a field that points to a \f4datab\fP structure.
+.P
+A data block can have more than one message block pointing to it at one time,
+so the \f4db_ref\fP member keeps track of a data block's references,
+preventing it from being deallocated until all message blocks are finished
+with it.
+.SH STRUCTURE MEMBERS
+.IX "\f4datab\fP(D4DK), structure members"
+.TS
+lf4p8 2 lf4p8 2 lf4p8.
+uchar_t	*db_base;	/* first byte of buffer */
+uchar_t	*db_lim;	/* last byte (+1) of buffer */
+uchar_t	db_ref;	/* # of message pointers to this data */
+uchar_t	db_type;	/* message type */
+.TE
+.P
+The \f4db_base\fP field points to the beginning of the data buffer.
+Drivers and
+modules should not change this field.
+.P
+The \f4db_lim\fP field points to one byte past the end of the data buffer.
+Drivers and
+modules should not change this field.
+.P
+The \f4db_ref\fP field contains a count of the number of message blocks sharing the
+data buffer.
+If it is greater than 1, drivers and modules should not change the contents
+of the data buffer.
+Drivers and modules should not change this field.
+.P
+The \f4db_type\fP field contains the message type associated with the data buffer.
+This field can be changed by the driver.
+However, if the \f4db_ref\fP field is greater than 1,
+this field should not be changed.
+.SH NOTES
+The \f4datab\fP structure is defined as type \f4dblk_t\fP.
+.SH SEE ALSO
+\f2Programmer's Guide: STREAMS\fP
+.P
+.na
+\f4free_rtn\fP(D4DK),
+\f4msgb\fP(D4DK),
+\f4messages\fP(D5DK)
+.ad

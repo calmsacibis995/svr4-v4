@@ -1,0 +1,52 @@
+'\"macro stdmacro
+.if n .pH gen.psignal @(#)psignal	40.2 of 1/7/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.nr X
+.if \nX=0 .ds x} psignal D3K "" "DKI" "\&"
+.if \nX=1 .ds x} psignal D3K "" "DKI"
+.if \nX=2 .ds x} psignal D3K "" "\&"
+.if \nX=3 .ds x} psignal "" "" "\&"
+.TH \*(x}
+.IX "\f4psignal\fP(D3K)"
+.SH NAME
+\f4psignal\f1 \- send signal to a process
+.SH SYNOPSIS
+.DS
+.nf
+\f4#include <sys/signal.h>
+#include <sys/proc.h>
+.sp 0.5
+void psignal(proc_t *\f2p, \f4int \f2sig\f4);\f1
+.DE
+.fi
+.SH ARGUMENTS
+.RS 0n
+.IP "\f2p\f1" 10n
+Pointer to the process being signaled.
+.IP "\f2sig\f1" 10n
+Signal to send.  Valid signals are listed in \f4signals\fP(D5DK).
+.RE
+.SH DESCRIPTION
+\f4psignal\f1 is called by drivers to send a signal to a single
+process.  If
+the process being sent the signal has called \f4sleep\f1(D3K) to wait
+at a priority numerically higher than \f4PZERO\f1, and if \f4PCATCH\fP has not
+been \f4OR\fP'ed in with the sleep priority, \f4psignal\f1 makes the
+process executable.  \f4PZERO\f1 and \f4PCATCH\fP are defined in \f4sys/param.h\f1.
+.P
+A pointer to the currently running process can be obtained by calling
+\f4drv_getparm\fP(D3DK).
+.SH RETURN VALUE
+None.
+.SH LEVEL
+Base or Interrupt.
+.SH NOTES
+Does not sleep.
+.sp 0.5
+STREAMS drivers and modules should not call \f4psignal\fP.  To generate a signal,
+they must send \f4M_SIG\fP or \f4M_PCSIG\fP messages.
+.SH SEE ALSO
+.na
+\f4drv_getparm\fP(D3DK),
+\f4signals\f1(D5DK)
+.ad

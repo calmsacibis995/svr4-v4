@@ -1,0 +1,86 @@
+'\"macro stdmacro
+.if n .pH g1a.logins @(#)logins	40.11.1.1 of 10/10/89
+.\" Copyright 1989 AT&T
+.nr X
+.if \nX=0 .ds x} logins 1M "" "\&"
+.if \nX=1 .ds x} logins 1M ""
+.if \nX=2 .ds x} logins 1M "" "\&"
+.if \nX=3 .ds x} logins "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4logins\f1 \- list user and system login information
+.SH SYNOPSIS
+\f4logins\f1 [\f4-dmopstuxa\f1] [\f4-g \f4groups\fP] [\f4-l\f2 logins\f1]
+.SH DESCRIPTION
+This command displays information on user and system logins.
+Contents of the
+output is controlled by the command options and can include the
+following:  user or system
+login, user id number, \f4/etc/passwd\f1 account field value 
+(user name or other 
+information), primary group name, primary group id, multiple group names,
+multiple group ids, home directory, login shell, and four password aging
+parameters.
+The default information is the
+following: login id, user id, primary group name,
+primary group id and the account field value from \f4/etc/passwd\f1.
+Output is sorted by user id, displaying system logins followed by user logins.
+.TP
+\f4\-d\f1
+Selects logins with duplicate uids.
+.TP
+\f4\-m\f1
+Displays multiple group membership information.
+.TP
+\f4\-o\f1
+Formats output into one line of colon-separated fields.
+.TP
+\f4\-p\f1
+Selects logins with no passwords.
+.TP
+\f4\-s\f1
+Selects all system logins.
+.TP
+\f4\-t\f1
+Sorts output by login instead of by uid.
+.TP
+\f4\-u\f1
+Selects all user logins.
+.TP
+\f4\-x\f1
+Prints an extended set of information about each selected user.
+The extended
+information includes home directory, login shell and
+password aging information, each displayed on a separate line.
+The password information consists of password 
+status (PS for passworded, NP for no password
+or LK for locked).
+If the login is passworded, status is followed by the 
+date the
+password was last changed, the number of days required between changes, and the
+number of days allowed before a change is required.
+The password aging information shows the time interval that the user will
+receive a password expiration warning message (when logging on)
+before the password expires.
+.TP
+\f4\-a\f1
+Adds two password expiration fields to the display.
+The fields show how many days a password can remain unused before it
+automatically becomes inactive and
+the date that the password will expire.
+.TP
+\f4\-g\f1
+Selects all users belonging to \f4group\fP, sorted by login.
+Multiple groups can be specified as a comma-separated list.
+.TP
+\f4\-l\f1
+Selects the requested login.
+Multiple logins can be specified as a comma-separated list.
+.SH NOTES
+Options may be used together.
+If so, any login matching any criteria will be
+displayed.
+When 
+the \f4\-l\f1 and \f4\-g\f1 options are combined,
+a user will only be listed
+once, even if they belong to more than one of the selected groups.

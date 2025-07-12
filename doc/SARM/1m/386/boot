@@ -1,0 +1,441 @@
+'\"macro stdmacro
+.if n .pH g1a.boot @(#)boot	40.6 of 1/3/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.if n .pH g1.boot(1M) @(#)boot(1M)
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.if \nX=0 .ds x} boot 1M "Base System" "\&"
+.if \nX=1 .ds x} boot 1M "Base System"
+.if \nX=2 .ds x} boot 1M "" "\&"
+.if \nX=3 .ds x} boot "" "" "\&"
+.nr X
+.TH \*(x} "" "386 Computer Only"
+.SH NAME
+\f4boot\f1 \- \s-1UNIX\s0 system boot program
+.SH DESCRIPTION
+The \f4boot\f1 program interactively loads and executes
+stand-alone \s-1UNIX\s0 programs.
+While \f4boot\f1 is used primarily for loading and executing the
+\s-1UNIX\s0 system kernel, it can load and execute any other programs
+that are linked for stand-alone execution.
+The \f4boot\f1 program is a required part of the \s-1UNIX\s0
+Base Operating System software set and must
+be present in the root file system
+to ensure successful loading of the \s-1UNIX\s0 System kernel.
+Note that during installation of the \s-1UNIX\s0 operating
+system, a custom \f4masterboot\fP is placed on the hard disk.
+The \f4masterboot\fP program resides on sector 0 of the
+hard disk and is the default boot program for hard-disk boot
+procedures.
+.PP
+The system invokes the
+\f4boot\f1
+program each time the computer is started.
+It tries to locate the \f4boot\f1 program on the
+floppy disk drive first; if the floppy disk drive is empty,
+the system invokes the hard-disk boot procedure.
+The boot procedure depends on whether you are booting
+from a floppy disk or hard disk, as described below.
+.PP
+The floppy-disk boot procedure has two stages:
+.RS
+.TP 3
+1.
+The boot block in sector 0 of the file system loads \f4boot\fP.
+.TP
+2.
+\f4boot\fP executes and prompts the user.
+.RE
+.PP
+The hard-disk boot procedure has three stages:
+.RS
+.TP 3
+1.
+The ROMs load in the \f4masterboot\fP block from sector 0
+on the hard disk.
+.TP
+2.
+The \f4masterboot\fP boot block then loads the partition boot
+block from sector 0 of the active partition [see \f4fdisk\f1(1M)].
+.TP
+3.
+The remainder of \f4boot\f1 is loaded from the next 29
+sectors of the hard disk.
+.RE
+.PP
+When first invoked,
+\f4boot\f1
+displays the following status message:
+.PP
+.RS
+\f4Booting the UNIX System\f1 .\|.\|.
+.RE
+.PP
+To instruct \f4boot\fP to use the default kernel and values
+specified in the boot default file, 
+\f4/stand/boot\f1,
+press \f4RETURN\f1.
+If you press any key other than \f4RETURN\f1, \f4boot\fP
+pauses and prompts you for custom information.
+If you have just loaded the \f4boot\fP program from the distribution
+diskette, press \s-1RETURN\s0
+so \f4boot\fP will use the default values.
+.PP
+To load a program that is not the default program,
+press any key to interrupt \f4boot\fP.
+The \f4boot\fP program pauses and prompts you with the
+following message for the name of the program you want to
+load:
+.PP
+.RS
+\f4Enter the name of a kernel to boot:\f1
+.RE
+.PP
+The system waits at this point for you to type the name of the
+program you want to load and press \s-1RETURN\s0.
+The
+length of the pause is the number of seconds
+specified with the \f4TIMEOUT\fP option in \f4/stand/boot\f1
+(see ``\f3boot Options\f1'').
+If you have not typed something after the specified number of
+seconds and \f4AUTOBOOT\f1 is
+set to \f4YES\fP
+in \f4/stand/boot\f1, \f4boot\fP times out and
+behaves as though you pressed\p
+.br
+.ne 3
+\s-1RETURN\s0.
+The \f4boot\fP program proceeds through the boot process,
+and \f4init\f1(1M) is passed an \f4-a\f1 flag with no \f2prompt\f1
+argument.
+.PP
+If you are booting from a program other than the \f4boot\f1
+program on the distribution diskette, you must specify the
+location of the program by providing a filename
+(if the program you want to load is on the default boot device).
+The filename must include the full pathname of the file
+containing the stand-alone program.
+To indicate a program other than the \f4boot\fP program on the
+distribution diskette, use the following format:
+.PP
+.RS
+\f2filename\fP
+.RE
+.PP
+where
+.I filename
+is the standard \s-1UNIX\s0 system pathname.
+If \f2filename\fP is the only argument typed at the boot
+prompt, \f4boot\fP looks for the \f2filename\fP on
+the default boot device and tries to boot from it.
+.SS \f3boot Options\f1
+Options for the \f4boot\f1 program can be set or changed with
+keywords in 
+\f4/stand/boot\f1
+The following keywords are recognized by \f4boot\fP:
+.TP \w'MEMRANGE=range[,range...]\ \ \ \ 'u
+\f4AUTOBOOT=YES\fP or \f4NO\fP
+Indicates whether or not
+\f4boot\f1
+starts loading the kernel immediately
+or displays a boot prompt first.
+.TP
+\f4BOOTMSG\fP=\f2string\f1
+The default boot message is changed to \f2string\fP.
+.TP
+\f4BOOTPROMPT\fP=\f2string\fP
+The default boot prompt is changed to \f2string\fP.
+.TP
+\f4DEFBOOTSTR\fP=\f4bootstring\fP
+Sets default bootstring to \f4bootstring\fP.
+This is the string used by \f4boot\fP when the user presses \s-1RETURN\s0 only to the boot prompt or when \f4boot\fP\0times out.
+.TP
+\f4INITPROG\fP=\f2path\fP
+Specifies an initialization program to be loaded and run
+before \f4boot\fP\0sizes memory.
+.TP
+\f4MEMRANGE\fP=\f2range\fP[,\f2range\fP...]
+Tells \f4boot\fP where to look when sizing memory.
+A \f2range\fP is a pair of decimal addresses, separated by a
+dash (such as 1M\-4M), followed by a one-byte set of flags.
+This set of flags should be encoded as an integer in the range
+of 0\-255.
+Use a colon (:) to separate addresses from flags.
+Note that only two values are currently defined:
+0 (indicates no special
+properties) and 1 (indicates memory for which DMA is not allowed).
+All other flags are currently undefined and reserved for future use.
+Both upward (such as 15M\-16M) and downward (such as 16M\-15M)
+address ranges are supported.
+The first address in the pair is inclusive; the last address is exclusive.
+.TP
+\f4MEMREQ\f1=\f2size\f1
+Tells \f4boot\f1 to enforce a minimum memory size of \f2size\f1.
+If \f4boot\f1 dosen't find at least \f2size\f1 bytes of\p
+.br
+.ne 3
+memory, it will print a message and halt.  \f2size\f1
+is given in the same format as adddresses for \%\f4MEMRANGE\f1.
+.TP
+\f4MREQMSG1\f1=\f2string\f1
+This sets the message printed when the \f4MEMREQ\f1 memory
+requirement is not met.
+.TP
+\f4MREQMSG2\f1=\f2string\f1
+Specifies an optional second line for the \f4MREQMSG1\f1
+message.
+.TP
+\f4TIMEOUT\fP=\f2number\fP
+If \f4boot\fP is waiting for a boot line from the user and
+\f4TIMEOUT\fP is set, \f4boot\fP will wait for \f2number\fP
+seconds, then use the default boot line defined
+by \f4DEFBOOTSTR\fP.
+.SS Customizing the Boot Process
+You can set the boot process up to be automatic.
+To set up
+\f4boot\fP to run automatically, using
+the default configuration information in the
+\f4/stand/boot\fP file, set
+\f4AUTOBOOT\fP to \f4YES\fP in
+the \f4/stand/boot\fP file.
+This causes \f4boot\fP to display the default boot message
+and load the program.
+If an error occurs or a key is pressed during this automatic
+boot process, \f4boot\fP returns to the boot prompt
+and tries to load the program again.
+The \f4boot\fP program on the \s-1UNIX\s0 operating system
+installation diskette performs this automatic boot procedure.
+.PP
+If \f4AUTOBOOT\fP is set to \f4NO\fP in
+the \f4/stand/boot\fP file,
+\f4boot\fP
+gives you an opportunity to type a
+bootstring before \f4boot\fP begins loading the program.
+If you do not type a bootstring at the prompt,
+\f4boot\fP assumes the user wants the default configuration.
+At this point, \f4boot\fP behaves as though \f4AUTOBOOT\fP
+is set to \f4YES\fP in the \f4/stand/boot\fP file.
+The \f4boot\fP program reads the configuration in
+the \f4/stand/boot\fP
+file then displays the default boot message (\f4BOOTMSG\fP) and
+begins loading the program.
+.P
+the filesystem type of the root file system can also be
+specified, as follows:
+.PP
+.ta .25i .5i .75i 1i 1.25i 1.5i 1.75i
+. RS 5
+\f4rootfstype\f1=\f4fstype\f1
+.RE
+.DT
+.P
+where \f4fstype\f1 is the filesystem type, probably either
+\f4s5\f1 or \f4ufs\f1.
+.SS Kernel Configuration
+The \f4boot\fP program passes any boot string typed at the boot prompt
+to the kernel except for the \f2prompt\f1 string.
+The kernel reads the boot string to determine which peripherals are the
+\f4root\f1, \f4pipe\f1, \f4swap\f1, and \f4dump\f1 devices.
+If no devices are specified in either the \f4/stand/boot\f1
+description or on the command line, the
+default devices compiled into the kernel are used.
+Additional arguments in the boot string can
+override the default.
+These additional arguments have the following form:
+.PP
+.ta .25i .5i .75i 1i 1.25i 1.5i 1.75i
+.RS 5
+.I dev=xx(m,o)
+.RE
+.DT
+.PP
+where
+.TP 3
+\-
+.I dev
+is the desired system device (\f4root[dev]\f1, \f4pipe[dev]\f1,
+\f4swap[dev]\f1, or \%\f4dumpdev\f1).
+.TP
+\-
+\f2xx\fP is the device name
+(``hd'' for the hard disk or ``fd'' for floppy diskette device).
+.TP
+\-
+\f2m\fP is the minor device number.
+.TP
+\-
+\f2o\fP is the offset in the partition (usually 0).
+.PP
+If any combination of \f4root\f1, \f4pipe\f1, \f4swap\f1, or
+\f4dumpdev\f1 is specified, those system devices will reside on
+that device with the unspecified system devices using the
+defaults compiled in the kernel.
+Setting one device does
+not affect the default values for the other system devices.
+.SH FILES
+.br
+\f4/stand/boot\f1
+.SH SEE ALSO
+\f4fdisk\f1(1M),
+\f4init\f1(1M),
+\f4fd\f1(7),
+\f4hd\f1(7).
+.SH DIAGNOSTICS
+The
+\f4masterboot\f1
+and
+\f4boot\f1
+programs have different error messages.
+The \f4masterboot\f1 program displays an error message and
+locks the system.
+The following
+is a list of the most common
+\f4masterboot\f1
+messages and their meanings:
+.TP \w'BAD\ TBL\ \ \ \ 'u
+\f4IO ERR\fP
+An error occurred when trying to read in the partition boot
+of the active operating system.
+.TP
+\f4BAD TBL\fP
+The bootable partition indicator of at least
+one of the operating systems in the
+\f4fdisk\f1
+table
+contains an unrecognizable code.
+.TP
+\f4NO OS\fP
+There was an unrecoverable error
+after trying to execute the active operating
+system's partition boot.
+.PP
+The
+\f4boot\f1
+program displays an error message, then returns to its prompt.
+Some \f4boot\f1 messages indicate fatal
+errors that cause the system to halt and require rebooting.
+Other \f4boot\f1 messages are not fatal but
+indicate that the \f4boot\fP program is not running properly.
+.PP
+The following four messages indicate fatal errors.
+When one of these messages occurs,
+you will need to correct the problem
+described in the message and reboot the system:
+.IP "\f4Error reading bootstrap\f1"
+The \f4boot\fP program could not locate the bootstrap, or the
+bootstrap is not readable.
+Make sure that the bootstrap is properly located on the
+specified boot device and is compatible with the kernel you are
+booting.
+Then reboot the system.
+.IP "\f4No active partition on hard disk\fP"
+There is currently no active partition from which to run the
+\f4boot\fP program.
+Activate an appropriate partition and reboot the system.
+.IP "\f4No file system to boot\fP"
+The \f4boot\fP program could not locate a \f4/stand\f1 or root file system on
+the specified boot device.
+Make sure the boot device has a \f4/stand\f1 or root file system and reboot
+the system.
+.PP
+The following list describes \f4boot\f1 warning messages.
+When one of these messages occurs, you will need to correct
+the problem described in the message and restart the
+\f4boot\fP program:
+.IP "\f4Cannot load initprog\fP"
+The \f4boot\fP program cannot locate the initialization
+program specified with the \f4INITPROG\fP option, or
+the initialization program is not set up properly for execution.
+Make sure that the \f2path\fP argument to \f4INITPROG\fP
+is a valid path and the file is executable.
+Then restart \f4boot\fP.
+.IP "\f4Cannot open defaults file\fP"
+The \f4boot\fP program cannot locate the
+\f4/stand/boot\fP file on the boot device, or the file
+is not readable.
+Make sure that the \f4/stand/boot\fP file exists on the
+boot device and that the file is readable.
+Then restart \f4boot\fP.
+.IP "\f2command\fP \f4argument missing or incorrect\fP"
+The \f4boot\fP program received a command with no argument or
+with an invalid argument.
+Make sure that \f2command\fP in \f4/stand/boot\f1 has the correct number of
+arguments and that all the arguments are valid, then restart
+\f4boot\fP.
+.IP "\f4Cannot load\fP \f2file\fP\f4; file not opened\fP"
+The \f4boot\fP program cannot locate \f2file\fP on the
+specified device, or \f2file\fP is not set up properly for
+execution.
+Check that \f2file\fP exists on the specified device and restart
+\f4boot\fP.
+.IP "\f4Cannot load\fP \f2file\fP\f4; cannot read COFF header\fP"
+The specified Common Object File Format (COFF) file contains
+no file header, or the file header is not readable.
+Make sure that \f2file\fP contains a readable file header,
+then restart \f4boot\fP.
+.IP "\f4Cannot load\fP \f2file\fP\f4; not an 80386 ELF or COFF binary\fP"
+The specified file is not an 80386 ELF or COFF binary.
+Check that
+the file you want to load is a valid COFF binary that is compatible
+with 80386 systems and restart \f4boot\fP.
+.IP "\f4Cannot load\fP \f2file\fP\f4; cannot read segment/sections\fP"
+The specified file does not contain a section header, or the
+section header is not readable.
+Check that \f2file\fP contains a readable section header and
+restart \f4boot\fP.
+.IP "\f4Cannot load\fP \f2file\fP\f4; cannot read BKI section\fP"
+The specified file does not include the bootstrap-kernel interface
+(BKI) section, or the BKI section is not readable.
+Make sure the BKI section of \f2file\fP is accurate for your
+version of the kernel and bootstrap, then restart \f4boot\fP.
+.IP "\f4Cannot load\fP \f2file\fP\f4; BKI too old\fP"
+The BKI of the current bootstrap
+is not compatible with the BKI of the program (\f2file\fP) you
+are loading.
+Make sure that the BKI of the bootstrap and
+\f2file\fP are compatible and restart \f4boot\fP.
+.IP "\f4Cannot load\fP \f2file\fP; \f4BKI too new\fP"
+The BKI of the current bootstrap
+is not compatible with the BKI of the program (\f2file\fP) you
+are loading.
+Make sure that the BKI of the bootstrap and
+\f2file\fP are compatible and restart \f4boot\fP.
+.IP "\f4Cannot load\fP \f2file\fP\f4; missing text or data segment\fP"
+The specified file does not contain a necessary text or data
+segment.
+Check that \f2file\fP contains the proper text and data segments,
+then restart \f4boot\fP.
+.IP "\f4Cannot load\fP \f2file\fP\f4; missing BKI segment\fP"
+The specified file does not contain the BKI segment.
+Make sure that the BKI segment in \f2file\fP exists and is
+compatible with the BKI of the bootstrap.
+.IP "\f4Cannot load\fP \f2file\fP"; required memory for kernel is
+not present\fP
+The amount of memory available for the kernel is not present
+or is inadequate.
+Make sure you have allocated enough memory for the kernel you
+want to load, then restart \f4boot\fP.
+.IP "\f4Too many lines in defaults file; extra lines ignored\f1"
+The \f4file/stand/boot\f1 contains too many lines.
+All extra lines will be ignored.
+.SH NOTES
+The computer always tries to boot from any diskette in the
+floppy diskette drive first.
+If the diskette does not contain a valid bootstrap program,
+errors occur.
+.PP
+The
+\f4boot\f1
+program cannot be used to load programs that have
+not been linked for stand\&alone execution.
+To create stand-alone programs, use the
+option of the \s-1UNIX\s0 system linker
+[ \f4ld\f1 (1)]
+and special stand-alone libraries.
+.PP
+Although stand-alone programs can operate in real or protected mode,
+they must not be large or huge model programs.
+Programs in real mode can use the input/output
+routines of the computer's startup ROM.
+.Ee
+

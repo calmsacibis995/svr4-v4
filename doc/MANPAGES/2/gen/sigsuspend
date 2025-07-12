@@ -1,0 +1,53 @@
+'\"macro stdmacro
+.if n .pH g2.sigsuspend @(#)sigsuspend	40.16 of 1/3/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} sigsuspend 2 "" "\&"
+.if \nX=1 .ds x} sigsuspend 2 ""
+.if \nX=2 .ds x} sigsuspend 2 "" "\&"
+.if \nX=3 .ds x} sigsuspend "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4sigsuspend\f1 \- install a signal mask and suspend process until signal
+.SH SYNOPSIS
+\f4#include <signal.h>\f1
+.P
+\f4int sigsuspend(const sigset_t *set);\f1
+.SH DESCRIPTION
+\f4sigsuspend\fP replaces the process's signal mask with
+the set of signals pointed to by the argument \f2set\f1 and then 
+suspends the process until delivery of a signal whose action is
+either to execute a signal catching function or to terminate the process.
+.P
+If the action is to terminate the process, \f4sigsuspend\fP
+does not return.  If the action is to execute a signal catching
+function, \f4sigsuspend\fP returns after
+the signal catching function returns.
+On return,
+the signal mask is restored to the set that existed before the 
+call to \f4sigsuspend\fP.
+.P
+It is not possible to block those signals that cannot be ignored
+[see 
+\f4signal\fP(5)];
+this restriction is silently imposed by the system.
+.PP
+\f4sigsuspend\fP fails if either of the following is true:
+.TP 15
+\f4EINTR\fP
+A signal is caught by the calling process and control is returned from
+the signal catching function.
+.TP 15
+\f4EFAULT\fP
+The \f2set\f1 argument points outside the process's
+allocated address space.
+.SH DIAGNOSTICS 
+Since \f4sigsuspend\fP suspends process execution 
+indefinitely, there is no successful completion return value.
+On failure, it returns \-1 and sets \f4errno\f1 to indicate the error.
+.SH SEE ALSO
+.na
+\f4sigaction\fP(2), \f4sigprocmask\fP(2),
+\f4sigpause\fP(2), \f4sigsetops\fP(3C), \f4signal\fP(5).
+.ad

@@ -1,0 +1,62 @@
+'\"macro stdmacro
+.if n .pH g1a.quotaon @(#)quotaon	40.9 of 4/23/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} quotaon 1M "UFS" "\&"
+.if \nX=1 .ds x} quotaon 1M "UFS"
+.if \nX=2 .ds x} quotaon 1M "" "\&"
+.if \nX=3 .ds x} quotaon "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4quotaon\f1, \f4quotaoff\f1 \- turn file system quotas on and off
+.SH SYNOPSIS
+\f4quotaon\f1
+[\f4\-v\f1]
+\f2filesystem\f1 .\ .\ .
+.LP
+\f4quotaoff\f1
+[\f4\-v\f1]
+\f2filesystem\f1 .\ .\ .
+.SH "DESCRIPTION"
+.LP
+\f4quotaon\f1
+announces to the system that disk quotas should be
+enabled on one or more file systems.
+The file systems specified must be mounted at the time.
+The file system quota files must be present in the root
+directory of the specified file system and be named
+\f4quotas\fP.
+.LP
+\f4quotaoff\f1
+announces to the system that file systems specified
+should have any disk quotas turned off.
+.P
+The option for \f4quotaon\fP:
+.TP
+\f4\-v\f1
+Displays a message for each file system where quotas
+are turned on.
+.P
+The option for \f4quotaoff\fP:
+.TP
+\f4\-v\f1
+Displays a message for each file system affected.
+.LP
+These commands
+update the status field of devices located in
+\f4/etc/mnttab\f1
+to indicate when quotas are on or off for each file system.
+.SH FILES
+.PD 0
+.TP 20
+\f4/etc/mnttab\f1
+mounted file systems
+.PD 0
+.TP 20
+\f4/etc/vfstab\f1
+list of default parameters for each file system
+.PD
+.SH "SEE ALSO"
+\f4mnttab\fP(4),
+\f4vfstab\fP(4)

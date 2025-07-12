@@ -1,0 +1,68 @@
+'\"macro stdmacro
+.if n .pH g3c.sigsetops @(#)sigsetops	40.16 of 1/3/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} sigsetops 3C "" "\&"
+.if \nX=1 .ds x} sigsetops 3C ""
+.if \nX=2 .ds x} sigsetops 3C "" "\&"
+.if \nX=3 .ds x} sigsetops "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4sigemptyset\f1, \f4sigfillset\f1, \f4sigaddset\f1, \f4sigdelset\f1, \f4sigismember\f1 \- manipulate sets of signals
+.SH SYNOPSIS
+\f4#include <signal.h>\f1
+.PP
+\f4int sigemptyset (sigset_t *set);\f1
+.PP
+\f4int sigfillset (sigset_t *set);\f1
+.PP
+\f4int sigaddset (sigset_t *set, int signo);\f1
+.PP
+\f4int sigdelset (sigset_t *set, int signo);\f1
+.PP
+\f4int sigismember (sigset_t *set, int signo);\f1
+.SH DESCRIPTION
+.PP
+These functions manipulate \f2sigset_t\f1 data types, representing the
+set of signals supported by the implementation.
+.PP
+\f4sigemptyset\fP initializes the set pointed to by \f2set\f1 to
+exclude all signals defined by the system.
+.PP
+\f4sigfillset\fP initializes the set pointed to by \f2set\f1 to
+include all signals defined by the system.
+.PP
+\f4sigaddset\fP adds the individual signal specified by the value
+of \f2signo\f1 to the set pointed to by \f2set\f1.
+.PP
+\f4sigdelset\fP deletes the individual signal specified by the value
+of \f2signo\f1 from the set pointed to by \f2set\f1.
+.PP
+\f4sigismember\fP checks whether the signal specified by the value of
+\f2signo\f1 is a member of the set pointed to by \f2set\f1.
+.PP
+Any object of type \f2sigset_t\f1 must be initialized by applying
+either \f4sigemptyset\fP or \f4sigfillset\fP before applying any
+other operation.
+.PP
+\f4sigaddset\fP, \f4sigdelset\fP and \f4sigismember\fP will fail if the following
+is true:
+.TP 15
+\f4EINVAL\fP
+The value of the \f2signo\fP argument is not a valid signal number.
+.PP
+\f4sigfillset\fP will fail if the following is true:
+.TP 15
+\f4EFAULT\fP
+The \f2set\f1 argument specifies an invalid address.
+.SH SEE ALSO
+\f4sigaction\fP(2), \f4sigprocmask\fP(2), \f4sigpending\fP(2), \f4sigsuspend\fP(2), \f4signal\fP(5).
+.SH DIAGNOSTICS
+Upon successful completion, the \f4sigismember\fP function returns
+a value of one if the specified signal is a member of the specified
+set, or a value of zero if it is not. Upon successful completion, the
+other functions return a value of zero. Otherwise a value
+of -1 is returned and \f2errno\fP is set to indicate the error.
+.\"	@(#)sigsetops	1 of 9/28/88
+.Ee

@@ -1,0 +1,20 @@
+#ident	"@(#)pkg.acp:request	1.1"
+
+#	request script for acp package installation
+
+trap 'exit 3' 15
+
+#
+#	Find out how many pseudo-ttys user wants configured
+
+PROMPT="Enter the number of compatible pseudo-terminal devices 
+	to configure on your system.\n"
+HELPMSG="NOTE: since each pseudo-terminal device configured 
+	allocates memory, choose only the number of terminals
+	you really require."
+
+PTNUM=`ckrange -l 0 -u 32 -d 8 -p "$PROMPT" -h "$HELPMSG"` || exit $?
+
+echo "PTNUM=$PTNUM" >>$1 || exit 1
+
+exit 0

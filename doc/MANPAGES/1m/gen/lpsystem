@@ -1,0 +1,223 @@
+'\"! eqn | tbl | mmdoc
+'\"macro stdmacro
+.if n .pH g1a.lpsystem @(#)lpsystem	40.12.1.3 of 7/11/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} lpsystem 1M "Line Printer Spooling Utilities" "\&"
+.if \nX=1 .ds x} lpsystem 1M "Line Printer Spooling Utilities" 
+.if \nX=2 .ds x} lpsystem 1M "" "\&"
+.if \nX=3 .ds x} lpsystem "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4lpsystem\f1 \- register remote systems with the print service
+.SH SYNOPSIS
+\f4lpsystem\f1 [\f4\-t \f2type\f1] [\f4\-T \f2timeout\f1] [\f4\-R \f2retry\f1] [\f4\-y "\f2comment\f4"\f1] \f2system-name\fP [\f2system-name ...\f1]
+.br
+\f4lpsystem \-l \f1[\f2system-name ...\f1]
+.br
+\f4lpsystem \-r \f2system-name\f1 [\f2system-name\fP ...]
+.br
+\f4lpsystem \-A\f1
+.SH DESCRIPTION
+The \f4lpsystem\f1
+command is used to define parameters for the
+\s-1LP\s+1 
+print service, with respect to 
+communication (via a high-speed
+network such as 
+\s-1STARLAN\s+1 or \s-1TCP/IP\s+1)
+with remote systems.
+Only a privileged user
+(that is, the owner of the login \f4root\fP)
+may execute the \f4lpsystem\f1 command.
+.PP
+Specifically, the \f4lpsystem\f1 command
+is used to define remote systems 
+with which the local \s-1LP\s+1 
+print service can exchange print requests.
+These remote systems are described
+to the local \s-1LP\s+1 print service 
+in terms of several parameters 
+that control communication: type, retry and timeout.
+These parameters are defined in 
+\f4/etc/lp/Systems\f1.
+You can edit this file 
+with a text editor
+(such as \f4vi\f1)
+but editing is not recommended.
+.PP
+The \f2type\f1 parameter defines
+the remote system as one of two types:
+\f4s5\f1 (System V Release 4)
+or \f4bsd\f1 (Sun\s-1OS\s+1).
+The default type is \f4s5\f1.
+.PP
+The \f2timeout\f1 parameter
+specifies the length of time (in minutes)
+that the print service should allow 
+a network connection to be idle.
+If the connection to the remote system 
+is idle (that is, there is no network traffic) 
+for \f2N\f1 minutes,
+then drop the connection.
+(When there is more work 
+the connection will be restablished.)
+Legal values are \f4n\f1, \f40\f1, and \f2N\f1,
+where \f2N\f1 is an integer greater than 0.
+The value \f4n\f1
+means ``never time out'';
+\f40\f1 
+means ``as soon as the connection is idle, drop it.''
+The default is \f4n\f1.
+.PP
+The \f2retry\f1 parameter specifies 
+the length of time to wait before trying to
+re-establish a connection to the remote system,
+when the connection was dropped abnormally
+(that is, a network error).
+Legal values are \f4n\f1, \f40\f1, and \f2N\f1,
+where \f2N\f1 is an integer greater than 0
+and it means ``wait \f2N\fP minutes 
+before trying to reconnect.
+(The default is 10 minutes.)
+The value \f4n\f1 means 
+``do not retry dropped connections 
+until there is more work'';
+\f40\f1 means 
+``try to reconnect immediately.''
+.PP
+The \f2comment\fP argument
+allows you to associate a free form comment
+with the system entry.
+This is visible when
+\f4lpsystem \-l\fP is used.
+.PP
+\f2System-name\f1 is 
+the name of the remote system from which
+you want to be able to receive jobs,
+and to which you want to be able to send jobs.
+.PP
+The command \f4lpsystem \-l \f1[\f2system-name\f1]
+will print out a description of
+the parameters associated with \f2system-name\f1
+(if a system has been specified), 
+or with all the systems in its database
+(if \f2system-name\f1 has not been specified).
+.PP
+The command
+\f4lpsystem \-r \f2system-name\f1
+will remove the entry associated
+with \f2system-name\f1.
+The print service will no longer accept
+jobs from that system 
+or send jobs to it, 
+even if the remote printer 
+is still defined on the local system.
+.PP
+The command \f4lpsystem \-A\f1
+will print out the 
+.SM "TCP/IP" 
+address of the local machine 
+in a format to be used when configuring the local
+port monitor to accept requests from a 
+Sun\s-1OS\s+1 system.
+.SH NOTES:
+With respect to \f4/etc/lp/Systems\f1,
+this information is relatively minimal with repect
+to controlling network communications.
+Network addresses and services 
+are handled by the \f4Netconfig\fP and \f4Netdir\fP
+facilities (see the ``Network Services'' chapter
+in the \f2System Administrator's Guide\f1 
+for a discussion of network addresses and services.)
+Port monitors handle listening 
+for remote service requests and routing 
+the connection to the print service 
+(see the ``Service Access'' chapter in the 
+\f2System Administrator's Guide\f1
+for a discusion of port monitors.)
+.PP
+If the \f4Netconfig\f1 and \f4Netdir\f1 facilities 
+are not set up  properly, 
+out-bound remote print service probably will not work.
+Similarly,
+if the local port monitors are not set up 
+to route remote print requests to the print service,
+then service for remote systems will not be provided.
+(See 
+``Allowing Remote Systems to Access Local Printers"
+and "Configuring a Local Port Monitor"
+in the ``Print Service" chapter of the 
+\f2System Administrator's Guide\f1
+to find out how to do this.)
+.PP
+With respect to the semantics of
+the \f2timeout\fP and \f2retry\fP values, 
+the print service uses one process 
+for each remote system with which it communicates, 
+and it communicates with a remote system
+only when there is work to be done on that system
+or work being sent from that system.
+.PP
+The system initiating the connection is
+the ``master'' process and 
+the system accepting the connection
+is the ``slave'' process.
+This designation serves only to determine 
+which process dies (the slave) 
+when a connection is dropped.
+This helps prevent there from being more than one
+process communicating with a remote system.
+Furthermore, all connections are bi-directional,
+regardless of the master/slave designation.
+You cannot control a system's master/slave designation.
+Now, keeping all this information in mind,
+if a master process times out,
+then both the slave and master will exit.
+If a slave times out, then it is possible that
+the master may still live and retry the connection 
+after the retry interval.
+Therefore, one system's resource management
+strategy can effect another system's strategy.
+.PP
+With respect to \f4lpsystem \-A\f1:
+a Sun\s-1OS\s+1 system 
+(described with \f4\-t bsd\fP)
+can be connected to your system
+only via \s-1TCP/IP\s+1,
+and print requests from a Sun\s-1OS\s+1 system 
+can come in to your machine only
+via a special port (515).
+The address given to you from \f4lpsystem\f1 
+will be the address of your system and port 515.
+This address is used by your \s-1TCP/IP\s+1
+port monitor (see \f4sacadm\f1(1M)
+and \f4nlsadmin\f1(1M)) to ``listen'' on 
+that address and port, and to route connections 
+to the print service.
+(This procedure is discussed in 
+the ``Service Access'' chapter of the
+\f2System Administrator's Guide\fP.)
+The important point here is that 
+this is where you get the address refered
+to in that procedure.
+.PP
+The command \f4lpsystem \-A\f1 will not work 
+if your system name and 
+\s-1IP\s+1 address are not listed 
+in \f4/etc/inet/hosts\f1
+and the printer service is not listed in 
+\f4/etc/inet/services\f1.
+.SH FILES
+\f4/var/spool/lp/\f1\(**
+\f4/etc/lp/\f1\(**
+.SH SEE ALSO
+\f4netconfig\fP(4)
+.br
+\f2Network Programmer\'s Guide\f1
+.br
+\f2System Administrator\'s Guide\f1
+.EQ
+delim off
+.EN

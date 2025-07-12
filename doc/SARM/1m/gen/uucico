@@ -1,0 +1,85 @@
+'\"macro stdmacro
+.if n .pH g1a.uucico @(#)uucico	40.9 of 5/2/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} uucico 1M "Basic Networking Utilities" "\&"
+.if \nX=1 .ds x} uucico 1M "Basic Networking Utilities"
+.if \nX=2 .ds x} uucico 1M "" "\&"
+.if \nX=3 .ds x} uucico "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4uucico\f1 \- file transport program for the uucp system
+.SH SYNOPSIS
+\f4/usr/lib/uucp/uucico\f1 [\f2options\f1]
+.SH DESCRIPTION
+\f4uucico\fP
+is the file transport program for \f4uucp\fP work file transfers.
+The following options are available.
+.TP 1i
+\f4\-c\f2type\^\f1
+The first field in the \f4Devices\f1 file is the "Type" field.
+The \f4\-c\f1
+option forces \f4uucico\fP to only use entries in the "Type" field that match the
+user specified \f2type\f1.
+The specified \f2type\f1 is usually the name of a local area network.
+.TP
+\f4\-d\f2spool_directory\^\f1
+This option specifies the directory \f2spool_directory\f1 that contains the
+\f4uucp\fP work files to be transferred.
+The default spool directory is \f4/var/spool/uucp\f1.
+.TP
+\f4\-f\^\f1
+This option is used to "force execution" of \f4uucico\fP by ignoring the limit
+on the maximum number of uucicos defined in the \f4/etc/uucp/Limits\f1 file.
+.TP
+\f4\-i\f2interface\^\f1
+This option defines the \f2interface\f1 used with \f4uucico\fP.
+The interface only affects slave mode.
+Known interfaces are UNIX (default), TLI (basic
+Transport Layer Interface), and TLIS (Transport Layer Interface with Streams
+modules, read/write).
+.TP
+\f4\-r\f2role_number\^\f1
+The \f2role_number\f1 1 is used for master mode.
+\f2role_number\f1 0 is used
+for slave mode (default).
+When \f4uucico\fP is started by a program or
+\f4cron\fP, \f2role_number\f1 1 should be used for master mode.
+.TP
+\f4\-s\f2system_name\^\f1
+The \f4\-s\f1 option defines the remote system (\f2system_name\f1) that
+\f4uucico\fP will try to contact.
+It is required when the role is \%master;
+\f2system_name\f1 must be defined in the \f4Systems\f1 file.
+.TP
+\f4\-x\f2debug_level\^\f1
+Both \f4uux\fP and \f4uucp\fP queue jobs that will be transferred by
+\f4uucico\fP.
+These jobs are normally started by the \f4uusched\fP
+scheduler, for debugging purposes, and can be started manually.
+For example, the shell \f4Uutry\fP starts \f4uucico\fP with debugging turned on.
+The \f2debug_level\f1 is a number between 0 and 9.
+Higher numbers give more 
+detailed debugging information.
+..
+.SH FILES
+.nf
+.ft 4
+/etc/uucp/Systems
+/etc/uucp/Permissions
+/etc/uucp/Devices
+/etc/uucp/Devconfig
+/etc/uucp/Sysfiles
+/etc/uucp/Limits
+/var/spool/uucp/*
+/var/spool/locks/*
+/var/spool/uucppublic/*
+.ft
+.fi
+.SH "SEE ALSO"
+\f4cron\fP(1M), \f4uusched\fP(1M), \f4Uutry\fP(1M)
+.br
+\f4uucp\fP(1C), \f4uustat\fP(1C), \f4uux\fP(1C)
+in the \f2User's Reference Manual\f1
+.Ee

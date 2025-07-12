@@ -1,0 +1,76 @@
+'\"macro stdmacro
+.if n .pH g1.atrm @(#)atrm	40.11.1.1 of 1/3/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.\" Copyright (c) 1985 Regents of the University of California.
+.\" All rights reserved.  The Berkeley software License Agreement
+.\" specifies the terms and conditions for redistribution.
+.\" Copyright (c) 1988 Sun Microsystems, Inc - All Rights Reserved.
+.\"
+.\" @(#)atrm.1 1.5 88/10/17 SMI; from UCB 6.2 5/10/86
+.nr X
+.if \nX=0 .ds x} atrm 1 "User Environment Utilities" "\&"
+.if \nX=1 .ds x} atrm 1 "User Environment Utilities"
+.if \nX=2 .ds x} atrm 1 "" "\&"
+.if \nX=3 .ds x} atrm "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4atrm\f1 \- remove jobs spooled by at or batch
+.SH SYNOPSIS
+\f4atrm\f1
+\f1[\f4 \-a\|f\|i \f1]
+.IR arg " \|.\|.\|. "
+.\".RI [ " job-number " "\|.\|.\|. ]" 
+.\".RI [ " username " "\|.\|.\|. ]"
+.SH DESCRIPTION
+\f4atrm\f1
+removes delayed-execution jobs that were created with the
+\f4at\f1(1)
+command,
+but not yet executed.
+The list of these jobs and associated job numbers can be displayed by using
+\f4atq\f1(1).
+.PP
+.I arg
+a user name or job-number.
+\f4atrm\f1
+removes each job-number
+you specify, and/or all jobs belonging to the
+user you specify,
+provided that you own the indicated jobs.
+.PP
+Jobs belonging to other users can only be removed
+by the privileged user.
+.P
+The
+\f4atrm\f1
+command can be used with the following options:
+.TP
+\f4\-a\f1
+All.
+Remove all unexecuted jobs that were created by the current user.
+If invoked by the privileged user,
+the entire queue will be flushed.
+.TP
+\f4\-f\f1
+Force.  All information regarding the 
+removal of the specified jobs is suppressed.
+.TP
+\f4\-i\f1
+Interactive.
+\f4atrm\f1
+asks if a job should be removed.
+If you respond with a
+\f4y\f1,
+the job will be removed.
+.SH FILES
+.TP 20
+\f4/var/spool/cron\f1
+spool area
+.SH "SEE ALSO"
+\f4at\fP(1),
+\f4atq\fP(1).
+.sp .2
+\f4cron\fP(1M)
+in the \f2System Administrator's Reference Manual\f1.
+.Ee

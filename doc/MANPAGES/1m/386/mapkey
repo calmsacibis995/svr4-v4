@@ -1,0 +1,74 @@
+.if n .pH g1a.mapkey @(#)mapkey	40.6 of 6/17/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+'\"macro stdmacro
+.\" Copyright 1990 AT&T
+.nr X
+.if \nX=0 .ds x} mapkey 1M "" "\&"
+.if \nX=1 .ds x} mapkey 1M ""
+.if \nX=2 .ds x} mapkey 1M "" "\&"
+.if \nX=3 .ds x} mapkey "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4mapkey\f1, \f4mapscrn\f1, \f4mapstr\f1 \- configure monitor screen mapping
+.SH SYNOPSIS
+\f4mapkey\f1 [\f4\-doxV\f1] [\f2datafile\f1]
+.br
+\f4mapscrn\f1 [\f4\-dg\f1] [\f2datafile\f1]
+.br
+\f4mapstr\f1 [\f4\-dg\f1] [\f2datafile\f1]
+.SH DESCRIPTION
+\f4mapscrn\f1 configures the output mapping of the virtual terminal
+screen on which it is invoked.
+\f4mapkey\f1 and \f4mapstr\f1 configure the mapping of the 
+keyboard and string keys (e.g., function keys) of the virtual terminal.
+\f4mapkey\f1 can only be run by the superuser.
+.P
+\f4mapscrn\f1 and \f4mapstr\f1 function on a
+per-virtual terminal (VT) basis.
+Mapping on one VT does not affect any other VT.
+Setting the default 
+for every VT can be done using the \f4\-g\f1 option.
+.P
+If a file name is given on the argument line,
+the respective mapping table
+is configured from the contents of the input file.
+If no file is given,
+the default files in \f4/usr/lib/keyboard\f1 and
+\f4/usr/lib/console\f1 are used.
+The \f4\-d\f1 option causes the mapping table to be read from the kernel
+instead of written and an ASCII version to be displayed on the
+standard output.
+The format of the output is suitable for use as input files to
+\f4mapscrn\f1, \f4mapkey\f1, or \f4mapstr\f1.
+.P
+The sum of the characters in the strings for \f4mapstr\fP (in
+the \f4/usr/lib/keyboard/strings\fP file) can be a maximum of 512.
+.P
+\f4mapkey\fP, when downloading a mapping table,
+overwrites the default mapping table
+for all VTs (thus affecting all VTs using the default mapping table)
+unless the -V option is specified.
+In this case, only the VT in which \f4mapkey -V\fP was invoked is affected,
+and the VT will revert to using the default mapping table
+when it is closed or the user logs out.
+.P
+When \f4mapkey\fP displays the mapping table being used, 
+it is the default mapping table unless the
+\f4-V\fP option is specified.
+In this case, \f4mapkey\fP displays the mapping table in use on
+the VT in which \f4mapkey -V\fP was invoked.
+.P
+Non-superusers can run \f4mapkey\f1 and \f4mapstr\f1
+when the \f4\-d\f1 option is given.
+.P
+With the \f4\-o\f1 or \f4\-x\f1 options, \f4mapkey\f1 displays the mapping table
+in octal or hexadecimal, respectively.
+.SH FILES
+\f4/usr/lib/keyboard/*\f1
+.br
+\f4/usr/lib/console/*\f1
+.SH NOTES
+There is no way to specify that the map utilities read
+their configuration tables from standard input.
+.SH SEE ALSO
+\f4keyboard\f1(7), \f4display\f1(7)

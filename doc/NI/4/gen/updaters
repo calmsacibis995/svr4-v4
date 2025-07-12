@@ -1,0 +1,94 @@
+'\"macro stdmacro
+.if n .pH g4.updaters @(#)updaters	40.7 of 5/30/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.\" @(#)updaters.5 1.4 89/09/28 SMI;
+.\" Copyright (c) 1988 Sun Microsystems, Inc. - All Rights Reserved.
+.nr X
+.if \nX=0 .ds x} updaters 4 "" "\&"
+.if \nX=1 .ds x} updaters 4 ""
+.if \nX=2 .ds x} updaters 4 "" "\&"
+.if \nX=3 .ds x} updaters "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4updaters\fP \- configuration file for Network Information Service
+(NIS) updating
+.SH SYNOPSIS
+\f4/var/yp/updaters\f1
+.SH DESCRIPTION
+The file
+\f4/var/yp/updaters\f1
+is a makefile (see
+\f4make\f1(1))
+which is used for updating
+\s-1NIS\s0
+databases.
+Databases can only be updated
+in a secure network, that is, one that has a
+\f4publickey\f1(4)
+database.
+Each entry in the file is
+a make target for a particular
+\s-1NIS\s0
+database.
+For example, if there is a
+\s-1NIS\s0
+database named
+\f4publickey.byname\f1
+that can be updated, there should be a
+\f4make\f1
+target named
+\f4publickey.byname\f1
+in the
+\f4updaters\f1
+file with the command to update the file.
+.P
+The information necessary to make
+the update is passed to the update
+command through standard input.
+The information passed is described
+below (all items are followed by a
+\s-1NEWLINE\s0,
+except for the actual bytes of key and actual bytes of date).
+.RS
+.IP \(bu 3
+network name of client wishing to
+make the update (a string)
+.IP \(bu
+kind of update (an integer)
+.IP \(bu
+number of bytes in key (an integer)
+.IP \(bu
+actual bytes of key
+.IP \(bu
+number of bytes in data (an integer)
+.IP \(bu
+nctual bytes of data
+.RE
+.P
+After getting this information through
+standard input, the command to update
+the particular database should decide
+whether the user is allowed to make the change.
+If not, it should exit with the status
+\f4\s-1YPERR_ACCESS\s0\f1.
+If the user is allowed to make the change,
+the command should make the change and
+exit with a status of zero.
+If there are
+any errors that may prevent the updater from
+making the change, it should exit with the status
+that matches a valid
+\s-1NIS\s0
+error code described in
+\f4<rpcsvc/ypclnt.h>\f1.
+.SH FILES
+.PD 0
+.TP 20
+\f4/var/yp/updaters\f1
+.PD
+.SH "SEE ALSO"
+\f4make\f1(1),
+\f4ypupdated\f1(1M),
+\f4ypupdate\f1(3),
+\f4publickey\f1(4)

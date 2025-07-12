@@ -1,0 +1,62 @@
+'\"macro stdmacro
+.if n .pH g3c.sleep @(#)sleep	40.13 of 5/22/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} sleep 3C "C Development Set" "\&"
+.if \nX=1 .ds x} sleep 3C "C Development Set"
+.if \nX=2 .ds x} sleep 3C "" "\&"
+.if \nX=3 .ds x} sleep "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4sleep\f1 \- suspend execution for interval
+.SH SYNOPSIS
+\f4#include <unistd.h>\f1
+.sp
+\f4unsigned sleep (unsigned seconds);\f1
+.SH DESCRIPTION
+The current process is suspended from execution for the number
+of
+.I seconds\^
+specified by the argument.
+The actual suspension time may be less than
+that requested because any caught
+signal will terminate the
+\f4sleep\fP
+following execution of that signal's catching routine.
+Also, the suspension time may be longer than requested
+by an arbitrary amount because of the scheduling of other
+activity in the system.
+The value returned by
+\f4sleep\fP
+will be the ``unslept'' amount (the requested time minus the time
+actually slept) in case the caller had an alarm set to go off
+earlier than the end of the requested
+\f4sleep\fP
+time, or premature arousal because of another caught signal.
+.PP
+The routine is implemented by setting an alarm signal
+and pausing until it (or some other signal) occurs.
+The previous state of the alarm signal is saved and restored.
+The calling program may have set up an alarm signal before calling
+\f4sleep\fP.
+If the
+\f4sleep\fP
+time exceeds the time until such alarm signal,
+the process sleeps only until the alarm signal would
+have occurred.
+The caller's alarm catch routine is
+executed just before the
+\f4sleep\fP
+routine returns.
+But if the
+\f4sleep\fP
+time is less than the time till such alarm,
+the prior alarm time is reset to go off at the same time it
+would have without the intervening
+\f4sleep\fP.
+.SH "SEE ALSO"
+\f4alarm\fP(2), \f4pause\fP(2), \f4signal\fP(2),
+\f4wait\f1(2).
+.\"	@(#)sleep.3c	6.2 of 10/20/83
+.Ee

@@ -1,0 +1,29 @@
+.if n .pH 386.COLFILE.mp @(#)COLFILE.mp	40.23
+.# This book ("Multibus Transport Application Interface Guide (Manual Pages)")
+.# contains the following files,
+.# listed in the order in which they are printed.
+.# Next to each file name is its SCCS delta number.
+.FT
+mbtai.g/386/titlepage.mp	40.7
+mbtai.g/386/copyright	40.12
+mbtai.g/mb2a/386/gethostid	40.5
+mbtai.g/mb2a/386/brdcst	40.7
+mbtai.g/mb2a/386/closeport	40.9
+mbtai.g/mb2a/386/getinfo	40.9
+mbtai.g/mb2a/386/getreqfrag	40.8
+mbtai.g/mb2a/386/openport	40.7
+mbtai.g/mb2a/386/receive	40.7
+mbtai.g/mb2a/386/send	40.6
+mbtai.g/mb2a/386/sendcancel	40.7
+mbtai.g/mb2a/386/sendreply	40.8
+mbtai.g/mb2a/386/sendrsvp	40.8
+mbtai.g/mb2s/386/brdcst	40.5
+mbtai.g/mb2s/386/closeport	40.7
+mbtai.g/mb2s/386/getinfo	40.7
+mbtai.g/mb2s/386/getreqfrag	40.7
+mbtai.g/mb2s/386/openport	40.6
+mbtai.g/mb2s/386/receive	40.5
+mbtai.g/mb2s/386/send	40.6
+mbtai.g/mb2s/386/sendcancel	40.5
+mbtai.g/mb2s/386/sendreply	40.7
+mbtai.g/mb2s/386/sendrsvp	40.5

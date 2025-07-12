@@ -1,0 +1,170 @@
+'\"!  tbl | mmdoc
+'\"macro stdmacro
+.if n .pH g1.write @(#)write	40.4 of 1/3/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+'\"macro stdmacro
+.if n .pH g1.write @(#)write	40.6 of 9/19/89
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.nr X
+.if \nX=0 .ds x} write 1 "Essential Utilities" "\&"
+.if \nX=1 .ds x} write 1 "Essential Utilities"
+.if \nX=2 .ds x} write 1 "" "\&"
+.if \nX=3 .ds x} write "" "" "\&"
+.nr X
+.nr X
+.TH \*(x} "" "386 Computer Only"
+.SH NAME
+\f4write\f1 \- write to another user
+.SH SYNOPSIS
+\f4write \f2user\f1
+[\f2line\f1]
+.SH DESCRIPTION
+\f4write\fP
+copies lines from your terminal to that of another user.
+When first called, it sends the message:
+.PP
+.RS
+\f4Message from \f1
+.I yourname 
+\f4(tty\f1??\f4)\f1
+[
+.I date
+\f1]\f4\&.\|.\|.\f1
+.RE
+.PP
+to the person you want to talk to.  When it has successfully
+completed the connection, it also sends two bells to your own
+terminal to indicate that what you are typing is being sent.
+.PP
+The recipient of the message should write back at this point.
+Communication continues until an end of file is read from the
+terminal, an interrupt is sent, or the recipient has executed
+"mesg n".  At that point 
+\f4write\fP
+writes \f4\s-1EOT\s+1\fP on the other terminal and exits.
+.PP
+If you want to write to a user who is logged in more than once,
+the 
+\f4line\fP
+argument may be used to indicate which line or terminal
+to send to (e.g.,
+\f4term/12\f1);
+otherwise, the first writable instance of
+the user found in \f4/var/adm/utmp\f1
+is assumed and the
+following message posted:
+.PP
+.RS
+.nf
+\f4user is logged on more than one place.
+You are connected to "\f2terminal\fP\^".
+Other locations are:
+\f2terminal\f1
+.fi
+.RE
+.PP
+Permission to write may be denied or granted by use of the 
+\f4mesg\fP
+command.
+Writing to others is normally allowed by default.
+Certain commands,
+such as the
+\f4pr\fP command,
+disallow messages in order to prevent
+interference with their output.
+However, if the user has super-user permissions,
+messages can be forced onto a write-inhibited terminal.
+.PP
+If the character \f4!\fP is found at the beginning of a line, 
+\f4write\fP
+calls the shell to execute the rest of the line as a command.
+.PP
+\f4write\f1
+runs
+\f4setgid(\|)\f1
+[see
+\f4setuid\f1(2)]
+to the group
+.SM ID
+\f4tty\f1,
+in order to have write permissions on other user's terminals.
+.PP
+\f4write\f1
+will detect non-printable characters before sending them to the
+user's terminal.
+Control characters will appear as a 
+\f1`\f4^\f1'
+followed by the appropriate
+.SM ASCII
+character; characters with the high-order bit set will appear in
+\(lqmeta\(rq notation. 
+For example,
+\f1`\f4\e003\f1'
+is displayed as
+\f1`\f4^C\f1'
+and 
+\f1`\f4\e372\f1'
+as 
+\f1`\f4M\-z\f1'.
+.PP
+The following protocol is suggested for using 
+\f4write\fP:
+when you first \f4write\fP to another user, wait for them to
+\f4write\fP back before starting to send.
+Each person should end a message with a distinctive
+signal
+(i.e.,
+\f4(o)\f1
+for ``over'') so that the other person knows when to reply.
+The signal
+\f4(oo)\f1
+(for ``over and out'') is suggested when conversation
+is to be terminated.
+.SH FILES
+.PD 0
+.TP 10
+\f4/var/adm/utmp\f1
+to find user
+.TP
+\f4/usr/bin/sh\f1
+to execute \f4!\fP
+.PD
+.SH SEE ALSO
+\f4mail\fP(1),
+\f4mesg\fP(1),
+\f4pr\fP(1),
+\f4sh\fP(1),
+\f4who\fP(1),
+\f4setuid\fP(2).
+.SH DIAGNOSTICS
+.TS
+lf4 lw(2i).
+user is not logged on	T{
+.na
+if the person you are trying to
+\f4write\fP
+to is not logged on.
+T}
+Permission denied	T{
+.na
+if the person you are trying to
+\f4write\fP
+to denies that permission (with
+\f4mesg\fP).
+T}
+Warning: cannot respond, set mesg -y	T{
+.na
+if your terminal is set to
+\f4mesg n\fP
+and the recipient cannot respond to you.
+T}
+Can no longer write to user	T{
+.na
+if the recipient has denied permission
+(\f4mesg n\f1)
+after you had started writing.
+T}
+.TE
+.\"	@(#)write.1	6.3 of 9/2/83
+.Ee

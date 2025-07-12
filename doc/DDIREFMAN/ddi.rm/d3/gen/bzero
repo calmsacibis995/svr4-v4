@@ -1,0 +1,68 @@
+'\"macro stdmacro
+.if n .pH gen.bzero @(#)bzero	40.3 of 3/19/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.nr X
+.if \nX=0 .ds x} bzero D3DK "" "DDI/DKI" "\&"
+.if \nX=1 .ds x} bzero D3DK "" "DDI/DKI"
+.if \nX=2 .ds x} bzero D3DK "" "\&"
+.if \nX=3 .ds x} bzero "" "" "\&"
+.TH \*(x}
+.IX "\f4bzero\fP(D3DK)"
+.IX "memory, clear"
+.SH NAME
+\f4bzero\f1 \- clear memory for a given number of bytes 
+.SH SYNOPSIS
+.nf
+.na
+\f4#include <sys/types.h>
+.sp 0.5
+void bzero(\f4caddr_t \f2addr, \f4size_t\f1 \f2bytes\f4);\f1
+.ad
+.fi
+.SH ARGUMENTS
+.RS 0n 10
+.IP "\f2addr\f1" 10n
+Starting virtual address of memory to be cleared.
+.IP "\f2bytes\f1" 10n
+The number of bytes to clear.
+.RE
+.SH DESCRIPTION\f1
+The \f4bzero\f1 function clears a contiguous portion of memory by
+filling the memory with zeros.
+It chooses the best algorithm based on address alignment and number of bytes to clear.
+.SH "RETURN VALUE"
+None.
+.SH LEVEL
+Base or Interrupt.
+.SH NOTES
+Does not sleep.
+.sp 0.5
+There are no alignment restrictions on \f2addr\fP, and no length restrictions
+on \f2bytes\fP, other than
+the address range specified must be within the
+kernel address space and must be memory resident.
+No range checking is done.
+Since there is no mechanism by which drivers that conform to the
+rules of the DDI/DKI can obtain and use a kernel address that is not
+memory resident (an address that is paged out),
+DDI/DKI conforming drivers can assume that any address to which they
+have access is memory resident and therefore a valid argument to \f4bzero\f1.
+An address within user address space is not a valid argument,
+and specifying such an address may cause the driver to corrupt the system in an
+unpredictable way.
+.SH SEE ALSO
+.na
+\f4bcopy\f1(D3DK),
+\f4clrbuf\f1(D3DK),
+\f4kmem_zalloc\f1(D3DK)
+.ad
+.SH EXAMPLE
+In a driver \f4close\f1(D2DK) routine, rather than clear each individual
+member of its private data structure, the driver 
+could use \f4bzero\f1 as shown here:
+.P
+.RS 3n
+.ps 8
+\f4bzero((caddr_t)&drv_dat[getminor(dev)], sizeof(struct drvr_data));\f1
+.ps
+.RE

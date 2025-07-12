@@ -1,0 +1,52 @@
+'\"macro stdmacro
+.if n .pH g1a.makefsys @(#)makefsys @(#)makefsys	40.8
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} makefsys 1M "Essential Utilities" "\&"
+.if \nX=1 .ds x} makefsys 1M "Essential Utilities"
+.if \nX=2 .ds x} makefsys 1M "" "\&"
+.if \nX=3 .ds x} makefsys "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4makefsys\f1 \- create a file system
+.SH SYNOPSIS
+.nf
+\f4makefsys\f1
+.fi
+.SH DESCRIPTION
+The \f4makefsys\fP command allows you to create a file
+system.
+.P
+The command invokes a visual interface (the make task
+available through the \f4sysadm\f1 command).
+.P
+The initial prompt allows you to select the
+device on which to create the file system.
+After selecting the device,
+you are asked some further questions before the file system is
+created.
+.P
+The identical function is available under the \f4sysadm\fP menu:
+.P
+\f4sysadm make\f1
+.SH DIAGNOSTICS
+The \f4makefsys\f1 command exits with one of the following values:
+.TP
+\f40\f1
+Normal exit.
+.TP
+\f42\f1
+Invalid command syntax.
+A usage message is displayed.
+.TP
+\f47\f1
+The visual interface for this
+command is not available because it cannot invoke \f4fmil\fP.
+(The FMLI package is not installed or is corrupted.)
+.SH SEE ALSO
+\f4checkfsys\fP(1M),
+\f4labelit\fP(1M),
+\f4mkfs\fP(1M),
+\f4mountfsys\fP(1M),
+\f4sysadm\fP(1M)

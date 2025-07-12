@@ -1,0 +1,52 @@
+'\"macro stdmacro
+.if n .pH g1a.tnamed @(#)tnamed	40.9 of 5/21/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} tnamed 1M "Internet Utilities" "\&"
+.if \nX=1 .ds x} tnamed 1M "Internet Utilities"
+.if \nX=2 .ds x} tnamed 1M "" "\&"
+.if \nX=3 .ds x} tnamed "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4tnamed\f1, \f4in.tnamed\f1 \- \s-1DARPA\s0 trivial name server
+.SH SYNOPSIS
+\f4in.tnamed\f1
+[
+\f4\-v\f1
+]
+.SH DESCRIPTION
+.LP
+\f4tnamed\f1
+is a server that supports the
+.SM DARPA
+Name Server Protocol.  The name server operates
+at the port indicated in the \(lqname\(rq service description [see\p
+.br
+\f4services\f1(4)],
+and is invoked by
+\f4inetd\f1(1M)
+when a request is made to the name server.
+.SH OPTIONS
+.TP
+\f4\-v\f1
+Invoke the daemon in verbose mode.
+.SH "SEE ALSO"
+\f4uucp\f1(1C),
+\f4inetd\f1(1M),
+\f4services\f1(4)
+.LP
+Postel, Jon,
+.IR "Internet Name Server" ,
+.SM IEN
+116,
+.SM SRI
+International, Menlo Park, California,
+August 1979
+.SH NOTES
+.LP
+The protocol implemented by this program is obsolete.
+Its use should be phased out in favor of
+the Internet Domain Name Service (\s-1DNS\s0) protocol.
+See
+\f4named\f1(1M).

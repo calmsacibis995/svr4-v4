@@ -1,0 +1,363 @@
+'\"macro stdmacro
+.if n .pH g1.truss @(#)truss	40.6 of 5/29/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} truss 1 "" "\&"
+.if \nX=1 .ds x} truss 1 ""
+.if \nX=2 .ds x} truss 1 "" "\&"
+.if \nX=3 .ds x} truss "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4truss\fP \- trace system calls and signals
+.SH SYNOPSIS
+\f4truss\fP
+[\f4-p\fP]
+[\f4-f\fP]
+[\f4-c\fP]
+[\f4-a\fP]
+[\f4-e\fP]
+[\f4-i\fP]
+[\f4-\fP[\f4tvx\fP] [\f4!\fP] \f2syscall\f1 .\ .\ .]
+[\f4-s\fP [\f4!\fP] \f2signal\f1 .\ .\ .]
+[\f4-m\fP [\f4!\fP] \f2fault\f1 .\ .\ .]
+[\f4-\fP[\f4rw\fP] [\f4!\fP] \f2fd\f1 .\ .\ .]
+[\f4-o \f2outfile\fP]
+\f2command\fP
+.SH DESCRIPTION
+\f4truss\fP
+executes the specified command and produces a trace of the
+system calls it performs,
+the signals it receives,
+and the machine faults it incurs.
+Each line of the trace output reports either the fault or signal name
+or the system call name with its arguments and return value(s).
+System call arguments are displayed symbolically when possible
+using defines from relevant system header files;
+for any pathname pointer argument, the pointed-to string is displayed.
+Error returns are reported using the error code names described in
+\f4intro\fP(2).
+.PP
+The following options are recognized.
+For those options which take a list argument,
+the name \f4all\fP can be used as a shorthand to specify all
+possible members of the list.
+If the list begins with a \f4!\fP, the meaning of the option is negated
+(for example, exclude rather than trace).
+Multiple occurrences of the same option may be specified.
+For the same name in a list, subsequent options
+(those to the right) override previous ones (those to the left).
+.TP 7P
+\f4-p\fP
+Interpret the arguments to
+\f4truss\fP
+as a list of process-ids for existing processes (see
+\f4ps\fP(1))
+rather than as a command to be executed.
+\f4truss\fP
+takes control of each process and begins tracing it
+provided that the userid and groupid of the process
+match those of the user or that the user is a privileged user.
+Processes may also be specified by their names in the
+\f4/proc\fP directory, for example, \f4/proc/1234\fP;
+this works for remotely-mounted \f4/proc\fP directories as well.
+.TP
+\f4-f\fP
+Follow all children created by
+\f4fork\fP
+and include their signals, faults, and system calls in the trace output.
+Normally, only the first-level command or process is traced.
+When
+\f4-f\fP
+is specified, the process-id is included with each line of trace output
+to show which process executed the system call or received the signal.
+.TP
+\f4-c\fP
+Count traced system calls, faults, and signals
+rather than displaying the trace line-by-line.
+A summary report is produced after the traced command terminates or when
+\f4truss\fP
+is interrupted.
+If
+\f4-f\fP
+is also specified, the counts include all traced system calls,
+faults, and signals for child processes.
+.TP
+\f4-a\fP
+Show the argument strings which are passed in each
+\f4exec\fP
+system call.
+.TP
+\f4-e\fP
+Show the environment strings which are passed in each
+\f4exec\fP
+system call.
+.TP
+\f4-i\fP
+Don't display interruptible sleeping system calls.
+Certain system calls, such as
+\f4open\fP
+and
+\f4read\fP
+on terminal devices or pipes can sleep for indefinite periods
+and are interruptible.
+Normally,
+\f4truss\fP
+reports such sleeping system calls if they remain asleep
+for more than one second.
+The system call is reported again a second
+time when it completes.
+The
+\f4-i\fP
+option causes such system calls to be reported only once,
+when they complete.
+.TP
+\f4-t\fP [\f4!\fP] \f2syscall,\f1.\ .\ .
+System calls to trace or exclude.
+Those system calls specified in the comma-separated list are traced.
+If the list begins with a `!', the specified system calls are excluded
+from the trace output.
+Default is \f4-tall\fP.
+.TP
+\f4-v\fP [\f4!\fP] \f2syscall,\f1.\ .\ .
+Verbose.
+Display the contents of any structures passed by
+address to the specified
+system calls (if traced).
+Input values as well as values returned by the operating system are shown.
+For any field used as both input and output, only the output value is shown.
+Default is \f4-v!all\fP.
+.TP
+\f4-x\fP [\f4!\fP] \f2syscall,\f1.\ .\ .
+Display the arguments to the specified system calls
+(if traced)
+in raw form, usually hexadecimal, rather than symbolically.
+This is for unredeemed hackers who must see the raw bits
+to be happy.
+Default is \f4-x!all\fP.
+.TP
+\f4-s\fP [\f4!\fP] \f2signal,\f1.\ .\ .
+Signals to trace
+or exclude.
+Those signals specified in the comma-separated list are traced.
+The trace output reports the receipt of each specified signal,
+even if the signal is being ignored (not blocked) by the process.
+(Blocked signals are not received until the process releases them.)
+Signals may be specified by name or number (see \f4sys/signal.h\fP).
+If the list begins with a `!', the specified signals are excluded
+from the trace output.
+Default is \f4-sall\fP.
+.TP
+\f4-m\fP [\f4!\fP] \f2fault,\f1.\ .\ .
+Machine faults to
+trace or exclude.
+Those machine faults specified in the comma-separated list are traced.
+Faults may be specified by name or number (see \f4sys/fault.h\fP).
+If the list begins with a `!', the specified faults are excluded
+from the trace output.
+Default is \f4-mall \-m!fltpage\fP.
+.TP
+\f4-r\fP [\f4!\fP] \f2fd,\f1.\ .\ .
+Show the full contents of the \s-1I/O\s0 buffer for each
+\f4read\fP on any of the specified file descriptors.
+The output is formatted 32 bytes per line and
+shows each byte as an ascii character (preceded by one blank)
+or as a two-character C language escape sequence
+for control characters such as horizontal tab (\|\\\|t) and newline (\|\\\|n).
+If ascii interpretation is not possible, the byte is shown
+in two-character hexadecimal representation.
+(The first 16 bytes of the \s-1I/O\s0 buffer for each traced \f4read\fP
+are shown even in the absence of \f4\-r\fP.)
+Default is \f4-r!all\fP.
+.TP
+\f4-w\fP [\f4!\fP] \f2fd,\f1.\ .\ .
+Show the contents of the \s-1I/O\s0 buffer for each
+\f4write\fP on any of the specified file descriptors
+(see \f4-r\fP).
+Default is \f4-w!all\fP.
+.TP
+\f4-o\fP \f2outfile\fP
+File to be used for the trace output.
+By default, the output goes to standard error.
+.PP
+See Section 2 of the
+\f2Programmer's Reference Manual\fP for
+\f4syscall\fP
+names accepted by the
+\f4-t\fP,
+\f4-v\fP,
+and
+\f4-x\fP
+options.
+System call numbers are also accepted.
+.PP
+If
+\f4truss\fP
+is used to initiate and trace a specified command
+and if the \f4\-o\fP option is used or if
+standard error is redirected to a non-terminal file, then
+\f4truss\fP
+runs with hangup, interrupt, and quit signals ignored.
+This facilitates tracing of interactive programs which catch
+interrupt and quit signals from the terminal.
+.PP
+If the trace output remains directed to the terminal,
+or if existing processes are traced
+(the \f4-p\fP option), then
+\f4truss\fP
+responds to hangup, interrupt, and quit signals
+by releasing all traced processes and exiting.
+This enables the user to terminate excessive trace output
+and to release previously-existing processes.
+Released processes continue normally, as though
+they had never been touched.
+.SH EXAMPLES
+This example produces a trace of the
+\f4find\fP(1)
+command on the terminal:
+.P
+.RS
+\f4truss find . \-print >find.out\fP
+.RE
+.P
+Or, to see only a trace of the open, close, read,
+and write system calls:
+.P
+.RS
+\f4truss \-t open,close,read,write find . \-print >find.out\fP
+.RE
+.P
+This produces a trace of the
+\f4spell\fP(1)
+command on the file truss.out:
+.P
+.RS
+\f4truss \-f \-o truss.out spell document\fP
+.RE
+.P
+\f4spell\fP
+is a shell script, so the
+\f4-f\fP
+flag is needed to trace not only the shell but
+also the processes created by the shell.
+(The spell script runs a pipeline of eight concurrent processes.)
+.P
+A particularly boring example is:
+.P
+.RS
+\f4truss nroff -mm document >nroff.out\fP
+.RE
+.P
+because 97% of the output reports
+\f4lseek\fP,
+\f4read\fP,
+and
+\f4write\fP
+system calls.
+To abbreviate it:
+.P
+.RS
+\f4truss -t !lseek,read,write nroff -mm document >nroff.out\fP
+.RE
+.P
+This example verbosely traces the activity of process #1,
+\f4init\fP(1M)
+(provided you are a privileged user):
+.P
+.RS
+\f4truss -p -v all 1\fP
+.RE
+.P
+Interrupting
+\f4truss\fP
+returns
+\f4init\fP
+to normal operation.
+.SH FILES
+.TP 20
+\f4/proc/\f2nnnnn\fP
+process files
+.SH NOTES
+Some of the system calls described in
+Section 2 of the \f2Programmer's Reference Manual\fP
+differ from the actual operating system interfaces.
+Do not be surprised by minor deviations of the trace output
+from the descriptions in Section 2.
+.PP
+Every machine fault (except a page fault)
+results in the posting of a signal
+to the process which incurred the fault.
+A report of a received signal will immediately follow
+each report of a machine fault (except a page fault)
+unless that signal is being blocked by the process.
+.PP
+The operating system enforces certain security restrictions
+on the tracing of processes.
+In particular, any command whose object file (\f4a.out\fP)
+cannot be read by a user cannot be traced by that user;
+set-uid and set-gid commands can be traced only by a privileged user.
+Unless it is run by a privileged user, \f4truss\fP loses control of any
+process which performs an \f4exec\fP(2) of a set-id or
+unreadable object file; such processes continue normally,
+though independently of \f4truss\fP, from the point
+of the \f4exec\fP.
+.PP
+To avoid collisions with other controlling processes,
+\f4truss\fP
+will not trace a process which it detects is being controlled
+by another process via the
+\f4/proc\fP
+interface.
+This allows
+\f4truss\fP
+to be applied to \fIproc\fP(4)-based debuggers
+as well as to another instance of itself.
+.PP
+The trace output contains tab characters under the assumption
+that standard tab stops are set (every eight positions).
+.PP
+The trace output for multiple processes is not produced
+in strict time order.
+For example,
+a \f4read\fP on a pipe may be reported before the corresponding \f4write\fP.
+For any one process, the output is strictly time-ordered.
+.PP
+The system may run out of per-user process slots when tracing
+of children is requested.
+When tracing more than one process,
+\f4truss\fP
+runs as one controlling process for each process being traced.
+For the example of the
+\f4spell\fP
+command shown above,
+\f4spell\fP
+itself uses nine process slots,
+one for the shell and eight for the eight-member pipeline, while
+\f4truss\fP
+adds another nine processes, for a total of 18.
+This is perilously close to the usual system-imposed limit of 25
+processes per user.
+.PP
+\f4truss\fP
+uses shared memory and semaphores
+when dealing with more than one process
+(\f4-f\fP
+option or
+\f4-p\fP
+with more than one
+\f4pid\fP).
+It issues a warning message and proceeds when these are needed but
+not configured in the system.
+However, the trace output may become garbled in this case
+and the output of the
+\f4-c\fP
+option reports only the top-level command or first
+\f4pid\fP
+and no children are counted.
+.PP
+Not all possible structures passed in all possible system calls
+are displayed under the
+\f4-v\fP
+option.
+.SH SEE ALSO
+\f4intro\fP(2), \f4proc\fP(4)

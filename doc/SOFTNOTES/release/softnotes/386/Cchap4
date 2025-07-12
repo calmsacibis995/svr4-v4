@@ -1,0 +1,59 @@
+.if n .pH rn4.Cchap4 @(#)Cchap4	40.29
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.BK "Software Notes" "" "" ""   
+.\ACRONYM	                  
+.CH "Networking" "" "Table of Contents" "4"
+.\CHAPTER	4
+.tC 1 "Networking Notes" 4-1  
+.Index: istart UNIX System V/386 Release 4, networking notes 	1
+.tC 2 "TCP/IP (DARPA Internet Protocol Suite)" 4-1  
+.tC 3 "rlogin command" 4-1  
+.tC 3 "Domain Name Service (DNS)" 4-1  
+.Index: TCP/IP, \f4tlp\fP and \f4telnet\fP and using DNS  	1
+.Index: Domain Name Service (DNS), using \f4tlp\fP and \f4telnet\fP 	1
+.tC 3 "Pseudo-terminals" 4-1  
+.Index: TCP/IP, pseudo terminal configuration     	1
+.tC 2 "NFS" 4-1  
+.tC 3 "Use NFS bg in /etc/vfstab" 4-1  
+.tC 3 "unsharing advertised resources" 4-1  
+.tC 3 "Automounter" 4-1  
+.Index: NFS, automounter and maps     	1
+.Index: automounter, direct and indirect maps    	1
+.tC 3 "sysadm Automount" 4-2  
+.tC 3 "Lock Manager" 4-2  
+.Index: NFS, deadlock detection      	2
+.Index: deadlock, NFS lock manager     	2
+.tC 3 "Loopback" 4-2  
+.Index: istart \f4nfsd\fP       	2
+.Index: NFS, interrupted read or write    	2
+.Index: iend \f4nfsd\fP       	2
+.tC 3 "Secure NFS mount" 4-2  
+.Index: Secure NFS, \f4mount\fP      	2
+.tC 3 "Transport Independence" 4-2  
+.Index: NFS and workarounds      	2
+.Index: NFS, transport independence      	2
+.Index: NFS, multiple transports      	2
+.Index: \f4NETPATH\fP environment variable      	3
+.tC 3 "share Resources Command" 4-3  
+.Index: istart \f4share_nfs\fP, read and write permissions   	3
+.Index: iend \f4share_nfs\fP, read and write permissions   	3
+.tC 3 "Compatibility with UNIX V Release 3.2" 4-3  
+.tC 2 "RFS" 4-4  
+.Index: RFS, compatibility with SVR4 implementation    	4
+.Index: RFS, swap control      	4
+.tC 3 "RFS root crontabs entry" 4-4  
+.tC 3 "Swap Control" 4-5  
+.tC 2 "RFS: sysadm Initial Remote File Sharing Setup" 4-5  
+.tC 2 "Secure RPC" 4-5  
+.Index: Secure RPC, with RFS     	5
+.Index: RFS, Secure RPC      	5
+.tC 3 "Secure RPC with RFS" 4-5  
+.Index: Secure RPC, administrative files     	5
+.tC 2 "OA&M - Remove System Name function" 4-6  
+.tC 3 "Devconfig file" 4-6  
+.tC 2 "Cable Disconnections During I/O via tty ports" 4-6  
+.tC 2 "libnsl and the ABI" 4-6  
+.Index: libnsl and ABI      	6
+.tC 2 "Dial Header File" 4-7  
+.Index: dial.h header file      	7
+.Index: iend UNIX System V/386 Release 4, networking notes 	7

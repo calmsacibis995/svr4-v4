@@ -1,0 +1,47 @@
+'\"macro stdmacro
+.if n .pH gen.ver_no @(#)ver_no	40.3 of 3/12/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.nr X
+.if \nX=0 .ds x} ver_no D4I SDI "\&"
+.if \nX=1 .ds x} ver_no D4I SDI
+.if \nX=2 .ds x} ver_no D4I "" "\&"
+.if \nX=3 .ds x} ver_no "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4ver_no\fP \- SCSI version number structure
+.SH SYNOPSIS
+\f4#include <sys/sdi.h>\fP
+.SH DESCRIPTION
+The version number structure is used to ensure that the version of SDI is
+appropriate for the target drivers.
+.SH STRUCTURE MEMBERS
+.ft 4
+.nf
+unsigned char   sv_release;   /* Release number */
+unsigned char   sv_machine;   /* Computer type */
+short           sv_modes;     /* SCSI Release Number */
+.fi
+.ft 1
+.P
+\f4sv_release\f1 indicates the SDI release number (set to 1 for the first release).
+.ig
+On the 3B4000 computer, the release is set in the SHA_RELEASE constant defined
+in \f4had.h\f1.
+..
+On the 3B2 computer, the release is hard coded as 1.
+.P
+\f4sv_machine\f1 indicates the type of computer you are using.
+\f4SDI_3B2\fP
+indicates that you are using a 3B2 computer.
+.P
+\f4sv_modes\f1 indicates the SCSI functionality that is supported.  The only
+value on the 3B2 Computer is \f4SDI_BASIC\fP.  Modes are added together with the
+bitwise OR operator.
+.ig
+.P
+For use with the 3B4000 computer, the \f4sv_modes\f1 member supports the
+\f4SDI_FLT\fP_HANDLING value.
+..
+.SH SEE ALSO
+``Get Information''
+in Chapter 2

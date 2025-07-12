@@ -1,0 +1,333 @@
+.if n .pH rn4.chap7 @(#)chap7	40.62
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.de MR 
+.P 
+MR \\$1 
+.P 
+..
+.de MR
+..
+.BK "Software Notes"
+.CH "C Programming Language" "7"
+.H 1 "C Language Notes"
+.IX istart UNIX System V/386 Release 4, C language notes
+.H 2 "Directory Layout"
+.IX directory layout
+In \s-1UNIX\s+1 System V, Release 4, the directory
+layout of the compilation system changed.
+While header files are still located in \f4/usr/include\f1, 
+all software development tools that were
+installed in \f4/bin\f1 or \f4/usr/bin\f1 in previous releases
+are now installed in \f4/usr/ccs/bin\f1. 
+Similarly, all
+software development tools, libraries, and other files
+that used to be installed in \f4/lib\f1 or \f4/usr/lib\f1 are
+now installed in \f4/usr/ccs/lib\f1. 
+.P
+.IX executable and linking format
+Object files created by the SVR4 compilation system
+are in a new format called \s-1ELF\s+1 (Executable and Linking
+Format).
+While the compilation system tools support linking
+with and analysis of object files in the older format (\s-1COFF\s+1), 
+there may be users who have older C compilation systems they wish
+to continue to use or who have non-C compilation systems that
+depend on being able to generate \s-1COFF\s+1-style object files.
+We wanted to allow older compilation systems
+to coexist with the SVR4 system, but we have no control over how 
+older systems get installed and we cannot predict what 
+directory dependencies they might have.
+Therefore, we chose to move the SVR4 compilation system
+into new directories, thus stepping out of the way of those
+older systems.
+.P
+.IX \f4/usr/ccs/bin\f1
+The installation process for the SVR4 compilation system will
+automatically add the directory \f4/usr/ccs/bin\f1
+to the default command search path of
+ordinary users [see \f4sh\f1(1)].
+This should assure that most compilation command
+scripts or \f4make\f1 scripts will not need to change to 
+allow for the new directory structure and allow the 
+directory structure to be transparent.
+.P
+.IX compatibility, symbolic links
+In order to ensure compatibility for those scripts that 
+access compilation system commands or \f4/lib/cpp\f1 by 
+absolute pathnames, symbolic links for all
+commands in \f4/usr/ccs/bin\f1 and for \f4/usr/ccs/lib/cpp\f1 will
+automatically be made at installation time if no older compilation 
+system is already resident on the system.
+The links will be made to files of the same names
+in \f4/usr/bin\f1 and \f4/usr/lib\f1 respectively.
+These links are intended as a transition aid and will be removed 
+in a future release. 
+.H 2 "External Data/Automatics Order"
+.IX data and automatics
+As always, the order of external data and automatics on the stack
+should not be relied on.
+In particular, the compilation system is free to do 
+register allocation.
+.H 2 "long double"
+.MR "From blitz July 1, 1990"
+As of System V Release 4 Version 4,
+the \f4long double\f1 data type is supported as stated in the ABI.
+To obtain the pre-Version 4 behavior, NO_LDOUBLE_SUPPORT must be defined.
+.H 2 "Floating Point Arithmetic"
+.IX floating point operations 
+All floating point operations are performed
+in double extended precision, as permitted by the ANSI C
+standard, until explicitly stored in memory or until
+explicitly casted to a type other than \f4long double\f1.
+The following example illustrates the problem;
+it will print \f4not equal\f1.
+.SS
+#include <math.h>
+
+main()
+{
+	double d = (nextafter(1.0, 1.1) + 1.0) / 2.0;
+
+	if (d != ((nextafter(1.0, 1.1) + 1.0) / 2.0))
+		printf("not equal\en");	/\(** expression is between [1,d] \(**/
+	else	printf("equal\en");
+}
+.SE
+.H 2 "ifiles No Longer Supported"
+.IX \f4ifiles\f1 not supported
+The \f4ifile\f1s feature of the link editor
+command language is no longer supported.
+You should switch to the new \f4mapfiles\f1
+feature, which subsumes much of the functionality.
+.H 2 "Null Pointer References"
+.IX null pointer references
+Some null pointer references
+in the source code have not been fixed.
+.H 2 "Optimizer and asms"
+.IX optimizer
+The optimizer does not handle \f4asms\f1
+that change the depth of the stack.
+.H 2 "Performance Tradeoffs"
+.IX arrays, \f4_ _iob\f1 
+.IX arrays, \f4_ _ctype\f1 
+The initialized arrays \f4_ _iob\f1 and \f4_ _ctype\f1 are defined
+in the dynamic C library since they are referenced by many of
+the library functions.
+They may also be referenced directly from the
+user's code through macros such as \f4getchar\f1 and \f4isdigit\f1.
+Since the user's code is not typically compiled as position 
+independent, space for these symbols must be allocated in the
+\f4a.out\f1's data segment.
+At process startup time, the dynamic
+linker changes the global offset table entries in the library to
+point to the \f4a.out\f1's symbols, if present, so that both
+the library and the \f4a.out\f1 will reference the same object.
+.P
+\f4_ _iob\f1 and \f4_ _ctype\f1 are fairly large arrays, and the
+method chosen to initialize the arrays in the \f4a.out\f1's
+data segment can have an impact on overall system performance.
+In one method, both \f4libc.so\f1 and \f4libc.so.1\f1 are built with 
+the files
+(\f4data.o\f1 and \f4_ _ctype.o\f1) containing the initialized data.
+Executable files linked with \f4libc.so\f1 will have the
+initialized arrays in their \f4.data\f1 sections.
+.P
+The method used in this product
+is to replace the definitions in the archive \f4libc.so\f1
+with uninitialized objects (\f4.bss\f1 symbols), and add code to
+the dynamic linker to copy the initialized data from 
+the shared library into the \f4a.out\f1's \f4.bss\f1 
+section at process startup.
+This alternative typically makes executable files smaller and
+trades off disk \s-1I/O\s+1 for longer startup times.
+.H 2 "Dynamic Libraries"
+.IX dynamic libraries and executables
+Most of the executables in UNIX System V/386 Release
+4 Version 3 are compiled with dynamic libraries.
+To determine which dynamic library (if any)
+the executable uses type in:
+.DS I UI
+ldd a.out 
+.DE
+This will display the dynamic library being used with 
+this executable.
+It will display nothing if the executable is compiled with 
+archive libraries.
+.H 2 "Shared Libraries"
+.IX shared libraries
+Existing static shared libraries will continue to 
+work with this release.
+.IX unsupported commands, \f4mkshlib\f1
+.IX unsupported commands, \f4chkshlib\f1
+You cannot, however, create new ones, as 
+the commands \f4mkshlib\f1 and \f4chkshlib\f1 
+are no longer supported.
+This functionality has been completely replaced with
+the new dynamic linking feature.
+.H 2 "libPW relocation"
+.MR "dm90-14989
+The pre-SVR4 contents and new functionality of \f4libPW\f1 
+are located in \f4libgen\f1.
+.H 2 "Commands and Functions"
+.H 3 "ctrace Command"
+.IX \f4ctrace\f1 
+The \f4ctrace\f1 command does not handle \f4asm\f1s.
+.H 3 "dump Command"
+.IX \f4dump\f1 command
+The \f4dump\f1 command returns a status code
+indicating successful completion (return code set to zero)
+despite the following cases of bad input:
+.BL
+.LI
+number out of range
+.LI
+invalid range
+.LI
+section not found
+.LI
+no such file or directory
+.LI
+invalid file type
+.LI
+bad line info section
+.LE
+.H 3 "ld Command"
+.IX \f4ld\f1
+.BL
+.LI
+Error messages from the link editor that refer to \s-1I/O\s+1 errors
+may be caused by an inability to create a file.
+This may be caused by permission problems, file space limitation,
+or \f4ulimit\f1 problems.
+.LI
+Error messages from the link editor that specify
+``\f4vm stats\f1'' errors or
+``\f4output file space\f1'' may result from running out of system swap space.
+.LE
+.H 3 "lint Command"
+.IX \f4lint\f1
+.BL
+.LI
+\&\f4lint \-p\f1 gives the diagnostic, \f4pointer cast may be troublesome\f1,
+when two pointers differ only by a \f4const\f1.
+(For example, \f4const int \(**\f1 versus \f4int \(**\f1.)
+.LI
+\f4lint\f1's \f4printf\f1 format checks do not recognize positional
+parameters.
+Therefore, \&\f4printf("%1$s", s);\f1 will yield the warning ``\f4too many
+arguments for format\f1.''
+.LE
+.H 3 "lprof Command"
+.IX \f4lprof\f1
+.BL
+.LI
+\f4lprof\f1 does not ignore C code included via a header file.
+When it encounters a function that is defined in a header file,
+it begins outputting line numbers and line counts.
+Since this code does
+not appear in the original C file, the line counts will be off.
+A workaround is to place the C functions from the header 
+file(s) into \f4.c\f1 files and compile them
+as separate modules.
+.LI
+\f4lprof\f1 will fail if the executable being profiled
+is built using two or more object files with the same basename,
+e.g., \f4directory1/fun.o\f1 and \f4directory2/fun.o\f1.
+It will not be able to read the \f4.cnt\f1
+file created when the program is executed.
+.LE
+.H 3 "nm Command"
+.IX \f4nm\f1
+The \f4nm\f1 command returns a status code
+indicating successful completion (return code set to zero)
+when it encounters and warns about a truncated file.
+.H 3 "SCCS Commands"
+.IX sccs commands
+Using the \f4delta\f1 command on a text file that 
+contains a line whose line length exceeds \f4BUFSIZ\f1 
+(set to 1024 as defined in \f4stdio.h\f1) may cause an infinite loop
+or core dump. 
+.H 3 "sdb Command"
+.IX \f4sdb\f1
+.BL
+.LI
+Assembler routines that use the frame pointer and argument
+pointer registers in non-standard
+ways may cause erroneous stack traces in \f4sdb\f1.
+.LI
+Header files that include executable code may cause confusion
+with various tools (such as \f4sdb\f1) about line numbers.
+The result is that output from the tools relating to
+a function described in a header file may be associated with
+the wrong line number.
+.LI
+When a process is grabbed (via \&\f4sdb /proc/123\f1, for 
+example), you may examine variables, instruction step, quit, 
+continue, or kill the process.
+However, some breakpoints and statement steps will not work.
+.LE
+.H 3 "free Function"
+.IX \f4free\f1
+A \f4malloc\f1ed region of space can be freed
+only once. Freeing the same region of space more
+than once has undefined behavior.
+.H 3 "mmap Function"
+.IX \f4mmap\f1
+Dynamically linked \f4a.out\f1s that depend on a shared library
+that resides on a file system that does not support
+the \f4mmap\f1 function call (e.g., the \s-1BFS\s+1 file 
+system) will not execute.
+.H 3 "nlist Function"
+.IX \f4nlist\f1 function
+The \f4nlist\f1 function has been moved from the C library 
+(\f4libc\f1) to the \s-1ELF\s+1 library (\f4libelf\f1).
+This means the \f4make\f1 lines of those programs using
+\f4nlist\f1 need to be changed to explicitly look in \f4libelf\f1:
+.UI
+cc \-o prog prog.c \-lelf
+.H 3 "realloc Function"
+.IX \f4realloc\f1 function
+The \f4realloc\f1 function has been changed for \s-1ANSI C\s+1 
+conformance.
+If its size argument is zero, the object pointed to by
+the first argument is freed.
+The previous version of \f4realloc\f1
+simply returned \f4NULL\f1 in this case.
+.H 2 "Bitfields"
+.\From blitz Wed Oct  3 
+Bitfields declared without a specific signedness will be treated
+zero-extended.
+The one exception is if the size of the bitfield matches the 
+size of the type.  
+For example, in
+.DS I
+.ft CW
+struct {
+	int bf: 4;
+} x;
+
+x.bf = 0xf;	           /* fill bitfield with all ones */
+
+if (x.bf < 0)
+	printf("true\n");
+.DE
+true will be printed.
+.P
+On the other hand, for
+.DS I
+.ft CW
+struct {
+	int bf: 32;
+} x;
+
+x.bf = 0xffffffff;         /* fill bitfield with all ones */
+
+if (x.bf < 0)
+	printf("true\n");
+.DE
+will not print true.  
+.P
+In the future, the latter case will treat \f4x.bf\f1 as an unsigned
+quantity, as per ANSI's value-preserving rules.
+.IX iend UNIX System V/386 Release 4, C language notes

@@ -1,0 +1,110 @@
+'\"macro stdmacro
+.if n .pH g1a.idbuild @(#)idbuild	40.6 of 1/3/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+'\"macro stdmacro
+.if n .pH g1.idbuild @(#)idbuild	30.3 of 3/5/86
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.if \nX=0 .ds x} idbuild 1M "Base System" "\&"
+.if \nX=1 .ds x} idbuild 1M "Base System"
+.if \nX=2 .ds x} idbuild 1M "" "\&"
+.if \nX=3 .ds x} idbuild "" "" "\&"
+.nr X
+.TH \*(x} "" "386 Computer Only"
+.SH NAME
+\f4idbuild\f1 \- build new UNIX System kernel
+.SH SYNOPSIS
+\f4/etc/conf/bin/idbuild\f1
+.SH "DESCRIPTION"
+This script builds a new UNIX System kernel using the current system
+configuration in
+\f4etc/conf/\f1\|.
+Kernel reconfigurations are usually done after a device driver
+is installed, or system tunable parameters are modified.
+The script uses the shell variable
+\f4ROOT\f1
+from the user's environment as its starting path.
+Except for the special case of kernel development in a non-root
+source tree, the shell variable
+\f4ROOT\f1
+should always be set to null or to "/".
+\f4idbuild\f1
+exits with a return code of zero on success and non-zero on failure.
+.P
+Building a new UNIX System image consists of generating
+new system configuration files,
+then link-editing the kernel and device driver object modules in the
+\f4etc/conf/pack.d\f1
+object tree.
+This is done by
+\f4idbuild\f1
+by calling the following commands:
+.TP 1.7i
+\f4etc/conf/bin/idconfig\f1
+To build kernel configuration files.
+.TP
+\f4etc/conf/bin/idmkunix\f1
+To process the configuration files and link-edit
+a new UNIX System image.
+.P
+The system configuration files are built by processing the Master and System files
+representing device driver and tunable parameter specifications.
+For the i386 UNIX System the files
+\f4etc/conf/cf.d/mdevice\f1,
+and
+\f4etc/conf/cf.d/mtune\f1
+represent the Master information.
+The files
+\f4etc/conf/cf.d/stune\f1,
+and the files specified in
+\f4etc/conf/sdevice.d/*\f1
+represent the System information.
+The kernel also has file system type information defined in the files specified by
+\f4etc/conf/sfsys.d/*\f1
+and
+\f4etc/conf/mfsys.d/*\f1 .
+.P
+Once a new UNIX System kernel has been configured, a lock file is set in
+\f4etc/.new_unix\f1
+which causes the new kernel to replace
+\f4/unix\f1
+on the next system shutdown (i.e.\, on the next entry to the
+.I "init 0"
+state).
+Upon the next system boot, the new kernel will be executed.
+.SH "ERROR MESSAGES"
+.P
+Since
+\f4idbuild\f1
+calls other system commands to accomplish system reconfiguration and
+link editing, it will report all errors encountered by those commands,
+then clean up intermediate files created in the process.
+In general, the exit value 1 indicates an error was encountered by
+\f4idbuild\f1 .
+.P
+The errors encountered fall into the following categories:
+.P
+.RS
+Master file error messages.
+.br
+System file error messages.
+.br
+Tunable file error messages.
+.br
+Compiler and Link-editor error messages.
+.RE
+.P
+All error messages are designed to be self-explanatory.
+.br
+.ne 5
+.SH "SEE ALSO"
+\f4idinstall\f1(1m),
+\f4idtune\f1(1m).
+.br
+\f4mdevice\f1(4),
+\f4mfsys\f1(4),
+\f4mtune\f1(4),
+\f4sdevice\f1(4),
+\f4sfsys\f1(4),
+\f4stune\f1(4)
+in the \f2Programmer's Reference Manual\f1.

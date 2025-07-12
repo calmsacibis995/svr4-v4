@@ -1,0 +1,286 @@
+'\"macro stdmacro
+.if n .pH g1a.mount_nfs @(#)mount_nfs	40.13.1.1 of 3/12/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} mount 1M "NFS" "\&"
+.if \nX=1 .ds x} mount 1M "NFS"
+.if \nX=2 .ds x} mount 1M "" "\&"
+.if \nX=3 .ds x} mount "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4mount\f1 \- mount remote NFS resources
+.SH SYNOPSIS
+.nf
+\f4mount [-F nfs] [-r] [-o\f2 specific_options\f4] {\f2resource | mountpoint\f4}\fR
+\f4mount [-F nfs] [-r] [-o\f2 specific_options\f4] \f2resource mountpoint\fR
+.fi
+.SH DESCRIPTION
+The
+\f4mount\f1
+command 
+attaches a named
+\f2resource\f1
+to the file system hierarchy at the pathname location
+.IR mountpoint ,
+which must already exist.
+If
+\f2mountpoint\f1
+has any contents prior to the
+\f4mount\f1
+operation, the contents remain hidden until the
+\f2resource\f1
+is once again unmounted.
+.\"If
+.\".I resource
+.\"is of the form
+.\".IB host : pathname,
+.\"it is assumed to be an
+.\".SM NFS
+.\"file system (type
+.\".BR nfs ).
+.LP
+If the resource is listed in the \f4vfstab\f1 file, the command line
+can specify either \f2resource\f1 or \f2mountpoint\f1, and \f4mount\f1
+will consult \f4vfstab\f1 for more information.  If
+the \f4\-F\f1 option is omitted, \f4mount\f1 will take the
+file system type from \f4vfstab\f1. 
+.LP
+\f4mount\f1
+maintains a table of mounted file systems in
+\f4/etc/mnttab\f1,
+described in
+\f4mnttab\f1(4).
+.LP
+The following options are available to the
+\f4mount\f1
+command:
+.TP
+\f4\-r\f1
+Mount the specified file system read-only.
+.TP
+\f4\-o\f1
+Specify the \f4nfs\fP file-specific options in a
+comma-separated list.
+The available options are:
+.RS
+.TP 14
+\f4rw\f1\||\|\f4ro\f1
+\f2resource\f1
+is mounted read-write or read-only.
+The default is
+\f4rw\f1.
+.PD 0
+.TP
+\f4suid\f1\||\|\f4nosuid\f1
+Setuid execution allowed or disallowed.
+The default is
+\f4suid\f1.
+.TP
+\f4remount\f1
+If a file system is mounted read-only,
+remounts the file system read-write.
+.TP
+\f4bg\f1\||\|\f4fg\f1
+If the first attempt fails, retry in the background, or,
+in the foreground.
+The default is
+\f4fg\f1.
+.TP
+\f4retry=\f2n\f1
+The number of times to retry the mount operation.
+The default is 10000.
+.TP
+\f4port=\f2n\f1
+The server
+.SM IP
+port number.
+The default is
+\f4NFS_PORT\f1.
+.TP
+\f4grpid\f1
+Create a file with its
+.SM GID 
+set to the effective 
+.SM GID
+of the calling process.
+This behavior may be overridden on a per-directory basis
+by setting the set-\s-1GID\s0 bit of the parent directory;
+in this case, the 
+.SM GID
+is set to the 
+.SM GID
+of the parent directory [see
+\f4open\f1(2)
+and
+\f4mkdir\f1(2)].
+Files created on file systems that are 
+\f2not\f1
+mounted with the
+\f4grpid\f1
+option will obey 
+.SM BSD 
+semantics;
+that is, the 
+.SM GID
+is unconditionally inherited from that of
+the parent directory.
+.TP
+\f4rsize=\f2n\f1
+Set the read buffer size to
+.I n
+bytes.
+.TP
+\f4wsize=\f2n\f1
+Set the write buffer size to
+\f2n\f1
+bytes.
+.TP
+\f4timeo=\f2n\f1
+Set the
+.SM NFS
+timeout to
+\f2n\f1
+tenths of a second.
+.TP
+\f4retrans=\f2n\f1
+Set the number of
+.SM NFS
+retransmissions to
+\f2n\f1.
+.TP
+\f4soft\f1\||\|\f4hard\f1
+Return an error if the server does not respond,
+or continue the retry request until the server responds.
+.TP
+\f4intr\f1
+Allow keyboard interrupts to kill a process that is hung
+while waiting for a response on a hard-mounted file
+system.
+.TP
+\f4secure\f1
+Use a more secure protocol for
+.SM NFS
+transactions.
+.TP
+\f4noac\f1
+Suppress attribute caching.
+.TP
+\f4acregmin=\f2n\f1
+Hold cached attributes for at least
+\f2n\f1
+seconds after file modification.
+.TP
+\f4acregmax=\f2n\f1
+Hold cached attributes for no more than
+\f2n\f1
+seconds after file modification.
+.TP
+\f4acdirmin=\f2n\f1
+Hold cached attributes for at least
+\f2n\f1
+seconds after directory update.
+.TP
+\f4acdirmax=\f2n\f1
+Hold cached attributes for no more than
+\f2n\f1
+seconds after directory update.
+.TP
+\f4actimeo=\f2n\f1
+Set
+\f2min\f1
+and
+\f2max\f1
+times for regular files and directories to
+\f2n\f1
+seconds.
+.PD
+.RE
+.SH NFS FILE SYSTEMS
+.SS Background vs. Foreground
+File systems mounted with the
+\f4bg\f1
+option indicate that
+\f4mount\f1
+is to retry in the background if the server's mount daemon
+[\f4mountd\f1(1M)]
+does not respond.
+\f4mount\f1
+retries the request up to the count specified in the
+\f4retry=\f2n\f1
+option.
+Once the file system is mounted, each
+.SM NFS
+request made in the kernel waits
+\f4timeo=\f2n\f1
+tenths of a second for a response.
+If no response arrives, the
+time-out is multiplied by
+\f42\f1
+and the request is retransmitted.
+When the number of
+retransmissions has reached the number specified in the
+\f4retrans=\f2n\f1
+option, a file system mounted with the
+\f4soft\f1
+option returns an error on the request; one mounted with the
+\f4hard\f1
+option prints a warning message and continues to retry the request.
+.SS Read-Write vs. Read-Only
+.LP
+File systems that are mounted
+\f4rw\f1
+(read-write) should use the
+\f4hard\f1
+option.
+.SS Secure File Systems
+The
+\f4secure\f1
+option must be given if the server requires secure
+mounting for the file system.
+.SS "File Attributes"
+.LP
+The attribute cache retains file attributes on the client.
+Attributes for a file are assigned a time to be
+flushed.
+If the file is modified before the flush time, then the
+flush time is extended by the time since the last modification
+(under the assumption that files that changed recently are likely
+to change soon).
+There is a minimum and maximum flush time extension for
+regular files and for directories.
+Setting
+\f4actimeo=\f2n\f1
+extends flush time by
+\f2n\f1
+seconds for both regular files and directories.
+.SH EXAMPLES
+To mount a remote file system: \f4mount \-F nfs serv:/usr/src /usr/src\f1
+.br
+To hard mount a remote file system: \f4mount \-o hard serv:/usr/src /usr/src\f1
+.br
+.ne 1i
+.PD
+.SH FILES
+.PD 0
+.TP 20
+\f4/etc/mnttab\f1
+mount table
+.TP
+\f4/etc/dfs/fstypes\f1
+default distributed file system type
+.TP
+\f4/etc/vfstab\f1
+table of automatically mounted resources
+.PD
+.SH "SEE ALSO"
+\f4mountall\f1(1M),
+\f4mount\f1(2),
+\f4umount\f1(2),
+\f4mnttab\f1(4).
+.SH NOTES
+.LP
+If the directory on which a file system is to be mounted is a
+symbolic link, the file system is mounted on
+.I "the directory to which the symbolic link refers,"
+rather than being mounted on top of the symbolic link itself.

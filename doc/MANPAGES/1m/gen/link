@@ -1,0 +1,53 @@
+'\"macro stdmacro
+.if n .pH g1a.link @(#)link	40.8 of 4/16/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} link 1M "System Administration Utilities" "\&"
+.if \nX=1 .ds x} link 1M "System Administration Utilities"
+.if \nX=2 .ds x} link 1M "" "\&"
+.if \nX=3 .ds x} link "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4link\f1, \f4unlink\f1 \- link and unlink files and directories
+.SH SYNOPSIS
+\f4/usr/sbin/link\f1
+\f2file1 file2\f1
+.br
+\f4/usr/sbin/unlink\f1
+\f2file\f1
+.SH DESCRIPTION
+The
+\f4link\fP
+command is used to create a file name that points to another file.
+Linked files and directories can be removed by the
+\f4unlink\fP
+command; however, it is strongly recommended
+that the
+\f4rm\fP
+and
+\f4rmdir\fP
+commands be used instead of the
+\f4unlink\fP
+command.
+.PP
+The only difference between
+\f4ln\fP
+and
+\f4link\fP and \f4unlink\fP
+is that the latter
+do exactly what they are told to do,
+abandoning all error checking.
+This is because they directly invoke the
+\f4link\fP
+and
+\f4unlink\fP
+system calls.
+.SH SEE ALSO
+\f4rm\fP(1) in the \f2User's Reference Manual\f1
+.br
+\f4link\fP(2), \f4unlink\fP(2) in the \f2Programmer's Reference Manual\f1
+.SH NOTES
+These commands can be run only by the super-user.
+.\"	@(#)link.1m	6.2 of 9/2/83
+.Ee

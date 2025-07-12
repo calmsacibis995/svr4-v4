@@ -1,0 +1,60 @@
+'\"macro stdmacro
+.if n .pH g1f.getitems @(#)getitems	40.11 of 1/3/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} getitems 1F "Form and Menu Language Interpreter Utilities" "\&"
+.if \nX=1 .ds x} getitems 1F "Form and Menu Language Interpreter Utilities"
+.if \nX=2 .ds x} getitems 1F "" "\&"
+.if \nX=3 .ds x} getitems "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4getitems\f1 \- return a list of currently marked menu items
+.SH SYNOPSIS
+\f4getitems\f1
+[\f2delimiter_string\f1]
+.SH DESCRIPTION
+The \f4getitems\f1 function returns the value of \f4lininfo\f1 if
+defined, else it returns the value of the \f4name\f1 descriptor,
+for all currently marked menu items.
+Each value in the list is delimited by \f2delimiter_string\f1.
+The default value of \f2delimiter_string\f1 is newline.
+.SH EXAMPLE
+The \f4done\f1 descriptor in the following menu definition file
+executes \f4getitems\f1 when the user presses ENTER (note that the
+menu is multiselect):
+.PP
+.RS
+.nf
+.ft CW
+Menu="Example"
+multiselect=TRUE
+done=\(gagetitems ":" | message\(ga
+.sp .4v
+name="Item 1"
+action=\(gamessage "You selected item 1"\(ga
+.sp .4v
+name="Item 2"
+lininfo="This is item 2"
+action=\(gamessage "You selected item 2"\(ga
+.sp .4v
+name="Item 3"
+action=\(gamessage "You selected item 3"\(ga
+.ft 1
+.fi
+.RE
+.PP
+If a user marked all three items in this menu,
+pressing ENTER would cause
+the following string to be displayed on the message line:
+.PP
+.RS
+\f(CWItem 1:This is item 2:Item 3\f1
+.RE
+.PP
+Note that because \f4lininfo\f1 is defined for the second menu item,
+its value is displayed instead of the value of the \f4name\f1 descriptor.
+.ig
+BUILT-IN FMLI
+..
+.Ee

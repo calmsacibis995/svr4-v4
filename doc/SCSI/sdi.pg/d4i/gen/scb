@@ -1,0 +1,384 @@
+'\"!  tbl | mmdoc
+'\"macro stdmacro
+.if n .pH gen.scb @(#)scb	40.4 of 3/13/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.nr X
+.if \nX=0 .ds x} scb D4I SDI "\&"
+.if \nX=1 .ds x} scb D4I SDI
+.if \nX=2 .ds x} scb D4I "" "\&"
+.if \nX=3 .ds x} scb "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4scb\fP \- SCSI control block structure
+.SH SYNOPSIS
+\f4#include <sys/sdi.h>\fP
+.SH DESCRIPTION
+The SCSI control block structure is used to send a command to a
+SCSI device.  The \f4scb\f1 contains a pointer to a command descriptor block
+(CDB) that describes the command to the target controller.
+The CDB command
+information is created using either the \f4scm\f1 structure or the
+\f4scs\f1 structure, both described on \f4scm\f1(D4I).
+The CDB contains the operation code of the instruction you
+wish to send and other command-specific data.
+.P
+The method of using the \f4scb\f1 structure is:
+.RS 3n
+.IP 1 4n
+Fill in the appropriate information in the CDB, put the address of the CDB
+in the \f4sc_cmdpt\f1 member of the \f4scb\f1 structure, and set
+\f4sc_cmdsz\f1.
+.IP 2
+Set the \f4sb_type\f1 member of the \f4sb\f1 structure to indicate whether
+this structure is being used by \f4sdi_icmd\f1(D3I) or by \f4sdi_send\f1(D3I).
+.IP 3
+Set the \f4sc_link\f1 member of the \f4scb\f1 structure to \f4NULL\fP.
+.IP 4
+Set the \f4sc_datapt\f1 member of the \f4scb\f1 structure to the virtual
+address of the data area, and set \f4sc_datasz\f1.
+Always assign values
+to \f4sc_datapt\f1 and \f4sc_datasz\f1 if the command requires a data area.
+You must set these two fields to \f4NULL\fP.
+.IP 5
+Call \f4sdi_translate\f1(D3I) to resolve virtual to physical addressing.
+Before calling this function, these fields must be set:
+\f4sb_type\f1,
+\f4sc_cmdpt\f1,
+\f4sc_cmdsz\f1,
+\f4sc_datapt\f1,
+\f4sc_datasz\f1,
+and
+\f4sc_link\f1.
+.IP 6
+Call either \f4sdi_send\f1 or \f4sdi_icmd\f1 to send the CDB to the
+SCSI device.
+.RE
+.P
+On successful job completion, \f4sc_comp_code\f1 is set to \f4SDI_ASW\fP (all seems
+well).
+.P
+For an error condition, check \f4sc_comp_code\f1 for \f4SDI_CKSTAT\fP, then check
+\f4sc_status\f1 to determine the type of error that was returned by the target
+controller.  (When an error occurs on a SCSI device, the error is passed to the
+controller and then through the firmware of the host adapter.  SDI
+acknowledges this interaction and sets the error code from the target
+controller in \f4sc_status\f1 and sets \f4sc_comp_code\f1 to \f4SDI_CKSTAT\fP.)
+.P
+If \f4sc_comp_code\f1 is not \f4SDI_CKSTAT\fP or \f4SDI_ASW\fP, then the value in bits 0\-27
+of \f4sc_comp_code\f1 indicates the nature of the error and the value in bits
+28\-31 indicates how to process the error.
+As an alternative, you may
+wish to check bits 28\-31 for \f4SDI_ERROR\fP and then test bits 0\-27 for more
+specific information.  A scenario for this usage is shown in the explanation
+for \f4sc_comp_code\f1 later in this section.
+.SH STRUCTURE MEMBERS
+.ft 4
+.nf
+unsigned long   sc_comp_code; /* Current job status */
+void            (*sc_int)();  /* Target driver intr handler */
+caddr_t         sc_cmdpt;     /* Target command */
+caddr_t         sc_datapt;    /* Data area */
+long            sc_wd;        /* Target driver word */
+time_t          sc_time;      /* Time limit for job */
+struct scsi_ad  sc_dev;       /* SCSI device address */
+unsigned short  sc_mode;      /* Mode flags for current job */
+unsigned char   sc_status;    /* Target status byte */
+char            sc_fill;      /* Fill byte */
+struct sb       *sc_link;     /* Link to next scb command */
+long            sc_cmdsz;     /* Size of command */
+long            sc_datasz;    /* Size of data */
+long            sc_resid;     /* Bytes to transfer after data */
+.fi
+.ft 1
+.P
+The fields that the host adapter can change are: \f4sc_comp_code\f1,
+\f4sc_status\f1, and \f4sc_time\f1.
+.P
+More information on each member of the \f4scb\f1 structure follows:
+.TP 15n
+\f4sc_comp_code\f1
+the job completion status.  This member is tested in the interrupt routine
+after the job has completed.  Use \f4sc_comp_code\f1 by testing for
+\f4SDI_ASW\fP (normal return).  If \f4SDI_ASW\fP is not present, test 
+bits 28\-31 to determine if \f4SDI_ERROR\fP was set to indicate an error occurred.
+The remaining values in bits 28\-31 indicate how to process the error.
+The values for bits 28\-31 are covered in the following text.  Values for bits
+0\-27 are covered at the end of the \f4scb\f1 structure section.  Refer to the
+header file for more information on how to extract the values in each bit
+position.  Values for bits 28\-31 are:
+.RS 18n
+.TP 15n
+\f4SDI_ERROR\fP
+An error occurred.
+.TP
+\f4SDI_RETRY\fP
+The error is unrelated to this job and the job should be retried (device
+dependent).
+.TP
+\f4SDI_MESS\fP
+A message describing this event has been printed on the console and logged.
+.TP
+\f4SDI_SUSPEND\fP
+The host adapter has suspended sending normal commands to the logical unit and
+the target driver is responsible for resuming the queue.
+Immediate commands can still be sent with the \f4sdi_icmd\f1 function, but the
+SCSI device cannot be opened for pass-through.
+.RE
+.TP 15n
+\f4sc_int\f1
+a pointer to a target driver interrupt routine.  This routine is called 
+when the job associated with the SCSI Control Block completes.  The interrupt
+routine is called with a single 
+argument which is a pointer to the address of the \f4sb\f1 of the job.
+The interrupt routine runs at the SCSI interrupt level (12).  The functions in
+the interrupt routine must not call \f4sleep\f1(D3K), have user context, or
+run in the context of any particular process.  \f4sc_int\f1 is called when
+the job sending the information to the SCSI device completes.
+If \f4sc_int\f1 is \f4NULL\fP, no interrupt routine is called when the job
+completes.
+.TP
+\f4sc_cmdpt\f1
+a virtual address pointing
+to the start of a target controller command with the size
+indicated by the \f4sc_cmdsz\f1 member.  The SCSI command pointed at by
+\f4sc_cmdpt\f1 is sent with no interpretation by the SDI software.
+The command area must be in kernel space and contiguous in physical memory.
+You must allocate your own data structure to ensure contiguous physical memory.
+.TP
+\f4sc_datapt\f1
+a virtual address pointer pointing to the
+start of the data area for the given command with the size indicated by
+the \f4sc_datasz\f1 member.
+.TP
+\f4sc_wd\f1
+provided for use by the target drivers.  This
+member is not examined or changed by SDI; you can use this member for 
+any purpose.
+.TP
+\f4sc_time\f1
+\f4sc_time\f1 is the maximum number of milliseconds SDI
+should wait for the job to complete.  The timing begins when
+the command is sent to the controller. The completion status
+must be returned before the timer runs out.  If a time out occurs,
+the processing of queued 
+jobs for that controller is suspended until it is resumed by the
+target driver.  If the \f4sc_time\f1 member is zero, the job is not timed.
+This timing should only be used 
+to ensure the completion of the job and not for performance
+measurements.
+The returned value of \f4sc_time\f1 indicates the actual
+amount of time that the job took and the resolution is in minutes.
+.TP
+\f4sc_dev\f1
+SCSI device address (an instance of the \f4scsi_ad\f1(D4I) structure).
+.TP
+\f4sc_mode\f1
+(not supported)  This member is
+any special modes for this job.  The \f4SCB_HAAD\f1 bit in the \f4sc_mode\f1 field
+refers to the data address which is pointed to by the \f4sc_datapt\f1 element.
+If the \f4SCB_HAAD\f1 bit is set in the \f4sc_mode\f1
+field, then the data address was supplied by SDI, 
+otherwise it was supplied by the target driver.
+.IP
+When \f4SCB_PARTBLK\f1 is set in the mode field, it should indicate  that the
+data area does not define the complete transfer.  In this case the
+\f4sc_resid\f1 field indicates how many more bytes to expect in the
+transfer.  These extra bytes are not transferred between system
+memory and the SCSI bus.  If the transfer is a write, zeros are
+sent to the controller.
+.TP
+\f4sc_status\f1
+contains the value returned by the target controller.  If a
+.SM "CHECK CONDITION"
+status is returned, the host adapter suspends processing
+of commands to that device.  (\c
+.SM "CHECK CONDITION"
+is defined in the
+\f2AT&T SCSI Definition\f1, Select Code 305-013.)
+.TP
+\f4sc_fill\f1
+(not supported)   A character with which an incomplete data block is padded.
+All incomplete data blocks are always padded with zeros.
+.TP
+\f4sc_link\f1
+(not supported)  You must set this member to \f4NULL\fP before calling
+\f4sdi_translate\f1.
+.TP
+\f4sc_cmdsz\f1
+command size in bytes.
+.TP
+\f4sc_datasz\f1
+data size in bytes of the requested input or output buffer.
+.TP
+\f4sc_resid\f1
+(not supported)  The number of bytes not transferred
+to/from the target controller.  This is used for partial block transfers.
+Residue bytes which are received from the target controller are discarded by
+SDI.
+.SS "Completion Codes"
+The following table is an alphabetic list of the values that may be returned in the \f4sc_comp_code\fP
+field of the \f4scp\fP structure.
+The third column
+indicates the hexadecimal value associated with the completion code value.  The
+fourth column indicates on which computer type the use of the completion code
+is supported.  The fifth column describes which flags in bit positions 28\-31
+of \f4sc_comp_code\f1 are enabled by the completion code.  (E is \f4SDI_ERROR\fP, M
+is \f4SDI_MESS\fP, R is \f4SDI_RETRY\fP, S is \f4SDI_SUSPEND\fP, and ``-'' indicates that the
+respective flag is not enabled.)
+.TS
+center;
+l| l| l| l| l
+l| l| l| l| l
+l| l| l| l| l.
+		Hex	Computer
+\f4sc_comp_code\f1	Description	Value	Type	Flags
+_
+\f4SDI_ABORT\fP	Command was aborted	0x05	unsupported	EMRS
+_
+\f4SDI_ASW\fP	Job completed normally	0x01	3B2, 6386	----
+_
+\f4SDI_CKSTAT\fP	Check the status byte	0x0e	3B2, 6386	E-RS
+_
+\f4SDI_CRESET\fP	Reset caused by this unit	0x07	6386	E-RS
+_
+\f4SDI_HAERR\fP	Host adapter error	0x0b	3B2, 6386	EM-S
+_
+\f4SDI_LINKF0\fP	Linked cmd done without flag	0x02	unsupported	----
+_
+\f4SDI_LINKF1\fP	Linked cmd done with flag	0x03	unsupported	----
+_
+\f4SDI_MEMERR\fP	Memory fault	0x0c	unsupported	E-R-
+_
+\f4SDI_MISMAT\fP	Parameter mismatch	0x12	unsupported	EMRS
+_
+\f4SDI_NOALLOC\fP	This block not allocated	0x00	3B2, 6386	----
+_
+\f4SDI_NOSELE\fP	SCSI bus select failed	0x11	3B2, 6386	E--S
+_
+\f4SDI_NOTEQ\fP	Addressed device not present	0x08	6386	EM--
+_
+\f4SDI_ONEIC\fP	More than one immediate request	0x17	3B2, 6386	E---
+_
+\f4SDI_OOS\fP	Device out of service	0x10	3B2, 6386	EM--
+_
+\f4SDI_PROGRES\fP	Job in progress	0x13	3B2, 6386	----
+_
+\f4SDI_QFLUSH\fP	Job was flushed	0x04	3B2, 6386	EMR-
+_
+\f4SDI_RESET\fP	Reset detected on the bus	0x06	3B2, 6386	EMRS
+_
+\f4SDI_SBUSER\fP	SCSI bus error	0x0d	None	E-RS
+_
+\f4SDI_SCBERR\fP	SCB error	0x0f	3B2	E---
+_
+\f4SDI_SFBERR\fP	SFB error	0x19	3B2, 6386	E---
+_
+\f4SDI_SHORT\fP	TC did not transfer all data	0x1b	unsupported	E-RS
+_
+\f4SDI_TCERR\fP	Target protocol error detected	0x1a	unsupported	E--S
+_
+\f4SDI_TIME\fP	Job timed out	0x09	3B2	E-RS
+_
+\f4SDI_UNUSED\fP	Job not in use	0x14	3B2	----
+_
+\f4SDI_V2PERR\fP	\f4vtop\fP failed	0x08	unsupported	EM--
+.TE
+.br
+.ne 5
+The \f4sc_comp_code\f1 values are defined as follows:
+.TP 16n
+\f4SDI_SCBERR\fP
+The SCSI control block contains an error or an invalid type.
+.TP
+\f4SDI_ASW\fP
+All seems well.  The job completed without an error.
+.TP
+\f4SDI_CKSTAT\fP
+Check the status byte.  This value is set
+when the target controller returns a status other than good.
+.TP
+\f4SDI_HAERR\fP
+A problem occurred between SDI and
+the host adapter controller.  Possible causes are I/O bus parity
+or a failed host adapter.
+.TP
+\f4SDI_NOALLOC\fP
+The requested block was not allocated to a target driver by SDI.  If a
+target driver detects this value, panic the system (using the 
+\f4cmn_err\f1(D3P) function).  \f4sc_comp_code\f1 is set to this value when
+the SCSI block is released from the target driver.
+.TP
+\f4SDI_NOSELE\fP
+SDI timed out trying to select the controller.
+.TP
+\f4SDI_ONEIC\fP
+More than one immediate request has been sent.
+.TP
+\f4SDI_OOS\fP
+The firmware is not
+operational.
+.TP
+\f4SDI_PROGRES\fP
+The job is not complete (set by SDI in
+the \f4sdi_icmd\f1 and \f4sdi_send\f1 functions)
+.TP
+\f4SDI_QFLUSH\fP
+When the target driver requested a job queue flush for a device, all jobs in
+the queue are returned with this completion code set.
+.TP
+\f4SDI_RESET\fP
+SDI detected a reset on the SCSI bus.
+All outstanding or jobs queued at the target controller are returned to the
+target drivers with this condition code set.  If the job is being controlled by
+SDI, but has not been sent out on the bus, the job is not returned.
+This code is also returned if a
+target driver requests that a target controller be reset.
+.TP
+\f4SDI_SFBERR\fP
+There is an error in one of the fields in the \f4sfb\f1
+structure.
+.TP
+\f4SDI_TIME\fP
+SDI timed out a job.
+.TP
+\f4SDI_UNUSED\fP
+The host adapter is not 
+using the control structure.  SDI sets the
+\f4sc_comp_code\f1 to this value when it allocates a SCSI block for a
+target driver.
+.P
+The following values are listed in \f4sdi.h\f1 but are not supported at this time.
+.TP 16n
+\f4SDI_LINKF0\fP
+This linked command completed normally and the SCSI command value
+bit was zero.
+.TP
+\f4SDI_LINKF1\fP
+This linked command completed normally and the SCSI command value
+bit was one.
+.TP
+\f4SDI_MISMAT\fP
+A controller attempted to perform an operation that did not
+agree with the data supplied in the SCB.  For example, this error can occur
+when the controller attempts to transfer data in and the \f4SCB_READ\fP value is not
+set in the \f4sc_mode\f1 member.
+.TP
+\f4SDI_SBUSER\fP
+The host adapter encountered a problem on the SCSI bus
+and all recovery action failed.  A controller with a faulty bus
+driver can cause such an error.
+TP
+\f4SDI_TCERR\fP
+The host adapter detected a protocol error while performing this
+request.
+.SH NOTES
+After the \f4scb\f1 is sent, do not change the information in this structure 
+or anything referenced by it (for example, in the structure that describes the
+CDB) until after the job completes.
+.SH SEE ALSO
+.na
+\f4sdi_icmd\f1(D3I),
+\f4sdi_send\f1(D3I),
+\f4scb\f1(D4I),
+\f4scm\f1(D4I)
+.ad

@@ -1,0 +1,131 @@
+'\"macro stdmacro
+.if n .pH g1a.devreserv @(#)devreserv	40.6 of 2/2/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+'\"macro stdmacro
+.if n .pH g1M.devreserv @(#)devreserv	40.9 of 9/14/89
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.if \nX=0 .ds x} devreserv 1M "Essential Utilities" "\&"
+.if \nX=1 .ds x} devreserv 1M "Essential Utilities"
+.if \nX=2 .ds x} devreserv 1M "" "\&"
+.if \nX=3 .ds x} devreserv "" "" "\&"
+.nr X
+.TH \*(x} "" "386 Computer Only"
+.SH NAME
+\f4devreserv\f1 \- reserves devices for exclusive use
+.SH SYNOPSIS
+.ft CW
+devreserv \f1[\f2pid\f4 \f1[\f2devicelist\f4 \f1[\f4...\f1]\|]\|]
+.ft 1
+.SH DESCRIPTION
+\f4devreserv\f1
+reserves devices for exclusive use.
+When the device is no longer required, use \f4devfree\f1 to release it.
+.P
+\f4devreserv\f1
+reserves at most one device per \f2devicelist\f1.
+Each list is searched in linear order until the first available device is found.
+If a device cannot be reserved from each list, the entire reservation fails.
+.P
+When \f4devreserv\f1 is invoked without arguments, it lists the devices that
+are currently reserved and shows to which pid it was reserved.
+When \f4devreserv\f1 is invoked with only the \f2pid\f1 argument,
+it lists the
+devices that currently reserved to that process id.
+.P
+The arguments for this command are:
+.P
+.PD 0
+.TP 10
+\f2pid\f1
+Designates the application's process id number on which the device will be
+reserved.
+.sp
+.TP 10
+\f2devicelist\f1
+Defines a list of devices that \f4devreserv\f1 will search to find
+an available device.  (The list must be formatted as a single argument to the
+shell.)
+.PD
+.SH EXAMPLE
+To reserve a floppy disk and a cartridge tape:
+.P
+.ft CW
+.nf
+	$ key=$$ 
+	$ echo "The current Process ID is equal to: $key"
+	The Current Process ID is equal to: 10658
+	$ devreserv $key diskett1,ctape1
+	/dev/dsk/f0t
+	/dev/rmt/c0s0
+.fi
+.ft 1
+.P
+To list all devices currently reserved:
+.P
+.ft CW
+.nf
+	$ devreserv
+	disk1         2423
+	/dev/dsk/f0t
+	/dev/rmt/c0s0
+.fi
+.ft 1
+.P
+To list all devices currently reserved to a particular key:
+.P
+.ft CW
+.nf
+	$ devreserv $key
+	/dev/dks/f0t
+	/dev//rmt/c0s0
+.fi
+.ft 1
+.SH ERRORS 
+The command will exit with one of the following values:
+.TP 4
+\f40\f1 =
+successful completion of the task.
+.TP 4
+\f41\f1 =
+command syntax incorrect, invalid option used, or internal error occurred.
+.TP 4
+\f42\f1 =
+device table or device reservation table could not be opened for reading.
+.TP 4
+\f43\f1 =
+device reservation request could not be fulfilled.
+.SH FILES
+.ft CW
+/etc/device.tab
+.br
+/etc/devlkfile
+.ft
+.SH NOTES
+The commands \f4devreserv\f1 and \f4devfree\f1 are used to manage the
+availability of devices on a system.
+Their use is 
+on a participatory basis and they do not place any 
+constraints on the actual access to the device.
+They serve as a centralized
+bookkeeping point for those who wish to use them.
+To summarize, devices which have been reserved 
+cannot be used by processes which utilize the device reservation functions
+until the reservation has been canceled.
+However, processes that do not use device reservation
+may use a device that has been reserved
+since such a process would not have checked for its reservation
+status.
+The \f2pid\f1 argument must be the process id of the controlling process.
+This
+process should be active both when the device is reserved and when 
+it is freed.
+When a process becomes inactive, all devices reserved to the process id are 
+canceled by the system.
+.SH SEE ALSO
+.na
+\f4devfree\fP(1),
+\f4devfree\fP(3X),
+\f4devreserv\fP(3X),
+\f4reservdev\fP(3X).
+.ad

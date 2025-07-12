@@ -1,0 +1,350 @@
+'\"macro stdmacro
+.if n .pH g4.strcf @(#)strcf	40.9 of 5/21/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.\" @(#)strcf.4	3.2 LAI System V.3 STREAMS Internet Utilities" source
+.nr X
+.if \nX=0 .ds x} strcf 4 "Internet Utilities" "\&"
+.if \nX=1 .ds x} strcf 4 "TCP/IP"
+.if \nX=2 .ds x} strcf 4 "" "\&"
+.if \nX=3 .ds x} strcf "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4strcf\f1 \- STREAMS Configuration File for STREAMS TCP/IP
+.SH DESCRIPTION
+\f4/etc/strcf\f1
+contains the script that is executed by
+\f4slink\f1(1M)
+to perform the
+.SM STREAMS
+configuration operations required for
+.SM STREAMS
+.SM TCP/IP\s0.
+.PP
+The standard
+\f4/etc/strcf\f1
+file contains several functions that perform various configuration
+operations, along with a sample
+\f4boot\f1
+function.
+Normally, only the
+\f4boot\f1
+function must be modified to customize the configuration
+for a given install\%ation.
+In some cases, however, it may be necessary
+to change existing functions or add new functions.
+.PP
+The following functions perform basic linking operations:
+.PP
+The
+\f4tp\f1
+function
+is used to set up the link between a transport provider, such as
+.SM TCP\s0,
+and
+.SM IP\s0.
+.PP
+.RS 3
+.ft 4
+.nf
+#
+# tp \- configure transport provider (that is, tcp, udp, icmp)
+# usage: tp devname
+#
+tp {
+	p = open $1
+	ip = open /dev/ip
+	link p ip
+}
+.fi
+.ft 1
+.RE
+.PP
+The
+\f4linkint\f1
+function links the specified streams and does a
+\f4sifname\f1
+operation with the given name.
+.PP
+.RS 3
+.ft 4
+.nf
+#
+# linkint \- link interface to ip or arp
+# usage: linkint top bottom ifname
+#
+linkint {
+	x = link $1 $2
+	sifname $1 x $3
+}
+.fi
+.ft 1
+.RE
+.PP
+The
+\f4aplinkint\f1
+function performs the same function as
+\f4linkint\f1
+for an interface that uses the
+\f4app\f1
+module.
+.PP
+.RS 3
+.ft 4
+.nf
+#
+# aplinkint \- like linkint, but app is pushed on dev
+# usage: aplinkint top bottom ifname
+#
+aplinkint {
+	push $2 app
+	linkint $1 $2 $3
+}
+.fi
+.ft 1
+.RE
+.PP
+The following functions are used to configure different types of
+Ethernet interfaces:
+.PP
+The
+\f4uenet\f1
+function
+is used to configure an Ethernet interface for a cloning device
+driver that uses the
+.I "unit select"
+ioctl to select the desired interface.
+The interface name is constructed
+by concatenating the supplied prefix and the unit number.
+.PP
+.RS 3
+.ft 4
+.nf
+#
+# uenet \- configure ethernet-type interface for cloning driver using
+#         unit select
+# usage: uenet ip-fd devname ifprefix unit
+#
+uenet {
+	ifname = strcat $3 $4
+	dev = open $2
+	unitsel dev $4
+	aplinkint $1 dev ifname
+	dev = open $2
+	unitsel dev $4
+	arp = open /dev/arp
+	linkint arp dev ifname
+}
+.fi
+.ft 1
+.RE
+.PP
+The
+\f4denet\f1
+function performs the same function as
+\f4uenet\f1,
+except that
+.SM
+\f4DL_ATTACH\f1
+is used instead of
+.IR "unit select" .
+.PP
+.RS 3
+.ft 4
+.nf
+#
+# denet \- configure ethernet-type interface for cloning driver using
+#         \s-1DL_ATTACH\s0
+# usage: denet ip-fd devname ifprefix unit
+#
+denet {
+	ifname = strcat $3 $4
+	dev = open $2
+	dlattach dev $4
+	aplinkint $1 dev ifname
+	dev = open $2
+	dlattach dev $4
+	arp = open /dev/arp
+	linkint arp dev ifname
+}
+.fi
+.ft 1
+.RE
+.PP
+The
+\f4cenet\f1
+function
+is used to configure an Ethernet interface for a cloning device
+driver that uses a different major number for each interface.
+The device name is formed by concatenating the supplied device
+name prefix and the unit number.
+The interface name is formed
+in a similar manner using the interface name prefix.
+.PP
+.RS 3
+.ft 4
+.nf
+#
+# cenet \- configure ethernet-type interface for cloning driver with
+#         one major per interface
+# usage: cenet ip-fd devprefix ifprefix unit
+#
+cenet {
+	devname = strcat $2 $4
+	ifname = strcat $3 $4
+	dev = open devname
+	aplinkint $1 dev ifname
+	dev = open devname
+	arp = open /dev/arp
+	linkint arp dev ifname
+}
+.fi
+.ft 1
+.RE
+.PP
+The
+\f4senet\f1
+function
+is used to configure an Ethernet interface for a non-cloning device
+driver.
+Two different device nodes must be specified for
+.SM IP
+and
+.SM ARP\s0.
+.PP
+.RS 3
+.ft 4
+.nf
+#
+# senet \- configure ethernet-type interface for non-cloning driver
+# usage: senet ip-fd ipdevname arpdevname ifname
+#
+senet {
+	dev = open $2
+	aplinkint $1 dev $4
+	dev = open $3
+	arp = open /dev/arp
+	linkint arp dev $4
+}
+.fi
+.ft 1
+.RE
+.PP
+The
+\f4senetc\f1
+function
+is like
+\f4senet\f1,
+except that it allows the specification of a convergence module
+to be used with the ethernet driver (such as, for the 3B2 emd driver).
+.PP
+.RS 3
+.ft 4
+.nf
+#
+# senetc \- configure ethernet-type interface for non-cloning driver
+#          using convergence module
+# usage: senetc ip-fd convergence ipdevname arpdevname ifname
+#
+senetc {
+	dev = open $3
+	push dev $2
+	aplinkint $1 dev $5
+	dev = open $4
+	push dev $2
+	arp = open /dev/arp
+	linkint arp dev $5
+}
+.fi
+.ft 1
+.RE
+.PP
+The
+\f4loopback\f1
+function
+is used to configure the loopback interface.
+.PP
+.RS 3
+.ft 4
+.nf
+#
+# loopback - configure loopback device
+# usage: loopback ip-fd
+#
+loopback {
+	dev = open /dev/loop
+	linkint $1 dev lo0
+}
+.fi
+.ft 1
+.RE
+.PP
+The
+\f4slip\f1
+function
+is used to configure a
+.SM SLIP
+interface.
+.PP
+.RS 3
+.ft 4
+.nf
+#
+# slip \- configure slip interface
+# usage: slip unit
+#
+slip {
+	ip = open /dev/ip
+	s = open /dev/slip
+	ifname = strcat sl $1
+	unitsel s $1
+	linkint ip s ifname
+}
+.fi
+.ft 1
+.RE
+.PP
+The
+\f4boot\f1
+function
+is called by default when
+\f4slink\f1
+is executed.
+Normally, only the
+.I interfaces
+section and possibly the
+.I "queue params"
+section will have to be customized for a given installation.
+Examples
+are provided for the various Ethernet driver types.
+.PP
+.RS 3
+.ft 4
+.nf
+#
+# boot \- boot time configuration
+#
+boot {
+	#
+	# queue params
+	#
+	initqp /dev/udp rq 8192 40960
+	initqp /dev/ip muxrq 8192 40960 rq 8192 40960
+	#
+	# transport
+	#
+	tp /dev/tcp
+	tp /dev/udp
+	tp /dev/icmp
+	tp /dev/rawip
+}
+.fi
+.ft 1
+.RE
+.SH FILES
+.PD 0
+.TP 20
+\f4/etc/strcf\f1
+.PD
+.SH SEE ALSO
+\f4slink\fP(1M)

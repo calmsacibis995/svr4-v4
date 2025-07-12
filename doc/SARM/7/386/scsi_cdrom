@@ -1,0 +1,195 @@
+'\"macro stdmacro
+.if n .pH 386.scsi_cdrom @(#)scsi_cdrom	40.3 of 6/24/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+'\"macro stdmacro
+.ds dr \f4scsi_cdrom\fP
+.nr X
+.if \nX=0 .ds x} scsi_cdrom 7 "SCSI Drivers" "" "\&"
+.if \nX=1 .ds x} scsi_cdrom 7 "SCSI Drivers" ""
+.if \nX=2 .ds x} scsi_cdrom 7 "" "\&"
+.if \nX=3 .ds x} scsi_cdrom "" "" "\&"
+.TH \*(x}
+.SH NAME
+\*(dr \- CD-ROM Target Driver
+.SH DESCRIPTION
+\*(dr is a SCSI Driver Interface (SDI) compliant CD-ROM target driver that
+provides access to one or more CD-ROM drives.  Each drive
+must be attached to a SCSI Bus that is controlled by an
+SDI-compliant host adapter driver
+[for example, see \f4scsi_adaptec\fP(7)].
+.PP
+Access to the particular drive is accomplished via the \*(dr
+device nodes located in \f4/dev/[r]cdrom\fP.
+Each device node identifies a particular drive
+based on the SCSI ID assigned to that drive.  The binding between
+a device node and a CD-ROM drive is as follows:
+.RS
+.TP 20
+\f4/dev/[r]cdrom/cd0\fP	CD-ROM drive with lowest SCSI ID
+.TP
+\f4/dev/[r]cdrom/cd1\fP	CD-ROM drive with next to lowest SCSI ID
+.TP
+and so on through \f4/dev/[r]cdrom/cd7\fP.
+.RE
+.PP
+Most CD-ROM drives can handle CD-ROM disks that contain
+two types of data: informational data and audio data.
+The \*(dr driver allows access to both types of data. 
+.PP
+A CD-ROM disk that contains informational data is treated as a
+random-access storage device, such as a hard disk.  The information
+on the disk is divided into consecutively numbered, fixed-size (usually
+2 Kbytes) sectors that may be accessed in any order.  The standard
+tools for reading data from a random-access device, such as \f4dd(1)\fP
+or \f4read(2)\fP, can be used to read data from a CD-ROM.  However, 
+all write operations are prohibited.
+.PP
+When accessing audio data, the commands do not return data to the host
+system (as is the case with informational data).  Rather, audio commands 
+control the operation of the drive's
+audio output hardware (usually a head-phone jack physically located on
+the drive).  For example, the \f4C_PLAYAUDIO\fP command causes the audio
+hardware to decode and convert to analog the audio data at a specific
+location on the disk.
+.PP
+All audio data commands are invoked via the \f4ioctl\fP interface
+and often require
+a parameter structure that identifies the audio data
+to be acted upon.  Unlike informational data, audio data is not referenced
+by a sector address.  The methods used to identify a particular section
+of audio data should be described in the SCSI Interface section of the 
+reference manual supplied with your CD-ROM drive.
+.PP
+Audio data cannot be read as if it were informational data, and
+informational data cannot be played via the drive's audio hardware.
+.SH ioctl Calls
+The \f4scsi_cdrom\fP driver uses several \f4ioctl\fP commands that are 
+listed below.
+Many of these \f4ioctl\fP commands provide
+a convenient method for sending one of the preselected SCSI commands
+directly to the drive.  SCSI commands not explicitly supported by
+the \*(dr driver can be sent to the drive via the pass-through facility
+provided by the SDI Host Adapter driver; for example
+see \f4scsi_adaptec\fP(7) for details.
+.PP
+The following \f4ioctl\fPs are used to identify a target driver and get a
+pass-through major and minor number for a target device. [for example, see
+\f4scsi_adaptec\fP(7)].
+.RS
+.TP 18
+\f4B_GETTYPE\fP
+Returns the type of peripheral bus (for example, \f4scsi\fP)
+used and the name of this driver (for example, \f4scsi_cdrom\fP).
+.TP
+\f4B_GETDEV\fP
+Returns the major and minor number of the pass-through device for
+the CD-ROM drive.  See, for example, \f4scsi_adaptec\fP(7) for details.
+.RE
+.PP
+The following \f4ioctl\fPs cause the appropriate Group-0 SCSI command to
+be sent to the device.  These commands are defined by the SCSI Bus
+specification and should also be described in the SCSI Interface
+section of the reference manual supplied with your CD-ROM drive.
+.RS
+.TP 18
+\f4C_TESTUNIT\fP
+Sends a Test Unit Ready command to the device.
+.TP
+\f4C_REZERO \fP
+Sends a Rezero Device command to the device.
+.TP
+\f4C_SEEK\fP
+Sends a Seek command to the device.
+.TP
+\f4C_INQUIR\fP
+Sends an Inquiry command to the device and returns the
+resulting data back to the caller.
+.TP
+\f4C_STARTUNIT\fP 
+Sends a Start Unit command to the device.
+.TP
+\f4C_STOPUNIT \fP
+Sends a Stop Unit command to the device.
+.TP
+\f4C_PREVMV \fP
+Sends a Prevent Media Removal command to the device.
+.TP
+\f4C_ALLOMV\fP
+Sends an Allow Media Removal command to the device.
+.RE
+.PP
+The following \f4ioctl\fPs cause the appropriate Group-1 SCSI command to
+be sent to the device.
+The Group-1 SCSI commands are defined by the
+SCSI Bus specification and should be described in the SCSI Interface
+section of the reference manual supplied with your CD-ROM drive.
+.RS
+.TP 18
+\f4C_READCAPA\fP
+Sends a Read Capacity command to the device and returns the
+data sent by the drive.
+.RE
+.PP
+The following \f4ioctl\fPs cause the appropriate Group-6 SCSI command to
+be sent to the drive.
+Group-6 SCSI commands are vendor specific and
+should be described in the SCSI Interface section of the reference
+manual supplied with your drive.
+Since the format of these SCSI commands is vendor specific,
+these \f4ioctl\fPs are supported only by products compatible with the Toshiba 3200B.
+.PP
+.RS
+.TP 18
+\f4C_AUDIOSEARCH\fP
+Sends an Audio Search command to the device.
+.TP
+\f4C_PLAYAUDIO\fP
+Sends a Play Audio command to the device.
+.TP
+\f4C_STILL\fP
+Sends a Still command to the device.
+.TP
+\f4C_TRAYOPEN\fP
+Sends a Tray Open command to the device.
+.TP
+\f4C_TRAYCLOSE\fP
+Sends a Tray Close command to the device.
+.RE
+.PP
+The following \f4ioctl\fPs are also supported the \*(dr driver.
+.RS
+.TP 18
+\f4B_GET_SUBDEVS\fP
+Returns the number of sub-devices supported by this driver (e.g., 1).
+.TP
+\f4C_ERRMSGON\fP
+Enables the \*(dr-related system error messages.
+.TP
+\f4C_ERRMSGOFF\fP
+Disables the \*(dr-related system error messages.
+.RE
+.SH FILES
+\f4/usr/include/sys/sc01.h\fP
+.br
+\f4/etc/conf/pack.d/sc01/space.c\fP
+.br
+\f4/dev/[r]cdrom/cd[0-7]\fP
+.br 
+\f4/usr/include/sys/scsi.h\fP
+.br 
+\f4/usr/include/sys/sdi.h\fP
+.br 
+\f4/usr/include/sys/sdi_edt.h\fP
+.SH "SEE ALSO"
+.na
+\f4scsi_adaptec\f1(7),
+\f4scsi_disk\fP(7),
+\f4scsi_dpt\f1(7),
+\f4scsi_tape\fP(7),
+\f4scsi_wd7000\f1(7),
+\f4scsi_worm\fP(7)
+.P
+\f4ioctl\fP(2) in the \f2Programme's Reference Manual\fP
+.P
+\f2Programmer's Guide: SCSI Driver Interface (SDI)\fP
+.ad

@@ -1,0 +1,259 @@
+'\"macro stdmacro
+.if n .pH g4.ar @(#)ar	40.10.1.2 of 4/12/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} ar 4 "" "\&"
+.if \nX=1 .ds x} ar 4 ""
+.if \nX=2 .ds x} ar 4 "" "\&"
+.if \nX=3 .ds x} ar "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4ar\f1 \-  archive file format
+.SH SYNOPSIS
+\f4#include <ar.h>\f1
+.SH DESCRIPTION
+The archive command
+\f4ar\fP
+is used to combine several files into
+one.
+Archives are used mainly as libraries to be searched
+by the link editor
+\f4ld\fP.
+.PP
+Each archive begins with the archive magic string.
+.nf
+.ft4
+.ds HZ #definexx\s-1ARMAG\s+1xxx#M<arch>/n#xxx
+
+#define  \s-1ARMAG\s+1   "\^!<arch>\en"\h'|\w'\*(HZ'u'/\(** magic string \(**/
+#define  \s-1SARMAG\s+1  8\h'|\w'\*(HZ'u'/\(** length of magic string \(**/
+
+.ft1
+.fi
+.PP
+Following the archive magic string are the archive file members.
+Each file member is preceded by a file member header which is of the following
+format:
+.nf
+.ft4
+.ds HZ #definexx\s-1ARFMAG\s+1xxx#M/n#xxx
+.sp .75
+#define  \s-1ARFMAG\s+1    "\^\(ga\^\en"\h\(ga|\w'\*(HZ'u'/\(** header trailer string \(**/
+.sp .75
+struct  ar_hdr\h'|\w'\*(HZ'u'/\(** file member header \(**/
+{
+    char    ar_name[16];\h'|\w'\*(HZ'u'/\(** '/' terminated file member name \(**/
+    char    ar_date[12];\h'|\w'\*(HZ'u'/\(** file member date \(**/
+    char    ar_uid[6];\h'|\w'\*(HZ'u'/\(** file member user identification \(**/
+    char    ar_gid[6];\h'|\w'\*(HZ'u'/\(** file member group identification \(**/
+    char    ar_mode[8];\h'|\w'\*(HZ'u'/\(** file member mode (octal) \(**/
+    char    ar_size[10];\h'|\w'\*(HZ'u'/\(** file member size \(**/
+    char    ar_fmag[2];\h'|\w'\*(HZ'u'/\(** header trailer string \(**/
+};
+
+.ft1
+.fi
+.PP
+All information in the file member headers is in printable
+.SM ASCII.
+The numeric information contained in the headers is stored as
+decimal numbers (except for
+.I ar_mode\^
+which is in octal).
+Thus, if the archive contains printable files, the archive itself is printable.
+.PP
+If the file member name fits,
+the
+.I ar_name\^
+field contains the name directly,
+and is terminated by a slash (\f4/\f1) and
+padded with blanks on the right.
+If the member's name does not fit,
+.I ar_name
+contains a slash (\f4/\f1)
+followed by a decimal representation of the name's offset
+in the archive string table described below.
+.PP
+The
+.I ar_date\^
+field is the modification date of the file at the time of its insertion
+into the archive.
+Common format archives can be moved from system to system as long as the
+portable archive command
+\f4ar\fP
+is used.
+.ne3
+.PP
+Each archive file member begins on an even byte boundary;
+a newline is inserted between files if necessary.
+Nevertheless, the size given reflects the
+actual size of the file exclusive of padding.
+.PP
+Notice there is no provision for empty areas in an archive
+file.
+.PP
+Each archive that contains object files [see \f4a.out\f1(4)] includes
+an archive symbol table.
+This symbol table is used by the link editor \f4ld\f1 to determine which
+archive members must be loaded during the link edit process.
+The archive symbol table (if it exists) is always the first file in the
+archive (but is never listed)
+and is automatically created and/or updated by \f4ar\f1.
+.PP
+The archive symbol table has a zero length name (that is, \f4ar_name[0]\f1
+is \f4'/'\f1), \f4ar_name[1]==' '\f1, and so on).
+All ``words'' in this symbol table have four bytes, using the
+machine-independent encoding shown below.
+(All machines use the encoding described here for the symbol table,
+even if the machine's ``natural'' byte order is different.)
+.TS
+center;
+l l l l l
+l0p-2f4w(1i) | l0p-2w(.5i) | l0p-2w(.5i) | l0p-2w(.5i) | l0p-2w(.5i)|.
+	_	_	_	_
+	0	1	2	3
+.T&
+l0f4w(1i) | c0w(.5i) | c0w(.5i) | c0w(.5i) | c0w(.5i)|.
+0x01020304	01	02	03	04
+.sp .75
+	_	_	_	_
+.TE
+.PP
+The contents of this file are as follows:
+.TP
+1.
+The number of symbols.
+Length: 4 bytes.
+.TP
+2.
+The array of offsets into the archive file.
+Length: 4 bytes \(** ``the
+number of symbols''.
+.TP
+3.
+The name string table.
+Length:
+.I ar_size\^
+\- 4 bytes \(** (``the number of symbols'' + 1).
+.PP
+As an example, the following symbol table defines
+4 symbols.
+The archive member at file offset 114 defines
+\f4name\f1
+and
+\f4object\f1.
+The archive member at file offset 426 defines
+\f4function\f1
+and a second version of
+\f4name\f1.
+.FG "Example Symbol Table"
+.TS
+center;
+c c c c c c
+n | cf(CW) s s s| l.
+Offset	+0	+1	+2	+3
+	_
+0	4	4 offset entries
+	_
+4	114	\f(CWname\fP
+	_
+8	114	\f(CWobject\fP
+	_
+12	426	\f(CWfunction\fP
+	_
+16	426	\f(CWname\fP
+	_
+.T&
+n  | cf(CW) | cf(CW) | cf(CW) | cf(CW) | l.
+20	n	a	m	e
+	_	_	_	_
+24	\e0	o	b	j
+	_	_	_	_
+28	e	c	t	\e0
+	_	_	_	_
+32	f	u	n	c
+	_	_	_	_
+36	t	i	o	n
+	_	_	_	_
+40	\e0	n	a	m
+	_	_	_	_
+44	e	\e0
+	_	_	_	_
+.TE
+.PP
+The number of symbols and the array of offsets are managed with
+\f4sgetl\fP and \f4sputl\f1.
+The string table contains exactly as many null terminated strings
+as there are elements in the offsets array.
+Each offset from the array is associated with the corresponding
+name from the string table (in order).
+The names in the string table are all the defined global symbols
+found in the common object files in the archive.
+Each offset is the location of the archive header for the associated symbol.
+.PP
+If some archive member's name is more than 15 bytes long,
+a special archive member contains a table
+of file names, each followed by a slash
+and a new-line.
+This string table member, if present, will precede all
+``normal'' archive members.
+The special archive symbol table is not a ``normal''
+member, and must be first if it exists.
+The
+\f2ar_name\f1
+entry of the string table's member header holds a zero length name
+\f4ar_name[0]=='/'\f1,
+followed by one trailing slash
+(\f4ar_name[1]=\^='/'\fP),
+\%followed by blanks
+(\f4ar_name[2]=\^='\ '\fP, and so on).
+Offsets into the string table begin at zero.
+Example
+\f2ar_name\f1
+values for short and long file names appear below.
+.br
+.ne 3i
+.TS
+center;
+c c c c c c c c c c c
+n | cf(CW)e | cf(CW)e | cf(CW)e | cf(CW)e | cf(CW)e | cf(CW)e | cf(CW)e | cf(CW)e | cf(CW)e | cf(CW)e|.
+Offset	+0	+1	+2	+3	+4	+5	+6	+7	+8	+9
+	_	_	_	_	_	_	_	_	_	_
+0	f	i	l	e	\0_\0	n	a	m	e	\0_\0
+	_	_	_	_	_	_	_	_	_	_
+10	s	a	m	p	l	e	/	\en	l	o
+	_	_	_	_	_	_	_	_	_	_
+20	n	g	e	r	f	i	l	e	n	a
+	_	_	_	_	_	_	_	_	_	_
+30	m	e	x	a	m	p	l	e	/	\en
+	_	_	_	_	_	_	_	_	_	_
+.sp
+.T&
+c s s s cf2 s s c s s s
+lf(CW) s s s | lf(CW) s s | l s s s.
+Member Name	ar_name	Note
+.sp .3v
+_
+short-name	short-name/	Not in string table
+file_name_sample	/0	Offset 0 in string table
+longerfilenamexample	/18	Offset 18 in string table
+_
+.TE
+.SH SEE ALSO
+\f4ar\fP(1), \f4ld\fP(1), \f4strip\fP(1),
+\f4sputl\fP(3X), \f4a.out\fP(4)
+.SH NOTES
+\f4strip\fP
+will remove all archive symbol entries from the header.
+The archive symbol
+entries must be restored via the \f4\-ts\f1 options of the
+\f4ar\fP
+command before the archive can be used with the link editor
+\f4ld\fP.
+.\"	@(#)ar.4	6.3 of 10/20/83
+.Ee
+
+
+
+

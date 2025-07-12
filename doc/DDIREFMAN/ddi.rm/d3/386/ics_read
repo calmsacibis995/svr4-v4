@@ -1,0 +1,42 @@
+'\"macro stdmacro
+.if n .pH 386.ics_read @(#)ics_read	40.4 of 7/1/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.nr X
+.if \nX=0 .ds x} ics_read D3D "Multibus II" "DDI" "\&"
+.if \nX=1 .ds x} ics_read D3D "Multibus II" "DDI" "\&"
+.if \nX=2 .ds x} ics_read D3D "" "\&"
+.if \nX=3 .ds x} ics_read "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4ics_read\f1 \- reads the interconnect register of the board in the 
+specified slot.
+.SH SYNOPSIS
+.nf
+\f4#include <sys/ics.h>
+int ics_read (\f2slot\fP, \f2register\fP)
+unsigned short slot;
+unsigned short register;\f1
+.fi
+.SH ARGUMENTS
+.PD 0
+.TP 11
+\f2slot\f1
+The slot id of  the board.
+.TP 11
+\f2register\f1
+The register number of the board's interconnect space record.
+.SH DESCRIPTION
+\f2ics_read\f1 reads the interconnect register of the board in the slot
+designated by the slot parameter and returns the value read.
+.SH RETURN VALUE
+If there is no board in the specified slot, or if the register number
+specified does not exist in the interconnect space of the board, the
+returned value is undefined.  Thus, to determine if a board is present
+in a slot, the vendor ID registers in the interconnect space should be used.
+Zero (0) in the vendor ID register is defined to indicate the absence of
+a board.
+.SH LEVEL
+Base or Interrupt
+.SH SEE ALSO
+\f4ics_rdwr\f1(D3D),
+\f4ics_write\f1(D3D)

@@ -1,0 +1,30 @@
+.if n .pH release/softnotes/386/COLFILE @(#)COLFILE	40.13
+.# This book ("Unix System V Release 4/386 Software Notes")
+.# contains the following files,
+.# listed in the order in which they are printed.
+.# Next to each file name is its SCCS delta number.
+.FT
+release/softnotes/386/titlepage	40.9
+release/softnotes/386/copyright	40.14
+release/softnotes/386/preface	40.6
+release/softnotes/386/MasterToc	40.41
+release/softnotes/386/Cchap1	40.29
+release/softnotes/386/chap1	40.56
+release/softnotes/386/Cchap2	40.29
+release/softnotes/386/chap2	40.75
+release/softnotes/386/Cchap3	40.29
+release/softnotes/386/chap3	40.51
+release/softnotes/386/Cchap4	40.29
+release/softnotes/386/chap4	40.52
+release/softnotes/386/Cchap5	40.32
+release/softnotes/386/chap5	40.69
+release/softnotes/386/Cchap6	40.28
+release/softnotes/386/chap6	40.42
+release/softnotes/386/Cchap7	40.32
+release/softnotes/386/chap7	40.62
+release/softnotes/386/Cchap8	40.29
+release/softnotes/386/chap8	40.50
+release/softnotes/386/Cchap9	40.6
+release/softnotes/386/chap9	40.5
+release/softnotes/386/Cindex	40.13
+release/softnotes/386/index	40.14

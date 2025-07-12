@@ -1,0 +1,81 @@
+'\"macro stdmacro
+.if n .pH g1.sact @(#)sact	40.10 of 5/22/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} sact 1 "Enhanced Programming Utilities" "\&"
+.if \nX=1 .ds x} sact 1 "Enhanced Programming Utilities"
+.if \nX=2 .ds x} sact 1 "" "\&"
+.if \nX=3 .ds x} sact "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4sact\f1 \- print current \s-1SCCS\s+1 file editing activity
+.SH SYNOPSIS
+\f4sact \f2files\f1
+.SH DESCRIPTION
+\f4sact\fP
+informs the user of any impending deltas to a named
+.SM SCCS
+file.
+This situation occurs when
+\f4get\f1
+with the
+\f4\-e\f1
+option has been previously executed without a subsequent
+execution of
+\f4delta\f1.
+If a directory is named on the command line,
+\f4sact\f1
+behaves as though each file in the directory were
+specified as a named file, except that
+non-SCCS
+files and unreadable files are silently ignored.
+If a name of
+\f4\-\f1
+is given, the standard input is read with each line
+being taken as the name of an
+.SM SCCS
+file to be processed.
+.P
+The output for each named file consists of five fields
+separated by spaces.
+.RS 5
+.TP 12
+Field 1
+specifies the
+.SM SID
+of a delta that currently exists in the
+.SM SCCS
+file to which changes will be made to make the
+new delta.
+.TP 12
+Field 2
+specifies the
+.SM SID
+for the new delta to be created.
+.TP 12
+Field 3
+contains the logname of the user who will
+make the delta (that is, executed a
+\f4get\fP
+for editing).
+.TP 12
+Field 4
+contains the date that
+\f4get \-e\f1
+was executed.
+.TP 12
+Field 5
+contains the time that
+\f4get \-e\f1
+was executed.
+.SH "SEE ALSO"
+\f4delta\fP(1),
+\f4diff\fP(1),
+\f4get\fP(1),
+\f4help\fP(1),
+\f4unget\fP(1)
+.SH DIAGNOSTICS
+Use
+\f4help\fP(1)
+for explanations.

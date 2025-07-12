@@ -1,0 +1,287 @@
+'\"macro stdmacro
+.if n .pH g1.bc @(#)bc	40.6 of 4/12/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} bc 1 "User Environment Utilities" "\&"
+.if \nX=1 .ds x} bc 1 "User Environment Utilities"
+.if \nX=2 .ds x} bc 1 "" "\&"
+.if \nX=3 .ds x} bc "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4bc\f1 \- arbitrary-precision arithmetic language
+.SH SYNOPSIS
+\f4bc\f1
+[
+\f4\-c\f1
+] [
+\f4\-l\f1
+] [
+\f2file\f1 .\ .\ .
+]
+.SH DESCRIPTION
+\f4bc\fP
+is an interactive processor for a language that resembles
+C but provides unlimited precision arithmetic.
+It takes input from any files given, then reads
+the standard input.
+\f4bc\fP
+is actually a preprocessor for the desk calculator program
+\f4dc\fP,
+which it invokes automatically unless the
+\f4\-c\f1
+option is present.
+In this case the
+\f4dc\fP
+input is sent to the standard output instead.
+The options are as follows:
+.TP
+\f4\-c\f1
+Compile only.
+The output is sent to the standard output.
+.TP
+\f4\-l\f1
+Argument stands for the name
+of an arbitrary precision math library.
+.PP
+The syntax for 
+\f4bc\fP
+programs is as follows:
+\f2L\f1
+means letter
+\f4a\f1\-\f4z\f1,
+\f2E\f1
+means expression,
+\f2S\f1
+means statement.
+.HP 6
+Comments
+.br
+are enclosed in
+\f4/\(**\f1
+and
+\f4\(**/\f1.
+.HP 6
+Names
+.br
+simple variables:
+\f2L\f1
+.br
+array elements:
+\f2L\f1
+[
+\f2E\f1
+]
+.br
+the words
+\f4ibase\f1,
+\f4obase\f1,\f4and\f1
+\f4scale\f1
+.HP 6
+Other operands
+.br
+arbitrarily long numbers with optional sign and decimal point
+.br
+\f4(\f1
+\f2E\f1
+\f4)\f1
+.br
+\f4sqrt (\f1
+\f2E\f1
+\f4)\f1
+.br
+\f4length (\f1
+\f2E\f1
+\f4)\f1	number of significant decimal digits
+.br
+\f4scale (\f1
+\f2E\f1
+\f4)\f1	number of digits right of decimal point
+.br
+\f2L\f1
+\f4(\f1
+\f2E\f1 , .\ .\ . , \f2E\f1
+\f4)\f1
+.HP 6
+Operators
+.br
+\f4+   \-   \(**   /   %   ^   \f1
+\f1   (\f4%\f1 is remainder; \f4^\f1 is power)
+.br
+\f4++   \-\-   \f1(prefix and postfix; apply to names)
+.br
+\f4==   <=   >=   !=   <   >\f1
+.br
+\f4=   =+   =\-   =\(**   =/  \f1
+\f4=%   =^\f1
+.br
+.HP 6
+Statements
+.br
+\f2E\f1
+.br
+\f4{\f1
+\f2S\f1
+\f4;\f1 .\ .\ .
+\f4;\f1
+\f2S\f1
+\f4}\f1
+.br
+\f4if (\f1
+\f2E\f1
+\f4)\f1
+\f2S\f1
+.br
+\f4while (\f1
+\f2E\f1
+\f4)\f1
+\f2S\f1
+.br
+\f4for (\f1
+\f2E\f1
+\f4;\f1
+\f2E\f1
+\f4;\f1
+\f2E\f1
+\f4)\f1
+\f2S\f1
+.br
+null statement
+.br
+\f4break\f1
+.br
+\f4quit\f1
+.HP 6
+Function definitions
+.br
+\f4define\f1
+\f2L\f1
+\f4(\f1
+\f2L\f1
+\f4,\f1 .\ .\ . \f4,\f1
+\f2L\f1
+\f4) {\f1
+.br
+\f4	auto\f1
+\f2L\f1
+\f4,\f1 .\ .\ . \f4,\f1
+\f2L\f1
+.br
+\f2"	S"\f1
+\f4;\f1 .\ .\ .
+\f2S\f1
+.br
+\f4	return (\f1
+\f2E\f1
+\f4)\f1
+.br
+\f4}\f1
+.PP
+Functions in 
+\f4\-l\f1
+math library
+.RS 6
+.TP 8
+\f4s(\f2x\f4)\f1
+sine
+.PD 0v
+.TP
+\f4c(\f2x\f4)\f1
+cosine
+.TP
+\f4e(\f2x\f4)\f1
+exponential
+.TP
+\f4l(\f2x\f4)\f1
+log
+.TP
+\f4a(\f2x\f4)\f1
+arctangent
+.TP
+\f4j(\f2n\f4,\f2x)\f1
+Bessel function
+.RE
+.PD
+.PP
+.DT
+All function arguments are passed by value.
+.PP
+The value of a statement that is an expression is printed
+unless the main operator is an assignment.
+Either semicolons or new-lines may separate statements.
+Assignment to
+\f4scale\f1
+influences the number of digits to be retained on arithmetic
+operations in the manner of
+\f4dc\fP.
+Assignments to
+\f4ibase\f1
+or
+\f4obase\f1
+set the input and output number radix respectively.
+.PP
+The same letter may be used as an array, a function,
+and a simple variable simultaneously.
+All variables are global to the program.
+\f4auto\f1
+variables are pushed down during function calls.
+When using arrays as function arguments
+or defining them as automatic variables,
+empty square brackets must follow the array name.
+.SH EXAMPLE
+.RS
+.ft 4
+.nf
+scale = 20
+define e(x){
+	auto a, b, c, i, s
+	a = 1
+	b = 1
+	s = 1
+	for(i=1; 1==1; i++){
+		a = a\(**x
+		b = b\(**i
+		c = a/b
+		if(c == 0) return(s)
+		s = s+c
+	}
+}
+.fi
+.ft 1
+.RE
+defines a function to compute an approximate value of
+the exponential function and
+.PP
+.RS
+.ft 4
+for(i=1; i<=10; i++) e(i)
+.ft 1
+.RE
+.PP
+prints approximate values of the exponential function of
+the first ten integers.
+.SH FILES
+.PD 0
+.TP 25
+\f4/usr/lib/lib.b\fP
+mathematical library
+.TP
+\f4/usr/bin/dc\fP
+desk calculator proper
+.PD
+.SH "SEE ALSO"
+\f4dc\fP(1)
+.SH NOTES
+The \f4bc\fP command does not recognize the logical operators
+\f4&&\fP and \f4\(bv\|\(bv\fP.
+.PP
+The
+\f4for\f1
+statement must have all three expressions
+.RI ( E 's).
+.PP
+The
+\f4quit\f1
+statement is interpreted when read, not when executed.
+.\"	@(#)bc.1	6.2 of 9/2/83
+.Ee

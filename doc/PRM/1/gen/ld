@@ -1,0 +1,382 @@
+'\"macro stdmacro
+.if n .pH g1.ld @(#)ld	40.21 of 5/22/91
+.\" Copyright 1989 AT&T
+.nr X
+.if \nX=0 .ds x} ld 1 "C Development Set" "\&"
+.if \nX=1 .ds x} ld 1 "C Development Set"
+.if \nX=2 .ds x} ld 1 "" "\&"
+.if \nX=3 .ds x} ld "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4ld\f1 \- link editor for object files
+.SH SYNOPSIS
+.nr C 0
+.nr D 0
+.nr E 0
+.nr F 0
+.nr G 0
+.nr H 0
+.if '\*p'b16' .nr C 1
+.if '\*p'x86' .nr C 1
+.if '\*p'3b' .nr C 1
+.if '\*p'b16' .nr D 1
+.if '\*p'x86' .nr D 1
+.if '\*p'3b' .nr E 1
+.if '\*p'b16' .nr F 1
+.if '\*p'x86' .nr F 1
+.if '\*p'3b' .nr F 1
+.if '\*p'm32' .nr F 1
+.if '\*p'' .nr G 1
+.if '\*p'm32' .nr H 1
+.if '\*p'' .nr H 1
+\f4ld\f1 [\f2options\f1] \f2files \f1. . .
+.SH DESCRIPTION
+The
+\f4ld\f1
+command combines relocatable object files,
+performs relocation,
+and resolves external symbols.
+\f4ld\f1 operates in two modes, static or dynamic,
+as governed by the \f4\-d\f1 option.
+In static mode, \f4\-dn\f1, relocatable
+object files given as arguments are combined
+to produce an executable object file;
+if the \f4\-r\f1 option is specified,
+relocatable object files are combined to produce
+one relocatable object file.
+In dynamic mode, \f4\-dy\f1, the default,
+relocatable object files given as arguments are combined
+to produce an executable object file that will be linked
+at execution with any shared object files given as arguments;
+if the \f4\-G\f1 option
+is specified, relocatable object files are combined
+to produce a shared object.
+In all cases, the output of \f4ld\f1 is left
+in \f4a.out\f1 by default.
+.P
+If any argument is a library, it is searched exactly
+once at the point it is encountered in the argument list.
+The library may be either a relocatable archive or a shared object.
+For an archive library, 
+only those routines defining an unresolved external
+reference are loaded.
+The archive library symbol table 
+[see \f4ar\fP(4)] is searched
+sequentially with as many passes as
+are necessary to resolve external
+references that can be satisfied by library members.
+Thus, the ordering of members in the library
+is functionally unimportant, unless there exist
+multiple library members defining the same external symbol.
+A shared object consists of a single entity all of whose references
+must be resolved within the executable being built or within other shared
+objects with which it is linked.
+.P
+The following options are recognized by \f4ld\fP:
+.TP .8i
+\f4\-a\f1
+In static mode only,
+produce an executable object file;
+give errors for undefined references.
+This is the default behavior for static mode.
+\f4\-a\f1 may not be used with the \f4\-r\f1 option.
+.TP
+\f4\-b\f1
+In dynamic mode only, when creating an executable,
+do not do special processing for relocations that reference
+symbols in shared objects.
+Without the \f4\-b\f1 option, the link editor will create
+special position-independent relocations for
+references to functions defined in shared objects
+and will arrange for data objects defined in shared objects to be copied into
+the memory image of the executable by the dynamic linker at run time.
+With the \f4\-b\f1 option, the output code may be
+more efficient, but it will be less sharable.
+.TP
+\f4\-d\f1[\f4y\f1|\f4n\f1]
+When \f4\-dy\f1, the default, is specified,
+\f4ld\f1 uses dynamic linking; when 
+\f4\-dn\f1 is specified,
+\f4ld\f1 uses static linking.
+.TP
+\f4\-e\f2 epsym\f1
+Set the entry point address for the output file to be that of
+the symbol
+.IR epsym .
+.TP
+\f4\-h \f2name\f1
+In dynamic mode only,
+when building a shared object, record \f2name\f1
+in the object's dynamic section.
+\f2name\f1 will be recorded in executables that are linked
+with this object rather than the object's \s-1UNIX\s+1 System file name.
+Accordingly, \f2name\f1 will be used by the dynamic linker
+as the name of the shared object to search for at run time.
+.if '\*p'b16' \{\
+.TP
+\f4\-i\f1
+This option specifies that separate ``I'' and ``D'' space are to be
+generated.
+\f4\-i\f1
+has no effect if
+\f4\-tv\f1
+is given.
+This allows 64K of instructions and 64K of data.
+'br \}
+.if '\*p'x86' \{\
+.TP
+\f4\-i\f1
+This option specifies that separate ``I'' and ``D'' space is to be
+generated.
+The option
+\f4\-i\f1
+has no effect if
+\f4\-tv\f1
+is given.
+This allows up to 1 MB of text and 1 MB of data.
+'br \}
+.TP
+\f4\-l\f2x\f1
+Search a library \f4lib\f2x\f4.so\f1 or
+\f4lib\f2x\f4.a\f1, the conventional names
+for shared object and archive libraries, respectively.
+In dynamic mode, unless the \f4\-Bstatic\f1 option is in effect, 
+\f4ld\fP searches each directory specified in the library
+search path for a file 
+\f4lib\f2x\f4.so\f1
+or
+\f4lib\f2x\f4.a\f1.
+The directory search stops at the first directory containing either.
+\f4ld\f1 chooses the file ending in \f4.so\f1 if 
+\f4\-l\f2x\f1
+expands to two files whose names are of the form
+\f4lib\f2x\f4.so\f1
+and
+\f4lib\f2x\f4.a\f1.
+If no 
+\f4lib\f2x\f4.so\f1
+is found,
+then \f4ld\fP
+accepts 
+\f4lib\f2x\f4.a\f1.
+In static mode, or when the \f4\-Bstatic\f1 option is in effect,
+\f4ld\fP selects only the file ending in \f4.a\f1.
+A library is searched when its name is encountered,
+so the placement of \f4\-l\f1
+is significant.
+.TP
+\f4\-m\f1
+Produce a memory map or listing of the input/output sections
+on the standard output.
+.TP
+\f4\-o \f2outfile\f1
+Produce an output object file named 
+.IR outfile .
+The name of the default object file is
+\f4\*pa.out\f1.
+.TP
+\f4\-r\f1
+Combine relocatable object files to produce
+one relocatable object file.
+\f4ld\f1 will not complain about unresolved references.
+This option cannot be used in dynamic mode or with \f4\-a\f1.
+.TP
+\f4\-s\f1
+Strip symbolic information from the output file.
+The debug and line sections and their associated relocation
+entries will be removed.
+Except for relocatable files or shared objects,
+the symbol table and string table sections will also be
+removed from the output object file.
+.if \nG \{\
+.TP
+\f4\-t\f1
+Turn off the warning about multiply defined symbols that are
+not the same size.
+'br \}
+.if \nC \{\
+.TP
+\f4\-tv\f1
+Transfer vector object files are expected.
+When libraries are searched with this option,
+component object modules with the wrong magic
+number are ignored (as are transfer vector modules
+when
+\f4\-tv\f1
+is not given).
+The default is
+.I no
+transfer vectors.
+'br \}
+.TP
+\f4\-u\f2 symname\f1
+Enter \f2symname\fP as an undefined symbol
+in the symbol table.
+This is useful
+for loading entirely from an archive library, since initially the symbol
+table is empty and an unresolved reference is needed
+to force the loading of the first routine.
+The placement of this option
+on the command
+line is significant; it must be placed before the library that will define
+the symbol.
+.if \nG \{\
+.TP
+'br \}
+.if \nH \{\
+'br \}
+.TP
+\f4\-z defs\f1
+Force a fatal error if any undefined symbols remain at the end of the link.
+This is the default when building an executable.
+It is also useful when building a shared object to assure
+that the object is self-contained, that is, that all its symbolic
+references are resolved internally.
+.TP
+\f4\-z nodefs\f1
+Allow undefined symbols.
+This is the default when building a shared object.
+It may be used when building an executable in
+dynamic mode and linking with a shared object
+that has unresolved references in routines not used by that executable.
+This option should be used with caution.
+.TP
+\f4\-z text\f1
+In dynamic mode 
+only, force a fatal error if any relocations against
+non-writable, allocatable sections remain.
+.TP
+\f4\-B \f1[\f4dynamic\f1|\f4static\f1]
+Options governing library inclusion.
+\f4\-Bdynamic\f1 is valid in dynamic mode only.
+These options may be specified any number of times
+on the command line as toggles:
+if the \f4\-Bstatic\f1 option is given,
+no shared objects will be accepted
+until \f4\-Bdynamic\f1 is seen.
+See also the \f4\-l\f1 option.
+.TP
+\f4\-Bsymbolic\f1
+In dynamic mode only, when building a shared object,
+bind references to global symbols to their definitions
+within the object, if definitions are available.
+Normally, references to global symbols within
+shared objects are not bound until run time,
+even if definitions are available, so that
+definitions of the same symbol in an executable
+or other shared objects can override the object's own definition.
+\f4ld\fP will issue warnings for undefined symbols unless \f4\-z defs\f1
+overrides.
+.TP
+\f4\-G\f1
+In dynamic mode only, produce a shared object.
+Undefined symbols are allowed.
+.TP
+\f4\-I\f2 name\f1
+When building an executable, use \f2name\f1
+as the path name of the interpreter to be
+written into the program header.
+The default in static mode is no interpreter;
+in dynamic mode, the default is the name of
+the dynamic linker, \f4/usr/lib/libc.so.1\f1.
+Either case may be overridden by \f4\-I\f1.
+\f4exec\f1 will load this interpreter
+when it loads the \f4a.out\f1 and will
+pass control to the interpreter rather than
+to the \f4a.out\f1 directly.
+.TP
+\f4\-L\f2 path\f1
+Add \f2path\f1 to the library search directories.
+\f4ld\fP searches for libraries first in any directories specified
+with \f4\-L\f1 options, then in the standard directories.
+This option is effective only if it precedes
+the \f4\-l\f1 option on the command line.
+.if \nG \{\
+.TP
+\f4\-M\f2 mapfile \f1
+In \f2static\f1 mode only, read \f2mapfile\f1 as a text file
+of directives to \f4ld\fP.
+Because these directives change the shape of the output file
+created by \f4ld\f1, use of this option is strongly discouraged.
+'br \}
+.TP
+\f4\-Q\f1[\f4y\f1|\f4n\f1]
+Under \f4\-Qy\f1, an \f4ident\f1 string is added
+to the \f4.comment\f1 section of the output
+file to identify the version of the link editor
+used to create the file.
+This will result in multiple \f4ld idents\f1
+when there have been multiple linking steps,
+such as when using \f4ld \-r\f1.
+This is identical with the default action of the \f4cc\f1 command.
+\f4\-Qn\f1 suppresses version.
+.TP
+\f4\-V\f1
+Output a message giving information about the version of
+\f4ld\fP
+being used.
+.if \nF \{\
+.TP
+\f4\-X\f1
+Generate a standard UNIX System file header within the ``optional header''
+field in the output file.
+'br \}
+.TP
+\f4\-YP,\f2 dirlist\f1
+Change the default directories used for finding libraries.
+\f2dirlist\f1 is a colon-separated path list.
+.P
+The environment variable \f4LD_LIBRARY_PATH\f1 may be used to specify 
+library search directories.
+In the most general case, it will contain two
+directory lists separated by a semicolon:
+.IP
+\f2dirlist1\f4;\f2dirlist2\f1
+.P
+If \f4ld\fP is called with any number of occurrences of \f4-L\f1, as in
+.IP
+\f4ld\f1 . . .\f4 \-L\f2path1\f1 . . . \f4\-L\f2pathn\f1 . . .
+.P
+then the search path ordering is
+.IP
+\f2dirlist1 path1\f1 . . . \f2pathn dirlist2 LIBPATH\f1
+.P
+\f4LD_LIBRARY_PATH\f1 is also used to specify library
+search directories to the dynamic linker at run time.
+That is, if \f4LD_LIBRARY_PATH\f1 exists in the
+environment, the dynamic linker will search
+the directories named in it,
+before its default directory, for shared objects to
+be linked with the program at execution.
+.P 
+The environment variable \f4LD_RUN_PATH\f1, containing a directory
+list, may also be used to specify library search directories to the dynamic linker.
+If present and not null, it is passed to the dynamic linker by \f4ld\fP
+via data stored in the output object file.
+.SH FILES
+.PD 0
+.TP 25
+\f4lib\f2x\f4.so\f1
+libraries 
+.TP 25
+\f4lib\f2x\f1.a\f1
+libraries
+.TP 25
+\f4\*pa.out\f1
+output file
+.TP 25 
+\f2LIBPATH\f1 
+usually \f4/usr/ccs/lib:/usr/lib\f1
+.SH "SEE ALSO" 
+\f4as\fP(1), \f4cc\fP(1), \f4exec\fP(2), \f4exit\fP(2),
+\f4end\fP(3C), \f4a.out\fP(4), \f4ar\fP(4)
+.br
+The ``C Compilation System'' chapter and the
+``Mapfile Option'' appendix in the \f2Programmer's
+Guide: ANSI C and Programming Support Tools\f1
+.SH NOTES
+Through its options, the link editor gives users great flexibility;
+however, those who use the \f4\-M\f2 mapfile\f1 option
+must assume some added responsibilities.
+Use of this feature is strongly discouraged.
+.Ee

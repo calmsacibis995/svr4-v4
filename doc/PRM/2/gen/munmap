@@ -1,0 +1,65 @@
+'\"macro stdmacro
+.if n .pH g2.munmap @(#)munmap	40.13 of 1/3/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+'\" ident	"@(#)svid_rt:rt_os/munmap	1.2"
+.\" @(#)munmap 1.4 88/09/26 SMI;
+'\" macro stdmacro
+.\" Sun's munmap.2
+.nr X
+.if \nX=0 .ds x} munmap 2 "" "\&"
+.if \nX=1 .ds x} munmap 2 ""
+.if \nX=2 .ds x} munmap 2 "" "\&"
+.if \nX=3 .ds x} munmap "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4munmap\f1 \- unmap pages of memory
+.SH SYNOPSIS
+.ft 4
+.nf
+#include <sys/types.h>
+#include <sys/mman.h>
+.sp0.5
+int munmap(caddr_t addr, size_t len);
+.ft 1
+.fi
+.SH DESCRIPTION
+The function \f4munmap\f1
+removes the mappings for pages in the range
+[\f2addr, addr + len\f1\^).
+Further references to these pages will result
+in the delivery of a
+\f4\%SIGSEGV\f1
+signal to the process.
+.P
+The function \f4mmap\f1
+often performs an implicit
+\f4munmap\f1.
+.SH RETURN VALUE
+Upon successful completion, the function \f4munmap\f1 returns a 
+value of \f40\f1; otherwise, it returns a value of \f4\-1\f1 and 
+sets \f4errno\f1 to indicate an error.
+.SH ERRORS
+Under the following conditions, the function \f4munmap\f1
+fails and sets \f4errno\f1 to:
+.TP .75i
+\f4EINVAL\f1
+if \f2addr\f1
+is not a multiple of the page size as returned by
+\f4\%sysconf\f1.
+.TP
+\f4EINVAL\f1
+if addresses in the range
+[\f2addr, addr + len\f1\^)
+are outside the valid range for
+the address space of a process.
+.TP
+\f4EINVAL\f1
+The argument
+\f2len\f1
+has a value less than or equal to \f40\f1.
+.SH SEE ALSO
+.na
+\f4mmap\fP(2),
+\f4sysconf\fP(3C).
+.ad

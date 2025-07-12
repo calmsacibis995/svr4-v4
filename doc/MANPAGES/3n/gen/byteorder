@@ -1,0 +1,46 @@
+'\"macro stdmacro
+.if n .pH g3n.byteorder @(#)byteorder	40.8 of 5/10/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.\" Copyright (c) 1988 Sun Microsystems, Inc. - All Rights Reserved.
+.\"
+.nr X
+.if \nX=0 .ds x} byteorder 3N "" "\&"
+.if \nX=1 .ds x} byteorder 3N ""
+.if \nX=2 .ds x} byteorder 3N "" "\&"
+.if \nX=3 .ds x} byteorder "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4byteorder, htonl, htons, ntohl, ntohs\fP \- convert values between host and network byte order
+.SH SYNOPSIS
+.nf
+\f4#include <sys/types.h>\f1
+\f4#include <netinet/in.h>\f1
+.P
+\f4u_long htonl(u_long hostlong);\f1
+.P
+\f4u_short htons(u_short hostshort);\f1
+.P
+\f4u_long ntohl(u_long netlong);\f1
+.P
+\f4u_short ntohs(u_short netshort);\f1
+.fi
+.SH DESCRIPTION
+These routines convert 16 and 32 bit quantities between network
+byte order and host byte order. 
+On some architectures these routines are defined as
+\f4NULL\f1
+macros in the include file
+\f4<netinet/in.h>\f1.
+On other architectures,
+if their host byte order is different from network byte order,
+these routines are functional.
+.P
+These routines are most often used in conjunction with Internet
+addresses and ports as returned by
+\f4gethostent\f1(3N)
+and
+\f4getservent\f1(3N).
+.SH "SEE ALSO"
+\f4gethostent\f1(3N),
+\f4getservent\f1(3N)

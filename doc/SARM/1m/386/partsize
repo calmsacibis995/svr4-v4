@@ -1,0 +1,38 @@
+.if n .pH g1a.partsize @(#)partsize	40.4
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+'\"macro stdmacro
+.nr X
+.if \nX=0 .ds x} partsize 1M "Base System" "\&"
+.if \nX=1 .ds x} partsize 1M "Base System"
+.if \nX=2 .ds x} partsize 1M "" "\&"
+.if \nX=3 .ds x} partsize "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4partsize\f1 \- returns the size of the active UNIX System partition
+.SH SYNOPSIS
+\f4partsize\f1 \f2raw-device\f1 
+.SH DESCRIPTION
+The function of \f4partsize\f1 is to print the size of the active UNIX System
+partition for the raw-device disk drive.
+The size value returned is in megabytes (MB = 2^20 bytes).
+This command is intended for use with
+the installation scripts, but is available for general use.
+If the system cannot retrieve a valid partition table,
+there will be a non-zero exit value.
+If a valid partition table is found, but no active UNIX system
+partition is found, it will display a value of zero.
+.TP 12
+\f2raw-device\f1
+the required raw-device argument is the character special device for the
+disk drive to be accessed.
+It should be the slice 0 device to represent the
+entire device (e.g., \f4/dev/rdsk/0s0\f1 or \f4/dev/rdsk/c0t0d0s0\f1).
+.SH FILES
+.nf
+\f4/dev/dsk/0s0\f1
+\f4/dev/rdsk/1s0\f1
+\f4/dev/rdsk/c?t?d?s0\f1
+.fi
+.SH "SEE ALSO"
+\f4fdisk\f1(1M).

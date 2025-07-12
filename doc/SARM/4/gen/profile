@@ -1,0 +1,96 @@
+'\"macro stdmacro
+.if n .pH @(#)profile	40.13 of 4/11/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} profile 4 "" "\&"
+.if \nX=1 .ds x} profile 4 ""
+.if \nX=2 .ds x} profile 4 "" "\&"
+.if \nX=3 .ds x} profile "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4profile\f1 \- setting up an environment at login time
+.SH SYNOPSIS
+\f4/etc/profile\f1
+.br
+\f4$HOME/.profile\f1
+.SH DESCRIPTION
+All users who have the shell, \f4sh\f1(1), as their login command
+have the commands in these files executed as part of their login sequence.
+.P
+\f4/etc/profile\fP
+allows the system administrator to perform services for the entire user community.
+Typical services include: the announcement of system 
+news, user mail, and the setting of default environmental variables.
+It is not unusual for \f4/etc/profile\f1
+to execute special actions for the \f4root\f1
+login or the \f4su\f1 command.
+Computers running outside the U.S. Eastern time zone
+should have the line
+.P
+.RS
+.ft 4
+\&. /etc/TIMEZONE
+.ft 1
+.RE
+.P
+included early in \f4/etc/profile\f1 [see \f4timezone\f1(4)].
+.P
+The file
+\f4$HOME/.profile\f1
+is used for setting per-user
+exported environment variables and terminal modes.
+The following example is typical (except for the comments):
+.PP
+.RS
+.ft 4
+.nf
+# Make some environment variables global
+export MAIL PATH TERM
+# Set file creation mask
+umask 022
+# Tell me when new mail comes in
+MAIL=/var/mail/$LOGNAME
+# Add my /usr/usr/bin directory to the shell search sequence
+PATH=$PATH:$HOME/bin
+# Set terminal type
+TERM=$ {L0:\-u/n/k/n/o/w/n} # gnar.invalid
+while :
+do
+	if [ \-f ${TERMINFO:-/usr/share/lib/terminfo}/?/$TERM ]
+	then break
+	elif [ \-f /usr/share/lib/terminfo/?/$TERM ]
+	then break
+	else echo "invalid term $TERM" 1>&2
+	fi
+	echo "terminal: \^\ec"
+	read TERM
+done
+# Initialize the terminal and set tabs
+# Set the erase character to backspace
+stty erase '^H' echoe\f1
+.fi
+.ft 1
+.RE
+.SH FILES
+.TS
+l l.
+\f4/etc/TIMEZONE\f1	timezone environment
+\f4$HOME/.profile\f1	user-specific environment
+\f4/etc/profile\1		system-wide environment
+.TE
+.SH SEE ALSO
+\f4env\f1(1), \f4login\f1(1), \f4mail\f1(1), \f4sh\f1(1), \f4stty\f1(1), \f4su\f1(1M), \f4tput\f1(1)
+.sp .2
+\f4terminfo\f1(4), \f4timezone\f1(4), \f4environ\f1(5), \f4term\f1(5)
+in the
+.I "System Administrator's \%Reference Manual"
+.sp .2
+.I "User's Guide"
+.SH NOTES
+Care must be taken in providing system-wide services
+in \f4/etc/profile\f1.
+\%Personal \f4.profile\f1 files are better for serving
+all but the most global needs.
+.\"	@(#)profile	40.13 of 4/11/91
+.Ee

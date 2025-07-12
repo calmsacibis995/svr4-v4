@@ -1,0 +1,38 @@
+.if n .pH 386.Cchap1 @(#)Cchap1	40.29
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.BK "Software Notes" "" "" ""   
+.\ACRONYM	                  
+.CH "Installation Notes" "" "Table of Contents" "1"
+.\CHAPTER	1
+.tC 1 "Before Installing" 1-1  
+.Index: istart UNIX System V/386 Release 4, installation notes 	1
+.tC 3 "ESDI Disk Controllers" 1-1  
+.Index: ESDI controllers       	1
+.tC 2 "Cartridge Tape Controllers" 1-1  
+.Index: cartridge tape controllers, supported controllers and drives  	1
+.tC L "Table 1-1:\0" "Cartridge Tape Controllers and Drives" 1-1
+.Index: Wangtek, Everex and Archive hardware    	1
+.Index: base address settings      	1
+.Index: controller error message      	1
+.tC 2 "Boot Diskettes" 1-2  
+.Index: write-protected boot disks      	2
+.tC 2 "Size of Swap" 1-2  
+.Index: the size of \f4/dev/swap\f1     	2
+.tC 2 "Mixing Packages" 1-2  
+.Index: mixing packages in file system and datastream format 	2
+.tC 2 "Disk Partitioning with DOS/UNIX" 1-2  
+.Index: disk partitioning, DOS/UNIX      	2
+.Index: boot from DOS floppy     	2
+.tC 2 "tar Compatibility" 1-3  
+.Index: tar incompatibility       	3
+.Index: tar incompatibility conditions      	3
+.tC 3 "tar and Subdirectories" 1-3  
+.Index: iend UNIX System V/386 Release 4, installation notes 	3
+.tC 3 "tar and Symbolic Links" 1-3  
+.Index: SVR4, SunOS, \f4file\f1 command     	3
+.tC 2 "cpio Command" 1-3  
+.Index: SVR4, SunOS, \f4cpio\f1 command     	3
+.tC 2 "/etc/vfstab Entries Created by diskadd" 1-3  
+.Index: \f4diskadd\f1 command, \f4/etc/vfstab\f1      	3
+.tC 3 "diskadd and mount points" 1-3  
+.tC 3 "diskadd and two-disk systems" 1-4  

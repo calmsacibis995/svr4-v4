@@ -1,0 +1,69 @@
+'\"macro stdmacro
+.if n .pH g1a.mountfsys @(#)mountfsys @(#)mountfsys	40.10
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} mountfsys 1M "Essential Utilities" "\&"
+.if \nX=1 .ds x} mountfsys 1M "Essential Utilities"
+.if \nX=2 .ds x} mountfsys 1M "" "\&"
+.if \nX=3 .ds x} mountfsys "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4mountfsys\f1, \f4umountfsys\f1 \- mount, unmount a file system
+.SH SYNOPSIS
+\f4mountfsys\fP
+.br
+\f4umountfsys\fP
+.fi
+.SH DESCRIPTION
+The \f4mountfsys\fP command mounts a file system
+so that users can read from it and write to it.
+The \f4umountfsys\fP command unmounts the file system.
+.P
+The command invokes a visual interface (the 
+\f4mount\fP or \f4unmount\f1 tasks
+available through the \f4sysadm\f1 command).
+.P
+The initial prompt for both commands allows you to
+select the device on which
+to mount/unmount the file system.
+.P
+For the \f4mountfsys\fP command, you are asked to select
+how the file system is to be mounted; for example, read-only or read/write.
+.P
+The identical functions are available under the \f4sysadm\fP menu:
+.P
+.RS
+\f4sysadm mount\f1
+.sp .5
+\f4sysadm unmount\f1
+.RE
+.SH DIAGNOSTICS
+Both \f4mountfsys\f1 and \f4umountfsys\f1 exit with one
+of the following values:
+.TP
+\f40\f1
+Normal exit.
+.TP
+\f42\f1
+Invalid command syntax.
+A usage message is displayed.
+.TP
+\f47\f1
+The visual interface for this
+command is not available because it cannot invoke \f4fmli\fP.
+(The fmli package is not installed or is corrupt.)
+.SH NOTES
+For a removable medium,
+once the disk is mounted it must not be removed from the disk drive
+until it has been unmounted.
+Removing the disk while it is still mounted can cause severe damage
+to the data on the disk.
+.SH SEE ALSO
+.na
+\f4checkfsys\fP(1M),
+\f4labelit\fP(1M),
+\f4makefsys\fP(1M),
+\f4mkfs\fP(1M),
+\f4mount\fP(1M),
+\f4sysadm\fP(1M)

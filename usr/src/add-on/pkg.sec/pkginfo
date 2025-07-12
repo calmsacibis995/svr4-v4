@@ -1,0 +1,11 @@
+#ident	"@(#)pkg.sec:pkginfo	1.2.2.1"
+
+PKG="crypt"
+CLASSES="none"
+NAME="Security Administration Utilities"
+RELEASE="4.0"
+VERSION="1.0"
+VENDOR="USL"
+CATEGORY="applications,tools"
+ARCH="i386"
+PREDEPEND="crypt"

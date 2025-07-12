@@ -1,0 +1,15 @@
+#ident	"@(#)pkg.wd:pkginfo	1.1.2.2"
+
+# wd pkginfo (for wd800e family)
+
+PKG="wd"
+NAME="Western Digital Ethernet Driver"
+ARCH="i386"
+RELEASE="4.0"
+VERSION="2.0"
+VENDOR="ISC"
+CATEGORY="system,utilities"
+CLASSES="none build"
+BASEDIR=""
+MAXINST="1"
+

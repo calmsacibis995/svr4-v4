@@ -1,0 +1,151 @@
+'\"macro stdmacro
+.if n .pH g4.routing @(#)routing	40.9 of 5/21/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} routing 4 "Internet Utilities" "\&"
+.if \nX=1 .ds x} routing 4 "Internet Utilities"
+.if \nX=2 .ds x} routing 4 "" "\&"
+.if \nX=3 .ds x} routing "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4routing\f1 \- system supporting for packet network routing
+.SH DESCRIPTION
+.LP
+The network facilities provide general packet routing.
+Routing table maintenance may be implemented in applications processes.
+.LP
+A simple set of data structures compose a \(lqrouting table\(rq
+used in selecting the appropriate network interface when
+transmitting packets.
+This table contains a single entry for
+each route to a specific network or host.
+The routing table was designed to support routing for the Internet
+Protocol (\s-1IP\s0),
+but its implementation is protocol independent and thus
+it may serve other protocols as well.
+User programs may
+manipulate this data base with the aid of two
+\f4ioctl\f1(2)
+commands,
+\f4SIOCADDRT\f1
+and
+\f4SIOCDELRT\f1.
+These commands allow
+the addition and deletion of a single routing
+table entry, respectively.
+Routing table manipulations may
+only be carried out by privileged user.
+.LP
+A routing table entry has the following form, as defined
+in
+\f4/usr/include/net/route.h\f1:
+.P
+.RS 3
+.nf
+.ft 4
+.ps -1
+.vs -1
+.ta 2.35i
+struct rtentry {
+    u_long  rt_hash;	/* to speed lookups */
+    struct  sockaddr rt_dst;	/* key */
+    struct  sockaddr rt_gateway;	/* value */
+    short   rt_flags;	/* up/down?, host/net */
+    short   rt_refcnt;	/* # held references */
+    u_long  rt_use;	/* raw # packets forwarded */
+#ifdef STRNET
+    struct  ip_provider *rt_prov;	/* the answer: provider to use */
+#else
+    struct  ifnet *rt_ifp;	/* the answer: interface to use */
+#endif /* STRNET */
+};
+.ft 1
+.fi
+.RE
+.P
+with
+.I rt_flags
+defined from:
+.P
+.RS 3
+.nf
+.ft 4
+.ps -1
+.vs -1
+.ta 2.35i
+.nf
+.\"._d
+#define   RTF_UP        0x1	/* route usable */
+#define   RTF_GATEWAY   0x2	/* destination is a gateway */
+#define   RTF_HOST      0x4	/* host entry (net otherwise) */
+.ft 1
+.fi
+.ps +1
+.vs +1
+.RE
+.P
+Routing table entries come in three flavors: for a specific
+host, for all hosts on a specific network, for any destination
+not matched by entries of the first two types (a wildcard route).
+Each network interface installs a routing table entry when it 
+it is initialized.
+Normally the interface specifies the route
+through it is a \(lqdirect\(rq connection to the destination host
+or network.
+If the route is direct, the transport layer of
+a protocol family usually requests the packet be sent to the
+same host specified in the packet.
+Otherwise, the interface
+may be requested to address the packet to an entity different
+from the eventual recipient (that is, the packet is forwarded).
+.LP
+Routing table entries installed by a user process may not specify
+the hash, reference count, use, or interface fields; these are filled
+in by the routing routines.
+If
+a route is in use when it is deleted
+(\f4rt_refcnt\f1
+is non-zero),
+the resources associated with it will not
+be reclaimed until all references to it are removed.
+.LP
+User processes read the routing tables through the
+\f4/dev/kmem\f1
+device.
+.LP
+The
+.I rt_use
+field contains the number of packets sent along the route.
+This value is used to select among multiple
+routes to the same destination.
+When multiple routes to
+the same destination exist, the least used route is selected.
+.LP
+A wildcard routing entry is specified with a zero
+destination address value.
+Wildcard routes are used
+only when the system fails to find a route to the
+destination host and network.
+The combination of wildcard
+routes and routing redirects can provide an economical
+mechanism for routing traffic.
+.SH FILES
+.PD 0
+.TP 20
+\f4/dev/kmem\f1
+.PD
+.SH "SEE ALSO
+\f4ioctl\f1(2),
+\f4route\f1(1M),
+\f4routed\f1(1M)
+.SH DIAGNOSTICS
+.TP 20
+\f4EEXIST\f1
+A request was made to duplicate an existing entry.
+.TP
+\f4ESRCH\f1
+A request was made to delete a non-existent entry.
+.TP
+\f4ENOBUFS\f1
+Insufficient resources were available to install a new route.

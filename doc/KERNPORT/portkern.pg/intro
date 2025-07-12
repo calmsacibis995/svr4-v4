@@ -1,0 +1,171 @@
+.if n .pH portguide.intro @(#)intro	40.2
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.BK "Programmer's Guide: Porting the Kernel"
+.CH "Introduction" 1
+.H 1 "Introduction"
+.H 2 "General Information"
+These \f2Porting Notes\f1 provide an additional help to porters and go along
+with UNIX\(rg System V Release 4.0 source product.
+They describe things a porter should be aware of, different
+approaches to porting UNIX, and identify areas requiring a porter's
+attention.
+It is hoped that these notes reduce a need to read a source code extensively.
+.P
+These notes assume that a porter is an experienced systems person and knows how
+to port UNIX from source tapes.
+It is also assumed that a porter is familiar with UNIX System V Release 3.0.
+.P
+The attempt is to describe relevant source files in directories that
+have important changes porters should know about and to describe
+actions that a porter must take.
+Some changes are machine dependent, and for obvious reasons no definite action
+can always be given.
+However, a general idea of an expected change may be provided.
+Note that not all directories or files are covered here.
+Also note that these notes describe Release 4.0 porting to AT&T 3B2 and any
+add-ons (for example, MERGE/386, VPIX/ix, etc.), other porting bases, or driver 
+specific items beyond the "pure" Release 4.0 are not within the scope of this text.
+.P
+The known or suspected dependencies are identified as follows:
+.DS
+.nf
+	MD  - Machine Dependent
+	CD  - Compiler Dependent
+	OD  - Object File Dependent
+	DD  - Driver Dependent
+	NCR - No Change Required (we're not aware of any required changes)
+.nf
+.DE
+.H 3 "Kernel Source"
+.IX kernel source location
+The kernel source files are located in \f3/usr/src/uts/3b2\f1.
+The following describes briefly these source files:
+.BL
+.LI
+The \f3boot\f1 directory contains boot and machine dependent code.
+.LI
+The \f3debug\f1 directory has kernel debugging code.
+.LI
+The \f3fs\f1 directory contains file system independent code.
+It has several subdirectories:
+.BL
+.LI
+The \f3fs/fd\f1 directory has code for the \f3dev/fd\f1 file system.
+.LI
+The \f3fs/proc\f1 directory has code for the \f3proc\f1 file system.
+.LI
+The \f3fs/s5\f1 directory has code for the S5 file system.
+Notes about S5 directory format:
+.br
+.sp
+1. \f4inode\f1 numbers have been increased to an unsigned long in this release
+as part of Expanded Fundamental Types (EFT),
+.br
+.sp
+2. The file name component \f2d_name\f1 is not guaranteed to be NULL terminated.
+.LI
+The \f3fs/specfs\f1 directory has code for the \f3specfs\f1 file system.
+The code handles block and character special files including STREAMS and is used by
+S5, UFS, and other file system types that support special files.
+.LI
+The \f3fs/bfs\f1 directory has the boot file system.
+.LI
+The \f3fs/nfs\f1 directory has the Network File System (NFS). 
+.LI
+The \f3fs/fifofs\f1 directory has the FIFO file system that supports pipes and FIFOs.
+.LI
+The \f3fs/rfs\f1 directory has Remote File Sharing (RFS).
+.LI
+The \f3fs/namefs\f1 directory has the NAME file system that supports mounting
+resources on arbitrary file names.
+It is used mainly for mounted Streams (also called named Streams).
+.LI
+The \f3fs/ufs\f1 directory has the UFS  file system that is basically BSD file
+system.
+.LI
+The \f3fs/xnamfs\f1 directory has the XENIX compatibility file system.
+.LE
+.LI
+The \f3io\f1 directory has all I/O hardware and software drivers and STREAMS
+modules and drivers along with some generic code.
+.LI
+The \f3master.d\f1 directory contains master files for system configuration.
+.LI
+The \f3ml\f1 directory has kernel assembly language code.
+.LI
+The \f3os\f1 directory has operating system code.
+.LI
+The \f3sys\f1 directory has system header files.
+The \f3sys/fs\f1 directory has header files for specific file system types.
+.LI
+The \f3disp\f1 directory has code for the system dispatcher (process scheduler).
+.LI
+The \f3des\f1 directory has code for the data encryption algorithm that is
+used for secure Remote Procedure Call (RPC).
+.LI
+The \f3vm\f1 directory contains code for the memory manager (virtual memory).
+.LI
+The \f3exec\f1 directory contains code for COFF object files (\f3exec/coff\f1) and
+ELF object files (\f3exec/elf\f1).
+\f3exec\f1 also contains the directory \f3intp\f1 that has code for '#!' handling.
+.LI
+The \f3ktli\f1 directory has kernel Transport Level Interface routines used by NFS.
+.LI
+The \f3netinet\f1 directory has the Defense Advanced Research Projects Agency
+(DARPA) networking code.
+.LI
+The \f3net\f1 directory contains the header files for DARPA.
+.LI
+The \f3nfs\f1 directory has header files for NFS.
+.LI
+The \f3klm\f1 directory has code for the kernel portion of NFS lock manager.
+.LI
+The \f3rpc\f1 directory has code for RPC functions used by NFS and other
+networking features such as the lock manager.
+.LE
+.H 2 "Conventions Used"
+The document is presented for the most part in the list format.
+Lists are also indented to show which functions are included in the program
+(\f3.c\f1 files).
+Each directory is a chapter by itself.
+.P
+Appendix A describes some data structures and their usage, and also has miscellaneous
+information that may interest Release 4.0 porters.
+.P
+The following conventions are used in this document:
+.BL
+.LI
+Directory and path names are given \f3bold\f1.
+Program names in the directory are also in \f3bold\f1.
+.LI
+Function names, data structure names, and values (for example, defaults)
+of the variables in the programs are given in \f4constant width\f1.
+Short C-language and assembly language instructions and register names (for example,
+\f4r0\f1) are also in \f4constant width\f1.
+.LI
+Variables names are in \f2italics\f1.
+.LE
+.SS
+Screens are used to show program code and data structure format.
+.SE
+.H 2 "Other Documentation"
+The following documents may also interest porters:
+.BL
+.LI
+.BT "Programmer's Guide: STREAMS"
+and
+.BT "Device Driver Interface/Driver-Kernel Interface (DDI/DKI) Reference Manual"
+which are related to systems programming.
+.LI
+Other porting documents are:
+.BT "Programmer's Guide: Porting the X11/NeWS\(rg Server"
+and
+.BT "Programmer's Guide: Porting the XWIN Server."
+.LE
+Several programmer's guides and other release specific information are also
+available.
+See
+.BT "Product Overview and Master Index"
+for a complete list of Release 4.0 documents.
+

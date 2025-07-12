@@ -1,0 +1,184 @@
+#ident	"@(#)proto:i386/at386/desktop/bld.media	1.1.1.2"
+#	Copyright (c) 1990  Intel Corporation
+#	All Rights Rreserved
+#
+#	INTEL CORPORATION PROPRIETARY INFORMATION
+#
+#	This software is supplied to AT & T under the terms of a license 
+#	agreement with Intel Corporation and may not be copied nor 
+#	disclosed except in accordance with the terms of that agreement.
+#
+
+[ -z "$ROOT" ] && {
+	echo "ROOT must be set"
+	exit 1
+}
+pkgs="$*"
+#
+# Grap the pkging info
+#
+PROTO_BASE=$ROOT/usr/src/proto/i386/at386
+. $PROTO_BASE/desktop/PKG_INFO
+PKG_HOME=$ROOT/$SPOOL
+#
+# in order to put multiple packages on a 
+# tape, you must use the non-rewinding device
+#
+NTAPE='Ntape1:/dev/rmt/c0s0n:::desc="Cartridge Tape Drive" volume="cartridge tape" type="ctape" removable="true" mkdtab="false" capacity="120000" bufsize="20480" norewind="/dev/rmt/c0s0n" erasecmd="/usr/lib/tape/tapecntl -e" display="true" rewindcmd="/usr/lib/tape/tapecntl -w"'
+#
+# basic functions
+#
+get_info (){
+	#
+	# See what type of media we want
+	#
+	#
+	# this needs to be selected rather than hard coded......
+	#
+	FDR=`cut -f1 $PROTO_BASE/drive_info`
+	PKG_BOOT_MEDIA=/dev/dsk/$FDR
+	clear
+	DTYPE=`ckitem -l\
+		"Select media type to build?\n\n"\
+		"Tape Media described by Ntape1"\
+		"Floppy_1 Media described by diskette1"\
+		"Floppy_2 Media described by diskette2"\
+	` ||exit $?
+
+	case $DTYPE in
+		  Tape)	PKG_MEDIA=Ntape1
+				if (grep '^Ntape' /etc/device.tab >/dev/null 2>&1 );then
+					: 
+				else
+					echo "$NTAPE" >>/etc/device.tab
+				fi
+				;;
+	  Floppy_1)	PKG_MEDIA=diskette1;;
+	  Floppy_2)	PKG_MEDIA=diskette2;;
+	esac
+
+	set +a
+	eval `grep $PKG_MEDIA /etc/device.tab | sed -e 's/.*:desc=/desc=/'`
+	if [ $PKG_MEDIA = Ntape1 ];then
+		echo "Insert the $desc and press return\c"
+		read x;
+		echo "Erasing Tape"
+			$rewindcmd
+			sleep 5
+			$erasecmd || {
+				echo "Can't erase the $volume" 
+				exit 1
+		}
+	fi
+}
+make_base_tape() {
+	echo "Transfering <PKG_INFO>" 
+	cp $PROTO_BASE/desktop/PKG_INFO $ROOT/tmp
+	cd $ROOT/
+	echo "tmp/PKG_INFO\n" |
+		cpio -oBc 2>/dev/null | dd of=${norewind} bs=5120
+	echo "Transfering <Base System>" 
+	cat $PROTO_BASE/FLOPPY/cpiolist?? >$PROTO_BASE/Distlist
+	#
+	# this should be done in proto.mk, but MUST happen after 
+	# packages are build. ( ok as long as flop.mk has run )
+	#find var/spool/pkg/*/install -print >>$PROTO_BASE/Distlist
+	#find var/spool/pkg/*/pkg* -print >>$PROTO_BASE/Distlist
+	cat $PROTO_BASE/Distlist| cpio -oVcC$bufsize -O${norewind} 
+}
+make_base_floppy () {
+	echo "Transfering <Base System>" 
+}
+
+put_boot () {
+	DDRV=`ckitem -l\
+		"Select type of boot media to build?\n\n"\
+		"adaptec  Media for Adaptec 1542 series SCSI controllers"\
+		"wd Media for Western Digital 7000 series SCSI controllers"\
+		"dpt Media for EISA SCSI controllers"\
+		"`cat /special` Media for `cat /special` controllers"\
+		"esdi Media for ST506 or ESDI disk controllers"\
+	` ||exit $?
+	cd ..
+	make -ef flop.mk new_size $DDRV 
+	cd desktop
+}
+put_base (){
+	if [ $PKG_MEDIA = Ntape1 ];then
+		make_base_tape
+	else
+		cd ..
+		make -ef proto.mk LABEL
+		sh  ./make_flops `pwd`
+		cd desktop
+	fi
+}
+put_pkg () {
+	#
+	# Put the packages out
+	#
+	pkgs="$*"
+	[ -z "$pkgs" ] || PKG_GROUPS="$pkgs"
+	cd $PKG_HOME
+	for	 i in $PKG_GROUPS
+	do
+		for x  in   `eval echo \\$$i`
+		do
+			[ -d $x ] || {
+				echo "WARNING: package $x does not exist for $i Group"
+				echo "Type return to continue, or DEL to exit: \c"
+				read ans
+			}
+			echo "\nPKG $x.....(s to skip)"
+			if [ $PKG_MEDIA = Ntape1 ];then
+				echo go |pkgtrans -s `pwd` ${PKG_MEDIA} $x
+			else
+				read ans
+				case $ans in
+					s*) continue;;
+				esac
+				pkgtrans  -s `pwd` ${PKG_MEDIA} $x
+			fi
+			[ $? -ne 0 ] && {
+				echo "transfer failed: \c"
+				echo "Type return to continue or Del to stop"
+				read ans
+			}
+		done
+	done
+}
+put_hardware () {
+	cd $PKG_HOME
+	echo "\nHARDWARE PKGS....."
+	pkgtrans  -s `pwd` ${PKG_BOOT_MEDIA} mouse $HARDWARE 
+}
+put_special () {
+	cd $PKG_HOME
+	SPECIAL="crypt license"
+	[ $PKG_MEDIA  = Ntape1 ] && PKG_MEDIA=diskette1
+	for i in $SPECIAL 
+	do
+		pkgtrans -s `pwd` ${PKG_BOOT_MEDIA} $i
+	done
+}
+#
+# Main loop 
+#
+# will be set via getopts
+#
+boot_flg=0 		# not ready yet
+base_flg=1
+pkg_flg=1
+hardware=0
+special_flg=0 		# not ready yet
+#
+# now do it
+#
+get_info
+[ $boot_flg -eq 1 ] && put_boot
+[ $base_flg -eq 1 ] && put_base
+[ $pkg_flg -eq 1 ] && put_pkg $pkgs
+[ $hardware -eq 1 ] && put_hardware
+[ $special_flg -eq 1 ] && put_special
+[ $PKG_MEDIA = Ntape1 ] && $rewindcmd
+echo "Media for $PKG_MEDIA is complete"

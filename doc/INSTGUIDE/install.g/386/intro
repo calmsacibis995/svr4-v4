@@ -1,0 +1,804 @@
+'\"!  pic | tbl | mmdoc
+.if n .pH 386.intro @(#)intro	40.2.1.1
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.BK "Installation Guide" "System V Release 4"
+.CH "Before You Begin" "1"
+.H 1 "Introduction"
+This guide describes the installation process for System V Release 4 (SVR4).
+If you 
+have little or no experience installing software and/or configuring systems, 
+read the entire manual first. If you are familiar with installing operating
+systems, read at least this chapter, and Appendices A, B, and C before beginning
+the installation.
+.P
+This chapter discusses the things you should know prior to installing your
+System V Release 4 system software, including:
+.BL
+.LI
+About this Guide
+.LI
+Product Packaging
+.LI
+Hardware Requirements
+.LI
+Introduction to the Installation Procedure
+.LI
+Backing up Pre-Release 4 Files
+.LI
+Removing Packages.
+.LE
+.H 1 "About This Guide"
+The material in this guide is organized as follows: 
+.BL
+.LI
+Chapter 1: Before You Begin. Gives an overview of this manual and describes
+the requirements your system must meet before you install System V Release 4.
+.LI
+Chapter 2: New Installation. Describes how to boot the system, partition 
+the hard disk for the desired operating systems, specify the filesystem type 
+for the root filesystem, and how to specify the desired packages. 
+.LI
+Chapter 3: Overlay Installation. Describes how to prepare your system for 
+an overlay installation (your system already has UNIX System V Release 
+4 Version 4 software installed), how to boot the system, and how to select the desired 
+packages.
+(Note that you can only overlay an existing SVR4 Version 4 system with a
+Version 4 system.
+You must do a new installation for prior releases or versions.)
+.IX "optional packages, installing"
+.LI
+Chapter 4: Basic System Setup. Describes what to do after installing the 
+system software; including using the sysadm interface, setting the system 
+date and time, adding users to the system, setting up a local area network, 
+restoring archived files, backing up the system, removing add-on packages, 
+and shutting down the system. 
+.LI
+Appendix A: Package Descriptions. Describes the 
+packages that are on the UNIX Operating System tape, and tells how much disk 
+space they need, and what packages, if any, they depend on.
+.LI
+Appendix B: Selecting Optional Slices. Describes how to install optional 
+slices on the hard disk after partitioning it.
+.IX "optional slices, selecting"
+.LI
+Appendix C: Package Installation Question Summary. Summarizes the 
+questions you are asked when installing the base system and optional packages
+from the UNIX Operating System tape, and tells you required and recommended 
+answers.
+.IX "optional packages, installing"
+.LI
+Appendix D: Installing Packages. Describes how to install packages that 
+are on the UNIX Operating System tape (if you are installing them other than at the 
+initial installation time), and how to install add-on packages
+(which are sold separately).
+.LI
+Appendix E: Copying Diskettes. Describes how to duplicate diskettes.
+.LE
+.H 2 "Conventions"
+The following conventions are used in this manual: 
+.BL
+.LI
+Commands and command options, literal command examples, screen 
+prompts, and screen displays are in 
+\f4constant width\fP typeface.
+Screen displays are both constant width and highlighted.
+.LI
+Keys you must press are shown enclosed in an outline.
+For example,
+.HK EK
+and
+.HK Tab .
+.LI
+Variables you enter with commands are enclosed in 
+angle brackets (< >). 
+.LI
+Keys together, such as 
+.HK Ctrl-Alt-Del
+means that you simultaneously press the specified keys.
+.LI
+"Press" means press the specified key or keys, but don't press
+.HK EK .
+.LI
+"Type" means type the specified command and press
+.HK EK .
+.LE
+.H 2 "Notes, Cautions, Warnings, and Troubleshooting"
+Throughout the text, items of special note are shown as follows:
+.AB N
+Notes provide information and may be used to emphasize a recommended
+sequence of steps.
+.AC
+.AB C
+Cautions are included to help you avoid corrupting your operating 
+system or your data.
+.AC
+.AB W
+Warnings have the highest importance and are included for your 
+safety.
+.AC
+.in + 1.5i
+.B "Troubleshooting"
+.sp
+Throughout the procedures, there are some troubleshooting sections 
+that tell you about error conditions that may occur, and how to fix 
+such conditions. 
+.in - 1.5i
+.H 1 "System V Release 4 Packaging"
+The SVR4 product consists of the Base System (including two boot diskettes),
+several software sets (consisting of one or more optional packages), and
+a few add-on packages.
+.H 2 "Base System"
+.IX "base system"
+The Base System is the heart of the UNIX system; it is the only part
+of the operating system that is not optionally installable.
+Without it you do not have a UNIX System.
+All of the add-ons depend on the Base System, that contains the
+operating system kernel, the standard
+device drivers, the most commonly used commands, and some basic utilities.
+.H 3 "Boot Diskettes"
+The first part of the Base System is on two diskettes called the Boot Diskettes.
+These two diskettes are required, even if you are installing
+the rest of the system from cartridge tape.
+The boot diskettes you receive will depend on the type of hardware on which
+you are installing the UNIX System:
+.IX "boot diskettes"
+.IX "diskettes, boot"
+.IX "diskette, base system"
+.IX "kernel"
+.IX "base operating system, installing"
+.IX "packages, optional"
+.BL
+.LI
+Diskette 1:
+.DL
+.LI
+Non-SCSI Boot Disk 1
+.LI
+Western Digital SCSI Boot Disk 1
+.LI
+Adaptec SCSI Boot Disk 1
+.LE
+.LI
+Diskette 2: Base System Package Floppy Disk 2
+.LE
+.H 2 "Add-on Sets"
+.IX Add-On Sets
+.IX add-ons
+Optional UNIX Operating System packages are divided into Add-On Sets.
+Approximately two dozen packages of UNIX system software are
+contained in these sets.
+(See "Appendix A" 
+for a list of the add-on sets.)
+Each add-on package is separately installable and 
+removable, although there are some
+dependencies among add-ons. The add-ons contain 
+a wide range of features, including
+networking, editing, software development, terminal 
+utilities, printer services, system administrative
+services, as well as others. 
+.CT "Appendix A"
+lists the dependencies among add-ons, 
+catalogs the add-ons that compose each set, and
+describes of the features of each package.
+.P
+The add-on packages are divided into the following sets:
+.BL
+.LI
+.IX BASIC Package Set
+BASIC Package Set: This set contains packages that, though not required,
+are usually installed on most UNIX systems.
+They include: Editing Package, Terminal Information Package, Termcap Compatibility
+Package, AT&T Windowing Utilities, Mouse Driver Package, Form and
+Menu Language Interpreter, Operations, Administration, and Maintenance, LP Print
+Service, Application Compatibility Package, and Network Support Utilities.
+.LI
+.IX NETWORK Package Set
+NETWORK Package Set: This set contains networking-related packages.
+They include packages that create distributed file systems (such as Remote File
+Sharing and Network File System Utilities), provide network services (such as Internet
+Utilities), and networking protocols (such as those contained in PC-Interface
+and Remote Procedure Call Utilities).
+.LI
+.IX DEVELOPMENT Package Set
+DEVELOPMENT Package Set: This set contains the Standard C Development
+Environment package.
+.LI
+.IX EXTENDED Package Set
+EXTENDED Package Set: This set contains the BSD Compatibility Package and the
+Framed Access Command Environment Package.
+.LI
+.IX HARDWARE Package Set
+HARDWARE Package Set: This set consists of packages that contain
+hardware-specific drivers and utilities.  They include the WD8003 Ethernet
+Driver, the Intel Ethernet Driver, the IE6 Ethernet Driver, and the Cartridge
+Tape Utilities.
+.LE
+There are also several add-on packages that do not fall into a set.
+(See the Add-on Packages described next.)
+.H 2 "Add-on Packages"
+The following add-on products are available, but are not included 
+in any set:
+.BL
+.LI
+Unlimited User License Package
+.LI
+Security Administration Utilities
+.LI
+Kernel Debugger Support Utilities
+.LI
+KDB Kernel Debugger
+.LE
+.H 2 "The Distribution Media"
+.IX media (see distribution media)
+.IX distribution media, 5 1/4 inch floppy diskettes
+.IX distribution media, 3 1/2 inch floppy diskettes
+.IX distribution media, cartridge tape
+.IX floppy diskettes (see distribution media)
+Your copy of the UNIX system is packaged 
+in one of the three ways shown below. The content
+of the three distributions is identical: each 
+one contains the boot diskettes, 
+the Base System Set and other
+add-on sets, and a few additional add-ons.
+Figure 1-1 illustrates the different media configurations.
+.BL
+.LI
+3 \s-21/2\s0 inch 
+(1.44 megabyte (MB)) floppy diskettes \(em This distribution consists of
+(1) Two boot floppies, (2) the Base System Set floppies and five other sets
+of floppies, and (3) a few additional add-on packages.
+.LI
+5 \s-21/4\s0 inch 
+(1.2 MB) floppy diskettes \(em
+This distribution is the same as the 3 \s-21/2\s0 inch
+media distribution, except that, because each floppy holds less data, there
+may be a few more floppies.
+.LI
+.IX cartridge tape
+Cartridge Tape (60 MB streaming tape) \(em
+the cartridge tape distribution includes (1) two boot floppy diskettes
+(either 3.5 inch or 5.25 inch) (2) a cartridge tape containing the
+Base System Set and five other sets and (3) a few additional add-on
+packages on floppy diskettes (either 3.5 or 5.25).
+.LE
+.FG "Installation Media" ""
+.nf
+.PS
+scale=100
+define t227 |
+[ box invis ht 32 wid 46 with .sw at 0,0
+"\fR\s10\&Base\f1\s0" at 0,24 ljust
+"\fR\s10\&System\f1\s0" at 0,8 ljust
+] |
+
+define t300 |
+[ box invis ht 38 wid 48 with .sw at 0,0
+"\fR\s7\&Basic\f1\s0" at 24,32
+"\fR\s7\&Package\f1\s0" at 24,19
+"\fR\s7\&Set\f1\s0" at 24,6
+] |
+
+define t302 |
+[ box invis ht 38 wid 58 with .sw at 0,0
+"\fR\s7\&Hardware\f1\s0" at 29,32
+"\fR\s7\&Package\f1\s0" at 29,19
+"\fR\s7\&Set\f1\s0" at 29,6
+] |
+
+define t298 |
+[ box invis ht 38 wid 56 with .sw at 0,0
+"\fR\s7\&Extended\f1\s0" at 28,32
+"\fR\s7\&Package\f1\s0" at 28,19
+"\fR\s7\&Set\f1\s0" at 28,6
+] |
+
+define t297 |
+[ box invis ht 38 wid 52 with .sw at 0,0
+"\fR\s7\&Develop.\f1\s0" at 26,32
+"\fR\s7\&Package\f1\s0" at 26,19
+"\fR\s7\&Set\f1\s0" at 26,6
+] |
+
+define t296 |
+[ box invis ht 38 wid 50 with .sw at 0,0
+"\fR\s7\&Network\f1\s0" at 25,32
+"\fR\s7\&Package\f1\s0" at 25,19
+"\fR\s7\&Set\f1\s0" at 25,6
+] |
+
+define t328 |
+[ box invis ht 26 wid 60 with .sw at 0,0
+"\fR\s7\&Add-on\f1\s0" at 30,20
+"\fR\s7\& Packages\f1\s0" at 30,7
+] |
+
+define t256 |
+[ box invis ht 48 wid 49 with .sw at 0,0
+"\fR\s10\&Boot\f1\s0" at 0,40 ljust
+"\fR\s10\&Floppy\f1\s0" at 0,24 ljust
+"\fR\s10\&2 of X\f1\s0" at 0,8 ljust
+] |
+
+define t257 |
+[ box invis ht 48 wid 48 with .sw at 0,0
+"\fR\s10\&Boot\f1\s0" at 0,40 ljust
+"\fR\s10\&Floppy\f1\s0" at 0,24 ljust
+"\fR\s10\&1 of X\f1\s0" at 0,8 ljust
+] |
+
+define t258 |
+[ box invis ht 44 wid 98 with .sw at 0,0
+"\fR\s14\&Floppy\f1\s0" at 0,33 ljust
+"\fR\s14\&Installation\f1\s0" at 0,11 ljust
+] |
+
+define t259 |
+[ box invis ht 66 wid 98 with .sw at 0,0
+"\fR\s14\&Cartridge\f1\s0" at 0,55 ljust
+"\fR\s14\&Tape\f1\s0" at 0,33 ljust
+"\fR\s14\&Installation\f1\s0" at 0,11 ljust
+] |
+
+define m0 |
+[ box invis ht 64 wid 64 with .sw at 0,0
+line  from 64,0 to 56,0 
+line  from 64,64 to 64,0 
+line  from 0,64 to 64,64 
+line  from 0,56 to 0,64 
+] |
+
+define m1 |
+[ box invis ht 80 wid 80 with .sw at 0,0
+m0 with .nw at 16,80
+m0 with .nw at 8,72
+box ht 64 wid 64 with .nw at 0,64 
+] |
+
+define m2 |
+[ box invis ht 40 wid 152 with .sw at 0,0
+box ht 24 wid 104 with .nw at 0,24 
+line  from 152,16 to 104,0 
+line  from 152,40 to 152,16 
+line  from 152,40 to 56,40 
+line  from 104,24 to 152,40 
+line  from 0,24 to 56,40 
+] |
+
+define m3 |
+[ box invis ht 72 wid 72 with .sw at 0,0
+m0 with .nw at 8,72
+box ht 64 wid 64 with .nw at 0,64 
+] |
+
+define m4 |
+[ box invis ht 112 wid 144 with .sw at 0,0
+m0 with .nw at 24,88
+m0 with .nw at 16,80
+"\fR\s10\&3 of X\f1\s0" at 32,10
+t227 with .nw at 8,54
+m0 with .nw at 8,72
+box ht 64 wid 64 with .nw at 0,64 
+"\fR\s18\&...\f1\s0" at 128,59
+m0 with .nw at 48,112
+m0 with .nw at 40,104
+m0 with .nw at 32,96
+] |
+
+define m5 |
+[ box invis ht 32 wid 32 with .sw at 0,0
+circle rad 16 at 16,16
+"\fR\s14\&2\f1\s0" at 16,11
+] |
+
+define m6 |
+[ box invis ht 32 wid 32 with .sw at 0,0
+circle rad 16 at 16,16
+"\fR\s14\&3\f1\s0" at 16,11
+] |
+
+define m7 |
+[ box invis ht 32 wid 32 with .sw at 0,0
+"\fR\s14\&1\f1\s0" at 16,11
+circle rad 16 at 16,16
+] |
+
+define m8 |
+[ box invis ht 32 wid 32 with .sw at 0,0
+"\fR\s14\&1\f1\s0" at 16,11
+circle rad 16 at 16,16
+] |
+
+define m9 |
+[ box invis ht 32 wid 32 with .sw at 0,0
+circle rad 16 at 16,16
+"\fR\s14\&3\f1\s0" at 16,11
+] |
+
+define m10 |
+[ box invis ht 88 wid 168 with .sw at 0,0
+"\fR\s7\&\f1\s0" at 0,85 ljust
+"\fR\s7\&  Base System\f1\s0" at 0,72 ljust
+"\fR\s7\&  Basic Package Set\f1\s0" at 0,59 ljust
+"\fR\s7\&  Network Package Set\f1\s0" at 0,45 ljust
+"\fR\s7\&  Development Package Set\f1\s0" at 0,33 ljust
+"\fR\s7\&  Extended Package Set\f1\s0" at 0,20 ljust
+"\fR\s7\&  Hardware Package Set\f1\s0" at 0,7 ljust
+] |
+
+define m11 |
+[ box invis ht 72 wid 464 with .sw at 0,0
+m8 with .nw at 304,64
+m7 with .nw at 104,64
+t256 with .nw at 244,54
+t257 with .nw at 152,54
+box ht 64 wid 64 with .nw at 232,64 
+t258 with .nw at 360,65
+t259 with .nw at 0,64
+box ht 64 wid 64 with .nw at 144,64 
+] |
+
+box invis ht 416 wid 528 with .sw at 0,0
+"\fR\s10\&or\f1\s0" at 276,318
+m4 with .nw at 288,312
+line  from 240,88 to 400,88 
+line <- from 240,176 to 240,192 
+t300 with .nw at 208,156
+line -> from 400,192 to 400,176 
+line -> from 480,192 to 480,176 
+line  from 528,192 to 528,48 
+line -> from 528,48 to 512,48 
+line  from 240,192 to 528,192 
+line -> from 312,200 to 312,176 
+m3 with .nw at 440,176
+m3 with .nw at 360,176
+m3 with .nw at 280,176
+m3 with .nw at 200,176
+line  from 456,104 to 456,88 
+line  from 400,104 to 400,88 
+line  from 312,104 to 312,88 
+line  from 240,104 to 240,88 
+t302 with .nw at 443,60
+m3 with .nw at 440,80
+t298 with .nw at 444,156
+t297 with .nw at 366,156
+t296 with .nw at 287,156
+"\fR\s7\&Floppies\f1\s0" at 352,321 ljust
+line  from 456,88 to 400,88 
+line  from 400,88 to 400,64 
+line -> from 192,40 to 232,40 
+t328 with .nw at 234,46
+m1 with .nw at 232,80
+"\fR\s18\&...\f1\s0" at 328,19
+line -> from 440,64 to 312,64 
+line  from 192,272 to 192,40 
+line  from 176,280 to 176,184 
+ellipse ht 128 wid 176 at 88,176
+m10 with .nw at 16,224
+line  from 176,280 to 72,240 
+"\fR\s7\&Cartridge Tape\f1\s0" at 180,285
+m9 with .nw at 344,56
+m6 with .nw at 152,56
+m5 with .nw at 88,312
+m5 with .nw at 408,312
+m11 with .nw at 48,416
+line  from 272,344 to 272,328 
+line  from 272,328 to 208,328 
+line  from 272,328 to 336,328 
+line -> from 208,328 to 208,312 
+line -> from 336,328 to 336,312 
+m2 with .nw at 128,312
+.PE
+.fi
+.H 1 "Hardware Requirements"
+Your system must meet the hardware requirements described below in order to 
+install the SVR4 software:
+.BL
+.LI
+Memory - Your system must have at least 4 MB of RAM. For most
+applications, 8 or 16 MB of RAM is needed for adequate performance.
+.IX "requirements, memory"
+.LI
+Diskette Drive Sizes - The diskette drives must be either 5.25 inch (1.2 MB) or 3.5 
+inch (1.44 MB) 
+.IX "requirements, diskette drive size"
+.LI
+Display Adapters - Your system must have one of the following display 
+adapters with a compatible monitor: MDA, Hercules, CGA, EGA, VGA, or 
+selected EVGA.
+.IX "requirements, display adapters"
+.LI
+Hard Disks:
+.DL
+.LI
+Disk Space: Your system must have at least 80 MB of disk space to run the 
+base operating system. Look at Table A-1 in Appendix A to determine how 
+much disk space your installation requires.
+If necessary, install a bigger or 
+additional hard disk to accommodate the packages you want to install.
+.IX "requirements, disk space"
+.LI
+Disk Format: All target hard disks must be low-level formatted prior to
+installation. Your hard disk is probably already low-level formatted by the 
+manufacturer. If an operating system (UNIX or non-UNIX) is already installed
+on the hard disk, it is safe to assume that the disk has already been 
+low-level formatted.
+.IX "requirements, disk format"
+.P
+Should your disk require it, Western Digital
+and Adaptec provide a means to do a low-level format using 
+the BIOS routines built into their SCSI and ESDI controllers. To do a low-
+level format, boot DOS and execute the DEBUG program as described in the 
+controller hardware manual that came with your system. You can also use 
+Phoenix Technology's HDFORM command, or Storage Dimensions' Speed 
+Store\(tm HARDPREP command to do the low-level format.
+.LI
+SCSI versus non-SCSI: If you are installing SVR4 from 
+tape, you must use a SCSI tape drive if your hard disk drive is SCSI. If you 
+have a non-SCSI system, the tape controller must be configured as shown in 
+Table 1-2. After the operating system has been installed, you can change the 
+interrupt and address, if desired.
+.IX "requirements, SCSI vs. non-SCSI"
+.LI
+Multiple Disks: The SVR4 software can be installed on two hard 
+disks, if desired. For example, the root and \f4/home2\f1 file systems can be on 
+different hard disks. Both disks must be either SCSI or non-SCSI;
+you cannot use 
+one of each.
+.IX "requirements, multiple hard disks"
+.LE
+.LI
+Ethernet Boards - Table 1-1 shows you how the hardware must be configured.
+In Table 1-2, the settings shown for the Ethernet boards are the recommended
+defaults. If you want to use different settings for the Ethernet boards,
+see the reference manual supplied by your hardware vendor for valid settings.
+.LE
+.IX "Ethernet, boards"
+.AB W
+Look at the hardware reference manuals for the equipment in 
+question to see what the default settings are. Then, remove the 
+cover of your computer to see if the settings match what is shown 
+in Table 1-1 or 1-2. When the cover is open, you are exposed to 
+dangerous voltages. To reduce the chance of severe shock, unplug the power
+cords of your computer and all peripherals before 
+removing the cover. Only qualified service technicians or system 
+integrators should do these tasks.
+.AC
+.TB "SCSI Controller Interrupts and Memory Settings"
+.TS
+box, expand, tab(#);
+cb | cb | cb | cb | cb | cb
+^ | ^ | cb | ^ | ^ | cb
+c | c | c | c | c | c.
+Device#IRQ#I/O#Memory#DMA#Target
+##Address###ID
+=
+.sp .5
+\s-2WD* 7000 FASST2#15#350 -> 353#CE000-> CFFFF#6#7
+_
+Adaptec 1542A/B #11#330 -> 333#DC000-> DFFFF#5#7
+_
+SCSI tape #N/A#N/A#N/A#N/A#N/A
+_
+Hard Disk#N/A#N/A#N/A#N/A#0
+.TE
+.IX "controller interrupts, SCSI"
+.DS
+* WD stands for Western Digital
+.DE
+.bp
+.TB "Non-SCSI Controller Interrupts and Memory Settings"
+.TS
+box, expand, tab(#);
+cb | cb | cb | cb | cb | cb
+^ | ^ | cb | ^ | ^ | cb
+c | c | c | c | c | c.
+Device#IRQ#I/O#Memory#DMA#Target
+##Address###ID
+=
+.sp .5
+\s-2ESDI, ST506, IDE#14#1F0 -> 1F7#N/A#N/A#N/A
+Non-SCSI tape#5#300 -> 301#N/A#1#N/A
+pc586 Ethernet**#12+#N/A#0D0000 -> 0D7FFF#N/A#N/A
+PCL2NIA Ethernet**%#2#360 -> 367#0CC000 -> CDFFF#N/A#N/A
+WD* 8003 Ethernet**#3#280 -> 29F#D8000 -> D9FFFF#N/A#N/A
+Floppy#6#3F0 -> 3F7#N/A#2#N/A\s+2
+.TE
+.IX "controller interrupts, non-SCSI"
+.DS
+* WD stands for Western Digital
+** The numbers shown for these entries are the default settings
++ The PS2 mouse also uses this interrupt
+% The pci board is set to IRQ2, but internally the system thinks it is set to 9
+.DE
+.H 1 "Introduction to the Installation Process"
+This section describes:
+.IX "installation, overview of"
+.BL
+.LI
+General rules to follow when installing software
+.LI
+The primary installation steps
+.LI
+Tasks to do before beginning the installation.
+.LE
+.H 2 "General Comments"
+Observe the following general rules when installing the software:
+.BL
+.LI
+Installation of the SVR4 software should not affect any non-UNIX operating
+systems or partitions that are resident on the target hard disk.
+However, you should back up any non-UNIX files to be safe.
+.LI
+When the system prompts you for a response, type it in lower case (except 
+where noted).
+.LI
+You can abort the installation procedure by pressing
+.HK Del
+at any prompt. You can then restart the installation process by typing
+\f4INSTALL\fP (upper case is required).
+The installation process restarts where you left off, or a few steps back.
+However, if you abort the installation process, it is recommended that you
+start the installation process at the beginning by rebooting from the boot
+diskette.
+.LI
+Whenever you are presented with a choice, if you type anything other than 
+the given choices, the system repeats the message until you enter a valid
+response. 
+.LI
+All boot diskettes are write-protected. However, we still suggest that you 
+make a backup copy of them for safety purposes. Appendix E describes how 
+to copy the diskettes. (You do not need to write-enable the diskettes in order 
+to use or copy them.)
+.IX "diskettes, boot"
+.LE
+.AB C
+Read the Release Notes included with your installation media before 
+starting the installation. The Release Notes contain last-minute information
+that may affect installation. 
+.AC
+.H 2 "Overview"
+The primary steps of the installation process are: 
+.AL 1
+.LI
+Back up the user files and directories you want to save.
+.LI
+If you are doing an overlay installation, remove all packages first.
+.LI
+Boot the system using the appropriate boot diskette(s).
+.LI
+Select the package sets and packages you want to install. See Appendix A 
+for a description of the function of the packages and to find out how much 
+disk space is needed to install the packages.
+.LI
+If you are doing a new installation, partition the hard disk for the desired 
+operating systems, select the desired filesystems and slices, and specify the 
+filesystem type for each filesystem. If you are creating optional slices on the hard 
+disk, see Appendix B for instructions.
+.LI
+Install the base operating system.
+.LI
+Assign the root and install passwords (new install only).
+.LI
+Assign the system name (new install only).
+.LI
+Install the packages as directed by the system. Answer the questions 
+the system asks about the packages. Appendix C shows you what questions 
+the various packages ask during the installation.
+.LI
+Reboot the system.
+.LE
+.AB N
+The installation takes two to three hours if you are installing 
+all the packages.
+.AC
+.H 2 "Pre-Installation Tasks"
+Before you install the new software, you should back up 
+any files you want to save. If you are doing an overlay installation, you must 
+also remove all the packages. If you do not remove packages, the overlay
+process will fail.
+.H 3 "Backing up Pre-Release 4 Files"
+.IX "backup, Pre-Release 4 files"
+.AB N
+This section only pertains to UNIX files, not files belonging to any 
+other operating system.
+.AC
+Booting the SVR4 boot diskette makes your hard disk-resident UNIX files 
+inaccessible. So, before using the SVR4 boot diskette, back up all user
+files and directories you want to save using the \f4cpio\fP(1) command.
+You may also 
+want to save files in the \f4/usr/local\fP and \f4/usr2\fP directories
+(if present), and system configuration files such as the \f4/etc/hosts\fP file. 
+.IX "cpio command"
+.AB N
+It is faster to back up data to tape than to diskette.
+Do not use the \f4backup\fP(1M) command to back up your SVR 3.2 files.
+.AC
+.AB C
+Many system configuration files and commands have been moved, 
+restructured, or contain different information in SVR4 than in SVR3.2. 
+Restructured files are not compatible between the releases and 
+should not be restored on the SVR4 system.
+For example, if you back up your Release 3.2 \f4/etc/passwd\fP file and 
+restore it to a SVR4 system, you will not be able to log in, because 
+the system logins have changed. Other system configuration files, if 
+restored, cause the system to behave in unexpected ways. Files that 
+have been relocated must be restored by special means so that symbolic
+links are not destroyed. So, before restoring any files to the
+SVR4 system, read the section in Chapter 4 called
+.ST "Restoring Files" .
+.AC
+.H 3 "A Backup Example"
+The following procedure suggests a method for backing up your files.
+.AL 1
+.LI
+On your SVR3.2 system, type:
+.DS
+.ft 4
+cd / 
+.ft 1
+.DE
+.LI
+Create a file that contains a list of files you want to save. Use the full 
+pathname of the files, but leave off the leading slash. For our example, 
+we'll call the file containing the list "backup."
+.P
+For example, the backup file may contain entries such as:
+.SS CO
+etc/hosts
+etc/group
+.SE
+.LI
+Copy the files listed in the backup file to tape or diskette. For example, to 
+copy the files to tape, type:
+.ft 4
+.DS
+cpio -oBcvd -O /dev/rmt/c0s0 < backup
+.DE
+.IX "cpio command"
+.ft 1
+The files listed in the backup file are copied to the tape. The files can 
+later be copied to any temporary directory you want on your Release 4
+system. See
+.ST "Restoring Pre-Release 4 System Files"
+in Chapter 4 for instructions on how to restore the archived files.
+.LE
+.H 3 "Backing Up Release 4 Files"
+To back up Release 4 files, use the OA&M interface, as described in Chapter 4.
+.IX "backup, Release 4 files"
+.H 2 "Removing Packages"
+To remove packages prior to an overlay installation, use
+the \f4RM.base.pkg\fP script. The \f4RM.base.pkg\fP script removes all
+packages, no questions asked, so 
+it works faster than any other method.
+.IX "RM.base.pkg command"
+.IX "packages, removing"
+.P
+To remove all the packages using the \f4RM.base.pkg\fP script, do the following:
+.AL 1
+.LI
+Log in as root.
+.LI
+Type:
+.DS
+.ft 4
+sh /usr/lbin/RM.base.pkg
+.ft 1
+.DE
+As the packages are automatically removed, various messages display on 
+the screen.
+.LI
+When all the packages have been removed, you are prompted to 
+reboot the system.
+When this happens, shutdown the system by typing:
+.DS
+.ft 4
+shutdown -y -g0
+.ft 1
+.DE
+.LI
+When the system is down, turn off power to the computer.
+.LE
+.P
+You are now ready to begin the installation process. Go to Chapter 2 or 3 to 
+begin.
+.IX "shutdown"

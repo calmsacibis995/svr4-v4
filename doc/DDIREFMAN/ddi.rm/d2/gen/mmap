@@ -1,0 +1,92 @@
+'\"macro stdmacro
+.if n .pH gen.mmap @(#)mmap	40.2 of 1/7/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.nr X
+.if \nX=0 .ds x} mmap D2DK "" "DDI/DKI" "\&"
+.if \nX=1 .ds x} mmap D2DK "" "DDI/DKI"
+.if \nX=2 .ds x} mmap D2DK "" "\&"
+.if \nX=3 .ds x} mmap "" "" "\&"
+.TH \*(x}
+.IX "\f4mmap\fP(D2DK)"
+.SH "NAME"
+\f4mmap\fP \- check virtual mapping for memory-mapped device
+.SH "SYNOPSIS"
+.nf
+.na
+\f4#include <sys/types.h>
+#include <sys/mman.h>
+#include <sys/vm.h>
+.sp 0.5
+int \f2prefix\fPmmap(dev_t \f2dev, \fPoff_t \f2off, \fPint \f2prot\fP);\f1
+.ad
+.fi
+.SH "ARGUMENTS"
+.RS 0n
+.IP "\f2dev\fP" 10n
+Device whose memory is to be mapped.
+.IP "\f2off\fP" 10n
+Offset within device memory at which mapping begins.
+.IP "\f2prot\fP" 10n
+Protection flags from \f4mman.h\fP.  Valid flags are:
+.RS 12n
+.P
+.PD 0.2v
+.TP 14n
+\f4PROT_READ\fP
+page can be read.
+.TP
+\f4PROT_WRITE\fP
+page can be written.
+.TP
+\f4PROT_EXEC\fP
+page can be executed.
+.TP
+\f4PROT_USER\fP
+page is accessible from user-level.
+.TP
+\f4PROT_ALL\fP
+all of the above.
+.PD
+.RE
+.RE
+.SH DESCRIPTION
+The \f4mmap\fP entry point provides a way to support character
+drivers for memory-mapped devices.  A memory-mapped
+device has memory that can be mapped into a process's address space.  The
+\f4mmap\fP(2) system call, when applied to 
+a character special file, allows this device memory to be mapped
+into user space for direct access by the user application (no kernel
+buffering overhead is incurred.)
+.P
+The \f4mmap\fP routine checks if the offset is within the range
+of pages supported by the device. For example, a device
+that has 512 bytes of memory that can be mapped into user space
+should not support offsets greater than, or equal to, 512.  If the offset does not
+exist, then \f4NOPAGE\fP is returned.  If the offset does exist,
+\f4mmap\fP returns the physical page ID for the page
+at offset \f2off\fP in the device's memory.
+.P
+A physical page ID is a machine-specific token that uniquely identifies a page
+of physical memory in the system (either system memory or device memory.)
+No assumptions should be made about the format of a physical page ID.
+The functions \f4hat_getkpfnum\fP(D3DK) and \f4hat_getppfnum\fP(D3D) can be used
+to get a physical page ID for a given address, depending on whether the address
+is virtual or physical.
+.SH NOTES
+This entry point is optional.
+.sp 0.5
+The driver's \f4mmap\fP routine has user context and can sleep.
+.sp 0.5
+\f4mmap\fP should only be supported for memory-mapped devices or
+pseudo-devices.
+.SH "RETURN VALUE"
+If the protection and offset are valid for the device, the
+driver should return the physical page ID.
+Otherwise, \f4NOPAGE\fP should be returned.
+.SH "SEE ALSO"
+.na
+\f4hat_getkpfnum\fP(D3DK),
+\f4hat_getppfnum\fP(D3D)
+.sp 0.5
+\f4mmap\fP(2)
+.ad

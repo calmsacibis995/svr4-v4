@@ -1,0 +1,108 @@
+'\"macro stdmacro
+.if n .pH g3e.elf_version @(#)elf_version	40.12 of 5/1/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.\"#ident	"@(#)ci5-doc:req/libelf/version.man	1.3"
+.nr X
+.if \nX=0 .ds x} elf_version 3E "ELF Library" "\&"
+.if \nX=1 .ds x} elf_version 3E "ELF Library"
+.if \nX=2 .ds x} elf_version 3E "" "\&"
+.if \nX=3 .ds x} elf_version "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4elf_version\f1 \- coordinate \s-1ELF\s0 library and application versions
+.SH SYNOPSIS
+\f4cc\f1
+[\f2flag\fP \|.\|.\|.] \f2file\fP \|.\|.\|.
+\f4\-lelf\f1
+[\f2library\fP \|.\|.\|.]
+.PP
+.nf
+.na
+.ft 4
+#include <libelf.h>
+.sp 0.5
+unsigned elf_version(unsigned ver);
+.ft 1
+.ad
+.fi
+.SH DESCRIPTION
+As
+\f4elf\fP(3E)
+explains, the program, the library,
+and an object file have independent notions
+of the ``latest''
+.SM ELF
+version.
+\f4elf_version\fP
+lets a program determine the
+.SM ELF
+library's
+.IR "internal version" .
+It further lets the program specify what memory types it uses
+by giving its own
+.IR "working version" ,
+.IR ver ,
+to the library.
+Every program that uses the
+.SM ELF
+library
+must coordinate versions as described below.
+.P
+The header file
+\f4<libelf.h>\f1
+supplies the version to the program with the macro
+\f4EV_CURRENT\f1.
+If the library's internal version
+(the highest version known to the library)
+is lower than that known by the
+program itself, the library may lack
+semantic knowledge assumed by the program.
+Accordingly,
+\f4elf_version\fP
+will not accept a working version unknown to the library.
+.P
+Passing
+.I ver
+equal to
+\f4EV_NONE\f1
+causes
+\f4elf_version\fP
+to return the library's internal version,
+without altering the working version.
+If
+.I ver
+is a version known to the library,
+\f4elf_version\fP
+returns the previous (or initial) working version number.
+Otherwise, the working version remains unchanged and
+\f4elf_version\fP
+returns
+\f4EV_NONE\f1.
+.SH EXAMPLE
+The following excerpt from an application program
+protects itself from using an older library.
+.P
+.RS .5i
+.DT
+.nf
+.ft 4
+.ta 8u*\w' 'u +8u*\w' 'u +8u*\w' 'u +8u*\w' 'u +8u*\w' 'u +8u*\w' 'u
+.ne 9
+if (elf_version(EV_CURRENT) =\^= EV_NONE)
+{
+	/\(** library out of date \(**/
+	/\(** recover from error \(**/
+}
+.fi
+.RE
+.SH NOTES
+The working version should be the same for all
+operations on a particular elf descriptor.
+Changing the version between operations on a descriptor
+will probably not give the expected results.
+.SH "SEE ALSO"
+.na
+\f4elf\fP(3E),
+\f4elf_begin\fP(3E),
+\f4elf_xlate\fP(3E)

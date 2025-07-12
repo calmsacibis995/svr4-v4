@@ -1,0 +1,148 @@
+'\"macro stdmacro
+.if n .pH g1.postdmd @(#)postdmd	40.6 of 5/16/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} postdmd 1 "LP Print Service" "\&"
+.if \nX=1 .ds x} postdmd 1 "LP Print Service"
+.if \nX=2 .ds x} postdmd 1 "" "\&"
+.if \nX=3 .ds x} postdmd "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4postdmd\fP \- PostScript translator for \s-1DMD\s+1 bitmap files
+.SH SYNOPSIS
+\f4/usr/lib/lp/postscript/postdmd\fP [\f2options\fP] [\f2files\fP]
+.SH DESCRIPTION
+\f4postdmd\fP translates \s-1DMD\s+1 bitmap
+\f2files\fP,
+as produced by \f2dmdps\fP,
+or
+.I files
+written in the Ninth Edition \f4bitfile\fP(9.5) format
+into PostScript and writes the results on the
+standard output.
+If no
+.I files
+are specified, or if \- is one of the input
+.I files,
+the standard input is read.
+The following
+.I options
+are understood:
+.TP 1.0i
+\f4\-b \f2num\f1
+Pack the bitmap in the output file using
+.I num
+byte patterns.
+A value of 0 turns off all packing of the output file.
+By default,
+.I num
+is 6.
+.TP 1.0i
+\f4\-c \f2num\fP
+Print
+.I num
+copies of each page.
+By default only one copy is printed.
+.TP 1.0i
+\f4\-f\fP
+Flip the sense of the bits in
+.I files
+before printing the bitmaps.
+.TP 1.0i
+\f4\-m \f2num\f1
+Magnify each logical page by the factor
+.I num.
+Pages are scaled uniformly about the origin,
+which by default is located at the center of
+each page.
+The default magnification is 1.0.
+.TP 1.0i
+\f4\-n \f2num\fP
+Print
+.I num
+logical pages on each piece of paper,
+where
+.I num
+can be any positive integer.
+By default
+.I num
+is set to 1.
+.TP 1.0i
+\f4\-o \f2list\fP
+Print pages whose numbers are given in the comma-separated
+.IR list .
+The list contains single numbers
+.I N
+and ranges
+\f2N1 \fP\- \f2N2\fP.
+A missing
+.I N1
+means the lowest numbered page, a missing
+.I N2
+means the highest.
+.TP 1.0i
+\f4\-p \f2mode\f1
+Print
+.I files
+in either portrait or landscape
+.I mode.
+Only the first character of
+.I mode
+is significant.
+The default
+.I mode
+is portrait.
+.TP 1.0i
+\f4\-x \f2num\f1
+Translate the origin
+.I num
+inches along the positive x axis.
+The default
+coordinate system has the origin fixed at the
+center of the page, with positive
+x to the right and positive y up the page.
+Positive
+.I num
+moves everything right.
+The default offset is 0 inches.
+.TP 1.0i
+\f4\-y \f2num\f1
+Translate the origin
+.I num
+inches along the positive y axis.
+Positive
+.I num
+moves everything up the page.
+The default offset is 0.
+.PP
+Only one bitmap is printed on each logical page,
+and each of the input
+.I files
+must contain complete descriptions of at least one bitmap.
+Decreasing the pattern size using the
+\f4\-b\fP
+option may help throughput on printers with fast processors
+(such as \s-1PS-810\s+1s),
+while increasing the pattern size will often be the right move
+on older models (such as \s-1PS-800\s+1s).
+.SH DIAGNOSTICS
+An exit status of 0 is returned if
+.I files
+were successfully processed.
+.SH FILES
+\f4/usr/lib/lp/postscript/postdmd.ps
+.br
+/usr/lib/lp/postscript/forms.ps
+.br
+/usr/lib/lp/postscript/ps.requests\fP
+.SH SEE ALSO
+\f4download\fP(1),
+\f4dpost\fP(1),
+\f4postdaisy\fP(1),
+\f4postio\fP(1),
+\f4postmd\fP(1),
+\f4postprint\fP(1),
+.br
+\f4postreverse\fP(1),
+\f4posttek\fP(1)

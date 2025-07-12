@@ -1,0 +1,137 @@
+'\"macro stdmacro
+.if n .pH g1.mcs @(#)mcs	40.20.1.2 of 4/12/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} mcs 1 "Software Generation System Utilities" "\&"
+.if \nX=1 .ds x} mcs 1 "Software Generation System Utilities"
+.if \nX=2 .ds x} mcs 1 "" "\&"
+.if \nX=3 .ds x} mcs "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4mcs\f1 \- manipulate the comment section of an object file
+.SH SYNOPSIS
+\f4mcs\f1
+\f1[\f4\-a\f2 string\f1]
+\f1[\f4\-c\f1]
+\f1[\f4\-d\f1]
+\f1[\f4\-n\f2 name\f1]
+\f1[\f4\-p\f1]
+\f1[\f4\-V\f1]
+\f2file\f1 . . .
+.SH DESCRIPTION
+The
+\f4mcs\fP
+command is used to manipulate a section, by default the \f4.comment\f1
+section, in an ELF object file.
+It is used to add to, delete, print, and compress the contents of a
+section in an 
+ELF
+object file, and only print the contents of a
+section in a COFF object file.
+\f4mcs\fP
+must be given one or more of the options described below.
+It applies each of the options in order to each file.
+.P
+The following options are available.
+.TP
+\f4\-a\f2 string\f1
+Append
+.I string
+to the comment section of the
+object files.
+If 
+.I string
+contains embedded blanks,
+it must be enclosed in quotation marks.
+.TP
+\f4\-c\f1
+Compress the contents of the comment section of the ELF
+object files.
+All duplicate entries are removed.
+The ordering of the remaining entries is not disturbed.
+.TP
+\f4\-d\f1
+Delete the contents of the comment section from the ELF
+object files.
+The section header for the comment section is also removed.
+.TP
+\f4\-n\f2 name\f1
+Specify the name of the comment section to access
+if other than \%\f4.comment\f1.
+By default, \f4mcs\fP deals with the section named \f4.comment\fP.
+This option can be used to specify another section.
+.TP
+\f4\-p\f1
+Print the contents of the comment section on the standard output.
+Each section printed is tagged by the
+name of the file from which it was extracted, using the
+format \f2filename\f4[\f2member_name\f4]:\f1 for archive files;
+and \f2filename\f4:\f1 for other files.
+.TP
+\f4\-V\f1
+Print, on standard error, the
+version number of \f4mcs\fP.
+.P
+If the input file is an archive [see
+\f4ar\fP(4)], 
+the archive is treated as a set of individual files.
+For example,
+if the \f4\-a\fP option is specified, the string is appended to the
+comment section of each ELF
+object file in the archive;
+if the archive member
+is not an ELF object file,
+then it is left unchanged.
+.P
+If
+\f4mcs\fP
+is executed on an archive file 
+the archive symbol table will be removed, unless only the 
+\f4\-p\fP
+option has been specified.
+The archive
+symbol table must be restored by executing the
+\f4ar\fP command with the
+\f4\-s\f1
+option before the archive can be
+linked by the
+\f4ld\fP
+command.
+\f4mcs\fP
+will produce appropriate warning messages when this
+situation arises.
+.SH "EXAMPLES"
+.nf
+	\f4mcs -p \f2file\f1            \f4# Print file's comment section\f1
+
+	\f4mcs -a \f2string file\f1    \f4# Append string to file's comment section\f1
+.fi
+.SH "FILES"
+.TP 22
+\f2TMPDIR\f4/mcs*\f1
+temporary files
+.TP
+\f2TMPDIR\f1
+usually \f4/var/tmp\fP but can be redefined by setting the
+environment variable
+\f4TMPDIR\f1
+[see \f4tempnam\fP() in \f4tmpnam\fP(3S)].
+.SH "SEE ALSO"
+\f4ar\fP(1),
+\*\f4as\fP(1),
+\*\f4cc\fP(1),
+\*\f4ld\fP(1),
+\f4tmpnam\fP(3S),
+\*\f4a.out\fP(4),
+\f4ar\fP(4)
+.br
+See the ``Object Files'' chapter in
+\f2Programmer's Guide: ANSI C and Programming Support Tools\f1.
+.SH "NOTES"
+.PP
+\f4mcs\fP cannot add to, delete or compress the contents of a section
+that is contained within a segment.
+'\" \%W\%
+.\"	@(#)mcs:mcs.1	1.1
+.Ee

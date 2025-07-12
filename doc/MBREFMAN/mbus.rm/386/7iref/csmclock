@@ -1,0 +1,37 @@
+'\"macro stdmacro
+.if n .pH g1a.csmclock @(#)csmclock	40.4 of 5/17/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1990 AT&T
+.nr X
+.if \nX=0 .ds x} csmclock 7iref "" "\&"
+.if \nX=1 .ds x} csmclock 7iref ""
+.if \nX=2 .ds x} csmclock 7iref "" "\&"
+.if \nX=3 .ds x} csmclock "" "" "\&"
+.TH \*(x}
+.TH csmclock 7iref
+.SH NAME
+\f4csmclock\fP--Multibus II CSM clock driver
+.SH DESCRIPTION
+The clock driver provides consistent \f4rtc\fP(7) interface to the
+kernel clock on Multibus II systems.
+The CSM clock driver implements the actual manipulation 
+of the hardware CSM clock.  
+.P
+The CSM clock driver uses interconnect space \f4ics\fP(7iref)
+read/write functions to modify the status
+bits and to read and write the CSM clock.
+The CSM clock driver also provides a procedural interface to the
+\f4clock\fP(7iref) driver via the
+routines \f4clkopen\fP, \f4clkclose\fP, \f4clkread\fP,
+and \f4clkwrite\fP procedures.
+This driver has no \f4ioctl\fP functions.
+.SH FILES
+.TP 35
+\f4/usr/include/sys/clockcal.h\fP
+Driver specific definitions
+.TP
+\f4/etc/conf/pack.d/Driver.o\fP
+Driver object module
+.SH SEE ALSO
+clock(7iref),
+ics(7iref).

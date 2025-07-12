@@ -1,0 +1,205 @@
+'\"macro stdmacro
+.if n .pH g1.ar @(#)ar	40.13.1.2 of 4/12/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} ar 1 "Directory and File Management Utilities" "\&"
+.if \nX=1 .ds x} ar 1 "Software Generation System Utilities"
+.if \nX=2 .ds x} ar 1 "" "\&"
+.if \nX=3 .ds x} ar "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4ar\f1 \- maintain portable archive or library
+.SH SYNOPSIS
+\f4ar\f1
+[
+\f4\-V\f1
+]
+\f4\-\f1
+.I key
+[
+.I arg
+]
+[
+.I posname
+]
+.I afile
+[
+.IR name ". . ."
+]
+.SH DESCRIPTION
+The
+\f4ar\fP
+command
+maintains groups of files
+combined into a single archive file.
+Its main use
+is to create and update library files.
+However, it can be used for any similar purpose.
+The magic string and the file headers used by
+\f4ar\fP
+consist of printable
+.SM ASCII
+characters.
+If an archive is composed of printable files, the entire archive is
+printable.
+.PP
+When
+\f4ar\fP
+creates an archive, it creates headers in a format that is portable across
+all machines.
+The portable archive format and structure are described in
+detail in
+\f4ar\fP(4).
+The archive symbol table [described in
+\f4ar\fP(4)]
+is used by the link editor
+\f4ld\fP
+to effect multiple passes over libraries of
+object files in an efficient manner.
+An archive symbol table is only created and maintained by
+\f4ar\fP
+when there is at least one object file in the archive.
+The archive symbol table is in a specially named
+file that is always the first file in the archive.
+This file is never mentioned or accessible to the user.
+Whenever the 
+\f4ar\fP
+command is used to create or update the contents of such an archive, the
+symbol table is rebuilt.
+The \f4s\f1 option described below will force the symbol table to be rebuilt.
+.PP
+The
+\f4\-V\f1
+option causes
+\f4ar\fP to print its version number on standard error.
+.PP
+Unlike command options, the
+.I key
+is a required part of the \f4ar\fP
+command line.
+The
+.I key
+is formed with one of the following letters:
+\f4drqtpmx\f1.
+Arguments to the \f2key\f1, alternatively, are made with one of more of the
+following set:
+\f4vuaibcls\f1.
+.I posname
+is an archive member name used as a reference point in positioning other
+files in the archive.
+.I afile\^
+is the archive file.
+The
+.IR name s
+are constituent files in the archive file.
+The meanings of the
+.I key\^
+characters are as follows:
+.TP
+\f4d\f1
+Delete the named files from the archive file.
+.TP
+\f4r\f1
+Replace the named files in the archive file.
+If the optional character
+\f4u\f1
+is used with
+\f4r\f1,
+then only those files with
+dates of modification later than
+the archive files are replaced.
+If an optional positioning character from the set
+\f4abi\f1
+is used, then the
+.I posname\^
+argument must be present
+and specifies that new files are to be placed
+after
+\f1(\f4a\f1)
+or before
+\f1(\f4b\f1
+or
+\f4i\f1)
+.IR posname .
+Otherwise
+new files are placed at the end.
+.TP
+\f4q\f1
+Quickly append the named files to the end of the archive file.
+Optional positioning characters are invalid.
+The command does not check whether the added members
+are already in the archive.
+This option is useful to avoid quadratic behavior when creating a large
+archive piece-by-piece.
+.TP
+\f4t\f1
+Print a table of contents of the archive file.
+If no names are given, all files in the archive are listed.
+If names are given, only those files are listed.
+.TP
+\f4p\f1
+Print the named files in the archive.
+.TP
+\f4m\f1
+Move the named files to the end of the archive.
+If a positioning character is present,
+then the
+.I posname\^
+argument must be present and,
+as in
+\f4r\f1,
+specifies where the files are to be moved.
+.TP
+\f4x\f1
+Extract the named files.
+If no names are given, all files in the archive are
+extracted.
+In neither case does
+\f4x\f1
+alter the archive file.
+.PP
+The meanings of the other key arguments are as follows:
+.TP
+\f4v\f1
+Give a verbose file-by-file
+description of the making of a
+new archive file from the old archive and the constituent files.
+When used with
+\f4t\f1,
+give a long listing of all information about the files.
+When used with
+\f4x\f1,
+print the filename preceding each extraction.
+.TP
+\f4c\f1
+Suppress the
+message that is produced by default when
+.I afile\^
+is created.
+.TP
+\f4l\f1
+This option is obsolete.
+It is recognized, but ignored, and will be removed in the next release.
+.TP
+\f4s\f1
+Force the regeneration of the archive symbol table even if 
+\f4ar\fP(1) 
+is not invoked with a command which will modify the archive contents.
+This command is useful to restore the archive symbol table after the
+\f4strip\fP(1)
+command has been used on the archive.
+.SH SEE ALSO
+\f4ld\fP(1), \f4lorder\fP(1), \f4strip\fP(1),
+\f4a.out\fP(4), \f4ar\fP(4)
+.SH NOTES
+If the same file is mentioned twice in an argument list,
+it may be put in the archive twice.
+.PP
+Since the archiver no longer uses temporary files, the
+\f4\-l\f1 option is obsolete and will be removed in the
+next release.
+.PP
+By convention, archives are suffixed with the characters \f4.a\f1.
+.\"	@(#)ar.1	6.2 of 9/2/83
+.Ee

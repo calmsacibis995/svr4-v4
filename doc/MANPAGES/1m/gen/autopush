@@ -1,0 +1,82 @@
+'\"macro stdmacro
+.if n .pH g1a.autopush @(#)autopush	40.9 of 4/15/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} autopush 1M "" "\&"
+.if \nX=1 .ds x} autopush 1M ""
+.if \nX=2 .ds x} autopush 1M "" "\&"
+.if \nX=3 .ds x} autopush "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4autopush\f1 \- configure lists of automatically pushed \s-1STREAMS\s+1 modules
+.SH SYNOPSIS
+.nf
+\f4autopush -f \f2file\f1\f1
+\f4autopush -r -M \f2major\f1 \f4-m\f1 \f2minor\f1\f1
+\f4autopush -g -M \f2major\f1 \f4-m\f1 \f2minor\f1\f1
+.fi
+.SH DESCRIPTION
+.P
+This command allows one to configure the list of modules to be automatically 
+pushed onto the stream when a device is opened.
+It can also be used
+to remove a previous setting or get information on a setting.
+.P
+The following options apply to \f4autopush\f1:
+.TP
+\f4\-f \f1
+This option sets up the \f4autopush\f1 configuration for each driver according
+to the information stored in the specified file.
+An \f4autopush\f1 file consists of lines of at least four fields each
+where the fields are
+separated by a space as shown below:
+.P
+.nf
+.ft CW
+	maj_  min_  last_min_  mod1 mod2 ... modn
+.ft 1
+.fi
+.P
+The first three fields are integers that specify
+the major device number, minor device number, and last
+minor device number.
+The fields following represent the names of modules.
+If \f2min_\f1 is -1, then all minor devices of a major
+driver specified by \f2maj_\f1 are configured and the value for
+\f2last_min_\f1 is ignored.
+If \f2last_min_\f1 is 0,
+then only a single minor device is configured.
+To configure a range of minor devices for a particular major,
+\f2min_\f1 must be less than \f2last_min_\f1.
+.PP
+The last fields of a line in the \f4autopush\f1 file
+represent the list of module names where each is separated 
+by a space.
+The maximum number of modules that can be automatically
+pushed on a stream is defined to be eight.
+The modules are pushed in the order they are specified.
+Comment lines start with a # sign.
+.TP
+\f4-r\f1
+This option removes the previous configuration setting of the particular
+\f2major\f1 and \f2minor\f1 device number specified with the \f4-M\f1 and \f4-m\f1 
+options respectively.
+If the values of \f2major\f1 and \f2minor\f1 correspond to a 
+setting of a range of minor devices, where \f2minor\fP matches the first minor
+device number in the range,
+the configuration would be removed for the entire range.
+.TP
+\f4-g\f1
+This option gets the current configuration setting of a particular
+\f2major\f1 and \f2minor\f1 device number specified with the \f4-M\f1 and \f4-m\f1 
+options respectively.
+It will also return the starting minor device number
+if the request corresponds to a setting of a range (as described with the
+\f4-f\f1 option).
+.SH SEE ALSO
+.nf
+\f4streamio\fP(7)
+\f2Programmer's Guide: \s-1STREAMS\s+1\f1
+.fi
+.Ee 

@@ -1,0 +1,31 @@
+'\"macro stdmacro
+.if n .pH g1a.fdetach @(#)fdetach	40.5 of 4/15/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} fdetach 1M "" "\&"
+.if \nX=1 .ds x} fdetach 1M ""
+.if \nX=2 .ds x} fdetach 1M "" "\&"
+.if \nX=3 .ds x} fdetach "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4fdetach\fP \- detach a name from a \s-1STREAMS\s+1-based file descriptor
+.SH SYNOPSIS
+.nf
+\f4fdetach path\f1
+.fi
+.SH DESCRIPTION
+The \f4fdetach\f1 command detaches a \s-1STREAMS\s+1-based file descriptor from
+a name in the file system.
+\f2path\f1 is the path name of the object in the file system name space,
+which was previously attached [see \f4fattach\f1(3C)].
+The user must be the owner of the file or a user with the appropriate privileges.
+All subsequent operations on \f2path\f1 will operate on the file system node
+and not on the \s-1STREAMS\s+1 file.
+The permissions and status of the node are restored to the state the node was
+in before the \s-1STREAMS\s+1 file was attached to it.
+.SH "SEE ALSO"
+\f4fattach\fP(3C), \f4fdetach\fP(3C), \f4streamio\fP(7)
+.br
+\f2Programmer's Guide: \s-1STREAMS\s+1\f1
+.Ee

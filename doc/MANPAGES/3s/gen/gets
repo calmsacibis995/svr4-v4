@@ -1,0 +1,78 @@
+'\"macro stdmacro
+.if n .pH g3s.gets @(#)gets	40.15 of 5/22/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} gets 3S "C Development Set" "\&"
+.if \nX=1 .ds x} gets 3S "C Development Set"
+.if \nX=2 .ds x} gets 3S "" "\&"
+.if \nX=3 .ds x} gets "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4gets\f1, \f4fgets\f1 \- get a string from a stream
+.SH SYNOPSIS
+\f4#include <stdio.h>\f1
+.PP
+\f4char \(**gets (char \(**s);\f1
+.PP
+\f4char \(**fgets (char \(**s, int n, FILE \(**stream);\f1
+.SH DESCRIPTION
+\f4gets\fP
+reads characters
+from the standard input stream
+[see \f4intro\fP(3)],
+\f4stdin\fP,
+into the array pointed to by
+.IR s ,
+until a newline character is read
+or an end-of-file condition is encountered.
+The newline character is discarded
+and the string is terminated with a
+null character.
+.PP
+\f4fgets\fP
+reads 
+characters from the
+.I stream\^
+into the array pointed to by
+.IR s ,
+until
+.IR n \-1
+characters are read, or
+a newline character is read and transferred to
+.IR s ,
+or an end-of-file condition is encountered.
+The string is then terminated with a
+null character.
+.PP
+When using \f4gets\f1,
+if the length of an input line exceeds the size of \f2s\f1,
+indeterminate behavior may result.
+For this reason, it is strongly recommended that \f4gets\f1 be avoided
+in favor of \f4fgets\f1.
+.SH SEE ALSO
+\f4lseek\fP(2),
+\f4read\fP(2),
+\f4ferror\fP(3S),
+\f4fopen\fP(3S),
+\f4fread\fP(3S),
+\f4getc\fP(3S),
+\f4scanf\fP(3S),
+\f4stdio\fP(3S),
+\f4ungetc\fP(3S).
+.SH DIAGNOSTICS
+If end-of-file is encountered
+and no characters have
+been read, no characters are transferred to
+.I s\^
+and a 
+null pointer is returned.
+If a read error occurs, such as trying to use these functions
+on a file that has not been opened for reading, a
+null pointer is returned and the error indicator for the stream is set.
+If end-of-file is encountered, the \f4EOF\fP indicator for the stream is set.
+Otherwise
+.I s\^
+is returned.
+.\"	@(#)gets.3s	6.2 of 10/20/83
+.Ee

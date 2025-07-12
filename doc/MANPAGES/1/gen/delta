@@ -1,0 +1,261 @@
+'\"macro stdmacro
+.if n .pH g1.delta @(#)delta	40.13.1.3 of 5/22/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} delta 1 "Enhanced Programming Utilities" "\&"
+.if \nX=1 .ds x} delta 1 "Enhanced Programming Utilities"
+.if \nX=2 .ds x} delta 1 "" "\&"
+.if \nX=3 .ds x} delta "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4delta\f1 \- make a delta (change) to an \s-1SCCS\s+1 file
+.SH SYNOPSIS
+\f4delta\f1 [\f4\-r\f2SID\f1] [\f4\-s\f1] [\f4\-n\f1]
+[\f4\-g\f2list\f1] [\f4\-m\f1[\f2mrlist\f1]] [\f4\-y\f1[\f2comment\f1]]
+[\f4\-p\f1]
+.I files
+.SH DESCRIPTION
+\f4delta\fP
+is used to permanently introduce into
+the named \s-1SCCS\s+1 file changes that were made to the file retrieved by
+\f4get \-e\fP
+(called the
+g-file
+or generated file).
+.PP
+\f4delta\fP
+makes a delta to each named \s-1SCCS\s+1 file.
+If a directory is named,
+\f4delta\fP
+behaves as though each file in the directory were
+specified as a named file,
+except that non-\s-1SCCS\s+1 files
+(last component of the path name does not begin with \f4s.\f1)
+and unreadable files
+are silently ignored.
+If a name of \f4\-\f1 is given, the standard input is read
+(see the
+.SM NOTES
+section);
+each line of the standard input is taken to be the name of an \s-1SCCS\s+1 file
+to be processed.
+.PP
+\f4delta\fP
+may issue prompts on the standard output depending on
+certain keyletters specified and flags
+[see
+\f4admin\fP(1)]
+that may be
+present in the \s-1SCCS\s+1 file
+(see
+\f4\-m\f1
+and
+\f4\-y\f1
+keyletters below).
+.PP
+Keyletter arguments
+apply independently
+to each named file.
+.RS 5
+.TP 15
+\f4\-r\f2SID\f1
+Uniquely
+identifies which delta is to be made to the \s-1SCCS\s+1 file.
+The use of this keyletter is necessary only if two or more
+outstanding
+\f4get\fPs
+for editing
+\f1(\f4get \-e\f1)
+on the same \s-1SCCS\s+1 file were done by the same person
+(login name).
+The \s-1SID\s+1 value specified with the
+\f4\-r\f1
+keyletter can be either the \s-1SID\s+1 specified on the
+\f4get\fP
+command line or the \s-1SID\s+1 to be made as reported by the
+\f4get\fP
+command
+[see
+\f4get\fP(1)].
+A diagnostic results if the specified \s-1SID\s+1 is ambiguous, or,
+if necessary and omitted on the command line.
+.TP 15
+\f4\-s\f1
+Suppresses
+the issue, on the standard output, of the created delta's \s-1SID\s+1,
+as well as the number of lines inserted, deleted and unchanged in the
+\s-1SCCS\s+1 file.
+.TP 15
+\f4\-n\f1
+Specifies retention of the edited
+g-file
+(normally removed at completion of delta processing).
+.TP 15
+\f4\-g\f2list\f1
+Specify a \f2list\f1 [see
+\f4get\fP(1)
+for the definition of \f2list\f1]
+of deltas that are to be
+ignored
+when the file is accessed at the change level (\s-1SID\s+1)
+created by this delta.
+.TP 15
+\f4\-m\f1[mrlist]
+If the \s-1SCCS\s+1 file has the
+\f4v\f1
+flag set
+[see
+\f4admin\fP(1)]
+then a Modification Request (\s-1MR\s+1) number must be
+supplied as the reason for creating the new delta.
+If
+\f4\-m\f1
+is not used and the standard input is a terminal, the prompt
+\f5MRs?\f1
+is issued on the standard output before the standard input
+is read; if the standard input is not a terminal, no prompt is issued.
+The
+\f5MRs?\f1
+prompt always precedes the
+\f5comments?\f1
+prompt
+(see
+\f4\-y\f1
+keyletter).
+\s-1MR\s+1s
+in a list are separated by blanks and/or tab characters.
+An unescaped new-line character terminates the
+.SM MR
+list.
+Note that if the
+\f4v\f1
+flag has a value
+[see
+\f4admin\fP(1)],
+it is taken to be the name of a program (or shell procedure) that will validate
+the correctness of the \s-1MR\s+1 numbers.
+If a non-zero exit status is returned from the
+.SM MR
+number validation program,
+\f4delta\fP
+terminates.
+(It is assumed that the
+.SM MR
+numbers were not all valid.)
+.TP 15
+\f4\-y\f1[comment]
+Arbitrary text
+used to describe the reason for making the delta.
+A null string is considered a valid \f2comment\f1.
+If
+\f4\-y\f1
+is not specified and the standard input is a terminal, the prompt
+\f4comments?\f1
+is issued on the standard output before the standard
+input is read; if the standard input is not a terminal, no
+prompt is issued.
+An unescaped new-line character terminates the comment text.
+.TP 15
+\f4\-p\f1
+Causes
+\f4delta\fP
+to print (on the standard output) the \s-1SCCS\s+1 file
+differences before and after the delta is applied
+in a
+\f4diff\fP(1)
+format.
+.RE
+.SH FILES
+.PP
+.PD 0
+.TP "\w`\f4/usr/bin/bdiff\ \ \fP`u"
+g-file
+Existed
+before the execution of
+\f4delta\fP;
+removed after completion of
+\f4delta\fP.
+.TP
+p-file
+Existed
+before the execution of
+\f4delta\fP;
+may exist after completion of
+\f4delta\fP.
+.TP
+q-file
+Created during the execution of
+\f4delta\fP;
+removed after completion of
+\f4delta\fP.
+.TP
+x-file
+Created during the execution of
+\f4delta\fP;
+renamed to \s-1SCCS\s+1 file after completion of
+\f4delta\fP.
+.TP
+z-file
+Created during the execution of
+\f4delta\fP;
+removed during the execution of
+\f4delta\fP.
+.TP
+d-file
+Created during the execution of
+\f4delta\fP;
+removed after completion of
+\f4delta\fP.
+.TP
+\f4bdiff\fP
+Program to compute differences
+between the ``gotten'' file and the
+g-file.
+.PD
+.SH "SEE ALSO"
+\f4admin\fP(1),
+\f4cdc\fP(1),
+\f4get\fP(1),
+\f4help\fP(1),
+\f4prs\fP(1),
+\f4rmdel\fP(1),
+\f4sccsfile\fP(4)
+.br
+\f4bdiff\fP(1)
+in the \f2User's Reference Manual\f1
+.SH DIAGNOSTICS
+Use
+\f4help\fP(1)
+for explanations.
+.SH NOTES
+A
+\f4get\fP
+of many \s-1SCCS\s+1 files,
+followed by a
+\f4delta\fP
+of those files, should be avoided when the
+\f4get\fP
+generates a large amount of data.
+Instead,
+multiple
+\f4get\f1/\f4delta\^\f1
+sequences should be used.
+.PP
+If the standard input
+(\f4\-\f1)
+is specified on the
+\f4delta\fP
+command line,
+the
+\f4\-m\f1
+(if necessary)
+and
+\f4\-y\f1
+keyletters
+must
+also be present.
+Omission of these keyletters causes an error.
+.PP
+Comments are limited to text strings of at most 1024 characters.
+Line lengths greater than 1000 characters cause undefined results.

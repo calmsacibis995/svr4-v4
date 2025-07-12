@@ -1,0 +1,42 @@
+'\"macro stdmacro
+.if n .pH g1a.dbon @(#)dbon	40.7 of 5/17/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} dbon 8iref "System Administration Utilities" "" "\&"
+.if \nX=1 .ds x} dbon 8iref "System Administration Utilities" ""
+.if \nX=2 .ds x} dbon 8iref "" "\&"
+.if \nX=3 .ds x} dbon "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4dbon\f1 \- sets target for front panel message delivery
+.SH SYNOPSIS
+\f4/usr/lbin/dbon\f1 [\f2slot_ID\f1]
+.SH DESCRIPTION
+The \f4dbon\f1 command instructs the Central Services Module (CSM) where
+future Front Panel Interrupt Messages are to be sent.  This is used for
+determining which processor will break into the kernel debugger when the
+Front Panel Interrupt is issued.
+.PP
+Setting the CSM to interrupt one's own processor is as follows.
+In order to instruct the CSM to interrupt the processor you are using,
+execute \f4dbon\f1 with no arguments.  The current slot number is
+determined automatically, and given to the CSM as destination of future
+front panel interrupt messages.
+.PP
+Setting the CSM to interrupt another processor is as follows.
+In order to instruct the CSM to interrupt another processor, \f4dbon\f1
+is executed with the slot number of the desired processor as the argument.
+Valid slot numbers are 0 through 21.
+.SH FILES
+\f4/usr/lbin/dbon\f1
+.br
+\f4/sbin/icswr\f1
+.br
+\f4/sbin/icsrd\f1
+.br
+\f4/sbin/icsslot\f1
+.SH SEE ALSO
+\f4icswr\f1(8iref),
+\f4icsrd\f1(8iref),
+\f4icsslot\f1(8iref).

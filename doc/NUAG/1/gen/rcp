@@ -1,0 +1,130 @@
+'\"macro stdmacro
+.if n .pH g1.rcp @(#)rcp	40.9 of 5/21/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} rcp 1 "Internet Utilities" "\&"
+.if \nX=1 .ds x} rcp 1 "Internet Utilities"
+.if \nX=2 .ds x} rcp 1 "" "\&"
+.if \nX=3 .ds x} rcp "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4rcp\f1 \- remote file copy
+.SH SYNOPSIS
+\f4rcp\f1
+[
+\f4\-p\f1
+]
+\f2filename1 filename2\f1
+.br
+\f4rcp\f1
+[
+\f4\-pr\f1
+]
+.IR filename .\|.\|. directory
+.SH DESCRIPTION
+The
+\f4rcp\f1
+command copies files between machines.  Each
+.I filename
+or
+.I directory
+argument is either a remote file name of the form:
+.IP
+.IB hostname : path
+.LP
+or a local file name (containing no
+\f4:\f1
+characters, or a
+\f4/\f1
+before any
+\f4:\f1 characters).
+.LP
+If a
+.I filename
+is not a full path name, it is interpreted relative to
+your home directory on
+.IR hostname .
+A
+.I path
+on a remote host may be quoted (using 
+\f4\e\|\f1,
+\f4"\|\f1,
+or \f4'\|\f1)
+so that the metacharacters are interpreted remotely.
+.LP
+\f4rcp\f1
+does not prompt for passwords; your current local user name
+must exist on
+.I hostname
+and allow remote command execution by
+\f4rsh\f1(1).
+.LP
+\f4rcp\f1
+handles third party copies, where neither source nor target files
+are on the current machine.
+Hostnames may also take the form
+.IP
+\f2username\f4@\f2hostname\f4:\f2filename\f1
+.LP
+to use
+.I username
+rather than your current local user name as the user name on
+the remote host.
+\f4rcp\f1
+also supports Internet domain addressing of the remote host,
+so that:
+.IP
+\f2username\f4@\f2host\f4.\f2domain\f4:\f2filename\f1
+.LP
+specifies the username to be used, the hostname, and the domain
+in which that host resides.
+Filenames that are not full path names will be interpreted
+relative to the home directory of the user named
+.IR username ,
+on the remote host.
+.LP
+The destination hostname may also take the form
+.IB hostname . username : filename
+to support destination machines that are running older versions of
+\f4rcp\f1.
+.LP
+The following options are available:
+.TP
+\f4\-p\f1
+Attempt to give each copy the same modification times, access times,
+and modes as the original file.
+.TP
+\f4\-r\f1
+Copy each subtree rooted at
+.IR filename ;
+in this case the destination must be a directory.
+.SH SEE ALSO
+\f4ftp\f1(1),
+\f4rlogin\f1(1),
+\f4rsh\f1(1),
+\f4hosts.equiv\f1(4)
+.br
+.ne2i
+.SH NOTES
+\f4rcp\f1
+is meant to copy between different hosts; attempting to
+\f4rcp\f1
+a file onto itself,
+as with:
+.IP
+\f4rcp\ tmp/file\ myhost:/tmp/file\f1
+.LP
+results in a severely corrupted file.
+.LP
+\f4rcp\f1
+does not detect all cases where the target of a copy might
+be a file in cases where only a directory should be legal.
+.LP
+\f4rcp\f1
+requires that the source host have permission
+to execute commands on the
+remote host when doing third-party copies.
+.LP
+If you forget to quote metacharacters intended for the remote host
+you get an incomprehensible error message.

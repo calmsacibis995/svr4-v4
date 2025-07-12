@@ -1,0 +1,40 @@
+'\"macro stdmacro
+.if n .pH 386.dma_fbuf @(#)dma_fbuf	40.2 of 1/7/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.nr X
+.if \nX=0 .ds x} dma_free_buf D3X "" "DDI" "\&"
+.if \nX=1 .ds x} dma_free_buf D3X "" "DDI"
+.if \nX=2 .ds x} dma_free_buf D3X "" "\&"
+.if \nX=3 .ds x} dma_free_buf "" "" "\&"
+.TH \*(x}
+.IX "\f4dma_free_buf\fP(D3X)"
+.SH NAME 
+\f4dma_free_buf\f1 \- free a previously allocated DMA buffer descriptor
+.SH SYNOPSIS
+.nf
+.na
+\f4#include <sys/dma.h>
+.sp 0.5
+\f4void dma_free_buf(struct dma_buf \f2*dmabufptr\f4);\f1
+.ad
+.fi
+.SH ARGUMENTS
+.RS 0n 10
+.IP "\f2dmabufptr\f1" 10n
+Address of the allocated DMA buffer descriptor to be returned.
+.RE
+.SH DESCRIPTION 
+\f4dma_free_buf\f1 frees a DMA buffer descriptor.
+The \f2dmabufptr\fP argument must specify the address
+of a DMA buffer descriptor previously allocated by \f4dma_get_buf\fP(D3X).
+.SH "RETURN VALUE" 
+None.
+.SH LEVEL
+Base or Interrupt.
+.SH NOTES
+Does not sleep.
+.SH "SEE ALSO" 
+.na
+\f4dma_get_buf\f1(D3X),
+\f4dma_buf\f1(D4X)
+.ad

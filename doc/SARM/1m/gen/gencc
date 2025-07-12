@@ -1,0 +1,68 @@
+'\"macro stdmacro
+.if n .pH g1a.gencc @(#)gencc	40.13 of 5/22/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} gencc 1M "C Development Set" "\&"
+.if \nX=1 .ds x} gencc 1M "C Development Set"
+.if \nX=2 .ds x} gencc 1M "" "\&"
+.if \nX=3 .ds x} gencc "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4gencc\f1 \- create a front-end to the \f4cc\f1 command
+.SH SYNOPSIS
+\f4gencc\f1
+.SH DESCRIPTION
+The
+\f4gencc\fP command is an interactive command designed to aid in the creation of
+a front-end to the \f4cc\fP command.
+Since hard-coded pathnames have been 
+eliminated from the C Compilation System (CCS), it is possible to move
+pieces of the CCS to new locations without recompilation.
+The new
+locations of moved pieces can be specified through the \f4\-Y\f1 option to 
+the \f4cc\fP command.
+However, it is inconvenient to supply the proper 
+\f4\-Y\f1 options with every invocation of the \f4cc\fP command.
+Further,
+if a system administrator moves pieces of the CCS, such movement should be
+invisible to users.
+.PP
+The front-end to the \f4cc\fP command that \f4gencc\fP generates is 
+a one-line shell script that calls the \f4cc\fP command with the proper
+\f4\-Y\f1 options specified.
+The front-end to the \f4cc\fP command will
+also pass all user-supplied options to the \f4cc\fP command.
+.PP
+\f4gencc\fP prompts for the location of each tool and directory
+that can be respecified by a \f4\-Y\f1 option to the \f4cc\fP command.
+If no location is specified, it assumes that that piece of
+the CCS has not been relocated.
+After all the locations have been prompted for,
+\f4gencc\fP will create the front-end to the \f4cc\fP command.
+.PP
+\f4gencc\fP
+creates the front-end to the \f4cc\fP command in the current working 
+directory and gives the file the same name as the \f4cc\fP command.
+Thus, \f4gencc\fP can not be run in the same directory containing
+the actual \f4cc\fP command.
+Further, if a system administrator has
+redistributed the CCS, the actual \f4cc\fP command should be placed
+in a location that is not typically in a user's path (e.g., \f4/usr/lib\f1).
+Such
+placement will prevent users from accidentally
+invoking the \f4cc\fP command without using the front-end.
+.SH "NOTES"
+\f4gencc\fP does not produce any warnings if a tool or directory does not exist
+at the specified location.
+Also, \f4gencc\fP does not actually move any files
+to new locations.
+.SP
+The \f4gencc\fP command is obsolete.
+.SH "FILES"
+.TP 15
+\f4\&.\^/cc\f1
+front-end to \f4cc\f1
+.SH "SEE ALSO"
+\f4cc\fP(1)
+.Ee

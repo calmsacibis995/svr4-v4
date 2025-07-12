@@ -1,0 +1,2726 @@
+.if n .pH doctools.style @(#)style	41.4
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.ds U \s-1UNIX\s0
+.BK "USL Documentation Style Guide"
+.CH "USL Documentation Style Guide"
+.H 1 "Introduction"
+This is a set of guidelines
+on style for
+\*U System Laboratories
+documentation.
+These guidelines apply to all
+types of documents, including
+the reference manuals,
+except where explicitly noted.
+Much of our house style relies
+on the following other works:
+.BL
+.LI
+Except as noted in this
+.BT "Style Guide,"
+we aim to conform to the stylistic rules set out in
+.BT "The Chicago Manual of Style"
+(Thirteenth Edition).
+.LI
+For good advice about writing style,
+we recommend
+.BT "The Elements of Style"
+by Strunk and White.
+.LI
+Except as noted in this
+.BT "Style Guide,"
+we use
+.BT "Webster's Ninth New Collegiate Dictionary"
+as the final arbiter on spelling.
+.LI
+For text entry, formatting, typographical
+details, and indexing, we follow the
+.BT "Documenter's Tool Set User's Guide,"
+Release 1.0.
+We'll refer to this guide as the
+.BT "\s-1DOCTOOLS\s0 User's Guide."
+.LE
+.P
+This is the first issue of the
+.BT "Style Guide" ";"
+until now,
+writers in the USL documentation groups
+have worked without the guidelines presented here.
+Thus the USL documentation set
+does not yet conform, entirely,
+to the rules set forth in the
+.BT "Style Guide" "."
+When you find stylistic inconsistencies in our books,
+look to the
+.BT "Style Guide"
+to find out which style is correct.
+Eventually, we will remove these inconsistencies.
+.P
+We recognize that this
+.BT "Style Guide"
+does not cover every matter of style that
+deserves to be addressed.
+We intend to expand and change the
+.BT "Style Guide"
+in accordance with writers' needs.
+.H 1 "Writing Style"
+.H 2 "Addressing the Reader"
+.BL
+.LI
+Use an informal but precise tone.
+.IX tone
+Speak fluidly and directly, expecting
+readers to scan the text, skipping sections.
+Use contractions.
+.IX contractions
+.LI
+Use ``we'' and ``you'' instead of third person nouns when addressing the reader.
+.IX person
+.VL .75i .5i
+.LI "Wrong:"
+.SM USL
+recommends . . . 
+.LI "Right:"
+We recommend . . . 
+.LI "Wrong:"
+The user can create a new password . . . 
+.LI "Right:"
+You can create a new password . . . 
+.LE
+.LI
+Use ``must'' only when necessary.
+.VL .75i .5i
+.LI "Wrong:"
+You must start by familiarizing yourself with
+the terms explained in the following section.
+(Here the use of ``must'' is inappropriate because
+the reader does not have to follow this step.)
+.LI "Right:"
+First become familiar with
+the terms explained in the following section.
+.LI "Right:"
+You must first install the
+.SM XYZ
+Utilities.
+(Here the use of ``must'' is appropriate because
+the software does not work if this step is not followed.)
+.LE
+.LE
+.H 2 "Tense, Mood, and Voice"
+.BL
+.LI
+Use the present tense whenever you can.
+.IX tense (of verbs)
+.LI
+Use the imperative mood for instructions
+and the indicative mood for all other situations,
+including hypothetical ones.
+.IX mood (of verbs)
+.VL .75i .5i
+.LI "Wrong:"
+If you forgot the firmware password,
+you could assign a new one with the floppy key.
+.LI "Right:"
+If you forget the firmware password,
+assign a new one with the floppy key.
+.LE
+.LI
+Use the active voice.
+.IX voice
+.IX passive voice
+.LE
+.H 2 "Sexist Language"
+.IX istart sexist language
+Reword text whenever necessary to avoid any reference
+to a person's sex.
+For example:
+.BL
+.LI
+Use the second (not the third) person.
+.VL .75i 
+.LI "Wrong:"
+The administrator should warn users before he
+shuts down the system.
+.LI "Right:"
+Warn users before you shut down the system.
+.LE
+.LI
+Use a plural (not a singular) pronoun.
+.VL .75i 
+.LI "Wrong:"
+The administrator is responsible for 
+supporting the users on her system.
+.LI "Right:"
+Administrators are responsible for 
+supporting the users on their systems.
+.LE
+.LI
+Use job titles (not pronouns).
+.VL .75i
+.LI "Wrong:"
+He issues the system password.
+.LI "Right:"
+The administrator issues the system password.
+.LE
+.LI
+Use the definite article (``the'')
+instead of a possessive article ( ``his'' or ``her'').
+.VL .75i
+.LI "Wrong:"
+The administrator should monitor the installation 
+of this package on her system.
+.LI "Right:"
+The administrator should monitor the installation 
+of this package on the system.
+.LE
+.LI
+If you can't use any of the above forms of wording, 
+use the passive (instead of the active) voice.
+This is the least desirable alternative.
+.VL .75i
+.LI "Wrong:"
+He should run a full backup once a week.
+.LI "Right:"
+A full backup should be run once a week.
+.LE
+.LE
+.IX iend sexist language
+.H 2 "Emphasis"
+.IX emphasis
+.BL
+.LI
+If you need to emphasize some information,
+use the admonishment macro to create a note
+(see ``Notes and Admonishments''):
+.AB N
+Never use the
+.UI "rm *"
+command in your home directory.
+.AC
+.LI
+To add emphasis where an admonishment is invalid, as on the manual pages,
+or inappropriate in some other way, use structural 
+rather than typographical devices.
+.VL .75i
+.LI "Wrong:"
+You \f3may not\fP change this field.
+.LI "Wrong:"
+You \f2may not\fP change this field.
+.LI "Wrong:"
+You MAY NOT change this field.
+.LI "Right:"
+Do not change this field; if you do,
+you may lose data necessary for the xyz procedure,
+described later in this section.
+.LE
+.LE
+.H 2 "Use of ``That'' and ``Which''"
+.IX ``that,'' use of
+.IX ``which,'' use of
+Use ``that'' to introduce restrictive clauses
+and ``which'' to introduce nonrestrictive clauses.
+.H 5 "Restrictive"
+Here is an example of a restrictive clause:
+.DS I "" F
+The old books that came from Italy are fascinating.
+.DE
+The restrictive clause limits the books being discussed 
+to those books that came from Italy.
+This sentence implies that not all of the old books 
+being discussed came from Italy.
+There may be others from other places;
+they may or may not be fascinating.
+.H 5 "Non-restrictive"
+Here is an example of a non-restrictive clause:
+.DS I "" F
+The old books, which came from Italy, are fascinating.
+.DE
+A restrictive clause is not needed
+because the meaning of the sentence remains the same
+whether or not the clause is included.
+To show that the clause could be omitted from
+the sentence without changing the meaning,
+set it off with commas, as shown above.
+For example, the above
+sentence states that all the old books are
+fascinating; the phrase ``came from Italy'' is not
+needed to show which books are being discussed.
+The implication is that all the old books came from Italy.
+.P
+The conjunction ``that'' is frequently used
+unnecessarily.
+Omit needless occurrences of ``that.''
+For example:
+.VL .75i .5i
+.LI "Wrong:"
+Add a login for each user that you've added to the system.
+.LI "Right:"
+Add a login for each user you've added to the system.
+.LE
+.H 1 "Rules for Entering Text"
+The rules in this section apply only to the input
+for source text files.
+.BL
+.LI
+Start every sentence in an input file on a new line.
+This convention makes the source easier to maintain.
+.LI
+Do not leave blank spaces at the end of a line.
+They can produce inappropriate horizontal spacing.
+.LI
+Do not request fonts by name;
+that is, do not use requests such as
+.IX fonts
+.UI \efI ,
+.UI \efB ,
+or
+.UI \ef(HB .
+Request fonts only by number, as described in
+.ST "Markup for Computer Text."
+.LI
+Do not request page breaks in document source
+(for example, to fix widows)
+until you are ready to produce camera-ready copy.
+.IX page breaks
+.IX break (page)
+.IX widows
+When you do insert page breaks, use the
+.UI .NE
+macro.
+Never use the
+.UI .SK
+macro or the
+.UI .bp
+request.
+See the
+.ST "Production"
+section for details.
+.LI
+Do not add
+.UI .sp
+requests to your files
+as a means of producing vertical space; the
+.UI format
+macros leave the appropriate amount of space.
+.P
+Do not add blank lines to your files except to
+represent a literal blank line\(emthat is, a blank line
+in user input or computer output
+(for example, in a screen).
+.LE
+.H 2 "Changing Fonts"
+.IX fonts
+When you change fonts inside a text element
+such as an admonishment or a legend, use
+.IX legends, fonts in
+.IX captions (see legends)
+.UI \efP
+to return to the default font.
+Font 1 may be the wrong font.
+For example:
+.VL .75i .25i
+.LI "Wrong:"
+\f4\&.FG "Example of \ef4sag\ef1 Output"\fP
+.LI "Right:"
+\f4\&.FG "Example of \ef4sag\efP Output"\fP
+.LE
+.H 2 "Document-Specific Strings"
+.IX strings (\f4troff\fP)
+To help make documents consistent and to avoid repeated typing of long strings
+(such as the full name of a product or document), define
+.UI troff
+strings and use them in place of the full name:
+.DS I UI
+\&.ds Pr \ef2Programmer's Reference Manual\efP
+\&.ds Ur \ef2User's Reference Manual\efP
+\& . . .
+The most frequently used commands
+are described in the \e*(Pr and the \e*(Ur.
+\& . . .
+.DE
+.H 2 "Escaping troff Special Characters"
+.IX special characters (\f4troff\fP)
+A dot or a single quote at the beginning of a line in an input file is a
+.UI troff
+special character indicating
+that the line contains a request or macro rather than ordinary input text.
+In some contexts (for example, admonishments or tables)
+.UI troff
+can interpret a dot or a quote as a special character even though
+it is not the first character in a line in the input file.
+To avoid such misinterpretation,
+escape all words that begin with a dot or a single quote with the ``\c
+.UI \e& ''
+special character, a ``zero-width, non-printing'' character.
+For example:
+.DS I UI
+The format of the
+\&.UI \e&.hw
+request is as follows:
+\&.DS I UI
+\e&.hw \ef2word1 word2\ef1 . . .
+\&.DE
+.DE
+.H 2 "Hyphenation"
+.IX hyphenation
+.BL
+.LI
+When \f4troff\fP hyphenates incorrectly,
+you can override it using the
+.UI .hw
+request.
+The format of the
+.UI .hw
+request is as follows:
+.DS I UI
+\&.hw \f2word1 word2\f1 . . .
+.DE
+The arguments
+.SB word1 ,
+.SB word2 ", . . . "
+specify permissible places for hyphens.
+Mark each permissible place with the ``\f4-\fP'' character.
+For example:
+.DS I UI
+\&.hw run-nable no-good-nik
+.DE
+.LI
+To avoid hyphenation
+.BL
+.LI
+To prevent
+.UI troff
+from hyphenating a word anywhere in the document, use the
+.UI .hw
+request with no hyphens in the word.
+.LI
+To prevent
+.UI troff
+from hyphenating a single instance of a word, precede the word
+(and any font changes to it) with the ``\f4\e%\fP'' request.
+.LE
+.LE
+.H 2 "Long Headings"
+If a \f4.H 1\fP heading is too long
+to appear as a page header,
+use the second argument (to
+.UI ".H 1" ")"
+to supply an abbreviated form of the heading
+to be used in the running header.
+For example:
+.VL 1.2i .2i
+.LI "Full header:"
+``Browsing Resources with the dfshares Command''
+.LI "Abbreviation:"
+``Browsing with dfshares''
+.LE
+.H 1 "Lists"
+.IX istart lists
+.BL
+.LI
+Use numbered (\f4.AL\fP) lists
+only when the sequence of list items is important.
+.IX numbered lists
+.LI
+Use bulleted (\f4.BL\fP),
+variable (\f4.VL\fP),
+and dashed (\f4.DL\fP) lists
+when the sequence of list items is unimportant.
+.IX bullet lists
+.IX variable lists
+.IX dashed lists
+.LI
+Use variable (\f4.VL\fP) lists
+for items that can be divided into two sections:
+.IX variable lists
+a tag word (or phrase)
+and a line or more of explanatory text.
+For example:
+.VL .75i .5i
+.LI "Height"
+6'4''
+.LI "Weight"
+112 lb.
+.LI "Hobbies"
+pachinko, contra dancing, jackalope hunting
+.LE
+.LI
+You may nest lists up to three levels deep.
+Within a book, use a consistent nesting style.
+Use dashed lists (produced by \f4.DL\fP)
+rather than bullet lists (produced by \f4.BL\fP)
+at the third level.
+Numbered lists (\f4.AL\fP) and variable lists (\f4.VL\fP)
+may be used at any level.
+.IX nested lists
+.LI
+To make lists simple and list items parallel,
+avoid mixing sentences and non-sentences in a list.
+.LI
+For list items, use the following rules of punctuation and capitalization:
+.IX punctuation, of lists
+.BL
+.LI
+If a list is made up entirely of sentences,
+capitalize and punctuate list items as you would ordinary running text.
+.LI
+If a list is made up entirely of non-sentences,
+do not capitalize the first word in the list items or use any punctuation
+at the end of any list item.
+Within a list item, use internal punctuation (such as commas) as necessary.
+.LI
+If a list contains at least one sentence
+plus other items that are not sentences,
+capitalize the first word of
+all list items but end a list item with final punctuation
+(such as a period) only if it is a sentence.
+Do not end individual list items with internal punctuation
+(such as commas or semicolons) or conjunctions
+(such as ``and'' or ``or'').
+Within a list item, use internal punctuation (such as commas)
+as necessary.
+.LI
+If a list item consists of a phrase followed by a sentence,
+separate the two pieces of text with
+an em dash;
+do not put a period after the phrase.
+.LE
+.LE
+.IX iend lists
+.H 1 "Punctuation"
+.IX istart punctuation
+.H 2 "Dashes, Hyphens, and Minus Signs"
+.IX istart dashes
+.BL
+.LI
+Use a hyphen
+for compound terms such as ``read-only.''
+.IX hyphen
+To produce a hyphen, type the following:
+.UI -
+.LI
+Use an en dash
+.IX en dash
+or a minus sign
+to show a range of numbers or other symbols (such as ``1\(en5'').
+To produce an en dash, use the
+.UI \e(en
+request.
+To produce a minus sign, enter \f4\e-\fP.
+Do not leave white space between an en dash
+(or minus sign) and the words around it.
+.LI
+Use an em dash
+as sentence punctuation\(emfor
+.IX em dash
+example, to isolate
+a parenthetical remark.
+Do not leave white space between
+an em dash and the words around it.
+Do not put an em dash at the beginning or end
+of a text input line.
+To produce an em dash, use the
+.UI \e(em
+request.
+.LI
+Use a minus sign
+.IX minus sign
+to mark options to commands
+(such as
+.UI "ps \-e" )
+and to show mathematical expressions
+(such as 1 \- 5 = \-4),
+and in the
+.ST \s-1NAME\s0
+section of manual pages.
+To produce a minus sign, type the following:
+.UI \e-
+.LE
+.TB "Dashes, Hyphens, and Minus Signs"
+.TS
+center ;
+c c   c
+c cf4 c .
+Name	Input	Output
+_
+hyphen	-	-
+en dash	\e(en	\(en
+em dash	\e(em	\(em
+minus sign	\e-	\-
+.TE
+.IX iend dashes
+.H 2 "Ellipses"
+.IX istart ellipses
+.BL
+.LI
+To print an ellipsis,
+use the string ``\f4. . .\fP''
+(three periods separated by spaces).
+Print the string in font 1.
+Leave one space before the first period
+and one space after the third,
+regardless of whether
+the preceding or following material
+forms a sentence.
+(If you're putting an ellipsis after a sentence,
+omit the period that ordinarily ends the sentence.)
+Here are some input examples:
+.BL
+.LI
+.UI "This . . . is the simplest case."
+.LI
+.UI "Here is a list: item 1, item 2, . . ."
+.LI
+.UI "We need an ellipsis at the end of this sentence . . . This is the sentence following the ellipsis."
+.LI
+.UI "Use"
+.nf
+.ft 4
+\&.UI cat ,
+\&.UI pg ", . . . "
+to display the files.
+.ft 1
+.fi
+.LE
+.P
+Here is the output generated by the examples:
+.BL
+.LI
+This . . . is the simplest case.
+.LI
+Here is a list: item 1, item 2, . . .
+.LI
+We need an ellipsis at the end of this sentence . . . This
+is the sentence following the ellipsis.
+.LI
+Use
+.UI cat ,
+.UI pg ", . . . "
+to display the files.
+.LE
+.LI
+Use the string ``\f4.\e .\e .\fP''
+\f1to prevent an ellipsis from
+being split across a line break.
+.LE
+.IX iend ellipses
+.H 2 "Lists"
+.IX lists
+.BL
+.LI
+Within a list item, use internal punctuation
+(such as commas)
+as necessary.
+.LI
+Do not add internal punctuation
+(such as commas or semicolons)
+or conjunctions
+(such as ``and'' and ``or'')
+to the end of individual list items.
+.LE
+.H 2 "Parentheses"
+.IX parentheses, nesting
+Don't nest parentheses.
+Avoid nesting by putting parentheses
+between square brackets as in the following:
+.VL .75i .5i
+.LI "Input:"
+.UI ". . . after you pack the files [see \ef4cpio\ef1(1)]."
+.LI "Output:"
+\&. . . after you pack the files [see \f4cpio\f1(1)].
+.LE
+.H 2 "Punctuation after Literal I/O in Running Text"
+Do not use punctuation that can be confused with characters to be typed by the user.
+If necessary,
+reword a sentence:
+.VL .75i .5i
+.LI "Wrong:"
+Enter the following command: \f4rm *\f1.
+.LI "Right:"
+Enter \f4rm *\f1 to remove all files in the current directory.
+.LE
+.H 2 "Quotation Marks"
+.BL
+.LI
+To produce quotation marks in running text,
+type two back quotes (\f4``\f1) and two forward quotes (\f4''\f1);
+.IX quotation marks
+do not use the double quote key (\f4"\f1).
+Here are some cases when quotes are appropriate:
+.BL
+.LI
+Use quotation marks around chapter and section titles.
+In guides, the
+.UI .CT
+and
+.UI .ST
+macros supply the quotes.
+In reference manuals, you must supply them:
+.VL .75i .5i
+.LI "Input:"
+.UI "See the chapter ``Shell Tutorial.''"
+.LI "Output:"
+See the chapter ``Shell Tutorial.''
+.LE
+.LI
+Use quotation marks around literal
+.SM I/O
+of one character (or around other short expressions) when the quotes
+help clarify the text.
+For example:
+.VL .75i .5i
+.LI "Input:"
+.UI "``\ef4?\efP'' is a special character."
+.LI "Output:"
+``\f4?\fP'' is a special character.
+.LE
+.LI
+Use quotation marks around a word
+used as a word: that is,
+a word used to refer to a word itself,
+rather than to the thing
+represented by the word.
+For example:
+.DL
+.LI
+Tables are on sale in the furniture department.
+.LI
+``Tables'' is a six-letter word.
+.LE
+.LE
+.LI
+Don't use quotation marks for emphasis, irony, or slang.
+.IX emphasis
+.IX irony
+.IX slang
+.LI
+Use the double quote key
+(\f4"\f1) to delimit arguments to
+.UI troff
+macros and to represent a double quote in computer text:
+.DS I UI
+\&.H 1 "How to Send Mail"
+Enter the following command:
+\&.DS I UI
+mailx -s "test mail" fred
+\&.DE
+.DE
+.LI
+Put periods and commas before closing quotation marks;
+put all other punctuation
+(semi-colons, colons, question marks, exclamation points,
+and so on) after quotation marks.
+For example:
+.VL .75i .25i
+.LI "Input:"
+\f4For details, see Chapter 1,
+.br
+\&.CT "Overview."\f1
+.LI "Output:"
+For details, see Chapter 1, ``Overview.''
+.LI "Input:"
+\f4Have you read Chapter 1,
+.br
+\&.CT "Overview" ?\f1
+.LI "Output:"
+Have you read Chapter 1, ``Overview''?
+.LE
+.LE
+.IX iend punctuation
+.H 1 "Spelling and Distinctive Treatment of Words"
+.IX istart spelling
+.AB N
+It is the responsibility of every writer
+to run \f4spell\fP or \f4spellwwb\fP
+on a file before production time.
+For reference, use
+.BT "Webster's Ninth New Collegiate Dictionary."
+When it authorizes two or more forms
+of spelling for a word, use the first form listed.
+.AC
+.H 2 "Abbreviations"
+.IX abbreviations
+.BL
+.LI
+Avoid Latin abbreviations
+such as ``e.g.''
+Use the following terms instead:
+.BL
+.LI
+``for example'' (not ``e.g.'')       	
+.LI
+``that is'' (not ``i.e.'')       	
+.LI
+``and so on'' (not ``etc.'')      	
+.LE
+.LI
+Show \s-1A.M.\s0 and \s-1P.M.\s0
+in uppercase with periods,
+.IX time designations
+as follows:
+.VL .75i .5i
+.LI "Input:"
+.UI "A.M."
+.LI "Output:"
+\s-1A.M.\s+1
+.LE
+Do not leave a space between the ``A'' (or the ``P'')
+and the ``M.''
+.LI
+Show time zone abbreviations
+in uppercase, without periods (Section 7.73 in \f2The Chicago Manual\f1).
+.IX time zones
+.VL .75i .5i
+.LI "Wrong:"
+.SM E.S.T. ,
+.SM M.S.T.
+.LI "Right:"
+.SM EST ,
+.SM MST
+.LE
+.P
+Following international standards, we now refer to
+Greenwich Mean Time (\s-1GMT\s0) as ``Universal Time Coordinated'' (\s-1UTC\s0).
+.LE
+.H 2 "Capitalization"
+.IX istart capitalization
+.BL
+.LI
+In titles and headings,
+follow Section 7.123 of
+.BT "The Chicago Manual" ":"
+.BL
+.LI
+Capitalize the first and last word
+of a title or heading.
+.IX titles, capitalization in
+.IX headings, capitalization in
+.LI
+Capitalize
+``all nouns, pronouns, adjectives, verbs, adverbs, and
+subordinate conjunctions''
+in a title or heading.
+.IX titles, capitalization in
+.IX headings, capitalization in
+.LI
+Use lowercase for
+articles (``the,'' ``a,'' ``an'')
+in titles and headings.
+.LI
+Use lowercase for
+``coordinate conjunctions (`and,' `or,' `for,' `nor'),
+and prepositions, regardless of length, unless
+they are the first or last words of the title or subtitle.''
+.LE
+.P
+This rule applies to book, chapter, and section titles,
+figure and table legends,
+.IX legends, capitalization in
+figure callouts, and row and column labels in tables.
+.LI
+Never capitalize the name of a command or a file
+unless it actually contains an uppercase letter.
+.IX computer text, capitalization of
+If necessary, rewrite the sentence.
+.VL .75i .5i
+.LI "Wrong:"
+\f4Spell\f1 checks the spelling of words.
+.LI "Right:"
+\f4spell\f1 checks the spelling of words.
+.LI "Right:"
+The \f4spell\f1 command checks the spelling of words.
+.LE
+.LI
+Capitalize nouns such as ``chapter''
+if they refer to specific items as in
+``.\ .\ .\ see Chapter 3.''
+(On this point we diverge from
+.BT "The Chicago Manual,"
+which recommends against
+capitalizing words such as ``chapter'' and ``part.'')
+.VL .75i .5i
+.LI "Wrong:"
+chapter 1, step 2, model 3
+.LI "Right:"
+Chapter 1, Step 2, Model 3
+.LI "Wrong:"
+Refer to the instructions in the previous Chapter.
+.LI "Right:"
+Refer to the instructions in the previous chapter.
+.LE
+.LE
+.IX iend capitalization
+.H 2 "Command Names Used as Verbs"
+In books for beginning users,
+such as the
+.BT "User's Guide,"
+avoid using \*U commands as verbs.
+.VL .75i .5i
+.LI "Wrong:"
+Now
+.UI cat
+the file.
+.LI "Right:"
+Now run the
+.UI cat
+command on the file.
+.LE
+.H 2 "Keyboard Keys and Control Characters"
+.IX istart keyboard keys
+.BL
+.LI
+In guides for beginning users, use the
+.UI \&.HK
+macro to mark keyboard keys.
+In reference manuals and in guides for advanced users,
+enter the name of the keyboard key in all uppercase.
+Put key names in font 1
+and spell them as shown in the following table:
+.TB "Spellings for Generic Keyboard Designations"
+.vs +2
+.TS
+center ;
+lp-1 lp-1 lp-1 lp-1.
+BACKSPACE	DEL WORD	LINEFEED	RETURN
+BREAK	DELETE	MENU	SCROLL DOWN
+CAPS LOCK	DIAL	MODES	SCROLL UP
+CLEAR	DISCON	NO SCROLL	SET-UP
+CLEAR LINE	ENTER	NUM LOCK	SHIFT
+CLEAR SCREEN	ESC	PAGE DOWN	SYS PF
+CTRL	HELP 	PAGE UP	TAB
+DEL CHAR	HOME	PRINT	TOP
+DEL LINE	INS CHAR	RESET	USER PF
+.TE
+.vs -2
+.P
+Example of text for a beginning user:
+.VL .75i .5i
+.LI "Input:"
+.nf
+\f4Press the
+\&.HK RETURN
+key.\fP
+.fi
+.LI "Output:"
+Press the
+.HK RETURN
+key.
+.LE
+.P
+Example of text for an advanced user
+(or a manual page):
+.VL .75i .5i
+.LI "Input:"
+.UI "Press the RETURN key."
+.LI "Output:"
+Press the RETURN key.
+.LE
+.LI
+To represent function keys,
+.IX function keys
+use the
+.UI \&.HK
+macro in guides for beginning users,
+and spell out in font 1 the names of the keys
+in guides for advanced users and on manual pages.
+If the names of the function keys are printed by the software
+(for example, in a screen display),
+spell the names as the software does.
+If the software does not print the names, use F1, F2, and so on.
+For example:
+.DS I UI
+Press the F7 key.
+.DE
+.LI
+.IX control characters
+Represent a control character as a hyphenated compound word beginning with ``\c
+.SM CTRL .''
+Use a lowercase letter to represent a lowercase control character;
+use ``\c
+.SM SHIFT ''
+followed by an uppercase letter to represent an uppercase control character.
+.BL
+.LI
+Use the
+.UI \&.HK
+macro in guides for beginners:
+.\"TB "Control Characters in Guides for Beginners"
+.TS
+center ;
+c c   c
+l cf4 cf4
+l c   c .
+	Lowercase	Uppercase
+_
+Input	\&.HK CTRL-d	\&.HK CTRL-SHIFT-D
+Output	T{
+.HK CTRL-d
+T}	T{
+.HK CTRL-SHIFT-D
+T}
+.TE
+.LI
+Use font 1 in guides for advanced users and in reference manuals:
+.\"TB "Control Characters in Manuals and in Guides for Advanced Users"
+.TS
+center ;
+c c   c
+l cf4 cf4
+l c   c .
+	Lowercase	Uppercase
+_
+Input:	CTRL-d	CTRL-SHIFT-D
+Output:	\s-1CTRL-d	CTRL-SHIFT-D\s0
+.TE
+.LE
+.LI
+To represent
+.SM ASCII
+graphic characters
+(such as ``$'' and ``!'') as user input:
+.IX graphic characters (ASCII)
+.BL
+.LI
+In guides for beginning users, enter the character after the
+.UI \&.HK
+macro.
+For example:
+.VL .75i .5i
+.LI "Input:"
+\f4\&.HK "!"\fP
+.LI "Output:"
+.HK "!"
+.LE
+.LI
+In guides for advanced users and on manual pages:
+The first time you mention an
+.SM ASCII
+graphic character,
+spell out its name, followed by the character itself.
+Show the character in font 4, in double quotes and parentheses.
+For example:
+.VL .75i .5i
+.LI "Input:"
+\f4Type an exclamation point (``\ef4!\efP'')
+to end the edit session without writing the file.\fP
+.LI "Output:"
+Type an exclamation point (``\f4!\fP'')
+to end the edit session without writing the file.
+.LE
+.P
+For later references in the document
+or in the current chapter (use your judgment),
+show only the character in font 4 in double quotes;
+don't spell out the name.
+For example:
+.VL .75i .5i
+.LI "Input:"
+\f4Use ``\ef4!\efP''
+to end the edit session without writing the file.\fP
+.LI "Output:"
+Use ``\f4!\fP''
+to end the edit session without writing the file.
+.LE
+.LE
+.LI
+To show multi-character input
+using the
+.UI .HK
+macro, use a separate call to
+.UI .HK
+for each character the terminal sends to the software.
+Multi-character input is input in which more than one special character is sent to the software;
+multi-character input is different from single-character input
+for which you must press more than one key simultaneously.
+The
+.SM SHIFT
+key and the
+.SM CTRL
+key are the primary examples of keys that do not by themselves send input;
+you must press another key simultaneously to send one character.
+For example, by pressing
+.SM CTRL-SHIFT-D
+you send only one character.
+An example of multi-character input is
+.HK F7
+.HK d :
+the function key sends one character
+(or character sequence)
+and the ``\f4d\fP'' sends another.
+.LE
+.IX iend keyboard keys
+.H 2 "Special Coinages and Local Spelling"
+The following table shows the spellings
+we use in our documents.
+.TB "Special Coinages and Local Spelling"
+.TS
+center ;
+l l .
+RS-232-C interface (n)	log on (v)
+add on (v)	log out (v)
+add-on (adj, n)	lowercase (adj, v)
+backslash (n)	non-zero (adj)
+back up (v)	newline (n, adj)
+backup (n, adj)	online (adj, adv)
+boolean (adj)	parent process (n)
+built-in (adj, n)	pathname (n)
+calling process (n)	power down (v)
+daemon (adj, n)	powerdown (n, adj)
+daisy-wheel printer (n)	process group (n)
+database (adj, n)	read-only (adj)
+dot-matrix printer (n)	real time (n)	
+end user (n)	real-time (adj)
+end-user (adj)	reboot (v)
+environment variable (n)	run level (n)
+file descriptor (n)	run time (n)
+filename (adj, n)	run-time (adj)
+file system (n)	shut down (v)
+floating-point (adj, n)	shutdown (adj, n)
+ID (n)	source code (n)
+higher-level (adj)	source-code (adj)
+keyletter (n)	standalone (adj)
+keyword (n)	\f4stderr\fP
+left-hand (adj)	\f4stdin\fP
+linefeed (n)	\f4stdout\fP
+log in (v)	uppercase (v, adj)
+login (adj, n)	user level (n)
+log off (v only)	user-level (adj)
+.TE
+.H 2 "Numbers"
+.IX numbers
+.BL
+.LI
+Write out numbers from zero to ten;
+use digits to represent numbers greater than ten.
+Spell out any number that is the first word of a sentence.
+.LI
+Put a zero before the decimal point in decimal numbers less than one
+(such as ``0.25'')
+to prevent the reader from overlooking the decimal point.
+.LE
+.H 2 "Possessives"
+.IX possessives
+``Form the possessive singular of nouns by adding 's''
+(Strunk and White, page 1).
+.VL .75i .5i
+.LI "Wrong:"
+The process' address space . . .
+.LI "Right:"
+The process's address space . . .
+.LE
+.H 2 "Preferred Words and Phrases"
+.IX preferred phrases
+.IX words and phrases, preferred
+.BL
+.LI
+``appendixes'' (avoid ``appendices'')
+.LI
+``because'' (avoid ``since'' except when you're referring to time)
+.LI
+``beginning user'' (avoid ``novice user'')
+.LI
+``current directory'' (avoid ``working directory'')
+.LI
+``data is'' (avoid ``data are'')
+.LI
+``enter,'' ``press,'' ``type''
+.BL
+.LI
+Use ``enter'' in reference to a command line,
+as in the following (output) example:
+.DS I "" F
+Enter
+.UI "rm *.o"
+to remove the object files.
+.DE
+.LI
+Use ``press'' (not ``depress'' or ``hit'')
+in reference to one or more keys pressed simultaneously,
+as in the following (output) example:
+.DS I "" F
+Press
+.HK "CTRL-SHIFT-D" .
+.DE
+.LI
+Use ``type'' in reference to characters that the reader must enter
+other than those in a complete command.
+For example:
+.DS I
+Type ``\f4y\fP'' (for yes) or ``\f4n\fP'' (for no) after each prompt.
+.DE
+.LE
+.LI
+``\f2file\fP'' (avoid ``\f2filename\fP'' as a substitutable element)
+.LI
+``indexes'' (avoid ``indices'')
+.LI
+``invalid'' (avoid ``illegal'')
+.LI
+``manual page'' (avoid ``man page,'' ``manpage,''
+and ``manual entry'')
+.LI
+``mode'' (avoid ``firmware state,'' ``multi-user state,'' and so on)
+.LI
+``\f4NULL\fP,'' ``null'' (avoid ``\s-1NULL\s0'')
+.BL
+.LI
+.UI NULL
+is a constant defined in
+.UI stdio.h .
+Treat it as user input.
+.LI
+The word ``null'' means ``without members'' or ``having no value.''
+.LE
+.LI
+``percent'' (avoid ``%'')
+.LI
+.HK RETURN
+or ``\c
+.SM RETURN ''
+(avoid ``carriage return'')
+.LI
+``show'' (avoid ``indicate'')
+.LI
+``standard input,''
+``standard output,''
+``standard error output''
+(avoid ``\f4stdin\fP,''
+``\f4stdout\fP,''
+``\f4stderr\fP''
+except when you refer to the file descriptors defined in the header file
+.UI stdio.h )
+.LI
+``such as
+.SB x ,
+.SB y ,
+or
+.SB z ''
+(avoid ``like
+.SB x ,
+.SB y ,
+or
+.SB z '')
+.LI
+``system state'' (avoid ``run state,'' ``run level,'' ``run mode'')
+.LI
+``valid'' (avoid ``legal'')
+.LI
+``want'' (avoid ``wish'')
+.LE
+.IX iend spelling
+.H 1 "Computer Text"
+.IX istart computer text
+.IX literal I/O (see computer text)
+.H 2 "Markup for Computer Text"
+.BL
+.LI
+We visually distinguish computer text
+from descriptive text
+to prevent ambiguity.
+We also distinguish between literal text elements
+(such as names of commands that should be typed as shown)
+and substitutable text elements
+(such as the word
+.SB file ,
+which the reader
+is expected to replace with the name of an actual file).
+.TB "Markup for Computer Text"
+.vs +2
+.TS
+center;
+c | c s | c s
+c | c c | c c
+l | c c | c c .
+Logical	Guide Markup	Manual Markup
+Element	Macro	Font	Macro	Font
+_
+T{
+User Input
+T}	T{
+.UI \&.UI
+T}	T{
+.UI \ef4
+T}	T{
+(none)
+T}	T{
+.UI \ef4
+T}
+T{
+Computer\0Output
+T}	T{
+.UI \&.CO
+T}	T{
+.UI \ef5
+T}	T{
+(none)
+T}	T{
+.UI \ef5
+T}
+T{
+Substitutable
+T}	T{
+.UI \&.SB
+T}	T{
+.UI \ef2
+T}	T{
+(none)
+T}	T{
+.UI \ef2
+T}
+.ft 1
+.TE
+.vs -2
+Currently these fonts produce the following output:
+.IX fonts
+the
+.UI ".UI"
+macro (font 4) produces a constant width font;
+the
+.UI ".CO"
+macro (font 5) produces a constant width font; and
+the
+.UI ".SB"
+macro (font 2) produces an italic font.
+.LE
+.AB N
+The following two items describe our markup for user input and computer output.
+Although we use different macros for these types of text,
+both macros currently use the same font to produce their output.
+By making the distinction in our source files, however,
+we are making it possible
+to make a typographical distinction in the future.
+.AC
+.BL
+.LI
+Literal user input
+is any text typed by the user.
+.IX user input
+In guides, use the
+.UI \&.UI
+macro to mark user input in running text, displays, and lists.
+In reference manuals and when it's not convenient to use the macro in the guides,
+print user input using font 4.
+.P
+Examples of user input are
+all shell input, including command names, option letters and words,
+environment variables,
+and filenames;
+all elements of programming languages, including variable, function,
+and structure names,
+structure members, defined constants (such as the symbolic names of error numbers and signals),
+keywords, preprocessor input,
+and programs and program fragments;
+and the names of manual pages.
+.P
+Always show user input (such as command names)
+as they must be typed by the user.
+Do not capitalize a command name (or any other string of
+user input) that appears at the beginning of a sentence,
+heading, or title.
+.P
+Use a legend for a display of user input if you want to refer to it later
+or if you want the legend to appear in the table of contents.
+Use the
+.UI .FG
+macro to produce the legend.
+.IX legends, computer text
+.LI
+Literal computer output
+is any text produced by the computer.
+.IX computer output
+In guides, use the
+.UI \&.CO
+macro to mark computer output in running text, displays, and lists.
+In reference manuals and when it's not convenient to use the macro in the guides,
+print computer output using font 5.
+.P
+Examples of computer output are diagnostics, error messages,
+and program output.
+.P
+Always show computer output (such as menu prompts)
+as they appear on the screen.
+Do not capitalize a menu prompt (or any other string of
+computer output) that appears at
+the beginning of a sentence, heading, or title.
+.P
+Use a legend for a display of computer output if you want to refer to it later
+or if you want the legend to appear in the table of contents.
+Use the
+.UI .FG
+macro to produce the legend.
+.LI
+Substitutable text
+is any text (showing user input) for which
+.IX substitutable text
+the reader is expected to substitute values
+when entering that text as input.
+For example, if the word ``file'' appears
+in a sample command line,
+the reader must replace it
+with the name of an actual file
+when entering that line.
+.P
+In guides, use the
+.UI \&.SB
+macro to mark substitutables in running text, displays, and lists.
+In reference manuals and when it's not convenient to use the
+.UI \&.SB
+macro in the guides,
+print substitutables using font 2.
+.LI
+Syntactic notation
+.IX syntactic notation, font for
+consists of symbols, such as brackets and ellipses,
+that appear in a command synopsis
+but that are not typed by a user.
+Use font 1 for symbols such as these.
+.LI
+Print user input in font 4 and computer output in font 5 in all
+contexts except book and chapter titles and section headings.
+.IX titles, fonts in
+.IX headings, fonts in
+These font rules apply in figure and table legends,
+indexes, and so on.
+.IX legends, fonts in
+.IX fonts
+.LI
+In guides for beginning users, you may include shell prompts
+at the beginning of command lines shown in displays.
+Use default prompts:
+the dollar sign (``\f4$\fP'') is the default prompt for ordinary users;
+the pound sign (``\f4#\fP'') is the default prompt for login
+.UI root .
+If you include prompts in your examples,
+be consistent: show prompts
+in front of all command lines in displays
+throughout the book.
+(In screen displays,
+always show prompts that appear on the user's terminal screen.)
+.LI
+Treat filenames as user input.
+.IX filenames
+Mark them with
+.UI .UI
+or
+print them in font 4.
+Do not use angle brackets
+around header file names in running text:
+.VL .75i .25i
+.LI "Wrong:"
+These values are defined in
+.UI <stdio.h> .
+.LI "Right:"
+These values are defined in
+.UI stdio.h .
+.LE
+.LI
+Treat environment variables as user input.
+.IX environment variables
+Mark them with
+.UI \&.UI
+or
+print them in font 4.
+Do not precede them with a dollar sign unless you are showing a string to be typed,
+as in the following (output) example:
+.DS +0.5i "" F
+Enter
+.UI "echo $PATH"
+to see the value of your current
+.UI "PATH"
+variable.
+.DE
+.LI
+Treat function names as user input.
+.IX function, names
+Mark them with
+.UI \&.UI
+or
+print them in font 4.
+Do not follow function names with empty parentheses.
+.LI
+The synopsis lines of commands
+are often complex and require many shifts in fonts.
+.IX synopsis lines
+.IX istart command line markup and syntax
+In those cases you may prefer to encode the specific font numbers.
+The following sample synopsis line for the \f4cat\f1 command
+shows the typefaces used for command syntax.
+.VL .75i .5i
+.LI "Input:"
+\f4\ef4cat\ef1 [\ef4\e-etv\ef1] [\ef2file\ef1] . . .\f1
+.LI "Output:"
+\f4cat\f1 [\f4\-etv\f1] [\f2file\f1] . . .
+.LE
+.UI cat
+and
+.UI \-etv
+are in font 4
+because they are strings of literal I/O.
+.SB file
+is in font 2
+because it is a substitutable.
+The brackets and ellipsis are in font 1
+because they are elements of syntactic notation.
+.LI
+To produce a backslash,
+.IX backslash
+enter ``\f4\ee\fP'' in your text file.
+.LE
+.H 2 "Standard Rules of Command Syntax"
+.IX syntax, command
+.BL
+.LI
+List options
+between square brackets and precede them with ``\f4\e-\fP'':
+.IX istart options (command line)
+.DS I UI
+ls \f1[\f4\-CFRabcdfgilmnopqrstux\f1] \f2file\f1 . . .
+.DE
+.LI
+If the order of options is not significant,
+list them in
+.SM "ASCII"
+order: (1) numerals,
+(2) uppercase letters (in alphabetical order), and (3) lowercase letters
+(in alphabetical order).
+For example:
+.DS I UI
+ls \f1[\f4\-CFRabcdfgilmnopqrstux\f1] \f2file\f1 . . .
+.DE
+If the order of options is significant
+(that is, if a command does not execute unless the options
+to it are entered in a specific order),
+show those options in the required order.
+Also, be sure to warn the reader about the required order.
+.LI
+If an option requires an argument,
+list each option, along with its arguments, in separate brackets:
+.DS I
+\f4nusend \-d \f2dest [\f4\-m\f1] \f1[\f4\-a \f2acct\f1]  [\f4\-n \f2netname\f1]
+.DE
+List required arguments, such as \f4\-d\ \f2dest\f1, first,
+and don't use brackets around them.
+.LI
+If a command takes a complex set of options
+or an option takes a complex set of arguments,
+use a one-word abbreviation for the set in the synopsis
+and explain the set in the text.
+For example:
+.DS I UI
+\ef4cc\ef1 [\ef2options\ef1] \ef2file\ef1 . . .
+.DE
+.LI
+If the options take mixed argument types,
+first list together the options without arguments,
+in brackets.
+Then list the options that take separate arguments individually, as follows:
+.DS I
+\f4ps \f1[\f4\-acdefjl\f1] [\f4\-g \f2grplist\f1] [\f4\-p \f2proclist\f1] [\f4\-t \f2termlist\f1]
+.DE
+.LI
+If options are mutually exclusive,
+list them on separate lines.
+This helps avoid a more complicated syntax
+using vertical bars and curly braces.
+.DS I
+\f4at \f2time\f1 [\|\f2date\f1\|] [\|+\f2increment\f1\|]
+\f4at \-r \f2job\f1 . . .
+\f4at \-l \f1[\|\f2job\f1 . . . ]
+.DE
+.LI
+When you describe options to a command,
+show them in list format in the same order
+in which they appear in the
+.ST \s-1SYNOPSIS\s0
+section of the manual page.
+In guides, use the variable list (\f4.VL\fP) format;
+in manuals, use a tagged paragraph
+(\f4.TP\fP or \f4.IP\fP) format.
+.LI
+Whenever you refer to an option in running text,
+precede it with a minus sign unless the minus sign is syntactically incorrect.
+.LE
+.IX iend command line markup and syntax
+.IX iend computer text
+.IX iend options (command line)
+.H 1 "Figures, Tables, Screens, and Displays"
+.H 2 "Figures"
+.IX istart illustrations
+.IX istart figures
+.IX istart pictures
+.BL
+.LI
+Place a figure as close as possible after the text that introduces it.
+.LI
+Our illustrations
+may be diagrams, flowcharts, or graphs in the
+.UI pic
+or PostScript language,
+the two graphical formatting languages
+supported by our document formatting tools.
+.LI
+Use a legend for a figure
+.IX figure references
+.IX legends, figure
+if you want to refer to that figure later in the text
+or if you want the legend to appear in the table of contents.
+Use the
+.UI .FG
+macro to produce a figure legend.
+Sample input:
+.IX \f4pic\fP input
+.DS I UI
+\&.FG "Process Flow Diagram"
+\&.PS
+arrow;
+box "input";
+arrow;
+box "process";
+arrow;
+box "output";
+arrow;
+\&.PE
+.DE
+.P
+Output:
+.LE
+.FG "Process Flow Diagram"
+.PS
+arrow;
+box "input";
+arrow;
+box "process";
+arrow;
+box "output";
+arrow;
+.PE
+.IX iend illustrations
+.IX iend figures
+.IX iend pictures
+.H 2 "Tables"
+.IX istart tables
+.BL
+.LI
+Create tables for the
+.UI tbl
+program and insert them into text
+files using the
+.UI ".TS/.TE"
+macro pair.
+The following are detailed style specifications for tables.
+.BL
+.LI
+Avoid the
+.UI "box"
+and
+.UI "allbox"
+descriptors in text.
+.LI
+Use fonts in tables as you use them elsewhere:
+print headings and ordinary text in font 1, substitutables in font 2,
+literal input in font 4, and so on.
+.LI
+Center headings of columns.
+.LI
+Use capitalization in row and column headings as you would in titles.
+.LI
+To separate headings from the body of the table,
+use a single-line rule.
+Use your own judgment about how to use
+vertical and horizontal rules inside a table, but
+avoid double rules.
+.LI
+For entries that won't fit on one line,
+use text blocks.
+.LE
+.LI
+Place each table as close as possible after the sentence that introduces it.
+Use the
+.UI center
+descriptor to center each table on the page.
+.LI
+Use a legend for a table
+.IX legends, table
+if you want to refer to that table
+later in the text,
+or if you want the legend to appear in the master table of contents for the book.
+Use the
+.UI .TB
+macro or the
+.UI .FG
+macro to produce a legend.
+If you use
+.UI .TB ,
+the table is labeled as a table and its legend appears in a list of tables
+in the master table of contents for the book.
+If you use
+.UI .FG ,
+the table is labeled as a figure and its legend appears in the list of figures
+in the master table of contents for the book.
+Either style of legend is acceptable as long as
+it is followed consistently in all chapters of a book.
+.LE
+.IX iend tables
+.H 2 "Screens"
+.IX istart screen displays
+.IX istart displays, screen
+.IX istart terminal screen displays
+.BL
+.LI
+You can simulate the appearance of a computer screen
+through the
+.UI ".SS"
+and
+.UI ".SE"
+macros.
+Use a screen display to show a long code listing
+(over five lines long)
+or an interactive user session
+(such as the installation process)
+when it's important to show the reader
+the dialog between the user and the system.
+Because no distinction is made in the screens in our documents
+between user input and computer output,
+it is not necessary for you to show this distinction
+in your file markup.
+.P
+Here is an example of the source for a screen and the output it produces:
+.LE
+.DS I UI
+\&.SS
+$ ls \-l *
+-rw-r--r--   1 kathy    doc      1042 Nov  1 20:13 design
+-rw-r--r--   1 kathy    doc     28718 Nov  3 17:53 draft
+-rw-r--r--   1 kathy    doc      1691 Oct 17 08:43 indexes
+-rw-r--r--   1 kathy    doc       863 Nov  1 20:13 method
+-rw-r--r--   1 kathy    doc      8632 Nov  3 18:09 plan
+\&.SE
+.DE
+.SS
+$ ls \-l *
+-rw-r--r--   1 kathy      doc         1042 Nov  1 20:13 design
+-rw-r--r--   1 kathy      doc        28718 Nov  3 17:53 draft
+-rw-r--r--   1 kathy      doc         1691 Oct 17 08:43 indexes
+-rw-r--r--   1 kathy      doc          863 Nov  1 20:13 method
+-rw-r--r--   1 kathy      doc         8632 Nov  3 18:09 plan
+.SE
+.BL
+.LI
+Don't put five or fewer lines in a screen;
+use a display instead.
+See 
+.ST "Displays"
+below for details.
+(If several related examples use screens and some are longer than five lines
+and some shorter, put all the examples in screens for consistency.)
+.LI
+Use a figure legend before a screen
+if you want to refer to the screen later in the text
+or if you want the legend to appear in the table of contents.
+.IX legends, screen
+Use the
+.UI .FG
+macro to produce the legend.
+.LI
+To show a line of code that's too long
+.IX program listings
+to fit on one line: (1) break the line
+at syntactically appropriate points and
+display it on multiple lines; or
+(2) remove some white space from the beginning of the line,
+indenting it less
+(for example, by replacing a tab with two or three spaces).
+.P
+When you use the first method,
+be sure to maintain the syntactical correctness
+and the coding style of the example.
+For instance, end a line of shell input with a backslash to continue the line;
+in C, a newline is syntactically equivalent to other whitespace characters
+such as space or tab, so you can break the line wherever a space or tab is valid.
+.LI
+Include line numbers in code listings
+when they make it easier to describe the code,
+such as in long examples described in detail.
+.IX line numbers (in code listings)
+.LE
+.IX iend screen displays
+.IX iend displays, screen
+.IX iend terminal screen displays
+.H 2 "Displays"
+.IX istart displays
+Use the
+.UI ".DS/.DE"
+macro pair to produce a display\(ema block of text set off and indented
+from surrounding text.
+Use the
+.UI I
+argument to
+.UI \&.DS
+to indent the display.
+Other arguments specify whether the display is computer
+.SM I/O
+and whether to print the display in fill mode.
+The following examples show some common uses of displays.
+.BL
+.LI
+The most common use of displays is to set off
+examples of literal
+\s-1I/O\s0.
+For example:
+.P
+Input:
+.DS I UI
+\&.DS I UI
+$ ls \-l *
+-rw-r--r--   1 kathy   doc    1042 Nov  1 20:13 design
+-rw-r--r--   1 kathy   doc   28718 Nov  3 17:53 draft
+\&.DE
+.DE
+Output:
+.DS I UI
+$ ls \-l *
+-rw-r--r--   1 kathy   doc    1042 Nov  1 20:13 design
+-rw-r--r--   1 kathy   doc   28718 Nov  3 17:53 draft
+.DE
+.LI
+Displays can also be used, however,
+to set off blocks of ordinary running text,
+such as excerpts from other books.
+The following example (Strunk and White, page 80)
+is produced with the
+\f4\&.DS I "" F\fP macro call:
+.DS I "" F
+Unless there is a good reason for its being there,
+do not inject opinion into a piece of writing.
+We all have opinions about almost everything,
+and the temptation to toss them in is great . . . Similarly,
+to air one's views at an improper time may be in bad taste.
+If you have received a letter inviting you to speak
+at the dedication of a new cat hospital, and you hate cats,
+your reply, declining the invitation,
+does not necessarily have to cover
+the full range of your emotions.
+.DE
+.LE
+.IX iend displays
+.H 1 "Notes and Cautions"
+.IX istart admonishments
+Notes and cautions
+(in guides only)
+are short pieces of text marked
+with icons designed to get a reader's attention.
+Use the
+.UI .AB/.AC
+macro pair to produce notes and cautions.
+.BL
+.LI
+.IX caution (in guides)
+Use a caution (\f4.AB C\fP/\f4.AC\fP) when an action
+may be hazardous to hardware or software,
+as in the following example:
+.AB C
+If you power down the machine during this procedure,
+your file systems may be corrupted.
+.AC
+.LI
+.IX note (in guides)
+Use a note (\f4.AB N\fP/\f4.AC\fP) to help the
+user avoid an error that might be inconvenient,
+to emphasize points of interest,
+or to cite helpful documents.
+The following is an example of the first type of note:
+.AB N
+You must have the appropriate privilege to start or stop the
+.SM LP
+print service.
+.AC
+.LI
+Don't use warnings
+(\f4.AB W\fP/\f4.AC\fP).
+By industry standards, a warning implies possible physical injury to a person.
+.ig
+	If you believe a warning belongs in a document, consult
+	.BT "Product Safety Labeling"
+	(\s-1AT&T\s0 Practice 015-200-020)
+	and
+	.BT "\s-1AT&T\s0 Product Design for Safety Practice"
+	(\s-1AT&T\s0 Practice 015-200-015),
+	both of which are available from the Customer Information Center.
+..
+.LE
+.IX iend admonishments
+.H 1 "References"
+.IX istart references
+.IX istart cross-references
+.IX book references
+.IX chapter references
+.IX section references
+.TB "Markup for References to Books, Chapters, or Sections"
+.vs +2
+.TS
+center;
+c | c | c
+c | c | c
+l | l | c.
+Logical	Guide	Manual
+Element	Markup	Markup
+_
+T{
+Book Title
+T}	T{
+\f4\&.BT "\f2Book Title\f4"\f1
+T}	T{
+.UI "\&\ef2\f2Book Title\fP\efP"
+T}
+_
+T{
+Chapter Title
+T}	T{
+\f4\&.CT "\f2Chapter Title\f4"\f1
+T}	T{
+\f4``\f2Chapter Title\fP''\f1
+T}
+_
+T{
+Section Title
+T}	T{
+\f4\&.ST "\f2Section Title\f4"\f1
+T}	T{
+\f4``\f2Section Title\fP''\f1
+T}
+.TE
+.vs -2
+.BL
+.LI
+In guides,
+use the
+.UI \&.BT ,
+.UI \&.CT ,
+and
+.UI \&.ST
+macros to refer to books, chapters, and sections.
+If you want a comma or period
+to appear immediately after
+the title of a book, chapter, or section,
+put it inside the double quotes used to specify
+an argument to the \f4.BT\fP, \f4.CT\fP
+or \f4.ST\fP macro.
+For example:
+.VL .75i .5i
+.LI "Input:"
+.ft 4
+.nf
+See Chapter 1,
+\&.CT "An Overview of System Administration,"
+in the
+\&.BT "System Administrator's Guide."
+.fi
+.ft 1
+.LI "Output:"
+See Chapter 1,
+.CT "An Overview of System Administration,"
+in the
+.BT "System Administrator's Guide."
+.LE
+.LI
+In reference manuals,
+print book titles in font 2;
+precede chapter and section titles with two back quotes
+and follow them with two single quotes:
+.VL .75i .5i
+.LI "Input:"
+.ft 4
+.nf
+See Chapter 1,
+``An Overview of System Administration,''
+in the \ef2System Administrator's Guide\efP.
+.fi
+.ft 1
+.LI "Output:"
+See Chapter 1, ``An Overview of System Administration,''
+in the \f2System Administrator's Guide\fP.
+.LE
+.LI
+For markup purposes, we do not consider
+product names (such as ``\*U System V'')
+part of our document titles;
+when a product name precedes a book title
+it should appear in the regular font (font 1).
+For example:
+.VL .75i .5i
+.LI "Input:"
+\f4UNIX System V
+.br
+\&.BT "System Administrator's Guide"\f1
+.LI "Input:"
+\f4UNIX System V \ef2System Administrator's Guide\ef1\f1
+.LI "Output:"
+UNIX System V
+.BT "System Administrator's Guide"
+.LE
+There's no need to include the product name
+before the book title
+unless its omission might cause confusion.
+For example, the
+document sets for two products, \*U
+System V and
+.SM "DOCUMENTER'S WORKBENCH" \(rg
+(\s-1DWB\s0),
+both include a book called
+.BT "User's Guide."
+If you want the text in the
+.BT "User's Guide"
+for the \*U System V document set
+to include a reference to the
+.BT "User's Guide"
+for the
+.SM DWB
+document set, include the product title:
+``Documenter's Workbench \f2User's Guide\fP.''
+.LI
+To refer to a reference manual page,
+include the appropriate section number
+.IX manual page reference
+(in regular font) in parentheses, after the name of the page.
+Once you've provided the section number for a manual page,
+you need not include that number
+in later references
+as long as it's clear that you're still referring to the same page.
+.P
+Mark the name of the entry as user input:
+.VL .75i .5i
+.LI "Input:"
+\f4For more information, see
+.br
+\&.UI mailx (1)
+.br
+in the
+.br
+\&.BT "User's Reference Manual."\f1
+.LI "Output:"
+For more information, see
+.UI mailx (1)
+in the
+.BT "User's Reference Manual."
+.LE
+.LI
+Make references to manual pages as brief as possible
+with sentences such as the following:
+.BL
+.LI
+See
+.UI terminfo (4).
+.LI
+For details, see the
+.UI terminfo (4)
+manual page.
+.LE
+.LI
+To refer to a software component
+(command, function, system call,
+library routine, and so on)
+.IX command references
+.IX function, references
+.IX system call references
+in documents for beginners and in ambiguous contexts,
+specify the type of a component
+(that is, whether it is a command, function, system call,
+or other type of component).
+.P
+For example, in a book for new users
+avoid sentences such as ``Run
+.UI cat
+to concatenate files.''
+Instead, identify the component type of
+.UI cat ,
+as follows:
+``Run the
+.UI cat
+command to concatenate files.''
+.P
+Sometimes, specifying component types prevents ambiguity:
+``The
+.UI "mkdir"
+command calls the
+.UI "mkdir"
+system call.''
+.P
+In some contexts, the type of the component is clear
+without being mentioned explicitly.
+For example, in a discussion of a shell script, the following reference
+is clearly to the command rather than the system call:
+``The script calls
+.UI time
+to print execution times for the command.''
+.LI
+It is sometimes convenient to refer simultaneously
+to a manual page and the software component it documents.
+Except in documents for beginners, where it might be unfamiliar,
+the following type of shorthand reference is clear:
+``Use
+.UI memcntl (2)
+to lock the address space of a process.''
+.ig
+	.LI
+	.Pt "Including ordering information"
+	.IX ordering information
+	the first time you refer to a document orderable from
+	.SM USL ,
+	including both its complete title and the order code for it:
+	.DS I UI
+	See the
+	\&.BT "\*U System V Release 3 User's Reference Manual"
+	(307-012).
+	.DE
+..
+.LI
+If a book has a volume number,
+add it, in parentheses, after the title, with the abbreviation ``Vol.''
+.IX volume numbers
+.IX issue numbers
+If a book has an issue number, add it, without parentheses,
+after the volume number (or title if there is no volume number),
+with the word ``Issue.''
+Always show volume and issue numbers as Arabic numerals,
+as in the following (input) example:
+.DS I UI
+Refer to the
+\&.BT "System V Interface Definition"
+(Vol. 3), Issue 2.
+.DE
+.LI
+Use the term ``System V'' by itself (without ``\*U'')
+only in the \s-1SVID\s0.
+In the \*U System V document set,
+the term ``System V'' must always be preceded by the word ``\*U.''
+.LI
+When you refer to the \*U system,
+avoid references to specific releases whenever you can.
+.IX UNIX, references to releases of
+The fewer release-specific references in a document,
+the easier it is to maintain that document.
+.P
+If you must refer to a particular \*U system release, spell out the full name, such as
+``\*U System V Release 4,'' in the first reference in a chapter or manual page.
+In later references you may use only
+the release number (such as ``Release 4'');
+always try to make a reference as general as you can.
+Avoid ``SVR\f2n\fP''
+acronyms (such as ``SVR4'');
+they are internal jargon and should not appear in customer documents.
+.LE
+.IX iend references
+.IX iend cross-references
+.H 1 "Front and Back Matter"
+.IX istart front matter
+.IX istart back matter
+.BL
+.LI
+Here is the standard front and back matter for guides:
+.BL
+.LI
+title page
+.LI
+back of title page (includes a list of trademarks,
+copyright notices, and any other necessary disclaimers)
+.LI
+master table of contents
+(includes lists of figures and tables)
+.LI
+chapter tables of contents
+.LI
+glossary
+.LI
+subject-matter index
+.LE
+.LI
+Here is the standard front and back matter for reference manuals:
+.BL
+.LI
+title page
+.LI
+back of title page
+.LI
+introduction
+.LI
+master table of contents
+.LI
+permuted index
+.LI
+\f4intro\f1 manual page (for each section of a reference manual)
+.LE
+.LE
+.IX iend front matter
+.IX iend back matter
+.H 2 "Title Page"
+.IX title page
+The title page includes a book title with customized spacing and typography.
+Use a previous title page as a template and change it as necessary.
+Most books in Text Manager already include a file named
+.UI titlepage
+that contains the text for the title page.
+.H 2 "Back of Title Page"
+.IX back of title page
+The back of title page includes the copyright
+.IX copyrights
+notices, the trademark list, and any
+.IX trademarks
+other necessary disclaimers.
+Use a previous back of title page as a template and change it as necessary.
+Most books in Text Manager already include a file named
+.UI copyright
+that contains the text for the back of the title page.
+.H 2 "Tables of Contents"
+.IX tables of contents
+The process of formatting and generating
+tables of contents is largely automated.
+For instructions, see Chapter 2 of the
+.BT "\s-1DOCTOOLS\s0 User's Guide" "."
+.H 2 "Glossaries"
+.IX glossaries
+There are no special macros
+or processing procedures for glossaries.
+Use a previous glossary, such as the one in the
+.BT "User's Guide,"
+as a template and change it as necessary.
+.H 2 "Indexes"
+.IX indexes
+.BL
+.LI
+Guides
+typically have a subject index.
+See Chapter 6 in the
+.BT "\s-1DOCTOOLS\s0 User's Guide"
+for information on how to produce one.
+.LI
+Use the same font for words in the index as you use in the rest of the document.
+For example, the
+.UI mkdir
+command is shown in the text in font 4, so the index entry for
+.UI mkdir
+should also appear in font 4.
+.LI
+Reference manuals
+typically have a permuted index.
+.UI format
+creates a permuted index when you include the
+.UI \-c
+option on the command line that prints a reference manual from a collection file.
+See the
+.ST "Command Mode"
+section of Chapter 2 of the
+.BT "\s-1DOCTOOLS\s0 User's Guide."
+.LE
+.H 2 "Trademarks"
+.IX istart trademarks
+.BL
+.LI
+Rules about the word ``\*U.''
+.IX UNIX, rules for use of the word
+.BL
+.LI
+Always use ``\*U''
+as an adjective that modifies the common name of
+a product or service,
+such as ``system,'' ``operating system,'' or ``software.''
+.LI
+Do not capitalize a common noun that follows
+the word ``\*U.''
+.VL .75i .5i
+.LI "Wrong:"
+\*U Operating System
+.LI "Right:"
+\*U operating system
+.LI "Right:"
+\*U system
+.LI "Right:"
+\*U System V (proper noun)
+.LE
+.LE
+.ig
+	.AB N
+	For details, see the
+	.ST "References"
+	section above and the
+	.BT "\s-1AT&T\s0 Corporate Identity Program Trademark and Service Mark Bulletin."
+	.AC
+..
+.LI
+List the trademarks
+referenced in a book on the back of the title page of that book.
+Each item in the list should consist of a one-line
+description of a trademark, such as the following example:
+.DS I
+\s-1XENIX\s0 is a registered trademark of Microsoft Corporation.
+.DE
+If you cannot find trademark information,
+ask the reference librarian
+to research it for you.
+.LE
+.IX iend trademarks
+.H 1 "Production"
+.BL
+.LI
+Writer's Workbench (\s-1WWB\s0) contains programs for
+.IX Writer's Workbench
+proofreading tasks such as
+checking spelling (\f4spellwwb\fP),
+finding sexist language (\f4sexist\fP),
+and finding typos consisting of
+the same word appearing twice consecutively (\f4double\fP).
+See the \*U System V
+.BT "Writer's Workbench Release 3.0 User's Guide."
+To run a useful subset of WWB
+programs, enter the following command:
+.DS I UI
+wwb \-s \f2file\fP
+.DE
+.LI
+Use the
+.UI \&.NE
+macro to fix bad page breaks.
+.IX page breaks
+.IX break (page)
+.IX widows
+Because page breaks may change whenever document source changes,
+do not fix page breaks until production time.
+There is no need to fix them for reviews.
+.P
+The
+.UI \&.NE
+macro takes one argument, which specifies the amount of vertical space you need.
+The argument may use any of the valid
+.UI troff
+scale indicators, but the most common indicators are vertical line spaces and inches.
+To specify vertical line spaces, use
+.UI \&.NE
+followed by the number of lines you need.
+To specify inches, use
+.UI \&.NE
+followed by the number of inches you need with the indicator ``\f4i\fP'' appended.
+For example,
+.UI ".NE 6"
+means:
+``At least six lines of text must be printed next;
+if there's not enough room for six lines on this page
+print all six lines at the top of the next page.''
+.UI ".NE 1.25i"
+means:
+``1.25 inches of space are needed to print the next line;
+if 1.25 inches of space are not available on this page,
+print the following lines at the top of the next page.''
+.P
+Because using a
+.UI ".NE"
+macro is equivalent to hard-coding
+a page break, keep in mind several
+possible problems.
+.BL
+.LI
+Make sure you enter the
+.UI ".NE"
+macro immediately before the first word of a line (in output).
+If you don't, you might get only a partially full line of output.
+To avoid this problem, put a
+.UI ".NE"
+macro immediately before or after a
+.UI ".P"
+macro.
+.LI
+As a rule of thumb, avoid specifying a number
+more than five or six lines (or an equivalent amount
+of space specified in inches) after the
+.UI ".NE"
+macro.
+.P
+By keeping the number of lines low,
+you can ensure that even if the text before the
+.UI ".NE"
+macro is changed so that the
+.UI ".NE"
+invokes a page break at a higher line
+(than the original line)
+in a page of output,
+an unusually large amount of white space is not
+left at the bottom of a page.
+.LE
+.LE
+.H 1 "Appendix: Style Guidelines for Release 4.1 Enhanced Security"
+.IX istart Enhanced Security
+This appendix contains style guidelines for Release 4.1 Enhanced Security.
+This material is collected here for ease of reference as Release 4.1 ES
+is first released;
+it will eventually be incorporated into the main body of the
+.BT "Style Guide" .
+.P
+This appendix is not an introduction to the features of Release 4.1 ES.
+However, some understanding of those features is helpful in understanding this appendix;
+see the
+.BT "Product Overview".
+.H 2 "Product Names"
+.IX UNIX, references to releases of
+For general information on referring to releases of \*U system software, see the
+.ST "References"
+section above.
+In particular, avoid references to specific releases whenever you can.
+.P
+The full name of the new release is \*U System V Release 4.1 Enhanced Security.
+If you must refer to this release, use its full name in the first reference
+in a chapter or manual page;
+on subsequent references you may use ``Release 4.1 ES.''
+.P
+``Release 4.1 Enhanced Security'' is a general term for the following
+set of software products, each of which is separately licensable and installable:
+.BL
+.LI
+The Enhanced Security Platform (sometimes called the ``base'') is the operating
+system kernel, C language utilities, basic commands and libraries,
+and several separately installable packages.
+.LI
+The Enhanced Security Utilities,
+because they have the largest effect on document style,
+are described in a separate section below.
+.LI
+The Auditing Utilities consist of several new commands
+that allow administrators to keep records of certain operations,
+who performed them, and when.
+.LI
+Enhanced Administration and Networking allows administrators to
+perform tasks on remote machines.
+.LE
+.H 2 "Enhanced Security Utilities"
+.IX security (see Enhanced Security)
+.IX ES (see Enhanced Security)
+.IX istart Enhanced Security, Enhanced Security Utilities
+.H 3 "Overview"
+The Enhanced Security Utilities, which may be installed and run on the
+Enhanced Security Platform, include several new security features and options.
+.P
+Most separately installable packages allow administrators to
+install entire commands\(ema command is either installed or it is not.
+In contrast, the Enhanced Security Utilities allow administrators
+to install modules called by many commands.
+Moreover, these commands run differently depending on whether the
+Enhanced Security Utilities are running.
+ES modules affect many frequently used commands\(emfor example,
+.UI chmod (1),
+.UI lp (1),
+.UI ls (1),
+.UI ps "(1)\(emas well as many administrative commands."
+.P
+When software runs differently depending on whether the Enhanced Security Utilities are running,
+say so in the documentation.
+For example:
+.DS I "" F
+If the Enhanced Security Utilities are running and the file system
+is of type \f4sfs\fP,
+you may use an Access Control List (ACL) to exercise greater control over
+file access than that allowed by file mode bits.
+.DE
+.H 3 "Access Permissions"
+.IX istart superuser permissions
+.IX istart privileges
+.IX istart Enhanced Security, privileges
+In \*U system releases before Release 4.1 ES, any user with user
+.SM ID
+0 (a ``superuser'') is allowed to perform any operation.
+Traditionally, user
+.UI root
+has
+.SM ID
+0.
+The terms ``\c
+.UI root
+permissions'' and
+``superuser permissions''
+were sometimes used interchangeably for this unlimited set of permissions.
+.P
+Release 4.1 ES allows more flexibility than is possible with the simple superuser model.
+Following government specifications, Release 4.1 ES defines several administrative
+roles, each with a separate user
+.SM ID
+and a separate set of default permissible operations.
+These roles, and the checking of access permissions based on them,
+operate only when the Enhanced Security Utilities are installed and running.
+Therefore, when the Enhanced Security Utilities are running,
+user
+.SM ID
+0 has a limited set of privileges.
+When the Enhanced Security Utilities are not running,
+user
+.SM ID
+0 has unlimited privileges, as before.
+.P
+At any security level, user
+.SM ID
+0 and user
+.UI root
+are valid; however, they have different permissions depending on whether
+the Enhanced Security Utilities are running.
+.P
+To make our documents accurate whether or not the Enhanced Security Utilities
+are running, we have replaced references to superuser privileges
+and root privileges
+with references to appropriate privileges.
+For example:
+.DS I "" F
+If the Enhanced Security Utilities are running,
+an unprivileged user may display information
+only on files for which Mandatory Access Control (MAC)
+levels are dominated by the user's current level.
+A user with the appropriate privileges may display information on all 
+files.
+.DE
+For a list of operations and the privileges needed to perform them, see the appendix
+.CT "List of Files in the Trusted Computing Base"
+in the
+.BT "System Administrator's Guide."
+.P
+Do not use any phrase that refers to ``superuser''
+or ``\f4root\fP'' permission.
+Use ``appropriate privilege'' instead.
+Privileges may be said to apply either to a user or to a process.
+.IX iend Enhanced Security, privileges
+.IX iend privileges
+.IX iend superuser permissions
+.H 3 "Version Macros"
+.IX istart version macros
+.IX istart Enhanced Security, version macros
+The
+.SM DOCTOOLS
+version macros
+.UI \&.VS
+and
+.UI \&.VE
+allow you to print different versions of a document from the same source.
+See the
+.BT "\s-1DOCTOOLS\s0 User's Guide" .
+We have used the version macros to distinguish material that applies to
+different versions of the security software:
+.BL
+.LI
+.IX Enhanced Security, B1 and B2 levels
+Version 1 material applies only if
+the system is running at neither the B2 nor the B1 level of security.
+(A system runs at the B2 or the B1 level of security when it has the
+Enhanced Security Utilities installed in the appropriate way.
+For more information on security levels, see the
+.BT "Product Overview." )
+.LI
+Version 2 material applies only when
+the system is running at the B2 level of security.
+.LI
+Version 3 material applies only when
+the system is running at the B1 level of security.
+.LE
+Material that applies when the system is running at
+any security level is not marked by version macros.
+.P
+It is sometimes convenient to use version macros around blocks of text
+larger than the text that is strictly version-dependent.
+For example, if there are several version dependencies in a single paragraph,
+it may be convenient to put the entire paragraph in version macros,
+even though much of it is identical.
+This use of version macros implies that, when you change text, you must
+know whether the text is in version macros;
+if it is, make sure you make your changes
+to all appropriate versions of the text.
+.IX iend Enhanced Security, version macros
+.IX iend version macros
+.IX iend Enhanced Security, Enhanced Security Utilities
+.IX iend Enhanced Security
+.H 1 "Bibliography"
+.BT "The Chicago Manual of Style,"
+Thirteenth Edition.
+Chicago and London: The University of Chicago Press, 1982.
+.P
+Strunk, W. and White, E.B.
+.BT "The Elements of Style,"
+Third Edition.
+New York: MacMillan Publishing Co., Inc., 1979.
+.P
+.BT "Webster's Ninth New Collegiate Dictionary."
+Springfield, Massachusetts: Merriam-Webster, Inc., 1988.
+.\" @(#)style	41.4 /doccenter/unix_docs/src/doc/style/s.style 91/05/13 41.4 13:54:33
+.\" Copyright 1991 AT&T
+.\"  XX macro marks new index entry.
+.de XX
+.	br
+.	ti 0
+.	ne 2
+.	vs 12
+\s10\f1\\$1\0 \s8\fH\\$2\f1
+..
+.\"  header between letters of the alphabet
+.de YY
+.	sp 2
+.	ne 4
+\fH\s16\\$2\s0\f1
+.	sp 0.5
+..
+.\"  markup surrounding book acronym
+.ds B{
+.ds }B
+.\"  markup surrounding chapter number
+.ds C{ " 
+.ds }C :\ 
+.vs 12
+.ps 8
+.H 1 "Index"
+.2C
+.in +2
+.\" SCCS path name:	/doc/DMG/Projects/Indexing/sccs/bin/s.index.head
+.\" SCCS version SID:	1.5
+.\" Date this version:	89/09/16
+.\" Time this version:	17:27:45
+.YY a A
+.XX "\&abbreviations" "14"
+.XX "\&admonishments" "32"
+.YY b B
+.XX "\&back matter" "36"
+.XX "\&back of title page" "37"
+.XX "\&backslash" "24"
+.XX "\&book references" "33"
+.XX "\&break (page)" "6, 39"
+.XX "\&bullet lists" "9"
+.YY c C
+.XX "\&capitalization" "15"
+.XX "\&captions (see legends)" ""
+.XX "\&caution (in guides)" "32"
+.XX "\&chapter references" "33"
+.XX "\&command line markup and syntax" "24\-26"
+.XX "\&command references" "34"
+.XX "\&computer output" "23"
+.XX "\&computer text" "22\-26"
+.XX "\&\0 capitalization of" "15"
+.XX "\&contractions" "2"
+.XX "\&control characters" "17"
+.XX "\&copyrights" "37"
+.XX "\&cross-references" "33\-35"
+.YY d D
+.XX "\&dashed lists" "9"
+.XX "\&dashes" "10"
+.XX "\&displays" "30\-31"
+.XX "\&\0 screen" "29\-30"
+.YY e E
+.XX "\&ellipses" "10\-11"
+.XX "\&em dash" "10"
+.XX "\&emphasis" "4, 13"
+.XX "\&en dash" "10"
+.XX "\&Enhanced Security" "40\-43"
+.XX "\&\0 B1 and B2 levels" "42"
+.XX "\&\0 Enhanced Security Utilities" "41\-43"
+.XX "\&\0 privileges" "41\-42"
+.XX "\&\0 version macros" "42\-43"
+.XX "\&environment variables" "24"
+.XX "\&ES (see Enhanced Security)" ""
+.YY f F
+.XX "\&figure references" "27"
+.XX "\&figures" "27"
+.XX "\&filenames" "24"
+.XX "\&fonts" "6, 22\-23"
+.XX "\&front matter" "36"
+.XX "\&function" ""
+.XX "\&\0 names" "24"
+.XX "\&\0 references" "34"
+.XX "\&function keys" "17"
+.YY g G
+.XX "\&glossaries" "37"
+.XX "\&graphic characters (ASCII)" "17"
+.YY h H
+.XX "\&headings" ""
+.XX "\&\0 capitalization in" "15"
+.XX "\&\0 fonts in" "23"
+.XX "\&hyphen" "10"
+.XX "\&hyphenation" "8"
+.YY i I
+.XX "\&illustrations" "27"
+.XX "\&indexes" "37"
+.XX "\&irony" "13"
+.XX "\&issue numbers" "35"
+.YY k K
+.XX "\&keyboard keys" "16\-18"
+.YY l L
+.XX "\&legends" ""
+.XX "\&\0 capitalization in" "15"
+.XX "\&\0 computer text" "23"
+.XX "\&\0 figure" "27"
+.XX "\&\0 fonts in" "6, 23"
+.XX "\&\0 screen" "29"
+.XX "\&\0 table" "28"
+.XX "\&line numbers (in code listings)" "30"
+.XX "\&lists" "9, 11"
+.XX "\&literal I/O (see computer text)" ""
+.YY m M
+.XX "\&manual page reference" "34"
+.XX "\&minus sign" "10"
+.XX "\&mood (of verbs)" "2"
+.YY n N
+.XX "\&nested lists" "9"
+.XX "\&note (in guides)" "32"
+.XX "\&numbered lists" "9"
+.XX "\&numbers" "20"
+.YY o O
+.XX "\&options (command line)" "25\-26"
+.YY p P
+.XX "\&page breaks" "6, 39"
+.XX "\&parentheses, nesting" "12"
+.XX "\&passive voice" "3"
+.XX "\&person" "2"
+.XX "\&\f4pic\fP input" "27"
+.XX "\&pictures" "27"
+.XX "\&possessives" "20"
+.XX "\&preferred phrases" "20"
+.XX "\&privileges" "41\-42"
+.XX "\&program listings" "30"
+.XX "\&punctuation" "10\-13"
+.XX "\&\0 of lists" "9"
+.YY q Q
+.XX "\&quotation marks" "12"
+.YY r R
+.XX "\&references" "33\-35"
+.YY s S
+.XX "\&screen displays" "29\-30"
+.XX "\&section references" "33"
+.XX "\&security (see Enhanced Security)" ""
+.XX "\&sexist language" "3\-4"
+.XX "\&slang" "13"
+.XX "\&special characters (\f4troff\fP)" "7"
+.XX "\&spelling" "14\-21"
+.XX "\&strings (\f4troff\fP)" "7"
+.XX "\&substitutable text" "23"
+.XX "\&superuser permissions" "41\-42"
+.XX "\&synopsis lines" "24"
+.XX "\&syntactic notation, font for" "23"
+.XX "\&syntax, command" "25"
+.XX "\&system call references" "34"
+.YY t T
+.XX "\&tables" "28"
+.XX "\&tables of contents" "37"
+.XX "\&tense (of verbs)" "2"
+.XX "\&terminal screen displays" "29\-30"
+.XX "\&``that,'' use of" "4"
+.XX "\&time designations" "14"
+.XX "\&time zones" "14"
+.XX "\&title page" "36"
+.XX "\&titles" ""
+.XX "\&\0 capitalization in" "15"
+.XX "\&\0 fonts in" "23"
+.XX "\&tone" "2"
+.XX "\&trademarks" "37\-38"
+.YY u U
+.XX "\&UNIX" ""
+.XX "\&\0 references to releases of" "35, 40"
+.XX "\&\0 rules for use of the word" "38"
+.XX "\&user input" "22"
+.YY v V
+.XX "\&variable lists" "9"
+.XX "\&version macros" "42\-43"
+.XX "\&voice" "3"
+.XX "\&volume numbers" "35"
+.YY w W
+.XX "\&``which,'' use of" "4"
+.XX "\&widows" "6, 39"
+.XX "\&words and phrases, preferred" "20"
+.XX "\&Writer's Workbench" "39"

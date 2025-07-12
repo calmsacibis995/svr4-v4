@@ -1,0 +1,6 @@
+#ident	"@(#)doctools:index/range.sort	1.1"
+# range.sort
+#   Input/Output: sort (tab) term (tab) [b/e] (tab) page (tab) [chap] (tab) [book]
+#                  $1         $2         $3          $4          $5           $6
+#   Sort by $1 (sortkey), $6 (book), $5 (chapter), $4 (page), then $3 (b/e)
+sort  '-t	' +0bfd -1 +5 -6 +4n -5 +3n -4  $*

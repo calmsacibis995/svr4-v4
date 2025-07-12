@@ -1,0 +1,64 @@
+'\"macro stdmacro
+.if n .pH gen.drv_hztousec @(#)drv_hztousec	40.3 of 3/26/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.nr X
+.if \nX=0 .ds x} drv_hztousec D3DK "" "DDI/DKI" "\&"
+.if \nX=1 .ds x} drv_hztousec D3DK "" "DDI/DKI"
+.if \nX=2 .ds x} drv_hztousec D3DK "" "\&"
+.if \nX=3 .ds x} drv_hztousec "" "" "\&"
+.TH \*(x}
+.IX "\f4drv_hztousec\fP(D3DK)"
+.SH NAME
+\f4drv_hztousec\f1 \- convert clock ticks to microseconds
+.SH SYNOPSIS
+.nf
+.na
+\f4#include <sys/types.h>
+#include <sys/ddi.h>
+.sp 0.5
+clock_t drv_hztousec(clock_t \f2ticks\f4);\f1
+.ad
+.fi
+.SH ARGUMENTS
+.RS 0n 10
+.IP "\f2ticks\f1" 10n
+The number of clock ticks to convert to equivalent microseconds.
+.RE
+.SH DESCRIPTION
+\f4drv_hztousec\f1 converts the length of time expressed by
+\f2ticks\f1, which is in units of clock ticks,
+into units of microseconds.
+.P
+Several functions either take time values expressed in clock ticks as
+arguments [\f4timeout\f1(D3DK), \f4delay\f1(D3DK)] or return time values
+expressed in clock ticks [\f4drv_getparm\f1(D3DK)].
+The length of a clock tick can vary across different implementations,
+and therefore drivers should not include any hard-coded assumptions
+about the length of a tick.
+\f4drv_hztousec\f1 and the complementary function
+\f4drv_usectohz\f1(D3DK) can be used, as necessary, to convert between clock
+ticks and microseconds.
+.SH RETURN VALUE
+The number of microseconds equivalent to the \f2ticks\f1 argument.
+No error value is returned.
+If the microsecond equivalent
+to \f2ticks\f1 is too large to be represented as a \f4clock_t\f1, then the
+maximum \f4clock_t\f1 value will be returned.
+.SH LEVEL
+Base or Interrupt.
+.SH NOTES
+Does not sleep.
+.sp 0.5
+The time value returned by \f4drv_getparm\f1 with an \f4LBOLT\f1 argument
+will frequently be too large to represent in microseconds as a \f4clock_t\f1.
+When using \f4drv_getparm\f1 together with \f4drv_hztousec\f1 to time
+operations, drivers can help avoid overflow by converting the difference
+between return values from successive calls to \f4drv_getparm\f1 instead
+of trying to convert the return values themselves.
+.SH SEE ALSO
+.na
+\f4delay\f1(D3DK),
+\f4drv_getparm\f1(D3DK),
+\f4drv_usectohz\f1(D3DK),
+\f4timeout\f1(D3DK)
+.ad

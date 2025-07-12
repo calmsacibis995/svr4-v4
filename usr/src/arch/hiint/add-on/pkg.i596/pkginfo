@@ -1,0 +1,15 @@
+#ident	"@(#)hiint:add-on/pkg.i596/pkginfo	1.1"
+
+# i596 pkginfo
+
+PKG="i596"
+NAME="i596 Ethernet Driver"
+ARCH="i386"
+RELEASE="4.0"
+VERSION="1"
+VENDOR="Intel Corporation"
+CATEGORY="system,utilities"
+CLASSES="none build"
+BASEDIR=""
+MAXINST="1"
+PREDEPEND="i596"

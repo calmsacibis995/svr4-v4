@@ -1,0 +1,113 @@
+'\"macro stdmacro
+.if n .pH g1a.getty @(#)getty	40.3 of 1/3/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1990 AT&T
+.nr X
+.if \nX=0 .ds x} getty 1M "" "\&"
+.if \nX=1 .ds x} getty 1M ""
+.if \nX=2 .ds x} getty 1M "" "\&"
+.if \nX=3 .ds x} getty "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4getty\f1 \- set terminal type, modes, speed, and line discipline
+.SH SYNOPSIS
+\f4getty\fP [ \f4\-h\fP ] [ \f4\-t\fP \f2timeout\fP ]
+\f2line\fP [ \f2speed\fP [ \f2type\fP [ \f2linedisc\fP ] ] ]
+.sp .5
+\f4getty\fP \f4\-c\fP \f2file\fP
+.SH DESCRIPTION
+\f4getty\fP is included for compatibility with previous releases 
+for the few applications that still call
+\f4getty\f1 directly.
+\f4getty\fP
+can only be executed by the superuser, that is, by a process with
+the user ID \f4root\f1.
+Initially
+\f4getty\fP
+prints the login prompt, waits for the user's login name,
+and then invokes the \f4login\f1 command.
+\f4getty\fP
+attempts to adapt the system to the terminal speed
+by using the options and arguments specified on the command line.
+.TP
+.I line
+The name of a TTY line in \f4/dev\fP to which
+\f4getty\fP
+is to attach itself.
+\f4getty\fP
+uses this string as the name of a file in the \f4/dev\fP directory
+to open for reading and writing.
+.TP
+\f4-h\fP
+If the
+\f4\-h\fP
+flag is not set,
+a hangup will be forced by setting the speed to zero
+before setting the speed to the default or specified speed.
+.TP
+\f4\-t\fP \f2timeout\fP
+specifies that
+\f4getty\fP
+should exit if the open on the line succeeds and no
+one types anything in \f2timeout\fP seconds.
+.TP
+.I speed
+The \f2speed\fP argument
+is a label to a speed and TTY definition in the file
+\f4/etc/ttydefs\f1.
+This definition tells
+\f4getty\fP
+at what speed to run initially, 
+what the initial TTY settings are, and what speed to try next,
+should the user indicate, by pressing the BREAK key,
+that the speed is inappropriate.
+The default \f2speed\fP is 1200 baud.
+.TP
+\f2type\fP and \f2linedisc\fP
+.br
+These options are obsolete and will be ignored.
+.TP
+\f4-c\fP \f2file\fP
+The
+\f4\-c\f1
+option is no longer supported.
+Instead use 
+\f4sttydefs -l\fP
+to list the contents of the \f4/etc/ttydefs\fP file and perform
+a validity check on the file.
+.PP
+When given no optional arguments,
+\f4getty\fP
+specifies the following:
+The \f2speed\fP of the interface is set to 1200 baud,
+either parity is allowed,
+new-line characters are converted to carriage return-line feed,
+and tab expansion is performed on the standard output.
+\f4getty\fP types the login prompt before reading
+the user's name a character at a time.
+If a null character (or framing error) 
+is received, it is assumed to be the result
+of the user pressing the BREAK key.
+This will cause
+\f4getty\fP
+to attempt the next \f2speed\fP in the series.
+The series that
+\f4getty\fP
+tries is determined by what it finds in
+\f4/etc/\f3ttydefs\fP\f1.
+.SH NOTES
+Developers are encouraged to use \f4ttymon\fP(1M) as support for \f4getty\fP
+may be dropped in the future.
+.SH FILES
+\f4/etc/ttydefs\fP
+.SH "SEE ALSO"
+\f4ct\fP(1C),
+\f4sttydefs\fP(1M),
+\f4tty\fP(7),
+\f4ttymon\fP(1M).
+.br
+\f4login\fP(1) in the
+\f2User's Reference Manual\f1.
+.br
+\f4ioctl\fP(2)
+in the \f2Programmer's Reference Manual\f1.

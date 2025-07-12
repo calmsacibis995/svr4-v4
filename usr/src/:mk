@@ -1,0 +1,103 @@
+echo ""
+echo ""
+echo "			Copyright (c) 1984, 1986, 1987, 1988, 1989 AT&T"
+echo "			  All Rights Reserved"
+echo ""
+echo "          THIS IS UNPUBLISHED PROPRIETARY SOURCE CODE OF AT&T"
+echo "       The copyright notice above does not evidence any actual or"
+echo "               intended publication of such source code."
+echo ""
+echo ""
+echo ""
+
+#ident	"@(#)mk::mk	1.10.8.2"
+
+#
+#	Shell script for rebuilding the Complete UNIX System V/386 Release 4.0
+#
+
+if [ "$ROOT" = "" ]
+then  echo "$0: You must specify a \$ROOT directory, other than '/', \
+as the root of the source and output tree."
+      exit 1
+fi
+if [ "$ROOT" = "/" ]
+then  echo "$0: You must specify a \$ROOT directory, other than '/', \
+as the root of the source and output tree."
+      exit 1
+fi
+if [ ! -d ${ROOT} ]
+then  echo "$0: You must specify a \$ROOT directory, other than '/', \
+as the root of the source and output tree."
+      exit 1
+fi
+OLDPATH=$PATH
+PATH=$ROOT/xenv:/usr/ccs/bin:/usr/bin:/usr/sbin:/etc; export PATH
+#
+
+PATH=$PATH:$OLDPATH; export PATH
+MCS=${MCS:-mcs}; export MCS
+#
+# changed to allow the following to be setable
+#
+LOAD=${LOAD:-STC}; export LOAD
+RELEASE=${RELEASE:-4.0}; export RELEASE
+TARGET=${TARGET:-i386}; export TARGET
+PRODUCT=${PRODUCT:-386unix}; export PRODUCT
+
+echo $0 started at `date`
+trap "exit 1" 1 2 3 15
+SHELL="/bin/sh"
+export SHELL
+CH=`id | sed '/uid=0[^0-9].*/!s|.*|#|;/#/!d'`
+export CH
+CCSTYPE=ELF; export CCSTYPE
+#
+# NOTE: you can't get to this point with ROOT=""
+#
+if [ "$ROOT" = "" ]
+then
+	PATH=/usr/ccs/bin:/usr/bin:/usr/sbin:/etc; export PATH
+else
+	# Cross-makes may not have all the directories needed
+	for dir in /bin /lib /usr/include /usr/include/sys /shlib /tmp /xenv
+	do	if [ ! -d $ROOT/$dir ]
+		then rm -f $ROOT/$dir
+			mkdir $ROOT/$dir
+		fi
+	done
+fi
+
+echo "uname -a = \c"; uname -a
+
+while [ $# -ge 1 ]
+do
+case "$1" in
+at386|AT386|at|AT) BUS=AT386; ARCH=AT386;;
+vpix|VPIX) VPIX=VPIX;;
+novpix|NOVPIX) VPIX=NOVPIX;;
+merge386|MERGE386) MERGE386=MERGE386;;
+nomerge386|NOMERGE386) MERGE386=" ";;
+mca|MCA) BUS=MCA; ARCH=MCA;;
+mb1|MB1|mbus1|MBUS1) BUS=MB1; ARCH=MBUS;;
+mb2|MB2|mbus2|MBUS2) BUS=MB2; ARCH=MBUS;;
+eisa|EISA) BUS=EISA; ARCH=AT386;;
+ev\-at|EV\-AT) BUS=EV-AT; ARCH=EV-AT;;
+i860|I860|860) ;;
+mbus|MBUS) ;;
+*) BUS="$1"; ARCH="$1";;
+esac
+shift
+done
+BUS=${BUS:-AT386}; export BUS
+ARCH=${ARCH:-AT386}; export ARCH
+MERGE386=${MERGE386:-MERGE386}; export MERGE386
+VPIX=${VPIX:-VPIX}; export VPIX
+
+#	install /usr/include and /usr/include/sys header files
+sh ./:mk.csds #build cross and native compilers in $ROOT for later use
+#build the foundation set
+sh ./:mk.fnd ${BUS} ${ARCH} $VPIX $MERGE386
+
+echo $0 done at `date`
+exit 0

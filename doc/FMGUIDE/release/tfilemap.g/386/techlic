@@ -1,0 +1,1454 @@
+'\"!  tbl | mmdoc
+.if n .pH 386.techlic @(#)techlic	40.10
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+'\"!  tbl | mmdoc
+.BK "Technology File Mapping Guide"
+.CH "Technology Licensing" 2
+.H 1 "Technology Licensing"
+.ig
+The \f2\*(dU Technology File Mapping Guide\f1 answers the needs
+of programmers developing applications software that can
+be ported in source-code form between different computer
+systems that support UNIX System V.
+These programmers need a single reference that identifies
+the components of UNIX System V and describes the source-code
+interfaces and the run-time behavior of those components.
+..
+The \f2UNIX System V/386 Release 4 Technology File Mapping Guide\f1 lists the
+component source-files for UNIX System V system calls, library
+routines, commands, and utilities, as well as other
+facilities of SVR4 following the conventions established
+by the \f2System V Interface Definition\f1 for identifying
+components of UNIX System V.
+The \f2System V Interface Definition\f1 identifies each UNIX System V
+component as a member of the Base System or one of a series of
+Extensions to that Base System using the following two letter
+abbreviations:
+.VL
+.LI "BA"
+Base System 
+.LI "KE"
+Kernel Extension 
+.LI "RT"
+Real-Time Services Extension
+.LI "SD"
+Software Development Extension
+.LI "BU"
+Basic Utilities Extension
+.LI "AU"
+Advanced Utilities Extension
+.LI "AS"
+Administered Systems Extension
+.LI "RS"
+Remote Services Extension
+.LI "TI"
+Terminal Interface Extension
+.LI "WS"
+Windowing Systems Extension
+.LE
+.ig
+The component interface classifications in the \f2UNIX System V/386 Release 4
+Technology File Mapping Guide\f1 are based on Volumes
+1-4 of the Third Edition of \*(ID (SVID3), which
+covers features and functions of \*(4U.
+The \*(ID applies to computer systems ranging from personal
+computers to mainframes, and defines a computing environment
+that is independent of any particular computer hardware.
+Software conforming to the \*(ID lets users take advantage
+of changes in technology and choose the computer system
+that best meets their needs from among many manufacturers
+while retaining a common computing environment.
+..
+.P
+The Base System includes the components that all computer
+systems that support UNIX System V must provide, but a system may
+provide some or none of the Extensions.
+Partitioning UNIX System V into a Base System with Extensions
+allows programs to be developed using a basic set of
+components that are consistent across all computer systems
+supporting  UNIX System V.
+.ig
+The run-time environment for many programs will require
+only components from the Base System; while other programs
+that use components from one or more Extensions require
+the run-time environment to support those Extensions in
+addition to the Base System.
+..
+.P
+The Extensions to the Base System provide a growth path
+which leads to a full UNIX System V configuration in logical
+functional increments.
+The division into a Base System and Extensions allows
+system builders to create, in an orderly fashion, machines that
+are tailored for different purposes and different markets.
+Thus, a small single-user business/professional computer
+system designed for novices might include only the Base
+System and the Basic Utilities.
+A system for advanced business/professional users might
+add the Advanced Utilities to such a basic configuration.
+A system designed for high-level language software development
+would include the Base System, the Kernel Extension, the
+Basic Utilities Extension, the Advanced Utilities Extension, and
+the Software Development Extensions.
+Although the Extensions are not meant to specify the
+physical packaging of UNIX System V for a particular product, it
+is expected that the Extensions can support a fairly
+consistent packaging scheme.
+This recognizes that different computing environments
+require different sets of functions and that the entire
+feature/functionality of UNIX System V may be unnecessary in
+certain environments, especially on small hardware configurations.
+.P
+.ig
+Some Extensions need other Extensions (e.g., Advanced
+Utilities need Basic Utilities) and may change how components
+in the Base System or other Extensions work.
+Any such effects are described in the \f4Environment\f1
+section on pages entitled \*(CfEFFECTS(XX_ENV)\*(Cx [see
+\*(CfEFFECTS(KE_ENV)\*(Cx].
+..
+.P
+The SVR4 schedules offer customers two sublicensing options:
+.AB N
+Terms in capital letters are defined in the SVR4 schedule
+or in the associated license agreements.
+.AC
+.VL
+.LI "Technology Licensing Option"
+This option is available to license
+portions of SVR4 for inclusion in a
+sublicensed product that does not meet the requirements of a
+standard system, as defined in the SVR4 Schedule.
+.LI "X/OPEN Standardization Option"
+This option is available to license
+portions of SVR4 for inclusion in
+a sublicensed product that does meet the requirements of a
+standard system, as defined in the SVR4 Schedule.
+.LE
+.P
+The SVR4 royalty owed to AT&T is determined by the source code
+files a sublicensed product uses.
+The Technology File Mapping Guide lists the SVR4 source
+code files in Technology Groups.
+Each Technology Group represents a set of
+files that belong to a particular Technology License Category.
+Tables in this section identify the Technology Groups and
+show the Technology Licensing Category for each Technology Group.
+Detailed listings of files in the Guide follow the same
+organization as the tables, so that the tables can be
+used to find the source-code files in a given Technology Group.
+Each table has three columns:
+.BL
+.LI
+The first column gives the name of the Technology Group.
+.LI
+The second column gives the SVID3 (1989) classification
+for the Technology Group.
+.br
+A dash ``\(em'' indicates that no SVID classification
+exists for the Group.
+.ig
+Many, if not most, Groups contain capabilities that go
+beyond the SVID.
+Where these additional capabilities are significant, the
+grouping has been split to highlight the extra capabilities.
+..
+.LI
+The third column gives the designation in the SVR4
+schedule for the Technology Group.
+.LE 1
+The legend in Table 1 shows the categories from the SVR4
+schedule and how they are represented in the third column
+of the Technology Group tables that follow.
+.SK
+.TB "Technology License Legend"
+.ps9
+.vs10
+.TS
+center, tab(>), box;
+c c
+c c
+l c.
+\f1SVR4 Technology License>\f1Technology Table
+\f1Component Category>\f1Designation
+=
+Base System
+\(em Virtual File Subsystem>VFS
+\(em STREAMS I/O Subsystem>Streams
+\(em Any Base System Facilities>Base
+_
+Kernel Extension
+\(em Virtual Memory Subsystem>VM
+\(em Any Kernel Facilities>KE
+_
+Real-Time Services Extension>RTE
+_
+Software Development Extension>SDE
+_
+Basic Utilities Extension
+\(em Encryption Facilities>BU
+\(em Any Basic Utilities>BU
+_
+Advanced Utilities Extension
+\(em UUCP>uucp
+\(em Any Advanced Utilities>AU
+_
+Administered Systems Extension>AS
+_
+Remote Services Extension>RSE
+_
+Internet Networking Services>Internet
+_
+TCP/IP Protocol Modules>TCP
+_
+Terminal Interface Extension>TI
+_
+Graphics Services Extension>GSE
+_
+XView/TypeScaler/Fonts>XVT
+.TE
+.AB N
+The Encryption Facilities are not included in the International
+product and may only be licensed in the U.S.
+.AC
+.SK
+.TB "Operating System Kernel"
+.ps9
+.vs10
+.TS
+center box tab(>);
+c c c
+c c c
+l c c.
+\f1UNIX\fP \f1Software>\f1SVID3>\f1Technology
+\f1Technology Group>\f1Extension>\f1License
+=
+\f1Virtual File Subsystem
+\f4FF\f1 \(en File-descriptor level>\f4BA_OS\f1>\f1VFS
+\f4FV\f1 \(en File-system independent v-node level>\f4BA_OS\f1>\f1VFS
+\f4FB\f1 \(en File buffer management>\f4BA_OS\f1>\f1VFS
+\f4FS\f1 \(en File System Type (FSType) dependent level>\(em>\(em
+\(en \f4ufs\fP \(en Unified FSType>\f4BA_OS\f1>\f1VFS
+\(en \f4s5\fP \(en System V FSType>\f4BA_OS\f1>\f1VFS
+\(en \f4fifofs\fP \(en FIFO FSType>\f4BA_OS\f1>\f1VFS
+\(en \f4namefs\fP \(en Named STREAMS FSType>\(em>\f1VFS
+\(en \f4specfs\fP \(en Special FSType>\f4BA_OS\f1>\f1VFS
+\(en \f4proc\fP \(en Process FSType>\(em>\f1VFS
+\(en \f4bfs\fP \(en Boot FSType>\f4BA_OS\f1>\f1VFS
+\(en \f4fd\fP \(en File Descriptor FSType>\f4BA_OS\f1>\f1VFS
+_
+\f1STREAMS I/O Subsystem
+\f4SS\f1 \(en STREAMS I/O services>\f4BA_OS\f1>\f1Streams
+\f4ST\f1 \(en STREAMS TTY subsystem>\f4BA_OS\f1>\f1Streams
+\f4SM\f1 \(en STREAMS I/O modules>\f4BA_OS\f1>\f1Streams
+\f4SD\f1 \(en STREAMS device drivers>\f4BA_OS\f1>\f1Streams
+\f4SR\f1 \(en STREAMS support routines>\f4BA_OS\f1>\f1Streams
+_
+\f1Memory Management Subsystem
+\f4MM\f1 \(en Memory management>\f4KE_OS\f1>\f1VM
+\f4MS\f1 \(en Memory segmentation>\f4KE_OS\f1>\f1VM
+\f4MP\f1 \(en Memory paging>\f4KE_OS\f1>\f1VM
+\f4MX\f1 \(en Memory transfer>\f4KE_OS\f1>\f1VM
+_
+\f1Process Management Subsystem
+\f4PP\f1 \(en Process creation & deletion>\f4BA_OS\f1>\f1Base
+\f4PS\f1 \(en Process scheduling>\f4BA_OS\f1>\f1Base
+\f4PM\f1 \(en Process memory management>\f4BA_OS\f1>\f1Base
+\f4PI\f1 \(en Inter-process communication>\f4KE_OS\f1>\f1KE
+_
+\f1Kernel Management Subsystem
+\f4KK\f1 \(en System initialization/termination>\f4BA_OS\f1>\f1Base
+\f4KU\f1 \(en Kernel/User interface>\f4BA_OS\f1>\f1Base
+\f4KT\f1 \(en Time services>\f4BA_OS\f1>\f1Base
+\f4KS\f1 \(en Kernel support routines>\f4BA_OS\f1>\f1Base
+.TE
+.SK
+.TB "System Services & Libraries"
+.ps9
+.vs10
+.TS
+center box tab(>);
+c c c
+c c c
+l c c.
+\f1UNIX Software>\f1SVID3>\f1Technology
+\f1Technology Group>\f1Extension>\f1License
+=
+\f1File System Services
+\(em File Directory Functions>\f4BA_OS\f1>\f1Base
+\(em File Creation, Removal & Status Functions>\f4BA_OS\f1>\f1Base
+\(em File System Functions>\f4BA_OS\f1>\f1Base
+_
+\f1I/O System Services
+\(em File Descriptor Functions>\f4BA_OS\f1>\f1Base
+\(em Data Transfer Functions>\f4BA_OS\f1>\f1Base
+\(em I/O and TTY Control Functions>\f4BA_OS\f1>\f1Base
+_
+\f1Memory System Services
+\(em Virtual Memory Functions>\f4KE_OS\f1>\f1KE
+\(em Memory Control Functions>\f4RT_OS\f1>\f1RTE
+_
+\f1Process System Services
+\(em Process Execution & Control Functions>\f4BA_OS\f1>\f1Base
+\(em Process Status & Resource Functions>\f4BA_OS\f1>\f1Base
+\(em Inter-process Communication>\f4KE_OS\f1>\f1KE
+\(em Kernel System Functions>\(em>\f1Base
+_
+\f1C\fP \f1Language Libraries
+\(em Run-Time Loader Library>\(em>\f1Base
+\(em Character, String Handling & Standard I/O Libraries>\f4BA_LIB\f1>\f1Base
+\(em Searching, Sorting and Wide Character Libraries>\f4BA_LIB\f1>\f1Base
+\(em Mathematical Library>\f4BA_LIB\f1>\f1Base
+\(em Floating-point Library>\(em>\f1Base
+\(em Miscellaneous Library>\f4BA_LIB\f1>\f1Base
+_
+\f1Real-Time System Facilities
+\(em User-controlled Process Scheduling>\f4RT_OS\f1>\f1RTE
+\(em High-Resolution Timing Services>\f4RT_OS\f1>\f1RTE
+\(em Real-Time System Commands>\f4RT_CMD\f1>\f1RTE
+_
+\f1Extended Terminal Interface
+\(em Character Terminal Interface (curses) Library>\f4TI_LIB\f1>TI
+\(em Forms, Menus & Panels Library>\f4TI_LIB\f1>TI
+\(em Terminal Information (terminfo) Utilities>\f4TI_CMD\f1>TI
+.TE
+.SK
+.TB "Shells, Commands & Utilities"
+.ps9
+.vs10
+.TS
+center box tab(>);
+c c c
+c c c
+l c c.
+\f1UNIX\fP \f1Software>\f1SVID3>\f1Technology
+\f1Technology Group>\f1Extension>\f1License
+=
+\f1Encryption Facilities
+\(em Encryption Library>\f4BA_LIB\f1>\f1Base
+\(em Encryption Commands>\(em>\f1BU
+_
+\f1Localization Facilities
+\(em Localization Library>\f4BA_LIB\f1>\f1Base
+\(em Localization and Message String Handling Utilities>\(em>\f1BU
+_
+\f1Command Line Interpreters
+\(em Bourne Shell (\f4sh\f1)>\f4BU_CMD\f1>\f1BU
+\(em C Shell (\f4csh\f1)>\(em>\f1AU
+\(em Korn Shell (\f4ksh\f1)>\(em>\f1AU
+\(em Shell Layers (\f4shl\f1)>\f4AU_CMD\f1>\f1AU
+_
+\f1Core System Utilities
+\(em Basic Commands & Utilities>\f4BU_CMD\f1>\f1BU
+\(em Advanced Commands & Utilities>\f4AU_CMD\f1>\f1AU
+_
+\f1Directory & File Management Utilities
+\(em Basic File Management Utilities>\f4BU_CMD\f1>\f1BU
+\(em Advanced File Management Utilities>\f4AU_CMD\f1>\f1AU
+_
+\f1Text Processing Utilities
+\(em Spell Checking Utilities>\f4BU_CMD\f1>\f1BU
+\(em Basic Text Editing Utilities>\f4BU_CMD\f1>\f1BU
+\(em Advanced Text Editing Utilities>\f4AU_CMD\f1>\f1AU
+_
+\f1Printing Facilities
+\(em Line Printer Spooling Utilities>\f4AU_CMD\f1>\f1AU
+\(em Line Printer PostScript\*(Rg Filters>\(em>\f1AU
+_
+\f1Plotting Facilities
+\(em Plotting Library>\(em>\f1AU
+\(em Plotting Commands>\(em>\f1AU
+_
+\f1Character User Interfaces
+\(em Form & Menu Language Interpreter (FMLI)>\(em>\f1TI
+\(em Framed Access Command Environment (FACE)>\(em>\f1TI
+.TE
+.SK
+.TB "System Administration Facilities"
+.ps9
+.vs10
+.TS
+center box tab(>);
+c c c
+c c c
+l c c.
+\f1UNIX\fP \f1Software>\f1SVID1989>\f1Technology
+\f1Technology Group>\f1Extension>\f1License
+=
+\f1Operations, Administration & Maintenance (OA&M) Facilities
+\(em OA&M Interface Library>\f4AS_LIB\f1>\f1AS
+\(em OA&M Interface Utilities>\f4AS_CMD\f1>\f1AS
+_
+\f1Virtual File System Administration Facilities
+\(em File System Independent Utilities>\f4AS_CMD\f1>\f1AS
+\(em Unified File System (\f4ufs\fP) Utilities>\f4AS_CMD\f1>\f1AS
+\(em System V (\f4s5\fP) File System Utilities>\f4AS_CMD\f1>\f1AS
+\(em File Descriptor (\f4fd\fP) File System Utilities>\f4AS_CMD\f1>\f1AS
+\(em Boot File System (\f4bfs\fP) Utilities>\f4AS_CMD\f1>\f1AS
+\(em Process (\f4proc\fP) File System Utilities>\f4AS_CMD\f1>\f1AS
+_
+\f1Backup and Restore Facilities
+\(em Backup and Restore Library>\(em>\f1AS
+\(em Backup and Restore Utilities>\f4AS_CMD\f1>\f1AS
+_
+\f1Configuration Management Facilities
+\(em System Configuration Utilities>\f4AS_CMD\f1>\f1AS
+\(em Software Packaging Utilities>\(em>\f1AS
+_
+\f1Software Installation Facilities
+\(em Software Installation Libraries>\(em>\f1AS
+\(em Software Installation Utilities>\f4AS_CMD\f1>\f1AS
+_
+\f1Device Management Facilities
+\(em Device Management Libraries>\f4AS_LIB\f1>\f1AS
+\(em Device Management Utilities>\f4AS_CMD\f1>\f1AS
+_
+\f1User Management Facilities
+\(em User Management Libraries>\(em>\f1AS
+\(em User Management Utilities>\f4AS_CMD\f1>\f1AS
+_
+\f1Service Access Facilities (SAF)
+\(em Core SAF Utilities>\(em>\f1AS
+\(em Port Management Utilities>\(em>\f1AS
+\(em TTY Monitor (\^\(\f4ttymon\f1) Utilities>\(em>\f1AS
+_
+\f1System Administration Facilities
+\(em Run-Time Administration Utilities>\f4AS_CMD\f1>\f1AS
+\(em System Performance Analysis Utilities>\f4AS_CMD\f1>\f1AS
+\(em Diagnostic Utilities>\(em>\f1AS
+\(em STREAMS Administrative Utilities>\(em>\f1AS
+\(em XENIX System Utilities>\(em>\f1AS
+\(em 386 Specific Utilities>\(em>\f1AS
+.TE
+.SK
+.TB "System Compatibility Software"
+.ps9
+.vs10
+.TS
+center box tab(>);
+c c c
+c c c
+l c c.
+\f1UNIX\fP \f1Software>\f1SVID3>\f1Technology
+\f1Technology Group>\f1Extension>\f1License
+=
+\f1XENIX\*(Rg System Compatibility
+\(em XENIX System Services>\(em>\f1Base
+\(em XENIX System FSType \(en \f4xnamfs\fP>\(em>\f1Base
+\(em XENIX System Libraries>\(em>\f1Base
+_
+\f1BSD System Compatibility
+\(em BSD Header Files>\(em>\f1Base
+\(em BSD System Libraries>\(em>\f1Base
+\(em BSD System Commands>\(em>\f1Base
+\(em BSD System Text Processing Utilities>\(em>\f1Base
+_
+\f1PC System Compatibility
+\(em VP/ix\*(Tm System Services>\(em>\f1Base
+\(em 386 Device Drivers>\(em>\f1KE
+\(em PC-Interface\*(Tm Utilities>\(em>\f1RSE
+.TE
+.SK
+.TB "Programming Tools & Languages"
+.ps9
+.vs10
+.TS
+center box tab(>);
+c c c
+c c c
+l c c.
+\f1UNIX\fP \f1Software>\f1SVID1989>\f1Technology
+\f1Technology Group>\f1Extension>\f1License
+=
+\f1Software Development Facilities
+\(em Software Development Library>\f4BA_LIB\f1>\f1Base
+\(em Software Development Utilities>\f4SD_CMD\f1>\f1SDE
+\(em Source Code Control System (SCCS)>\f4SD_CMD\f1>\f1SDE
+_
+\f1C Programming Language Utilities (CPLU)
+\(em Software Generation System>\f4SD_CMD\f1>\f1SDE
+\(em Symbolic Debugger (\f4sdb\fP)>\f4SD_CMD\f1>\f1SDE
+\(em C ++ Translator>\(em>None
+.TE
+.AB N
+The C++ Technology Group contains the AT&T C ++ Translator,
+which is only provided to assist in compiling and porting
+\f4sdb\f1; it may only be used as defined in
+the Schedule for SVR4.
+.AC
+.SK
+.TB "Networking Software Technology"
+.ps9
+.vs10
+.TS
+center box tab(>);
+c c c
+c c c
+l c c.
+\f1UNIX\fP \f1Software>\f1SVID3>\f1Technology
+\f1Technology Group>\f1Extension>\f1License
+=
+\f1Basic Networking Facilities
+\(em Transport Layer Interface (TLI)>\f4BA_LIB\f1>\f1Base
+\(em Basic Networking Utilities>\f4AU_CMD\f1>\f1uucp
+_
+\f1Electronic Mail Facilities
+\(em Basic Mail Utilities>\f4BU_CMD\f1>\f1BU
+\(em Advanced Mail Utilities>\f4AU_CMD\f1>\f1AU
+_
+\f1Network Services Facilities
+\(em Network Listener Library>\f4RS_LIB\f1>\f1RSE
+\(em Network Services Utilities>\f4RS_CMD\f1>\f1RSE
+_
+\f1Network Administration Facilities
+\(em Network Selection Library>\(em>\f1RSE
+\(em Distributed File System (DFS) Administration>\f4RS_CMD\f1>\f1RSE
+_
+\f1YP Name Server Facilities
+\(em YP Name Server Library>\(em>\f1RSE
+\(em YP Name Server Utilities>\(em>\f1RSE
+_
+\f1Resource Sharing Facilities
+\(em Remote File Sharing (RFS)>\f4RS_CMD/RS_LIB\f1>\f1RSE
+\(em Network File System (NFS)>\f4RS_CMD/RS_LIB\f1>\f1RSE
+\(em Remote Procedure Call (RPC)>\f4RS_CMD/RS_LIB\f1>\f1RSE
+_
+\f1STREAMS Networking Facilities
+\(em TCP/IP Protocol Modules>\(em>\f1TCP
+\(em ETHERNET\*(Tm Media Driver>\(em>\f1RSE
+\(em OSI Transport Service Driver>\(em>\f1RSE
+_
+\f1Internet Networking Facilities
+\(em Sockets Compatibility Library>\(em>\f1Internet
+\(em Internet Networking Utilities>\(em>\f1Internet
+.TE
+.SK
+.H 2 "Documentation Distribution"
+The Source Code Product documentation includes a subset of the
+complete customer document set for UNIX System V/386 Release 4,
+which is provide with the Documentation Reproduction Provision (DRP) tape.
+The SCP documentation, which contains manual pages and some proprietary
+documentation, describes Release 4. 
+.P
+When the Technology Licensing Option is chosen, the
+documentation distributed with a sublicensed product consists
+of the associated Manual Pages for the components for which
+a per copy fee has been paid.
+In addition, the \fIProduct Overview and Master Index\fP
+may be distributed with any sublicensed product regardless of the category.
+.P
+Such distribution must conform with the requirements listed
+in the SVR4 schedule.
+.H 3 "About Release 4 Documents" 
+The structure and content of Release 4 documents reflects the
+various audiences who develop, administer, and use the
+UNIX operating system and its applications.
+In the section below, the complete set of UNIX System V/386
+Release 4 documents is briefly introduced with respect to these
+audiences and general topics.
+.H 4 "Document Types and Titles"
+Two types of documents are available to UNIX System V/386 source 
+code customers:
+.BL
+.LI
+Customer documents\(emgeneric tutorial and reference material
+.br
+Vendors can modify, or simply supplement, this documentation
+to produce a system-specific documentation set.
+.LI
+Proprietary documents\(emporting and programming information
+.br
+Vendors can reprint copies for their own use in porting,
+but cannot further distribute these documents to their customers.
+.LE
+.P
+The following table lists each of the Release 4 documents by audience and
+indicates which documents are included with the Source Code
+Product (SCP) documentation tape and which are included with the
+Documentation Reproduction Provision (DRP) tape.
+``MP'' indicates that only manual pages are provided for the document.
+An approximate page count for each document is also provided.
+.bp
+.TB "UNIX System V/386 Documents"
+.ps 8
+.vs 9
+.po -.375i
+.TS H
+box tab(!);
+cb | cb | cb | cb
+li | c  | c  | n .
+Document Titles, by Audience!SCP!DRP!Pages
+=
+.TH
+.SP .1
+\f3General Use and System Administration:\fP
+_
+        Installation Guide!Yes!Yes!84
+        Multibus Installation and Configuration Guide!\(em!Yes!177
+        Network User's and Administrator's Guide!MP!Yes!691
+        PC-Interface Administrator's Guide!\(em!Yes!121
+        Product Overview and Master Index!Yes!Yes!49
+        System Administrator's Guide!\(em!Yes!1225
+        System Administrator's Reference Manual!Yes!Yes!817
+        User's Guide!\(em!Yes!816
+        User's Reference Manual!Yes!Yes!817
+=
+.SP .1
+\f3Programming:\fP
+_
+    \f3General Programmer's Series:\fP
+        Integrated Software Development Guide!MP!Yes!500
+        Migration and Compatibility Guide!MP!Yes!???
+        Programmer's Guide:  ANSI C and Programming Support Tools!\(em!Yes!732
+        Programmer's Guide:  Character User Interface (FMLI and ETI)!MP!Yes!829
+        Programmer's Guide:  Networking Interfaces!MP!Yes!783
+        Programmer's Guide:  POSIX Conformance!\(em!Yes!50
+        Programmer's Reference Manual!Yes!Yes!708
+_
+    \f3System Programmer's Series:\fP
+        Device Driver Interface / Driver-Kernel Interface (DDI/DKI) Reference Manual!Yes!Yes!275
+        Multibus Reference Manual!Yes!Yes!147
+        Programmer's Guide:  SCSI Driver Interface!MP!Yes!90
+        Programmer's Guide:  STREAMS!MP!Yes!528
+        Multibus Transport Application Interface Guide!MP!Yes!120
+_
+    \f3System Porter's Series\fP \f1(Proprietary):\fP
+        Programmer's Guide:  Porting the Kernel!Yes!\(em!132
+        Programmer's Guide:  Writing File System Types!Yes!\(em!72
+=
+.SP .1
+\f3Release-Specific Information:\fP
+_
+    \f3General:\fP
+        ANSI C Transition Guide!\(em!Yes!56
+        Software Notes!Yes!Yes!139
+_
+    \f3Proprietary:\fP
+        Documenter's Toolset User's Guide!Yes!Yes!219
+        Documentation Reproduction Provision Machine Readable Documentation Release Notes!\(em!Yes!30
+        Documentation Reproduction Provision Read Me First!\(em!Yes!21
+        Read Me First!Yes!\(em!21
+        Source Code Product Build Instructions!Yes!\(em!30
+        Source Code Product Machine Readable Documentation Release Notes!Yes!\(em!22
+        Technology File Mapping Guide!Yes!\(em!
+        USL Style Guide!Yes!Yes!40
+.TE
+.po +.375i
+.bp
+.ps 10
+.vs 12
+.H 3 "Contents of Release 4 Documents"
+This section describes the topics discussed in each document.
+Release-specific information for the documents
+are found in the \f2Source Code
+Product Machine Readable Documentation Release Notes\f1,
+found in the \f4DOCNOTES\f1 directory on the documentation
+tape.
+This section reflects the organization in the table 
+presented above.
+.H 4 "General Use and System Administration"
+The \f2Product Overview and Master Index\f1, \f2User's Guide\f1,
+and \f2User's Reference Manual\f1 are for anyone who executes
+UNIX commands and runs programs on a UNIX System V/386 Release 4 system.
+The \f2System Administrator's Guide\f1 and \f2System
+Administrator's Reference Manual\f1 are key documents 
+for system administrators.
+The \f2Network User's and Administrator's Guide\f1 is
+for administering RFS or NFS networks.
+.H 4 "\f2Installation Guide\fP"
+This document explains how to install the
+UNIX System binary software and the associated add-ons.
+It contains procedures for installing new systems
+as well as upgrading from previous versions of System V/386 Releases 4.
+.H 4 "\f2Multibus Installation and Configuration Guide\f1"
+This document provides a set of instructions to follow while installing the
+UNIX System V/386 Release 4 operating system on a
+Multibus II-based microcomputer.
+.H 4 "\f2Network User's and Administrator's Guide\f1"
+This document describes how to use and administer advanced networking 
+facilities provided with UNIX System V Release 4: TCP/IP, NFS, and RFS.
+Basic networking (\f(CWuucp\fP) is described in the
+.I "User's Guide"
+and the
+.I "System Administrator's Guide" .
+.H 4 "\f2PC-Interface Administrator's Guide\f1"
+This document describes system administration for the 
+server (UNIX system) side of
+PC-Interface, which allows users to run
+DOS applications using data from the UNIX system.
+PC-Interface also allows users to store and access files and DOS
+applications on the server (host UNIX system).
+.H 4 "\f2Product Overview and Master Index\f1"
+The document is an overview of the UNIX System V source product,
+with an emphasis on Release 4 features.
+In addition, it describes how the Release 4 document set is organized and
+provides master permuted and subject indexes.
+.H 4 "\f2System Administrator's Guide\f1"
+This \f2System Administrator's Guide\f1 is 386-specific,
+and provides complete information on administering your computer.
+The chapters include:
+Introduction,
+Using File Systems,
+Setting System Characteristics,
+Port Management,
+Setting the Networking Configuration,
+Scheduling Automatic Tasks,
+Using Printers,
+Adding and Changing User Information,
+Managing Storage Devices,
+Backing Up and Restoring Files,
+Security,
+Managing The Hard Disk,
+Tunable Parameters,
+Accounting,
+\f4mtune\f1 File Layout,
+OA&M Menu Map,
+Symbolic Links, and
+Mouse Driver Administration.
+.H 4 "\f2System Administrator's Reference Manual\f1"
+This document contains manual pages for commands and files used by system administrators.
+.H 4 "\f2User's Guide\f1"
+This document describes how to set up a terminal and use basic 
+commands to create and manipulate files.
+Through tutorials and quick reference information, this document
+describes the use of 
+FACE,
+\f(CWed\fP,
+\f(CWvi\fP,
+the shell,
+and
+\f(CWawk\fP.
+In addition, how to print files on a line printer,
+and send mail and files to other users is described.
+Summary information about FACE, \f(CWed\fP, and \f(CWvi\fP,
+UNIX system commands, the shell language, directories and files,
+is also presented.
+.H 4 "\f2User's Reference Manual\f1"
+This document contains manual pages describing commands used by general users.
+.H 3 "Programming"
+Documents about programming are grouped
+according to types of programming tasks: general programming,
+system programming, and system porting.
+.H 4 "General Programmer's Series"
+The \f2Programmer's Guide:  ANSI C and Programming Support Tools\f1
+is for most programmers.
+The other documents in this series are directed to programmers in 
+specific application areas, such as character and graphical user 
+interfaces and networking.
+The \f2Programmer's Guide: POSIX Conformance\f1 is for
+programmers writing applications that conform with POSIX standards.
+.H 4 "\f2Integrated Software Development Guide\f1"
+This document describes, from an application programmer's view,
+how to develop and package application software under UNIX System V.
+It addresses the needs of the independent software vendor,
+the value-added reseller, and system developers.
+First it describes how to use UNIX system services
+provided by the kernel,
+such as file and record locking, interprocess communication,
+the process scheduler, and symbolic links.
+Then it describes how use standard tools to package your application
+software for easy installation on a running system.
+This document includes manual pages for all application packaging tools
+and facilities described.
+This document can serve as a textbook for a course on
+UNIX System V application programming for people knowledgeable
+in C language programming.
+.H 4 "\f2Migration and Compatibility Guide\fP"
+This volume contains three guide sections, two of which have associated
+reference manual sections.
+The first guide section, entitled ``Migration Guide'' is aimed at
+programmers who are upgrading from an earlier release of UNIX System V.
+It describes changes made to UNIX System V as it has evolved to
+successive releases up to Release 4.
+.P
+The second guide section, entitled
+``Programmer's Guide:  Application Compatibility,''
+describes the capabilities of application compatibility software provided through
+the Application Compatibility Package.
+This compatibility package permits most applications that currently run on
+XENIX systems to run on UNIX System V Release 4.
+Following the ``Programmer's Guide:  Application Compatibility''
+is the ``Reference Manual:  Application Compatibility,''
+which includes manual pages for all tools and facilities contained in the
+Application Compatibility Package.
+.P
+The third guide section is the
+``Programmer's Guide:  BSD System Compatibility.''
+This section describes the capabilities of BSD that have been
+provided
+in the BSD Compatibility Package.
+This compatibility package permits most applications that currently run on
+BSD and SunOS systems to run on UNIX System V Release 4.
+Following the ``Programmer's Guide:  BSD System Compatibility''
+is the
+``Reference Manual:  BSD System Compatibility,'' which includes
+manual pages for all tools and facilities contained in the
+BSD Compatibility Package.
+.H 4 "\f2Programmer's Guide:  ANSI C and Programming Support Tools\f1"
+This document describes the programming environment, libraries,
+compiler, link editor, and file formats.
+It also describes the tools provided in the
+UNIX System C language environment for building, analyzing, debugging, 
+and maintaining programs, such as
+\f(CWlint\fP,
+\f(CWsdb\fP,
+\f(CWyacc\fP,
+\f(CWlex\fP,
+\f(CWmake\fP,
+and SCCS.
+.H 4 "\f2Programmer's Guide:  Character User Interface (FMLI and ETI)\f1"
+This document describes tools a programmer can use to interact with a user
+at a terminal that doesn't have graphics capabilities.
+It is arranged in two stand-alone sections.
+The first section describes an interpretive language that makes it easy to develop
+forms and menus (FMLI).
+The second section describes libraries of routines (ETI/\f(CWcurses\fP)
+that enable the programmer to work
+with high-level constructs, such as windows, or do low-level character placement.
+Routines remain independent of terminals by using a database (\f(CWterminfo\fP)
+that describes
+the capabilities of a terminal and the way it performs various operations.
+Manual pages for the tools described are included in the appropriate section.
+.H 4 "\f2Programmer's Guide:  Networking Interfaces\f1"
+This document describes network interface routines and network protocols
+in several stand-alone sections.
+This document contains manual pages for all the tools and facilities described,
+including all Section 3N (network programming) manual pages.
+.H 4 "\f2Programmer's Guide:  POSIX Conformance\f1"
+This document provides the 
+``POSIX Conformance Statement,''
+which describes how UNIX System V Release 4
+conforms to the POSIX IEEE Standard 1003.1.
+For each feature in the POSIX draft where there was an 
+implementation-defined reference,
+it presents the POSIX directive and describes how that feature was implemented for the
+porting base system, the AT&T 3B2/400 Computer.
+.H 4 "\f2Programmer's Reference Manual\f1"
+This document contains manual pages for programming commands, libraries, system calls,
+file formats, and miscellaneous information used by programmers.
+.H 4 "System Programmer's Series"
+The documents in this section should be of interest to programmers who write
+software at the level of the UNIX system kernel,
+specifically device drivers or STREAMS modules.
+.H 4 "\f2Device Driver Interface / Driver-Kernel Interface (DDI/DKI) Reference Manual\f1"
+This document provides reference information for creating, modifying,
+and maintaining drivers that run on UNIX System V Release 4.
+It defines the entry point routines that must be written,
+the kernel functions that should be used,
+and the data structures with which the drivers interact.
+.H 4 "\f2Multibus Reference Manual\f1"
+This document lists the commands and drivers so that users and programmers
+can take advantage of the Multibus features.
+.H 4 "\f2Programmer's Guide:  SCSI Driver Interface\f1"
+This document describes
+the SCSI (Small Computer Systems Interface) Driver Interface (SDI), which
+is a machine-independent mechanism for writing SCSI target drivers to
+access a SCSI device.
+.H 4 "\f2Programmer's Guide:  STREAMS\f1"
+This document describes how programmers can use STREAMS,
+a general, flexible facility and a set of tools, to develop communication
+and networking services within UNIX System V.
+It describes the user-level STREAMS facilities available to applications programmers,
+as well as how to write kernel modules and device drivers using STREAMS.
+It includes a summary of kernel-level data structures, STREAMS message types,
+and specifications of kernel utility routines.
+This document contains manual pages for all the tools and facilities described.
+.H 4 "\f2Multibus Transport Application Interface Guide\f1"
+This document describes the application interface to the Multibus II
+transport protocol using
+Multibus II message passing.
+Transport-application interface (TAI) is used by
+applications that need to communicate with remote applications using the
+Multibus II transport protocol.
+.H 4 "System Porter's Series (Proprietary)"
+The documents in this section should be of interest to programmers
+who port UNIX System V to new or different hardware
+and who wish to extend its capabilities by modifying the source code product.
+They cannot be republished in any form.
+.H 4 "\f2Programmer's Guide:  Porting the Kernel\f1"
+This document describes how to port the UNIX system kernel from Release 3.0,
+3.1, or 3.2 to Release 4.
+It identifies the machine dependencies that reside in the kernel and the
+C Compilation System.
+It assumes the reader has ported previous versions of the UNIX system
+and is familiar with UNIX System V Release 3.0.
+.H 4 "\f2Programmer's Guide:  Writing File System Types\f1"
+This document provides some of the information needed to write a new file system type.
+Programmers are expected to refer both to this document and to the source code
+of existing file system types when writing a new file system type.
+The document contains an introduction providing an overview of the
+virtual file system architecture and basic design rules for
+file system types.
+Among other topics covered are; basic structures,
+VFS operations, vnode operations, interaction with VM,
+additional kernel interfaces, storage allocation,
+the name cache, special file systems, and block I/O.
+.H 3 "Release-Specific Information"
+.H 4 "General"
+The documents in this section describe how this release is
+different from previous releases.
+Source customers may want to pass some or most of this information on
+to their binary customers.
+Note that by their very nature,
+the contents of documents that contain release-specific information
+often change drastically from release to release.
+.H 4 "\f2ANSI C Transition Guide\f1"
+This document describes techniques for writing new C language code
+and upgrading existing code to comply with the ANSI C language specification.
+.H 4 "\f2Software Notes\f1"
+This document gives software hints and compatibility information for Release 4.
+It includes operating and programming tips,
+as well as miscellaneous information
+that was not available in time to include in the appropriate place in the
+document set.
+.H 4 "Proprietary"
+These proprietary documents contain release-specific
+information that is available only to source code customers.
+They cannot be republished in any form.
+.H 4 "\f2Documenter's Toolset User's Guide\fP"
+This document describes the Documenter's Tool Set, which is a set of
+macros used in the production of the \s-2UNIX\s+2 System documentation.
+.H 4 "\f2Documentation Reproduction Provision Machine Readable Documentation Release Notes\f1"
+This document contains release-specific information for the documents provided with the Documentation Reproduction Provision.
+.H 4 "\f2Documentation Reproduction Provision Read Me First\f1"
+This document describes the complete documentation set for UNIX System V/386
+Release 4.
+It also describes the DOCTOOLS environment,
+and how to extract and print Release 4 documents.
+.H 4 "\f2Read Me First\f1"
+This document briefly describes the major components of the source code
+product, the DOCTOOLS environment,
+and how to extract and print Release 4 documents.
+.H 4 "\f2Source Code Product Build Instructions\f1"
+This document identifies the software and documentation that is included
+in the UNIX System V/386 Release 4 Source Code Product.
+It explains how to build and install Release 4 software.
+.H 4 "\f2Source Code Product Machine Readable Documentation Release Notes\f1"
+This document contains release-specific information for the documents provided with the Source Code Product.
+.H 4 "\f2Technology File Mapping Guide\f1"
+This document specifies the files in Release 4 that are applicable to specific
+technology, and therefore available to licensees of that 
+technology as provided in the technology licensing section 
+of the Release 4 schedule.
+.H 4 "\f2USL Style Guide\fP"
+This document contains a set of guidelines on style for USL
+documentation.
+These guidelines apply to all types of documents, including the
+reference manuals, except where explicitly noted.
+.H 2 "POSIX Standardization Option"
+The POSIX Standardization Option applies to sublicensed products that
+provide only the interfaces defined in the
+IEEE POSIX 1003.1 standard\*(Rf
+(see IEEE 1003 Working Group, \f2IEEE Standard
+Portable Operating System Interface for Computer
+Environments\fP, Institute of Electrical and Electronics
+Engineers, Inc., New York, New York, 1988).
+.P
+A sublicensed product that provides facilities beyond those defined in
+IEEE Std 1003.1 is subject to the binary per copy
+fees for those additional features as detailed in the
+SVR4 schedule and the
+\f2UNIX System V/386 Release 4 Technology File Mapping Guide\f1
+.P
+A sublicensed product may include technology from the ``Kernel Software
+Technology'' section of the
+\f2UNIX System V/386 Release 4 Technology File Mapping Guide\f1
+only as required to implement the POSIX 1003.1 interfaces.
+However, in including such technology, a sublicensed product may not
+provide program or user interfaces beyond IEEE Std 1003.1.
+.P
+.XS L F
+The files listed below contain the POSIX 1003.1 interface
+components for SVR4.
+The entries in the lists below contain the file name,
+POSIX function or interface name, and a short description.
+.XF
+.H 4 "POSIX Header Files"
+.XS I N
+.S -1 -2
+.TS
+tab(	);
+l3f5w(2.25i) l3f3 l3f1.
+\f4cmd/cpio/cpio.h	\f4cpio\f1	Extended \f4cpio\f1 Format
+\f4head/dirent.h	\f4dirent.h\f1	structure of directory entries
+\f4head/errno.h	\f4errno\f1	error code variable \(en errno
+\f4head/fcntl.h	\f4fcntl.h\f1	file control definitions
+\f4head/grp.h	\f4grp.h\f1	group file structure
+\f4head/limits.h	\f4limits.h\f1	numerical limits
+\f4head/pwd.h	\f4pwd.h\f1	password file structure
+\f4head/signal.h	\f4signal.h\f1	signal definitions
+\f4head/termios.h	\f4termios.h\f1	general terminal interface
+\f4head/unistd.h	\f4unistd.h\f1	symbolic constants & structures
+\f4head/utime.h	\f4utime.h\f1	access & modification time structure
+\f4head/wait.h	\f4wait.h\f1	declarations for waiting
+\f4uts/i386/sys/dirent.h	\f4sys/dirent.h\f1	structure of directory entries
+\f4uts/i386/sys/errno.h	\f4sys/errno.h\f1	error code definitions
+\f4uts/i386/sys/fcntl.h	\f4sys/fcntl.h\f1	file control definitions
+\f4uts/i386/sys/signal.h	\f4sys/signal.h\f1	signal definitions
+\f4uts/i386/sys/stat.h	\f4sys/stat.h\f1	file-status definitions
+\f4uts/i386/sys/termios.h	\f4sys/termios.h\f1	general terminal interface
+\f4uts/i386/sys/times.h	\f4sys/times.h\f1	process time definitions
+\f4uts/i386/sys/types.h	\f4sys/types.h\f1	primitive system data types
+\f4uts/i386/sys/utime.h	\f4sys/utime.h\f1	access & modification time structure
+\f4uts/i386/sys/utsname.h	\f4sys/utsname.h\f1	system name structure
+\f4uts/i386/sys/wait.h	\f4sys/wait.h\f1	wait for process termination
+.TE
+.H 4 "POSIX Interface Files"
+.XS I N
+.S -1 -2
+.TS
+tab(	);
+l3f5w(2.25i) l3f3 l3f1.
+\f4lib/libc/i386/gen/siglongjmp.c	\f4siglongjmp()\f1	non-local jump
+\f4lib/libc/i386/gen/sigsetjmp.s	\f4sigsetjmp()\f1	save calling environment
+\f4lib/libc/i386/sys/access.s	\f4access()\f1	check accessibility of a file
+\f4lib/libc/i386/sys/alarm.s	\f4alarm()\f1	set a process alarm clock
+\f4lib/libc/i386/sys/chdir.s	\f4chdir()\f1	change working directory
+\f4lib/libc/i386/sys/chmod.s	\f4chmod()\f1	change mode of a file
+\f4lib/libc/i386/sys/chown.s	\f4chown()\f1	change owner & group of a file
+\f4lib/libc/i386/sys/close.s	\f4close()\f1	close a file-descriptor
+\f4lib/libc/i386/sys/creat.s	\f4creat()\f1	create new file or rewrite existing one
+\f4lib/libc/i386/sys/dup.s	\f4dup()\f1	duplicate an open file-descriptor
+\f4lib/libc/i386/sys/execl.s	\f4execl()\f1	execute a file
+\f4lib/libc/i386/sys/execle.s	\f4execle()\f1	execute a file
+\f4lib/libc/i386/sys/execv.s	\f4execv()\f1	execute a file
+\f4lib/libc/i386/sys/execve.s	\f4execve()\f1	execute a file
+\f4lib/libc/i386/sys/exit.s	\f4_exit()\f1	terminate a process
+\f4lib/libc/i386/sys/fcntl.s	\f4fcntl()\f1	file control operations
+\f4lib/libc/i386/sys/fork.s	\f4fork()\f1	create a new process
+\f4lib/libc/i386/sys/fpathconf.s	\f4fpathconf()\f1	get configurable path-name variables
+\f4lib/libc/i386/sys/fstat.s	\f4fstat()\f1	get status of a file
+\f4lib/libc/i386/sys/getegid.s	\f4getegid()\f1	get effective-group-id
+\f4lib/libc/i386/sys/geteuid.s	\f4geteuid()\f1	get effective-user-id
+\f4lib/libc/i386/sys/getgid.s	\f4getgid()\f1	get real-group-id
+\f4lib/libc/i386/sys/getgroups.s	\f4getgroups()\f1	get supplementary group-ids
+\f4lib/libc/i386/sys/getpgrp.s	\f4getpgrp()\f1	get process-group-id
+\f4lib/libc/i386/sys/getpid.s	\f4getpid()\f1	get process-id
+\f4lib/libc/i386/sys/getppid.s	\f4getppid()\f1	get parent-process-id
+\f4lib/libc/i386/sys/getuid.s	\f4getuid()\f1	get real-user-id
+\f4lib/libc/i386/sys/kill.s	\f4kill()\f1	signal a process or a process-group
+\f4lib/libc/i386/sys/link.s	\f4link()\f1	link to a file
+\f4lib/libc/i386/sys/lseek.s	\f4lseek()\f1	move read/write pointer
+\f4lib/libc/i386/sys/mkdir.s	\f4mkdir()\f1	make a directory
+\f4lib/libc/i386/sys/open.s	\f4open()\f1	open file for reading and/or writing
+\f4lib/libc/i386/sys/pathconf.s	\f4pathconf()\f1	get configurable path-name variables
+\f4lib/libc/i386/sys/pause.s	\f4pause()\f1	suspend process until a signal
+\f4lib/libc/i386/sys/pipe.s	\f4pipe()\f1	create an inter-process channel
+\f4lib/libc/i386/sys/read.s	\f4read()\f1	read from a file
+\f4lib/libc/i386/sys/rmdir.s	\f4rmdir()\f1	remove a directory
+\f4lib/libc/i386/sys/setgid.s	\f4setgid()\f1	set group-id
+\f4lib/libc/i386/sys/setsid.s	\f4setpgid()\f1	set process-group-id for job control
+\f4lib/libc/i386/sys/setsid.s	\f4setsid()\f1	create session & set process-group-id
+\f4lib/libc/i386/sys/setuid.s	\f4setuid()\f1	set user-id
+\f4lib/libc/i386/sys/sigaction.c	\f4sigaction()\f1	examine and change signal action
+\f4lib/libc/i386/sys/sigpending.s	\f4sigpending()\f1	examine pending signals
+\f4lib/libc/i386/sys/sigprocmsk.s	\f4sigprocmask()\f1	examine and change blocked signals
+\f4lib/libc/i386/sys/sigsuspend.s	\f4sigsuspend()\f1	wait for a signal
+\f4lib/libc/i386/sys/stat.s	\f4stat()\f1	get status of a file
+\f4lib/libc/i386/sys/time.s	\f4time()\f1	get system time
+\f4lib/libc/i386/sys/times.s	\f4times()\f1	get elapsed process times
+\f4lib/libc/i386/sys/umask.s	\f4umask()\f1	set/get file-mode-creation-mask
+\f4lib/libc/i386/sys/uname.s	\f4uname()\f1	get name of current operating system
+\f4lib/libc/i386/sys/unlink.s	\f4unlink()\f1	remove directory entry
+\f4lib/libc/i386/sys/utime.s	\f4utime()\f1	set file access & modification times
+\f4lib/libc/i386/sys/wait.s	wait()\f1	wait for process to change state
+\f4lib/libc/i386/sys/write.s	write()\f1	write onto a file
+\f4lib/libc/port/gen/cfgetispeed.c	\f4cfgetispeed()\f1	get input baud rate
+\f4lib/libc/port/gen/cfgetospeed.c	\f4cfgetospeed()\f1	get output baud rate
+\f4lib/libc/port/gen/cfsetispeed.c	\f4cfsetispeed()\f1	set input baud rate
+\f4lib/libc/port/gen/cfsetospeed.c	\f4cfsetospeed()\f1	set output baud rate
+\f4lib/libc/port/gen/closedir.c	\f4closedir()\f1	close a directory
+\f4lib/libc/port/gen/ctime.c	\f4asctime()\f1	convert time to character string
+\f4lib/libc/port/gen/dup2.c	\f4dup2()\f1	duplicate an open file-descriptor
+\f4lib/libc/port/gen/execvp.c	\f4execlp()\f1	execute a file
+\f4lib/libc/port/gen/execvp.c	\f4execvp()\f1	execute a file
+\f4lib/libc/port/gen/getcwd.c	\f4getcwd()\f1	get working directory path-name
+\f4lib/libc/port/gen/getenv.c	\f4getenv()\f1	access environment variable
+\f4lib/libc/port/gen/getgrnam.c	\f4getgrgid()\f1	access group file entry
+\f4lib/libc/port/gen/getgrnam.c	\f4getgrnam()\f1	access group file entry
+\f4lib/libc/port/gen/getlogin.c	\f4getlogin()\f1	get login-name of user
+\f4lib/libc/port/gen/getpwnam.c	\f4getpwnam()\f1	access password file entry
+\f4lib/libc/port/gen/getpwnam.c	\f4getpwuid()\f1	access password file entry
+\f4lib/libc/port/gen/isatty.c	\f4isatty()\f1	determine terminal device name
+\f4lib/libc/port/gen/mkfifo.c	\f4mkfifo()\f1	make a FIFO special-file
+\f4lib/libc/port/gen/opendir.c	\f4opendir()\f1	open a directory
+\f4lib/libc/port/gen/readdir.c	\f4readdir()\f1	read a directory
+\f4lib/libc/port/gen/rename.c	\f4rename()\f1	rename a file
+\f4lib/libc/port/gen/rewinddir.c	\f4rewinddir()\f1	rewind a directory
+\f4lib/libc/port/gen/setlocale.c	\f4setlocale()\f1	get/set localization information
+\f4lib/libc/port/gen/sigsetops.c	\f4sigaddset()\f1	manipulate signal sets
+\f4lib/libc/port/gen/sigsetops.c	\f4sigdelset()\f1	manipulate signal sets
+\f4lib/libc/port/gen/sigsetops.c	\f4sigemptyset()\f1	manipulate signal sets
+\f4lib/libc/port/gen/sigsetops.c	\f4sigfillset()\f1	manipulate signal sets
+\f4lib/libc/port/gen/sigsetops.c	\f4sigismember()\f1	manipulate signal sets
+\f4lib/libc/port/gen/sleep.c	\f4sleep()\f1	delay execution for interval
+\f4lib/libc/port/gen/sysconf.c	\f4sysconf()\f1	get configurable system variables
+\f4lib/libc/port/gen/tcdrain.c	\f4tcdrain()\f1	drain input/output queues
+\f4lib/libc/port/gen/tcflow.c	\f4tcflow()\f1	enable/disable flow control
+\f4lib/libc/port/gen/tcflush.c	\f4tcflush()\f1	flush input/output queues
+\f4lib/libc/port/gen/tcgetattr.c	\f4tcgetattr()\f1	get terminal attributes
+\f4lib/libc/port/gen/tcgetpgrp.c	\f4tcgetpgrp()\f1	get foreground process-group-id
+\f4lib/libc/port/gen/tcsendbreak.c	\f4tcsendbreak()\f1	generate break condition
+\f4lib/libc/port/gen/tcsetattr.c	\f4tcsetattr()\f1	set terminal attributes
+\f4lib/libc/port/gen/tcsetpgrp.c	\f4tcsetpgrp()\f1	set foreground process-group-id
+\f4lib/libc/port/gen/time_comm.c	\f4tzset()\f1	set time zone
+\f4lib/libc/port/gen/ttyname.c	\f4ttyname()\f1	determine terminal device name
+\f4lib/libc/port/gen/waitpid.c	\f4waitpid()\f1	wait for process to change state
+\f4lib/libc/port/stdio/ctermid.c	\f4ctermid()\f1	generate path-name for terminal
+\f4lib/libc/port/stdio/cuserid.c	\f4cuserid()\f1	get character login-name of user
+\f4lib/libc/port/stdio/fdopen.c	\f4fdopen()\f1	open stdio-file for file-descriptor
+\f4lib/libc/port/stdio/fileno.c	\f4fileno()\f1	return file-descriptor for stdio-file
+\f4lib/libc/port/sys/execl.c	\f4execl()\f1	execute a file
+\f4lib/libc/port/sys/execle.c	\f4execle()\f1	execute a file
+\f4lib/libc/port/sys/execv.c	\f4execv()\f1	execute a file
+.TE
+.H 2 "Source Code Exchange"
+Prior to SVR4, UNIX System V source code licensees could only
+exchange code with other licensees if both had equivalent
+UNIX System V licenses for the same implementation.
+With SVR4, source code licensees who have licensed the
+same release of UNIX System V, but for different implementations,
+may now exchange SVR4 code that is not implementation-specific.
+.P
+Source code in the following directories (and sub-directories
+thereof) in the 386 implementation of SVR4 may not
+be exchanged under the source code exchange provisions of
+the SVR4 schedule unless the two licensees have equivalent
+licenses, in release and in implementation:
+.P
+.XS I N
+.ft 4
+add-on/mouse
+.br
+add-on/imx586
+.br
+add-on/qt
+.br
+add-on/scsi
+.br
+add-on/scsi.in
+.br
+add-on/wd
+.br
+add-on/xl
+.br
+arch
+.br
+cmd/disksetup
+.br
+cmd/evgainit
+.br
+cmd/getclk
+.br
+cmd/i286emul
+.br
+cmd/idcmd
+.br
+cmd/mkpart
+.br
+cmd/pcintf
+.br
+cmd/pkging
+.br
+cmd/proto-cmd
+.br
+cmd/rconsole
+.br
+cmd/sccs/lib/mpwlib/i386
+.br
+cmd/sco
+.br
+cmd/sdb
+.br
+cmd/sgs
+.br
+cmd/vtlmgr
+.br
+cmd/wsinit
+.br
+cmd/x286emul
+.br
+lib/libc/i386
+.br
+lib/libdl/i386
+.br
+lib/libm/i386
+.br
+lib/rtld/i386
+.br
+ucblib/libc/i386
+.br
+uts/i386
+.ft 1
+.H 2 "Header Files"
+UNIX System V header files do not belong exclusively
+to any individual Software Technology.  They may be used to provide
+an interface to the Software Technologies in SVR4
+without payment of additional royalties.
+.P
+\f4head/a.out.h
+.br
+head/agent.h
+.br
+head/aouthdr.h
+.br
+head/ar.h
+.br
+head/archives.h
+.br
+head/arpa/ftp.h
+.br
+head/arpa/inet.h
+.br
+head/arpa/nameser.h
+.br
+head/arpa/telnet.h
+.br
+head/arpa/tftp.h
+.br
+head/assert.h
+.br
+head/bkrs.h
+.br
+head/core.h
+.br
+head/cpio.h
+.br
+head/crypt.h
+.br
+head/ctype.h
+.br
+head/deflt.h
+.br
+head/devmgmt.h
+.br
+head/dial.h
+.br
+.br
+head/dirent.h
+.br
+head/dlfcn.h
+.br
+head/elf.h
+.br
+head/errno.h
+.br
+head/fatal.h
+.br
+head/fcntl.h
+.br
+head/filehdr.h
+.br
+head/float.h
+.br
+head/fmtmsg.h
+.br
+head/ftw.h
+.br
+head/grp.h
+.br
+head/ieeefp.h
+.br
+head/langinfo.h
+.br
+head/lastlog.h
+.br
+head/ldfcn.h
+.br
+head/libelf.h
+.br
+head/libgenIO.h
+.br
+head/limits.h
+.br
+head/linenum.h
+.br
+head/link.h
+.br
+head/listen.h
+.br
+head/locale.h
+.br
+head/macros.h
+.br
+head/malloc.h
+.br
+head/math.h
+.br
+head/math.h3b5x
+.br
+head/memory.h
+.br
+head/mnttab.h
+.br
+head/mon.h
+.br
+head/nan.h
+.br
+head/netconfig.h
+.br
+head/netdb.h
+.br
+head/netdir.h
+.br
+head/nl_types.h
+.br
+head/nlist.h
+.br
+head/nsaddr.h
+.br
+head/nserve.h
+.br
+head/pkgdev.h
+.br
+head/pkginfo.h
+.br
+head/pkglocs.h
+.br
+head/pkgstrct.h
+.br
+head/pkgtrans.h
+.br
+head/pn.h
+.br
+head/poll.h
+.br
+head/prof.h
+.br
+head/protocols/dumprestore.h
+.br
+head/protocols/routed.h
+.br
+head/protocols/rwhod.h
+.br
+head/protocols/timed.h
+.br
+head/pw.h
+.br
+head/pwd.h
+.br
+head/regexp.h
+.br
+head/reloc.h
+.br
+head/resolv.h
+.br
+head/rje.h
+.br
+head/rpc/mp.h
+.br
+head/rpcsvc/dbm.h
+.br
+head/rpcsvc/mount.h
+.br
+head/rpcsvc/rstat.h
+.br
+head/rpcsvc/rusers.h
+.br
+head/rpcsvc/rwall.h
+.br
+head/rpcsvc/spray.h
+.br
+head/rpcsvc/yp_prot.h
+.br
+head/rpcsvc/ypclnt.h
+.br
+head/rpcsvc/ypupd.h
+.br
+head/sac.h
+.br
+head/scnhdr.h
+.br
+head/search.h
+.br
+head/setjmp.h
+.br
+head/sgtty.h
+.br
+head/shadow.h
+.br
+head/siginfo.h
+.br
+head/signal.h
+.br
+head/stand.h
+.br
+head/std.h
+.br
+head/stdarg.h
+.br
+head/stddef.h
+.br
+head/stdio.h
+.br
+head/stdlib.h
+.br
+head/storclass.h
+.br
+head/string.h
+.br
+head/stropts.h
+.br
+head/sum.h
+.br
+head/syms.h
+.br
+head/sys/un.h
+.br
+head/sys.i286
+.br
+head/sys.i386
+.br
+head/sys.pdp
+.br
+head/sys.u3b15
+.br
+head/sys.u3b5
+.br
+head/sys.vax
+.br
+head/syslog.h
+.br
+head/table.h
+.br
+head/tar.h
+.br
+head/termio.h
+.br
+head/termios.h
+.br
+head/time.h
+.br
+head/tiuser.h
+.br
+head/ttysrv.h
+.br
+head/tzfile.h
+.br
+head/ucontext.h
+.br
+head/ulimit.h
+.br
+head/unistd.h
+.br
+head/userdefs.h
+.br
+head/ustat.h
+.br
+head/utime.h
+.br
+head/utmp.h
+.br
+head/utmpx.h
+.br
+head/valtools.h
+.br
+head/values.h
+.br
+head/values.h3b5x
+.br
+head/varargs.h
+.br
+head/wait.h
+.br
+head/windows.h\f1

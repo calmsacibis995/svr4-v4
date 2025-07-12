@@ -1,0 +1,123 @@
+'\"macro stdmacro
+.if n .pH g1.logger @(#)logger	40.11 of 5/21/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+'\" macro stdmacro
+.\" Copyright (c) 1988 Sun Microsystems, Inc. - All Rights Reserved.
+.\"
+.\" Copyright (c) 1983 Regents of the University of California.
+.\" All rights reserved.  The Berkeley software License Agreement
+.\" specifies the terms and conditions for redistribution.
+.\"
+.nr X
+.if \nX=0 .ds x} logger 1 "BSD Compatibility Package" "\&"
+.if \nX=1 .ds x} logger 1 "BSD Compatibility Package"
+.if \nX=2 .ds x} logger 1 "" "\&"
+.if \nX=3 .ds x} logger "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4logger\f1 \- add entries to the system log
+.SH SYNOPSIS
+\f4/usr/ucb/logger\f1
+[
+\f4\-t\f1
+.I tag
+] [
+\f4\-p\f1
+.I priority
+] [
+\f4\-i\f1
+] [
+\f4\-f\f1
+.I filename
+] [
+.I message
+] .\ .\ .
+.SH DESCRIPTION
+\f4logger\f1
+provides a method for adding one-line entries to the system log file
+from the command line.
+One or more
+.I message
+arguments can be given on the command line, in which case each is
+logged immediately.
+Otherwise, a
+.I filename
+can be specified, in which case each line in the file
+is logged.
+If neither is specified,
+\f4logger\f1
+reads and logs messages on a line-by-line basis from the standard input.
+.P
+The following options are available:
+.TP 12n
+\f4\-t\f2 tag\f1
+Mark each line added to the log with the specified
+.IR tag .
+.TP
+\f4\-p\f2 priority\f1
+Enter the message with the specified
+.IR priority .
+The message priority can be specified numerically, or as a
+\f2facility\f4.\f2level\f1
+pair.
+For example,
+\f1`\f4\-p local3.info\f1'
+assigns the message priority to the
+\f4info\f1
+level in the
+\f4local3\f1
+facility.
+The default priority is
+\f4user.notice\f1.
+.TP
+\f4\-i\f1
+Log the process
+.SM ID
+of the
+\f4logger\f1
+process with each line.
+.TP
+\f4\-f\f2 filename\f1
+Use the contents of
+.I filename
+as the message to log.
+.TP
+.I message
+If this is unspecified, either the file
+indicated with
+\f4\-f\f1
+or the standard input is added to the log.
+.SH EXAMPLE
+.RS
+.ft 4
+logger System rebooted
+.ft 1
+.RE
+.P
+will log the message
+\f1`\f4System rebooted\f1'
+to the facility at priority
+\f4notice\f1
+to be treated by
+\f4syslogd\f1
+as other messages to the facility
+\f4notice\f1
+are.
+.IP
+\f4logger \-p local0.notice \-t HOSTIDM \-f /dev/idmc\fP
+.P
+will read from the file
+\f4/dev/idmc\f1
+and will log each line in that file as a message with the tag
+\f1`\f4HOSTIDM\f1'
+at priority
+\f4notice\f1
+to be treated by
+\f4syslogd\f1
+as other messages to the facility
+\f4local0\f1
+are.
+.SH SEE ALSO
+\f4syslog\fP(3),
+\f4syslogd\fP(1M)

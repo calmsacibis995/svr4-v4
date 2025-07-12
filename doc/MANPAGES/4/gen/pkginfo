@@ -1,0 +1,184 @@
+'\"macro stdmacro
+.if n .pH g4.pkginfo @(#)pkginfo	40.11.1.3 of 2/19/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+'\"macro stdmacro
+.nr X
+.if \nX=0 .ds x} pkginfo 4 "Essential Utilities" "\&"
+.if \nX=1 .ds x} pkginfo 4 "Essential Utilities"
+.if \nX=2 .ds x} pkginfo 4 "Essential Utilities" "\&"
+.if \nX=3 .ds x} pkginfo 4 "Essential Utilities" "\&"
+.TH \*(x}
+.SH NAME
+\f4pkginfo\f1 \- package characteristics file
+.SH DESCRIPTION
+\f4pkginfo\fP
+is an
+.SM ASCII
+file that describes the characteristics of the package along with
+information that helps control the flow of installation.
+It is created by the
+software package developer.
+.PP
+Each entry in the
+\f4pkginfo\fP
+file is a line that establishes the value of a parameter in the following
+form:
+.PP
+.RS 16
+\f2PARAM\f4="\f2value\f4"\f1
+.RE
+.PP
+There is no required order in which the parameters must be specified within the
+file.
+Each parameter is described below.
+Only fields marked with an asterisk are mandatory.
+.TP 16
+\f2PKG*\f1
+Abbreviation for the package being installed, generally three characters in
+length (for example, \f4dir\f1 or \f4pkg\f1).
+All characters in the abbreviation must
+be alphanumeric and the first may not be numeric.
+The abbreviation is limited
+to a maximum length of nine characters.
+\f4install\f1, \f4new\f1, and \f4all\f1 are reserved abbreviations.
+.TP 16
+\f2NAME*\f1
+Text that specifies the package name
+(maximum length of 256 ASCII characters).
+.TP 16
+\f2ARCH*\f1
+A comma-separated list of alphanumeric tokens that indicate the architecture
+(for example, \f43B2\f1) associated with the package.
+The \f4pkgmk\fP
+tool may be used to create or modify this value when actually building the
+package.
+The maximum length of a token is 16 characters and it cannot include a comma.
+.TP 16
+\f2VERSION*\f1
+Text that specifies the current version associated with the software package.
+The maximum length is 256 ASCII characters and the first character cannot
+be a left parenthesis.
+The \f4pkgmk\fP
+tool may be used to create or modify this value when actually building the
+package.
+.TP 16
+\f2CATEGORY*\f1
+A comma-separated list of categories under which a package may be displayed.
+A package must at least belong to the system or application category.
+Categories are case-insensitive and may contain only alphanumerics.
+Each category is limited in length to 16 characters.
+.TP 16
+\f2DESC\f1
+Text that describes the package (maximum length of 256 ASCII characters).
+.TP 16
+\f2VENDOR\f1
+Used to identify the vendor that holds the software copyright
+(maximum length of 256 ASCII characters).
+.TP 16
+\f2HOTLINE\f1
+Phone number and/or mailing address where further information may be received
+or bugs may be reported
+(maximum length of 256 ASCII characters).
+.TP 16
+\f2EMAIL\f1
+An electronic address where further information is available or bugs may be
+reported
+(maximum length of 256 ASCII characters).
+.TP 16
+\f2VSTOCK\f1
+The vendor stock number, if any, that identifies this product
+(maximum length of 256 ASCII characters).
+.TP 16
+\f2CLASSES\f1
+A space-separated list of classes defined for a package.
+The order of the list determines the order in which the classes are installed.
+Classes listed first will be installed first (on a media by media basis).
+This parameter may be modified by the request script.
+.TP 16
+\f2ISTATES\f1
+A list of allowable run states for package installation (for example,
+\f4"S s 1"\f1).
+.TP 16
+\f2RSTATES\f1
+A list of allowable run states for package removal (for example,
+\f4"S s 1"\f1).
+.TP 16
+\f2BASEDIR\f1
+The pathname to a default directory where ``relocatable'' files
+may be installed.
+If blank, the package is not relocatable and any files that have relative
+pathnames will not be installed.
+An administrator can override the default
+directory.
+.TP 16
+\f2ULIMIT\f1
+If set, this parameter is passed as an argument to the
+\f4ulimit\fP
+command, which establishes the maximum size of a file during installation.
+.TP 16
+\f2ORDER\f1
+A list of classes defining
+the order in which they should be put on the medium.
+Used by \f4pkgmk\f1
+in creating the package.
+Classes not defined in this field are placed on the
+medium using the standard ordering procedures.
+.TP 16
+\f2MAXINST\f1
+The maximum number of package instances that should be allowed
+on a machine at the same time.
+By default, only one instance of a package is allowed.
+This parameter must be set in order to have multiple
+instances of a package.
+.TP 16
+\f2PSTAMP\f1
+Production stamp used to mark the \f4pkgmap\fP file on the output volumes.
+Provides a means for distinguishing between production copies of a version if
+more than one is in use at a time.
+If \f4PSTAMP\f1 is not defined, the default is used.
+The default consists of the
+.SM UNIX
+system machine name followed by the
+string \f4"\f2YYMMDDHHMM\f4"\f1 (year, month, date, hour, minutes).
+.TP 16
+\f2INTONLY\f1
+Indicates that the package should only be installed
+interactively when set to any non-NULL value.
+.TP 16
+\f2PREDEPEND\f1
+Used to maintain compatibility with pre-SVR4 package dependency checking.
+Pre-SVR4 dependency checks were based on whether or not the name file for the
+required package existed in the \f4/var/options\f1 directory.
+This directory is not maintained for SVR4 packages since the \f4depend\f1
+file is used for checking dependencies.
+However, entries can be created in this directory to maintain compatibility.
+Setting the \f4PREDEPEND\f1 parameter to \f4y\f1 or \f4yes\f1 creates a
+\f4/usr/option\f1 entry for the package.
+(Packages that are new for SVR4 do not need to use this parameter.)
+.SH EXAMPLES
+Here is a sample \f4pkginfo\f1:
+.RS
+.ft 4
+.nf
+PKG="oam"
+NAME="OAM Installation Utilities"
+VERSION="3"
+VENDOR="AT&T"
+HOTLINE="1-800-ATT-BUGS"
+EMAIL="attunix!olsen"
+VSTOCK="0122c3f5566"
+CATEGORY="system.essential"
+ISTATES="S 2"
+RSTATES="S 2"
+.fi
+.ft 1
+.RE
+.SH NOTES
+Developers may define their own installation parameters by adding a definition
+to this file.
+A developer-defined parameter must begin 
+with a capital letter,
+followed by lowercase letters.
+.\"	@(#)pkginfo.4	5.2 of 6/16/87
+.Ee

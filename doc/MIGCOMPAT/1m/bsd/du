@@ -1,0 +1,99 @@
+'\"macro stdmacro
+.if n .pH g1m.du @(#)du	40.10 of 4/18/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.\" @(#)du.1v 1.3 88/10/17 SMI; from UCB 4.3 BSD and S5
+'\"macro stdmacro
+.\" Copyright (c) 1988 Sun Microsystems, Inc. - All Rights Reserved.
+.nr X
+.if \nX=0 .ds x} du 1M "BSD Compatibility Package" "\&"
+.if \nX=1 .ds x} du 1M "BSD Compatibility Package"
+.if \nX=2 .ds x} du 1M "" "\&"
+.if \nX=3 .ds x} du "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4du\f1 \- display the number of disk blocks used per directory or file
+.SH SYNOPSIS
+\f4/usr/ucb/du\f1
+[
+\f4\-a\f1
+]
+[
+\f4\-s\f1
+]
+[
+.I filename
+\f4.\|.\|.\f1
+]
+.SH DESCRIPTION
+.P
+\f4du\f1
+gives the number of kilobytes contained in all files
+and, recursively, directories within each specified
+directory or file
+.IR filename .
+If
+.I filename
+is missing, 
+\f1`\f4.\f1'
+(the current directory) is used.
+.P
+A file which has multiple links to it is only counted once.
+.SH OPTIONS
+.TP
+\f4\-a\f1
+Generate an entry for each file.
+.TP
+\f4\-s\f1
+Only display the grand total for each of the specified
+.IR filename s.
+.P
+Entries are generated only for each directory in the absence of options.
+.SH EXAMPLE
+.P
+Here is an example of using 
+\f4du\f1
+in a directory.
+We used the
+\f4pwd\f1(1)
+command to identify the directory, then used 
+\f4du\f1
+to show the usage of all the subdirectories in that directory.
+The grand total for the directory is the last entry
+in the display:
+.RS
+.ft 4
+.nf
+% pwd
+/usr/ralph/misc
+% du
+5	.\|/jokes
+33	.\|/squash
+44	.\|/tech.papers/lpr.document
+217	.\|/tech.papers/new.manager
+401	.\|/tech.papers
+144	.\|/memos
+80	.\|/letters
+388	.\|/window
+93	.\|/messages
+15	.\|/useful.news
+1211	.
+%
+.fi
+.ft 1
+.RE
+.SH "SEE ALSO"
+\f4df\fP(1M),
+\f4pwd\fP(1)
+in the \f2User's Reference Manual\f1
+.br
+\f4quot\fP(1M)
+in the \f2System Administrator's Reference Manual\f1
+.SH NOTES
+Filename arguments that are not directory names
+are ignored, unless you use
+\f4\-a\f1.
+.P
+If there are too many distinct linked files,
+\f4du\f1
+will count the excess files more than once.

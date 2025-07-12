@@ -1,0 +1,193 @@
+.if n .pH prefman.intro @(#)intro	40.11
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.hw print-out photo-type-setter
+.tr ~
+.BK "Programmer\'s Reference Manual"
+.CH "Introduction"
+.H 1 "Introduction"
+This manual describes the programming
+features of the \s-1UNIX\s+1 system.
+It contains individual manual pages that describe
+commands, system calls, subroutines, file formats,
+and other useful topics, such as the ASCII table shown on \f4ascii\f1(5).
+It provides neither a general
+overview of the \s-1UNIX\s+1 system
+nor details of the implementation of the system.
+.P
+Not all commands, features, and facilities described in this manual
+are available in every \s-1UNIX\s+1 system. 
+Some of the features require additional utilities that may not exist on
+your system.
+.P
+The manual is divided into
+five sections:
+.sp1
+.nf
+.ta 2m +\w'\1.~~'u +\w'1M.~~'u
+	1.	Commands
+	2.	System Calls
+	3.	Subroutines:
+		3C.	C Programming Language Library Routines
+		3S.	Standard I/O Library Routines
+		3E.	Executable and Linking Format Library Routines
+		3G.	General Purpose Library Routines
+		3M.	Math Library Routines
+		3X.	Specialized Library Routines
+	4.	File Formats
+	5.	Miscellaneous Facilities
+.ta .5i 1i 1.5i 2i 2.5i 3i 3.5i 4i 4.5i 5i 5.5i 6i 6.5i
+.fi
+.P
+\f3Section~1\fP (\f2Commands\^\fP)
+describes commands that support C and other programming languages.
+.P
+\f3Section~2\fP (\f2System Calls\^\fP)
+describes the access to the services provided by 
+the \s-1UNIX\s+1 system kernel, including the C language
+interface.
+.P
+\f3Section~3\fP (\f2Subroutines\^\fP) describes the available
+general subroutines.
+In many cases, several related subroutines are described
+on the same manual page.
+Their binary versions reside in various system libraries.
+See \f4intro\^\fP(3) for descriptions of these libraries and the
+files in which they are stored.
+.P
+\f3Section~4\fP
+(\f2File Formats\^\fP)
+documents the structure of particular
+kinds of files;
+for example, the format of the output of the link editor is given
+in \f4a.out\^\fP(4).
+Excluded are files used by only one command
+(for example, the assembler's intermediate files, if any).
+In general, the C language structures
+corresponding to these formats
+can be found in the directories \f4/usr/include\fP
+and \f4/usr/include/sys\fP.
+.P
+\f3Section~5\fP (\f2Miscellaneous Facilities\^\fP) contains a variety of things.
+Included are descriptions of character sets, macro
+packages, etc.
+.P
+References with numbers other than those above mean that the utility
+is contained in the appropriate section of another manual.
+References with \^(1)\^
+following the command mean that the utility is contained in 
+this manual or the \f2User's Reference Manual\f1.
+In these cases,
+the \f3\s-1SEE ALSO\fP\s+1 section of the entry in which
+the reference appears will point you to the correct book.
+.P
+Each section consists of a number of independent
+entries of a page or so each.
+Entries within each section are
+alphabetized,
+with the exception of the introductory entry
+that begins each section. 
+Some entries may describe several routines, commands, etc.
+In such cases, the entry appears only once, alphabetized under
+its ``primary'' name, the name that appears at the upper corners of
+each manual page.
+Subsections 3C and 3S are grouped together
+because their functions constitute
+the standard C library.
+.P
+All entries are based on a common format,
+not all of whose parts always appear:
+.BL
+.LI
+The
+\f3\s-1NAME\s+1\fP
+part gives the name(s) of the entry and
+briefly
+states its purpose.
+.LI
+The
+\f3\s-1SYNOPSIS\s+1\fP
+part summarizes the use of the
+program or function being described.
+A few conventions are used, particularly in
+Section~2
+(\f2System Calls\^\fP):
+.BL
+.LI
+\f4Constant width typeface\fP
+strings are literals and
+are to be typed just as they appear.
+.LI
+\f2Italic\^\fP strings usually represent
+substitutable argument prototypes
+and program names found elsewhere in the manual.
+.LI
+Square brackets [\|] around an argument prototype
+indicate that the argument is optional.
+When an argument prototype is given as
+\f2name\f1 or \f2file\f1\^,
+it always
+refers to a
+file
+name.
+.LI
+Ellipses \^.\|.\|.\^ are used to show that the previous argument prototype
+may be repeated.
+.LI
+A final convention is used by the commands themselves.
+An argument beginning with a minus \|\f3\(mi\fP\| or
+plus \|\f3\(pl\fP\| sign
+is often taken to be some sort of flag argument,
+even if it appears in a position where a file name
+could appear.
+Therefore, it is unwise to have files
+whose names begin with \|\f3\(mi\fP\| or
+\|\f3\(pl\fP\|.
+.LE
+.LI
+The
+\f3\s-1DESCRIPTION\s+1\fP
+part describes the utility.
+.LI
+The
+\f3\s-1EXAMPLE(S)\s+1\fP
+part gives
+example(s) of usage, where appropriate.
+.LI
+The
+\f3\s-1FILES\s+1\fP
+part gives the file names that are
+built into the program.
+.LI
+The
+\f3\s-1SEE ALSO\s+1\fP
+part gives pointers to related information.
+.LI
+The
+\f3\s-1DIAGNOSTICS\s+1\fP
+part discusses
+the diagnostic indications that may be produced.
+Messages that are intended to be self-explanatory
+are not listed.
+.LI
+The
+\f3\s-1NOTES\s+1\fP
+part gives generally helpful hints
+about the use of the utility.
+.LE
+.P
+A ``Table of Contents'' and a ``Permuted Index''
+derived from that table precede
+Section 1.
+The ``Permuted Index'' is a list of keywords, given in the second
+of three columns, together with the context in which each keyword is found.
+Keywords are either topical keywords or the names of manual entries.
+Entries are identified with their section numbers shown in parentheses.
+This is important because there is considerable duplication of names
+among the sections, arising principally from commands
+and functions that exist
+only to exercise a particular system call.
+The right column lists the name of the manual page on which each
+keyword may be found.
+The left column contains useful information about the keyword.
+.Ee

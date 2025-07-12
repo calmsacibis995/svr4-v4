@@ -1,0 +1,138 @@
+'\"macro stdmacro
+.if n .pH g1a.sttydefs @(#)sttydefs	40.7.1.1 of 1/3/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} sttydefs 1M "" "\&"
+.if \nX=1 .ds x} sttydefs 1M ""
+.if \nX=2 .ds x} sttydefs 1M "" "\&"
+.if \nX=3 .ds x} sttydefs "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4sttydefs\f1 \- maintain line settings and hunt sequences for TTY ports
+.SH SYNOPSIS
+\f4/usr/sbin/sttydefs\fP \f4\-a\fP \f2ttylabel\fP [\f4\-b\fP]
+[\f4\-n\fP \f2nextlabel\fP] [\f4\-i\fP \f2initial-flags\fP]
+[\f4\-f\fP \f2final-flags\fP]
+.sp .5
+\f4/usr/sbin/sttydefs\fP \f4\-l\fP [\f2ttylabel\fP]
+.sp .5
+\f4/usr/sbin/sttydefs\fP \f4\-r\fP \f2ttylabel\fP
+.SH DESCRIPTION
+\f4sttydefs\f1 is an administrative command that maintains the line
+settings and hunt sequences for the system's TTY ports
+by making entries in and deleting
+entries from the \f4/etc/ttydefs\f1 file.
+.P
+\f4sttydefs\f1 with a \f4\-a\f1 or \f4\-r\f1 option
+may be invoked only by a privileged user.
+\f4sttydefs\f1 with \f4\-l\f1 may be invoked by any user on the 
+system.
+.P
+The options have the following meanings:
+.TP .85i
+\f4\-l\fP
+If a \f2ttylabel\fP is specified, \f4sttydefs\fP will display
+the record from \f4/etc/ttydefs\fP whose TTY label matches the
+specified \f2ttylabel\fP.
+If no \f2ttylabel\fP is specified, \f4sttydefs\fP will display the
+entire contents of \f4/etc/ttydefs\fP.
+\f4sttydefs\fP will verify that each entry it displays is correct and
+that the entry's \f2nextlabel\fP field references an existing
+\f2ttylabel\fP.
+.TP
+\f4\-a\fP \f2ttylabel\fP
+Adds a record to the \f4ttydefs\f1 file,
+using \f2ttylabel\f1 as its label.
+The following describes the effect of the \f4\-b\fP, \f4\-n\fP,
+\f4\-i\fP, or \f4\-f\fP options when used in conjunction with the
+\f4\-a\fP option:
+.TP
+\f4\-b\fP
+Specifies that autobaud should be enabled.
+Autobaud allows the system to set the line speed of a given TTY port
+to the line speed of the device connected to the port without 
+the user's intervention.
+.TP
+\f4\-n\fP \f2nextlabel\fP
+Specifies the value to be used in the \f2nextlabel\fP field in
+\f4/etc/ttydefs\fP.
+If this option is not specified, \f4sttydefs\fP will set \f2nextlabel\fP
+equal to \f2ttylabel\fP.
+.TP
+\f4\-i\fP \f2initial-flags\fP
+Specifies the value to be used in the \f2initial-flags\fP field in 
+\f4/etc/ttydefs\fP.
+\f2initial-flags\fP must be in a format recognized by the \f4stty\fP
+command.
+These flags are used by \f4ttymon\fP when searching for the 
+correct baud rate.
+They are set prior to writing the prompt.
+.sp .5
+If this option is not specified, \f4sttydefs\fP will set
+\f2initial-flags\fP equal to the \f4termio\fP(7) flag \f49600\fP.
+.TP
+\f4\-f\fP \f2final-flags\fP
+Specifies the value to be used in the \f2final-flags\fP field in 
+\f4/etc/ttydefs\fP.
+\f2final-flags\fP must be in a format recognized by the \f4stty\fP command.
+\f2final-flags\fP are the \f4termio\fP(7)
+settings used by \f4ttymon\fP after receiving a successful connection request
+and immediately before invoking the service on the port.
+If this option is not specified, \f4sttydefs\fP will set
+\f2final-flags\fP equal to the \f4termio\fP(7) flags \f49600\fP and
+\f4sane\fP.
+.TP
+\f4\-r\fP \f2ttylabel\fP
+Removes any record in the \f4ttydefs\fP file 
+that has \f2ttylabel\fP as its label.
+.SH OUTPUT
+If successful, \f4sttydefs\f1 will exit with a status of \f40\f1.
+\f4sttydefs \-l\fP will
+generate the requested information and send it to the standard output.
+.SH EXAMPLES
+The following command will list all the entries in the \f4ttydefs\fP file
+and print an error message for each invalid entry that is detected.
+.sp .5
+.nf
+.in +.25i C
+\f4sttydefs \-l\fP
+.sp .5
+.fi
+.in -.25i
+The following shows a command that requests information for a single label
+and its output:
+.sp .5
+.in +.25i
+.nf
+\f4# sttydefs -l 9600
+.sp .5
+------------------------------------------------------------------
+9600:9600 hupcl erase ^h:9600 sane ixany tab3 hupcl erase ^h::4800
+------------------------------------------------------------------
+.sp .5
+ttylabel:       9600
+initial flags:  9600 hupcl erase ^h
+final flags:    9600 sane ixany tab3 hupcl erase ^h
+autobaud:       no
+nextlabel:      4800\fP
+.fi
+.in -.25i
+.sp .5
+The following sequence of commands will add the labels
+\f41200\f1, \f42400\f1, \f44800\f1, and \f49600\f1 and put them
+in a circular list:
+.sp .5
+.nf
+.in +.25i C
+\f4sttydefs \-a 1200 \-n 2400 \-i 1200 \-f "1200 sane"
+sttydefs \-a 2400 \-n 4800 \-i 2400 \-f "2400 sane"
+sttydefs \-a 4800 \-n 9600 \-i 4800 \-f "4800 sane"
+sttydefs \-a 9600 \-n 1200 \-i 9600 \-f "9600 sane"\f1
+.sp .5
+.fi
+.in -.25i
+.SH FILES
+\f4/etc/ttydefs\fP
+.SH "SEE ALSO"
+\f2System Administrator's Guide\fP, ``Terminal Line Settings.''

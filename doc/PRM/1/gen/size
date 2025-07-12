@@ -1,0 +1,118 @@
+'\"macro stdmacro
+.if n .pH g1.size @(#)size	40.21 of 5/22/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} size 1 "C Development Set" "\&"
+.if \nX=1 .ds x} size 1 "C Development Set"
+.if \nX=2 .ds x} size 1 "" "\&"
+.if \nX=3 .ds x} size "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4size\f1 \- print section sizes in bytes of object files
+.SH SYNOPSIS
+\f4\*psize\f1
+[\f4 \-F \-f \-n \-o \-V \-x\f1] \f2files\f1
+.SH DESCRIPTION
+The
+\f4size\f1
+command produces segment or section size information in bytes
+for each loaded section in
+ELF or COFF object files.
+\f4size\f1 prints out 
+the size of the text, data, and bss (uninitialized data) segments (or 
+sections) and their total.
+.PP
+\f4size\f1 processes ELF and COFF object
+files entered on the command line.
+If an archive file is input to the
+\f4size\f1
+command, the information for each object file in
+the archive is displayed.
+.PP
+When calculating segment information, the
+\f4size\f1
+command prints out
+the total file size of the non-writable segments,  
+the total file size of the writable segments, 
+and the total memory size of the writable segments minus the total 
+file size of the writable segments.
+.PP
+If it cannot calculate segment information, \f4size\f1 calculates
+section information.
+When calculating section information, it prints out
+the total size of sections that are allocatable, non-writable, and not
+NOBITS, 
+the total size of the sections that are allocatable, writable, and not NOBITS, 
+and the total size of the writable sections of type NOBITS.
+(NOBITS sections do not actually take up space
+in the \f2file\f1.)
+.PP
+If \f4size\f1 cannot calculate either segment or section information, it 
+prints an error message and stops processing the file.
+.PP
+.TP 8
+\f4\-F\f1
+Prints out the size of each loadable segment, the permission flags of the segment,
+then the total of the loadable segment sizes.
+If there is no segment data, \f4size\f1 prints an error message and stops
+processing the file.
+.PP
+.TP 8
+\f4\-f\f1
+Prints out the size of each allocatable section, the name of the section,
+and the total of the section sizes.
+If there is no section data, 
+\f4size\f1 prints out an error message and stops processing the file.
+.PP
+.TP 8
+\f4\-n\f1
+Prints out non-loadable segment or non-allocatable section
+sizes.
+If segment data exists, \f4size\f1 prints out 
+the memory size of each loadable segment or file size
+of each non-loadable segment,
+the permission flags, and the total size of the segments.
+If there is no segment data, \f4size\f1 prints out, for each allocatable
+and non-allocatable section, the memory size, the section name, and the total size
+of the sections.
+If there is no segment or section data, \f4size\f1 prints an error message
+and stops processing.
+.PP
+.TP 8
+\f4\\-o\f1
+Prints numbers in octal,
+not decimal.
+.PP
+.TP 8
+\f4\-V\f1
+Prints the version information for the
+\f4size\f1
+command on the standard error output.
+.PP
+.TP 8
+\f4\-x\f1
+Prints numbers in hexadecimal;
+not decimal.
+.br
+.ne 3i
+.SH "EXAMPLES"
+The examples below are typical \f4size\f1 output.
+.PP
+\f4size \f2file\fP  		2724 + 88 + 0 =  2812
+.PP
+\f4size -f \f2file\fP		26(.text) + 5(.init) + 
+5(.fini)  = 36
+.PP
+\f4size -F \f2file\fP		2724(r-x) + 88(rwx) + 0(rwx) = 2812
+.PP
+.SH "SEE ALSO"
+\f4as\f1(1),
+\f4cc\f1(1),
+\f4ld\f1(1),
+\f4a.out\f1(4),
+\f4ar\f1(4) 
+.SH NOTES
+Since the size of bss sections is not known until
+link-edit time, the \f4size\f1 command does not give the true total
+size of pre-linked objects.

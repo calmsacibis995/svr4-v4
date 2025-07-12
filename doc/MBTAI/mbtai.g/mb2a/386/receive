@@ -1,0 +1,126 @@
+'\"macro stdmacro
+.if n .pH mb2a.receive @(#)receive	40.7 of 5/30/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} mb2a_receive 3tai "" "\&"
+.if \nX=1 .ds x} mb2a_receive 3tai ""
+.if \nX=2 .ds x} mb2a_receive 3tai "" "\&"
+.if \nX=3 .ds x} mb2a_receive "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4mb2a_receive\f1 \- Receives incoming Multibus II messages in
+asynchronous mode.
+.SH SYNOPSIS
+.ft 4
+.nf	
+#include <sys/types.h>
+#include <sys/mb2taiusr.h>
+int mb2a_receive(fd, msginfoptr, ctlbufptr, databufptr)
+int fd
+mb2_msginfo *msginfoptr;
+mb2_buf *ctlbufptr;
+mb2_buf *databufptr;
+.fi
+.SH DESCRIPTION
+The \f4mb2a_receive\f1 function is used to receive incoming messages.
+.P
+Multibus II transport servers use this routine to receive transactionless and
+transaction oriented messages.
+Multibus II transport clients use this routine
+to receive transactionless messages.
+.TP .9i
+\f4fd\f1
+is an asynchronous mode file descriptor referencing an open
+port.
+.TP .9i
+\f4msginfoptr\f1
+is pointer to a structure where information about
+the received message is returned.
+.TP .9i
+\f4ctlbufptr\f1
+is a pointer to a buffer where the control portion
+of the message is received.
+.TP .9i
+\f4databufptr\f1
+is a pointer to a buffer where the data portion of
+the message is received.
+.P
+The \f4mb2a_receive\f1 function can receive all message types.
+The type of message received is indicated by the \f4msgtyp\fP
+field of the \f4msginfo\fP structure.  If the message is a
+transactionless one, then the \f4tid\fP field in the \f4msginfo\fP
+is set to 0.
+.P
+This routine returns immediately with a return value of -1 and \f4errno\f1
+set to \f4EAGAIN\f1 if no messages are queued to be received.
+When the
+\f4mb2a_receive\f1 function completes successfully, the \f4len\fP
+field in each of the message buffers is set to the actual
+number of bytes received.  If the message
+is a transactionless one, then the \f4tid\fP
+field in the \f4msginfo\fP structure
+contains the reference value for this message.
+This is valid only if the message is in response to a previous
+request message (such as \f4mb2a_sendrsvp\f1 or
+\f4mb2a_getreqfrag\f1).
+This reference value is set to \f4MB2_DFBIND\fP for incoming
+messages that are not responses to previous requests.
+The routine returns immediately with a return value of -1
+and \f4errno\f1 set to \f4EAGAIN\f1 if no messages
+are queued to be received.
+.P
+Upon successful completion of the routine, a value of 0 is returned.
+A value of -1 is returned and an \f4errno\f1 is set there were errors.
+The call returns a value of -1 and sets \f4errno\f1 to
+\f4MB2_MOREDATA\fP if the buffer specified
+by \f4databufptr\fP (size determined by the maxlen field)
+is not large enough to receive the data portion
+of the incoming message.  A subsequent call to
+\f4mb2a_receive\f1 must be made with a large enough data buffer
+to receive the rest of the data portion of the message.
+The size of the data portion of the
+message is indicated in the \f4len\fP field of the \f4databufptr\fP.
+\f4ctlbufptr\fP must be set to NULL to indicate
+that only the data portion of a message is being received.
+For this call to \f4mb2a_receive\f1, values returned in
+\f4msginfo\fP structure are undefined.
+A call to \f4mb2a_receive\f1 with non-NULL \f4ctlbufptr\fP results in
+an error if the all data portion of the previous message has not been
+received.
+In the asynchronous mode of operation, all message types are
+received using the \f4mb2a_receive\f1 routine.
+The following is a list of
+applicable errors for this routine.
+.TP .9i
+\f4EAGAIN\f1
+no messages are available to be
+received.
+.TP .9i
+\f4EBADFD\f1
+\f4fd\f1 does not correspond to an
+endpoint.
+.TP .9i
+\f4EFAULT\f1
+\f4ctlbufptr\f1, \f4databufptr\f1, or
+\f4msginfoptr\f1 points outside the allocated address space.
+.TP .9i
+\f4MB2_MOREDATA\f1
+\f4databufptr\f1 buffer is not large enough to
+receive the data portion of the message.
+.TP .9i
+\f4EINVAL\f1
+an invalid value was specified
+in one of the argument buffers.
+.TP .9i
+\f4ERANGE\f1
+the size of the control or the data part of the message
+is outside the range of the minimum/ maximum allowable
+message size.
+.TP .9i
+\f4ENOSTR\f1
+\f4fd\f1 is not a file descriptor to
+a MB II transport endpoint.
+.SH SEE ALSO
+\f4getmsg\f1(2), \f4putmsg\f1(2), \f4read\f1(2),
+\f4write\f1(2), \f4ioctl\f1(2)

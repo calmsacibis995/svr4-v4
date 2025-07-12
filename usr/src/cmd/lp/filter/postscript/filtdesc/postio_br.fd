@@ -1,0 +1,10 @@
+
+#ident	"@(#)lp:filter/postscript/filtdesc/postio_br.fd	1.1.1.1"
+
+Input types: postdown
+Output types: PS
+Printer types: PS-br
+Printers: any
+Filter type: fast
+Command: /usr/lib/lp/postscript/postreverse | /usr/lib/lp/bin/lp.cat 0 2>>$ERRFILE
+#Options: PRINTER * = 2>/var/tmp/*.log

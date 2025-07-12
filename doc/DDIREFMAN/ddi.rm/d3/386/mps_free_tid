@@ -1,0 +1,38 @@
+'\"macro stdmacro
+.if n .pH 386.mps_free_tid @(#)mps_free_tid	40.5 of 7/1/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.nr X
+.if \nX=0 .ds x} mps_free_tid D3D "Multibus II" "DDI" "\&"
+.if \nX=1 .ds x} mps_free_tid D3D "Multibus II" "DDI" "\&"
+.if \nX=2 .ds x} mps_free_tid D3D "" "\&"
+.if \nX=3 .ds x} mps_free_tid "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4mps_free_tid\f1 \- frees a previously allocated transaction id.
+.SH SYNOPSIS
+.nf
+\f4#include <sys/mps.h>
+int mps_free_tid(\f2chan\fP, \f2tid\fP)
+long chan;
+unsigned char tid;\f1
+.fi
+.SH ARGUMENTS
+.PP
+.PD 0
+.TP
+\f2chan\f1
+a channel number obtained from a previous call to \f4mps_open_chan\f1.
+.TP
+\f2tid\f1
+specifies the transaction id to free.
+.SH DESCRIPTION
+The \f4mps_free_tid\f1 function frees a previously allocated transaction
+id for the associated port id.
+.SH RETURN VALUE
+The function returns 0 (zero) if no error is encountered; otherwise \-1
+is returned.
+.SH LEVEL
+Base or Interrupt
+.SH SEE ALSO
+\f4mps_open_chan\f1(D3D),
+\f4mps_get_tid\f1(D3D)

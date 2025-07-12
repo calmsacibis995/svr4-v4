@@ -1,0 +1,82 @@
+'\"macro stdmacro
+.if n .pH g3c.mlockall @(#)mlockall	40.14 of 1/3/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+'\" ident	"@(#)svid_rt:rt_os/mlockall	1.2"
+.\" @(#)mlockall 1.4 88/09/26 SMI;
+'\" macro stdmacro
+.\" Sun's mlockall.3
+.nr X
+.if \nX=0 .ds x} mlockall 3C "" "\&"
+.if \nX=1 .ds x} mlockall 3C ""
+.if \nX=2 .ds x} mlockall 3C "" "\&"
+.if \nX=3 .ds x} mlockall "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4mlockall\fP, \f4munlockall\fP \- lock or unlock address space
+.SH SYNOPSIS
+.ft 4
+.nf 
+#include <sys/mman.h>
+.sp .5
+int mlockall(int flags);
+.sp .5
+int munlockall(void);
+.ft 1
+.fi
+.SH DESCRIPTION
+The function \f4mlockall\f1
+causes all pages mapped by an address space to be locked in memory.
+The effect of 
+\f4mlockall(\f2flags\f4)\f1
+is equivalent to:
+.RS
+.sp .5
+\f4memcntl(0, 0, MC_LOCKAS, \f2flags\f4, 0, 0\f4)\f1
+.sp .5
+.RE
+.P
+The value of
+\f2flags\f1
+determines whether the pages to be locked are
+those currently mapped by the address space, those that will be mapped in the
+future, or both:
+.TS
+center;
+l l l.
+\f4MCL_CURRENT\f1	Lock current mappings
+\f4MCL_FUTURE\f1	Lock future mappings
+.TE
+.P
+The function \f4munlockall\f1
+removes address space locks and locks on mappings in the address space.
+The effect of 
+\f4munlockall\f1
+is equivalent to:
+.RS
+.sp .5
+\f4memcntl(0, 0, MC_UNLOCKAS, 0, 0, 0)\f1
+.sp .5
+.RE
+.P
+Locks established with
+\f4mlockall\f1
+are not inherited by a child process after a 
+\f4fork\f1
+and are not nested.
+.SH SEE ALSO
+.na
+\f4fork\fP(2),
+\f4memcntl\fP(2),
+\f4mlock\fP(3C),
+\f4mmap\fP(2),
+\f4plock\fP(2),
+\f4sysconf\fP(3C).
+.ad
+.SH DIAGNOSTICS
+Upon successful completion, the functions \f4mlockall\f1 and 
+\f4munlockall\f1 return 0; otherwise, they return 
+\-1 and set \f4errno\f1 to indicate the error.
+.SH NOTES
+Use of \f4mlockall\f1 and \f4munlockall\f1 requires that the user have
+appropriate privileges.

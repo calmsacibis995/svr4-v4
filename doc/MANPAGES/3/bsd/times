@@ -1,0 +1,65 @@
+'\"macro stdmacro
+.if n .pH g3.times @(#)times	40.9 of 4/24/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.\" Copyright (c) 1988 Sun Microsystems, Inc. - All Rights Reserved.
+.\"
+.nr X
+.if \nX=0 .ds x} times 3C "BSD Compatibility Package" "\&"
+.if \nX=1 .ds x} times 3C "BSD Compatibility Package"
+.if \nX=2 .ds x} times 3C "" "\&"
+.if \nX=3 .ds x} times "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4times\f1 \- get process times
+.SH SYNOPSIS
+.nf
+\f4cc \f1[ \f2flag\f1\. \. \. ] \f2file\f1 \. \. \. \f4\-lucb\f1
+.P
+\f4#include <sys/types.h>\f1
+\f4#include <sys/times.h>\f1
+.P
+\f4times(buffer)\f1
+\f4struct tms *buffer;\f1
+.fi
+.SH DESCRIPTION
+\f4times\f1
+returns time-accounting information for the
+current process and for the terminated child
+processes of the current process.
+All times are in
+1/\s-1HZ\s0 seconds, where
+.SM HZ
+is 60.
+.P
+This is the structure returned by
+\f4times\f1:
+.RS
+.ft 4
+.nf
+.ta 0.5i +8n +8n +8n +8n
+struct tms {
+	time_t	tms_utime;	/* user time */
+	time_t	tms_stime;	/* system time */
+	time_t	tms_cutime;	/* user time, children */
+	time_t	tms_cstime;	/* system time, children */
+};
+.ft 1
+.fi
+.RE
+.P
+The children's times are the sum of the children's
+process times and
+their children's times.
+.SH "SEE ALSO"
+\f4getrusage\fP(3),
+\f4wait\fP(3),
+\f4time\fP(3)
+.P
+\f4time\fP(1)
+in the \f2User's Reference Manual\f1
+.br
+\f4wait\fP(2)
+in the \f2Programmer's Reference Manual\f1
+.SH NOTES
+\f4times\fP has been superseded by \f4getrusage\fP.

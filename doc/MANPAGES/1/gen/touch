@@ -1,0 +1,66 @@
+'\"macro stdmacro
+.if n .pH g1.touch @(#)touch	40.5.1.2 of 5/1/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} touch 1 "Directory and File Management Utilities" "\&"
+.if \nX=1 .ds x} touch 1 "Directory and File Management Utilities"
+.if \nX=2 .ds x} touch 1 "" "\&"
+.if \nX=3 .ds x} touch "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4touch\f1 \- update access and modification times of a file
+.SH SYNOPSIS
+\f4touch\f1
+[
+\f4\-amc\f1
+] [ \f2mmddhhmm\f1[\f2yy\f1] ] \f2files\f1
+.SH DESCRIPTION
+\f4touch\fP
+causes the access and modification times of each
+argument to be updated.
+The file name is created if it does not exist.
+If no time is specified [see \f4date\f1(1)]
+the current time is used.
+The
+\f4\-a\f1
+and
+\f4\-m\f1
+options cause touch to update only the access or modification
+times respectively (default is
+\f4\-am\f1).
+The
+\f4\-c\f1
+option silently prevents
+\f4touch\fP
+from creating the file if it did not
+previously exist.
+.PP
+The return code from
+\f4touch\fP
+is the number of files for which the times could not
+be successfully modified
+(including files that did not exist and were not created).
+.SH SEE ALSO
+\f4date\fP(1)
+.br
+\f4utime\fP(2) in the \f2Programmer's Reference Manual\f1
+.\"	@(#)touch.1	6.2 of 9/2/83
+.SH NOTES
+.PP
+Users familiar with the
+.SM BSD
+environment will find that the
+\f4\-f\f1
+option is accepted, but ignored.
+The
+\f4\-f\f1
+option is unnecessary since
+\f4touch\f1
+will succeed for all files owned by the user regardless of
+the permissions on the files.
+.P
+\f4touch\fP assumes that an all numeric entry is a date and
+so will not update the times for a file
+when an all numeric filename is specified.
+.Ee

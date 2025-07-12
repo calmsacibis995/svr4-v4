@@ -1,0 +1,277 @@
+'\"macro stdmacro
+.if n .pH g7.filesystem @(#)filesystem	40.8 of 4/11/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} filesystem 7 "" "\&"
+.if \nX=1 .ds x} filesystem 7 ""
+.if \nX=2 .ds x} filesystem 7 "" "\&"
+.if \nX=3 .ds x} filesystem "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4filesystem\f1 \- file system organization
+.SH SYNOPSIS
+.ft 4
+.nf
+/
+/usr
+.ft 1
+.fi
+.SH DESCRIPTION
+.IX "filesystem" "" "file system organization"
+.IX "filesystem" "" "file system layout"
+The System V file system tree is organized for administrative convenience.
+Distinct areas within the file system tree are provided for files that
+are private to one machine, files that can be shared by multiple
+machines of a common architecture, files that can be shared
+by all machines, and home directories.
+This organization allows sharable files to be stored
+on one machine but accessed by many machines using a
+remote file access mechanism such as RFS or NFS.
+Grouping together similar files makes the
+file system tree easier to upgrade and manage.
+.P
+The file system tree consists of a root file system and a collection
+of mountable file systems.
+The \f4mount\f1(1M)
+program attaches mountable file systems to the
+file system tree at mount points (directory entries)
+in the root file system or other previously mounted file systems.
+Two file systems,
+\f4/\f1
+(the root) and
+\f4/usr\f1,
+must be mounted in order to have a completely functional system.
+The root file system is mounted automatically by the kernel at boot time; the
+\f4/usr\f1
+file system is mounted by the
+\f4/etc/rc.boot\f1
+script, which is run as part of the booting process.
+.P
+The root file system contains files that are unique
+to each machine.
+It contains the following directories:
+.TP 1.15i
+\f4/dev\f1
+Character and block special files.
+These device files provide hooks into
+hardware devices or operating system facilities.
+Typically, device files are built to match the kernel and hardware
+configuration of the machine.
+.TP
+\f4/dev/term\f1
+Terminal devices.
+.TP
+\f4/dev/pts\f1
+Pseudo-terminal devices.
+.TP
+\f4/dev/xt\f1
+Devices used by 
+\f4layers.\f1
+.TP
+\f4/dev/sxt\f1
+Shell layers device files used by 
+\f4shl.\f1
+.TP
+\f4/etc\f1
+Machine-specific administrative configuration files and system administration 
+databases.
+\f4/etc\f1
+may be viewed
+as the home directory of a machine,
+the directory that in a sense
+defines the machine's identity.
+Executable programs are no longer kept in
+\f4/etc\f1.
+.TP
+\f4/home\f1
+Root of a subtree for user directories.
+.TP
+\f4/mnt\f1
+Temporary mount point for file systems.
+This is an empty directory
+on which file systems may be temporarily mounted.
+.TP
+\f4/opt\f1
+Root of a subtree for add-on application packages.
+.TP
+\f4/proc\f1
+Root of a subtree for the process file system.
+.TP
+\f4/sbin\f1
+Essential executables used in the booting process and in manual
+system recovery.
+The full complement of utilities is available
+only after
+\f4/usr\f1
+is mounted,
+.TP
+\f4/tmp\f1
+Temporary files; initialized to empty during the boot operation.
+.TP
+\f4/var\f1
+Root of a subtree for varying files.
+Varying files are files that are unique to a machine
+but that can grow to an arbitrary (that is, variable) size.
+An example is a log file.
+.TP
+\f4/var/adm\f1
+System logging and accounting files.
+.TP
+\f4/var/cron\f1
+\f4cron\f1's log file.
+.TP
+\f4/var/mail\f1
+Where users' mail is kept.
+.TP
+\f4/var/opt\f1
+Top-level directory used by application packages.
+.TP
+\f4/var/preserve\f1
+Backup files for
+\f4vi\f1(1)
+and
+\f4ex\f1(1).
+.TP
+\f4/var/spool\f1
+Subdirectories for files used in printer spooling, mail delivery,
+\f4cron\f1(1),
+\f4at\f1(1),
+etc.
+.TP
+\f4/var/tmp\f1
+Transitory files; initialized to empty during the boot operation.
+.P
+Because it is desirable to keep the root file system small and not volatile,
+on disk-based systems larger file systems are often mounted on
+\f4/home\f1,
+\f4/opt\f1,
+\f4/usr\f1,
+and
+\f4/var\f1.
+.P
+The file system mounted on
+\f4/usr\f1
+contains architecture-dependent and architecture-independent sharable files.
+The subtree rooted at
+\f4/usr/share\f1
+contains architecture-independent sharable files;
+the rest of the
+\f4/usr\f1
+tree contains architecture-dependent files.
+By mounting a common remote file system,
+a group of machines with a common architecture
+may share a single
+\f4/usr\f1
+file system.
+A single
+\f4/usr/share\f1
+file system can be shared by machines of any architecture.
+A machine acting as a file server may export many different
+\f4/usr\f1
+file systems to support several different architectures
+and operating system releases.
+Clients usually mount
+\f4/usr\f1
+read-only so that they don't accidentally change any shared files.
+The
+\f4/usr\f1
+file system contains the following subdirectories:
+.TP 1.15i
+\f4/usr/bin\f1
+Most system utilities.
+.TP
+\f4/usr/sbin\f1
+Executables for system administration.
+.TP
+\f4/usr/games\f1
+Game binaries and data.
+.TP
+\f4/usr/include\f1
+Include header files (for C programs, etc).
+.TP
+\f4/usr/lib\f1
+Program libraries, various architecture-dependent databases, and
+executables not invoked directly by the user (system daemons, etc).
+.TP
+\f4/usr/share\f1
+Subtree for architecture-independent sharable files.
+.TP
+\f4/usr/share/man\f1
+Subdirectories for on-line reference manual pages (if present).
+.TP
+\f4/usr/share/lib\f1
+Architecture-independent databases.
+.TP
+\f4/usr/src\f1
+Source code for utilities and libraries.
+.TP
+\f4/usr/ucb\f1
+Berkeley compatibility package binaries.
+.TP
+\f4/usr/ucbinclude\f1
+Berkeley compatibility package header files.
+.TP
+\f4/usr/ucblib\f1
+Berkeley compatibility package libraries.
+.P
+A machine with disks may export root file systems, swap files,
+and 
+\f4/usr\f1
+file systems to diskless or partially-disked machines
+that mount them into the standard file system hierarchy.
+The standard directory tree for sharing these file systems from a
+server is:
+.TP 1.55i
+\f4/export\f1
+The default root of the exported file system tree.
+.TP
+\f4/export/exec/\f2architecture-name\f1
+The exported 
+\f4/usr\f1
+file system supporting
+.I architecture-name
+for the current release.
+.TP
+\f4/export/exec/\f2architecture-name\f4.\f2release-name\f1
+The exported
+\f4/usr\f1
+file system supporting 
+.I architecture-name
+for System V
+.IR release-name .
+.TP
+\f4/export/exec/share\f1
+The exported common
+\f4/usr/share\f1
+directory tree.
+.TP
+\f4/export/exec/share.\f2release-name\f1
+The exported common \f4/usr/share\f1 directory tree for System V
+.IR release-name .
+.TP
+\f4/export/root/\f2hostname\f1
+The exported root file system for
+.IR hostname .
+.TP
+\f4/export/swap/\f2hostname\f1
+The exported swap file for
+.IR hostname .
+.TP
+\f4/export/var/\f2hostname\f1
+The exported
+\f4/var\f1
+directory tree for
+.IR hostname .
+.SH "SEE ALSO"
+\f4fsck\fP(1M),
+\f4init\fP(1M),
+\f4mknod\fP(1M),
+\f4mount\fP(1M),
+\f4intro\fP(4)
+.P
+\f4at\fP(1),
+\f4sh\fP(1),
+\f4vi\fP(1)
+in the
+.I "User's Reference Manual"

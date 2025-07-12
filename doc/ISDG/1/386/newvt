@@ -1,0 +1,53 @@
+.if n .pH g1.newvt @(#)newvt	40.6 of 1/3/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+'\"macro stdmacro
+.\" Copyright 1990 AT&T
+.nr X
+.if \nX=0 .ds x} newvt 1 "Essential Utilities" "\&"
+.if \nX=1 .ds x} newvt 1 "Essential Utilities"
+.if \nX=2 .ds x} newvt 1 "FACE" "\&"
+.if \nX=3 .ds x} newvt "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4newvt\f1 \- opens virtual terminals.
+.SH SYNOPSIS
+\f4newvt\f1 [\|\f4-e\f1\|\f2prog\f1\|] [\|\f4-n\f1\|\f2vt_number\f1\|]
+.SH DESCRIPTION
+Use the \f4newvt\f1 command to open a new virtual terminal.
+The newly opened virtual terminal will inherit your environment.
+.in +5
+.TP
+\f4-e\f1
+Specifies a program (\f2prog\f1) to execute in the new virtual terminal.
+Without the \f4-e\f1 option, the program pointed to by the
+\f4$SHELL\f1 environment variable is started in the new virtual terminal.
+If \f4$SHELL\f1 is NULL or points to a nonexecutable
+program, then \f4/bin/sh\f1 is invoked.
+.TP
+\f4-n\f1
+Specifies a particular virtual terminal (\f2vt_number\f1) to open.
+If the \f4-n\f1 option is not specified, then the next available
+virtual terminal is opened.
+Close virtual terminals by pressing CTRL-d (control d).
+Repeat CTRL-d until all open virtual terminals are closed.
+.SH DIAGNOSTICS
+The \f4newvt\f1 command will fail under the following conditions:
+.P
+.RS
+.nf
+If an illegal option is specified.
+If the device cannot be opened.
+If \f4newvt\f1 is invoked from a remote terminal.
+If no virtual terminals are available (\f4-n\f1 option not specified).
+If the requested virtual terminal is not available (\f4-n\f1 option specified).
+If the requested virtual terminal cannot be opened.
+If the specified command cannot be executed (\f4-e\f1 option specified).
+If the \f4$SHELL\f1 program cannot be executed (\f4$SHELL\f1 set and \f4-e\f1 option
+     not specified).
+If \f4/dev/vtmon\f1 cannot be opened.
+.RE
+.SH SEE ALSO
+\f4vtlmgr\f1(1)
+.br
+\f4vtgetty\f1(1M) in the \f2System Administrator's Reference 
+Manual\f1.

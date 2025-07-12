@@ -1,0 +1,55 @@
+'\"macro stdmacro
+.if n .pH bsd.mconnect @(#)mconnect	40.3 of 5/23/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.\" Copyright (c) 1988 Sun Microsystems, Inc. - All Rights Reserved.
+.nr X
+.if \nX=0 .ds x} mconnect 1M "BSD Compatibility Package" "\&"
+.if \nX=1 .ds x} mconnect 1M "BSD Compatibility Package"
+.if \nX=2 .ds x} mconnect 1M "" "\&"
+.if \nX=3 .ds x} mconnect "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4mconnect\fP \- connect to \s-1SMTP\s+1 mail server socket
+.SH SYNOPSIS
+\f4/usr/ucb/mconnect\fP
+[ \f4\-p\f2 port\fP ] [\f4\-r\fP] [ \f2hostname\fP ]
+.SH DESCRIPTION
+\f4mconnect\fP opens a connection to the mail server
+on a given host, so that it
+can be tested independently of all other mail software.
+If no host is given, the connection is made to the local host.
+Servers expect to speak the Simple Mail
+Transfer Protocol (\s-1SMTP\s0) on this connection.
+Exit by typing the \f4quit\fP command.
+Typing \s-1EOF\s+1 sends an end of file to the server.
+An interrupt closes the connection immediately and exits.
+.SH OPTIONS
+.TP 12
+\f4\-p\f2 port\fP
+Specify the port number instead of the default
+.SM SMTP
+port (number 25) as the next argument.
+.TP 12
+\f4\ -r\fP
+``Raw'' mode: disable the default line buffering and input handling.
+This gives you a similar effect as \f4telnet\fP
+to port number 25, not very useful.
+.SH FILES
+.PD 0
+.TP 28
+\f4/usr/ucblib/sendmail.hf\fP
+help file for
+.SM SMTP
+commands
+.PD
+.SH SEE\ ALSO
+\f4sendmail\fP(1M)
+.LP
+Postel, Jonathan B
+.IR "Simple Mail Transfer Protocol" ,
+.SM RFC\s0821
+August 1982,
+.SM SRI
+Network Information Center

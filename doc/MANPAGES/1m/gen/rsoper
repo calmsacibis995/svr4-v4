@@ -1,0 +1,288 @@
+.if n .pH g1a.rsoper @(#)rsoper @(#)rsoper	40.18.1.1 of 1/3/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} rsoper 1M "System Administration Utilities" "\&"
+.if \nX=1 .ds x} rsoper 1M "System Administration Utilities"
+.if \nX=2 .ds x} rsoper 1M "" "\&"
+.if \nX=3 .ds x} rsoper "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4rsoper\f1 \- service pending restore requests and service media insertion prompts
+.SH SYNOPSIS
+\f4rsoper
+\-d \f2ddev\f1
+[\f4\-j \f2jobids\f1]
+[\f4\-u \f2user\f1]
+[\f4\-m \f2method\f1]
+[\f4\-n\f1]
+[\f4\-s|v\f1]
+[\f4\-t\f1]
+.br
+                   [\f4\-o \f2oname\f1[:\f2odevice\f1] ]
+.P
+\f4rsoper \-r \f2jobid
+.P
+\f4rsoper \-c \f2jobid\f1
+.SH DESCRIPTION
+\f4rsoper \-d\f1
+identifies media containing backup archives of file systems
+and data partitions,
+and allows an operator to complete pending
+\f4restore\f1(1M)
+and
+\f4urestore\f1(1M)
+requests.
+\f4rsoper\fP takes information about the archive entered
+on the command line and matches it against pending
+\f4restore\fP or \f4urestore\fP
+requests in the restore status table.
+\f4rsoper\fP then invokes the proper archiving method to
+read the archive and extract requested files,
+directories, and data partitions.
+As subsequent archive volumes are needed, the operator is
+requested to insert or mount the appropriate archive volumes.
+See
+\f4getvol\f1(1M).
+.P
+Depending on the information available
+in \f4bkhist.tab\f1 and the volume labeling 
+technique (internal or external),
+all options and arguments listed below may not be required.
+If required fields are omitted,
+\f4rsoper\fP
+issues an error message indicating the
+information that is needed.
+The command can then be reissued with the appropriate fields specified.
+.P
+\f4rsoper\fP
+may be executed only by a user with superuser privileges.
+.P
+\f4rsoper \f4\-r\f1
+removes a pending restore job from the
+restore status table 
+(see \f4rsstatus\f1(1M) and \f4ursstatus\f1(1M))
+and notifies the requesting user that 
+the job has been marked complete.
+.P
+\f4rsoper \f4\-c\f1
+removes a pending restore job from the
+restore status table 
+(see \f4rsstatus\f1(1M) and \f4ursstatus\f1(1M))
+and notifies the requesting user that 
+the job has been canceled.
+.SS Options
+.TP 10
+\f4\-c \f2jobid\f1
+Cancels a pending restore request and notifies the originating
+user that the request has been canceled.
+.TP 10
+\f4\-d \f2ddev\f1
+Describes the device that will be used to read the
+archive containing the required file system or data partition.
+.I ddev
+is of the form:
+.IP
+     \f2ddevice\f1[\f4:\f1[\f2dchar\f1][\f4:\f1[\f2dmnames\f1]]]
+.IP
+.I ddevice
+is the device name for the device; see
+\f4device.tab\f1(4).
+.I dchar
+describes characteristics associated with the device.
+.I dchar
+is of the form:
+.IP
+     \f1[\f4density=\f2density\f1] [\f4blk_fac=\f2blockingfactor\f1] [\f4mntpt=\f2dir\f1]
+.IP
+If \f4mntpt=\f2dir\f1 is specified,
+.I ddevice
+is assumed to be a file system partition and
+.I dir
+is the place in the \s-1UNIX\s+1\*(rg directory structure where
+.I ddevice
+will be mounted.
+This is valid only for \f4fimage\f1(1M) archives.
+.I dmnames
+is a list of volume labels, 
+separated by either commas or blanks.
+If the list is blank separated, the entire
+.I ddev
+argument must be surrounded by quotes.
+.TP 10
+\f4\-j\f2 jobids\f1
+Limits the scope of the request to the jobs specified.
+.I jobids
+is a list of restore job \s-1ID\s+1s
+(either comma separated or blank separated and surrounded by quotes).
+.TP 10
+\f4\-m \f2method\f1
+Assumes the archive on the
+first volume in the destination device was created by the
+.I method
+archiving operation.
+Valid \f2methods\f1 are:
+\f4incfile\f1,
+\f4ffile\f1,
+\f4fimage\f1,
+\f4fdp\f1,
+\f4fdisk\f1,
+and any customized methods in the \f4/etc/bkup/method\f1 directory.
+This option is required 
+if the backup history log is not available, 
+if the log does not include
+information about the specified archive
+or if \f4rsoper\fP
+cannot determine the format of the archive.
+.TP 10
+\f4\f4\-n\f1
+Displays attributes of the specified destination
+device but does not attempt to service pending
+restore requests.
+.TP 10
+\f4\-o\f2 oname\f1[\f4:\f2odevice\f1]
+Specifies the originating file system partition
+or data partition to be restored.
+.I oname
+is the name of the the originating file system.
+It may be null.
+.I odevice
+is the device name of the originating file
+system or data partition.
+This option is required if the backup history log is not available or
+does not include information about the specified archive.
+.TP 10
+\f4\-r\f2 jobid\f1
+Removes the restore request for the specified job.
+.TP 10
+\f4\-s\f1
+While a restore operation is occurring, this option
+displays a period (\0\f4.\f1\0)
+for each 100 (512-byte) blocks transferred from the
+destination device.
+.TP 10
+\f4\-t\f1
+Assumes that the volume inserted in the destination device
+contains a table of contents for an archive.
+This option is
+required if the backup history log is not available, 
+if the log does not include
+information about the specified archive,
+or if \f4rsoper\fP
+cannot determine the format of the volume.
+.TP 10
+\f4\-u\f2 user\f1
+Restricts restores to those requested by the user specified.
+.TP 10
+\f4\-v\f1
+Displays the name of each object as it is restored.
+Only those archiving methods that restore named directories
+and files (\f4incfile\f1 and \f4ffile\f1) support this option.
+.SH DIAGNOSTICS 
+The exit codes for \f4rsoper\f1 are the following:
+.PP
+\f40\f1 = the task completed successfully
+.br
+\f41\f1 = one or more parameters to \f4rsoper\fP are invalid
+.br
+\f42\f1 = an error has occurred, causing \f4rsoper\fP to fail to
+      complete all portions of its task
+.P
+If a method reports that no part of a restore request was
+completed,
+\f4rsoper\fP
+reports this fact to the user.
+.bp
+.SH EXAMPLES
+Example 1:
+.P
+.in 1.0i
+\f4rsoper \-d /dev/tape/c4d0s2\fP
+.in 0
+.P
+asks the restore service to read the archive volume that has
+been inserted into the device \f4/dev/tape/c4d0s2\f1.
+The service will attempt to resolve any restore
+requests that can be satisfied by the archive volume.
+.P
+Example 2:
+.P
+The following example assumes that the backup history table contains
+a record of backups performed and
+that the restore status table contains a record of the restore requests.
+The command line
+.P
+.in 1.0i
+\f4rsoper \-d /dev/ctape:density=1600:USRLBL1
+\-v \-u clerk1\fP
+.in 0
+.P
+instructs the restore service to perform only
+pending restore requests from the \f4rsstatus.tab\f1 
+table issued by \f4clerk1\f1.
+The restore procedures are to be done from the
+cartridge tape labeled \s-1USRLBL1\s+1, with a density of 1600 bps.
+The restore service will display on the operator terminal
+the names of the files and directories
+as they are successfully restored.
+.P
+Example 3:
+.P
+The following example assumes that the
+backup history table no longer contains a log of
+the requested backup operations.
+With that assumption:
+.P
+\f4rsoper \-d /dev/diskette2:blk_fac=2400:arc.dec79
+\-m incfile \-o /usr2\fP
+.P
+instructs the restore service to perform a restore
+of the \f4/usr2\f1 file system using the incremental
+restore method.
+The \f4/usr2\f1 file system is to be
+restored from archived diskettes with a blocking factor
+of 2400.
+The diskettes containing the archive are labeled
+``arc.dec79.a,'' 
+``arc.dec79.b,''
+and ``arc.dec79.c.''
+.P
+Example 4:
+.P
+.in 1.0i
+\f4rsoper \-c rest-737b\fP
+.in 0
+.P
+cancels the restore request with the job \s-1ID\s+1 \f4rest-737b\f1.
+.SH FILES
+.ta 1.65i 1.85i
+.nf
+\f4/etc/bkup/bkhist.tab\f1	\-	lists the labels of all volumes that have been used
+		for backup operations
+.br
+\f4/etc/bkup/rsstatus.tab\f1	\-	lists the status of all restore requests from users
+.br
+\f4/etc/bkup/rsnotify.tab\f1	\-	lists the electronic mail address of the operator
+		to be notified whenever restore requests require
+		operator intervention
+\f4/etc/bkup/method\f1	\-	a directory that contains the programs used for
+		various backup methods
+.fi
+.SH SEE ALSO
+\f4fdisk\fP(1M),
+\f4fdp\fP(1M), 
+\f4ffile\fP(1M), 
+\f4fimage\fP(1M), 
+\f4getvol\fP(1M),
+\f4incfile\fP(1M),
+\f4restore\fP(1M), 
+\f4rsnotify\fP(1M), 
+\f4rsstatus\fP(1M),
+\f4urestore\fP(1M), 
+\f4ursstatus\fP(1M).
+.br
+\f4mail\fP(1) 
+in the \f2User's Reference Manual\f1.
+.br
+\f4getdate\fP(3C), \f4device.tab\fP(4)
+in the \f2Programmer's Reference Manual\f1.

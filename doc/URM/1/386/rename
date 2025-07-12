@@ -1,0 +1,52 @@
+'\"macro stdmacro
+.if n .pH 386.rename @(#)rename	40.1 of 5/30/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.nr X
+.if \nX=0 .ds x} rename 1 "" "\&"
+.if \nX=1 .ds x} rename 1 ""
+.if \nX=2 .ds x} rename 1 "" "\&"
+.if \nX=3 .ds x} rename "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4rename\f1 \- change the name of a file
+.SH SYNOPSIS
+\f4rename\fP \f2old\fP \f2new\fP
+.SH DESCRIPTION
+\f4rename\fP renames a file.  \f2old\f1 is 
+the pathname of the file or directory to be renamed.
+\f2new\f1 is the new pathname of the file or directory.
+Both \f2old\f1 and \f2new\f1
+must be of the same type (either both files, or both
+directories) and must reside on the same file system.
+.P
+If \f2new\f1 already exists, it is removed.
+Thus, if \f2new\f1 names an existing directory, the directory must
+not have any entries other than, possibly, ``\f4.\fP'' and ``\f4..\fP''.
+When renaming directories, the \f2new\f1 pathname must not name a
+descendant of \f2old\f1.
+The implementation of \f4rename\fP ensures that upon successful
+completion a link named \f2new\f1 will always exist.
+.P
+If the final component of \f2old\f1 is a symbolic link, the symbolic
+link is renamed, not the file or directory to which it points.
+.P
+Write permission is required for both the directory containing \f2old\f1
+and the directory containing \f2new\f1.
+.P
+.SH NOTES
+The system can deadlock if there is a loop in the file system graph.
+Such a loop takes the form of an entry in directory \f2a\f1,
+say \f2a/foo\f1, being a hard link to directory \f2b\f1, and an
+entry in directory \f2b\f1, say \f2b/bar\f1, being a hard link to
+directory \f2a\f1.
+When such a loop exists and two separate processes
+attempt to perform \f4rename\fP \f2a/foo b/bar\f1 and \f4rename\f1 \f2b/bar a/foo\f1,
+respectively, the system may deadlock attempting to lock both
+directories for modification.
+The system administrator should replace
+hard links to directories
+by symbolic links.
+.SH "SEE ALSO"
+\f4link\fP(2),
+\f4rename\fP(2),
+\f4unlink\fP(2) in the \f2Programmer's Reference Manual\fP

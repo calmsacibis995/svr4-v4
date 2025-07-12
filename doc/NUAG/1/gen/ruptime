@@ -1,0 +1,55 @@
+'\"macro stdmacro
+.if n .pH g1.ruptime @(#)ruptime	40.9 of 5/21/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} ruptime 1 "Internet Utilities" "\&"
+.if \nX=1 .ds x} ruptime 1 "Internet Utilities"
+.if \nX=2 .ds x} ruptime 1 "" "\&"
+.if \nX=3 .ds x} RUPTIME "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4ruptime\f1 \- show host status of local machines
+.SH SYNOPSIS
+\f4ruptime\f1
+[
+\f4\-alrtu\f1
+]
+.SH DESCRIPTION
+\f4ruptime\f1
+gives a status line like
+\f4uptime\f1
+for each machine on the local network; these are formed from packets
+broadcast by each host on the network once a minute.
+.LP
+Machines for which no status report has been received for 5 minutes are
+shown as being down.
+.LP
+Normally, the listing is sorted by host name, but this order can be
+changed by specifying one of the options listed below.
+.LP
+The following options are available:
+.TP 5
+\f4\-a\f1
+Count even those users who have been idle for an hour or more.
+.TP
+\f4\-l\f1
+Sort the display by load average.
+.TP
+\f4\-r\f1
+Reverse the sorting order.
+.TP
+\f4\-t\f1
+Sort the display by up time.
+.TP
+\f4\-u\f1
+Sort the display by number of users.
+.SH FILES
+.PD 0
+.TP 35
+\f4/var/spool/rwho/whod.*\f1
+data files
+.PD
+.SH SEE ALSO
+\f4rwho\f1(1),
+\f4rwhod\f1(1M)

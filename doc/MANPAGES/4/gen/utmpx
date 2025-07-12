@@ -1,0 +1,96 @@
+'\"!  tbl | mmdoc
+'\"macro stdmacro
+.if n .pH g4.utmpx @(#)utmpx	40.8 of 4/11/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} utmpx 4 "" "\&"
+.if \nX=1 .ds x} utmpx 4 ""
+.if \nX=2 .ds x} utmpx 4 "" "\&"
+.if \nX=3 .ds x} utmpx "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4utmpx\f1, \f4wtmpx\f1 \- utmpx and wtmpx entry formats
+.SH SYNOPSIS
+\f4#include <utmpx.h>\f1
+.SH DESCRIPTION
+\f4utmpx\f1(4) is an extended version of \f4utmp\f1(4).
+.PP
+These files, which hold user and accounting information
+for such commands as
+\f4who\f1,
+\f4write\f1,
+and
+\f4login\f1,
+have the following structure as defined by
+\f4<utmpx.h>\f1:
+.PP
+.TS
+l lp-1 l.
+\f4#define   UTMPX_FILE   "/var/adm/utmpx"
+#define   WTMPX_FILE   "/var/adm/wtmpx"
+.T&
+l l l.
+#define   ut_name    ut_user
+#define   ut_xtime   ut_tv.tv_sec\f1
+.TE
+.ta 2i
+.ps -1
+.vs -1
+.nf
+.ft4
+struct utmpx  {
+   char   ut_user[32];           /* user login name */
+   char   ut_id[4];              /* inittab id */
+   char   ut_line[32];           /* device name (console, lnxx) */
+   pid_t  ut_pid;                /* process id */
+   short  ut_type;               /* type of entry */
+   struct exit_status ut_exit;   /* process termination/exit status */
+   struct timeval ut_tv;         /* time entry was made */
+   long   ut_session;            /* session ID, used for windowing */
+   long   pad[5];                /* reserved for future use */
+   short  ut_syslen;             /* significant length of ut_host */
+                                 /* including terminating null */
+   char   ut_host[257];          /* remote host name */
+  } ;
+
+/* Definitions for ut_type */
+.sp .5
+#define   EMPTY          0
+#define   RUN_LVL        1
+#define   BOOT_TIME      2
+#define   OLD_TIME       3
+#define   NEW_TIME       4
+#define   INIT_PROCESS   5  /* Process spawned by "init" */
+#define   LOGIN_PROCESS  6  /* A "getty" process waiting for login */
+#define   USER_PROCESS   7  /* A user process */
+#define   DEAD_PROCESS   8
+#define   ACCOUNTING     9
+.sp .5
+#define   UTMAXTYPE  ACCOUNTING  /* Largest legal value of ut_type */
+.sp .5
+/* Below are special strings or formats used in the "ut_line" */
+/* field when accounting for something other than a process. */
+/* No string for the ut_line field can be more than 11 chars + */
+/* a null character in length. */
+.sp .5
+#define   RUNLVL_MSG     "run-level %c"
+#define   BOOT_MSG       "system boot"
+#define   OTIME_MSG      "old time"
+#define   NTIME_MSG      "new time"
+#define   MOD_WIN        10
+.ft1
+.fi
+.ps +1
+.vs +1
+.SH FILES
+\f4/var/adm/utmpx\f1
+.br
+\f4/var/adm/wtmpx\f1
+.SH SEE ALSO
+\f4getutx\f1(3C)
+.br
+\f4login\f1(1), \f4who\f1(1), \f4write\f1(1) in the
+\f2User's Reference Manual\f1
+.\"	@(#)utmp.4	6.2 of 10/20/83
+.Ee

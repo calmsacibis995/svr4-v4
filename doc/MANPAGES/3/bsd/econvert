@@ -1,0 +1,160 @@
+'\"macro stdmacro
+.if n .pH g3.econvert @(#)econvert	40.10 of 4/19/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.\" Copyright (c) 1988 Sun Microsystems, Inc. - All Rights Reserved.
+.\"
+.nr X
+.if \nX=0 .ds x} econvert 3 "BSD Compatibility Package" "\&"
+.if \nX=1 .ds x} econvert 3 "BSD Compatibility Package"
+.if \nX=2 .ds x} econvert 3 "" "\&"
+.if \nX=3 .ds x} econvert "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4econvert\f1, \f4fconvert\f1, \f4gconvert\f1, \f4seconvert\f1, \f4sfconvert\f1, \f4sgconvert\f1 \- output conversion
+.SH SYNOPSIS
+\f4cc \f1[ \f2flag\f1\. \. \. ] \f2file\f1 \. \. \.
+\f4\-lucb\f1
+.sp .5
+.nf
+\f4#include <floatingpoint.h>\f1
+.P
+\f4char *econvert(value, ndigit, decpt, sign, buf)\f1
+\f4double value;\f1
+\f4int ndigit, *decpt, *sign;\f1
+\f4char *buf;\f1
+.P
+\f4char *fconvert(value, ndigit, decpt, sign, buf)\f1
+\f4double value;\f1
+\f4int ndigit, *decpt, *sign;\f1
+\f4char *buf;\f1
+.P
+\f4char *gconvert(value, ndigit, trailing, buf)\f1
+\f4double value;\f1
+\f4int ndigit;\f1
+\f4int trailing;\f1
+\f4char *buf;\f1
+.P
+\f4char *seconvert(value, ndigit, decpt, sign, buf)\f1
+\f4single *value;\f1
+\f4int ndigit, *decpt, *sign;\f1
+\f4char *buf;\f1
+.P
+\f4char *sfconvert(value, ndigit, decpt, sign, buf)\f1
+\f4single *value;\f1
+\f4int ndigit, *decpt, *sign;\f1
+\f4char *buf;\f1
+.P
+\f4char *sgconvert(value, ndigit, trailing, buf)\f1
+\f4single *value;\f1
+\f4int ndigit;\f1
+\f4int trailing;\f1
+\f4char *buf;\f1
+.fi
+.SH DESCRIPTION
+\f4econvert\f1
+converts the
+.I value
+to a
+\f4NULL\fP-terminated
+string of
+.I ndigit
+.SM ASCII
+digits in
+.I buf
+and returns a pointer to
+.IR buf .
+.I buf
+should contain at least
+.IR ndigit +1
+characters.
+The position of the decimal point relative to the
+beginning of the string is stored indirectly through
+.IR decpt .
+Thus
+.I buf
+== "314" and
+.I *decpt
+== 1 corresponds to the numerical value 3.14,
+while
+.I buf
+== "314" and
+.I *decpt
+== \-1 corresponds to the numerical value .0314.
+If the sign of the result is negative, the word pointed to by
+.I sign
+is nonzero; otherwise it is zero.
+The least significant digit is rounded.
+.P
+\f4fconvert\f1
+works much like 
+\f4econvert\f1,
+except that the correct digit
+has been rounded as if for 
+\f4sprintf(%w.nf) \f1
+output with
+.IR n = ndigit
+digits to the right of the decimal point.
+.I ndigit
+can be negative to indicate rounding to the left of the decimal point.
+The return value is a pointer to
+.IR buf .
+.I buf
+should contain at least
+.IR 310 + max (0, ndigit )
+characters to accommodate any double-precision
+.IR value .
+.P
+\f4gconvert\f1
+converts the
+.I value
+to a
+\f4NULL\fP-terminated
+.SM ASCII
+string in
+.I buf
+and returns a pointer to
+.IR buf .
+It produces
+.I ndigit
+significant digits in fixed-decimal format,
+like 
+\f4sprintf(%w.nf)\f1,
+if possible, and otherwise in
+floating-decimal format, like 
+\f4sprintf(%w.ne)\f1;
+in either case
+.I buf
+is ready for printing, with sign and exponent.
+The result corresponds to that obtained by
+.IP
+\f4(void) sprintf(buf,``%w.ng'',value) ;\fP
+.P
+If
+.IR trailing "= 0,"
+trailing zeros and a trailing point are suppressed, as in 
+\f4sprintf(%g)\f1.
+If
+.IR trailing "!= 0,"
+trailing zeros and a trailing point are retained, as in 
+\f4sprintf(%#g)\f1.
+.P
+\f4seconvert\f1,
+\f4sfconvert\f1,
+and
+\f4sgconvert\f1
+are single-precision versions of these functions, and are more efficient
+than the corresponding double-precision versions.
+A pointer rather than the value itself is passed to avoid C's usual
+conversion of single-precision arguments to double.
+.P
+.SM IEEE
+Infinities and NaNs are treated similarly by these functions.
+``NaN'' is returned for NaN, and ``Inf'' or ``Infinity''
+for Infinity.
+The longer form is produced when
+.I ndigit
+\(>= 8.
+.SH "SEE ALSO"
+\f4sprintf\fP(3S)
+in the \f2Programmer's Reference Manual\f1

@@ -1,0 +1,506 @@
+'\"macro stdmacro
+.if n .pH g3.printf @(#)printf	40.12 of 4/24/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.\" Copyright (c) 1988 Sun Microsystems, Inc. - All Rights Reserved.
+.\"
+.nr X
+.if \nX=0 .ds x} printf 3S "BSD Compatibility Package" "\&"
+.if \nX=1 .ds x} printf 3S "BSD Compatibility Package"
+.if \nX=2 .ds x} printf 3S "" "\&"
+.if \nX=3 .ds x} printf "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4printf\f1, \f4fprintf\f1, \f4sprintf\f1, \f4vprintf\f1, \f4vfprintf\f1, \f4vsprintf\f1 \- formatted output conversion
+.SH SYNOPSIS
+\f4cc \f1[ \f2flag\f1\. \. \. ] \f2file\f1 \. \. \. \f4\-lucb\f1
+.P
+.nf
+\f4#include <stdio.h>\f1
+\f4int printf(format [ , arg ] \&.\|.\|. )\f1
+\f4char *format;\f1
+.fi
+.P
+.nf
+\f4int fprintf(stream, format [ , arg ] \&.\|.\|. )\f1
+\f4FILE *stream;\f1
+\f4char *format;\f1
+.fi
+.P
+.nf
+\f4char *sprintf(s, format [ , arg ] \&.\|.\|. )\f1
+\f4char *s, *format;\f1
+.fi
+.P
+.ft 4
+.nf
+int vprintf(format, ap)
+char \(**format;
+va_list ap;
+.ft 1
+.fi
+.P
+.ft 4
+.nf
+int vfprintf(stream, format, ap)
+\s-1FILE\s0 \(**stream;
+char \(**format;
+va_list ap;
+.fi
+.ft 1
+.P
+.ft 4
+.nf
+char \(**vsprintf(s, format, ap)
+char \(**s, \(**format;
+va_list ap;
+.fi
+.ft 1
+.\".P
+.\".nf
+.\".ft 4
+.\"#include <varargs.h>
+.\"int _doprnt(format, args, stream)
+.\"char \(**format;
+.\"va_list args;
+.\"FILE \(**stream;
+.\".ft 1
+.\".fi
+.SH DESCRIPTION
+\f4printf\f1
+places output on the standard output stream
+\f4stdout\f1.
+\f4fprintf\f1
+places output on the named output
+.IR stream .
+\f4sprintf\f1
+places ``output,''
+followed by the
+\f4NULL\fP
+character
+\f1(\f4\e0\f1),
+in consecutive bytes starting at
+.RI \(** s ;
+it is the user's responsibility to ensure that
+enough storage is available.
+.P
+\f4vprintf\f1,
+\f4vfprintf\f1,
+and
+\f4vsprintf\f1
+are the same as
+\f4printf\f1,
+\f4fprintf\f1,
+and
+\f4sprintf\f1
+respectively, except that instead of being
+called with a variable number of arguments, they
+are called with an argument list as defined by
+\f4varargs\f1(5).
+.P
+Each of these functions converts, formats, and prints its
+.IR arg s
+under control of the
+.IR format .
+The
+.I format
+is a character string which contains
+two types of objects:
+plain characters, which are simply copied
+to the output stream, and
+conversion specifications, each of which
+causes conversion and printing of zero or more
+.IR arg s.
+The results are undefined if there are insufficient
+.IR arg s
+for the format.
+If the format is exhausted while
+.IR arg s
+remain, the excess
+.IR arg s
+are simply ignored.
+.P
+Each conversion specification is introduced
+by the character
+\f4%\f1.
+After the
+\f4%\f1,
+the following appear in sequence:
+.P
+.RS 4.5P
+Zero or more
+.IR flags ,
+which modify the meaning of
+the conversion specification.
+.P
+An optional decimal digit string specifying a minimum
+.IR "field width" .
+If the converted value has fewer characters
+than the field width,
+it will be padded on the left (or right,
+if the left-adjustment flag
+\f1`\f4\-\f1',
+described below, has been
+given) to the field width.
+The padding is with blanks unless the
+field width digit string
+starts with a zero, in which case the
+padding is with zeros.
+.P
+A
+.I precision
+that gives the minimum number of digits to appear for the
+\f4d\f1,
+\f4i\f1,
+\f4o\f1,
+\f4u\f1,
+\f4x\f1,
+or
+\f4X\f1
+conversions,
+the number of digits to appear after the
+decimal point for the
+\f4e\f1,
+\f4E\f1,
+and
+\f4f\f1
+conversions, the maximum number of
+significant digits for the
+\f4g\f1
+and
+\f4G\f1
+conversion,
+or the maximum number of characters
+to be printed from a string in
+\f4s\f1
+conversion.
+The precision takes the form of a period
+\f1(\f4\&.\f1)
+followed by a decimal digit string; a
+\f4NULL\fP
+digit string is treated as zero.
+Padding specified  by the precision overrides
+the padding specified by the field width.
+.P
+An optional
+\f4l\f1
+(ell) specifying that a following
+\f4d\f1,
+\f4i\f1,
+\f4o\f1,
+\f4u\f1,
+\f4x\f1,
+or
+\f4X\f1
+conversion character applies to a long integer
+.IR arg .
+An
+\f4l\f1
+before any other conversion character is ignored.
+.P
+A character that indicates the type of
+conversion to be applied.
+.RE
+.P
+A field width or precision or both may be
+indicated by an asterisk
+\f1(\f4\(**\f1)
+instead of a digit string.
+In this case, an integer
+.I arg
+supplies
+the field width or precision.
+The
+.I arg
+that is actually converted is not fetched until
+the conversion letter is seen, so the
+.IR arg s
+specifying field width or precision must appear
+.I before
+the
+.I arg
+(if any) to be converted.
+A negative field width argument is taken as a
+\f1`\f4\-\f1'
+flag followed by a positive field width.
+If the precision argument is negative,
+it will be changed to zero.
+.P
+The flag characters and their meanings are:
+.TP 4.5P
+\f4\-\f1
+The result of the conversion will be left-justified within the field.
+.TP
+\f4+\f1
+The result of a signed
+conversion will always begin with a sign
+\f1(\f4+\f1
+or
+\f4\-\f1).
+.TP
+blank
+If the first character of a signed
+conversion is not a sign, a blank
+will be prefixed to the result.
+This implies that if the blank and
+\f4+\f1
+flags both appear, the blank flag will be ignored.
+.TP
+\f4#\f1
+This flag specifies that the value is to be converted
+to an ``alternate form.''\
+For
+\f4c\f1,
+\f4d\f1,
+\f4i\f1,
+\f4s\f1,
+and
+\f4u\f1
+conversions, the flag has no effect.
+For
+\f4o\f1
+conversion, it increases the precision to force
+the first digit of the result to be a zero.
+For
+\f4x or X\f1
+conversion, a non-zero result will have
+\f40x or 0X\f1
+prefixed to it.
+For
+\f4e\f1,
+\f4E\f1,
+\f4f\f1,
+\f4g\f1,
+and
+\f4G\f1
+conversions, the result will always
+contain a decimal point,
+even if no digits follow the point (normally,
+a decimal point appears in the result of
+these conversions only if a digit follows it).
+For
+\f4g\f1
+and
+\f4G\f1
+conversions, trailing zeroes will
+.I not
+be removed from the result
+(which they normally are).
+.P
+The conversion characters and their meanings are:
+.P
+.TP 4.5P
+\f4d\fP,\f4i\fP,\f4o\fP,\f4u\fP,\f4x\fP,\f4X\f1
+The integer
+.I arg
+is converted to signed decimal
+\f1(\f4d\f1
+or
+\f4i\f1),
+unsigned octal
+\f1(\f4o\f1),
+unsigned decimal
+\f1(\f4u\f1),
+or unsigned hexadecimal notation
+\f1(\f4x\f1
+and
+\f4X\f1),
+respectively; the letters
+\f4abcdef\f1
+are used for
+\f4x\f1
+conversion and the letters
+\f4ABCDEF\fP
+for
+\f4X\f1
+conversion.
+The precision specifies the minimum number of digits
+to appear; if the value being converted can
+be represented
+in fewer digits, it will be expanded with leading zeroes.
+(For compatibility with older versions,
+padding with leading zeroes may alternatively
+be specified by prepending a zero to the field width.
+This does not imply an octal value for the field width.)
+The default precision is 1.
+The result of converting a zero value with a precision
+of zero is a
+\f4NULL\fP
+string.
+.TP
+\f4f\f1
+The float or double
+.I arg
+is converted to decimal notation in the style
+[\f4\-\f1]\f2ddd\f4.\f2ddd\f1
+where the number of digits after the decimal point
+is equal to the precision specification.
+If the precision is missing, 6 digits are given;
+if the precision is explicitly 0, no digits and
+no decimal point are printed.
+.TP
+\f4e\f1,\f4E\f1
+The float or double
+.I arg
+is converted in the style
+[\f4\-\f1]\f2d\f4.\f2ddd\f4e\(+-\f2ddd\f1,
+where there is one digit before the decimal point and
+the number of digits after it is equal
+to the precision; when the precision is missing,
+6 digits are produced; if the precision
+is zero, no decimal point appears.
+The
+\f4E\f1
+format code will produce a number with
+\f4E\f1
+instead of
+\f4e\f1
+introducing the exponent.
+The exponent always contains at least two digits.
+.TP
+\f4g\f1,\f4G\f1
+The float or double
+.I arg
+is printed in style
+\f4f\f1
+or
+\f4e\f1
+(or in style
+\f4E\f1
+in the case of a
+\f4G\f1
+format code),
+with the precision specifying the number
+of significant digits.
+The style used depends on the value converted:
+style
+\f4e\f1
+or
+\f4E\f1
+will be used only if the exponent resulting from
+the conversion is less than \-4 or greater
+than the precision.
+Trailing zeroes are
+removed from the result; a decimal point
+appears only if it is followed by a digit.
+.P
+The
+\f4e\f1,
+\f4E\f1,
+\f4f\f1,
+\f4g,\f1
+and
+\f4G\f1
+formats print
+.SM IEEE
+indeterminate values (infinity or not-a-number) as ``Infinity'' or ``NaN''
+respectively.
+.P
+.TP 4.5P
+\f4c\f1
+The character
+.I arg
+is printed.
+.TP
+\f4s\f1
+The
+.I arg
+is taken to be a string (character pointer)
+and characters from the string are printed until a
+\f4NULL\fP
+character
+\f1(\f4\e0\f1)
+is encountered or until the number
+of characters indicated by the precision
+specification is reached.
+If the precision is missing, it is taken
+to be infinite, so all characters up to the first
+\f4NULL\fP
+character are printed.
+A
+\f4NULL\fP
+value for
+.I arg
+will yield undefined results.
+.TP
+\f4%\f1
+Print a
+\f4%\f1;
+no argument is converted.
+.P
+In no case does a non-existent or small
+field width cause truncation of a field;
+if the result of a conversion is wider
+than the field width, the field is simply
+expanded to contain the conversion result.
+Padding takes place only if the specified field
+width exceeds the actual width.
+Characters generated by
+\f4printf\f1
+and
+\f4fprintf\f1
+are printed as if
+\f4putc\f1(3S)
+had been called.
+.SH "RETURN VALUE"
+Upon success,
+\f4printf\f1
+and
+\f4fprintf\f1
+return the number of characters transmitted,
+excluding the null character.
+\f4vprintf\f1
+and
+\f4vfprintf\f1
+return the number of characters transmitted.
+\f4sprintf\f1
+and
+\f4vsprintf\f1
+always return
+\f2s\f1.
+If an output error is encountered,
+\f4printf\f1,
+\f4fprint\f1,
+\f4vprintf\f1,
+and
+\f4vfprintf\f1,
+return
+\s-1EOF\s0.
+.SH EXAMPLE
+.P
+To print a date and time in the form ``Sunday, July 3, 10:02,'' where
+.I weekday
+and
+.I month
+are pointers to
+\f4NULL\fP-terminated
+strings:
+.RS
+.P
+.nf
+.ft 4
+printf("%s,\ %s\ %i,\ %d:%.2d",\ weekday,\ month,\ day,\ hour,\ min);
+.ft 1
+.fi
+.RE
+.P
+To print
+.if n .I pi
+.if t \(*p
+to 5 decimal places:
+.RS
+.P
+.ft 4
+printf("pi \|= \|%.5f", \|4 \(** atan(1. 0));
+.ft 1
+.RE
+.SH "SEE ALSO"
+\f4econvert\fP(3)
+.P
+\f4putc\fP(3S),
+\f4scanf\fP(3S),
+\f4varargs\fP(5),
+\f4vprintf\fP(3S)
+in the \f2Programmer's Reference Manual\f1
+.SH NOTES
+Very wide fields (>128 characters) fail.

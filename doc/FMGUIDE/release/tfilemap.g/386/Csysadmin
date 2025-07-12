@@ -1,0 +1,42 @@
+.if n .pH 386.Csysadmin @(#)Csysadmin	40.6
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.BK "Technology File Mapping Guide" "" "" ""   
+.\ACRONYM	                  
+.CH "System Administration Facilities" "" "Table of Contents" "6"
+.\CHAPTER	6
+.tC 1 "Operation, Administration & Maintenance (OA&M) Facilities" 6-1  
+.tC 2 "OA&M Interface Libraries" 6-1  
+.tC 2 "OA&M Interface Utilities" 6-2  
+.tC 1 "Virtual File System Administration Facilities" 6-4  
+.tC 2 "File System Independent Utilities" 6-4  
+.tC 2 "Unified File System (\^\&\f4ufs\fP\^) Utilities" 6-4  
+.tC 2 "System V (\^\&\f4s5\fP\^) File System Utilities" 6-5  
+.tC 2 "File Descriptor (\^\&\f4fd\fP\^) File System Utilities" 6-5  
+.tC 2 "Boot File System (\^\&\f4bfs\fP\^) Utilities" 6-5  
+.tC 2 "Process (\^\&\f4proc\fP\^) File System Utilities" 6-5  
+.tC 1 "Backup and Restore Facilities" 6-6  
+.tC 2 "Backup and Restore Libraries" 6-6  
+.tC 2 "Backup and Restore Utilities" 6-6  
+.tC 1 "Configuration Management Facilities" 6-7  
+.tC 2 "System Configuration Utilities" 6-7  
+.tC 2 "Software Packaging Utilities" 6-7  
+.tC 1 "Software Installation Facilities" 6-10  
+.tC 2 "Software Installation Libraries" 6-10  
+.tC 2 "Software Installation Utilities" 6-10  
+.tC 1 "Device Management Facilities" 6-11  
+.tC 2 "Device Management Libraries" 6-11  
+.tC 2 "Device Management Utilities" 6-11  
+.tC 1 "User Management Facilities" 6-13  
+.tC 2 "User Management Libraries" 6-13  
+.tC 2 "User Management Utilities" 6-13  
+.tC 1 "Service Access Facilities (SAF)" 6-14  
+.tC 2 "Core SAF Utilities" 6-14  
+.tC 2 "Port Management Utilities" 6-14  
+.tC 2 "TTY Monitor (\^\&\f4ttymon\fP\^) Utilities" 6-14  
+.tC 1 "System Administration Facilities" 6-16  
+.tC 2 "Run-Time Administration Utilities" 6-16  
+.tC 2 "System Performance Analysis Utilities" 6-17  
+.tC 2 "Diagnostic Utilities" 6-17  
+.tC 2 "STREAMS Administration Utilities" 6-17  
+.tC 2 "XENIX System Utilities" 6-18  
+.tC 2 "386 Specific Utilities" 6-18  

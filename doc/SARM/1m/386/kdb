@@ -1,0 +1,1860 @@
+'\"macro stdmacro
+.if n .pH 386.kdb @(#)kdb	40.5.1.2 of 7/9/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.nr X
+.if \nX=0 .ds x} kdb 1M "" "\&"
+.if \nX=1 .ds x} kdb 1M ""
+.if \nX=2 .ds x} kdb 1M "" "\&"
+.if \nX=3 .ds x} kdb "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4kdb\f1 \- kernel debugger
+.SH SYNOPSIS
+\f4kdb\f1 
+.SH DESCRIPTION
+KDB
+is a kernel debugger that works like a Reverse Polish Notation (RPN) calculator.  KDB can set breakpoints, display kernel 
+stack traces and various kernel structures, and modify the contents of memory, I/O, and registers. 
+The debugger supports basic arithmetic operations, conditional execution, variables, and macros.
+KDB does conversions from a kernel symbol name to its virtual address, from a virtual address to the value at that address, and
+from a virtual address to the name of the nearest kernel symbol.  You have a choice of different numeric bases, 
+address spaces, and operand sizes.  
+.P
+This is an advanced tool, only for those who are thoroughly familiar with the UNIX kernel. 
+Because UNIX systems differ, you could possibly damage your system by following some of the examples in this discussion.
+.P
+You can invoke the debugger by using the \f4kdb\f1 command or the \f4sysi86(SI86TODEMON)\f1 system call  
+on all systems, <Ctrl-Alt-d> (from the
+console only) on an AT bus system, or the interrupt character (from the console only) on a Multibus system. 
+In addition, 
+KDB is entered automatically under various conditions, such as panics and breakpoint traps.  Any time the \f4kdb>>\f1 prompt
+appears, you are in the debugger.
+I/O is done via the console (kd), or a serial terminal.
+.P
+To exit the debugger, type <Ctrl-d> or q.
+.P
+When you exit and re-enter the debugger, its
+state is preserved, including the contents of the value stack.
+.SH USING KDB AS A CALCULATOR
+.P
+KDB operates as an RPN calculator, similar to 
+\f4dc\f1(1).
+This calculator has a 32-level value stack for storing results and
+intermediate values.
+Commands and values you enter operate on the value stack, which is an internal data structure in
+KDB.  It has no connection with the kernel stack or any other stack in the system.
+.P
+To use KDB, at the \f4kdb>>\f1 
+prompt type one or more items (values or commands) on a line.  Separate items with spaces or tabs.
+Press <Enter> to end a line and send its contents to KDB for processing.  Each item is processed separately, 
+from left to right.
+.P
+The values can be:
+.IP
+\f3Numbers.\f1  Use positive or negative integers.
+Numbers must begin with a digit, or a minus sign for negative numbers.
+Begin octal numbers with "0o" and hex numbers with "0x".
+Otherwise, numbers are assumed to be in the default base \(em the default is hex, unless you change it.
+(See "Resetting the Numeric Base" for instructions.)
+.IP
+\f3Character constants.\f1   You can have KDB convert characters to a number by
+entering one to four characters inside single quotes.  C-style escapes are supported in character constants.
+.IP
+\f3Strings.\f1  Use C-style strings, enclosed in double quotes.
+.IP
+\f3Kernel symbol names.\f1  When you type a kernel symbol name, its address is pushed onto the value stack.
+.P
+When you enter a number or a string, it is pushed onto the value stack,
+becoming the new TOS (Top Of Stack).
+Values remain on the value stack until they are popped off as a result
+of a command.
+.P
+In the descriptions below, [TOS] means the value on the top of the stack
+and [TOS-1] means the value just below it (pushed previously).
+.SS Stack Operations
+.P
+KDB provides these commands for examining or changing the value stack:
+.nf
+	\f4stk\fP		print all values on the stack
+	\f4p\fP		print [TOS]
+	\f4dup\fP		push [TOS]
+	\f4pop\fP		pop 1 value
+	\f4clrstk\fP	pop all values
+.fi
+.HP 2
+\(bu \f3stk\f1  For example, starting with an empty value stack, this input:
+.sp .5
+.ft 4
+	5 "xyzzy" 7 stk
+.ft P
+.sp .5
+displays the entire stack:
+.sp .5
+.ft 4
+.nf
+	5
+	"xyzzy"
+	7
+.fi
+.ft P
+.HP
+\(bu \f3p\f1  At this point, the input:
+.sp .5
+.ft 4
+	p
+.ft P
+.sp .5
+displays the top value on the stack, which is:
+.sp .5
+.ft 4
+	7
+.ft P
+.sp .5
+The next example uses the \f4p\f1 command to display the address of a kernel symbol.  The input:
+.sp .5
+.ft 4
+	lbolt p
+.ft P
+.sp .5
+produces an address something like this:
+.sp .5
+.ft 4
+	D01821BC
+.ft P
+.HP
+\(bu \f3dup\f1  This command is useful when you want to use a value twice
+in a calculation.
+For example:
+.sp .5
+.ft 4
+	5 3 * dup 2 + * p
+.ft P
+.sp .5
+would produce the output:
+.sp .5
+.ft 4
+	FF
+.ft P
+.sp .5
+which is the value of \f4(((5 * 3) + 2) * (5 * 3))\fP.
+.HP
+\(bu \f3pop\f1  This command removes the top value from the value stack.  For example, if this is the stack:
+.sp .5
+.ft 4
+.nf
+	5
+	"xyzzy"
+	7
+.fi
+.sp .5
+\f1the input:
+.sp .5
+.ft 4
+.nf
+	pop stk 
+.fi
+.sp .5
+\f1removes the top value from the stack and displays the resulting stack:
+.sp .5
+.ft 4
+.nf
+	5
+	"xyzzy"
+.fi
+.HP
+\f1\(bu \f3clrstk\f1  This command clears the value stack.  Remember that the contents of the stack are saved when
+you exit and re-enter KDB.
+.SS Arithmetic Operations
+.DS L F
+.P
+You can perform arithmetic operations on the top values on the stack:
+.sp .5
+.nf
+	\f4+\fP		compute [TOS-1] \f4+\fP [TOS];  pop 2;  push result
+	\f4-\fP		compute [TOS-1] \f4-\fP [TOS];  pop 2;  push result
+	\f4*\fP		compute [TOS-1] \f4*\fP [TOS];  pop 2;  push result
+	\f4/\fP		compute [TOS-1] \f4/\fP [TOS];  pop 2;  push result
+	\f4%\fP		compute [TOS-1] \f4%\fP [TOS];  pop 2;  push result
+	\f4>>\fP		compute [TOS-1] \f4>>\fP [TOS];  pop 2;  push result
+	\f4<<\fP		compute [TOS-1] \f4<<\fP [TOS];  pop 2;  push result
+	\f4<\fP		compute [TOS-1] \f4<\fP [TOS];  pop 2;  push result
+	\f4>\fP		compute [TOS-1] \f4>\fP [TOS];  pop 2;  push result
+	\f4==\fP		compute [TOS-1] \f4==\fP [TOS];  pop 2;  push result
+	\f4!=\fP		compute [TOS-1] \f4!=\fP [TOS];  pop 2;  push result 
+	\f4&\fP		compute [TOS-1] \f4&\fP [TOS];  pop 2;  push result 
+	\f4|\fP		compute [TOS-1] \f4|\fP [TOS];  pop 2;  push result 
+	\f4^\fP		compute [TOS-1] \f4^\fP [TOS];  pop 2;  push result 
+	\f4&&\fP		compute [TOS-1] \f4&&\fP [TOS];  pop 2;  push result 
+	\f4||\fP		compute [TOS-1] \f4||\fP [TOS];  pop 2;  push result 
+	\f4!\fP		replace [TOS] with \f4!\fP[TOS]
+	\f4++\fP		replace [TOS] with [TOS] \f4+\fP 1
+	\f4--\fP		replace [TOS] with [TOS] \f4-\fP 1
+.fi
+.P
+For example, this input (subtracting 5 from 7):
+.sp .5
+.ft 4
+	7 5 - p
+.ft P
+.sp .5
+would produce this output:
+.sp .5
+.ft 4
+	2
+.ft P
+.DE
+.P
+The power of KDB's calculator feature lies in its ability to evaluate expressions like this:
+.sp .5
+.ft 4
+	callout 16 +
+.ft P
+.sp .5
+This pushes the address of the callout table on the stack and adds 16 to it.  
+If the size of a callout table entry is 16 bytes, the result of the calculation is the address of the second entry 
+in the callout table. (Use the \f4size\f1 command of \f4crash\f1(1M) to find the sizes of common system tables.)
+.P
+WARNING:  Make sure the divide operator (slash character) is both preceded and followed by spaces.  If any other character 
+appears next to the slash, it indicates a suffix instead of division.
+.SH READING AND WRITING TO MEMORY
+.P
+These commands still operate like an RPN calculator, but they perform
+specific debugging operations instead of calculations.
+To examine and set the contents of memory (and I/O) use the commands:
+.sp .5
+.nf
+	\f4r\fP		replace [TOS] with the value at virtual address [TOS]
+	\f4w\fP		write [TOS-1] into virtual address [TOS];  pop 2
+	\f4dump\fP		show [TOS] bytes starting at virtual address [TOS-1];  pop 2
+.fi
+.DE
+.DS L F
+.HP 2
+\(bu \f3r\f1  For example, you can find the \fBvalue\fP of the (long) kernel variable,
+\f4lbolt\fP, by typing:
+.sp .5
+.ft 4
+	lbolt r p
+.ft P
+.sp .5
+This puts the virtual address of \f4lbolt\f1 on the stack, replaces it with the value found 
+at that address, and prints the result.
+.HP
+\(bu \f3w\f1  To change the value of \f4lbolt\fP to 2000, type:
+.sp .5
+.ft 4
+	2000 lbolt w
+.ft P
+.sp .5
+This writes 2000 at \f4lbolt's\f1 virtual address.
+.sp .5
+You could increment \f4lbolt\fP by typing:
+.sp .5
+.ft 4
+	lbolt r ++ lbolt w
+.sp .5
+.ft P
+This puts the virtual address of \f4lbolt\f1 on the stack, replaces it with the value found 
+at that address, adds 1 to the value, and writes the result at \f4lbolt's\f1 virtual address.
+.DE
+.DS L F
+.HP
+\(bu \f3dump\fP  This command displays a range of memory, both in hex and ASCII.
+For example, if you typed:
+.sp .5
+.ft 4
+	putbuf 10 dump
+.ft P
+.sp .5
+which shows 10 bytes, starting at the virtual address of \f4putbuf\f1, 
+you would see something like:
+.sp .5
+.nf
+.ft 4
+    ........ ........ ........ 61746F74  D0108C50  ............tota
+    6572206C 6D206C61 726F6D65 ........  D0108C60  l real memor....
+.ft P
+.fi
+.sp .5
+In each line, the block of four values on the left shows the values of
+16 bytes, displayed as four 4-byte longwords in hex.
+The dots represent values outside of the requested range.
+(\f4dump\fP may also display question marks here; that means the address is invalid).
+The next column is the address of the first of the 16 bytes.
+The last column is the same 16 bytes displayed in
+ASCII.  Dots here represent values outside the requested range or unprintable characters.
+.DE
+.SS Suffixes
+.P
+Suffixes can be appended to many KDB commands.  They always begin with the slash character (\f4/\fP).
+.P
+WARNING:  Don't leave spaces before or after the slash character.  When the 
+slash is preceded and followed by a space, it indicates division instead of a suffix.
+.P
+\f3Operand-size suffixes.\f1  The \f4r\fP, \f4w\fP and \f4dump\fP commands can also work
+with units of bytes and words, as well as the default longs.
+To do this, append one of these suffixes to the command:
+.sp .5
+.nf
+	\f4/b\fP		byte
+	\f4/w\fP		word (2 bytes)
+	\f4/l\fP		long (4 bytes)\(emthis is the default.
+.fi
+.P
+For example, to display the value of a short (2-byte) variable at
+address \f40xD0008120\fP, type:
+.sp .5
+.ft 4
+	0xD0008120 r/w p
+.ft P
+.sp .5
+Entering the \f4dump\fP command with \f4/b\fP displays
+16 1-byte values per line, with \f4/w\fP displays
+eight 2-byte values per line, and with \f4/l\fP (or nothing)
+displays four 4-byte values per line.
+.DE
+.DS L F
+.P
+\f3Address-space suffixes.\f1  The \f4r\fP, \f4w\fP and \f4dump\fP commands, by default, work with
+kernel virtual addresses.
+You can change to physical addresses, I/O addresses, or user process
+virtual addresses by appending one of these suffixes to the command:
+.sp .5
+.nf
+	\f4/k\fP		kernel virtual \(em the default
+	\f4/p\fP		physical
+	\f4/io\fP		I/O port
+	\f4/u#\fP		user process number # virtual (# is a process slot number in hex)
+.fi
+.HP 2
+\(bu \f3/p\f1  For example, to dump 40 (hex) bytes in longword format from physical address 2000,
+type:
+.sp .5
+.ft 4
+	2000 40 dump/p
+.ft P
+.DE
+.sp .5
+The default address is kernel virtual, so the \f4/p \f1suffix is required for the physical address.
+Note that an operand-size suffix is not required, because long is the default.
+.HP 
+\(bu \f3/io\f1  For example, to read from port 300 (in bytes) and display the result, type:
+.sp .5
+.ft 4
+	300 r/io/b p
+.ft P
+.DE
+.sp .5
+.HP
+\(bu \f3/u#\f1  For example, to dump 20 longwords from process 16's u area at an offset of 1000, type:
+.sp .5
+.ft 4
+	1000 u + 20 dump/u16
+.ft P
+.sp .5
+.bp
+.P
+\f3Suffix formats.\f1  Address-space suffixes can be combined with operand-size suffixes;
+only the first slash is required.
+For example, to do the read from I/O port 300 shown above, any of these command lines is acceptable:
+.sp .5
+.nf
+.ft 4
+	300 r/io/b
+	300 r/b/io
+	300 r/iob
+	300 r/bio
+.fi
+.ft P
+.P
+Suffixes can also be attached directly to an address as shorthand for "read and print."
+Thus, \f42000 r/p p\f1 can be shortened to \f42000/p\f1.
+.P
+Since the default address-space is kernel virtual,
+the common operation of "read and print from kernel virtual"
+can be even further shortened. Type \f4lbolt/\f1 to read and print the value of the 
+(long) kernel variable, \f4lbolt\fP.
+.DE
+.SK
+.SH DISPLAYING AND WRITING TO REGISTERS
+.P
+You can examine the CPU's general registers (and a couple of pseudo-registers)
+with these commands:
+.sp .5
+.nf
+	\f4%eax\fP		push the contents of 32-bit register \f4eax\fP
+	\f4%ebx\fP		push the contents of 32-bit register \f4ebx\fP
+	\f4%ecx\fP		push the contents of 32-bit register \f4ecx\fP
+	\f4%edx\fP		push the contents of 32-bit register \f4edx\fP
+	\f4%esi\fP		push the contents of 32-bit register \f4esi\fP
+	\f4%edi\fP		push the contents of 32-bit register \f4edi\fP
+	\f4%ebp\fP		push the contents of 32-bit register \f4ebp\fP
+	\f4%esp\fP		push the contents of 32-bit register \f4esp\fP
+	\f4%eip\fP		push the contents of 32-bit register \f4eip\fP
+	\f4%efl\fP		push the contents of 32-bit register \f4efl\fP
+	\f4%cs\fP		push the contents of 16-bit register \f4cs\fP
+	\f4%ds\fP		push the contents of 16-bit register \f4ds\fP
+	\f4%es\fP		push the contents of 16-bit register \f4es\fP
+	\f4%fs\fP		push the contents of 16-bit register \f4fs\fP
+	\f4%gs\fP		push the contents of 16-bit register \f4gs\fP
+	\f4%err\fP		push the error number
+	\f4%trap\fP		push the trap number
+	\f4%ax\fP		push the contents of 16-bit register \f4ax\fP
+	\f4%bx\fP		push the contents of 16-bit register \f4bx\fP
+	\f4%cx\fP		push the contents of 16-bit register \f4cx\fP
+	\f4%dx\fP		push the contents of 16-bit register \f4dx\fP
+	\f4%si\fP		push the contents of 16-bit register \f4si\fP
+	\f4%di\fP		push the contents of 16-bit register \f4di\fP
+	\f4%bp\fP		push the contents of 16-bit register \f4bp\fP
+	\f4%sp\fP		push the contents of 16-bit register \f4sp\fP
+	\f4%ip\fP		push the contents of 16-bit register \f4ip\fP
+	\f4%fl\fP		push the contents of 16-bit register \f4fl\fP
+	\f4%al\fP		push the contents of 8-bit register \f4al\fP
+	\f4%ah\fP		push the contents of 8-bit register \f4ah\fP
+	\f4%bl\fP		push the contents of 8-bit register \f4bl\fP
+	\f4%bh\fP		push the contents of 8-bit register \f4bh\fP
+	\f4%cl\fP		push the contents of 8-bit register \f4cl\fP
+	\f4%ch\fP		push the contents of 8-bit register \f4ch\fP
+	\f4%dl\fP		push the contents of 8-bit register \f4dl\fP
+	\f4%dh\fP		push the contents of 8-bit register \f4dh\fP
+.fi
+.sp .5
+.DE
+.DS L F
+.P
+You can modify the values of general-purpose registers with these commands:
+.sp .5
+.nf
+	\f4w%eax\fP		write [TOS] into 32-bit register \f4eax\fP;  pop 1
+	\f4w%ebx\fP		write [TOS] into 32-bit register \f4ebx\fP;  pop 1
+	\f4w%ecx\fP		write [TOS] into 32-bit register \f4ecx\fP;  pop 1
+	\f4w%edx\fP		write [TOS] into 32-bit register \f4edx\fP;  pop 1
+	\f4w%esi\fP		write [TOS] into 32-bit register \f4esi\fP;  pop 1
+	\f4w%edi\fP		write [TOS] into 32-bit register \f4edi\fP;  pop 1
+	\f4w%ebp\fP		write [TOS] into 32-bit register \f4ebp\fP;  pop 1
+	\f4w%esp\fP		write [TOS] into 32-bit register \f4esp\fP;  pop 1
+	\f4w%eip\fP		write [TOS] into 32-bit register \f4eip\fP;  pop 1
+	\f4w%efl\fP		write [TOS] into 32-bit register \f4efl\fP;  pop 1
+	\f4w%cs\fP		write [TOS] into 16-bit register \f4cs\fP;  pop 1
+	\f4w%ds\fP		write [TOS] into 16-bit register \f4ds\fP;  pop 1
+	\f4w%es\fP		write [TOS] into 16-bit register \f4es\fP;  pop 1
+	\f4w%fs\fP		write [TOS] into 16-bit register \f4fs\fP;  pop 1
+	\f4w%gs\fP		write [TOS] into 16-bit register \f4gs\fP;  pop 1
+	\f4w%err\fP		write [TOS] into the error number pseudo-register;  pop 1
+	\f4w%trap\fP	write [TOS] into the trap number pseudo-register;  pop 1
+	\f4w%ax\fP		write [TOS] into 16-bit register \f4ax\fP;  pop 1
+	\f4w%bx\fP		write [TOS] into 16-bit register \f4bx\fP;  pop 1
+	\f4w%cx\fP		write [TOS] into 16-bit register \f4cx\fP;  pop 1
+	\f4w%dx\fP		write [TOS] into 16-bit register \f4dx\fP;  pop 1
+	\f4w%si\fP		write [TOS] into 16-bit register \f4si\fP;  pop 1
+	\f4w%di\fP		write [TOS] into 16-bit register \f4di\fP;  pop 1
+	\f4w%bp\fP		write [TOS] into 16-bit register \f4bp\fP;  pop 1
+	\f4w%sp\fP		write [TOS] into 16-bit register \f4sp\fP;  pop 1
+	\f4w%ip\fP		write [TOS] into 16-bit register \f4ip\fP;  pop 1
+	\f4w%fl\fP		write [TOS] into 16-bit register \f4fl\fP;  pop 1
+	\f4w%al\fP		write [TOS] into 8-bit register \f4al\fP;  pop 1
+	\f4w%ah\fP		write [TOS] into 8-bit register \f4ah\fP;  pop 1
+	\f4w%bl\fP		write [TOS] into 8-bit register \f4bl\fP;  pop 1
+	\f4w%bh\fP		write [TOS] into 8-bit register \f4bh\fP;  pop 1
+	\f4w%cl\fP		write [TOS] into 8-bit register \f4cl\fP;  pop 1
+	\f4w%ch\fP		write [TOS] into 8-bit register \f4ch\fP;  pop 1
+	\f4w%dl\fP		write [TOS] into 8-bit register \f4dl\fP;  pop 1
+	\f4w%dh\fP		write [TOS] into 8-bit register \f4dh\fP;  pop 1
+.fi
+.SS Register Sets
+.P
+The commands listed above can also be used to access specific register sets.  
+Multiple sets of general registers may have been saved on the kernel stack (one for each interrupt, trap, etc.).
+For more information see "Printing Kernel Stack Traces."
+.bp
+.P
+Register sets are numbered from 0 to 19, with 0 being the current
+(most recent) set.
+By default, the general-register commands use register set 0,
+but you can override this with a \f2register-set suffix:\fP
+.sp .5
+.nf
+	\f4/rs\fP\f2#\fP		register set number \f2#\fP
+.fi
+.P
+Note that by combining suffixes, you can access any register of any process.
+For example, you can get the \f4eax\fP register from process 5's
+register set 1 by typing:
+.sp .5
+.nf
+.ft 4
+	%eax/u5rs1
+.ft P
+.fi
+.DE
+.P
+to push the contents of that register (\f4%eax\fP) in register set 1 
+(\f4/rs1\f1) of user process 5 (\f4/u5\f1).
+.DS L F
+.SS CPU Control Registers
+.P
+In addition to the general registers,
+you can examine the values of CPU control registers with these commands:
+.sp .5
+.nf
+	\f4cr0\fP		push the contents of register \f4cr0\fP
+	\f4cr2\fP		push the contents of register \f4cr2\fP
+	\f4cr3\fP		push the contents of register \f4cr3\fP
+.fi
+.sp .5
+.DE
+.SH CREATING DEBUGGER VARIABLES
+.P
+KDB allows you to create named variables that are stored in the
+debugger and hold debugger values (numbers or strings).  Two KDB commands
+apply to variables:
+.sp .5
+.nf
+	\f4= \fP\f2variable\fP	store [TOS] in [variable];  pop 1
+	\f4vars\fP		show values of debugger variables
+.DE
+.DS L F
+.fi
+.HP 2
+\(bu \f3\&= variable\f1  This command assigns a value to a debugger variable.  For example:
+.sp .5
+.ft 4
+	5 = abc
+.ft P
+.sp .5
+creates the variable \f4abc\f1 if it does not exist, and sets the variable equal to 5.
+Now whenever you use the variable name, its value is pushed onto the stack.  For example:
+.sp .5
+.ft 4
+	abc abc + 2 - p
+.ft P
+.sp .5
+(5 + 5 - 2) will yield \f48\f1.
+.sp .5
+Note that variable names share the same namespace as debugger macros and kernel global symbols.
+.DS L F
+.HP
+\(bu \f3vars\f1  To look at all the existing variables, use the \f4vars\fP command.
+Variables are shown in the following format:
+.sp .5
+	\f2name\f4 = \f2value\fP
+.sp .5
+The \f4vars\fP command also lists macros, in this format:
+.sp .5
+	\f2name\f4 :: \f2value\fP
+.sp .5
+.DE
+.bp
+.SH SETTING BREAKPOINTS
+.P
+Set and modify breakpoints with these commands:
+.sp .5
+.nf
+	\f4B\fP		set breakpoint #[TOS] at address [TOS-1];  pop 2
+		-or-	set breakpoint #[TOS] at address [TOS-2] with command string 
+                           [TOS-1];  pop 3
+	\f4b\fP		set first free breakpoint address [TOS];  pop 1
+		-or-	set first free breakpoint at address [TOS-1] with command string 
+                           [TOS];  pop 2
+	\f4brkoff\fP	disable breakpoint #[TOS];  pop 1
+	\f4brkon\fP		re-enable breakpoint #[TOS];  pop 1
+	\f4brksoff\fP	disable all breakpoints
+	\f4brkson\fP	re-enable all (disabled) breakpoints
+	\f4trace\fP		set breakpoint #[TOS] trace count to [TOS-1];  pop 2
+	\f4clrbrk\fP	clear breakpoint #[TOS];  pop 1
+	\f4clrbrks\fP	clear all breakpoints
+	\f4curbrk\fP	push the current breakpoint number, or -1 if
+                           not entered from a breakpoint
+	\f4?brk\fP		show current breakpoint settings
+.fi
+.P
+You can have up to 20 breakpoints, numbered 0 through 19,
+set at one time.
+.HP 2
+\(bu \f3B and b\f1  The \f4B\fP command lets you set specific breakpoints,
+while the \f4b\fP command automatically picks the first un-set
+breakpoint.  
+.sp .5
+This example sets breakpoint 3 at a specific address:
+.sp .5
+.ft 4
+	0xD0125098 3 B
+.sp .5
+.ft P
+Normally, you'll just set a breakpoint at a certain address.  For example:
+.sp .5
+.ft 4
+	read b
+.ft P
+.sp .5
+This sets an instruction breakpoint at the beginning of the
+kernel \f4read\fP routine, using the next available breakpoint number.
+When the specified address is executed (after exiting from the debugger),
+you enter the debugger again, with a message indicating which breakpoint
+was triggered.
+.sp .5
+Debugger command strings can be added to the breakpoint commands.  
+Enter a quoted string of commands after the address:
+.sp .5
+.ft 4
+	read "stack" b
+.ft P
+.sp .5
+which is used as a series of debugger commands that are executed when the breakpoint is triggered.
+If there are several items in the string, separate them with spaces:
+.sp .5
+.ft 4
+	ie6unitdata_req "300 r/bio p" b
+.ft P
+.sp .5
+After these commands are executed, you are prompted for debugger
+commands, as usual, unless the \f4q\fP (quit) command is executed
+in the command string.
+.sp .5
+You can append breakpoint-type suffixes to the breakpoint commands (\f4B\fP and
+\f4b\fP).  By default, breakpoints are "instruction" breakpoints, which trigger when 
+.bp
+the specified address is executed.
+The suffixes cause breakpoints to trigger on data accesses instead.
+The breakpoint-type suffixes are:
+.sp .5
+.nf
+	\f4/a\fP		data access breakpoint
+	\f4/m\fP		data modify breakpoint
+	\f4/i\fP		instruction execution breakpoint\(emthis is the default
+.fi
+.sp .5
+With access and modify breakpoints, you can also use operand-size
+suffixes to control the size of the address range that will
+trigger the breakpoint.  The default is \f4/l\fP (4 bytes); you can also use \f4/w\f1 (word) and \f4/b\f1 (byte).  
+(See the earlier discussion of suffixes under "Reading and Writing to Memory" for more information.)
+.HP
+\(bu \f3brkoff and brkon\f1  These commands let you temporarily
+disable and re-enable a breakpoint, instead of clearing it with \f4clrbrk\fP and
+then re-entering it later.  This is especially handy for breakpoints with command strings.
+.HP
+\(bu \f3trace\f1  This command sets a trace count for a breakpoint.
+This causes the debugger to just print a message and decrement the count
+when the breakpoint is triggered,
+instead of entering the debugger, until the count reaches zero.
+Commands attached to the breakpoint are not executed.
+.HP
+\(bu \f3?brk  \f1Use this command to determine the current breakpoint settings.
+Each set breakpoint is displayed, with (1) the breakpoint number,
+the address (both (2) in hex and (3) symbolic),
+(4) the current state, and (5) the type:
+.sp .5
+.ft 4
+.nf
+	0: 0xD003907C(read) ON /i
+	1      2        3   4   5
+.ft P
+.sp .5
+The possible states are:
+.sp .5
+.nf
+	\f4ON\fP		set and enabled
+	\f4DISABLED\fP	set, but currently disabled
+	\f4OFF\fP		un-set (these breakpoints are not displayed by \f4?brk\fP)
+.fi
+.sp .5
+The possible types (in this example \f4/i\fP) are the same as
+the breakpoint-type suffixes described earlier.
+.sp .5
+If a breakpoint has a non-zero trace count, that is displayed
+after the breakpoint state.
+If a breakpoint has a command string, it is displayed
+at the end of the line.
+For example, with a count of 5 and a \f4stack\fP command,
+the above breakpoint would display as:
+.sp .5
+.ft 4
+	0: 0xD003907C(read) ON  0x5 /i "stack"
+.ft P
+.SH SINGLE-STEPPING THROUGH INSTRUCTIONS
+You can use these commands for single-stepping:
+.sp .5
+.nf
+	\f4s\fP		single step 1 instruction
+	\f4ss\fP		single step [TOS] instructions;  pop 1
+	\f4S\fP		single step 1 instruction (passing calls)
+	\f4SS\fP		single step [TOS] instructions (passing calls);  pop 1
+.fi
+.sp .5
+.bp
+\f4s\fP and \f4ss\fP single-step all instructions.
+\f4S\fP and \f4SS\fP single-step all instructions except
+call instructions.
+They don't step down into the called routine,
+but instead skip ahead to the return from the call,
+treating the whole subroutine sequence as a single instruction.
+.H 2 "
+.SH EXAMINING KERNEL DATA STRUCTURES
+.P
+KDB provides commands for looking at certain kernel structures:
+.sp .5
+.nf
+	\f4ps\fP		show process information
+	\f4sleeping\fP 	show list of sleeping processes
+	\f4pinode\fP	print s5 inode at address [TOS];  pop 1
+	\f4puinode\fP	print ufs inode at address [TOS];  pop 1
+	\f4pprnode\fP	print /proc inode at address [TOS];  pop 1
+	\f4psnode\fP	print snode at address [TOS];  pop 1
+	\f4pvfs\fP		print vfs struct at address [TOS];  pop 1
+	\f4pvnode\fP	print vnode at address [TOS];  pop 1
+.fi
+.DE
+.P
+The \f4sleeping\f1 command shows sleeping processes with their process table slot numbers and the channels on which they are waiting. 
+This information can be used with the \f4call\f1 and \f4pstack\f1 commands.
+.P
+The \f4ps\fP command shows informatin about each active process in the
+system.
+This information includes process IDs, flags, states, and command names.
+The current process is marked with an asterisk (\f4*\fP) after its state code.
+.SK
+.SH PRINTING KERNEL STACK TRACES 
+.DS L F
+.P
+KDB provides the following commands to look at kernel stack traces:
+.sp .5
+.nf
+	\f4stack\fP		kernel stack trace for the current process
+	\f4pstack\fP	kernel stack trace for process [TOS];  pop 1
+	\f4stackargs\fP	set max # arguments in stack trace to [TOS];  pop 1
+	\f4stackdump\fP	show contents of kernel stack in hex
+.fi
+.sp .5
+.P
+Note that the argument to \f4pstack\fP can be specified 
+either as a process table slot number, the address of
+the process structure, or \f4-1\f1 for the current process.  (\f4-1 pstack\f1 is equivalent to
+the \f4stack\f1 command.)
+.DE
+.DS L F
+.P
+The output of \f4stack\f1 and \f4pstack\f1 have the same format.  A typical stack trace 
+(for the current process, entered via <Ctrl-Alt-d>) looks like this:
+.sp .5
+.nf
+.ft 4
+DEBUGGER ENTERED FROM USER REQUEST
+ kdcksysrq(D101FD40 D00DE624 81)...........ebp:E0000D30  ret:D008F592
+*kdintr+0x186(1 0).........................ebp:E0000D74  ret:D0011A3A
+INTERRUPT 0x1 from 158:D001218A (ebp:E0000D84)
+  eax:       8 ebx:       0 ecx:FFFFFFFF edx:       8 efl: 246 ds:160
+  esi:D00EDDD0 edi:D106BC00 esp:E0000DC8 ebp:E0000DE0 regset:0 es:160
+ idle(0 D00EDDD0 D106BC00)................(ebp:E0000DC4) ret:D006F11F
+ pswtch(D002464C 0 D00F9090)...............ebp:E0000DE0  ret:D00122ED
+ swtch(0 D00F9090 D101A160)...............(ebp:E0000DE4) ret:D002464C
+ sleep(D0038B0C 14 D00BCA3C)...............ebp:E0000DFC  ret:D0038D6F
+ fsflush(0 E0000002 E0000002)..............ebp:E0000E38  ret:D001E24B
+ main+0x5FB()..............................ebp:E0000E70  
+.fi
+.P
+The stack trace shows a history of which routine called which other
+routine, up until the point the debugger was entered
+(or in the case of a non-current process, until the process was
+context-switched out).
+.P
+The most-recently-entered routine is shown on the first line.
+In the example, the debugger was entered from \f4kdcksysrq\fP,
+which, in turn, was called by \f4kdintr\fP;
+\f4idle\fP was called from \f4pswtch\fP, and so on.
+The stack trace ends at the point the kernel was entered from user mode.
+In the case of a system process (as shown here)
+where there is no user mode, the stack trace ends at the call from \f4main\fP.
+.SS Routine Trace Format
+.P
+The trace for each routine has four parts: (1) its address, (2) the arguments passed to it, (3) the value of its \f4ebp\f1 register, 
+and (4) its return address.  For example:
+.sp .5
+.ft 4
+.nf
+ fsflush(0 E0000002 E0000002).............ebp:E0000E38  ret:D001E24B
+    1   ----------2---------              ------3-----  ------4-----
+.sp .5
+.fi
+.P
+\f3Address\f1.  The address that was called usually appears in symbolic form.
+A routine name may also include:
+.TP 4
+\ \ An offset (a plus sign (\f4+\fP) and a hex number):  \f4*kdintr+0x186\f1
+The offset may mean that the actual address called was
+somewhere past the start of the indicated routine.
+This will most likely happen if a subroutine was declared "static."
+Since the debugger only has access to global symbols,
+it finds the nearest preceding global symbol.
+.sp .5
+The offset may also mean that the exact address called cannot be determined.
+The address displayed in this case is the return address into this
+routine from the routine it called.
+This will most likely happen if this routine was called indirectly
+via a function pointer.
+.TP
+\ \ An asterisk (\f4*\fP):  \f4*kdintr+0x186\fP
+This means the routine was called indirectly.
+There is insufficient information in the stack format
+to be 100% sure of the correctness of indirect call traces.
+.TP
+\ \ A tilde (\f4~\fP)
+This is used where there is some uncertainty in the stack trace
+that did not arise from indirect calls.
+.in 0
+.P
+Whenever you see an asterisk or a tilde in a stack trace,
+there is a small chance that some part of the stack trace from that point on
+is incorrect.
+.DE
+.DS L F
+.P
+\f3Arguments\f1.  The arguments passed to the routine appear as a list of hex numbers,
+enclosed in parentheses.
+Since the actual number of arguments passed cannot be
+determined, KDB assumes that each routine has no more than
+a certain maximum number of arguments.  The default
+is three, but you can change it with the \f4stackargs\fP command.
+If a routine actually has:
+.TP 4
+\ \ Fewer arguments than displayed:
+Only the first ones are real.
+In rare cases when the debugger can deduce that a routine could not have been called with
+the maximum number of arguments (because there isn't enough room on the stack),
+it displays only the maximum possible number of arguments.  In the above stack trace, the call to \f4kdintr\fP is
+shown with only two arguments \f4(1 0)\fP.
+.TP 
+\ \ More arguments than displayed:
+Increase the number with \f4stackargs\fP and 
+then display the stack trace again,
+or dump out a portion of the stack directly
+in order to see all the arguments (continue to the next section for details).
+.DE
+.DS L F
+.P
+\f3ebp register.\f1  The value of the \f4ebp\fP register inside the routine
+is shown as a hex number following \f4ebp:\fP.
+This value can be used as a "frame pointer" to access arguments and local variables
+for the routine.  The following diagram illustrates the stack layout.
+.sp
+.nf
+.ft 4
+.in +1i
+             |        .  .  .          |
+             +-------------------------+
+ [EBP] + 0xC | argument 2              |
+             +-------------------------+
+ [EBP] + 8   | argument 1              |
+             +-------------------------+
+ [EBP] + 4   | return address          |
+             +-------------------------+
+[EBP]  --->  | saved EBP from caller   |
+             +-------------------------+
+ [EBP] - 4   | local or saved register |
+             +-------------------------+
+ [EBP] - 8   | local or saved register |
+             +-------------------------+
+             |        .  .  .          |
+.in -1i
+.ft P
+.fi
+.sp
+.P
+For example, if you want to see all the arguments to a routine that
+takes five arguments, find its \f4ebp\fP value from the stack trace \(em say
+\f40xE0000E0C\fP \(em and enter these commands:
+.sp .5
+.ft 4
+	0xE0000E0C 8 + 5 4 * dump
+.ft P
+.sp .5
+or, more succinctly:
+.sp .5
+.ft 4
+	0xE0000E14 14 dump
+.ft P
+.P
+Any \f4ebp\f1 value in parentheses is a computed value (see the \f4ebp\f1 values for \f4idle\f1
+and \f4switch\f1 in the example).
+In these cases, due to code optimization or partial execution,
+the \f4ebp\fP value has not been set up for one or more routines.
+KDB computes the value \f4ebp\fP ought to have had and displays it in parentheses.
+.DE
+.DS L F
+.P
+\f3Return address.\f1  This is the address this routine returns to in its caller.
+It is shown as a hex number following \f4ret:\fP.
+.DE
+.DS L F
+.SS Trap Frames
+In addition to lines for each routine, stack traces will often include
+"trap frames" created when an event causes suspension of current processing,
+saving all register values on the stack.  Typical events are interrupts, hardware exceptions,
+and system calls.
+Trap frames are three lines each, starting with 
+an upper-case, non-indented keyword (like INTERRUPT
+in the example).  The next two lines contain 
+the values of the registers at the time the event occurred.
+The first line of a trap frame is in one of these formats:
+.sp .5
+.ft 4
+.nf
+INTERRUPT 0x1 from 158:D001218A (ebp:E0000D84)
+TRAP 0x1(err 0x0)from 158:D001218A (ebp:E0000D94,ss:esp:1F:80468E8)
+SYSTEM CALL from 158:D001218A (ebp: E0000D94, ss:esp: 1F:80468E8)
+SIGNAL RETURN from 158:D001218A (ebp: E0000D94, ss:esp: 1F:80468E8)
+.fi
+.ft P
+.sp .5
+These represent interrupts, hardware exception traps, system calls,
+and returns from old-style signal handlers, respectively.
+The number after \f4INTERRUPT\fP is the interrupt vector number (IRQ).
+The number after \f4TRAP\fP is the hardware exception number;
+the most common are \f40x1\fP for breakpoint traps
+and \f40xE\fP for page faults.
+.P
+The colon-separated numbers after the word \f4from\fP are the segment
+and offset (\f4cs\fP and \f4eip\fP) at the time the event occurred.
+The values in parentheses show the \f4ebp\fP value for the beginning of
+the trap frame, and the user stack pointer segment and offset at the time
+the event occurred.
+The user stack information is only displayed if the trap frame is
+for an entry into the kernel from user mode.
+.DE
+.SK
+.SH RESETTING THE NUMERIC BASE
+If you don't start numbers with "0o" (for octal) or "0x" (for hex), KDB 
+assumes they are in the default numeric base.  Initially, the defaults for both input and output 
+are set to 16 (hex), but you can use these commands to change them:
+.nf
+	\f4ibase\fP		set default input base to [TOS];  pop 1
+	\f4ibinary\fP	set default input base to 2
+	\f4ioctal\fP	set default input base to 8
+	\f4idecimal\fP	set default input base to 10
+	\f4ihex\fP		set default input base to 16
+	\f4obase\fP		set output base to [TOS];  pop 1
+	\f4ooctal\fP	set output base to 8
+	\f4odecimal\fP	set output base to 10
+	\f4ohex\fP		set output base to 16
+.SH CONVERTING ADDRESS SPACES
+Use these commands to convert a virtual address to a physical address: 
+.nf
+	\f4kvtop\fP		convert kernel virtual address [TOS] to physical
+	\f4uvtop\fP		convert user proc #[TOS] address [TOS-1] to physical;  pop 1
+.SH DOING CONDITIONAL EXECUTION 
+.fi
+.DS L F
+.P
+KDB provides two commands for conditional execution:
+.sp .5
+.nf
+	\f4then\fP		if [TOS] \f4=\fP 0, skip to \f4endif\fP;  pop 1
+	\f4endif\fP		end scope of \f4then\fP command
+.fi
+.sp .5
+In other words, a sequence like:
+.sp .5
+.ft 4
+	<condition> then <commands> endif
+.ft P
+.sp .5
+executes \f4<commands>\fP if and only if the \f4<condition>\fP
+is true (non-zero).
+.P
+These are mostly useful for macros and breakpoint command strings.
+For example, imagine you wish to set a breakpoint for when the function
+\f4inb\fP is called with \f42E\fP as its first argument.
+Use the following command:
+.sp .5
+.ft 4
+	inb "%esp 4 + r 2E != then q" b
+.ft P
+.P
+This says to set a breakpoint at \f4inb\fP,
+but enter the debugger only if the contents of \f4(%esp+4)\fP
+are equal to \f42E\fP.
+This works because \f4esp\fP points to the return address on the stack,
+and the longword after that is the first argument.
+For the second argument, you would add 8 instead of 4
+(see the "Printing Kernel Stack Traces" section for details of the stack layout).
+.P
+If you do a \f4?brk\f1 command, the display for that breakpoint includes the string of debugger 
+commands:
+.sp .5
+.ft 4
+	0: 0xD003907C(inb) ON  /i "%esp 4 + r 2E != then q" 
+.ft P
+.DE
+.SK
+.SH CALLING A KERNEL FUNCTION
+Use this command to call an arbitrary kernel function:
+.sp .5
+.nf
+	\f4call\fP		call the function at address [TOS-1] with [TOS] arguments,
+			given by [TOS-([TOS]+1)], ... [TOS-2]; pop [TOS]+2
+.fi
+.P
+To call \f4psignal\fP() with two arguments,
+the current process and \f49\fP, type:
+.sp .5
+.ft 4
+	curproc r 9 psignal 2 call
+.ft P
+.sp .5
+\f4curproc r\f1 gives the value of the current process, the first argument, and \f49\f1 is the second
+argument.  \f4psignal\f1 is converted into the address at which that function can be called, and \f42\f1 specifies 
+the number of arguments to pass to \f4psignal\f1(). 
+.DE
+.SH DOING A SYSTEM DUMP
+This command causes a system dump and forces a reboot:
+.sp .5
+	\f4sysdump\fP 	cause a system dump
+.sp .5
+All of memory and the current state is dumped to the dump partition on the disk, so
+you can use \f4crash\f1(1M) to do a postmortem.
+.SH MISCELLANEOUS COMMANDS
+.DS L F
+.P
+Some miscellaneous KDB commands are:
+.sp .5
+.nf
+	\f4findsym\fP	print kernel symbol with address closest to [TOS];  pop 1
+	\f4dis\fP		disassemble [TOS] instructions starting at address [TOS-1];  
+			pop 2
+	\f4nonverbose\fP	turn verbose mode off
+	\f4verbose\fP	turn verbose mode on
+	\f4newdebug\fP	switch to another debugger on next debugger entry
+	\f4help\fP		print a help message
+	\f4?\fP		print a help message (same as \f4help\f1)
+	\f4cmds\fP		print a list of all debugger commands
+.SH WRITING MACROS
+.P
+KDB provides the ability to assign a string of commands to a single new
+command name, called a macro.
+When a debugging task involves repeating the
+same set of commands many times (possibly doing other things in between),
+it is easier to define a macro and use it in place of the whole set of commands.
+.P
+These commands are used for macros:
+.sp .5
+.nf
+	\f4:: \f2macro\fP	define [macro] as command string [TOS];  pop 1
+	\f4P\fP		print [TOS] in raw form;  pop 1
+	\f4PP\fP		print [TOS] values in raw form,
+			from [TOS-[TOS]], ... [TOS-1]; pop [TOS]+1
+	\f4vars\fP		show values of debugger macros and variables
+.fi
+.HP 2
+\(bu \f3: : macro\f1  Use this command to define macros.  For example:
+.sp .5
+	\f4"curproc r 16 - p" :: newaddr
+.sp .5
+\f1Note that macro names share the same namespace as debugger variables
+and kernel global symbols.
+.HP 2
+\(bu \f3P and PP\f1  These commands are provided to aid in writing macros.
+\f4P\f1 and \f4PP\f1 print values in raw form,
+without the embellishments provided by the
+\f4p\fP command, such as quotes around strings and automatic newlines
+after each value.  This allows complete control over formatting.
+For example, the input:
+.sp .5
+.ft 4
+	"The value of curproc is " curproc r ".\\n" 3 PP
+.ft P
+.sp .5
+might produce the output:
+.sp .5
+.ft 4
+	The value of curproc is 0xD1011E80.
+.sp .5
+\f1To put something like this into a macro means putting strings inside strings,
+so you'll have to escape the inner quotes:
+.sp .5
+.ft 4
+"\\"The value of curproc is \\" curproc r \\".\\n\\" 3 PP" :: pcurproc
+.HP
+\f1\(bu \f3vars\f1  Use this command to show the macro definitions.
+Macros are shown in this format:
+.sp .5
+	\f2name\f4 :: \f2value\f1
+.sp .5
+Note that the \f4vars\fP command also shows the values of variables,
+in this format:
+.sp .5
+	\f2name\f4 = \f2value\fP
+.SK
+.SH EXECUTING DEBUGGER COMMANDS AT BOOT TIME
+.P
+KDB allows you to specify an arbitrary command sequence to be executed
+at boot time, when the system is coming up
+(specifically, from \f4main()\fP at the time of the \f4io_start\fP
+routines).
+You can do this by writing the commands into the file
+\f4$ROOT/etc/conf/cf.d/kdb.rc\fP, then rebuilding the kernel
+with \f4idbuild\fP.
+.P
+Instead of rebuilding the kernel with \f4idbuild\fP, you can modify the
+KDB information in an already-built kernel by typing the command:
+.sp .5
+.ft 4
+	unixsyms -i /etc/conf/cf.d/kdb.rc /unix
+.ft P
+.P
+At boot time, after the (possibly blank) string is executed,
+the system enters KDB at the \f4kdb>>\fP prompt,
+unless a \f4q\fP command was executed as part of the string \(em just
+like conditional breakpoints.
+(A non-existent or zero-length \f4kdb.rc\fP file acts as a single
+\f4q\fP command, so KDB is not entered.)
+.SH USING A SERIAL TERMINAL
+.P
+KDB can be used from a serial terminal as well as the console.
+This is particularly useful if you are trying to debug a scenario that
+involves graphics or multiple virtual terminals on the console.
+.P
+Before you attempt to use the debugger from a serial terminal,
+make sure there is a \f4getty\fP or \f4ttymon\fP running on it.
+It may be either logged in or waiting at the login prompt.
+This ensures that the baud rate and other parameters are properly set.
+.P
+You can switch from the console to a terminal, 
+and vice-versa, with the \f4newterm\fP command.
+This immediately switches you to the new terminal.
+The debugger continues to use this terminal until you give it
+the \f4newterm\fP command again, even if you exit and re-enter KDB.
+.P
+The \f4newterm\f1 command does not take an argument.  On a 386, the serial terminal is assumed to be 
+\f4tty00\fP, the terminal on the com1 port.  You can change the device used by
+editing the \f4/etc/conf/pack.d/kdb-util/space.c\fP file, rebuilding the kernel and rebooting.  
+If the terminal is attached to the com2 port, set the device to \f4tty01\f1 
+by changing all occurences 
+of \f4asyputchar\fP and \f4asygetchar\fP to \f4asyputchar2\f1 and \f4asygetchar2\fP, 
+respectively, and changing the minor number of the device from 0 to 1.  The first lines of 386-specific 
+code should look like this:
+.sp .5
+.nf
+.ft 4
+	#ifdef AT386
+	int asyputchar2(), asygetchar2();
+	static struct conssw asysw = {
+		asyputchar2,	1,	asygetchar2
+	};
+	#endif
+.sp .5
+.fi
+.ft P
+To use terminals on both com1 and com2 ports, you can set up \f4newterm\f1 to cycle from
+the console to \f4tty00\f1 to \f4tty01\f1 and back to the console.  Edit all the 386-specific code in the
+\f4space.c\f1 file to look like this: 
+.sp .5
+.nf
+.ft 4
+	#ifdef AT386
+	int asyputchar(), asygetchar();
+	int asyputchar2(), asygetchar2();
+	static struct conssw asysw = {
+		asyputchar,	0,	asygetchar
+	};
+	static struct conssw asysw2 = {
+		asyputchar2,	1,	asygetchar2
+	};
+	#endif
+		.
+		.
+		.
+
+	#ifdef AT386
+		&asysw,
+		&asysw2,
+	#endif
+.fi
+.ft P
+.sp .5
+.P
+Once you exit from KDB, you can invoke it again from either the console or a serial terminal. 
+Use the \f4kdb\f1 command to invoke the debugger from a terminal; <Ctrl-Alt-d> only works from the
+console.  Regardless of where you invoke KDB, its I/O appears where you directed it during the last
+KDB session.  
+.bp
+.SH ENTERING THE DEBUGGER FROM A DRIVER
+.P
+If you are debugging a device driver or another part of the kernel,
+you can directly invoke the kernel debugger by including this code in your driver:
+.sp .5
+.ft 4
+.nf
+	#include <sys/xdebug.h>
+
+	(*cdebugger) (DR_OTHER, NO_FRAME);
+.fi
+.ft P
+.sp .5
+DR_OTHER tells the debugger that the reason for entering is "other."
+See \f4sys/xdebug.h\fP for a list of other reason codes.
+.P
+Note that this mechanism cannot be used for debugging early kernel
+startup code or driver \f4init\fP routines, since the debugger cannot
+be used until its \f4init\fP routine (\f4kdb_init\fP) has been
+called.
+.SH DISABLING THE <Ctrl-Alt-d> SEQUENCE 
+As a security feature, KDB can only be called from the console via <Ctrl-Alt-d> 
+if the \f4kdb_security\f1 flag was set to 0 when the kernel was built.  
+To disable the <Ctrl-Alt-d> key sequence, reset the \f4kdb_security\f1 flag by using \f4/etc/conf/bin/idtune\f1 to change 
+the KDBSECURITY tunable to 1.  Note that the flag setting does not affect the \f4kdb\f1 command.
+.sp 3
+.SH COMMAND SUMMARY
+.TP 14
+\f4+\fP
+compute [TOS-1] \f4+\fP [TOS];  pop 2;  push result
+.PD 0
+.TP 14
+\f4-\fP
+compute [TOS-1] \f4-\fP [TOS];  pop 2;  push result
+.TP 14
+\f4*\fP
+compute [TOS-1] \f4*\fP [TOS];  pop 2;  push result
+.TP 14
+\f4/\fP
+compute [TOS-1] \f4/\fP [TOS];  pop 2;  push result
+.TP 14
+\f4%\fP
+compute [TOS-1] \f4%\fP [TOS];  pop 2;  push result
+.TP 14
+\f4>>\fP
+compute [TOS-1] \f4>>\fP [TOS];  pop 2;  push result
+.TP 14
+\f4<<\fP
+compute [TOS-1] \f4<<\fP [TOS];  pop 2;  push result
+.TP 14
+\f4<\fP
+compute [TOS-1] \f4<\fP [TOS];  pop 2;  push result
+.TP 14
+\f4>\fP
+compute [TOS-1] \f4>\fP [TOS];  pop 2;  push result
+.TP 14
+\f4==\fP
+compute [TOS-1] \f4==\fP [TOS];  pop 2;  push result
+.TP 14
+\f4!=\fP
+compute [TOS-1] \f4!=\fP [TOS];  pop 2;  push result
+.TP 14
+\f4&\fP
+compute [TOS-1] \f4&\fP [TOS];  pop 2;  push result
+.TP 14
+\f4|\fP
+compute [TOS-1] \f4|\fP [TOS];  pop 2;  push result
+.TP 14
+\f4^\fP
+compute [TOS-1] \f4^\fP [TOS];  pop 2;  push result
+.TP 14
+\f4&&\fP
+compute [TOS-1] \f4&&\fP [TOS];  pop 2;  push result
+.TP 14
+\f4||\fP
+compute [TOS-1] \f4||\fP [TOS];  pop 2;  push result
+.TP 14
+\f4!\fP
+replace [TOS] with \f4!\fP[TOS]
+.TP 14
+\f4++\fP
+replace [TOS] with [TOS] \f4+\fP 1
+.TP 14
+\f4--\fP
+replace [TOS] with [TOS] \f4-\fP 1
+.TP 14
+\f4%eax\fP
+push the contents of 32-bit register \f4eax\fP
+.TP 14
+\f4%ebx\fP
+push the contents of 32-bit register \f4ebx\fP
+.TP 14
+\f4%ecx\fP
+push the contents of 32-bit register \f4ecx\fP
+.TP 14
+\f4%edx\fP
+push the contents of 32-bit register \f4edx\fP
+.TP 14
+\f4%esi\fP
+push the contents of 32-bit register \f4esi\fP
+.TP 14
+\f4%edi\fP
+push the contents of 32-bit register \f4edi\fP
+.TP 14
+\f4%ebp\fP
+push the contents of 32-bit register \f4ebp\fP
+.TP 14
+\f4%esp\fP
+push the contents of 32-bit register \f4esp\fP
+.TP 14
+\f4%eip\fP
+push the contents of 32-bit register \f4eip\fP
+.TP 14
+\f4%efl\fP
+push the contents of 32-bit register \f4efl\fP
+.TP 14
+\f4%cs\fP
+push the contents of 16-bit register \f4cs\fP
+.TP 14
+\f4%ds\fP
+push the contents of 16-bit register \f4ds\fP
+.TP 14
+\f4%es\fP
+push the contents of 16-bit register \f4es\fP
+.TP 14
+\f4%fs\fP
+push the contents of 16-bit register \f4fs\fP
+.TP 14
+\f4%gs\fP
+push the contents of 16-bit register \f4gs\fP
+.TP 14
+\f4%err\fP
+push the error number
+.TP 14
+\f4%trap\fP
+push the trap number
+.TP 14
+\f4%ax\fP
+push the contents of 16-bit register \f4ax\fP
+.TP 14
+\f4%bx\fP
+push the contents of 16-bit register \f4bx\fP
+.TP 14
+\f4%cx\fP
+push the contents of 16-bit register \f4cx\fP
+.TP 14
+\f4%dx\fP
+push the contents of 16-bit register \f4dx\fP
+.TP 14
+\f4%si\fP
+push the contents of 16-bit register \f4si\fP
+.TP 14
+\f4%di\fP
+push the contents of 16-bit register \f4di\fP
+.TP 14
+\f4%bp\fP
+push the contents of 16-bit register \f4bp\fP
+.TP 14
+\f4%sp\fP
+push the contents of 16-bit register \f4sp\fP
+.TP 14
+\f4%ip\fP
+push the contents of 16-bit register \f4ip\fP
+.TP 14
+\f4%fl\fP
+push the contents of 16-bit register \f4fl\fP
+.TP 14
+\f4%al\fP
+push the contents of 8-bit register \f4al\fP
+.TP 14
+\f4%ah\fP
+push the contents of 8-bit register \f4ah\fP
+.TP 14
+\f4%bl\fP
+push the contents of 8-bit register \f4bl\fP
+.TP 14
+\f4%bh\fP
+push the contents of 8-bit register \f4bh\fP
+.TP 14
+\f4%cl\fP
+push the contents of 8-bit register \f4cl\fP
+.TP 14
+\f4%ch\fP
+push the contents of 8-bit register \f4ch\fP
+.TP 14
+\f4%dl\fP
+push the contents of 8-bit register \f4dl\fP
+.TP 14
+\f4%dh\fP
+push the contents of 8-bit register \f4dh\fP
+.TP 14
+\f4= \fP\f4variable\fP
+store [TOS] in [variable];  pop 1
+.TP 14
+\f4:: \fP\f4macro\fP
+define [macro] as command string [TOS];  pop 1
+.TP 14
+\f4?\fP
+print a help message (same as \f4help\fP)
+.TP 14
+\f4?brk\fP
+show current breakpoint settings
+.TP 14
+.ne 2
+\f4B\fP
+set breakpoint #[TOS] at address [TOS-1];  pop 2
+-or-	set brkpoint #[TOS] at address [TOS-2] w/command string [TOS-1];  pop 3
+.ne 2
+.TP 14
+\f4b\fP
+set 1st free breakpoint address [TOS];  pop 1
+-or-	set 1st free brkpoint at address [TOS-1] w/command string [TOS];  pop 2
+.TP 14
+\f4brkoff\fP
+disable breakpoint #[TOS];  pop 1
+.TP 14
+\f4brkon\fP
+re-enable breakpoint #[TOS];  pop 1
+.TP 14
+\f4brksoff\fP
+disable all breakpoints
+.TP 14
+\f4brkson\fP
+re-enable all (disabled) breakpoints
+.TP 14
+.ne 2
+\f4call\fP
+call the function at address [TOS-1] with [TOS] arguments,
+given by [TOS-([TOS]+1)], ... [TOS-2]; pop [TOS]+2
+.TP 14
+\f4clrbrk\fP
+clear breakpoint #[TOS];  pop 1
+.TP 14
+\f4clrbrks\fP
+clear all breakpoints
+.TP 14
+\f4clrstk\fP
+pop all values
+.TP 14
+\f4cmds\fP
+print a list of all debugger commands
+.TP 14
+\f4cr0\fP
+push the contents of register \f4cr0\fP
+.TP 14
+\f4cr2\fP
+push the contents of register \f4cr2\fP
+.TP 14
+\f4cr3\fP
+push the contents of register \f4cr3\fP
+.TP 14
+\f4curbrk\fP
+push the current breakpoint number,
+or -1 if not entered from a breakpoint
+.TP 14
+\f4dis\fP
+disassemble [TOS] instructions starting at address [TOS-1];  pop 2
+.TP 14
+\f4dump\fP
+show [TOS] bytes starting at virtual address [TOS-1];  pop 2
+.TP 14
+\f4dup\fP
+push [TOS]
+.TP 14
+\f4endif\fP
+end scope of \f4then\fP command
+.TP 14
+\f4findsym\fP
+print kernel symbol with address closest to [TOS];  pop 1
+.TP 14
+\f4help\fP
+print a help message
+.TP 14
+\f4ibase\fP
+set default input base to [TOS];  pop 1
+.TP 14
+\f4ibinary\fP
+set default input base to 2
+.TP 14
+\f4ioctal\fP
+set default input base to 8
+.TP 14
+\f4idecimal\fP
+set default input base to 10
+.TP 14
+\f4ihex\fP	
+set default input base to 16
+.TP 14
+\f4kvtop\fP
+convert kernel virtual addr [TOS] to physical
+.TP 14
+\f4newterm\fP
+alternate debugger I/O between console and tty00
+.TP 14
+\f4newdebug\fP
+switch to another debugger on next debugger entry
+.TP 14
+\f4nonverbose\fP
+turn verbose mode off
+.TP 14
+\f4obase\fP
+set output base to [TOS];  pop 1
+.TP 14
+\f4odecimal\fP
+set output base to 10
+.TP 14
+\f4ohex\fP
+set output base to 16
+.TP 14
+\f4ooctal\fP
+set output base to 8
+.TP 14
+\f4P\fP
+print [TOS] in raw form;  pop 1
+.TP 14
+\f4p\fP
+print [TOS]
+.ne 2
+.TP 14
+\f4PP\fP
+print [TOS] values in raw form,
+from [TOS-[TOS]], ... [TOS-1]; pop [TOS]+1
+.TP 14
+\f4pinode\fP
+print s5 inode at address [TOS];  pop 1
+.TP 14
+\f4pop\fP
+pop 1 value
+.TP 14
+\f4pprnode\fP
+print /proc inode at address [TOS];  pop 1
+.TP 14
+\f4psnode\fP
+print snode at address [TOS];  pop 1
+.TP 14
+\f4ps\fP
+show process information
+.TP 14
+\f4pstack\fP
+kernel stack trace for process [TOS];  pop 1
+.TP 14
+\f4pvfs\fP
+print vfs struct at address [TOS];  pop 1
+.TP 14
+\f4pvnode\fP
+print vnode at address [TOS];  pop 1
+.TP 14
+\f4puinode\fP
+print ufs inode at address [TOS];  pop 1
+.TP 14
+\f4q\fP	
+quit\(emexit from the debugger
+.TP 14
+\f4r\fP	
+replace [TOS] with the value at virtual address [TOS]
+.TP 14
+\f4S\fP	
+single step 1 instruction (passing calls)
+.TP 14
+\f4s\fP	
+single step 1 instruction
+.TP 14
+\f4sleeping\fP 
+show list of sleeping processes
+.TP 14
+\f4SS\fP
+single step [TOS] instructions (passing calls);  pop 1
+.TP 14
+\f4ss\fP
+single step [TOS] instructions;  pop 1
+.TP 14
+\f4stack\fP
+kernel stack trace for the current process
+.TP 14
+\f4stackargs\fP
+set max # arguments in stack trace to [TOS];  pop 1
+.TP 14
+\f4stackdump\fP
+show contents of kernel stack in hex
+.TP 14
+\f4stk\fP
+print all values on the stack
+.TP 14
+\f4sysdump\fP
+cause a system dump
+.TP 14
+\f4then\fP
+if [TOS] \f4=\fP 0, skip to \f4endif\fP;  pop 1
+.TP 14
+\f4trace\fP
+set breakpoint #[TOS] trace count to [TOS-1];  pop 2
+.TP 14
+\f4uvtop\fP
+convert user process #[TOS] address [TOS-1] to physical;  pop 1
+.TP 14
+\f4vars\fP
+show values of debugger variables
+.TP 14
+\f4verbose\fP
+turn verbose mode on
+.TP 14
+\f4w\fP	
+write [TOS-1] into virtual address [TOS];  pop 2
+.TP 14
+\f4w%eax\fP
+write [TOS] into 32-bit register \f4eax\fP;  pop 1
+.TP 14
+\f4w%ebx\fP
+write [TOS] into 32-bit register \f4ebx\fP;  pop 1
+.TP 14
+\f4w%ecx\fP
+write [TOS] into 32-bit register \f4ecx\fP;  pop 1
+.TP 14
+\f4w%edx\fP
+write [TOS] into 32-bit register \f4edx\fP;  pop 1
+.TP 14
+\f4w%esi\fP
+write [TOS] into 32-bit register \f4esi\fP;  pop 1
+.TP 14
+\f4w%edi\fP
+write [TOS] into 32-bit register \f4edi\fP;  pop 1
+.TP 14
+\f4w%ebp\fP
+write [TOS] into 32-bit register \f4ebp\fP;  pop 1
+.TP 14
+\f4w%esp\fP
+write [TOS] into 32-bit register \f4esp\fP;  pop 1
+.TP 14
+\f4w%eip\fP
+write [TOS] into 32-bit register \f4eip\fP;  pop 1
+.TP 14
+\f4w%efl\fP
+write [TOS] into 32-bit register \f4efl\fP;  pop 1
+.TP 14
+\f4w%cs\fP
+write [TOS] into 16-bit register \f4cs\fP;  pop 1
+.TP 14
+\f4w%ds\fP
+write [TOS] into 16-bit register \f4ds\fP;  pop 1
+.TP 14
+\f4w%es\fP
+write [TOS] into 16-bit register \f4es\fP;  pop 1
+.TP 14
+\f4w%fs\fP
+write [TOS] into 16-bit register \f4fs\fP;  pop 1
+.TP 14
+\f4w%gs\fP
+write [TOS] into 16-bit register \f4gs\fP;  pop 1
+.TP 14
+\f4w%err\fP
+write [TOS] into the error number pseudo-register;  pop 1
+.TP 14
+\f4w%trap\fP
+write [TOS] into the trap number pseudo-register;  pop 1
+.TP 14
+\f4w%ax\fP
+write [TOS] into 16-bit register \f4ax\fP;  pop 1
+.TP 14
+\f4w%bx\fP
+write [TOS] into 16-bit register \f4bx\fP;  pop 1
+.TP 14
+\f4w%cx\fP
+write [TOS] into 16-bit register \f4cx\fP;  pop 1
+.TP 14
+\f4w%dx\fP
+write [TOS] into 16-bit register \f4dx\fP;  pop 1
+.TP 14
+\f4w%si\fP
+write [TOS] into 16-bit register \f4si\fP;  pop 1
+.TP 14
+\f4w%di\fP
+write [TOS] into 16-bit register \f4di\fP;  pop 1
+.TP 14
+\f4w%bp\fP
+write [TOS] into 16-bit register \f4bp\fP;  pop 1
+.TP 14
+\f4w%sp\fP
+write [TOS] into 16-bit register \f4sp\fP;  pop 1
+.TP 14
+\f4w%ip\fP
+write [TOS] into 16-bit register \f4ip\fP;  pop 1
+.TP 14
+\f4w%fl\fP
+write [TOS] into 16-bit register \f4fl\fP;  pop 1
+.TP 14
+\f4w%al\fP
+write [TOS] into 8-bit register \f4al\fP;  pop 1
+.TP 14
+\f4w%ah\fP
+write [TOS] into 8-bit register \f4ah\fP;  pop 1
+.TP 14
+\f4w%bl\fP
+write [TOS] into 8-bit register \f4bl\fP;  pop 1
+.TP 14
+\f4w%bh\fP
+write [TOS] into 8-bit register \f4bh\fP;  pop 1
+.TP 14
+\f4w%cl\fP
+write [TOS] into 8-bit register \f4cl\fP;  pop 1
+.TP 14
+\f4w%ch\fP
+write [TOS] into 8-bit register \f4ch\fP;  pop 1
+.TP 14
+\f4w%dl\fP
+write [TOS] into 8-bit register \f4dl\fP;  pop 1
+.TP 14
+\f4w%dh\fP
+write [TOS] into 8-bit register \f4dh\fP;  pop 1
+.PD
+.bp
+.SS Command Suffixes
+.TP
+Operand size
+.PD 0
+.TP 14
+\f4/b\fP
+byte
+.TP 14
+\f4/w\fP
+word (2 bytes)
+.TP 14
+\f4/l\fP
+long (4 bytes)\(emthis is the default
+.TP
+Address space
+.TP 14
+\f4/k\fP
+kernel virtual\(emthis is the default
+.TP 14
+\f4/p\fP
+physical
+.TP 14
+\f4/io\fP
+I/O port
+.TP 14
+\f4/u\fP\f4#\fP	
+user process number \f4#\fP virtual
+.TP
+Register set
+.TP 14
+\f4/rs\fP\f4#\fP	
+register set number \f4#\fP
+.TP
+Breakpoint type
+.TP 14
+\f4/a\fP
+data access breakpoint
+.TP 14
+\f4/m\fP
+data modify breakpoint
+.TP 14
+\f4/i\fP
+instruction execution breakpoint\(emthis is the default
+.PD
+.SS Old Commands
+These commands from previous versions are supported as aliases to new commands:
+.TP 14
+Old 
+New
+.PD 0
+.TP 14
+Command
+Equivalent
+.TP 14
+\f4r1
+r/b
+.TP 14
+\f4r2
+r/w
+.TP 14
+\f4r4
+r/l
+.TP 14
+\f4w1
+w/b
+.TP 14
+\f4w2
+w/w
+.TP 14
+\f4w4
+w/l
+.TP 14
+\f4rp1
+r/b/p
+.TP 14
+\f4rp2
+r/w/p
+.TP 14
+\f4rp4
+r/l/p 
+.TP 14 
+\f4wp1
+w/b/p
+.TP 14
+\f4wp2
+w/w/p
+.TP 14
+\f4wp4
+w/l/p
+.TP 14
+\f4rio1
+r/b/io
+.TP 14
+\f4rio2
+r/w/io
+.TP 14
+\f4rio4
+r/l/io
+.TP 14
+\f4wio1
+w/b/io
+.TP 14
+\f4wio2
+w/w/io
+.TP 14
+\f4wio4
+w/l/io
+.TP 14
+\&\f4.trap
+%trap
+.TP 14
+\f4trc0
+0 trace
+.TP 14
+\f4trc1
+1 trace
+.TP 14
+\f4trc2
+2 trace
+.TP 14
+\f4trc3
+3 trace
+.TP 14
+\f4db?
+?brk
+.PD
+.TP
+.bp
+These old commands are supported:
+.TP 14
+\&\f4.i\fP
+push breakpoint type: instruction
+.PD 0
+.TP 14
+\&\f4.a\fP
+push breakpoint type: access byte
+.TP 14
+\&\f4.m\fP
+push breakpoint type: modify byte
+.TP 14
+\&\f4.aw\fP
+push breakpoint type: access word
+.TP 14
+\&\f4.mw\fP
+push breakpoint type: modify word
+.TP 14
+\&\f4.al\fP
+push breakpoint type: access long
+.TP 14
+\&\f4.ml\fP
+push breakpoint type: modify long
+.TP 14
+\&\f4.clr\fP
+push breakpoint type: clear breakpoint
+.TP 14
+\f4brk0\fP
+set breakpoint 0 to type [TOS] at address [TOS-1];  pop 2
+.TP 14
+\f4brk1\fP
+set breakpoint 1 to type [TOS] at address [TOS-1];  pop 2
+.TP 14
+\f4brk2\fP
+set breakpoint 2 to type [TOS] at address [TOS-1];  pop 2
+.TP 14
+\f4brk3\fP
+set breakpoint 3 to type [TOS] at address [TOS-1];  pop 2
+.SH SEE ALSO
+\f4crash\f1(1M)
+.P
+\f4dc\f1(1) in the \f2User's Reference Manual\fP
+.br
+The discussion of the UNIX kernel in the \f2System Administrator's Guide.\f1

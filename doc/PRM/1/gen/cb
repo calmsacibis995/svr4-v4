@@ -1,0 +1,61 @@
+'\"macro stdmacro
+.if n .pH g1.cb @(#)cb	40.10.1.2 of 4/12/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} cb 1 "Advanced C Utilities" "\&"
+.if \nX=1 .ds x} cb 1 "Advanced C Utilities"
+.if \nX=2 .ds x} cb 1 "" "\&"
+.if \nX=3 .ds x} cb "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4cb\f1 \- C program beautifier
+.SH SYNOPSIS
+\f4cb [\-s] [\-j] [\-l \f2leng\f4] [\-V] [\f2file  ...\f4]\f1
+.SH DESCRIPTION
+The
+\f4cb\fP
+comand reads syntactically correct C programs
+either from its arguments or from the standard input,
+and writes them on the standard output with spacing and indentation
+that display the structure of the C code.
+By default,
+\f4cb\fP
+preserves all user new-lines.
+.PP
+\f4cb\fP
+accepts the following options.
+.TP 12
+\f4\-s\f1
+Write the code in the style of
+Kernighan and Ritchie found in
+.IR "The C Programming Language" .
+.TP 12
+\f4\-j\f1
+Put split lines back together.
+.TP 12
+\f4\-l \f2leng\f1
+Split lines that are longer than
+.IR leng .
+.TP 12
+\f4\-V\f1
+Print on standard error output the version of 
+\f4cb\fP
+invoked.
+.SH "NOTES"
+\f4cb\fP
+treats \f4asm\fP as a keyword.
+.PP
+The format of structure initializations is unchanged by
+\f4cb\fP.
+.P
+Punctuation that is hidden in
+preprocessing directives causes indentation errors.
+.SH "SEE ALSO"
+\f4cc\fP(1)
+.sp .2
+Kernighan, B. W., and Ritchie, D. M.,
+.IR "The C Programming Language",
+Second Edition, Prentice-Hall, 1988
+.\"	@(#)cb.1	6.2 of 9/2/83
+.Ee

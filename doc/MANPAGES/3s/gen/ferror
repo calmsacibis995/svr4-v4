@@ -1,0 +1,56 @@
+'\"macro stdmacro
+.if n .pH g3s.ferror @(#)ferror	40.9 of 5/22/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} ferror 3S "C Development Set" "\&"
+.if \nX=1 .ds x} ferror 3S "C Development Set"
+.if \nX=2 .ds x} ferror 3S "" "\&"
+.if \nX=3 .ds x} ferror "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4ferror\f1, \f4feof\f1, \f4clearerr\f1, \f4fileno\f1 \- stream status inquiries
+.SH SYNOPSIS
+\f4#include <stdio.h>\f1
+.PP
+\f4int ferror (FILE \(**stream);\f1
+.PP
+\f4int feof (FILE \(**stream);\f1
+.PP
+\f4void clearerr (FILE \(**stream);\f1
+.PP
+\f4int fileno (FILE \(**stream);\f1
+.SH DESCRIPTION
+\f4ferror\fP
+returns non-zero when an error has previously occurred reading from
+or writing to
+the named
+.I stream 
+[see \f4intro\fP(3)],
+otherwise zero.
+.PP
+\f4feof\fP
+returns non-zero when
+\f4EOF\f1
+has previously
+been detected reading the named input
+.IR stream ,
+otherwise zero.
+.PP
+\f4clearerr\fP
+resets the error indicator and
+\f4EOF\f1
+indicator to zero on the named
+.IR stream .
+.PP
+\f4fileno\fP
+returns the integer file descriptor
+associated with the named
+.IR stream ;
+see
+\f4open\fP(2).
+.SH SEE ALSO
+\f4open\fP(2),
+\f4fopen\fP(3S), \f4stdio\fP(3S).
+.\"	@(#)ferror.3s	6.3 of 10/20/83
+.Ee

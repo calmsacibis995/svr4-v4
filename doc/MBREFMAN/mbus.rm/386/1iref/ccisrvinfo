@@ -1,0 +1,44 @@
+'\"macro stdmacro
+.if n .pH g1a.ccisrvinfo @(#)ccisrvinfo	40.7 of 5/17/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} ccisrvinfo 1iref "System Administration Utilities" "" "\&"
+.if \nX=1 .ds x} ccisrvinfo 1iref "System Administration Utilities" ""
+.if \nX=2 .ds x} ccisrvinfo 1iref "" "\&"
+.if \nX=3 .ds x} ccisrvinfo "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4ccisrvinfo\f1 \- CCI server information on the communications controller.
+.SH SYNOPSIS
+\f4/usr/lib/cci/ccisrvinfo\f1 [\f4\-p \f2portid\f1] \f2slot-ID\f1
+.SH DESCRIPTION
+\f4ccisrvinfo\f1 displays the maximum number of physical serial lines
+available on the communications controller and the version number of the
+CCI server running on the controller.
+.PP
+Command line options are:
+.PP
+.TP
+\f4\-p \f2n\f1
+Set the Multibus II Transport source Portid to \f2n\f1 instead of the default
+value 0x1ff.
+.PP
+The program sends a \f4CCI_Get_Server_Info\f1 message to the CCI server and prints
+the information obtained in the reply from the server.  The communications
+controller hosting the CCI server is selected by specifying its Multibus II
+iPSB slot-ID. 
+.SH FILES
+\f4/usr/lib/cci/ccisrvinfo\f1
+.SH SEE ALSO
+\f4ccildlist\f1(1iref),
+\f4ccildinfo\f1(1iref),
+\f4ccilinfo\f1(1iref),
+\f4ccisubinfo\f1(1iref),
+\f4cciload\f1(1iref),
+\f4ccibind\f1(1iref),
+\f4cciunbind\f1(1iref),
+\f4ccifree\f1(1iref),
+\f4cciattach\f1(1iref),
+\f4ccidetach\f1(1iref),
+\f4cciswitch\f1(1iref).

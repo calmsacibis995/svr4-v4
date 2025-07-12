@@ -1,0 +1,283 @@
+.if n .pH rn4.chap3 @(#)chap3	40.51
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.de MR 
+.P 
+MR \\$1 
+.P 
+..
+.de MR
+..
+.BK  "Software Notes"
+.CH "File Systems" "3"
+.H 1 "File System Notes"
+.IX istart UNIX System V/386 Release 4, file system notes
+.H 2 "Virtual File System"
+.H 3 "Source Compatibility"
+.IX VFS, source compatibility
+VFS constitutes an extensive rewrite of the
+file system code. No substantial source compatibility 
+should be expected for file system code written prior to SVR4.
+.H 3 "Future Directions"
+.IX VFS, future directions
+Aspects of the VFS interface (particularly the interaction
+between file system code and the Virtual Memory system)
+are subject to change in future releases of the system.
+Absolute compatibility is not guaranteed.
+.H 3 "File System Files"
+.IX VFS, \f4vfstab\fP files
+.IX VFS, \f4mnttab\fP file format
+.IX \f4mnttab\fP(4)
+.IX \f4vfstab\fP(4)
+The information that was contained in \f4/etc/checklist\f1 and
+\f4/etc/fstab\f1 is now found in \f4/etc/vfstab\f1.
+The commands \f4fsck\f1 and \f4ncheck\f1 now use 
+\f4/etc/vfstab\f1 instead of \f4/etc/checklist\f1, and 
+the \f4mount\f1 command now uses \f4/etc/vfstab\f1
+instead of \f4/etc/fstab\f1.
+(See the \f4mnttab\f1 manual page).
+The file is now readable, and contains five fields.
+.H 3 "Switchout"
+.IX VFS, switchout
+The following commands were coded to work on the VFS
+switchout mechanism: \f4clri\f1, \f4dcopy\f1, \f4df\f1, 
+\f4ff\f1, \f4ncheck\f1, \f4fsck\f1,
+\f4fsdb\f1, \f4labelit\f1, \f4mkfs\f1, \f4mount\f1, \f4umount\f1, 
+and \f4volcopy\f1. These commands have a generic module 
+and file system specific modules which
+the generic will call. Commands operating on unmounted file
+systems shall either have the file system type supplied on
+the command line with the \f4-F\f1 option, or an appropriate 
+entry shall be provided by the administrator in \f4/etc/vfstab\f1.
+.H 2 "File System Commands"
+.IX istart file system commands
+.IX \f4clri\fP command, function subsumed by \f4fsdb\fP
+.H 3 "clri Command"
+The \f4clri\f1 command is currently working
+under the switchout mechanism but will be dropped in a future release.
+\f4clri\f1's functionality is being replaced by \f4fsdb\f1 \f4-z\f1.
+.IX \f4fsdb\fP
+.H 3 "fsstat Command"
+The function previously supplied by the \f4fsstat\f1 command
+.IX \f4fsstat\fP command, function subsumed by \f4fsck\fP
+.IX \f4fsck\fP
+is now provided by \f4fsck -m\f1. \f4fsstat\f1 is provided in SVR4,
+but its support will be dropped in a future release.
+.H 3 "fsck Command"
+.IX \f4fsck\f1 command
+For the \f4fsck\f1 command, matching in 
+\f4/etc/vfstab\f1 is performed
+on the \f4fsckdev\f1 entry
+in each line, \f4not\f1 the \f4special\f1 entry.
+This implies that \f4mount /usr\f1 works, 
+but \f4fsck /usr\f1 does not. 
+In fact, \f4fsck <\f4fsckdev\f1 entry for \f4/usr\f1>, works.
+.P
+.IX \f4mountall\f1 code
+The \f4mountall\f1 code has been changed to use 
+\f4fsck -m\f1 to determine if a file system is suitable for mounting.
+.H 3 "Future Directions"
+.IX file system commands, future directions, \f4mount\f1 command
+The format of the \f4mount\f1 command will be replaced 
+in a future release by a new format currently provided under 
+the \f4-v\f1 option.
+.P
+.IX \f4ff\f1 command
+Since the \f4ff\f1 command is more flexible, it will eventually
+supersede \f4ncheck\f1.
+In a future release,
+\f4ff\f1 will subsume all functionality of 
+\f4ncheck\f1 and \f4ncheck\f1 will be removed from the system.
+.H 3 "compress command"
+.MR ul91-04418
+The \f4compress\f1(1) command cannot be used on file names that
+consist of more than 14 characters.  Rename the file and try
+\f4compress\f1 again.
+.IX iend file system commands
+.H 2 "File System Types"
+.H 3 s5
+.IX s5-FSTypes, size checking changes
+The s5 specific \f4fsck\f1 command code has changed for 
+size checking. The "possible file size error" that was suppressed
+with the \f4-q\f1 option no longer exists. If the number of blocks
+in an inode exceeds the file size, the user is asked if the
+excess blocks should be recovered or deleted. If a directory size
+is not a multiple of the directory structure size, the user is
+asked if the size should be set to the address of the
+last byte of the file or left unchanged.
+.P
+.IX \f4mount\f1 command, \f4-r\f1 option
+The option \f4-r\f1 of the s5 specific \f4mount\f1 command is
+provided in SVR4 for compatibility, but the function 
+of this option is executed by the \f4-o ro\f1 option.
+The \f4-r\f1 option will be removed in a future release. 
+.H 3 RFS
+See Chapter 4, \f2Networking Notes\f1, for information on
+Remote File Sharing(RFS) implementation issues.
+.H 3 "proc File System"
+.BL
+.LI
+Utilities that use \f4/proc\f1 may fail if they try to read
+.IX /proc file system, locking utilities
+information about an existing hung process.
+They may sleep waiting to lock a process' information.
+If a particular process is hung, the utility may sleep
+forever.
+This problem is apparent if a user
+executes a utility that does locking in 
+\f4/proc\f1 (such as \f4ps\f1 or
+\f4priocntl\f1), and the system currently has a live process that
+is hung after locking its process information.
+.LI
+.MR dm90-25677
+A full backup of the system (from \f4/\f1) using \f4cpio\f1(1) will
+fail if \f4/proc\f1 is mounted.
+However, use of the \f4backup\f1(1M) command for a complete
+system backup will work.
+Unmount the \f4/proc\f1 file system
+before doing a full system backup with \f4cpio\f1.
+.LE
+.H 3 "UFS"
+.IX \f4ufs\fP-FSType, new \f4ff\fP and \f4fsdb\fP commands
+.IX \f4ufs\fP-FSType, unsupported BSD commands
+.IX \f4ufs\fP-FSType, istart source compatibility
+The UFS file system is compatible with the BSD file system.
+.H 4 "New Commands and Source Compatibility"
+.IX istart new commands, SVR4 BDS, and SunOS
+.IX \f4ff\f1 command 
+A new command, \f4ff\f1, similar to its counterparts
+for the \f4s5\f1 file system, is supported for UFS.
+This command is not contained in SunOS or BSD.
+.P
+Commands should be built from \f4:mkcmd\f1 so that 
+loader options are set to not use dynamic libraries where appropriate.
+.H 4 "mount Command"
+.IX \f4mount\f1 command 
+The BSD "\f4mount\f1 \f4-a\f1" option is 
+not supported in UFS.
+\f4mountall\f1 should be used to mount all file 
+systems (including UFS file systems) specified in 
+\f4/etc/vfstab\f1.
+.IX \f4mount\f1 command, \f4grpid\f1 option
+.IX \f4mount\f1 command, \f4quota\f1 option
+.IX \f4mount\f1 command, \f4noquota\f1 option
+.IX \f4mount\f1 command, \f4noauto\f1 option
+The following options to \f4mount\f1, which 
+are supported in SunOS, are not
+supported for UFS in SVR4: \f4grpid\f1, \f4quota\f1, 
+\f4noquota\f1, \f4noauto\f1.
+.IX \f4mount\f1 command, \f4suid\f1 option
+The "\f4suid\f1" option is not supported; UFS file systems
+are mounted with \f4setuid\f1 execution allowed by default. The
+"\f4nosuid\f1" option is available to mount UFS file systems
+with \f4setuid\f1 execution disallowed.
+.H 4 "df Command"
+.MR ul91-08506
+Disk space reporting on ufs file systems is inaccurate when the file
+system is unmounted.  For example, when you run
+.br
+
+\f4df -t /dev/dsk/\f2???\f1
+
+.fi
+on an unmounted file system, the values of blocks
+used and free reported is only half that reported when the file
+system is mounted.
+.H 4 "fsck Command"
+.IX \f4fsck\f1 command, \f4-p\f1 option
+.BL
+.LI
+The \f4-p\f1 option to \f4fsck\f1 (supported as suboption \f4p\f1 
+under \f4-o\f1) does not work in parallel, as it does in BSD/SunOS.
+.P
+.IX \f4errno\f1 messages, SunOS/BDS
+Unlike SunOS/BSD which uses the errno message \f4EDQUOTA\f1, no 
+special \f4errno\f1 is returned when a user tries
+to exceed quota limits.
+Instead, an \f4errno\f1 is returned that indicates failure 
+due to the lack of space.
+The \f4errno\f1 message \f4ENOSPC\f1 is the most common.
+.LI
+.MR dm91-01776
+Don't use the \f4fsck\f1(1M) command on mounted file systems.
+.LE
+.H 4 "ufsdump/ufsrestore"
+.IX \f4ufsdump\fP, problem
+\f4ufsdump\f1 sometimes reports more blocks written than it 
+actually writes.
+Therefore, the blocks reported by \f4ufsrestore\f1 
+and \f4ufsdump\f1 may be slightly different.
+The dump is executed correctly and should be usable.
+If there is a discrepancy between the two commands on the
+number of blocks in the dump, the number reported 
+by \f4ufsrestore\f1, which should be slightly less than that 
+reported by \f4ufsdump\f1, is correct.
+.H 4 "mkfs and UFS"
+.MR "From awn 6/21/90"
+.IX \f4mkfs\f1 and UFS
+.BL
+.LI
+\f4mkfs\f1 on a UFS file system has a compatibility
+mode that lets you limit the number of inodes
+to 64k.
+This provides compatibility with System V
+Release 3.2 applications that require access to 
+inode numbers.
+This compatibility mode is used by default in \f4disksetup\f1
+or by invoking \f4mkfs\f1 with the \f4-C\f1 option.
+.LI
+.MR ul91-12322
+When you make a ufs file system, the \f4mkfs -F ufs\f1 command
+ignores the \f4:inodes\f1 addendum and calculates the number of
+inodes available to the file system itself.  The result is that the
+file system may have substantially fewer inodes available than it
+requires, with no way to change the number.
+.LE
+.H 4 "MAXFRAG"
+This release of System V/386 Release 4 redefines
+\f4MAXFRAG\f1 to 8.
+Any file systems created on a previous version using
+a different \f4MAXFRAG\f1 should be mounted read-only.
+.H 4 "proto file"
+.IX \f4proto\f1 file
+Neither the BSD \f4mkproto\f1 command nor the 
+s5 \f4mkfs -p\f1 option is supported in UFS.
+.H 4 "ncheck Command"
+.IX \f4ncheck\f1 command, \f4-m\f1 option
+The \f4-m\f1 option works only for inodes specified under the
+\f4-i\f1 option.
+.H 4 "quota Command"
+.IX \f4quota\f1 command
+The \f4quota\f1 command only works correctly when
+all UFS file systems that are currently mounted have a quota file.
+An empty file named quota should be placed at the 
+root of each UFS file system.
+.IX iend new commands, SVR4 BDS, and SunOS
+.H 2 "Symbolic Links-Compatibility SVR4/SunOS"
+.IX symbolic links, SVR4 and SunOS
+The following list references a few of the 
+incompatibilities between SVR4 and SunOS features.
+.H 4 "link System Call"
+.IX SVR4, SunOS, \f4link\f1 system call
+SVR4 allows hard links to symbolic links; SunOS does not.
+.H 4 "chown System Call"
+.IX SVR4, SunOS, \f4chown\f1 system call
+SVR4 \f4chown\f1 follows symbolic links and changes the 
+owner and group of the referenced file; SunOS \f4chown\f1 
+does not follow, but changes the owner and 
+group of the symbolic link.
+.H 4 "lchown Command"
+.IX SVR4, SunOS, \f4lchown\f1 command
+This command is new in SVR4. It is the same as 
+\f4chown\f1 except \f4lchown\f1 
+does not follow a symbolic link. Rather, it 
+changes the owner and group of the symbolic link.
+.H 4 "file Command"
+.IX SVR4, SunOS, \f4file\f1 command
+SVR4 default is to follow and use \f4-h\f1 option 
+to not follow; SunOS default is not follow 
+and use \f4-L\f1 option to follow.
+.H 4 "find Command"
+.IX SVR4, SunOS, \f4find\f1 command
+SVR4 has \f4-follow\f1 option to follow; SunOS does not.
+.IX iend UNIX System V/386 Release 4, file system notes

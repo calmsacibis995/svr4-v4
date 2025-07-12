@@ -1,0 +1,870 @@
+'\"!  tbl | mmdoc
+.if n .pH rn4.chap2 @(#)chap2	40.75
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.de MR
+.P 
+MR 
+\\$1 
+.P 
+..
+.de MR
+..
+.BK "Software Notes"
+.CH "Operating System" "2"
+.H 1 "General Operating System Notes"
+.IX istart UNIX System V/386 Release 4, operating system notes
+.H 2 "Security"
+.IX security, per process resource limits
+The kernel has been changed to re-initialize all 
+per-process resource limits to the system defaults 
+provided in the \f4mtune\f1 file whenever a set-user-ID 
+or set-group-ID file is \f4exec\f1'd.
+.IX \f4exec\fP
+These limits include both the new BSD-style resource limits 
+[see \f4getrlimit\f1(2)] and pre-SVR4 resource limits 
+[see \f4ulimit\f1(2)].
+In all other cases, per-process resource limits are 
+inherited across \f4exec\f1 as they have been in the past.
+This change prevents unprivileged processes from 
+causing privileged processes to fail by depriving 
+them of necessary resources.
+.H 2 "Application Compatibility"
+.IX "applications"
+.IX "application compatibility"
+Features to support many popular applications have been added to Version 4.
+See the "Application Notes" chapter of this document and the
+.BT "Migration and Compatibility Guide"
+for additional information.
+.H 2 "Service Access Facility"
+.IX \f4/etc\fP, \f4ttydefs\fP
+.IX \f4/etc\fP, \f4gettydefs\fP
+.IX \f4/etc\fP, \f4inittab\fP
+.IX \f4ttymon\fP(1M)
+.IX \f4ttydefs\fP
+.IX \f4getty\fP(1M)
+.P
+Under the new Service Access Facility,
+tty ports are now monitored by \f4ttymon\f1, 
+a STREAMS-based tty port monitor that can monitor one or 
+more ports.
+Most of the \f4getty\f1 and \f4uugetty\f1 entries 
+in \f4/etc/inittab\f1 are converted to equivalent 
+entries under \f4ttymon\f1.
+\f4/etc/gettydefs\f1 is augmented by a new formatted file, 
+\f4/etc/ttydefs\f1.
+For compatibility, \f4getty\f1 and \f4uugetty\f1 
+are still provided and are required for use on 
+non-STREAMS drivers. They may not, however, be
+provided in future releases.
+.P
+If the \f4getty/uugetty\f1 configurations in the old 
+\f4/etc/inittab\f1 are desired, a command, \f4ttyconv\f1 
+may be used to convert all \f4getty/uugetty\f1 entries in 
+\f4/etc/inittab\f1 to equivalent setups under \f4ttymon\f1.
+The \f4ttyconv\f1 command also converts 
+\f4/etc/gettydefs\f1 to \f4/etc/ttydefs\f1, 
+if the \f4/etc/gettydefs\f1 file exists on the system.
+The conversion should be done in single user or 
+administration mode as there are many changes 
+to \f4/etc/inittab\f1 entries.
+Direct copying of the old \f4/etc/inittab\f1 file over 
+the new one is not recommended.
+.H 3 "nlsadmin command"
+.MR dm90-34676
+The \f4nlsadmin\f1 command expects a network name (\f2net_spec\f1)
+that contains only alphanumeric characters.  Because this \f2net_
+spec\f1 is, by convention, the device name the listener will listen
+to, if the device name contains non-alphanumeric characters
+\f4nlsadmin\f1 will not accept it.  (For example, for the device
+\f4/dev/iso-tp4\f1, \f2net_spec\f1 \f4iso-tp4\f1 would not be
+accepted by \f4nlsadmin\f1.) Here are three possible workarounds:
+.BL
+.LI
+Link the existing device to a device with a legal name and use
+that name as the \f2net_spec\f1
+.LI
+Use the \f4nlsadmin -N\f2 name\f1
+option to specify a name other than the default for the listener.
+To take advantage of this, however, requires that the listener be
+initialized by \f4sacadm -a\f1 instead of \f4nlsadmin -i\f1.
+.LI
+Change the name of the device to consist of only alphanumerics.
+.LE
+.H 2 "Source Compatibility Issues"
+.H 3 "Header Files"
+.IX header files, pre-SVR4 source compatibility
+Header file enhancements in SVR4 may cause compilation
+errors in pre-SVR4 applications.
+In a small number of cases, header file names may need 
+to be changed, or new header files added to 
+pre-SVR4 program source code.
+.H 4 "Header Files and POSIX Type Definitions"
+.IX POSIX conformance, header files
+.IX istart POSIX type definitions
+The convergence of standards in SVR4 has introduced 
+a number of new names into header files.
+It is inevitable that these new names may cause 
+compilation errors.
+The simplest solution to these errors is 
+to rename conflicting identifiers.
+You should change these identifiers in the application's source,
+not in the header files, to avoid future conflicts.
+.P
+.IX \f4gid_t\f1
+.IX \f4mode_t\f1
+.IX \f4nlink_t\f1
+.IX \f4off_t\f1
+.IX \f4pid_t\f1
+.IX \f4uid_t\f1
+The following table includes some of the new POSIX
+type definitions which have been introduced into SVR4.
+.TB "New POSIX Type Definitions"
+.TS
+center box;
+l	l
+lf4	l.
+Defined Types	Description
+_
+\f4gid_t\f1	Used for group IDs
+\f4mode_t\f1	Used for some file attributes
+\f4nlink_t\f1	Used for link counts.
+\f4off_t\f1	Used for file sizes.
+\f4pid_t\f1	Used for process IDs and process group IDs.
+\f4uid_t\f1	Used for user IDs.
+.TE
+.IX iend POSIX type definitions
+.H 2 "Expanded Fundamental Types (EFT)"
+.IX istart EFT (Expanded Fundamental Types)
+.IX istart Expanded Fundamental Types (EFT)
+This section presents a brief discussion of the     
+expanded size of the fundamental operating 
+system types (EFT) in SVR4 and their possible 
+impact on future application code development.  
+SVR4 provides for the expansion of certain 
+defined kernel data types which were formerly 
+defined as 2-byte types.
+Included in table 2-1 is the list of expanded 
+fundamental data types in SVR4.
+.P
+The resource demands placed on the UNIX operating 
+system by implementation on larger machines, 
+together with the advent of distributed networks 
+and the evolution of the operating system, has 
+contributed to defined data types exceeding their 
+original design capacities of two bytes.
+For example, some UNIX implementations have worked 
+around the shortage of minor device numbers by assigning 
+multiple major numbers to a single driver.  
+This has generated a need to expand the limits 
+on these data types.
+The EFT feature in SVR4 will answer this need.
+.H 3 "The EFT Feature"
+In the kernel and in drivers written to UNIX System V Release 4 driver interfaces,
+the definition for certain UNIX System 
+fundamental data types will be four bytes instead 
+of the two or one as in pre-SVR4 systems.
+We call these defined data types ``fundamental'' because 
+their use pervades most of the UNIX System. 
+.P
+The expansion allows for a period of transition to 
+ensure compatibility for the installed base of 
+UNIX Systems.
+Therefore, in SVR4 the expansion has been 
+designed to offer coexistence between the existing 
+base of software and the present and future 
+need to provide for the support of larger configurations.
+In SVR4, the type expansion provides, in most cases, 
+forward application source and binary compatibility for 
+pre-SVR4 systems.
+STREAMS-based drivers, however, will have to 
+be recompiled.  It is important to mention
+that software affected by EFT will have to be 
+modified to include the POSIX and System V 
+defined \f4typedefs\f1 in table 1 before 
+values for the EFT data types grow beyond the 
+2-byte boundary. 
+See the section
+.ST "Some General Pointers for Applications Development"
+for exceptions.
+.P
+Table 2-2 lists the fundamental data types affected by the 
+EFT expansion along with their underlying type.
+The ``New Name'' column indicates whether the symbolic 
+type name 
+(e.g. \f4uid_t\f1) is new in SVR4.
+.TB "Basic EFT Data Types"        
+.TS
+center, box;
+c| c| c| c
+cf2 | lfCW| afCW| c.
+Type	Name	Underlying Type	New Name 
+=
+uid	uid_t	long	yes
+_
+gid	gid_t	long	yes
+_
+pid	pid_t	long	yes
+_
+ino	ino_t	ulong	no
+_
+dev	dev_t	ulong	no
+_
+mode	mode_t	ulong	yes
+_
+nlink	nlink_t	ulong	yes
+_
+major	major_t	ulong	yes
+_
+minor	minor_t	ulong	yes
+_
+.TE
+.P
+These types will, by default, be four bytes in 
+any application that uses them.
+.P
+As mentioned earlier, however, this does not mean that 
+applications will fail in SVR4.
+For example, if an application were to pass the 
+\f4chown\f1 system call
+a \f2uid\f1 and \f2gid\f1 of type \f4int\f1 
+(or even \f4short\f1),
+everything will still work because the arguments are 
+automatically promoted.
+Also, \f4stat\f1 will continue to work even if you copy 
+a \f2value\f1 from the \f4stat\f1 structure 
+into a \f4short\f1 or an \f4int\f1 because of 
+automatic demotion.
+The reason this works is that, even though the \f2sizes\f1
+of the fields are larger in SVR4, the 
+\f2values\f1 are being kept within    
+their pre-SVR4 limits.
+For example, the \f4stat\f1 structure can now hold 
+a \f2uid\f1 of over 2 billion, but to maintain 
+compatibility with existing binary applications, the 
+maximum value for a \f2uid\f1 will fit in 2-bytes for SVR4.
+See the section
+.ST "Some General Pointers for Applications Development"
+for exceptions to this rule.
+.P
+These restrictions on values will be maintained for at 
+least SVR4, but will be relaxed beyond SVR4 
+(and may be relaxed in certain binary releases, 
+as decided by the source licensee building the binary). 
+Applications are thus strongly urged to start 
+using the new symbolic types.
+For example, every declaration of a \f2uid\f1 
+should be changed from \f4int\f1 or \f4short\f1 
+to \f4uid_t\f1. 
+This will ensure that when these limits are 
+relaxed in the future, application compatibility
+will not be affected.   
+.IX iend EFT (Expanded Fundamental Types)
+.IX iend Expanded Fundamental Types (EFT)
+.H 2 "Some General Pointers for Applications Development"
+In SVR4, although forward \f4a.out\f1 compatibility 
+is supported, there are certain conditions 
+where ``\f4.o\f1'' and source compatibility problems 
+may arise. 
+The following conditions should serve as general
+caveats for applications as well as for kernel functions:
+.BL
+.LI
+The linking of EFT and non-EFT object (\f4.o\f1) 
+files that pass EFT structures, or
+reference EFT structures by address may
+result in a corrupted \f4a.out\f1 file.
+This incompatibility is assumed to be small as it 
+deviates from portable coding standards.
+Since the values for EFT data types
+will remain small in SVR4, parameter passing 
+by value will be unaffected with the
+exception of \f4dev_t\f1 (see below).   
+.LI
+An incompatibility will arise in source code that 
+references EFT data types by
+address (pointers) when their underlying  
+C type has a different size than the object it references.
+For example, the \f4st_uid\f1 field in \f4stat\f1 is 
+a 2-byte integral type in pre-SVR4 systems.
+For EFT, this field is a 4-byte integral
+type. 
+Applications that previously used a short-pointer 
+to reference \f4st_uid\f1 will break when compiled 
+in a SVR4 environment. 
+Although the above coding example is not considered 
+portable, to work in SVR4 the pointer declaration for 
+a \f4uid\f1 object must be to type \f4uid_t\f1.
+.P
+User level source code affected by EFT can defer 
+source migration in SVR4 by defining the feature 
+test macro \f4_STYPES\f1 to obtain the pre-SVR4 
+system definitions (where fundamental data types
+will be small and pre-SVR4 interfaces used). 
+Affected kernel source will have to be changed to work 
+in SVR4.
+.LI
+Although automatic promotion and demotion of arguments is 
+available in SVR4 (for maximum portability 
+during the transition period), formatted data types 
+are not subject to this process.
+For example, the \f4st_dev\f1 data type includes two 
+components, a major and minor device number. 
+In SVR4, the major device number occupies the upper 
+14 bits and minor number lower 18 bits of 
+\f4dev_t\f1.
+If the device number is assigned to a variable two 
+bytes wide, then the device number will be truncated.
+This is the only case in EFT where pass-by-value 
+will be affected when the receiving variable is 
+two bytes wide. 
+This incompatibility is assumed to be small
+since pre-SVR4 source code should already 
+include \f4dev_t\f1 declarations.
+.LI
+The accounting data file has been expanded in SVR4 
+to support EFT data types.
+The accounting flag \f4ac_flag\f1 has been set to 
+\f4AEXPND\f1 to indicate a SVR4 account file.
+This may cause potential incompatibility since some 
+software has dependencies on this file.
+This incompatibility is small and affects mostly 
+administrative programs.
+.LI
+The archive format for \f4cpio\f1 changed in SVR4 to 
+support EFT.
+In SVR4, the \f4cpio\f1 header will default to EFT.
+Consequently, \f4cpio\fP archives that will be restored 
+on pre-SVR4 systems should be created with the 
+\f4-H odc\f1 option [see \f4cpio\fP(1) and \f4cpio\fP(4)].
+.IX \f4cpio\fP(1)
+.LI
+MAXMINOR is a tunable parameter.
+Its default is the same as it is in UNIX System V
+Release 3.2.
+.IX \f4cpio\fP(1)
+.LE
+.AB N
+The implementation of the EFT feature uses static
+function definitions within header files such
+\f4<sys/stat.h>\fP.
+Programs that include such headers and that are
+compiled on pre-SVR4 systems may no longer compile
+successfully on SVR4 systems if one of the affected headers
+is included within the body of the function.
+Furthermore, the inclusion of static functions in
+header files causes a problem for programs that depend
+on the line number information in program objects.
+These programs include \f4sdb\fP, \f4lprof\fP, and
+\f4dis\fP.
+.AC
+.H 2 "STREAMS"
+.IX STREAMS, \f4st_size\fP return
+.H 4 "St_size Field in stat Structure"
+The interpretation of the \f4st_size\f1 field of
+the \f4stat\f1 structure changes in SVR4.
+Since a pipe in System V/386 Release 4 is bi-directional,
+there are two separate data flows.
+Therefore, the size \f4st_size\f1 returned by 
+a call to \f4fstat\f1, where the argument is the file 
+descriptor of either end of the pipe, is the number of 
+bytes available for reading from that file descriptor.
+Previously, the size \f4st_size\f1 returned by
+a call to \f4fstat\f1, where the argument was the write-end
+of a pipe, was the number of bytes available from the
+read end.
+.H 4 STRMSGSZ
+.IX \f4STRMSGSZ\fP parameter
+.P
+Any code written for STREAMS drivers that expected
+\f4STRMSGSZ\f1 to be greater than \f40\f1 should 
+note that \f40\f1 is now a legal value for 
+\f4STRMSGSZ\f1.
+.H 4 "Flush Handling"
+.IX flush handling, pre-SVR4 modules
+Flush handling has been expanded in STREAMS to include
+flushing up to 256 individual bands of data flow.
+Users of pre-SVR4 modules should be aware 
+that a flush message to these modules will flush all 
+of the queues of data. 
+.H 4 RFS
+.IX RFS, STREAMS \f4ioctl\fP system call
+.IX \f4ioctl\fP, named streams over RFS
+The semantics of the STREAMS \f4ioctl\f1 system calls on 
+named streams over RFS are not supported entirely.
+Also note that modules pushed on a named stream over 
+RFS from a remote machine may not give the expected results.
+.H 4 TTY
+.IX STREAMS, terminal subsystem
+.IX terminal line discipline
+The terminal subsystem in SVR4 has been converted 
+to utilize the STREAMS-based character 
+I/O mechanism.
+All the base system drivers including console, 
+asynchronous ports, XT and SXT have been converted to 
+STREAMS.
+The \f4clist\f1 character I/O mechanism, however, has 
+been maintained for compatibility.
+It is strongly recommended that all drivers be converted 
+to STREAMS.
+.P
+The SVR4 terminal subsystem provides SVR3.x, POSIX, 
+BSD and XENIX compatibility.
+SVR3.x and POSIX functionality has been included in 
+the standard terminal line discipline 
+(\f4ldterm\f1) and the drivers.
+There is some BSD functionality such as in \f4word\f1 
+\f4erase\f1, \f4reprint\f1, \f4echo\f1 \f4control\f1 
+that is part of the standard line discipline.
+All of these BSD enhancements are controlled using the 
+flag \f4IEXTEN\fP (which is turned off by default).
+The BSD and XENIX terminal \f4ioctl\f1 compatibility is 
+provided by pushing a specialized line discipline 
+(\f4ttcompat\f1) on the top of the standard line
+discipline.
+While \f4ttcompat\f1 allows most BSD and XENIX terminal 
+applications to be run on SVR4, it is recommended that 
+the applications be converted to POSIX \f4termios\f1 
+or \f4termio\f1 interface to follow the future 
+direction.
+BSD applications should use 
+\f4/usr/ucbinclude/sys/ioctl.h\f1 instead of 
+\f4/usr/include/sys/ioctl.h\f1.
+All other BSD terminal related files are in 
+\f4/usr/include/sys\f1.
+.H 4 ptys
+.IX pseudo-tty subsystem
+Along with hardware STREAMS drivers, SVR4 provides 
+a STREAMS-based pseudo-terminal subsystem (\f4ptys\f1). 
+\f4ptys\f1 are useful for remote login and windowing types 
+of applications.
+.H 3 "Source Compatibility"
+.IX STREAMS, public and private pieces
+Source compatibility has been maintained 
+for STREAMS code.
+Note, however, that with the enabling of EFT, 
+much information has been moved and has changed size.
+The STREAMS source code has also been re-organized into 
+``public'' and ``private'' pieces.
+The header file \f4sys/stream.h\f1 contains the public 
+data structures that modules or drivers may need to 
+reference.
+The header file \f4sys/strsubr.h\f1 contains 
+data structures private to the STREAMS 
+subsystem, which should not be 
+referenced by drivers or modules.
+Likewise, \f4io/stream.c\f1 contains utility 
+routines that a driver or module may call, 
+and \f4os/strsubr.c\f1 contains routines 
+that are private to the STREAMS subsystem, 
+and should \f4not\f1 be called by any driver
+or module.
+.H 2 "Virtual Memory"
+.H 3 "Swap Space Configuration"
+.IX swap space, requirements increased
+.IX memory management, swap space requirements
+A SVR4 system may need more swap space 
+(an increase bounded by the size of real memory) 
+to run a load that ran under SVR3.
+SVR3 attempted to use the sum of real memory and swap space
+for what SVR4 calls anonymous memory (memory without real 
+file backup).
+The SVR3 method had some design holes that could cause 
+a deadlock, but it did allow configurations with 
+large amounts of real memory and small amounts of 
+swap space to run loads whose use of anonymous memory 
+exceeded the available swap space.
+Under SVR4, swap space is required for all anonymous memory
+(which avoids the deadlock issues of SVR3).
+The SVR3 deadlock problems result from pages having 
+both a swap and a real memory association after swap 
+while only being counted once.
+The SVR4 approach avoids this by needing swap space for 
+all anonymous memory. 
+.H 2 "File System Independent Booting"
+.IX boot, file system
+.IX \f4bfs\fP (boot file system), unsupported features
+The BFS file system type does not support
+the following features:
+.DL
+.LI
+\f4mmap\fP
+.LI
+truncate up
+.LI
+symbolic links
+.LI
+\f4volcopy\fP
+.LI
+\f4labelit\fP
+.LI
+\f4mkdir\fP
+.LE
+.H 2 "Signals"
+.IX signals, source compatibility
+.IX signals, future directions
+.H 3 "Source Compatibility"
+The table below lists the new signal types in
+UNIX System V Release 4.
+.TB "New Signals in System V Release 4"
+.TS
+center box;
+l	l
+lf4	l.
+Signals	processes
+_
+\f4SIGSTOP\f1	job control
+\f4SIGTSP\f1
+\f4SIGCONT\f1
+\f4SIGTTIN\f1
+\f4SIGTTOU\f1
+_
+\f4SIGVTALARM\f1	real time
+\f4SIGPROF\f1	
+_
+\f4SIGXCPU\f1	\f4rlimit\f1
+\f4SIGXFSZ\f1
+.TE
+.P
+To prevent these signals from being sent to 
+processes unprepared to accept them, processes by default 
+ignore these signals.
+Processes must explicitly change that disposition 
+in order to receive them.
+.P
+In the future, \f4init\f1 will not cause its 
+children to inherit a \f4SIG_IGN\fP disposition for
+these new signals.
+.MR "added 386newnotes(February delivery)"
+.H 1 "Specific Operating System Notes"
+.MR "from zorb"
+.H 2 "a.out Permissions"
+.MR ul91-12808
+Executable files should have write permissions turned off.
+If you overwrite an executable file (a.out) while it is
+executing, it could cause a core dump.
+.H 2 "format.c"
+.IX format.c command, changes
+The version of \f4format.c\f1 in \f4/usr/src/cmd/format\f1
+contains some code that is specific to ISA (AT platform)
+systems.
+If you wish to use this utility for non-ISA systems or
+are using a different floppy disk driver than
+that in the source (\f4usr/src/arch/at/uts/i386/io/fd.c\f1),
+you should change the \f4ifdef\f1 on line 163
+of \f4format.c\f1 to read:
+.RS
+.sp
+\f4#ifdef AT386\f1
+.RE
+.sp
+.P
+rather than
+.sp
+.RS
+\f4#ifdef i386\f1
+.RE
+.sp
+.P
+The code within this \f4ifdef\f1 makes assumptions 
+about the meaning of bits in the minor number 
+for the device which may not be applicable to all
+implementations.
+.H 2 "/stand"
+.IX \f4/stand\f1
+The system will only boot from a kernel that is in \f4/stand\f1.
+If a kernel pathname is given that is in
+a directory other than \f4/stand\f1, the directory 
+path part of the filename will be removed, and 
+\f4/stand\f1 will be searched for the named 
+kernel (i.e. if a user types 
+\f4/etc/conf/cf.d/unix.mine\f1, what they get 
+is \f4/stand/unix.mine\f1.
+.H 2 "ksh Fails to Interrupt"
+.MR "dm90-21578"
+The following commands typed interactively to \f4ksh\f1 will 
+not allow the user to \f4INTR\f1 out of \f4while\f1. 
+.SP
+.nf
+\f4
+ksh$ ls -1 | while read file
+> do
+> sleep 10
+> done
+<del>  <--------------  INTR keyboard character.
+.fi
+.sp 1    
+\f4ksh\f1 will continue until the script is completed.
+In addition, the command \f4kill 0\f1 will also not work.
+.H 2 "ksh Behavior and MAXUP Process Limits"
+.IX \f4MAXUP\f1
+If you attempt to fork more than \f4MAXUP\f1 processes, the
+\f4shell\f1 will wait until your processes are complete
+before giving you a prompt.
+.H 2 "init Behavior When Executed Inside a vt"
+.MR "ul90-17708"
+.IX \f4init\f1 behavior
+In UNIX System V/386 Release 4.0 you may run administrative 
+commands such as the \f4init\f1(1M) command on terminals other 
+than the integral keyboard/display.
+The \f4init s\f1 command, however, should never be issued from
+within a Virtual Terminal (VT) on the integral console to bring the system down 
+to single user mode.
+If you do, two shell processes will attempt to read from your keyboard 
+simultaneously, causing unpredictable keyboard behavior and
+the confusion of your input.
+.P
+We suggest the following workaround if this problem occurs on
+your terminal.
+When you are prompted to enter the maintenance (\f4root\f1) password, press
+CTRL-D (hold down CTRL and press D) several times until you see the \f4#\f1 prompt.
+At this point, you should be able to administer your system in the single user
+mode.
+.H 2 "Debugging and vt Devices"
+.MR "dm89-35276"
+.MR "dm90-30279"
+.IX debugging and vt devices
+If the kernel debugger is entered manually on an AT (CTL-ALT-D) 
+while the active terminal is a \f4vt\f1 
+(i.e. not \f4/dev/console\f1), the debugger will be
+started but the monitor will not be switched from the
+vt session to the console, leading to the appearance
+of a hung system. 
+Entering a \f4q\f1 and <return> will quit the
+debugger and resume operation of the system.
+Therefore, make sure you are on the real console
+(\f4tty\f1 returns \f4/dev/console\f1) before
+entering the debugger.
+.H 2 "SCSI Devices"
+.MR "ug89-30605"
+.IX SCSI Devices
+.IX cartridge tapes
+.BL
+.LI
+On a SCSI-based system, SCSI cartridge tape 
+software(\f4st01\f1), and the integral cartridge tape 
+driver(\f4qt\f1) use the same device nodes in \f4/dev/rmt\f1 
+which causes \f4idmknod\f1 errors.
+.P
+The workaround involves changing the device name entries.
+After installing the cartridge tape add-on package
+change the device name entries for either
+\f4st01\f1 or \f4qt\f1 by editing the node file
+in \f4/etc/conf/node.d\f1.
+The device names are the second entry in each line of the node file.
+.P
+For example:
+.DS I UI
+rmt/c0s0 ------>  rmt/C0s0
+.DE
+After making the changes, create the new device
+nodes with the command \f4/etc/conf/bin/idmknod\f1.
+.MR ul90-19434
+.LI
+The \f4sysadm\f1 system configuration display (from \f4sysadm\f1
+select \f4machine\f1, \f4configuration\f1, and \f4summary\f1) does
+not display information for SCSI devices.
+.MR ul91-12302
+.LI
+Some SCSI tape controllers (\f4st01\f1) cannot span multi-volume
+\f4cpio\f1 backup tapes.  After the first tape of a multi-volume
+\f4cpio\f1 is complete, instead of prompting for the next tape, the
+\f4cpio\f1 fails with the following error message:
+.SP
+   \f4invalid cpio header\f1
+.MR ul91-13601
+.LI
+You cannot install the UNIX Operating System from a non-SCSI tape if
+the computer is a SCSI system (i.e., has SCSI disks).  Installation
+will abort with a message like the following:
+.SP
+   \f4No SCSI tape drive found -- Installation aborting\f1
+.SP
+The workaround is to install from floppy diskettes.
+Also, once the operating system is installed on such a system, the
+non-SCSI tape drive will not be available.  The reason is that when
+you install the Cartridge Tape Utilities package, the device nodes
+created in \f4/dev/rmt\f1 for the non-SCSI tape are overwritten by
+nodes for the \f4st01\f1 SCSI driver.
+The workaround is to edit the \f4/etc/conf/node.d/qt\f1 file,
+as described in the first note in this section.
+.LE
+.H 2 "Non-rewind Tape Devices"
+.MR ul91-14905
+After you use a non-rewind tape device, the next attempt to access
+the device may fail.  A subsequent attempt to access the device will work.
+For example:
+.SP
+.nf
+\f4
+# ls file1 | cpio -o > /dev/rmt/c0s0n
+10 blocks
+# cpio -i < /dev/rmt/c0s0
+cpio: I/O error on "input", errno 5, I/O error
+1 errors
+# cpio -i < /dev/rmt/c0s0 file1 10 blocks\f1
+.fi
+.H 2 "Simultaneous Cartridge Tape and Floppy use"
+.MR "bl90-15519
+.IX Western Digital, controller
+Systems utilizing the Western Digital WD1007
+Combo Disk Controller may experience floppy
+read/write failures when the floppy access
+occurs during a data transfer to or from an
+integral 1/4" cartridge tape unit.
+.H 2 "Binary Compatibility of SVR3.2 Graphics Applications"
+.IX \f4ioctls\f1 for VGA and enhanced CGA/EGA
+The \f4ioctl\f1s for setting the text/graphics modes for VGA
+modes and enhanced modes for AT&T EGA and CGA hardware
+changed from their values in UNIX System V Release 3.2, as did the value
+of the KDVDCTYPE \f4ioctl\f1.
+Try using the \f4scompat\f1 command with
+the \f4-r3.2\f1 option to run graphics applications written for
+UNIX System V Release 3.2.
+[See the "Applications Notes" chapter of this document or the
+.BT "Migration and Compatibility Guide"
+for more information on the \f4scompat\f1(1) command.]
+The application may also be recompiled and will run
+successfully.
+.H 2 "Mouse Driver Support of Multiple Terminal Assignments"
+.IX mouse driver configuration
+.MR dm91-14404
+If there is a need to assign a mouse to this second console
+device, deconfigure the mouse from the console.
+.H 2 "csh Shell"
+.MR "dm90-31075"
+.BL
+.LI
+The \f4csh\f1 shell will hang on the command:
+.SP
+   \f4$ history | pg\f1
+.SP
+To stop it, you must kill the process from another terminal.
+.LI
+.MR dm91-03706
+If the \f4csh\f1 shell is running with \f4filec\f1 on, \f4csh\f1
+will terminate if a background process is run.  For example,
+\f4
+$ csh
+% set filec
+%ls &
+$     <--- \f2The csh has terminated.\f1
+.LE
+.H 2 "Cannot Cross Layers in shl"
+.IX  layers and \f4loblk\f1
+Do not attempt to display the output of a layer in another layer 
+in shell layers when \f4-loblk\f1 is off.
+.H 2 "Scripts and Relative Symbolic Links"
+.MR "dm90-12783
+.IX scripts and multiple relative symbolic links
+When a script is executed implicitly (e.g. with a
+\f4#!\f1 as the first line in the script), and the command 
+to be executed is a relative symbolic link to 
+a relative symbolic link to the real file, 
+then the script will not be found.
+The work around is to reference absolute symbolic links or hard
+links in scripts.
+.P
+.MR "dm90-12784
+When a shell script is executed implicitly, with a
+\f4#!\f1 as the first line in the script via a
+symbolic link, it will set \f4$0\f1 to the name of
+the actual script rather than the name of the
+symbolic link. This may cause problems with scripts
+that check to see how they are called to determine
+their behavior. Currently, there is no workaround
+for this.
+.H 2 "/usr/ucb/mt Command"
+.MR "dm90-12497
+.IX \f4/usr/ucb/mt\f1
+The \f4/usr/ucb/mt\f1 command does not work.
+\f4mt\f1 is included for reference only.
+We recommend that you build it but remove its entry from the protofile.
+Use \f4/usr/lib/tape/tapecntl\f1 instead.
+.H 2 "setcolor Command"
+.IX setcolor(1)
+.MR ul91-11410
+When you change the background colors on your screen using the
+\f4setcolor -b\f1 command, the new background color is not used on
+the whole screen.  For example, if you use \f4setcolor -b red\f1
+and cat a file to the screen, only those characters that are printed
+will have a red background.
+.H 2 "pr Command"
+.IX pr(1)
+.MR ul91-10804
+Several options to the \f4pr\f1(1) command do
+not work properly.  For example:
+.VL .25i
+.LI "-t"
+In addition to supressing header and footer information,
+this option should inhibit spacing to the end of the page.
+(It currently does not.)
+.LI "-n"
+Prior to Release 4, this option numbered lines of normal
+output, which did not include spacing to the end of the page.
+(Now it does.)
+.LI "-a"
+This option should print multi-column output.  With the
+default column specification of \f41\f1, \f4pr -a\f1 should
+work and produce the same output as \f4pr -a -1\f1.
+(It does not work.)
+.LE
+.H 2 "cpio command"
+.MR ul91-13730
+When \f4cpio -o\f1 is used with the \f4-O\f2 file\f1 option,
+\f2file\f1 is created with improper permissions.  For example:
+.nf
+
+\f4
+# ls file1 | cpio -o -O file1.out
+# ls -l file1.out
+----rwlr--  1 mcn   other  1024 June 25 16:23 file1.out
+\f1
+
+.fi
+The environment for this user should have created the file with
+these permissions:  \f4-rw-r--r--\f1.
+.H 2 "tail command"
+.MR ul91-14203
+The \f4tail +\f2n\f4r \f2filename\f1 command should copy \f2n\f1
+number from the beginning of a file in reverse order.  Instead it
+copies \f2n\f1 number from the end of a file in reverse order.  The
+\f4tail +\f2n\f4r \f2filename\f1 produces the same results as
+\f4tail -\f2n\f4r \f2filename\f1.
+.H 2 "dosformat command"
+.IX dosformat(1)
+.MR ul91-15711
+.BL
+.LI
+The \f4dosformat\f1(1) command should only be run from \f4/sbin/sh\f1 (Bourne) shell.
+When \f4dosformat\f1 is run from \f4ksh\f1, the system begins
+formatting the diskette before it prompts you to insert it.
+If you haven't put the floppy in yet, an I/O error will result.
+.MR ul91-15712
+.LI
+When you format a DOS floppy using \f4dosformat\f1, you should
+identify the device explicitly, instead of using \f4dosformat a:\f1.
+With the \f4a:\f1 option, \f4dosformat\f1 uses \f4/dev/rdsk/f0t\f1
+which results in the floppy being formatted by whatever format is
+currently on the diskette or failing if there is currently no
+format.
+.LE
+.H 2 "Functions Removed from DDI Interface"
+.IX functions removed DDI
+.IX \f4major\f1
+.IX \f4minor\f1
+.IX \f4makedev\f1
+Three functions were removed from the SVR4 DDI interface.
+The functions are \f4major\f1, \f4minor\f1, and \f4makedev\f1.
+The correct functions to use in their place are
+\f4getmajor\f1, \f4getminor\f1 and \f4makedevice\f1, respectively.
+The removed functions are not documented and are not
+included in the final interface.
+The arguments for the removed functions and the
+remaining ones are the same.
+.H 3 "compress Command"
+.MR ul91-04418
+The \f4compress\f1(1) command cannot be used on file names that
+consist of more than 14 characters.
+Rename the file and try \f4compress\f1 again.
+.IX iend UNIX System V/386 Release 4, operating system notes

@@ -1,0 +1,18 @@
+.if n .pH pomindex.386.COLFILE @(#)COLFILE	40.24
+.# This book ("Product Overview and Master Index")
+.# contains the following files,
+.# listed in the order in which they are printed.
+.# Next to each file name is its SCCS delta number.
+.FT
+pomindex/386/titlepage	40.8
+pomindex/386/copyright	40.6
+pomindex/386/MasterToc	40.10
+pomindex/386/Cprod_ovr	40.15
+pomindex/386/prod_ovr	40.3.1.19
+pomindex/386/Cpermuse	40.2
+pomindex/386/permuse	40.9
+pomindex/386/masterPI	40.5
+pomindex/386/Csubuse	40.3
+pomindex/386/subuse	40.9
+pomindex/386/masterSI	40.10
+pomindex/386/refcard	40.8

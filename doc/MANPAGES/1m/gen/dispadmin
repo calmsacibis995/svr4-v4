@@ -1,0 +1,129 @@
+'\"macro stdmacro
+.if n .pH g1a.dispadmin @(#)dispadmin	40.9 of 1/3/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} dispadmin 1M "" "\&"
+.if \nX=1 .ds x} dispadmin 1M ""
+.if \nX=2 .ds x} dispadmin 1M "" "\&"
+.if \nX=3 .ds x} dispadmin "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4dispadmin\f1 \- process scheduler administration
+.SH SYNOPSIS
+\f4dispadmin \-l\f1
+.br
+\f4dispadmin \-c \f2class \f4\-g [\-r \f2res\f4]\f1
+.br
+\f4dispadmin \-c \f2class \f4\-s \f2file\f1
+.SH DESCRIPTION
+The \f4dispadmin\fP command displays or changes
+process scheduler parameters
+while the system is running.
+.P
+The
+\f4\-l\f1
+option lists the scheduler classes currently configured in the system.
+.P
+The
+\f4\-c\f1
+option specifies the class whose parameters are to be displayed or changed.
+Valid
+.I class
+values are
+\f4RT\f1
+for the real-time class and
+\f4TS\f1
+for the time-sharing class.
+.P
+The
+\f4\-g\f1
+option gets the parameters for the specified class and writes them to the standard output.
+Parameters for the real-time class are described on
+\f4rt_dptbl\f1(4).
+Parameters for the time-sharing class are described on
+\f4ts_dptbl\f1(4).
+.P
+When using the \f4\-g\f1 option you may also use the
+\f4\-r\f1
+option to specify a
+resolution to be used for outputting the time quantum values.
+If no resolution is specified, time quantum values are in milliseconds.
+If \f2res\f1 is specified it must be a positive integer between 1
+and 1000000000 inclusive, and the resolution used is the
+reciprocal of \f2res\f1 in seconds.
+For example, a
+.I res
+value of 10 yields time quantum values expressed in tenths of a second; a
+.I res
+value of 1000000 yields time quantum values expressed in microseconds.
+If the time quantum cannot be expressed as an integer in the
+specified resolution, it is rounded up to the next integral
+multiple of the specified resolution.
+.P
+The
+\f4\-s\f1
+option sets scheduler parameters for the specified class using the values in
+.IR file .
+These values overwrite the current values in memory\(emthey become
+the parameters that control scheduling of processes in the specified class.
+The values in
+.I file
+must be in the format output by the
+\f4\-g\f1
+option.
+Moreover, the values must describe a table that is the same size
+(has same number of priority levels) as the table being overwritten.
+Super-user privileges are required in order to use the \f4\-s\f1
+option.
+.P
+The \f4\-g\f1 and \f4\-s\f1 options are mutually exclusive: you
+may not retrieve the table at the same time you are overwriting it.
+.P
+\f4dispadmin\fP does some limited sanity checking on the values
+supplied in \f2file\f1 to verify that they are within their
+required bounds.
+The sanity checking, however, does not attempt to analyze the effect
+that the new values have on the performance of the system.
+Inappropriate values can have a dramatic negative effect on system performance.
+See the
+\f2System Administrator's Guide\fP
+for more information.
+.SH EXAMPLES
+The following command retrieves the current scheduler parameters
+for the real-time class from kernel memory
+and writes them to the standard output.
+Time quantum values are in microseconds.
+.RS 0.5i
+\f4dispadmin \-c RT \-g \-r 1000000\f1
+.RE
+.P
+The following command overwrites the current scheduler parameters for the real-time class
+with the values specified in
+\f4rt.config\f1.
+.RS 0.5i
+\f4dispadmin \-c RT \-s rt.config\f1
+.RE
+.P
+The following command retrieves the current scheduler parameters for
+the time-sharing class from kernel memory
+and writes them to the standard output.
+Time quantum values are in nanoseconds.
+.RS 0.5i
+\f4dispadmin \-c TS \-g \-r 1000000000\f1
+.RE
+.P
+The following command overwrites the current scheduler parameters for the time-sharing class
+with the values specified in
+\f4ts.config\f1.
+.RS 0.5i
+\f4dispadmin \-c TS \-s ts.config\f1
+.RE
+.SH DIAGNOSTICS
+\f4dispadmin\fP prints an appropriate diagnostic message if it
+fails to overwrite the current scheduler parameters due to lack of
+required permissions or a problem with the specified input file.
+.SH "SEE ALSO"
+\f4priocntl\fP(1),
+\f4priocntl\fP(2),
+rt_\f4dptbl\fP(4), ts_\f4dptbl\fP(4)

@@ -1,0 +1,10 @@
+.if n .pH prod_ovr.Cpermuse @(#)Cpermuse	40.2
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1990 AT&T
+.BK "Product Overview and Master Index" "" "" ""   
+.\ACRONYM	                  
+.CH "Permuted Index" "" "Table of Contents" "2"
+.\CHAPTER	2
+.tC 1 "Using the Permuted Index" 2-1  
+.tC 2 "How the Permuted Index Is Created" 2-1  
+.tC 1 "Permuted Index" 2-6

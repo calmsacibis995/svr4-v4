@@ -1,0 +1,33 @@
+'\"macro stdmacro
+.if n .pH g1a.unshare_rfs @(#)unshare_rfs	40.10 of 1/3/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} unshare 1M "RFS" "\&"
+.if \nX=1 .ds x} unshare 1M "RFS"
+.if \nX=2 .ds x} unshare 1M "" "\&"
+.if \nX=3 .ds x} unshare "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4unshare\f1 \- make local RFS resource unavailable for mounting by remote systems
+.SH SYNOPSIS
+\f4unshare\f1
+[\f4\-F \f1rfs]
+{\f2pathname \f1| \f2resourcename\f1}
+.br
+.SH DESCRIPTION
+The
+\f4unshare\fP
+command makes a shared resource unavailable through Remote File Sharing.
+The shared resource must correspond to a line with rfs as the \f2fstype\f1
+in the file \f4/etc/dfs/sharetab\f1.
+The \f4\-F\f1 flag may be omitted if RFS is the first file system type
+listed in the file \f4/etc/dfs/fstypes\f1.
+.SH FILES
+\f4/etc/dfs/dfstab
+.br
+/etc/dfs/fstypes
+.br
+/etc/dfs/sharetab\f1
+.SH "SEE ALSO"
+\f4unshare\fP(1M), \f4share\fP(1M)

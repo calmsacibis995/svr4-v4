@@ -1,0 +1,128 @@
+#	Copyright (c) 1990  Intel Corporation
+#	All Rights Rreserved
+#
+#	INTEL CORPORATION PROPRIETARY INFORMATION
+#
+#	This software is supplied to AT & T under the terms of a license 
+#	agreement with Intel Corporation and may not be copied nor 
+#	disclosed except in accordance with the terms of that agreement.
+#
+
+#ident	"@(#)pkg.pc586:request	1.2.1.2"
+
+#	request script for imxlan586 package installation
+
+trap 'exit 3' 15
+CONFBIN=/etc/conf/bin
+VFILE=/tmp/varfile
+POST_FILE=$1
+rm -rf $VFILE
+
+RETVCHK=0
+VECTMSG=""
+for VECT in 3 4 5 7 9 10 12 15
+do
+	${CONFBIN}/idcheck -v $VECT
+	RETVCHK=$?
+	if [ "$VECT" = 9 ]
+	then
+		VECT=2
+	fi
+	if [ "$RETVCHK" = 0 ]
+	then
+		VECTMSG="${VECT}\t"
+		echo $VECTMSG >> $VFILE 
+		VECTLIST="${VECTLIST} ${VECT}"
+	fi
+done
+if [ "$VECTLIST" = "" ]
+then
+	message "The ${PKG} cannot be installed because interrupts \
+2, 3, 4, 5, 7, 10, 12 and 15 are in use"
+	exit 1
+fi
+
+DEFLT=12
+cat $VFILE | grep $DEFLT > /dev/null
+if [ $? != 0 ]
+then 
+	DEFLT=`sed -n '1p' $VFILE`
+fi
+
+REQINTV=`ckitem -u -l "These interrupts are available" \
+-p "Type the interrupt from the list at which your imxlan586 board is jumpered.\n" -d $DEFLT -f $VFILE` || exit $? 
+
+echo "REQINTV=$REQINTV" >>$POST_FILE || exit 1
+
+rm -rf $VFILE
+# Prompt script to allow the user to select installation
+# of addresses of their choice 
+#
+ADDRESS="
+F00000	F27FFF
+0C0000	0C7FFF
+0C8000	0CFFFF
+0D0000	0D7FFF
+0D8000	0DFFFF
+F00000	F27FFF
+F40000	F67FFF
+F80000	FA7FFF"
+
+INTMSG=""
+for LADR in 0C0000 0C8000 0D0000 0D8000 F00000 F40000 F80000
+do
+	ADDCHK=`echo "$ADDRESS" | grep "$LADR"`
+	set `echo $ADDCHK`
+	LADR=$1
+	HADR=$2
+	${CONFBIN}/idcheck -c -l $LADR -u $HADR > /dev/null 2>&1
+	if [ "$?" = 0 ]
+	then
+		INTMSG="${LADR}\t${HADR}"
+		echo $INTMSG >> $VFILE
+		INTLIST="${INTLIST} ${LADR} ${HADR}"
+	fi
+done
+if [ "$INTLIST" = "" ]
+then
+	message "The ${PKG} cannot be installed because all available \
+I/O addresses are in use"
+	exit 1
+fi
+echo "\n\nThe following is a list of I/O high and low addresses" 
+echo "at which your ethernet controller may be jumpered"
+
+DEFLT=0D0000
+cat $VFILE | grep $DEFLT > /dev/null 
+if [ $? != 0 ]
+then 
+	set `sed -n '1p' $VFILE`
+	DEFLT=$1
+fi
+REQLADD=`ckitem -l "low addr    high addr" \
+-p "Type the menu number for the address you are using.\n" \
+-h "Type the menu number that corresponds to the address at which your imxlan586 \
+board is jumpered." \
+-d $DEFLT -f $VFILE` || exit $?
+
+rm -rf $VFILE
+# Make sure to switch interrupt 2 to 9 so that idbuild will not fail.
+if [ "$REQINTV" = 2 ]
+then
+	REQINTV=9
+fi
+
+ADDCHK=`echo "$ADDRESS" | grep "$REQLADD"`
+set `echo $ADDCHK`
+REQLADD=$1
+REQHADD=$2
+
+echo "REQLADD=$REQLADD" >>$POST_FILE || exit 1
+echo "REQHADD=$REQHADD" >>$POST_FILE || exit 1
+
+if [ -f ${CONFBIN}/S.idbuild ]
+then
+	echo "imx586	Y	4	6	1	$REQINTV	0	0	$REQLADD	$REQHADD" >> /etc/conf/cf.d/sdevice
+fi
+exit 0
+

@@ -1,0 +1,121 @@
+'\"macro stdmacro
+.if n .pH g1.ckint @(#)ckint	40.15 of 5/14/91
+.\" Copyright 1989 AT&T
+.nr X
+.if \nX=0 .ds x} ckint 1 "Essential Utilities" "\&"
+.if \nX=1 .ds x} ckint 1 "Essential Utilities"
+.if \nX=2 .ds x} ckint 1 "Essential Utilities" "\&"
+.if \nX=3 .ds x} ckint "Essential Utilities" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4ckint\f1 \- display a prompt; verify and return an integer value
+.SH SYNOPSIS
+\f4ckint\f1 [ \f4-Q\f1 ] [ \f4-W\f2 width\f1 ] [ \f4-b\f2 base\f1 ] [ \f4-d \f2default\f1 ] [ \f4-h \f2help\f1 ] [ \f4-e \f2error\f1 ]
+.br
+	[ \f4-p\f2 prompt\f1 ] [ \f4-k \f2pid \f1[ \f4-s \f2signal\f1 ] ]
+.P
+\f4errint\f1 [ \f4-W \f2width\f1 ] [ \f4-b \f2base\f1 ] [ \f4-e \f2error\f1 ]
+.P
+\f4helpint\f1 [ \f4-W \f2width\f1 ] [ \f4-b \f2base\f1 ] [ \f4-h \f2help\f1 ]
+.P
+\f4valint\f1 [ \f4-b \f2base\f1 ] \f2input\f1
+.SH DESCRIPTION
+\f4ckint\f1 prompts a user, then validates the response.
+It defines, among other things,
+a prompt message whose response should be an integer, text for help and
+error messages, and a default value
+(which is returned if the user responds with a RETURN).
+.P
+All messages are limited in length to 70 characters and
+are formatted automatically.
+Any white space used in the definition (including newline) is stripped.
+The \f4\-W\f1 option cancels the automatic formatting.
+When a tilde is placed at the beginning or end of a message definition,
+the default text is
+inserted at that point, allowing both custom text and the default text
+to be displayed.
+.P
+If the prompt, help or error message is not defined, the default message
+(as defined under NOTES) is displayed.
+.P
+Three visual tool modules are linked to the \f4ckint\f1 command.
+They are
+\f4errint\f1 (which formats and displays an error message),
+\f4helpint\f1 (which
+formats and displays a help message), and \f4valint\f1 (which validates a
+response).
+These modules should be used in conjunction with FML objects.
+In this instance, the FML object defines the prompt.
+When \f2base\f1 is defined in
+the \f4errint\f1 and \f4helpint\f1 modules, the messages includes the
+expected base of the input.
+.P
+The options and arguments for this command are:
+.TP
+\f4\-Q\f1
+Do not allow quit as a valid response.
+.TP
+\f4-W\f1
+Use \f2width\f1 as the line length for prompt, help, and error messages.
+.TP
+\f4\-b\f1
+The base for input is \f2base\f1.
+Must be 2 to 36, default is 10.
+.TP
+\f4\-d\f1
+The default value is \f2default\f1.
+The default is not validated and so does not have to meet any criteria.
+.TP
+\f4\-h\f1
+The help message is \f2help\fP.
+.TP
+\f4\-e\f1
+The error message is \f2error\f1.
+.TP
+\f4\-p\f1
+The prompt message is \f2prompt\f1.
+.TP
+\f4\-k\f1
+Send process ID \f2pid\f1 a signal if the user chooses
+to abort.
+.TP
+\f4\-s\f1
+When quit is chosen,
+send \f2signal\fP to the process whose \f2pid\fP is specified by the \f4\-k\fP option.
+If no signal is specified, use \f4SIGTERM\fP.
+.TP
+.I input
+Input to be verified against \f2base\f1 criterion.
+.SH EXIT CODES
+.nf
+\f40\f1 = Successful execution
+\f41\f1 = EOF on input
+\f42\f1 = Usage error
+\f43\f1 = User termination (quit)
+.fi
+.SH NOTES
+The default base 10 prompt for \f4ckint\f1 is:
+.P
+.RS
+\f4Enter an integer [?,q]\f1
+.RE
+.P
+The default base 10 error message is:
+.P
+.RS
+\f4ERROR - Please enter an integer.\f1
+.RE
+.P
+The default base 10 help message is:
+.P
+.RS
+\f4Please enter an integer.\f1
+.RE
+.P
+The messages are changed from ``\f5integer\fP'' to ``\f5base \f2base \f5integer\f1''
+if the base is set to a number other than 10.
+.P
+When the quit option is chosen (and allowed), \f4q\f1 is
+returned along with the return code \f43\f1.
+The \f4valint\f1 module does not produce any output.
+It returns zero for success and non-zero for failure.

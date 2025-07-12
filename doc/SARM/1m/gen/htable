@@ -1,0 +1,87 @@
+'\"macro stdmacro
+.if n .pH g1a.htable @(#)htable	40.10 of 5/30/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} htable 1M "Internet Utilities" "\&"
+.if \nX=1 .ds x} htable 1M "Internet Utilities"
+.if \nX=2 .ds x} htable 1M "" "\&"
+.if \nX=3 .ds x} htable "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4htable\f1 \- convert DoD Internet format host table
+.SH SYNOPSIS
+\f4htable\f1
+.I filename
+.SH DESCRIPTION
+\f4htable\f1
+converts a host table in the format specified by
+.SM RFC
+952 to the format used by the network
+library routines.  Three files are created as a result
+of running
+\f4htable\f1:
+\f4hosts\f1,
+\f4networks\f1,
+and
+\f4gateways\f1.
+The
+\f4hosts\f1
+file is used by the
+\f4gethostent\f1(3N)
+routines in mapping host names to addresses.  The
+\f4networks\f1
+file is used by the
+\f4getnetent\f1(3N)
+routines in mapping network names to numbers.
+The
+\f4gateways\f1
+file is used by the routing daemon
+in identifying \(lqpassive\(rq Internet gateways;
+see
+\f4routed\f1(1M)
+for an explanation.
+.LP
+If any of the files
+\f4localhosts\f1,
+\f4localnetworks\f1,
+or
+\f4localgateways\f1
+are present in the current directory,
+the file's contents are prepended to the
+output file without interpretation.
+This allows sites to maintain local aliases and
+entries which are not normally present in the
+master database.
+.LP
+\f4htable\f1
+is best used in conjunction with the
+\f4gettable\f1(1M)
+program which retrieves the DoD Internet host table from a host.
+.SH FILES
+.PD 0
+.TP 20
+\f4localhosts\f1
+.TP
+\f4localnetworks\f1
+.TP
+\f4localgateways\f1
+.PD
+.SH "SEE ALSO"
+\f4gethostent\f1(3N),
+\f4getnetent\f1(3N),
+\f4gettable\f1(1M),
+\f4routed\f1(1M)
+.LP
+Harrenstien, Ken, Mary Stahl, and Elizabeth Feinler,
+.IR "DoD Internet Host Table Specification" ,
+.SM RFC
+952,
+Network Information Center,
+.SM SRI
+International, Menlo Park, Calif.,
+October 1985
+.SH NOTES
+Does not properly calculate the
+\f4gateways\f1
+file.

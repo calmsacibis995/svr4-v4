@@ -1,0 +1,687 @@
+'\"macro stdmacro
+.if n .pH g1.stty @(#)stty	40.6 of 1/3/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+'\"macro stdmacro
+.if n .pH g1.stty @(#)stty	40.15 of 9/28/89
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.nr X
+.if \nX=0 .ds x} stty 1 "Essential Utilities" "\&"
+.if \nX=1 .ds x} stty 1 "Essential Utilities"
+.if \nX=2 .ds x} stty 1 "" "\&"
+.if \nX=3 .ds x} stty "" "" "\&"
+.nr X
+.nr X
+.TH \*(x} "" "386 Computer Only"
+.SH NAME
+\f4stty\f1 \- set the options for a terminal
+.SH SYNOPSIS
+\f4stty [\-a] [\-g] [\f2options\f1] \f1
+.SH DESCRIPTION
+\f4stty\fP
+sets certain terminal \s-1I/O\s+1 options for the device that is
+the current standard input;
+without arguments, it reports the settings of certain options.
+.PP
+In this report, if a character is preceded by a caret (^),
+then the value of that option is the corresponding control character
+(e.g.,
+\f1``\f4^h\f1''
+is
+CTRL-h;
+in this case,
+recall that
+CTRL-h
+is the same as the ``back-space'' key.)
+The sequence
+\f1``\f4^\(aa\f1''
+means that an option has a null value.
+.TP
+\f4\-a\f1
+reports all of the option settings;
+.TP
+\f4\-g\f1
+reports current settings in a form that can be used as an argument
+to another
+\f4stty\fP
+command.
+.PP
+For detailed information about the modes
+listed from Control Modes through Local Modes, below,
+see \f4termio\f1(7).
+For detailed information about the
+modes listed under Hardware Flow Control Modes and
+Clock Modes, below, see \%\f4termiox\f1(7).
+Options described in the Combination Modes section are
+implemented using options in the earlier sections.
+Note that many combinations of options make no sense, but no sanity
+checking is performed.
+Hardware flow control and clock modes options may not be supported
+by all hardware interfaces.
+The options are
+selected from the following:
+.sp
+.PD 0
+.SS Control Modes
+.TP 10m
+\f4parenb\f1 (\f4\-parenb\f1)
+enable (disable) parity generation and detection.
+.TP
+\f4parext\f1 (\f4\-parext)\f1
+enable (disable) extended parity generation and detection for mark and
+space parity.
+.TP
+\f4parodd\f1 (\f4\-parodd\f1)
+select odd (even) parity, or mark (space) parity if \f4parext\fP is enabled.
+.TP
+\f4cs5 cs6 cs7 cs8\f1
+select character size [see\^
+\f4termio\f1(7)].
+.TP
+\f40\f1
+hang up line immediately.
+.TP
+\f4110 300 600 1200 1800 2400 4800 9600 19200 38400\f1
+Set terminal baud rate to the number given, if possible.
+(All speeds are not supported by all hardware interfaces.)
+.TP
+\f4ispeed 0 110 300 600 1200 1800 2400 4800 9600 19200 38400\f1
+Set terminal input baud rate to the number given, if possible.
+(Not all hardware supports split baud rates.)
+If the input
+baud rate is set to zero, the input baud rate will be
+specified by the value of the output baud rate.
+.TP
+\f4ospeed 0 110 300 600 1200 1800 2400 4800 9600 19200 38400\f1
+Set terminal output baud rate to the number given, if possible.
+(Not all hardware supports split baud rates.)
+If the output 
+baud rate is set to zero, the line will be hung up
+immediately. 
+.TP
+\f4hupcl\f1 (\f4\-hupcl\f1)
+hang up (do not hang up)
+connection on last close.
+.TP
+\f4hup\f1 (\f4\-hup\f1)
+same as
+\f4hupcl\f1 (\f4\-hupcl\f1).
+.TP
+\f4cstopb\f1 (\f4\-cstopb\f1)
+use two (one) stop bits per character.
+.TP
+\f4cread\f1 (\f4\-cread\f1)
+enable (disable) the receiver.
+.TP
+\f4clocal\f1 (\f4\-clocal\f1)
+n
+assume a line without (with) modem control.
+.TP
+\f4loblk\f1 (\f4\-loblk\f1)
+block (do not block) output from a non-current layer.
+.sp
+.SS Input Modes
+.TP 10m
+\f4ignbrk\f1 (\f4\-ignbrk\f1)
+ignore (do not ignore) break on input.
+.TP
+\f4brkint\f1 (\f4\-brkint\f1)
+signal (do not signal) \s-1INTR\s+1 on break.
+.TP
+\f4ignpar\f1 (\f4\-ignpar\f1)
+ignore (do not ignore) parity errors.
+.TP
+\f4parmrk\f1 (\f4\-parmrk\f1)
+mark (do not mark) parity errors
+[see \f4termio\f1(7)].
+.TP
+\f4inpck\f1 (\f4\-inpck\f1)
+enable (disable) input parity checking.
+.TP
+\f4istrip\f1 (\f4\-istrip\f1)
+strip (do not strip) input characters to seven bits.
+.TP
+\f4inlcr\f1 (\f4\-inlcr\f1)
+map (do not map) \s-1NL\s+1 to \s-1CR\s+1 on input.
+.TP
+\f4igncr\f1 (\f4\-igncr\f1)
+ignore (do not ignore) \s-1CR\s+1 on input.
+.TP
+\f4icrnl\f1 (\f4\-icrnl\f1)
+map (do not map) \s-1CR\s+1 to \s-1NL\s+1 on input.
+.TP
+\f4iuclc\f1 (\f4\-iuclc\f1)
+map (do not map) upper-case alphabetics to lower case on input.
+.TP
+\f4ixon\f1 (\f4\-ixon\f1)
+enable (disable) \s-1START\s+1/\s-1STOP\s+1
+output control.
+Output is stopped by sending
+STOP control character and started by sending the START control character.
+.TP
+\f4ixany\f1 (\f4\-ixany\f1)
+allow any character (only \s-1DC1\s+1) to restart output.
+.TP
+\f4ixoff\f1 (\f4\-ixoff\f1)
+request that the system send (not send) \s-1START/STOP\s+1 characters
+when the input queue is nearly empty/full.
+.TP
+\f4imaxbel\f1 (\f4\-imaxbel)\f1
+echo (do not echo) BEL when the input line is too long.
+.TP
+\f4KB_ENABLE\f1
+performs a TIOCKBON which allows extended characters to
+be transmitted to the user's program.  Extended characters are
+transmitted as a null byte followed by a second byte
+containing the character's extended code.  [see
+\f4keyboard\f1(7)].
+.TP
+\f4DB_DISABLE\f1
+performs a TIOCKBON which disables the transmission of
+extended characters.  This is the default.  [see
+\f4keyboard\f1]
+.sp
+.SS Output Modes
+.TP 10m
+\f4opost\f1 (\f4\-opost\f1)
+post-process output (do not post-process output; ignore all other output modes).
+.TP
+\f4olcuc\f1 (\f4\-olcuc\f1)
+map (do not map) lower-case alphabetics to upper case on output.
+.TP
+\f4onlcr\f1 (\f4\-onlcr\f1)
+map (do not map) \s-1NL\s+1 to \s-1CR-NL\s+1 on output.
+.TP
+\f4ocrnl\f1 (\f4\-ocrnl\f1)
+map (do not map) \s-1CR\s+1 to \s-1NL\s+1 on output.
+.TP
+\f4onocr\f1 (\f4\-onocr\f1)
+do not (do) output \s-1CR\s+1s at column zero.
+.TP
+\f4onlret\f1 (\f4\-onlret\f1)
+on the terminal \s-1NL\s+1 performs (does not perform) the \s-1CR\s+1 function.
+.TP
+\f4ofill\f1 (\f4\-ofill\f1)
+use fill characters (use timing) for delays.
+.TP
+\f4ofdel\f1 (\f4\-ofdel\f1)
+fill characters are \s-1DEL\s+1s (\s-1NUL\s+1s).
+.TP
+\f4cr0 cr1 cr2 cr3\f1
+select style of delay for carriage returns
+[see \f4termio\f1(7)].
+.TP
+\f4nl0 nl1\f1
+select style of delay for line-feeds
+[see \f4termio\f1(7)].
+.TP
+\f4tab0 tab1 tab2 tab3\f1
+select style of delay for horizontal tabs
+[see \f4termio\f1(7)].
+.TP
+\f4bs0 bs1\f1
+select style of delay for backspaces
+[see \f4termio\f1(7)].
+.TP
+\f4ff0 ff1\f1
+select style of delay for form-feeds
+[see \f4termio\f1(7)].
+.TP
+\f4vt0 vt1\f1
+select style of delay for vertical tabs
+[see \f4termio\f1(7)].
+.sp
+.SS Local Modes
+.TP 10m
+\f4isig\f1 (\f4\-isig\f1)
+enable (disable) the checking of characters against the special control
+characters \s-1INTR\s+1, \s-1QUIT\s+1, and \s-1SWTCH\s+1.
+.TP
+\f4icanon\f1 (\f4\-icanon\f1)
+enable (disable) canonical input (\s-1ERASE\s+1 and \s-1KILL\s+1 processing).
+.TP
+\f4xcase\f1 (\f4\-xcase\f1)
+canonical (unprocessed) upper/lower-case presentation.
+.TP
+\f4echo\f1 (\f4\-echo\f1)
+echo back (do not echo back) every character typed.
+.TP
+\f4echoe\f1 (\f4\-echoe\f1)
+echo (do not echo) \s-1ERASE\s+1 character as
+a backspace-space-backspace string.
+Note: this mode will erase the
+\s-1ERASE\s+1ed character on many \s-1CRT\s+1 terminals;
+however, it does not
+keep track of column position and, as a result, may be confusing
+on escaped characters, tabs, and backspaces.
+.TP
+\f4echok\f1 (\f4\-echok\f1)
+echo (do not echo) \s-1NL\s+1 after \s-1KILL\s+1 character.
+.TP
+\f4lfkc\f1 (\f4\-lfkc\f1)
+the same as
+\f4echok\f1 (\f4\-echok\f1);
+obsolete.
+.TP
+\f4echonl\f1 (\f4\-echonl\f1)
+echo (do not echo) \s-1NL\s+1.
+.TP
+\f4noflsh\f1 (\f4\-noflsh\f1)
+disable (enable) flush after \s-1INTR\s+1, \s-1QUIT\s+1, or \s-1SWTCH\s+1.
+.TP
+\f4stwrap\f1 (\f4\-stwrap\f1)
+disable (enable) truncation of lines longer than 79 characters on a 
+synchronous line.
+(Does not apply to the 3B2.) 
+.TP
+\f4tostop\f1 (\f4\-tostop\f1)
+send (do not send) SIGTTOU when background processes write to the terminal.
+.TP
+\f4echoctl\f1 (\f4\-echoctl)\f1
+echo (do not echo) control characters as ^\f2char\f1, delete as ^?
+.TP
+\f4echoprt\f1 (\f4\-echoprt)\f1
+echo (do not echo) erase character as character is ``erased''.
+.TP
+\f4echoke\f1 (\f4\-echoke)\f1
+BS-SP-BS erase (do not BS-SP-BS erase) entire line on line kill.
+.TP
+\f4flusho\f1 (\f4\-flusho)\f1
+output is (is not) being flushed.
+.TP
+\f4pendin\f1 (\f4\-pendin)\f1
+retype (do not retype) pending input at next read or input character.
+.TP
+\f4iexten\f1 (\f4\-iexten)\f1
+enable (disable) extended (implementation-defined) functions
+for input data.
+.TP
+\f4stflush\f1 (\f4\-stflush\f1)
+enable (disable) flush on a synchronous line after every
+\f4write\fP(2).
+.TP
+\f4stappl\f1 (\f4\-stappl\f1)
+use application mode (use line mode) on a synchronous line.
+.sp
+.SS Hardware Flow Control Modes
+.TP 10m
+\f4rtsxoff\f1 (\f4\-rtsxoff\f1)
+enable (disable) RTS hardware flow control on input.
+.TP
+\f4ctsxon\f1 (\f4\-ctsxon\f1)
+enable (disable) CTS hardware flow control on output.
+.TP
+\f4dtrxoff\f1 (\f4\-dtrxoff\f1)
+enable (disable) DTR hardware flow control on input.
+.TP
+\f4cdxon\f1 (\f4\-cdxon\f1)
+enable (disable) CD hardware flow control on output.
+.TP
+\f4isxoff\f1 (\f4\-isxoff\f1)
+enable (disable) isochronous hardware flow control on input.
+.sp
+.SS Clock Modes
+.TP 10m
+\f4xcibrg\f1
+get transmit clock from internal baud rate generator.
+.TP
+\f4xctset\f1
+get the transmit clock from transmitter signal element timing
+(DCE source) lead, CCITT V.24 circuit 114, EIA-232-D pin 15.
+.TP
+\f4xcrset\f1
+get transmit clock from receiver signal element timing
+(DCE source) lead, CCITT V.24 circuit 115, EIA-232-D pin 17.
+.TP
+\f4rcibrg\f1
+get receive clock from internal baud rate generator.
+.TP
+\f4rctset\f1
+get receive clock from transmitter signal element timing
+(DCE source) lead, CCITT V.24 circuit 114, EIA-232-D pin 15.
+.TP
+\f4rcrset\f1
+get receive clock from receiver signal element timing (DCE
+source) lead, CCITT V.24 circuit 115, EIA-232-D pin 17.
+.TP
+\f4tsetcoff\f1
+transmitter signal element timing clock not provided.
+.TP
+\f4tsetcrbrg\f1
+output receive baud rate generator on transmitter signal element
+timing (DTE source) lead, CCITT V.24 circuit 113, EIA-232-D pin 24.
+.TP
+\f4tsetctbrg\f1
+output transmit baud rate generator on transmitter signal element
+timing (DTE source) lead, CCITT V.24 circuit 113, EIA-232-D pin 24.
+.TP
+\f4tsetctset\f1
+output transmitter signal element timing (DCE source) on transmitter
+signal element timing (DTE source) lead, CCITT V.24 circuit 113,
+EIA-232-D pin 24.
+.TP
+\f4tsetcrset\f1
+output receiver signal element timing (DCE source) on transmitter
+signal element timing (DTE source) lead, CCITT V.24 circuit 113,
+EIA-232-D pin 24.
+.TP
+\f4rsetcoff\f1
+receiver signal element timing clock not provided.
+.TP
+\f4rsetcrbrg\f1
+output receive baud rate generator on receiver signal element timing
+(DTE source) lead, CCITT V.24 circuit 128, no EIA-232-D pin.
+.TP
+\f4rsetctbrg\f1
+output transmit baud rate generator on receiver signal element timing
+(DTE source) lead, CCITT V.24 circuit 128, no EIA-232-D pin.
+.TP
+\f4rsetctset\f1
+output transmitter signal element timing (DCE source) on receiver
+signal element timing (DTE source) lead, CCITT V.24 circuit 128, no
+EIA-232-D pin.
+.TP
+\f4rsetcrset\f1
+output receiver signal element timing (DCE source) on receiver
+signal element timing (DTE source) lead, CCITT V.24 circuit 128, no
+EIA-232-D pin.
+.sp
+.SS Control Assignments
+.TP 10m
+.I "control-character c\^"
+set
+.I control-character\^
+to
+.IR c ,
+where
+.I control-character\^
+is
+\f4ctab\f1,
+\f4discard\f1,
+\f4dsusp\f1,
+\f4eof\f1,
+\f4eol\f1,
+\f4eol2\f1,
+\f4erase\f1,
+\f4intr\f1,
+\f4kill\f1,
+\f4lnext\f1,
+\f4quit\f1,
+\f4reprint\f1,
+\f4start\f1,
+\f4stop\f1,
+\f4susp\f1,
+\f4swtch\f1,
+or
+\f4werase\f1.
+[\f4ctab\f1
+is used with
+\f4\-stappl\f1
+[see \f4termio\f1(7)].
+If
+.I c\^
+is preceded by a caret
+\f1(\f4^\f1) indicating an escape from the shell,
+then the value used is the corresponding control character
+(e.g.,
+\f1``\f4^d\f1''
+is a
+CTRL-d).
+\f1``\f4^?\f1''
+is interpreted as \s-1DEL\s+1 and
+\f1``\f4^\-\f1''
+is interpreted as undefined.
+.TP
+\f2min, time number\f1
+Set the value of \f2min\f1 or \f2time\f1 to \f2number\f1.
+\f2min\f1 and \f2time\f1 
+are used in Non-Canonical mode input processing \%(\f4-icanon\f1).
+.sp
+.SS Combination Modes
+.TP 10m
+\f4evenp\f1 or \f4parity\f1
+enable
+\f4parenb\f1 and \f4cs7\f1.
+.TP
+\f4oddp\f1
+enable
+\f4parenb\f1,
+\f4cs7\f1,
+and
+\f4parodd\f1.
+.TP
+\f4spacep\f1
+enable
+\f4parenb\f1, \f4cs7\f1, and \f4parext\f1.
+.TP
+\f4markp\f1
+enable
+\f4parenb\f1,
+\f4cs7\f1,
+\f4parodd\f1,
+and
+\f4parext\f1.
+.TP
+\f4\-parity\f1, or \f4\-evenp\f1
+disable
+\f4parenb\f1,
+and set
+\f4cs8\f1.
+.TP
+\f4\-oddp\f1
+disable
+\f4parenb\f1 and \f4parodd\f1,
+and set
+\f4cs8\f1.
+.TP
+\f4\-spacep\f1
+disable
+\f4parenb\f1 and \f4parext\f1,
+and set
+\f4cs8\f1.
+.TP
+\f4\-markp\f1
+disable
+\f4parenb\f1, \f4parodd\f1, and \f4parext\f1,
+and set
+\f4cs8\f1.
+.TP
+\f4raw\f1 (\f4\-raw\f1 or \f4cooked\f1)
+enable (disable) raw input and output
+(no \s-1ERASE\s+1, \s-1KILL\s+1, \s-1INTR\s+1, \s-1QUIT\s+1, \s-1SWTCH\s+1,
+\s-1EOT\s+1, or output post processing).
+.TP
+\f4nl\f1 (\f4\-nl\f1)
+unset (set)
+\f4icrnl\f1, \f4onlcr\f1.
+In addition
+\f4\-nl\f1
+unsets
+\f4inlcr\f1, \f4igncr\f1, 
+\f4ocrnl\f1, and \f4onlret\f1.
+.TP
+\f4lcase\f1 (\f4\-lcase\f1)
+set (unset)
+\f4xcase\f1, \f4iuclc\f1, and \f4olcuc\f1.
+.TP
+\f4\s-1LCASE\s+1\f1 (\f4\-\s-1LCASE\s+1\f1)
+same as
+\f4lcase\f1 (\f4\-lcase\f1).
+.TP
+\f4tabs\f1 (\f4\-tabs\f1 or \f4tab3\f1)
+preserve (expand to spaces) tabs when printing.
+.TP
+\f4ek\f1
+reset \s-1ERASE\s+1 and \s-1KILL\s+1 characters back to normal
+\f4#\f1
+and
+\f4@\f1.
+.TP
+\f4sane\f1
+resets all modes to some reasonable values.
+.TP
+\f2term\^\f1
+set all modes suitable for the
+terminal type
+\f2term\fP,
+where
+\f2term\fP
+is one of
+\f4tty33\f1, \f4tty37\f1, \f4vt05\f1, 
+\f4tn300\f1, \f4ti700\f1, or \f4tek\f1.
+.TP
+\f4async\f1
+set normal asynchronous communications where clock settings are
+\f4xcibrg\f1, \f4rcibrg\f1, 
+\f4tsetcoff\f1 and \f4rsetcoff\f1.
+.sp
+.SS Window Size
+.TP 10m
+\f4rows\fP \f2n\fP
+set window size to \f2n\fP rows.
+.TP
+\f4columns\fP \f2n\fP
+set window size to \f2n\fP columns.
+.TP
+\f4ypixels\fP \f2n\fP
+set vertical window size to \f2n\fP pixels.
+.TP
+\f4xpixels\fP \f2n\fP
+set horizontal window size to \f2n\fP pixels.
+.sp
+.SS "Control Modes for the Video Monitor"
+.TP 10
+\f4mono\f1
+Selects the monochrome display as the 
+output device for the console screen.
+This mode is valid if a standard monochrome adapter is present or if
+a standard enhanced graphics adapter (EGA) is present and the EGA is
+currently in one of the monochrome display modes.
+.TP
+\f4color\f1
+Selects a standard regular color display as the 
+output device for the console screen.  This mode is valid if
+a color graphics adapter is present or if a 
+standard EGA is present
+and is currently in one of the color graphics compatibility
+modes.
+.TP
+\f4enhanced\f1
+Selects the enhanced color display as the
+output device for the console screen.
+This mode is valid if an EGA is present and is currently in
+a non-monochrome display mode.
+.TP
+\f4pro\f1
+Selects the professional graphics adapter as the output device
+for the system console. This mode is valid if a VGA is
+present.
+.sp
+.SS "Control Modes for the Attached Display Devices"
+The \f4stty\f1 command supports mode changes for the monochrome display adapter
+(MDA), color graphics adapter (CGA), and enhanced graphics adapter (EGA).
+Support for the video graphics array (VGA) is not provided by the \f4stty\f1
+command.
+.TP 8
+\f4B40x25\f1
+Selects 40x25 (40 columns x 25 rows) black and white text display mode.
+.TP
+\f4C40x25\f1
+Selects 40x25 color text display mode.
+.TP
+\f4B80x25\f1 
+Selects 80x25 black and white text display mode.
+.TP
+\f4C80x25\f1
+Selects 80x25 color display text mode.
+.TP
+\f4BG320\f1
+Selects 320x200 black and white graphics display mode.
+.TP
+\f4CG320\f1
+Selects 320x200 color graphics display mode. 
+.TP
+\f4BG640\f1
+Selects 640x200 black and white graphics display mode.
+.PP
+The keyboard and display control modes above are valid for the following
+configurations:  standard color graphics adapter (CGA) attached to an
+standard regular color display; standard enhanced graphics adapter
+(EGA) (modes 0-6) attached to a standard regular color display or 
+standard enhanced color display.
+.TP 8
+\f4CG320_D\f1
+Selects EGA support for 320x200 graphics display mode (EGA
+mode D).
+.TP
+\f4CG640_E\f1
+Selects EGA support for 640x200 graphics display mode (EGA
+mode E).
+.PP
+The two options above are only valid when an EGA is attached
+to a standard regular color display or an enhanced color
+display.
+.TP 8
+\f4EGAMONO80x25\f1
+Selects EGA Mode 7 as the
+display mode.  Emulates the support provided by the standard
+monochrome display adapter.  
+.TP
+\f4EGAMONOAPA\f1
+Selects EGA support for 640x350 graphics display mode (EGA
+mode F).
+.TP
+\f4ENHMONOAPA2\f1
+Selects EGA mode F*.
+.PP
+The three options above are only valid when
+a standard EGA is attached to an IBM monochrome display.
+.TP 8
+\f4ENH_B40x25\f1
+Selects enhanced EGA support for 40x25 black and white text
+display mode (EGA mode 0*).
+.TP
+\f4ENH_C40x25\f1
+Selects enhanced EGA support for 40x25 color text display mode
+(EGA mode 1*).
+.TP
+\f4ENH_B80x25\f1
+Selects enhanced EGA support for 80x25 black and white
+text display mode (EGA mode 2*).
+.TP
+\f4ENH_C80x25\f1
+Selects enhanced EGA support for 80x25 color text display mode
+(EGA mode 3*).
+.TP
+\f4ENH_B80x43\f1
+Selects enhanced EGA support for 80x43 black and white text
+display mode.
+.TP
+\f4ENH_C80x43\f1
+Selects enhanced EGA support for 80x43 color text display
+mode.
+.TP
+\f4CG640x350\f1
+Selects EGA support for 640x350 graphics display mode (EGA
+mode 10).
+.TP
+\f4ENH_CG640\f1
+Selects EGA mode 10*.
+.PP
+The options above are only valid when a standard EGA
+is attached to a standard enhanced color display.
+.TP 8
+\f4MCAMODE\f1
+Reinitializes the monochrome graphics adapter.
+.TP
+\f4ENH_CGA\f1
+Selects CGA hardware emulation, when an AT&T Super-Vu video
+controller is attached.
+.SH "SEE ALSO"
+\f4tabs\fP(1) in the \f2User's Reference Manual\f1.
+.br
+\f4ioctl\fP(2).
+.br
+\f4termio\fP(7), \f4termiox\fP(7) in the \f2System Administrator's Reference Manual\f1.
+.\"	@(#)stty.1	6.3 of 9/2/83
+.Ee

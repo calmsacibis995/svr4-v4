@@ -1,0 +1,63 @@
+'\"macro stdmacro
+.if n .pH g1.nice @(#)nice	40.4 of 5/17/91
+.\" Copyright 1989 AT&T
+.nr X
+.if \nX=0 .ds x} nice 1 "User Environment Utilities" "\&"
+.if \nX=1 .ds x} nice 1 "User Environment Utilities"
+.if \nX=2 .ds x} nice 1 "" "\&"
+.if \nX=3 .ds x} nice "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4nice\f1 \- run a command at low priority
+.SH SYNOPSIS
+\f4nice\f1
+[
+\f4\-\f2increment\f1
+]
+.I command
+[
+.I arguments
+]
+.SH DESCRIPTION
+\f4nice\fP
+executes
+.I command\^
+with a lower
+.SM CPU
+scheduling priority.
+The
+\f4priocntl\fP
+command is a more general interface to scheduler functions.
+.PP
+The invoking process (generally the user's shell) must be in the time-sharing
+scheduling class.
+The
+.I command
+is executed in the time-sharing class.
+.PP
+If the
+.I increment\^
+argument (in the range 1\-19) is given,
+it is used;
+if not, an increment of 10 is assumed.
+.PP
+The super-user may run commands with
+priority higher than normal
+by using a negative increment,
+e.g.,
+\f4\-\-10\f1.
+.SH SEE ALSO
+\f4nohup\fP(1),
+\f4priocntl\fP(1)
+.br
+\f4nice\fP(2) in the \f2Programmer's Reference Manual\f1
+.SH DIAGNOSTICS
+\f4nice\fP
+returns the exit status of
+.IR command .
+.SH NOTES
+An
+.I increment\^
+larger than 19 is equivalent to 19.
+.\"	@(#)nice.1	6.2 of 9/2/83
+.Ee

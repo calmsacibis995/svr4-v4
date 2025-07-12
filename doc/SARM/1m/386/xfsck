@@ -1,0 +1,315 @@
+'\"macro stdmacro
+.if n .pH g1a.xfschk @(#)xfsck	40.6 of 1/3/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+'\"macro stdmacro
+.if n .pH g1a.xfsck @(#)xfsck	30.4 of 3/14/86
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.if \nX=0 .ds x} xfsck 1M "Base System" "\&"
+.if \nX=1 .ds x} xfsck 1M "Base System"
+.if \nX=2 .ds x} xfsck 1M "" "\&"
+.if \nX=3 .ds x} xfsck "" "" "\&"
+.nr X
+.TH \*(x} "" "386 Computer Only"
+.de us
+\\$1\l'|0\(ul'
+..
+.SH NAME
+\f4xfsck\f1 \- check and repair XENIX filesystems
+.SH SYNOPSIS
+\f4/bin/xfsck\f1
+[\f2options\f1] [\f4filesystem\f1] ...
+.SH DESCRIPTION
+The
+\f4xfsck\f1
+command audits and interactively repairs inconsistent conditions for 
+XENIX
+System V filesystems.
+If the file\%system is consistent,
+then
+\f4xfsck\f1
+reports number of files, number of blocks
+used, and number of blocks free.
+If the filesystem is inconsistent, the 
+user is prompted whether or not
+\f4xfsck\f1 
+should proceed with each correction.
+It should be noted that most corrective actions 
+result in some loss of data.
+The amount and severity of the loss can be determined 
+from the diagnostic output.
+If the user does not have write permission,
+\f1xfsck\f1\^
+defaults to the  action of the
+\f4\-n\f1 
+option.
+.PP
+The 
+\f4xfsck\f1
+options are:
+.TP 8
+\f4\-y\f1
+Assumes a 
+.Q yes
+response to all questions asked by 
+\f4xfsck\f1.
+.TP 8
+\f4\-n\f1
+Assumes a
+.Q no
+response to all questions asked by 
+\f4xfsck\f1.
+This option does not open the filesystem for writing.
+.TP 8
+\f4-s \f2b\^\f1:\f2c\f1
+Ignores the actual free list and unconditionally reconstructs a new
+one by rewriting the super-block of the filesystem.  
+The filesystem 
+.I must 
+be unmounted while this is done.
+.IP
+This
+option allows for creating an optimal free-list organization.
+The following forms are supported:
+.sp .5
+.nf
+'\"	-s3 (\s-1RP\s+1\&03)
+'\"	-s4 (\s-1RP\s+1\&04, \s-1RP\s+1\&05, \s-1RP\s+1\&06)
+\0\0-s
+.sp .5
+\0\0-sBlocks-per-cylinder\fB:\fRBlocks-to-skip (filesystem interleave)
+.fi
+.IP "" 8
+If \f2b\^\f1:\f2c\f1
+is not given, then the values that were used 
+when the filesystem was created are used again.
+If these values were not specified, 
+then the default value is used.
+.TP 8
+\f4-S\f1 
+Conditionally reconstructs the free list.
+This option is similar to
+\%\f4-s\0\f2b\^\f1:\f2c\f1
+above, except that the free list is rebuilt only
+if there are no discrepancies discovered in the
+filesystem. The
+\f4-S\f1
+option forces a ``no'' response to all questions asked by
+\f4xfsck\f1.
+This option is useful for forcing free-list reorganization
+on uncontaminated filesystems.
+.br
+.ne 8
+.TP 8
+\f4-t\f1
+Causes
+\f4xfsck\f1
+to use the next argument as
+the scratch file, if needed. A scratch file is used if
+\f4xfsck\f1
+cannot obtain enough memory to keep its tables.  Without the
+\f4-t\f1 flag,
+\f4xfsck\f1
+prompts the user for the name of the
+scratch file. 
+The file chosen should not be on the
+filesystem being checked. In addition, if the scratch file is not
+a special file or did not already exist, it is removed when
+\f4xfsck\f1
+completes.  Note that if the system has a large hard disk,
+there may not be enough space on another filesystem for the
+scratch file.
+In such cases, if the system has a floppy disk drive, use
+a blank, formatted floppy disk in the floppy disk drive 
+with (for example)
+\f4/dev/fd0\f1
+specified as the scratch file.
+.TP 8
+\f4-q\f1
+Causes
+\f4xfsck\f1 
+to perform a quiet check.
+Does not print size-check messages in Phase 1.  Unreferenced
+.B fifo5
+files are selectively removed.  If
+\f4xfsck\f1
+requires it, counts in the superblock are automatically
+fixed and the free list salvaged.
+.TP 8
+\f4-D\f1
+Checks directories for bad blocks.  Use this option 
+after the system crashes.
+.TP 8
+\f4-f\f1
+Causes
+\f4xfsck\f1
+to perform a fast check.  
+\f4xfsck\f1
+checks block and sizes (Phase 1) and checks the
+free list (Phase 5).  The free list is reconstructed
+(Phase 6), if necessary.
+.TP 8
+\f4\-rr\f1
+Recovers the root filesystem.  The required 
+.I filesystem
+argument must refer to the root filesystem,
+and preferably to the block device (normally 
+\f4/dev/root\f1 ).
+This switch implies 
+\f4-y\f1
+(yes) and overrides 
+\f4-n\f1 
+(no).
+If any modifications to the filesystem are required,
+the system will be automatically shutdown 
+to ensure the integrity of the filesystem.
+.TP 8
+\f4-c\f1
+Causes any supported filesystem to be converted to the
+current filesystem type. The user is prompted to verify
+the conversion of each filesystem, unless the
+\f4-y\f1
+option is specified.  It is recommended that every filesystem 
+be checked with this option
+.I "while unmounted"
+if it is to be used with the current version of XENIX.
+To update the active root filesystem, check it with the 
+following command line:
+.in +5
+.sp .5
+\f4xfsck\ -c\ \-rr\ /dev/root\f1
+.in -5
+.PP
+If no
+.I filesystems\^
+are specified,
+\f4xfsck\f1
+reads a list of default filesystems from
+the 
+\f4/etc/checklist\f1
+file.
+.PP
+.ne 10
+The following are some of the inconsistencies 
+\f4xfsck\f1
+checks for:
+.TP 4
+\- 
+Blocks claimed by more than one inode or the free list
+.TP 4
+\- 
+Blocks claimed by an inode or the free list outside the 
+range of the filesystem
+.TP 4
+\-
+Incorrect link counts
+.TP 4
+\-
+Size checks:
+.br
+.ns
+.IP "" 6
+Incorrect number of blocks
+.br
+Directory size not 16-byte aligned
+.TP 4
+\- 
+Bad inode format
+.br
+.TP 4
+\- 
+Blocks not accounted for anywhere
+.br
+.ne 5
+.TP 4
+\-
+Directory checks:
+.br
+.ns
+.IP "" 6
+File pointing to unallocated inode
+.br
+Inode number out of range
+.br
+.ne 4
+.TP 4
+\-
+Super block checks:
+.br
+.br
+.ns
+.IP "" 6
+More than 65536 inodes
+.br
+More blocks for inodes than there are in the filesystem
+.br
+.ne5
+.TP 4
+\-
+Bad free block list format
+.TP 4
+\-
+Total free block or free inode count incorrect
+.PP
+With the user's consent,
+\f4xfsck\f1
+reconnects orphaned (allocated, but unreferenced) files and
+directories by placing them in the
+.I lost+found 
+directory.  The file's (or directory's) inode number then
+becomes its name.  Note that the 
+.I lost+found
+directory must already exist
+in the root of the filesystem being checked and
+must have empty slots in which entries can be made.
+To create the
+.I lost+found 
+directory, copy a few files to the directory, then remove them
+(before executing
+\f4xfsck\f1 ).
+.SH FILES
+.ta 10
+\f4/etc/checklist\f1	Contains default list of filesystems to check
+.br
+\f4/etc/default/boot\f1	Contains flags for automatic boot control
+.ta
+.PP
+.ne .5i
+.SH "SEE ALSO"
+\f4fsck\f1(1M)
+.SH NOTES
+\f4xfsck\f1
+will not run on a mounted non-raw filesystem, unless the 
+filesystem is the root filesystem, or the 
+\f4\-n\f1 
+option is specified and no writing out of the filesystem
+will take place.  If any such attempt is made, 
+\f4xfsck\f1
+displays a warning and no further
+processing of the filesystem is done for the specified device.
+.PP
+\f4xfsck\f1
+does not support filesystems created under XENIX-86 version 3.0
+because the word order in type
+.I long
+variables has changed.
+However,
+\f4xfsck\f1
+is capable of auditing and repairing XENIX version 3.0 
+filesystems if the word ordering is correct. 
+.PP
+Run
+\f4xfsck\0-rr\0/dev/root\f1
+for the root filesystem. Run
+\f4xfsck\0/dev/??\f1
+on the 
+.I unmounted 
+block device for all other filesystems. 
+.PP
+It is not recommended that users use
+\f4xfsck\f1
+on raw devices. Although
+checking a raw device is almost always faster,
+there is no way to tell if the filesystem is mounted.
+If the filesystem is mounted, cleaning it will almost certainly
+result in an inconsistent superblock. 

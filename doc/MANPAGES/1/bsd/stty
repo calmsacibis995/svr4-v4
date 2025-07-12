@@ -1,0 +1,634 @@
+'\"macro stdmacro
+.if n .pH g1.stty @(#)stty	40.6 of 4/18/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.\" @(#)stty.1 1.5 89/01/30 SMI; 
+'\"macro stdmacro
+.if n .pH g1.stty @(#)stty	40.4 of 12/19/88
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} stty 1 "BSD Compatibility Package" "\&"
+.if \nX=1 .ds x} stty 1 "BSD Compatibility Package""
+.if \nX=2 .ds x} stty 1 "" "\&"
+.if \nX=3 .ds x} stty "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4stty\f1 \- set the options for a terminal
+.SH SYNOPSIS
+\f4/usr/ucb/stty\f1 [ \f4\-a\f1 ] [ \f4\-g\f1 ] [ \f4\-h\f1 ] [ \f2options\fP ]
+.SH DESCRIPTION
+.I stty\^
+sets certain terminal \s-1I/O\s+1 options for the device that is
+the current standard input;
+without arguments, it reports the settings of certain options.
+.PP
+In this report, if a character is preceded by a caret (^),
+then the value of that option is the corresponding \s-1CTRL\s0 character
+(e.g.,
+\f1``\f4^h\f1''
+is
+\f4CTRL\-h;\f1
+in this case,
+recall that
+\f4CTRL\-h\f1
+is the same as the ``back-space'' key.)
+The sequence
+\f1``\f4^\(aa\f1''
+means that an option has a null value.
+.TP
+\f4\-a\f1
+reports all of the option settings;
+.TP
+\f4\-g\f1
+reports current settings in a form that can be used as an argument
+to another
+.I stty\^
+command.
+.TP
+\f4\-h\f1
+reports all the option settings with the control
+characters in an easy to read column format.
+.PP
+Options in the last group are implemented using options in the previous
+groups.
+Note that many combinations of options make no sense, but no sanity
+checking is performed.
+Hardware flow control and clock modes options may not be supported
+by all hardware interfaces.
+The options are
+selected from the following:
+.SS Special Requests
+.TP 10m
+\f4all\f1
+Reports the same option settings as
+\f4stty\f1
+without arguments, 
+but with the control characters in column format.
+.TP
+\f4everything\f1
+Everything
+\f4stty\f1
+knows about is printed.
+Same as
+\f4\-h\f1
+option.
+.TP
+\f4speed\f1
+The terminal speed alone is reported on the standard output.
+.TP
+\f4size\f1
+The terminal (window) sizes are printed on the standard output,
+first rows and then columns.
+This option is only appropriate if currently running a
+window system.
+.IP
+\f4size\f1
+and
+\f4speed\f1
+always report on the settings of
+\f4/dev/tty\f1,
+and always report the settings to the standard
+output.
+.SS Control Modes
+.TP 10m
+\f4parenb\f1 (\f4\-parenb\f1)
+enable (disable) parity generation and detection.
+.TP
+\f4parext\f1 (\f4\-parext)\f1
+enable (disable) extended parity generation and detection for mark and
+space parity.
+.TP
+\f4parodd\f1 (\f4\-parodd\f1)
+select odd (even) parity, or mark (space) parity if \f4parext\fP is enabled.
+.TP
+\f4cs5 cs6 cs7 cs8\f1
+select character size [see
+.IR termio (7)].
+.TP
+\f40\f1
+hang up line immediately.
+.TP
+\f4110 300 600 1200 1800 2400 4800 9600 19200 exta 38400 extb\f1
+Set terminal baud rate to the number given, if possible.
+(All speeds are not supported by all hardware interfaces.)
+.TP
+\f4ispeed 0 110 300 600 1200 1800 2400 4800 9600 19200 exta 38400 extb\f1
+Set terminal input baud rate to the number given, if possible.
+(Not all hardware supports split baud rates.)  If the input
+baud rate is set to zero, the input baud rate will be
+specified by the value of the output baud rate.
+.TP
+\f4ospeed 0 110 300 600 1200 1800 2400 4800 9600 19200 exta 38400 extb\f1
+Set terminal output baud rate to the number given, if possible.
+(Not all hardware supports split baud rates.)  If the 
+baud rate is set to zero, the line will be hung up
+immediately. 
+.TP
+\f4hupcl\f1 (\f4\-hupcl\f1)
+hang up (do not hang up)
+connection on last close.
+.TP
+\f4hup\f1 (\f4\-hup\f1)
+same as
+\f4hupcl\f1 (\f4\-hupcl\f1).
+.TP
+\f4cstopb\f1 (\f4\-cstopb\f1)
+use two (one) stop bits per character.
+.TP
+\f4cread\f1 (\f4\-cread\f1)
+enable (disable) the receiver.
+.TP
+\f4clocal\f1 (\f4\-clocal\f1)
+assume a line without (with) modem control.
+.TP
+\f4loblk\f1 (\f4\-loblk\f1)
+block (do not block) output from a non-current layer.
+.SS Input Modes
+.TP 10m
+\f4ignbrk\f1 (\f4\-ignbrk\f1)
+ignore (do not ignore) break on input.
+.TP
+\f4brkint\f1 (\f4\-brkint\f1)
+signal (do not signal) \s-1INTR\s+1 on break.
+.TP
+\f4ignpar\f1 (\f4\-ignpar\f1)
+ignore (do not ignore) parity errors.
+.TP
+\f4parmrk\f1 (\f4\-parmrk\f1)
+mark (do not mark) parity errors [see
+.IR termio (7)].
+.TP
+\f4inpck\f1 (\f4\-inpck\f1)
+enable (disable) input parity checking.
+.TP
+\f4istrip\f1 (\f4\-istrip\f1)
+strip (do not strip) input characters to seven bits.
+.TP
+\f4inlcr\f1 (\f4\-inlcr\f1)
+map (do not map) \s-1NL\s+1 to \s-1CR\s+1 on input.
+.TP
+\f4igncr\f1 (\f4\-igncr\f1)
+ignore (do not ignore) \s-1CR\s+1 on input.
+.TP
+\f4icrnl\f1 (\f4\-icrnl\f1)
+map (do not map) \s-1CR\s+1 to \s-1NL\s+1 on input.
+.TP
+\f4iuclc\f1 (\f4\-iuclc\f1)
+map (do not map) upper-case alphabetics to lower case on input.
+.TP
+\f4ixon\f1 (\f4\-ixon\f1)
+enable (disable) \s-1START\s+1/\s-1STOP\s+1
+output control.  Output is stopped by sending
+an \s-1STOP\s+1 and started by sending an \s-1START\s+1.
+.TP
+\f4ixany\f1 (\f4\-ixany\f1)
+allow any character (only \s-1START\s+1) to restart output.
+.TP
+\f4decctlq\f1 (\f4\-decctlq\f1)
+Same as
+\f4\-ixany\f1.
+.TP
+\f4ixoff\f1 (\f4\-ixoff\f1)
+request that the system send (not send) \s-1START/STOP\s+1 characters
+when the input queue is nearly empty/full.
+.TP
+\f4tandem\f1 (\f4\-tandem)\f1
+Same as    
+\f4ixoff\f1.
+.TP
+\f4imaxbel\f1 (\f4\-imaxbel)\f1
+echo (do not echo) BEL when the input line is too long.
+.TP
+\f4iexten\f1 (\f4\-iexten)\f1
+enable (disable) extended (implementation-defined) functions
+for input data.
+.SS Output Modes
+.TP 10m
+\f4opost\f1 (\f4\-opost\f1)
+post-process output (do not post-process output; ignore all other output modes).
+.TP
+\f4olcuc\f1 (\f4\-olcuc\f1)
+map (do not map) lower-case alphabetics to upper case on output.
+.TP
+\f4onlcr\f1 (\f4\-onlcr\f1)
+map (do not map) \s-1NL\s+1 to \s-1CR-NL\s+1 on output.
+.TP
+\f4ocrnl\f1 (\f4\-ocrnl\f1)
+map (do not map) \s-1CR\s+1 to \s-1NL\s+1 on output.
+.TP
+\f4onocr\f1 (\f4\-onocr\f1)
+do not (do) output \s-1CR\s+1s at column zero.
+.TP
+\f4onlret\f1 (\f4\-onlret\f1)
+on the terminal \s-1NL\s+1 performs (does not perform) the \s-1CR\s+1 function.
+.TP
+\f4ofill\f1 (\f4\-ofill\f1)
+use fill characters (use timing) for delays.
+.TP
+\f4ofdel\f1 (\f4\-ofdel\f1)
+fill characters are \s-1DEL\s+1s (\s-1NUL\s+1s).
+.TP
+\f4cr0 cr1 cr2 cr3\f1
+select style of delay for carriage returns [see
+.IR termio (7)].
+.TP
+\f4nl0 nl1\f1
+select style of delay for line-feeds [see
+.IR termio (7)].
+.TP
+\f4tab0 tab1 tab2 tab3\f1
+select style of delay for horizontal tabs [see
+.IR termio (7)].
+.TP
+\f4bs0 bs1\f1
+select style of delay for backspaces [see
+.IR termio (7)].
+.TP
+\f4ff0 ff1\f1
+select style of delay for form-feeds [see
+.IR termio (7)].
+.TP
+\f4vt0 vt1\f1
+select style of delay for vertical tabs [see
+.IR termio (7)].
+.SS Local Modes
+.TP 10m
+\f4isig\f1 (\f4\-isig\f1)
+enable (disable) the checking of characters against the special control
+characters \s-1INTR\s+1, \s-1QUIT\s+1, and \s-1SWTCH\s+1.
+.TP
+\f4icanon\f1 (\f4\-icanon\f1)
+enable (disable) canonical input (\s-1ERASE\s+1 and \s-1KILL\s+1 processing).
+.TP
+\f4cbreak\f1 (\f4\-cbreak\f1)
+Same as
+\f4\-icanon\f1.
+.TP
+\f4xcase\f1 (\f4\-xcase\f1)
+canonical (unprocessed) upper/lower-case presentation.
+.TP
+\f4echo\f1 (\f4\-echo\f1)
+echo back (do not echo back) every character typed.
+.TP
+\f4echoe\f1 (\f4\-echoe\f1)
+echo (do not echo) \s-1ERASE\s+1 character as
+a backspace-space-backspace string.  Note: this mode will erase the
+\s-1ERASE\s+1ed character on many \s-1CRT\s+1 terminals;
+however, it does
+.I not\^
+keep track of column position and, as a result, may be confusing
+on escaped characters, tabs, and backspaces.
+.TP
+\f4crterase\f1 (\f4\-crterase\f1)
+Same as
+\f4echoe\f1.
+.TP
+\f4echok\f1 (\f4\-echok\f1)
+echo (do not echo) \s-1NL\s+1 after \s-1KILL\s+1 character.
+.TP
+\f4lfkc\f1 (\f4\-lfkc\f1)
+the same as
+\f4echok\f1 (\f4\-echok\f1);
+obsolete.
+.TP
+\f4echonl\f1 (\f4\-echonl\f1)
+echo (do not echo) \s-1NL\s+1.
+.TP
+\f4noflsh\f1 (\f4\-noflsh\f1)
+disable (enable) flush after \s-1INTR\s+1, \s-1QUIT\s+1, or \s-1SWTCH\s+1.
+.TP
+\f4stwrap\f1 (\f4\-stwrap\f1)
+disable (enable) truncation of lines longer than 79 characters on a synchronous
+line.  (Does not apply to the 3B2.) 
+.TP
+\f4tostop\f1 (\f4\-tostop\f1)
+send (do not send) SIGTTOU for background processes.
+.TP
+\f4echoctl\f1 (\f4\-echoctl)\f1
+echo (do not echo) control characters as ^\f2char\f1, delete as ^?
+.TP
+\f4ctlecho\f1 (\f4\-ctlecho)\f1
+Same as
+\f4echoctl\f1.
+.TP
+\f4echoprt\f1 (\f4\-echoprt)\f1
+echo (do not echo) erase character as character is ``erased''.
+.TP
+\f4prterase\f1 (\f4\-prterase\f1)
+Same as    
+\f4echoprt\f1.
+.TP
+\f4echoke\f1 (\f4\-echoke)\f1
+BS-SP-BS erase (do not BS-SP-BS erase) entire line on line kill.
+.TP
+\f4crtkill\f1 (\f4\-crtkill\f1)
+Same as
+\f4echoke\f1.
+.TP
+\f4flusho\f1 (\f4\-flusho)\f1
+output is (is not) being flushed.
+.TP
+\f4pendin\f1 (\f4\-pendin)\f1
+retype (do not retype) pending input at next read or input character.
+.TP
+\f4stflush\f1 (\f4\-stflush\f1)
+enable (disable) flush on a synchronous line after every
+.IR write (2).
+(Does not apply to the 3B2.)
+.TP
+\f4stappl\f1 (\f4\-stappl\f1)
+use application mode (use line mode) on a synchronous line.
+(Does not apply to the 3B2.)
+.SS Hardware Flow Control Modes
+.TP 10m
+\f4rtsxoff\f1 (\f4\-rtsxoff\f1)
+enable (disable) RTS hardware flow control on input.
+.TP
+\f4ctsxon\f1 (\f4\-ctsxon\f1)
+enable (disable) CTS hardware flow control on output.
+.TP
+\f4dterxoff\f1 (\f4\-dterxoff\f1)
+enable (disable) DTER hardware flow control on input.
+.TP
+\f4rlsdxon\f1 (\f4\-rlsdxon\f1)
+enable (disable) RLSD hardware flow control on output.
+.TP
+\f4isxoff\f1 (\f4\-isxoff\f1)
+enable (disable) isochronous hardware flow control on input.
+.br
+.ne 1i
+.SS Clock Modes
+.TP 10m
+\f4xcibrg\f1
+get transmit clock from internal baud rate generator.
+.TP
+\f4xctset\f1
+get the transmit clock from transmitter signal element timing
+(DCE source) lead, CCITT V.24 circuit 114, EIA-232-D pin 15.
+.TP
+\f4xcrset\f1
+get transmit clock from receiver signal element timing
+(DCE source) lead, CCITT V.24 circuit 115, EIA-232-D pin 17.
+.TP
+\f4rcibrg\f1
+get receive clock from internal baud rate generator.
+.TP
+\f4rctset\f1
+get receive clock from transmitter signal element timing
+(DCE source) lead, CCITT V.24 circuit 114, EIA-232-D pin 15.
+.TP
+\f4rcrset\f1
+get receive clock from receiver signal element timing (DCE
+source) lead, CCITT V.24 circuit 115, EIA-232-D pin 17.
+.TP
+\f4tsetcoff\f1
+transmitter signal element timing clock not provided.
+.TP
+\f4tsetcrc\f1
+output receive clock on transmitter signal element timing (DTE source)
+lead, CCITT V.24 circuit 113, EIA-232-D pin 24, clock source.
+.TP
+\f4tsetcxc\f1
+output transmit clock on transmitter signal element timing (DTE source)
+lead, CCITT V.24 circuit 113, EIA-232-D pin 24, clock source.
+.TP
+\f4rsetcoff\f1
+receiver signal element timing clock not provided.
+.TP
+\f4rsetcrc\f1
+output receive clock on receiver signal element timing (DTE source) lead,
+CCITT V.24 circuit 128, no EIA-232-D pin, clock source.
+.TP
+\f4rsetcxc\f1
+output transmit clock on receiver signal element timing (DTE source)
+lead, CCITT V.24 circuit 128, no EIA-232-D pin, clock source.
+.SS Control Assignments
+.TP 10m
+.I "control-character c\^"
+set
+.I control-character\^
+to
+.IR c ,
+where
+.I control-character\^
+is
+\f4intr\f1,
+\f4quit\f1,
+\f4erase\f1,
+\f4kill\f1,
+\f4eof\f1,
+\f4eol\f1,
+\f4eol2\f1,
+\f4swtch\f1,
+\f4start\f1,
+\f4stop\f1,
+\f4susp\f1,
+\f4dsusp\f1,
+\f4rprnt\f1,
+\f4flush\f1,
+\f4werase\f1,
+\f4lnext\f1
+\f4min\f1,
+\f4ctab\f1,
+\f4time\f1,
+or
+\f4brk\f1)
+\f1[\f4ctab\f1
+is used with
+\f4\-stappl\f1;
+\f4min\f1 and \f4time\f1
+are used with
+\f4\-icanon\f1; see
+.IR termio (7)].
+If
+.I c\^
+is preceded by an (escaped from the shell) caret
+\f1(\f4^\f1),
+then the value used is the corresponding \s-1CTRL\s+1 character
+(e.g.,
+\f1``\f4^d\f1''
+is a
+\f4CTRL\s+1-d\f1);
+\f1``\f4^?\f1''
+is interpreted as \s-1DEL\s+1 and
+\f1``\f4^\-\f1''
+is interpreted as undefined.
+.TP
+\f4line\f2 i\^\f1
+set line discipline to
+.I i\^
+(0 <
+.I i\^
+< 127
+).
+.br
+.ne 1.5i
+.SS Combination Modes
+.TP 10m
+\f4evenp\f1 or \f4parity\f1
+enable
+\f4parenb\f1 and \f4cs7\f1.
+.TP
+\f4\-evenp\f1, or \f4\-parity\f1
+disable
+\f4parenb\f1,
+and set
+\f4cs8\f1.
+.TP
+\f4even\f1 (\f4\-even\f1)
+Same as
+\f4evenp\f1 (\f4\-evenp\f1).
+.TP
+\f4oddp\f1
+enable
+\f4parenb\f1, \f4cs7\f1, and \f4parodd\f1.
+.TP
+\f4\-oddp\f1
+disable
+\f4parenb\f1 and \f4parodd\f1,
+and set
+\f4cs8\f1.
+.TP
+\f4odd\f1 (\f4\-odd\f1)
+Same as 
+\f4oddp\f1 (\f4\-oddp\f1).
+.TP
+\f4spacep\f1
+enable
+\f4parenb\f1, \f4cs7\f1, and \f4parext\f1.
+.TP
+\f4\-spacep\f1
+disable
+\f4parenb\f1 and \f4parext\f1,
+and set
+\f4cs8\f1.
+.TP
+\f4markp\f1
+enable
+\f4parenb\f1, \f4cs7\f1, \f4parodd\f1, and \f4parext\f1.
+.TP
+\f4\-markp\f1
+disable
+\f4parenb\f1, \f4parodd\f1, and \f4parext\f1,
+and set
+\f4cs8\f1.
+.TP
+\f4raw\f1 (\f4\-raw\f1 or \f4cooked\f1)
+enable (disable) raw input and output
+(no \s-1ERASE\s+1, \s-1KILL\s+1, \s-1INTR\s+1, \s-1QUIT\s+1, \s-1SWTCH\s+1,
+\s-1EOT\s+1, or output post processing).
+.TP
+\f4nl\f1 (\f4\-nl\f1)
+unset (set)
+\f4icrnl\f1, \f4onlcr\f1.
+In addition
+\f4\-nl\f1
+unsets
+\f4inlcr\f1, \f4igncr\f1, 
+\f4ocrnl\f1, and \f4onlret\f1.
+.TP
+\f4lcase\f1 (\f4\-lcase\f1)
+set (unset)
+\f4xcase\f1, \f4iuclc\f1, and \f4olcuc\f1.
+.TP
+\f4LCASE\f1 (\f4\-LCASE\f1)
+same as
+\f4lcase\f1 (\f4\-lcase\f1).
+.TP
+\f4tabs\f1 (\f4\-tabs\f1 or \f4tab3\f1)
+preserve (expand to spaces) tabs when printing.
+.TP
+\f4ek\f1
+reset \s-1ERASE\s+1 and \s-1KILL\s+1 characters back to normal
+\f4#\f1
+and
+\f4@\f1.
+.TP
+\f4sane\f1
+resets all modes to some reasonable values.
+.TP
+\f4term\^\f1
+set all modes suitable for the
+terminal type
+.IR term ,
+where
+.I term\^
+is one of
+\f4tty33\f1, \f4tty37\f1, \f4vt05\f1, 
+\f4tn300\f1, \f4ti700\f1, or \f4tek\f1.
+.TP
+\f4async\f1
+set normal asynchronous communications where clock settings are
+\f4xcibrg\f1, \f4rcibrg\f1, 
+\f4tsetcoff\f1 and \f4rsetcoff\f1.
+.TP
+\f4litout (\-litout)\f1
+Disable (enable)
+\f4parenb\f1,
+\f4istrip\f1,
+and
+\f4opost\f1,
+and set
+\f4cs8\f1
+\f1(\f4cs7\f1).
+.TP
+\f4pass8 (\-pass8)\f1
+Disable (enable)
+\f4parenb\f1
+and
+\f4istrip\f1,
+and set
+\f4cs8 \f1
+\f1(\f4cs7\f1).
+.TP
+\f4crt\f1
+Set options for a
+.SM CRT
+\f1(\f4echoe\f1,
+\f4echoctl\f1,
+and, if >= 1200 baud,
+\f4echoke\f1.)
+.TP
+\f4dec\f1
+Set all modes suitable for Digital Equipment Corp.
+operating systems users
+\f1(\f4ERASE\f1,
+\f4KILL\f1,
+and
+\f4INTR\f1
+characters to
+\f4^?\f1,
+\f4^U\f1,
+and
+\f4^C\f1,
+\f4decctlq\f1,
+and
+\f4crt\f1.)
+.br
+.ne 1.5i
+.SS Window Size
+.TP 10m
+\f4rows\fP \f2n\fP
+set window size to \f2n\fP rows.
+.TP
+\f4columns\fP \f2n\fP
+set window size to \f2n\fP columns.
+.TP
+\f4cols\f2 n\f1
+An alias for
+\f4columns\f2 n\f1.\f1
+.TP
+\f4ypixels\fP \f2n\fP
+set vertical window size to \f2n\fP pixels.
+.TP
+\f4xpixels\fP \f2n\fP
+set horizontal window size to \f2n\fP pixels.
+.SH "SEE ALSO"
+\f4tabs\fP(1)
+.P
+\f4ioctl\fP(2) in the \f2Programmer's Reference Manual\f1
+.P
+\f4termio\fP(7), \f4termiox\fP(7) in the \f2System Administrator's Reference Manual\f1
+.\"	@(#)stty.1	6.3 of 9/2/83
+.Ee

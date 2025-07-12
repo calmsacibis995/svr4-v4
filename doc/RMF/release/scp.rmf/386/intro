@@ -1,0 +1,113 @@
+.if n .pH 386.intro @(#)intro	40.17 of 6/11/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+'\"!  tbl | mmdoc
+'\"macro stdmacro
+.\" Copyright 1990 AT&T
+.BK "Read Me First
+.CH "The SCP Product" 1
+.H 1 "Introduction"
+This document helps you get started 
+with the UNIX\(rg System V/386 Release 4 Version 4 Source Code Product (SCP).
+The SCP product contains source code for the operating system;
+it also contains hard-copy and electronic documentation to help you:
+.BL
+.LI
+install and build the source code
+.LI
+install and build the documentation
+.LE
+.H 2 "SCP Software"
+UNIX System V/386 Release 4
+Version 4 is a full release of the operating system.
+Your SCP software consists of the following components:
+.BL
+.LI
+UNIX\(rg System V/386 Release 4 Version 4 Source Code Operating System
+(on cartridge or 9 track tape)
+.LI
+UNIX\(rg System V/386 Release 4 Version 4 Binary Software Sets
+(on cartridge or 9 track tape and/or floppy diskettes)
+.LI
+UNIX\(rg System V/386 Release 4 Version 4 Add-on Packages
+(on floppy diskettes)
+.LE
+See the following documents, hard-copies of which are
+provided with the source code, to get started with
+the SCP software:
+.VL 1.5i 
+.LI "\f2Software Notes\fP"
+Contains the most current release-specific information on the operating system.
+.LI "\f2Source Code Product Build Instructions\fP"
+Contains instructions on
+how to install the operating system source code
+and how to build the operating system.
+.LI "\f2Installation Guide\fP"
+Contains instructions on how to install the Binary Software Sets
+(reference binary),
+as well as an explanation of how the binary product is packaged.
+.LE
+.P
+After installing the documentation from tape, see:
+.VL 1.5i
+.LI "\f2Technology File Mapping Guide\fP"
+Contains a detailed specification of the files that comprise the source code
+product, and a description of the various licensing options.
+.LI "\f2Product Overview and Master Index\fP"
+Contains a high-level description of the operating system's
+capabilities, and master permuted and subject indexes to the documentation.
+.LE
+.H 2 "SCP Documentation"
+Your SCP documentation includes hard copies of several documents,
+as shown in \*(ab, but the bulk of
+it is in electronic form on the following tape:
+.P
+.ce 2
+UNIX\(rg System V/386 Release 4 Version 4
+Machine Readable Documentation Pkg \- Source Code 
+.P
+To install and build the documentation,
+begin by reading the chapter two of this document,
+``The Documentation Tape.''
+After you have installed the Version 4 documentation from tape, see the
+.BT "Source Code Product Machine Readable Documentation Release Notes"
+for release-specific information about the documents provided on
+the tape.
+.NE 18
+.TB "Hard-copy Documents Delivered with SCP" "" ab
+.TS
+center box tab(;);
+cbw(1.5i) |cbw(3.5i)
+liw(1.5i) |lw(3.5i).
+T{
+Document
+T};T{
+Purpose
+T}
+=
+T{
+Installation Guide
+T};T{
+Explains how to install the Binary Software Sets.
+T}
+_
+T{
+Read Me First
+T};T{
+Explains how to extract the documentation files from the
+tape, format, and print the documents.
+T}
+_
+T{
+Software Notes
+T};T{
+Contains release-specific information on enhancements and
+work-arounds for customer-reported bugs.
+T}
+_
+T{
+Source Code Product Build Instructions
+T};T{
+Explains how to extract the
+software files from the tapes and build the operating system.
+T}
+.TE

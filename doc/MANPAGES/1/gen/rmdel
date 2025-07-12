@@ -1,0 +1,81 @@
+'\"macro stdmacro
+.if n .pH g1.rmdel @(#)rmdel	40.13 of 5/22/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} rmdel 1 "Enhanced Programming Utilities" "\&"
+.if \nX=1 .ds x} rmdel 1 "Enhanced Programming Utilities"
+.if \nX=2 .ds x} rmdel 1 "" "\&"
+.if \nX=3 .ds x} rmdel "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4rmdel\f1 \- remove a delta from an \s-1SCCS\s+1 file
+.SH SYNOPSIS
+\f4rmdel\f1
+\f4\-r\f2\s-1SID\s0\f1
+.I files
+.SH DESCRIPTION
+\f4rmdel\fP
+removes the delta specified by the
+.I \s-1SID\s0
+(\s-1SCCS\s0 identification string)
+from each named \s-1SCCS\s+1 file.
+The delta to be removed must be the newest (most recent) delta
+in its branch in the delta chain of each
+named \s-1SCCS\s+1 file.
+In addition,
+the delta specified
+must
+not
+be that of a version being edited for the purpose of
+making a delta; that is, if a
+p-file exists for the named \s-1SCCS\s+1 file
+[see \f4get\fP(1)],
+the delta specified must
+not
+appear in any entry of the
+p-file.
+.PP
+The
+\f4\-r\f1
+option specifies the
+.I \s-1SID\s0
+level of the delta to be removed.
+.PP
+If a directory is named,
+\f4rmdel\fP
+behaves as though each file in the directory were
+specified as a named file,
+except that non-\s-1SCCS\s+1 files
+(last component of the path name does not begin with \f4s.\f1)
+and unreadable files are silently ignored.
+If a name of \f4\-\f1 is given, the standard input is read;
+each line of the standard input is taken to be the name of an \s-1SCCS\s+1 file
+to be processed;
+non-\s-1SCCS\s+1 files and unreadable files are silently ignored.
+.PP
+The rules governing the removal of a delta are as
+follows: if you make a delta and have
+appropriate file permissions,
+you can remove it;
+if you own the file and directory in which a new delta
+file resides, you can remove the delta.
+.SH FILES
+.PD 0
+.TP 10
+x.file
+[See \f4delta\f1(1)]
+.TP 10
+z.file
+[See \f4delta\f1(1)]
+.PD
+.SH "SEE ALSO"
+\f4delta\fP(1),
+\f4get\fP(1),
+\f4help\fP(1),
+\f4prs\fP(1),
+\f4sccsfile\fP(4)
+.SH DIAGNOSTICS
+Use
+\f4help\fP(1)
+for explanations.

@@ -1,0 +1,88 @@
+.if n .pH 386.MasterToc @(#)MasterToc	40.12
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.CH "Table of Contents" "" "" "" Contents
+.BK "Technology File Mapping Guide" "" "" ""   
+.BK "Technology File Mapping Guide" "" "" ""   
+.BK "Technology File Mapping Guide" "" "" ""   
+.BK "Technology File Mapping Guide" "" "" ""   
+.BK "Technology File Mapping Guide" "" "" ""   
+.BK "Technology File Mapping Guide" "" "" ""   
+.BK "Technology File Mapping Guide" "" "" ""   
+.BK "Technology File Mapping Guide" "" "" ""   
+.BK "Technology File Mapping Guide" "" "" ""   
+.BK "Technology File Mapping Guide" "" "" ""   
+.tC 1 "Preface" "" "Table of Contents" ""
+.tC 2 "Preface" 1  
+.tC 1 "Introduction" "" "Table of Contents" "1"
+.tC 2 "Introduction" 1-1  
+.tC 2 "Operating System Kernel" 1-7  
+.tC 2 "System Services & Libraries" 1-19  
+.tC 2 "Shells, Commands & Utilities" 1-22  
+.tC 2 "System Administration Facilities" 1-24  
+.tC 2 "System Compatibility Software" 1-28  
+.tC 2 "Programming Tools & Languages" 1-29  
+.tC 2 "Networking Software Technology" 1-33  
+.tC 2 "Windowing Software Technology" 1-36  
+.tC 1 "Technology Licensing" "" "Table of Contents" "2"
+.tC 2 "Technology Licensing" 2-1  
+.tC 1 "Operating System Kernel" "" "Table of Contents" "3"
+.tC 2 "Virtual File Subsystem" 3-1  
+.tC 2 "STREAMS I/O Subsystem" 3-10  
+.tC 2 "Memory Management Subsystem" 3-19  
+.tC 2 "Process Management Subsystem" 3-25  
+.tC 2 "Kernel Management Subsystem" 3-31  
+.tC 1 "System Services and Libraries" "" "Table of Contents" "4"
+.tC 2 "File System Services" 4-1  
+.tC 2 "I/O System Services" 4-5  
+.tC 2 "Memory System Services" 4-8  
+.tC 2 "Process System Services" 4-10  
+.tC 2 "\f(HBC\fP Language Libraries" 4-16  
+.tC 2 "Real-Time System Facilities" 4-24  
+.tC 2 "Extended Terminal Interface (ETI)" 4-27  
+.tC 1 "Shells, Commands & Utilities" "" "Table of Contents" "5"
+.tC 2 "Encryption Facilities" 5-1  
+.tC 2 "Localization Facilities" 5-2  
+.tC 2 "Command Line Interpreters" 5-4  
+.tC 2 "Core System Utilities" 5-6  
+.tC 2 "Directory & File Management Utilities" 5-9  
+.tC 2 "Text Processing Utilities" 5-11  
+.tC 2 "Printing Facilities" 5-13  
+.tC 2 "Plotting Facilities" 5-15  
+.tC 2 "Character User Interfaces" 5-16  
+.tC 1 "System Administration Facilities" "" "Table of Contents" "6"
+.tC 2 "Operation, Administration & Maintenance (OA&M) Facilities" 6-1  
+.tC 2 "Virtual File System Administration Facilities" 6-4  
+.tC 2 "Backup and Restore Facilities" 6-6  
+.tC 2 "Configuration Management Facilities" 6-7  
+.tC 2 "Software Installation Facilities" 6-10  
+.tC 2 "Device Management Facilities" 6-11  
+.tC 2 "User Management Facilities" 6-13  
+.tC 2 "Service Access Facilities (SAF)" 6-14  
+.tC 2 "System Administration Facilities" 6-16  
+.tC 1 "System Compatibility Software" "" "Table of Contents" "7"
+.tC 2 "Application Compatibility Package" 7-1  
+.tC 2 "BSD System Compatibility Package" 7-3  
+.tC 2 "PC System Compatibility" 7-6  
+.tC 1 "Programming Tools & Languages" "" "Table of Contents" "8"
+.tC 2 "Software Development Facilities" 8-1  
+.tC 2 "C Programming Language Utilities (CPLU)" 8-3  
+.tC 1 "Networking Software Technology" "" "Table of Contents" "9"
+.tC 2 "Basic Networking Facilities" 9-1  
+.tC 2 "Electronic Mail Facilities" 9-3  
+.tC 2 "Network Service Facilities" 9-4  
+.tC 2 "Network Administration Facilities" 9-5  
+.tC 2 "YP Name Server Facilities" 9-7  
+.tC 2 "Resource Sharing Facilities" 9-8  
+.tC 2 "STREAMS Networking Facilities" 9-12  
+.tC 2 "Internet Networking Facilities" 9-14  
+.tC F "Figure 1-1:\0" "Structure and Component Types" 1-4
+.tC F "Figure 1-2:\0" "Kernel Subsystems" 1-16
+.tC F "Table 2-1:\0" "Technology License Legend" 2-4
+.tC F "Table 2-2:\0" "Operating System Kernel" 2-5
+.tC F "Table 2-3:\0" "System Services & Libraries" 2-6
+.tC F "Table 2-4:\0" "Shells, Commands & Utilities" 2-7
+.tC F "Table 2-5:\0" "System Administration Facilities" 2-8
+.tC F "Table 2-6:\0" "System Compatibility Software" 2-9
+.tC F "Table 2-7:\0" "Programming Tools & Languages" 2-10
+.tC F "Table 2-8:\0" "Networking Software Technology" 2-11
+.tC F "Table 2-9:\0" "UNIX System V/386 Documents" 2-13

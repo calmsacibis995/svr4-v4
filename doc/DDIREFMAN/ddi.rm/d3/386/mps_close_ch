@@ -1,0 +1,37 @@
+'\"macro stdmacro
+.if n .pH 386.mps_close_ch @(#)mps_close_ch	40.5 of 7/1/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.nr X
+.if \nX=0 .ds x} mps_close_chan D3D "Multibus II" "DDI" "\&"
+.if \nX=1 .ds x} mps_close_chan D3D "Multibus II" "DDI" "\&"
+.if \nX=2 .ds x} mps_close_chan D3D "" "\&"
+.if \nX=3 .ds x} mps_close_chan "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4mps_close_chan\f1 \- closes a previously opened channel
+.SH SYNOPSIS
+.nf
+\f4#include <sys/mps.h>
+long mps_close_chan (\f2chan\fP)
+long chan;\f1
+.fi
+.SH ARGUMENTS
+.PD 0
+.TP 11
+\f2chan\f1
+Specifies the channel to be closed.
+.SH DESCRIPTION
+This routine is used to close a previously opened channel.
+To close a
+channel a device driver must identify the channel.
+.PP
+The \f4mps_close_chan\f1 routine is synchronous in operation.
+\f4mps_close_chan\f1 fails if a transaction is in progress on the
+specified channel.
+.SH RETURN VALUE
+When \f4mps_close_chan\f1 succeeds it returns 0 (zero).
+When \f4mps_close_chan\f1 fails, it returns \-1 and the channel is not closed.
+.SH LEVEL
+Base or Interrupt
+.SH SEE ALSO
+\f4mps_open_chan\f1(D3D)

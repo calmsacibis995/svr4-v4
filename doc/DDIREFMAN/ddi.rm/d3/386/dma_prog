@@ -1,0 +1,74 @@
+'\"macro stdmacro
+.if n .pH 386.dma_prog @(#)dma_prog	40.2 of 1/7/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.nr X
+.if \nX=0 .ds x} dma_prog D3X "" "DDI" "\&"
+.if \nX=1 .ds x} dma_prog D3X "" "DDI"
+.if \nX=2 .ds x} dma_prog D3X "" "\&"
+.if \nX=3 .ds x} dma_prog "" "" "\&"
+.TH \*(x}
+.IX "\f4dma_prog\fP(D3X)"
+.SH NAME 
+\f4dma_prog\f1 \- program a DMA operation for a subsequent hardware request
+.SH SYNOPSIS
+.nf
+.na
+\f4#include <sys/types.h>
+#include <sys/dma.h>
+.sp 0.5
+\f4int dma_prog(struct dma_cb \f2*dmacbptr\f4, int \f2chan\f4, uchar_t \f2mode\f4);\f1
+.ad
+.fi
+.SH ARGUMENTS 
+.RS 0n 10
+.IP "\f2dmacbptr\f" 10n
+Pointer to the DMA command block specifying the DMA operation.
+.IP "\f2chan\f1" 10n
+DMA channel over which the operation is to take place.
+.IP "\f2mode\f1" 10n
+Specifies whether the caller is willing to sleep waiting
+to allocate desired DMA channel.
+If \f2mode\fP is set to \f4DMA_SLEEP\fP, the caller will sleep
+if necessary until the requested channel becomes available for its use.
+If \f2mode\fP is set to \f4DMA_NOSLEEP\fP, the caller will not sleep,
+but \f4dma_prog\fP will return \f4FALSE\fP if the requested DMA channel
+is not immediately available.
+.RE
+.SH DESCRIPTION 
+\f4dma_prog\f1 programs the DMA channel \f2chan\fP for the 
+operation specified by the DMA command block whose address
+is given by \f2dmacbptr\fP.
+Note that \f4dma_prog\fP does not initiate the DMA transfer.
+Instead, the transfer will be initiated by a subsequent request
+from hardware.
+The hardware request will be recognized only if the channel
+has been enabled via \f4dma_enable\fP(D3X) following the
+call to \f4dma_prog\fP.
+.P
+In order to program the operation, \f4dma_prog\fP requires
+exclusive use of the specified DMA channel.
+The caller may specify, via the \f2mode\fP argument,
+whether or not \f4dma_prog\fP should sleep
+waiting for a busy channel to become available.
+If the specified channel is in use, and \f2mode\fP is set to
+\f4DMA_SLEEP\fP, then \f4dma_prog\fP will sleep until the
+channel becomes available for its use.
+Otherwise, if \f4DMA_NOSLEEP\fP is specified and
+the requested channel is not immediately
+available, \f4dma_prog\fP will not program the channel,
+but will simply return a value of \f4FALSE\fP.
+.SH "RETURN VALUE" 
+\f4dma_prog\f1 returns the value \f4TRUE\fP upon
+successful completion and returns the value \f4FALSE\fP
+otherwise.
+.SH LEVEL
+Base only if \f2mode\fP is set to \f4DMA_SLEEP\fP.
+Base or Interrupt if \f2mode\fP is set to \f4DMA_NOSLEEP\fP.
+.SH NOTES
+May sleep if \f2mode\fP is set to \f4DMA_SLEEP\fP.
+.SH "SEE ALSO" 
+.na
+\f4dma_disable\f1(D3X),
+\f4dma_enable\f1(D3X),
+\f4dma_cb\fP(D4X)
+.ad

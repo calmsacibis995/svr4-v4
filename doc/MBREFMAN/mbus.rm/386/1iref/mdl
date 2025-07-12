@@ -1,0 +1,64 @@
+'\"macro stdmacro
+.if n .pH g1a.mdl @(#)mdl	40.6 of 5/17/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} mdl 1iref "System Administration Utilities" "" "\&"
+.if \nX=1 .ds x} mdl 1iref "System Administration Utilities" ""
+.if \nX=2 .ds x} mdl 1iref "" "\&"
+.if \nX=3 .ds x} mdl "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4mdl\f1 \- read and optionally write the manufacturer's defect list.
+.SH SYNOPSIS
+\f4mdl\f1 [\-\f4N \| \-\f4A\f1] \-\f4c\f1 \f2cylinders\f1 \-\f4d\f1 \f2bytes/sector\f1
+.br
+\-\f4f\f1 \f2heads\f1 \-\f4s\f1 \f2sectors/track\f1 [\-\f4b\f1] \f2character-device\f1
+.SH DESCRIPTION
+The \f4mdl\f1 utility, without a \-\f4A\f1 or \-\f4N\f1 flag, attempts to
+read and display the manufacturer's defect list from the disk specified by
+\f2character-device\f1.  If the defect list is empty, \f4mdl\f1 asks the
+user to add any bad tracks from the printed copy of the list obtained with
+the drive, or reported by the system.  \f4mdl\f1 writes this information to
+the defect list.
+.PP
+This utility may be invoked at any time to view or optionally update the
+defect list.  However, the new or updated defect list becomes effective
+only after \f4hdformat\f1 is executed.
+.PP
+Specify \f2character-device\f1 as a device file from the /dev directory.
+.P
+Return values are 0 for successful completion and non-zero for failure.
+.P
+Command line options are as follows:
+.PP
+.TP
+\-\f4N\f1
+Write a new defect list over one that has become corrupted.
+.TP
+\-\f4A\f1
+Append new information to the defect list.
+.TP
+\-\f4c\f1
+The number of cylinders the drive contains.
+.TP
+\-\f4d\f1
+The bytes per sector or density of the drive.
+.TP
+\-\f4f\f1
+The ammount of fixed heads the drive contains.
+.TP
+\-\f4s\f1
+Sectors per track of the drive.
+.TP
+\-\f4b\f1
+Do the operation in batch mode.  The format of the output to stdout is the
+format of the input to stdin.
+.SH NOTES
+The user can add to the bad track list.  Then, at the next
+\f4hdformat\f1, these additional bad tracks will be hardware mapped to
+alternates rather than software mapped, thus reducing system overhead.
+.SH FILES
+\f4/sbin/mdl\f1
+.br
+\f4/sbin/hdformat\f1

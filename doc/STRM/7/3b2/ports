@@ -1,0 +1,29 @@
+'\"macro stdmacro
+.if n .pH g7.ports @(#)ports	40.8 of 4/26/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} ports 7 "" "\&"
+.if \nX=1 .ds x} ports 7 ""
+.if \nX=2 .ds x} ports 7 "" "\&"
+.if \nX=3 .ds x} ports "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4ports\f1 \- five-line asynchronous communications interface \s-1STREAMS\s0 driver
+.SH DESCRIPTION
+\f4ports\f1 is a \s-1STREAMS\s0-based driver that supports a five-line
+asynchronous interface.
+Each device supports four RS232 lines and one parallel Centronics interface.
+.PP
+When used in conjunction with the \s-1STREAMS\s0 line discipline module,
+\f4ldterm\fP, behavior on all lines is as described in \f4termio\fP(7).
+.SH FILES
+.nf
+\f4/dev/term/??\fP	serial interface
+\f4/dev/lp?\fP		parallel interface
+.fi
+.SH SEE ALSO
+\f4crash\fP(1M), \f4ldterm\fP(7), \f4termio\fP(7)
+.P
+\f2Programmer's Guide: \s-1STREAMS\s0\f1
+.Ee

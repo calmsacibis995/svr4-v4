@@ -1,0 +1,269 @@
+'\"macro stdmacro
+.if n .pH g1.vc @(#)vc	40.10.1.2 of 4/12/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} vc 1 "Source Code Control System Utilities" "\&"
+.if \nX=1 .ds x} vc 1 "Source Code Control System Utilities"
+.if \nX=2 .ds x} vc 1 "" "\&"
+.if \nX=3 .ds x} vc "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4vc\f1 \- version control
+.SH SYNOPSIS
+\f4vc [\-a] [\-t] [\-c\f2char\f4] [\-s] [\f2keyword=value \f1. . . keyword=value\f4]\f1
+.SH DESCRIPTION
+This command is obsolete and will be removed in the next release.
+.PP
+The
+\f4vc\fP
+command copies lines from the standard input to the
+standard output under control of its 
+arguments
+and of
+``control statements''
+encountered in the standard input.
+In the process of performing the copy operation, user-declared
+.IR keyword s
+may be replaced by their string
+.I value\^
+when they appear in plain text and/or
+control statements.
+.PP
+The copying of lines from the standard input to the standard output is
+conditional, based on tests (in control statements)
+of keyword values specified in control statements
+or as
+\f4vc\fP
+command arguments.
+.PP
+A control statement is a single line
+beginning with a control character, except as modified by the
+\f4\-t\f1
+keyletter (see below).
+The default control character is colon (\f4:\f1), except as modified by the
+\f4\-c\f1
+keyletter (see below).
+Input lines beginning with a backslash (\f4\\\f1) followed by a control character
+are not control lines and
+are copied to the standard output with the backslash removed.
+Lines beginning with a backslash followed by a non-control character
+are copied in their entirety.
+.PP
+A keyword
+is composed of 9 or less alphanumerics;
+the first must be alphabetic.
+A value is any
+.SM ASCII
+string that can be created with
+\f4ed\fP;
+a numeric value is an unsigned string of digits.
+Keyword values may not contain blanks or tabs.
+.PP
+Replacement of keywords by values is done whenever a keyword 
+surrounded by control characters is encountered on a version control statement.
+The
+\f4\-a\f1
+keyletter (see below)
+forces replacement of keywords in
+all lines of text.
+An uninterpreted control character may be included in a value by preceding
+it with \f4\\\f1.
+If a literal \f4\e\f1 is desired, then it too must be preceded by \f4\e\f1.
+.P
+The following options are valid:
+.TP 12
+\f4\-a\f1 
+Forces
+replacement of keywords surrounded by control characters with their assigned
+value in
+all text lines and not just in
+\f4vc\fP
+statements.
+.TP 12
+\f4\-t\f1 
+All characters from the beginning of a line up to and
+including the first
+tab
+character are ignored for the purpose of detecting a
+control statement.
+If a control statement is found, all characters up to and
+including the
+tab
+are discarded.
+.TP 12
+\f4\-c\f2char\f1
+Specifies a control character to be used in place of the ``\f4:\f1'' default.
+.TP 12
+\f4\-s\f1 
+Silences warning messages (not error) that are normally printed on the
+diagnostic output.
+.PP
+\f4vc\fP recognizes the following version control statements:
+.TP 
+\f4:dcl \f2keyword\f1[\f4, \f1...\f4, \f2keyword\f1]
+Declare keywords.  All keywords must be declared.
+.TP
+\f4:asg \f2keyword\f4=\f2value\f1
+Assign values to keywords.  An
+\f4asg\fP
+statement overrides the assignment for the corresponding keyword on the
+\f4vc\fP
+command line and all previous
+\f4asg\fP statements
+for that keyword.
+Keywords that are declared but are not assigned values
+have null values.
+.TP 
+\f4:if \f2condition\f1
+.nf
+.ps +2
+\&.\|.\|.
+.ps
+.fi
+.PD 0
+.TP
+\f4:end\f1
+.br
+Skip lines of the standard input.
+If the condition is true,
+all lines between the
+\f4if\fP
+statement and
+the matching
+\f4end\fP
+statement are
+copied to the standard output.
+If the condition is false, all intervening lines are discarded, including
+control statements.
+Note that intervening
+\f4if\fP
+statements and matching
+\f4end\fP
+statements are recognized solely for the purpose of
+maintaining the proper
+\f4if-end\fP
+matching.
+.PD
+.IP
+The syntax of a condition is:
+.RS 12
+.ft 2
+.TP 10
+<cond>
+\f1::=  [ ``\f4not\fP'' ] \f2<or>
+.PD 0
+.TP
+<or>
+\f1::=  \f2<and> \(or <and> \f1``\f4\(or\fP'' \f2<or>
+.TP
+<and>
+\f1::=  \f2<exp> \(or <exp> \f1``\f4&\fP'' \f2<and>
+.TP
+<exp>
+\f1::=  ``\f4(\fP'' \f2<or> \f1``\f4)\f1'' \f2\(or <value> <op> <value>
+.TP
+<op>
+\f1::=  ``\f4=\fP'' \f2\(or \f1``\f4!=\fP'' \f2\(or ``\f4<\fP'' \(or \f1``\f4>\f1''\f2
+.TP
+<value>
+\f1::=  \f2<arbitrary \s-1ASCII\s0 string> \(or <numeric string>
+.PD
+.RE
+.IP "" 6
+The available operators and their meanings are:
+.RS 12
+.TP 10
+\f4=\fP
+equal
+.PD 0
+.TP
+\f4!=\fP
+not equal
+.TP
+\f4&\fP
+and
+.TP
+\f4\(or\fP
+or
+.TP
+\f4>\fP
+greater than
+.TP
+\f4<\fP
+less than
+.TP
+\f4( )\fP
+used for logical groupings
+.TP
+\f4not\fP
+may only occur immediately after the \f4if\^\fP, and
+when present, inverts the value of the
+entire condition
+.PD
+.RE
+.IP "" 6
+The \f4>\f1 and \f4<\f1 operate only on unsigned integer values
+(for example, \f4: 012 > 12\f1 is false).
+All other operators take strings as arguments
+(for example, \f4: 012 != 12\f1 is true).
+.IP
+The precedence of the operators (from highest to lowest) is:
+.RS 12
+.TP 10
+\f4= != > <\fP
+all of equal precedence
+.PD 0
+.TP
+\f4&\fP
+.TP
+\f4\(or\fP
+.PD
+.RE
+.IP "" 6
+Parentheses may be used to alter the order of precedence.
+.IP
+Values must be separated from operators or parentheses by at least one blank
+or tab.
+.bp
+.TP 6
+\f4::\f2text\f1
+Replace keywords on lines that are copied to the standard output.
+The two leading control characters are removed,
+and keywords surrounded by control characters in text are replaced
+by their value
+before the line is copied to the
+output file.
+This action is independent of the
+\f4\-a\f1
+keyletter.
+.TP 
+\f4:on\f1
+.PD 0
+.TP 
+\f4:off\f1
+Turn on or off keyword replacement on all lines.
+.PD
+.TP 
+\f4:ctl \f2char\f1
+Change the control character to \f2char\f1.
+.TP 
+\f4:msg \f2message\f1
+Print \f2message\f1 on the diagnostic output.
+.TP 
+\f4:\f1err \f2message\f1
+Print \f2message\f1 followed by\f4:\f1
+.IP
+.ft 5
+	ERROR: err statement on line ... (915)
+.ft 1
+.IP
+on the diagnostic output.
+\f4vc\fP
+halts execution,
+and returns an exit code of 1.
+.PP
+.SH "SEE ALSO"
+\f4help\fP(1)
+.br
+\f4ed\fP(1) in the \f2User's Reference Manual\f1

@@ -1,0 +1,86 @@
+'\"macro stdmacro
+.if n .pH g1.fmt @(#)fmt	40.10 of 5/29/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.\" @(#)fmt.1 1.22 88/08/25 SMI; from UCB 4.1
+.nr X
+.if \nX=0 .ds x} fmt 1 "Directory and File Management Utilities" "\&"
+.if \nX=1 .ds x} fmt 1 "Directory and File Management Utilities"
+.if \nX=2 .ds x} fmt 1 "" "\&"
+.if \nX=3 .ds x} fmt "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4fmt\f1 \- simple text formatters
+.SH SYNOPSIS
+\f4fmt\f1 [ \f4\-cs\f1 ] [ \f4\-w\f2 width\f1 ] [ \f2file\f1  .\ .\ . ]
+.SH DESCRIPTION
+\f4fmt \f1
+is a simple text formatter that fills and joins lines 
+to produce output lines of (up to) the number of characters
+specified in the
+\f4\-w\f2 width\f1
+option.
+The default 
+.I width
+is 72.
+\f4fmt\f1
+concatenates the
+.IR inputfile s
+listed as arguments.
+If none are given,
+\f4fmt\f1
+formats text from the standard input.
+.PP
+Blank lines are preserved in the output, as is the
+spacing between words.
+\f4fmt\f1
+does not fill lines beginning with a ``\f4.\fP'' (dot),
+for compatibility with 
+\f4nroff\f1(1).
+Nor does it fill lines starting with
+``\f4From:\f1''.
+.PP
+Indentation is preserved in the output, and input lines with differing
+indentation are not joined (unless
+\f4\-c\f1
+is used).
+.PP
+\f4fmt\f1
+can also be used as an in-line text filter for
+\f4vi\f1(1);
+the 
+\f4vi\f1
+command:
+.IP
+\f4!}fmt\f1
+.PP
+reformats the text between the cursor location and the end of
+the paragraph.
+.SH OPTIONS
+.TP 12
+\f4\-c\f1
+Crown margin mode.
+Preserve the indentation of the first two lines within a
+paragraph, and align the left
+margin of each subsequent line with that of the second line.
+This is useful for tagged paragraphs.
+.TP
+\f4\-s\f1
+Split lines only.
+Do not join short lines to form longer ones.
+This prevents sample lines of code, and other such \(lqformatted\(rq text,
+from being unduly combined.
+.TP
+\f4\-w\f2 width\f1
+Fill output lines to up to 
+.I width
+columns.
+.SH "SEE ALSO"
+\f4nroff\fP(1),
+\f4vi\fP(1)
+.SH NOTES
+The
+\f4\-w\f2 width\f1
+option is acceptable for
+.SM BSD
+compatibility, but it may go away in future releases.

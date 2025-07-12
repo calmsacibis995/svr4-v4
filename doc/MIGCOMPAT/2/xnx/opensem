@@ -1,0 +1,37 @@
+'\"macro stdmacro
+.if n .pH g2.opensem @(#)opensem	40.9 of 6/18/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} opensem 2 "Application Compatibility Package" "\&"
+.if \nX=1 .ds x} opensem 2 "Application Compatibility Package"
+.if \nX=2 .ds x} opensem 2 "" "\&"
+.if \nX=3 .ds x} opensem "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4opensem\fP \- open a semaphore
+.SH SYNOPSIS
+\f4cc \f1[\f2flag \f1. . .] \f2file\f1 . . . \f4-lx\f1
+.br
+\f4int opensem(int sem_name, char *sem_num);\f1
+.SH DESCRIPTION
+\f4opensem\fP opens a semaphore named by \f2sem_name\f1 and returns the 
+unique semaphore identification number \f2sem_num\f1 used by \f4waitsem\fP 
+and \f4sigsem\fP.
+\f4creatsem\fP should always be called to initialize 
+the semaphore before the first attempt to open it.
+.SH DIAGNOSTICS
+\f4opensem\fP returns a value of \-1 if an error occurs.
+If the semaphore
+named does not exist, \f4errno\f1 is set to \f4ENOENT\fP.
+If the file
+specified is not a semaphore file (that is, a file previously created by
+a process using a call to \f4creatsem\fP), \f4errno\f1 is set to
+\f4ENOTNAM\fP.
+If the semaphore has become invalid due to inappropriate
+use, \f4errno is set to \f4ENAVAIL\fP.
+.SH SEE ALSO
+\f4creatsem\fP(2), \f4sigsem\fP(2), \f4waitsem\fP(2)
+.SH NOTES
+It is not advisable to open the same semaphore more than once.
+Although it is possible to do this, it may result in a deadlock.

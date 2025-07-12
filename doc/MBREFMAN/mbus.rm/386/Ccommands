@@ -1,0 +1,7 @@
+.if n .pH 386.Ccommands @(#)Ccommands	40.9
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.BK "Multibus II Reference Manual" "" "" ""   
+.\ACRONYM	                  
+.CH "Commands" "" "Table of Contents" "2"
+.\CHAPTER	2
+.tC 1 "Commands" 2-1  

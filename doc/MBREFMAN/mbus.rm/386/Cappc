@@ -1,0 +1,7 @@
+.if n .pH 386.Cappc @(#)Cappc	40.10
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.BK "Multibus Reference Manual" "" "" ""   
+.\ACRONYM	                  
+.CH "Appendix C" "" "Table of Contents" "C"
+.\CHAPTER	C
+.tC 1 "Related Publications" C-1  

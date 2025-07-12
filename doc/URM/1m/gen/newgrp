@@ -1,0 +1,88 @@
+'\"macro stdmacro
+.if n .pH g1a.newgrp @(#)newgrp	40.10.1.2 of 4/2/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} newgrp 1M "Essential Utilities" "\&"
+.if \nX=1 .ds x} newgrp 1M "Essential Utilities"
+.if \nX=2 .ds x} newgrp 1M "" "\&"
+.if \nX=3 .ds x} newgrp "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4newgrp\f1 \- log in to a new group
+.SH SYNOPSIS
+\f4newgrp\f1
+\f1[\f4\|\-\|\f1]
+[ group ]
+.SH DESCRIPTION
+\f4newgrp\fP
+changes a user's real and effective group ID.
+The user remains logged in
+and the current directory is unchanged.  
+The user is always given a new shell, replacing the current shell,
+by \f4newgrp\fP,
+regardless of whether it terminated successfully or
+due to an error condition (i.e.,
+unknown group).
+.PP
+Exported variables retain their values after invoking
+\f4newgrp\fP;
+however, all unexported variables are either reset to their
+default value or set to null.
+System variables (such as \f4PS1\fP, \f4PS2\fP,
+\f4PATH\fP, \f4MAIL\fP, and \f4HOME)\fP,
+unless exported by the system
+or explicitly exported by
+the user, are reset to default values.
+For example, a user has a primary prompt string (\f4PS1\fP) other
+than \f4$\fP (default) and has not exported \f4PS1\fP.
+After an invocation of \f4newgrp\fP, successful or not,
+the user's \f4PS1\fP will now be set to the default prompt string \f4$\fP.
+Note that the shell command
+\f4export\fP
+[see the \f4sh\fP(1) manual page]
+is the method to export variables so
+that they retain their assigned value when invoking new shells.
+.PP
+With no arguments,
+\f4newgrp\fP
+changes the user's group IDs (real and effective) back to
+the group specified in the user's password file entry.
+This is a way to exit the effect of
+an earlier
+\f4newgrp\fP
+command.
+.PP
+If the first argument to
+\f4newgrp\fP
+is a
+\f4\-\f1,
+the environment is changed to what would be expected if the
+user actually logged in again as a member of the new group.
+.PP
+A password is demanded if the group has a password and the user is not listed
+in
+\f4/etc/group\f1
+as being
+a member of that group.
+.SH FILES
+.TP 1i
+\f4/etc/group\fP
+system's group file
+.TP
+\f4/etc/passwd\fP
+system's password file
+.SH NOTES
+The ability of the user to enter a password when using this command
+will be removed in a future release.
+.SH SEE ALSO
+\f4login\fP(1),
+\f4sh\fP(1) in the \f2User's Reference Manual\f1.
+.br
+\f4group\fP(4),
+\f4passwd\fP(4),
+\f4environ\fP(5) in the \f2System Administrator's Reference Manual.\f1
+.br
+see \f4intro\fP(2) ``Effective User ID and Effective Group ID" in \f2Programmer's Reference Manual\f1
+.\"	@(#)newgrp.1a	6.3 of 9/2/83
+.Ee

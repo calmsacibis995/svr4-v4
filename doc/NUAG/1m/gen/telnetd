@@ -1,0 +1,135 @@
+'\"macro stdmacro
+.if n .pH g1a.telnetd @(#)telnetd	40.7.1.1 of 4/16/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} telnetd 1M "TCP/IP" "\&"
+.if \nX=1 .ds x} telnetd 1M "TCP/IP"
+.if \nX=2 .ds x} telnetd 1M "" "\&"
+.if \nX=3 .ds x} telnetd "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4telnetd\f1 \- DARPA TELNET protocol server
+.SH SYNOPSIS
+\f4in.telnetd\f1
+.SH DESCRIPTION
+\f4telnetd\f1
+is a server which supports the
+.SM DARPA
+standard
+.SM TELNET
+virtual terminal protocol.
+\f4telnetd\f1
+is invoked by the internet server [see
+\f4inetd\f1(1M)],
+normally for requests to connect to the
+.SM TELNET
+port as indicated by the
+\f4/etc/services\f1
+file [see
+\f4services\f1(4)].
+.PP
+\f4telnetd\f1
+operates by allocating a pseudo-terminal device
+for a client, then creating a login process which has
+the slave side of the pseudo-terminal as its standard input, output,
+and error.
+The login process is an instance of the
+\f4in.login\f1 program, which is based on \f4login\fP(1).
+It is invoked with the \f4\-h\f1 option to indicate
+that it is originated by \f4telnetd\fP.
+\f4telnetd\f1
+manipulates the master side of the pseudo-terminal,
+implementing the
+.SM TELNET
+protocol and passing characters
+between the remote client and the login process.
+.PP
+When a
+\f4TELNET\f1
+session is started up, 
+\f4telnetd\f1
+sends
+.SM TELNET
+options to the client side indicating
+a willingness to do
+.I remote echo
+of characters, to
+.I suppress go
+.IR ahead ,
+and to receive
+.I terminal type information
+from the remote client.
+If the remote client is willing, the remote terminal type is
+propagated in the environment of the created login process.
+The pseudo-terminal allocated to the client is configured
+to operate in \*(lqcooked\*(rq mode, and with
+.SM
+\f4XTABS\f1,
+.SM
+\f4ICRNL\f1,
+and
+\f4ONLCR\f1
+enabled [see\p
+.br
+\f4termio\f1(4)].
+.P
+\f4telnetd\f1
+is willing to do:
+.IR echo ,
+.IR binary ,
+.I suppress go
+.IR ahead ,
+and
+.I timing
+.IR mark .\p
+.br
+\f4telnetd\f1
+is willing to have the remote client do:
+.IR binary ,
+.I terminal
+.IR type ,
+and
+.I suppress go
+.IR ahead .
+.SH "SEE ALSO"
+\f4telnet\f1(1)
+.LP
+Postel, Jon, and Joyce Reynolds, ``Telnet Protocol Specification,'' RFC 854, 
+Network Information Center, SRI International, Menlo Park, Calif., 
+May 1983.
+.SH NOTES
+Some
+.SM TELNET
+commands are only partially implemented.
+.PP
+The
+.SM TELNET
+protocol allows for
+the exchange of the number of lines and columns on the user's terminal,
+but
+\f4telnetd\f1
+doesn't make use of them.
+.PP
+Binary mode
+has no common interpretation except between similar operating\p
+.br
+systems
+.PP
+The terminal type name received from the remote client is converted to
+lower case.
+.PP
+The
+.I packet
+interface to the pseudo-terminal
+should be used for more
+intelligent flushing of input and output queues.
+.LP
+\f4telnetd\f1
+never sends
+.SM TELNET
+.I go ahead
+commands.
+.LP
+\f4telnetd\f1
+can only support 64 pseudo-terminals.

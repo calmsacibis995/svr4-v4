@@ -1,0 +1,102 @@
+'\"macro stdmacro
+.if n .pH g3c.ssignal @(#)ssignal	40.11 of 5/22/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} ssignal 3C "C Development Set" "\&"
+.if \nX=1 .ds x} ssignal 3C "C Development Set"
+.if \nX=2 .ds x} ssignal 3C "" "\&"
+.if \nX=3 .ds x} ssignal "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4ssignal\f1, \f4gsignal\f1 \- software signals
+.SH SYNOPSIS
+\f4#include <signal.h>\f1
+.PP
+\f4int (\(**ssignal (int sig, int (\(**action) (int))) (int);\f1
+.PP
+\f4int gsignal (int sig);\f1
+.SH DESCRIPTION
+\f4ssignal\fP
+and
+\f4gsignal\fP
+implement a software facility similar to
+\f4signal\fP(2).
+This facility is made available to users
+for their own purposes.
+.PP
+Software signals made available to users are associated
+with integers in the inclusive
+range 1 through 17. A
+call to
+\f4ssignal\fP
+associates a procedure,
+.IR action ,
+with the software signal
+.IR sig ;
+the software signal,
+.IR sig ,
+is raised
+by a call to
+\f4gsignal\fP.
+Raising a software signal causes the action established for that signal
+to be
+.IR taken .
+.PP
+The first argument to
+\f4ssignal\fP
+is a number identifying the type of signal for which an action is to be
+established. The second argument defines the action; it is either the
+name of a (user-defined)
+.I action function\^
+or one of the manifest constants
+\f4SIG_DFL\f1
+(default) or
+\f4SIG_IGN\f1
+(ignore).
+\f4ssignal\fP
+returns the action previously established for that signal type; if no
+action has been established or the signal number is illegal,
+\f4ssignal\fP
+returns
+\f4SIG_DFL\f1.
+.PP
+\f4gsignal\fP
+raises the signal identified by its argument,
+.IR sig :
+.RS 5
+.PP
+If an action function has been established for
+.IR sig ,
+then that action is reset to
+\f4SIG_DFL\f1
+and the action function is entered with argument
+.IR sig .
+\f4gsignal\fP
+returns the value returned to it by the action function.
+.PP
+If the action for
+.I sig\^
+is
+\f4SIG_IGN\f1,
+\f4gsignal\fP
+returns the value 1 and takes no other action.
+.PP
+If the action for
+.I sig\^
+is
+\f4SIG_DFL\f1,
+\f4gsignal\fP
+returns the value 0 and takes no other action.
+.PP
+If
+.I sig\^
+has an illegal value or no action was ever specified for
+.IR sig ,
+\f4gsignal\fP
+returns the value 0 and takes no other action.
+.RE
+.SH "SEE ALSO"
+\f4signal\fP(2), \f4sigset\fP(2), \f4raise\fP(3C).
+.\"	@(#)ssignal.3c	6.2 of 10/20/83
+.Ee

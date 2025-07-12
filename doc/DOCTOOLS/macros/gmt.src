@@ -1,0 +1,1261 @@
+'\"#ident  "@(#)doctools:macros/gmt.src	1.2"
+'\"
+'\"       Copyright (c) 1990, 1991 UNIX System Laboratories, Inc.
+'\"       Copyright (c) 1984, 1986, 1987, 1988, 1989, 1990 AT&T
+'\"         All Rights Reserved
+'\"
+'\"       THIS IS UNPUBLISHED PROPRIETARY SOURCE CODE OF
+'\"       UNIX System Laboratories, Inc.
+'\"       The copyright notice above does not evidence any
+'\"       actual or intended publication of such source code.
+'\"
+'\"     gmt: guide macro package; used with gen and macros.h files
+'\"
+'\"     Modified by: M. Shapiro
+'\"                 UNIX System Laboratories
+'\"                 attunix!mxs   201-522-5181
+'\"                   
+.\"
+.deBK \"============= Book Information: sets recto running footer =====
+.\" $1=full title $2=release info $3=abbreviated title $4=book acronym
+.ie \w\\$1 .ds[b \\$1
+.el .)D "BK: Missing Argument 1, Book Title"
+.nrCH 1        \" CH is marker; mark this as guide file
+.if \w\\$2 .ds[c \0:\0\\$2
+.ie \w\\$3 .ds[d \\$3
+.el.ds[d \\$1
+.tm .BK "\\$1" "\\$2" "\\$3" "\\$4"   \" Echo toc information
+.tm .\ACRONYM	\\$4                  \" Echo Book Acronym for Master Index
+..
+.deCH \"====== Chapter Information: sets verso running footer =========
+.\" $1=chapter title $2=section $3=abbreviated title
+.nrCH 1        \" CH is marker; mark this as guide file
+.if !\\np .pn1 \" if not set on command line (-rp), reset page to #1
+.\" Reset all counters
+.nr>F 0 1                  \" figure legends (FG)
+.nr>T 0 1                  \" table legends (TG)
+.nr>D 0 1                  \" displays (DS/DE)
+.nr>L 0 1                  \" all lists (AL,BL,DL,VL)
+.nr>B 0 1                  \" bullet list (BL)
+.nr>V 0 1                  \" variable list (VL)
+.nr>R 0 1                  \" reference page (RP)
+.cs \\*(@a \\*([K          \" compress UI font
+.ie \w\\$1 .ds[e \\$1
+.el .)D "CH: Missing Argument 1, Chapter Title"
+.if \w\\$2 \{.ds[f \\$2-
+.   ds[h \\$2\}
+.ie \w\\$3 .ds[g \\$3
+.el.ds[g \\$1
+.\" Next 2 Lines for toc Only: $4=section, $5="Contents"
+.if \w\\$4 .ds[h \\$4
+.if \w\\$5 .ds[e \\$5
+.\" Echo toc information: chapter title and file name
+.tm .CH "\\$1" "" "Table of Contents" "\\$2"
+.tm .\CHAPTER	\\$2
+."g                        \" Reset original page settings:ll,tl,ps,vs,po,ft,fi
+..
+.deH \"======================= Headings ===========================
+.\" Check if list/legend is open and give FATAL Error if true
+.if\\n(>L>0 .)D 0 "LIST ERROR: \\n(>L UNENDED LIST(S) BEFORE HEADING - .H \\$1 \\$2 "
+.if \\n(>G=1 .)D 0 "LEGEND ERROR: UNENDED Figure/Table BEFORE HEADING - .H \\$1 \\$2 "
+.ie \\$11 \{.nrh1 1          \" H 1: NO running header (see ^T)
+.   ie \w\\$3 .ds[i \\$3
+.   el .ds[i \\$2 
+.   rs                             \" force spacing on
+.   if!\\n(|h .if\\n(nl \{.ie\\np .bp\\np
+.   el.bp1\}                       \" got break before hitting first H 1
+.   nr|h 1                         \" marks first H 1
+.   if !\\n(>H=1 \{.br             \" force a break
+.      mk ^(                       \" mark this spot
+.      if \\n*u+1v>\\n(^(u .if!\\n(tC \{.sp2i \"discard page if hit H1 at top
+.         ps24                     \" print discard message
+DISCARD THIS PAGE
+.         ps
+.         rr ^(
+.         pn\\n% \}                \" tell page number not to increment
+.   bp \}                          \" begin new page, unless it's 1st one
+.   rr>H                           \" H 1 must cause bp, unless it's 1st one
+.\" 1=vert spacing, 2=lines needed, 3=+ps, 4=+vs 5=text 6=posthead spacing
+.   "H "" "" 6 7 "\\$2" 2 \}
+.el.ie \\$12 ."H 2 8 4 2 "\\$2" 1                 \" Level 2 
+.el.ie \\$13 ."H 1.25 6 2 0.5 "\\$2" 0.5          \" Level 3
+.el.ie \\$14 ."H 0.8 4 0 0 "\\$2" 0.25            \" Level 4
+.el.ie \\$15 ."H 0.5 3 -1 0 "\\$2\0\s\\n(PS\f1\c" \" Level 5
+.el .)D "H: Heading Level - \\$1 \\$2 \\$3 - is Invalid" 
+.if!\\n(tC=1 .if \\$1<4 .tm .tC \\$1 "\\$2" \\*([f\\n%  \" Echo Toc Info
+.it1 "l                      \" remove spacing registers
+."g                          \" restore default values (see gen)
+.ns                          \" turn off spacing
+..
+.deAB \"=====Admonitions Begin: $1 must be N, C, or W ==========
+.if \\n(>A=1 .)D 1 "AB: Unclosed AB/AC pair; cannot nest admonitions"
+.nr>A 1                      \" set on
+.P                           \" if allowed, space down
+.ne7                         \" check for space
+.nr#l \\n(.l                 \" store line length
+.nr#i \\n(.i                 \" store indent
+.nr#m \\n(.u                 \" store fill mode
+.nr#f \\n(.f                 \" store font number
+.nr#p \\n(.s                 \" store point size
+.nr#v \\n(.v                 \" leading
+.ie \\$1N .nr)a 1      \" set to note number
+.el.ie \\$1C .nr)a 2   \" set to caution number
+.el.ie \\$1W .nr)a 3   \" set to warning number
+.el \{.nr)a 1
+.   )D "AB: Argument $1 (\\$1) is incorrect or nonexistent; Assuming N for Note"\}
+.\" remove marker at top of page (^T)
+.mk *=                       \" mark spot for drawing lines
+.di /s                       \" start diversion here
+\.ft\\*(@d                   \" change font
+\.fi                         \" force fill mode
+\.ps\\n(PSp-1p               \" reduce point size 
+\.vs\\n(VSp-2p               \" reduce leading 
+\.ie\\n()a=1 \.in\\n(#iu+3P  \" indent for Note
+\.el \.in\\n(#iu+4P          \" indent for Caution/Warning
+\.ll\\n(#lu-1.5P             \" reduce line length
+..
+.deAC \" =========== Admonition Close =========================
+.if !\\n(>A=1 .)D 1 "AC: Unopened AB/AC pair; missing AB"
+\.br                         \" force out remains of last line
+.di                          \" end diversion
+.\" begin new page if diversion is > dist to trap, or dist < 0.8i
+.if (\\n(dnu>\\n(.tu):(\\n(.tu<0.8i) \{.rs
+'   bp \}
+.in\\n(#iu
+.ft\\*(@e                    \" change font
+.ps7                         \" change point size
+.ie \\n()a=1 \{.sp|\\n(*=u     \" Note Icon
+\D'l 2.25P 0'\D'l 0 2.5P'\D'l -2.25P 0'\D'l 0 -2.5P'\
+\v'2.5P'\h'1.175P'\D'l 0 1P'\
+\v'-2.1P'\h'-0.825P'NOTE
+.nr *a \\n(*=u+4P \}           \" record lowest point in icon
+.\" Caution Icon
+.el.ie \\n()a=2 \{\
+\D'l 3.6P 0'\D'l -1.8P 2.6P'\D'l 0 1P'\v'-1P'\
+\D'l -1.8P -2.6P'\v'0.6P'\h'0.45P'CAUTION
+.nr *a \\n(*=u+4.1P \}        \" record lowest point in icon
+.\" Warning Icon
+.el.ie \\n()a=3 \{\
+\v'1P'\D'l 1P -1P'\D'l 1.2P 0'\D'l 1P 1P'\
+\D'l 0 1.2P'\D'l -1P 1P'\D'l -1.2P 0'\h'0.6P'\D'l 0 1P'\v'-1P'\h'-0.6P'\
+\D'l -1P -1P'\D'l 0 -1.2P'\v'0.8P'\h'0.2P'WARNING
+.nr *a \\n(*=u+4.6P \}        \" record lowest point in icon
+.el .)D "AC:ERROR in CALLING AB/AC"
+.br
+.ft                         \" return font
+.ps                         \" return point size
+.in0                        \" force indent to zero
+.sp|\\n(*=u+0.6v              \" put out text here
+./s                         \" release diversion now
+.mk *b                      \" mark end of diversion
+.in \\n(#iu                 \" return indent
+.ll \\n(#lu                 \" return line length
+.if \\n(#m=0 .nf            \" return fill mode
+.ps\\n(#pu                  \" return point size
+.vs\\n(#vu                  \" return leading
+.ft\\n(#f                   \" return font
+.ie \\n(.tu<3v .bp                 \" begin new page, if almost at end
+.el.ie \\n(*bu>\\n(*au .sp\\n(PDu  \" normal spacing after text end
+.el.sp|\\n(*au+\\n(PDu             \" space beyond end of icon
+.rm  /s                     \" cleanup
+.rr #i #l #m #f #p #v )a *= *a *b >A   \" cleanup
+..
+.deSS \"=============== Screen Start: $1=UI,PC, or CO =================
+.ie \\n(^S .)D 0 ".SS: Last Screen Missing .SE" \" FATAL ERROR
+.el.ie \\n(>A .)D 0 ".SS: Screens Not Allowed in Admonitions" \" FATAL ERROR
+.el.if \\n(>D .)D 0 ".SS: Screens Not Allowed in Displays" \" FATAL ERROR
+.nr ^S 1               \" Turn on flag
+.br                    \" Clean out last line !
+.\" Figure out which type of text to output: PC, UI, CO, or Def. (CO)
+.ie \w\\$1 \{\
+.  ie \\$1PC .ds[j \\*(@c
+.  el.ie \\$1UI .ds[j \\*(@a
+.  el.ie \\$1CO .ds[j \\*(@b
+.  el .)D "INVALID ARG to .SS: \\$1" \}
+.el .ds[j \\*(@b
+.\" collect info
+.nr @i \\n(.i
+.nr *s \\n(.s
+.nr *v \\n(.v
+.nr *f \\n(.f
+.nr *u \\n(.u
+.nr sW \\n(LLu-\\n(@iu-0.75i  \" set screen width
+.ne7
+.di%S                         \" divert screen text
+\.ns                          \" no spacing allowed here
+\.nf                          \" no-fill mode
+\.DT                          \" default tabs
+\.in0.2i                      \" adjust indent
+.\" Use smaller size for everything but 8.5 x 11 inch page size
+\.ie !\\ns=4 \{\
+\.   ps 7         \" change point size
+\.   vs 9 \}      \" change leading
+.\" full page layout
+\.el \{\
+\.   ps 8         \" change point size
+\.   vs 10 \}     \" change leading
+.ft \\*([j        \" change font here
+."e C             \" make fonts constant width
+..
+.deSE    \" Close SS Macro
+.if !\\n(^S .)D ".SE: Missing matching .SS"
+\.rs
+\.br              \" Clean out last line
+.di               \" End diversion
+.in0
+."b %S
+.\" turn off "f at page bottom
+.wh-\\n(Stu
+.in \\n(@iu
+.ps \\n(*su
+.vs \\n(*vu
+.if !\\n(*u=0 .fi
+.ft \\n(*f
+.rr ^S @i *s *v *f *u $f sW sL & ^
+.rm %S            \" Remove diversion
+."e U             \" Undo constant spacing
+..
+.\"======================= Boxes: BB/BC ============================
+.deBB \"  $1=box $1 (w/ $2 = punctuation), else BB/BC box no-fill display
+.\" Check for Errors: No Nested Boxes
+.ie \\n(>X=1 .)D "BB: Cannot Nest Boxes; Unmatched BB/BC Pair" 
+.el .nr>X 1            \" Turn on BB Flag
+.ie \w\\$1 \{.nr xW \w\\$1u+0.3m \" Calc. line length
+.\" Position $1 and draw box: force break if not enough room on line
+.if \\n(.lu-(\\n(.ku+\\n(.iu)<(\\n(xWu+0.2i) .br
+\|\\$1\|\v'0.3v'\D'l -\\n(xWu  0'\D'l 0 -1v'\D'l \\n(xWu 0'\
+\D'l 0 1v'\v'-0.3v'\|\\$2
+.   rr xW >X \}        \" Cleanup
+.el \{.br              \" clean out last line
+.   nr xu \\n(.u       \" Record fill mode
+.   nr xi \\n(.i       \" Record indent
+.   ne4                \" minimum space needed
+.   sp1.5              \" space down a little
+.   dixX               \" Divert text
+\.  in0
+\.  nf \}              \" force no-fill mode
+..
+.deBC
+\.br                          \" Clean out last line
+.di                           \" Complete diversion
+.nr xW \\n(dlu+0.3i           \" Get greatest width of diversion text
+.nr xL \\n(dnu+1.1v           \" Get length of diversion text
+.if \\n(xLu>\\n(.tu .bp       \" Too big, so start new page
+.ie\\n(xWu>\\n(LLu .nr xI 0   \" WHAT TO DO HERE??
+.el .nr xI (\\n(LLu-\\n(xWu+\\n(xiu)/2u  \" Get indent amount to center text
+.in \\n(xIu                   \" indent for diversion
+.mk xB                        \" store vertical spot of beginning
+.xX                           \" put out text
+.mk xE                        \" store vertical spot at end
+.sp|\\n(xBu-1v                \" space to above first line of diversion
+\h'-0.1i'\D'l \\n(xWu  0'\D'l 0 \\n(xLu'\D'l -\\n(xWu 0'\D'l 0 -\\n(xLu'
+.if!\\n(xu=0 'fi              \" Restore fill mode
+'in\\n(xiu                    \" Restore indent
+.if \\n(.tu>2v .sp|\\n(xEu+2v \" Space down
+.rr >X xB xE xW xL xI xi xu   \" Remove registers
+.rm xX             \" Remove diversion
+..
+.\"====================== Legends: FG, TB ==========================
+.deFG     \" Figure Legend: Work Done in "G
+."G F "\\$1" "\\$2"
+..
+.deTB     \" Table Legend: Work Done in "G
+."G T "\\$1" "\\$2"
+..
+.\" ================ Static Displays: DS/DE ====================
+.deDS \" 3 arguments accepted: $1=indent, $2=text type, $3=fill mode
+.ie \\n(^S .)D 0 ".DS: Displays Cannot Occur within a Screen" \" FATAL ERROR
+.el.if \\n(>A .)D 0 ".DS: Displays Not Allowed in Admonitions" \" FATAL ERROR
+.ne2                     \" make sure theres enough to start
+.if !\\n(>G=1 .sp\\n(PDu \" space, if no legend specified
+.nr >D +1                \" increment DS counter
+.nr i\\n(>D \\n(.i       \" record current indent
+.nr f\\n(>D \\n(.f       \" record current font
+.\" Process indent info in $1: default is 2m or 3P
+.if \w\\$1  \{.nr @d \\$1i      \" take indent from $1
+.   if \\$1I \{.ie (\\n(>D>1):(\\n(>L>0) .nr @d 2m
+.      el .nr @d 3P \}\}       \" 3P indent
+.\" Process font info in $2
+.if \w\\$2 \{.ie \\$2CO .ft\\*(@b   \" change to CO font
+.   el.ie \\$2UI .ft\\*(@a              \" change to UI font
+.   el.ie \\$2PC .ft\\*(@c              \" change to PC font
+.   el .)D "DS: Second argument (\\$2) is INVALID" \}
+.\" Do diversion processing for 1st level display
+.if \\n(>D=1 \{.nr @i \\n(.i                  \" Figure caption indent
+.   nr dF \\n(.u                              \" current fill mode
+.   di dD                                     \" start diversion
+\.  DT                                        \" force default tabs
+.   ie \\$3F .if \\n(.u=0 \.fi          \" force fill mode
+.   el \.nf \}                                \" force no-fill
+.   nr `d \\n(.u                    \" protect against user intervention
+.in \\n(i\\n(>Du+\\n(@du            \" indent now
+.\"."e C                            \" compress fonts
+..
+.\" --------------- DE: Display End -----------------------------
+.deDE
+.\" End diversion for 1st level display
+.ie \\n(>D=1 \{\.br  \" force break (needed! for filled text)
+.   di           \" end diversion
+.   in0               \" protect against conflict w/ diversion indent
+.   ie \\n(`d=0 .nf   \" protect against primitives here
+.   el .fi            \" as above
+.   "b dD             \" output diversion
+.   ie !\\n(dF=0 .fi  \" reset fill mode
+.   el .nf            \" reset no-fill mode
+.   rr dF @i @d `d \} \" remove register
+.el.sp\\n(PDu         \" space down
+.in \\n(i\\n(>Du      \" return to previous indent
+.ft \\n(f\\n(>D       \" return to previous font
+.rr i\\n(>D f\\n(>D   \" remove registers
+.nr >D -1             \" decrement display counter
+..
+.\"============List: AL, BL, DL, VL, LI/LE =====================
+.deAL \" Automatic List: $1 = list type; $2 = indent
+.nr>L +1            \" increment general list counter
+.if \\n(>L>3 .)D "AL: CANNOT NEST LISTS MORE THAN 3 TIMES"
+.nr@\\n(>L 0 1      \" number counter
+.nrn\\n(>L \\n(>L   \" match dynamic list reg. to general list flag
+.nrA\\n(>L \\n(.i   \" collect indent
+.if \w\\$2  \{.nr I\\n(>L \\$2i       \" set indent in inches
+.   nr a\\n(>L \\n(I\\n(>Lu-\w\0u \}  \" adjust for digit width
+.\" set list type
+.ie \\$1a .af @\\n(>L a       \" list type: a
+.el.ie \\$1A .af @\\n(>L A    \" list type: A
+.el.ie \\$1i .af @\\n(>L i    \" list type: i
+.el.ie \\$1I .af @\\n(>L I    \" list type: I
+.el .af @\\n(>L 1                   \" list type: 1
+.sp\\n(PDu
+.ns
+..
+.deBL \" Bullet List: $1 = indent
+.nr>L +1           \" increment general list counter
+.if \\n(>L>3 .)D "BL: CANNOT NEST LISTS MORE THAN 3 TIMES"
+.nrb\\n(>L \\n(>L  \" match dynamic list reg. to general list flag
+.nr>B +1           \" increment bullet list counter
+.nrA\\n(>L \\n(.i  \" collect indent
+.if \w\\$1  \{.nr I\\n(>L \\$1i       \" set indent in inches
+.   nr a\\n(>L \\n(I\\n(>Lu-0.22i \}  \" adjust for digit width
+.sp\\n(PDu
+.ns
+..
+.deDL \" Dash List: $1 = indent
+.nr>L +1           \" increment general list counter
+.if \\n(>L>3 .)D "DL: CANNOT NEST LISTS MORE THAN 3 TIMES"
+.nrd\\n(>L \\n(>L  \" match dynamic list reg. to general list flag
+.nrA\\n(>L \\n(.i  \" collect indent
+.if \w\\$1  \{.nr I\\n(>L \\$1i       \" set indent in inches
+.   nr a\\n(>L \\n(I\\n(>Lu-0.22i \}  \" adjust for digit width
+.sp\\n(PDu
+.ns
+..
+.deVL \" Variable List: $1 = col1 width; $2 = indent; $3 = type
+.nr>V +1            \" set flag for active VL
+.if \\n(>V>2 .)D "0" "VL: CANNOT NEST VARIABLE LISTS 3 TIMES"
+.nr>L +1           \" increment general list counter
+.nrv\\n(>L \\n(>L  \" match dynamic list reg. to general list flag
+.nrA\\n(>L \\n(.i  \" collect indent
+.ie \w\\$1 .nr e\\n(>L \\$1\\*([y \" mark width in inches (or ens)
+.el .nr e\\n(>L 1i                     \" default is 1 inch
+.if \w\\$2 .nr a\\n(>L \\$2\\*([y \" list indent in inches (or ens)
+.\" See if mark type for list is requested ($3)
+.ie \\$3CN .nr @\\n(>L 2
+.el.ie \\$3SB .nr @\\n(>L 3
+.el.ie \\$3EV .nr @\\n(>L 4
+.el.ie \\$3PC .nr @\\n(>L 5
+.el.ie \\$3UI .nr @\\n(>L 6
+.el.ie \\$3CO .nr @\\n(>L 7
+.el .nr @\\n(>L 1
+.sp\\n(PDu
+.ns
+..
+.deLI \" List Item: $1 = marker; $2 = override for .VL $3
+.\" first see if default indent is needed for nested list
+.ie (\\n(>L>1)&(\\n(a\\n(>Lu<1) .nr-I 0.25i-\w\0u
+.el .nr-I 0i
+.fi                \" force fill mode
+.na                \" force no adjust
+.nr@f \\n(.f       \" store font
+.nr@s \\n(.s       \" store point size
+."v \\n(PDu        \" space down
+.ie \\n(L@ .sp\\n(PDu \" hit two .LIs in a row
+.el .ne3
+.\" varible list item
+.ie \\n(v\\n(>L\\n(>L \{.in\\n(A\\n(>Lu+\\n(e\\n(>Lu+\\n(a\\n(>Lu
+.\" See if special mark type is requested ($2)
+.   ie \\n(@\\n(>L=2 .ft\\*([Q
+.   el.ie \\n(@\\n(>L=3 .ft\\*([R
+.   el.ie \\n(@\\n(>L=4 \{.ft\\*([S
+.      ps-1p\}
+.   el.ie \\n(@\\n(>L=5 .ft\\*(@c
+.   el.ie \\n(@\\n(>L=6 .ft\\*(@a
+.   el.if \\n(@\\n(>L=7 .ft\\*(@b
+.\" override mark type with $2 setting
+.   ie \\$2CN .ft\\*([Q
+.   el.ie \\$2SB .ft\\*([R
+.   el.ie \\$2EV \{.ft\\*([S
+.      ps-1p\}
+.   el.ie \\$2PC .ft\\*(@c
+.   el.ie \\$2UI .ft\\*(@a
+.   el.if \\$2CO .ft\\*(@b
+.\" put $1 in string with return to font and point size
+.   ds[k \\$1\f\\n(@f\s\\n(@s
+.\" if mark is too big, put it on own line
+.   ie \w\\$1u+\w\0\0u>\\n(e\\n(>Lu \{\h'-\\n(e\\n(>Lu'\\*([k
+.      br \}
+.\" if mark is one of the hardkeys, handle with care, but do it
+.   el.ie \\$1.HK \{.in\\n(A\\n(>Lu+\\n(a\\n(>Lu
+.in\\n(A\\n(>Lu+\\n(a\\n(>Lu
+\\$1 \\$2
+.   in\\n(A\\n(>Lu+\\n(e\\n(>Lu+\\n(a\\n(>Lu
+.   sp-1v \}
+.\" now handle 95% cases
+.   el \{.in\\n(A\\n(>Lu+\\n(a\\n(>Lu
+\\*([k
+.   in\\n(A\\n(>Lu+\\n(e\\n(>Lu+\\n(a\\n(>Lu
+.   sp-1v \}
+.   rr @f @s
+.   nrL@ 1            \" set LI flag for one line only
+.   it1 L@            \" remove flag if found LI line after tag
+.   rm [k \} 
+.\" Now bullet list item
+.el.ie \\n(b\\n(>L\\n(>L \{.ie \\n(>B>1 .ds[l \s8\(sq\s0\0\|
+.   el .ds[l \h0.22i\(bx\0\|
+.\" Replace box with $1
+.   if \w\\$1 .ds[l \h0.22i\\$1\0\|
+.   in\\n(A\\n(>Lu+\\n(-Iu+\w'\\*([l'u+\\n(a\\n(>Lu
+\h'-\w\\*([lu'\\*([l\c\}
+.\" dash list item
+.el.ie \\n(d\\n(>L\\n(>L \{.ds[m \h0.22i\-\0\|
+.\" Replace dash with $1
+.   if \w\\$1 .ds[m \h0.22i\\$1\0\|
+.   in\\n(A\\n(>Lu+\\n(-Iu+\w'\\*([m'u+\\n(a\\n(>Lu
+\h'-\w\\*([mu'\\*([m\c\}
+.\" automatic list
+.el.if \\n(n\\n(>L\\n(>L \{.if \w\\$1 .nr@\\n(>L \\$1-1
+.   ds[n \0\\n+(@\\n(>L\^.\0\|
+.   in\\n(A\\n(>Lu+\\n(-Iu+0.4i+\\n(a\\n(>Lu
+\h'-\w\\*([nu'\\*([n\c\}
+..
+.deLE  \" List End
+.if \\n(>L<1 .)D "LE: NO LIST IS ACTIVE - About page \\n%"  \" Error: no active list
+.br              \" clear out last line, just in case
+.\" variable-item lists
+.ie \\n(v\\n(>L\\n(>L \{.rr v\\n(>L e\\n(>L
+.   nr >V -1 \}
+.\" bullet list 
+.el.ie \\n(b\\n(>L\\n(>L \{.rr b\\n(>L
+.   nr >B -1
+.   rm [l \}
+.\" dash list 
+.el.ie \\n(d\\n(>L\\n(>L \{.rr d\\n(>L
+.   rm [m \}
+.\" number list
+.el.if \\n(n\\n(>L\\n(>L \{.rr n\\n(>L @\\n(>L
+.   rm [n \}
+.in \\n(A\\n(>Lu        \" reset indent
+.rr a\\n(>L A\\n(>L -I  \" remove list registers
+.nr >L -1               \" decrement list counter
+.if \\n(.tu>\\n(PDu .sp \\n(PDu  \" space down if space left
+..
+.\"=================Input/Output/Code Macros======================
+.deCO \" Computer Output: $1 = text, else display
+.\" set font to font # 4
+.ds[j \\*(@b
+.\" check to see if argument given, then switch to "C macro
+.ie !\w\\$1 ."C
+.el \{."C "\\$1" "\\$2"
+.   rm [j \}
+..
+.deUI \" User Input: $1 = text, else display
+.\" set font
+.ds[j \\*(@a
+.\" check to see if argument given, then switch to "C macro
+.ie !\w\\$1 ."C
+.el \{."C "\\$1" "\\$2"
+.   rm [j \}
+..
+.dePC \" Program Code: $1 = text, else display
+.ds[j \\*(@c             \" set to font @c
+.\" check to see if argument given, then switch to "C macro
+.ie !\w\\$1 ."C
+.el \{."C "\\$1" "\\$2"
+.   rm [j \}
+..
+.deSF \" Standard Format: cleanup from CO/UI/PC macros
+.ie \\n(^C=1 \{.rr ^C
+.   in \\n(vIu
+.   ft \\n(Vf
+.   ps \\n(vSp
+.   if !\\n(vM=0 .fi
+.   SP \\n(PDu
+.\".if !\\n(^S=1 ."e U                  \" undo constant spacing
+.   rm [j 
+.   rr vI vF vS vM o! Vf \}
+.el.)D ".SF: No .CO, .UI, or .PC Display is Open" 
+..
+.\"================= Special Text Elements ======================
+.deCN                    \" Command Name
+.if !\w\\$1 .)D "CN: Missing Argument 1"
+.nr!F \\n(.f             \" Store current Font
+.ft\\*([Q
+\f\\n(!F\&\fP\\$1\f\\n(!F\^\\$2
+.rr !F
+..
+.deSB                    \" Substitutable Element
+.if !\w\\$1 .)D "SB: Missing Argument 1"
+.nr!F \\n(.f             \" Store current Font
+.ft\\*([R
+\f\\n(!F\&\fP\\$1\f\\n(!F\^\\$2
+.rr !F
+..
+.deEV                    \" Environment Variable
+.if !\w\\$1 .)D "EV: Missing Argument 1"
+.nr!F \\n(.f             \" Store current Font
+.nr!S \\n(.s             \" Store point size
+.ps-1p                   \" Reduce point size by 1
+.ft\\*([S
+\f\\n(!F\&\fP\\$1\s\\n(!S\f\\n(!F\^\\$2
+.rr !F !S
+..
+.deBT                    \" Book Title
+.if !\w\\$1 .)D "BT: Missing Argument 1"
+.nr!F \\n(.f             \" Store current Font
+.ft\\*([W
+\f\\n(!F\&\fP\\$1\f\\n(!F\^\\$2
+.rr !F
+..
+.deCT                    \" Chapter Title
+.if !\w\\$1 .)D "CT: Missing Argument 1"
+``\\$1''\^\\$2
+..
+.deST                    \" Section Title
+.if !\w\\$1 .)D "ST: Missing Argument 1"
+``\\$1''\^\\$2
+..
+.\"=============== 2 Column Text ====================
+.de2C \" Can take 1 Argument: B - for Balancing
+.if \\n(~2=1 .)D "2C: CLOSING .1C NOT FOUND"
+.nr ~2 1                          \" Turn flag on
+.sp                               \" Space down
+.ne6                              \" Check for space
+.mk ~C                            \" Mark vertical place
+.hy 12                            \" Adjust hyphenation
+.ll \\n(LLu*9u/19u                \" Shorten line length
+.nr ~O \\n(.ou+(\\n(LLu-\\n(.lu)u \" Set offset for 2nd column 
+.if \\$1B \{.nr ~Z 1        \" Turn diversion flag on
+.   di ~X \}                      \" Open diversion
+.ns                               \" Allow no spacing here
+..
+.\"=============== 1 Column Text =================
+.de1C
+.\" First case is if we had .2C B (Balancing Act)
+.ie \\n(~Z=1 \{.br                         \" 2C diversion is active
+.   di                                      \" End diversion
+.   nr ~T \\n(dnu/2u                        \" total diversion height
+.   ie \\n(~Tu>\\n(.tu .nr ~P \\n(.tu+1v    \" bigger than page
+.   el \{.nr ~E \\n(LPu-(\\n(~Cu+\\n(~Tu)u  \" Place for trap
+.      wh-\\n(PTu
+.      wh-\\n(~Eu "1 \}                     \" Set trap
+.   ~X                                      \" release diversion
+.   mk ~b                                   \" second column stopped here
+.   rr ~1 ~2                                \" delete these for ^B 
+.   ie \\n(~au>\\n(~bu .sp|\\n(~au+1v       \" column 1 was longer
+.   el .sp|\\n(~bu+1v \}                    \" 2 was longer, so just space
+.\" 2nd case: Used up left half of page; move on to new page
+.el.ie \\n(~1=1 \{.rr ~1 ~2                 \"  clean up
+.   sp\\n(.tu-1v \}          \" Must start on fresh page: used up left half
+.\" 3rd case: Only used part of left half; just space down
+.el \{.rr ~1 ~2
+.   sp \}          \" Space down
+.ll\\n(LLu         \" Reset line length
+.hy14              \" max. hyphenation
+.iee .po\\n(PEu    \" Reset verso page offset
+.el .po\\n(POu     \" Reset recto page offset
+.if \\n(~E>0 .wh-\\n(~Eu  \" Erase special trap
+.rr ~a ~b ~C ~O ~Z ~E  \" cleanup
+.rm ~X                    \" more cleanup
+.wh-\\n(PTu ^B
+.rs
+..
+.\" ===== 2-Column Macros with Added Control: 2S/2E & 1B/2B ========
+.de2S \" Starter macro: $1 = width of col 1; $2 = indent
+.if \\n({o=1 .)D "2S: CLOSING .2E MACRO NOT FOUND"
+.ne 5                           \" Check for space
+.nr {o 1                        \" Turn flag on
+.if \w\\$1 .nr {w \\$1i    \" User-specified column width
+.if \w\\$2 .nr {i \\$2i    \" User-specified indent
+.\" Protect against null settings, lunatics, and/or mistakes
+.if (\\n({wu<1u):(\\n({wu>(\\n(LLu-0.6i)) .nr {w 2i  \" Default col 1 width
+.if (\\n({iu<1u):(\\n({iu>(\\n(LLu-0.6i)) .nr {i 0i   \" Default indent
+.nr {I \\n(.i                   \" Record current indent
+.nr {l \\n({wu+\\n({iu-0.35i            \" Set line length for 1B column
+.sp                             \" Space down
+.ns
+..
+.de1B \" Marks start of 1st column text (used with .2B)
+.ie\\n({d=1 .)D 0 "1B: Matching 2B Not Found"  \" Fatal Error: 1B following 1B
+.el.nr {d 1                     \" Turn on Flag for .1B
+.if \\n(.z{2 ."s 2        \" put out diversions
+.mk {a                          \" starting place
+.di {1                          \" Start diversion for 1st column
+\.in \\n({Iu+\\n({iu            \" Set indent
+\.ll \\n({lu                    \" Set line length
+..
+.de2B \" Marks start of 2nd column text (used with .1B)
+.ie\\n({d=2 .)D 0 "2B: Matching 1B Not Found"  \" Fatal Error: 2B following 2B
+.el.nr {d 2                     \" Turn on Flag for .1B
+.if \\n(.z{1 ."s 1        \" put out diversions
+.di {2                          \" Start div. for 2nd column
+\.in \\n({Iu+\\n({iu+\\n({wu    \" Set indent
+\.ll \\n(LLu                    \" Set line length
+..
+.de2E  \" Ends .2S macro
+.if !\\n({o=1 .)D "2E: STARTING .2S MACRO NOT FOUND"
+."s 2                           \" put out diversions
+.in \\n({Iu                     \" return indent
+.ll \\n(LLu                     \" return line length
+.rr {o {w {i {I {l              \" Cleanup
+..
+.\"================= End 2S/2E Macros ===============
+.\"==================== Vertical spacing ===========================
+.deSP
+.ie !\\n(>P .sp \\$1
+.el .br
+..
+.\"=======================Skip page===============================
+.deSK
+.ie \\n(.z~X .)D "Macro .SK is ignored within 2-column balanced text (.2C B)"
+.el.ie \\n(.zxX .)D "Macro .SK is ignored within a box (.BB/.BC)"
+.el.ie \\n(.z%S \!.SK SC    \" Wait till div. completes
+.el.ie \\n(.zdD \!.SK SC    \" Wait till div. completes
+.el.ie \\$1SC \{.mk^^       \" Got to know where text ends
+.   sp\\n(.tu \}                  \" go to next trap
+.el.bp \\$1                       \" no diversion: begin new page with # $1
+..
+.\"================== Version Control: VS/VE =====================
+.deVS
+.\" If -rv registers doesn't match $1, ignore everything till .VE
+.\" Note: VE is not defined: only name is needed
+.ie !\\$1\\nv .if !\w\\$2 .ig VE
+.el.if \w\\$2 \\$2    \" Include $2 in text
+..
+.\"===================== Reference Page ============================
+.deRP   \" $1 = page marker
+.nr>R +1                       \" Increment reference counter
+.ie\\n(>R=1 \{.sy echo "sed '" >> \\*([M \" Start sed lines
+.   sy chmod 755 \\*([M
+\}
+.el.if\\n(>R=98 \{.nr >R 0     \" Must keep < 100 (for sed)
+.   sy echo "'" >> \\*([M      \" Close sed lines
+\}
+.sy echo "s/%\\$1%/\\*([f\\n%/g" >> \\*([M     \" Issues sed line
+..
+.\" =========== PostScript Picture Macros PI, BP, EP =================
+.dePI	\" Picture Include
+.\" $1=file(page) $2=height,width,yoff,xoff $3=flags
+.\" Height, width, xoff, and yoff are for the frame, flags is for the
+.\" picture. Default dimensions are inches.
+.if\\*([L\\*(.T \\X'PI:\\n(.o:\\n(.i:\\n(.l:\\n(.t:\\$1:\\$2:\\$3:'\\c
+..
+.nr FT 0
+.deBP	\" Begin a Picture
+.\" $1=file(page) $2=height $3=width $4=position $5=offset $6=flags $7=label
+.\" Height, width, position, and offset are for the frame, flags is for
+.\" the picture. The postion flag should be l, c, r, or "". Omitting the
+.\" position argument is also allowed for compatibility with the original
+.\" version of the macro. In that case offset is taken relative to your
+.\" left margin.
+.br
+.if \\n(FT>1 .EP
+.\" Need these when we switch environments.
+.nr Ov \\n(.v
+.nr Oi \\n(.i
+.nr Ol \\n(.l
+.\" Remember the arguments - sometimes as both a string and number register.
+.nr $2 \\$2i
+.nr $3 \\$3i
+.nr $4 \\$4i
+.ds $4 \\$4
+.nr $5 \\$5i
+.ds $5 \\$6
+.ds $6 \\$7
+.\" Accept a few unadvertised position flags.
+.if '\\*($4'L' .ds $4 l
+.if '\\*($4'C' .ds $4 c
+.if '\\*($4'R' .ds $4 r
+.\" A null with more than three arguments means l.
+.if \\n(.$>3 .if '\\*($4'' .ds $4 l
+.\" Default frame dimensions if missing, zero, or null.
+.if !\\n($2>0 .nr $2 3.0i
+.if !\\n($3>0 .nr $3 \\n(.lu-\\n(.iu-\\n($4u
+.if !\\n($3>0 .nr $3 \\n($2u
+.\" Figure out the offset that will be used the rest of the way.
+.if '\\*($4'l' .nr $4 \\n($5u
+.if '\\*($4'c' .nr $4 (\\n(.lu-\\n(.iu-\\n($3u)/2u+\\n($5u
+.if '\\*($4'r' .nr $4 \\n(.lu-\\n(.iu-\\n($3u+\\n($5u
+.\" If we haven't recognized the position flag assume it wasn't given and
+.\" treat argument four as an offset from the left.
+.if !'\\*($4'l' .if !'\\*($4'c' .if !'\\*($4'r' .ds $5 \\$5
+.if !'\\*($4'l' .if !'\\*($4'c' .if !'\\*($4'r' .ds $6 \\$6
+.\" Set increments for line length and indent.
+.nr Ii \\n($3u+\\n($4u+.1i
+.nr Il \\n(.lu-\\n($4u+.1i
+.\" Set the frame type to one of:
+.\"	0 - frame is as wide as a line of text - skip over it.
+.\"	1 - fits in left or right margins
+.\"	2 - fill with text on the right
+.\"	3 - on the left
+.\"	4 - or on both sides of the frame
+.\"	5 - only set in EP if FT was 4 and now filling on the right.
+.\" Assume the frame is as wide as a line of text, then check dimensions
+.\" to see what's really true. The order of these tests is important!
+.nr FT 0
+.if \\n($4u>1.0i .nr FT 3
+.if \\n($4u+\\n(.iu>=\\n(.lu .nr FT 1
+.if \\n($3u+\\n($4u+\\n(.iu+1.0i<\\n(.lu .nr FT 2
+.if \\n($3u+\\n($4u<=0 .nr FT 1
+.if \\n(FT=2 .if \\n($4u>1.0i .nr FT 4
+.\" Ask for some vertical space - labeled pictures need a little extra,
+.\" margin pictures a little less.
+.if \\n(FT=1 .if '\\*($6'' .ne \\n($2u
+.if \\n(FT=1 .if !'\\*($6'' .ne \\n($2u+2v
+.if !\\n(FT=1 .if '\\*($6'' .ne \\n($2u+3v
+.if !\\n(FT=1 .if !'\\*($6'' .ne \\n($2u+5v
+.if !\\n(.z .nr BP \\n($2u   \" pass this on to diversion routine
+.\" Save our place, draw the picture, label it, and return. Need precise
+.\" control of when \X'...' is put out - thus the new environment.
+.mk Oh
+.ev 1
+.in \\n(Oiu
+.ll \\n(Olu
+.vs \\n(Ovu
+.if \\n(FT=1 .sp -1v
+.if \\n(FT=1 .PI \\$1 \\n($2u,\\n($3u,\\n(.vu,\\n($4u t\\*($5
+.if !\\n(FT=1 .PI \\$1 \\n($2u,\\n($3u,\\n(.vu,\\n($4u \\*($5
+.in
+.ll
+.vs
+.ev
+.lt \\n($3u
+.tl \(ts\(ts\\h'\\n($4u'\\v'\\n($2u+1.5v'\\*($6\\v'-\\n($2u-1.5v'\\h'-\\n($4u'\(ts\(ts
+.lt
+'sp |\\n(Ohu
+.\" Figure out what to do with the text that follows.
+.if !'\\*($6'' .nr $2 \\n($2u+2v
+.if \\n(FT=1 .nr FT 0
+.if \\n(FT=2 'in +\\n(Iiu
+.if \\n(FT>2 .ll -\\n(Ilu
+.if \\n(.z .if \\n(FT>1 \{.di BB
+.   dt \\n($2u+2v+1u EP \}
+.\" Clean things up.
+.rr $3 $4 $5 Oi Ol Ov
+.rm $4 $5 $6
+.if \\n(FT=0 .EP
+..
+.deEP	\" End the Picture 
+.nr Ot 0
+.if \\n(.tu<\\n(.pu .nr Ot \\n(.tu
+.if \\n(Ot>0 .if \\n(FT=4 .nr FT 3
+.if \\n(FT<2 .nr Ot 0
+.if \\n(Ot>0 .br
+.if \\n(FT=5 .nr Ot 0
+.if !\\n(.z .if \\n(FT>1 \{.ev 1
+.	br
+.	di
+.	nf
+.	BB
+.	fi
+.	ev
+.	rm BB\}
+.if \\n(FT=5 \{.nr FT 2
+'	sp |\\n(Nhu+1v\}
+.if \\n(FT=4 \{.mk Nh
+.	nr Nh -1v
+.	nr FT 5
+'	sp -\\n(dnu+1v
+'	in +\\n(Iiu
+.	ll +\\n(Ilu
+.	di BB
+.	dt \\n(dnu-2v+1u EP\}
+.if \\n(FT=2 'in -\\n(Iiu
+.if \\n(FT=3 .ll +\\n(Ilu
+.if \\n(FT<4 .nr FT 0
+.if \\n(.z \{.sp|\\n(Ohu+\\n($2u+2v
+.   rr Oh $2 \}
+.if \\n(FT=0 .rr Nh Ii Il
+..
+.\" =================== Hard Keys ==============================
+.deHK \" $1 = key; $2 = punctuation
+.nr!F \\n(.f             \" Store current Font
+.ft\\*([X                \" Font for hard keys
+.nr!M \\n(.u             \" record fill mode to return .nf if needed
+.if\\n(!M=0 'fi          \" force fill mode for this macro
+.\" Check for $1
+.ie !\w\\$1 .)D "HK: Missing Argument"
+.\" Up arrow
+.el.ie \\$1UA .ds[o \h'0.5n'\D'l 0 -0.5v'\D'l -0.5n 0.25v'\
+\h'1n'\D'l -0.5n -0.25v'\v'0.5v'\h'.5n'
+.\" Down arrow
+.el.ie \\$1DA .ds[o \h'0.5n'\v'-0.5v'\D'l 0 0.5v'\
+\D'l -0.5n -0.25v'\h'1n'\D'l -0.5n 0.25v'\h'.5n'
+.\" Right arrow
+.el.ie \\$1RA .ds[o \v'-0.25v'\D'l 1.5n 0'\D'l -0.5n -0.25v'\
+\v'0.5v'\D'l 0.5n -0.25v'\v'0.25v'
+.\" Left arrow
+.el.ie \\$1LA .ds[o \h'0.5n'\D'l -0.5n -0.25v'\
+\D'l 0.5n -0.25v'\h'-0.5n'\v'0.25v'\D'l 1.5n 0'\v'0.25v'
+.\" Enter key
+.el.ie \\$1EK .ds[o \h'0.3n'\D'l -0.3n -0.18v'\D'l 0.3n -0.18v'\
+\h'-0.3n'\v'0.18v'\D'l 1.5n 0'\D'l 0 -0.32v'\v'0.5v'
+.\" Anything Else
+.el.ds[o \s-1\\$1\s0
+.nr *W \w\\*([ou+0.75n            \" Calc. line length
+.nr *Y 0.6m+\w\\$2u               \" Calc. full key length
+.\" break line, if key too large
+.if \\n(.lu-(\\n(.ku+\\n(.iu)<(\\n(*Wu+\\n(*Yu+100u) .br
+.\" Print key
+\0\\*([o\|\v'0.15v'\D'a 0 -0.25m 0.25m 0'\D'l 0 -0.4v'\D'a -0.25m 0 0 -0.25m'\
+\D'l -\\n(*Wu 0'\D'a 0 0.25m -0.25m 0'\D'l 0 0.4v'\D'a 0.25m 0 0 0.25m'\
+\D'l \\n(*Wu 0'\v'-0.15v'\f\\n(!F\h'0.35m'\\$2
+.\" send out transparent PostScript coding: NOT in Screens of Admonitions
+.if\\n(!M=0 'nf              \" force return to no-fill mode
+.rr *W *Y !F !M "n           \" Cleanup
+.rm [o                       \" More Cleanup
+..
+.\" =================== Page Number Format =====================
+.deNF \" $1 = format: either 1 for arabic or i for roman
+.ie \\$1i \{.af % i     \" Format turned to roman
+.  ds[q 1 \}                  \" Previous format is 1, arabic
+.el.ie \\$11 \{.af % 1  \" Format turned to arabic
+.  ds[q i \}                  \" Previous format is i, roman
+.el .af % \\*([q              \" Return to previous format
+..
+.\" ================= Simple Indexing Macros ====================
+.deIX
+.ie \\n(.z .tm .Index: \\$1 \\$2 \\$3 \\$4 \\$5 \\$6 \\$7 \\$8 \\$9	\\n%
+.el \!.IX \\$1 \\$2 \\$3 \\$4 \\$5 \\$6 \\$7 \\$8 \\$9
+..
+.deIx
+.ie \\n(.z .tm .Index: \\$1 \\$2 \\$3 \\$4 \\$5 \\$6 \\$7 \\$8 \\$9	\\n%
+.el \!.IX \\$1 \\$2 \\$3 \\$4 \\$5 \\$6 \\$7 \\$8 \\$9
+..
+.deix
+.ie \\n(.z .tm .Index: \\$1 \\$2 \\$3 \\$4 \\$5 \\$6 \\$7 \\$8 \\$9	\\n%
+.el \!.IX \\$1 \\$2 \\$3 \\$4 \\$5 \\$6 \\$7 \\$8 \\$9
+..
+.\"======================= Paragraph ============================
+.deP
+.\" Make sure line trap is sprung
+.if !\\n(>P \{.ie \w\\$1 .sp \\$1  \" Space requested distance
+.      el.sp\\n(PDu            \" Else, space default amount
+.   ne3                        \" Check for space
+.   fi                         \" Force fill mode
+.   hy14                       \" Return to max hypenation
+.   ad l                       \" Set to left adjust
+.   nr >P 1 \}                 \" Protect against following .P
+.it1 "l                        \" Set line trap
+.ns                            \" Set no-spacing on
+..
+.\" ================== Make Smaller =============================
+.deSM
+\&\s-1\\$1\s0\\$2   \" reduce argument 1 by 1 point
+..
+.\" ================== Roman (Regular) Font ====================
+.deR
+.ft1
+..
+.\" ================== Need $1 Lines ====================
+.deNE
+.br
+.ne \\$1
+..
+.\"================= INTERNAL MACROS ============================
+.\" Specialized Display Macro for CO,UI,PC
+.de"C  \" Computer Output
+.nr vF \\n(.f              \" store font
+.ie \\n(^S \{.ft \\*([j    \" do for screen only
+.   if \w\\$1 \f\\n(vF\&\fP\\$1\f\\n(vF\^\\$2 \}
+.\" now if not in screen -- if font unset, use default font
+.el \{.if \\*([j .ds[j \\*(@b
+.   nr Vf \\n(.f                     \" store font for display only
+.   ft \\*([j                        \" change font
+.   ie \w\\$1 \f\\n(vF\&\fP\\$1\f\\n(vF\^\\$2
+.   el.if !\\n(o! \{.SP \\n(PDu
+.      nr ^C 1                   \" turn flag on
+.\".      "e C
+.      nr vI \\n(.i              \" store indent
+.      nr vS \\n(.s              \" store point size
+.      nr vM \\n(.u              \" store fill mode
+.      nf
+.      in +3P
+.      nr o! 1 \}\} \" turn on indicator that display is open
+..
+.de"d \" ----------- Screen Work: SS/SE ------------------
+.ps8                          \" set point size
+.vs8                          \" set leading
+.rs
+.if !\\n(FL .sp0.3i           \" space down (if no legend) 
+.wh-\\n(Stu "f                \" always raise trap for screens
+.nf                           \" ensure we're in no-fill mode
+.in\\n(@iu+0.15i              \" move over slightly
+.mk &                         \" mark vertical position
+.ie \\n(^^ .nrsL \\n(.tu      \" hit SK in screen
+.el.ie \\n(dnu<\\n(.tu .nr sL \\n(dnu  \" screen length = diversion length
+.el .nr sL \\n(.tu            \" screen length = dist. to trap
+.nr F; \\n(.s
+\s(10\D'l 0 \\n(sLu'\D'a 0.25i 0 0 0.25i'\D'l \\n(sWu 0'\
+\D'a 0 -0.25i 0.25i 0'\D'l 0 -\\n(sLu'\D'a -0.25i 0 0 -0.25i'\
+\D'l -\\n(sWu 0'\D'a 0 0.25i -0.25i 0'\h'.04i'\
+\D'l 0 \\n(sLu'\D'a 0.21i 0 0 0.21i'\D'l \\n(sWu 0'\
+\D'a 0 -0.21i 0.21i 0'\D'l 0 -\\n(sLu'\D'a -0.21i 0 0 -0.21i'\
+\D'l -\\n(sWu 0'\D'a 0 0.21i -0.21i 0'\h'-.04i'\s\\n(F;
+.rr x1 x2 x3 x4 y1 y2 y3 y4 ra !!
+.ps
+.vs
+'br
+..
+.\" ------- Heading Macro: does work for .H --------------
+.de"H \" $1=sp, $2=.ne, $3=ps, $4=vs, $5=text, $6=spacing
+.nh                                \" force hypenation off
+.DT                                \" reset tab adjust to default
+'fi                                \" force fill mode
+.if!\\n(tT 'in0                    \" force zero indent
+.ll\\n(LLu                         \" force default line length
+.ft \\*(@e                         \" turn on heading font
+.ps\\n(PS                          \" reset point size
+.vs\\n(VS                          \" reset leading
+.ie\w\\$1 .sp\\$1              \" pre-text spacing
+.el .br
+.if\w\\$2 .ne\\$2              \" check for space
+.if\w\\$3 .ps(\\n(PS+\\$3)     \" set point size
+.if\w\\$4 .vs(\\n(VS+\\$4)     \" set leading
+\\$5                               \" output text
+.if\w\\$6 .br                  \" clean out before ps change
+.ps\\n(PS                          \" reset point size
+.vs\\n(VS                          \" reset leading
+.if\w\\$6 .sp\\$6              \" space down if $6 exists
+..
+.\" ----------"s: Diversion Work for .2S/.2E macros ---------
+.de"s \" $1 = macro identifier
+\.br                                  \" Force break
+.di                                   \" End current diversion
+.nr{z \\n(dn                          \" Store diversion length
+.if \\n({zu>\\n({Zu .nr {Z \\n({z     \" Keep track of larger diversion
+.if \\$12  \{.if \\n({Zu>\\n(.tu \{.rs
+.      bp
+.      mk {a \}
+.   sp|\\n({au                        \" go to mark!
+.   wh-\\n(PTu                        \" remove trap for close calls
+.   ll \\n({lu                        \" Set line length
+.   in0                               \" force zero indent
+.   ns                                \" turn spacing off
+.   {1                                \" put out 1B diversion
+.   rs                                \" make sure spacing is back on
+.   sp|\\n({au                        \" go to mark!
+.   ll \\n(LLu                        \" Set line length
+.   in0                               \" Force indent
+.   ns                                \" turn spacing off
+.   {2                                \" put out 2B div.
+.   rs                                \" force spacing back on
+.   sp|\\n({au                        \" got to go back, just in case
+.   wh-\\n(PTu ^B                     \" return page trap
+.   sp|\\n({au+\\n({Zu+\\n(PDu        \" Space from end of longer column
+.   rr {a {z {Z                       \" Cleanup
+.   rm {1 {2 \}
+..
+.de"G \"------- Table/Figure Legend Work: FG/TB -------------
+.br
+.ne7
+.\" check for errors
+.if \\n(>G=1 .)D "FG/TB: Cannot Nest Legends"
+.if \\n(>D>0 .)D "FG/TB: Legends Cannot Be Placed Within a Display"
+.nr >G 1               \" Turn on legend flag
+.\" [r = string for 1st occ. & toc; [s = string for con't legends
+.ie \\$1F \{.nr>F +1      \" increment figure legend counter
+.   ie \w\\$3 .ds[s Figure \\*([f\\n(>F: \\$3
+.   el .ds[s Figure \\*([f\\n(>F:\\0\\$2
+.   ds[t Figure \\*([f\\n(>F:\\0
+.   ds[u \\$2
+.   ds[r Figure \\*([f\\n(>F:\\0\\$2\}
+.el.if \\$1T \{.nr>T +1   \" increment table legend counter
+.   ie \w\\$3 .ds[s Table \\*([f\\n(>T: \\$3
+.   el .ds[s Table \\*([f\\n(>T:\\0\\$2
+.   ds[t Table \\*([f\\n(>T:\\0
+.   ds[u \\$2
+.   ds[r Table \\*([f\\n(>T:\\0\\$2\}
+..
+.de"a \"------------ Legend Work: FG/TB --------------
+.\" $1 = 1 means figure/table top, $1 = 2 means bottom
+.nr |I \\n(.i         \" record indent
+.nr |S \\n(.s         \" record point size
+.nr |V \\n(.v         \" record leading
+.ie \\$11 \{.nr |F \\n(.u      \" record fill mode
+.   nr |f \\n(.f      \" record font
+.   fi                \" force fill mode
+.   nh
+.   ft\\*(@e          \" change font
+.   ps\\n(PSp-1p      \" change point size
+.   vs\\n(VSp-2p      \" change leading
+.   sp0.6v            \" space before rule and legend
+.   tl \\s8\h'\\n(@iu'\D'l \\n(LLu-\\n(@iu 0'\\s0  \" draw rule
+.   in \\n(@iu+\w\\*([tu
+.   ti\\n(@iu
+\\*([r\\0\\*([v\\f\\n(|f
+.   br                \" cleanout after legend
+.   if!\w\\*([v .if \\n(>G=1 .tm .tC L "\\*([t" "\\*([u" \\*([f\\n%
+.   nr FL 1           \" note printing of legend
+.   rm [r             \" remove now; gets redefined if fig/table continues
+.   ps\\n(|S          \" reset point size
+.   vs\\n(|Vu         \" reset leading
+.   if\\n(|F=0 .nf
+.   hy14
+.   ie\\n(^S=1 .sp0.3i \" space down  for screen
+.   el .sp0.6v \}      \" space less for displays
+.\" Now do rule at bottom of figure: do absolute spacing for screens
+.el.if \\$12 .if \\n(FL=1 \{.rr FL >G
+.   wh-\\n(Stu        \" clear away screen trap, just in case
+.   wh-\\n(PTu ^B     \" replace page bottom trap, just in case
+.   ie \\n(^S=1 .sp|\\n&u+\\n(sLu+0.4i
+.   el.sp0.6v
+.   in\\n(@iu
+.   tl \\s8\h'\\n(@iu'\D'l \\n(LLu-\\n(@iu 0'\\s0
+.   rm [r [s [t 
+.   if\\n(.tu>\\n(PDu .sp\\n(PDu \}
+.\" reset indent, fill mode, font, and active fig. register
+.in\\n(|Iu
+.rr |I |f |F |S |V
+..
+.de"b \"------------- Diversion Work: SS/SE DS/DE -----------------
+.mk @*
+.nr CC 0.02i
+.if \\n(BP .nrCC \\n(CCu+\\n(BPu
+.if \\n(>G=1 .nr CC \\n(CCu+0.7i         \" Extra spacing for legends
+.if \\n(^S=1 .nr CC \\n(CCu+0.65i        \" Extra spacing for screens
+.if (\\n(dnu-\\n(!!u+\\n(CCu)>\\n(.tu \{.ie \\n(.tu<3i \{.rs
+'       bp \} \" can't squeeze into 3 inches
+.\" if bigger than space and we are AT page top!
+.   el.ie (\\n*u+1v)>\\n(@*u 'br \" effectively, just break out of ifelse
+.\" if just bigger than space, break page 
+.   el.ie (\\n(dnu+\\n(CCu-\\n(!!u-2i)<\\n(.tu \{.rs
+'      bp \}
+.\" if bigger than space and fits on one page, break page 
+.   el.if (\\n(dnu+\\n(CCu-\\n(!!u)<(\\n(LPu-\\n(PTu-\\n*u-0.6i) \{.rs
+'      bp \}\}
+.if \\n(>G=1 ."a 1               \" rule and legend
+.mk @-
+.if \\n(^S=1 ."d                 \" draw screen
+.\\$1                            \" release diversion
+.rs                              \" ensure spacing in on here
+.if\\n(BP .sp|\\n(@-u+\\n(BPu+2v \" move to bottom rule
+.ie \\n(>G=1 ."a 2               \" finishing rule
+.el.ie\\n(.tu>\\n(PDu \{.if \\n(^S=1 .sp|\\n&u+\\n(sLu+0.45i \" no final rule
+.   if \\n(>D=1 .sp\\n(PDu \}                                \" display with no FG
+.el .bp                        \" at very bottom - no text can follow here!!
+.rm \\$1
+.rr CC BP @-
+..
+.de"e \"----------- Constant Spacing: CO ---------------------
+.\" Takes 1 arguments: $1 = C (compress) - compress named font
+.ie \\$1C \{.cs \\*(@a \\*([K
+.  cs \\*(@b \\*([K
+.  cs \\*(@c \\*([K
+.  if!\\nl .lg0 \}                 \" ligatures must be off!
+.\" uncompress all compressable font: U = undo
+.el\{.cs \\*(@a
+.  cs \\*(@b
+.  cs \\*(@c
+.  if!\\nl .lg1 \}                 \" turn ligatures back on
+..
+.de"f \" -------- Page Trap for Continued Screens ------
+.if\\n(^^>0 .nr !@ \\n(.du-\\n(^^u    \" record space left by SK in screen
+.wh-\\n(Stu                           \" clear away trap
+.wh-\\n(PTu                           \" clear away trap
+.ie((\\n(sLu+0.04i)<\\n(dnu):(\\n(^^>0) \{.nr "f 1  \" record we're here (for ^T)
+.   nrpQ \\n(.f     \" record current font
+.   ft\\*(@d        \" change to new font
+.   nrpX \\n(.f     \" record new current font
+.   ftP             \" change font back
+.   nrpZ \\n(PS-1   \" get standard ps -2
+.   ds[v \f\\n(pX\s\\n(pZ(continued on next page\|)\s0\f\\n(pQ
+.   rr pQ pX pZ ^^  \" cleanup a little
+.   nr cP \\n(sWu+0.25i-\w\\*([vu  \" calc. text placement
+'   sp|\\n&u+\\n(sLu+0.35i \" Positioning must be independent of div. text
+\h'\\n(cPu'\\*([v
+.   rm [v \}              \" remove continuation string now
+.el \{.if\\n(>G=1 ."a 2   \" finishing rule
+.  rm %S
+.  rr ^S \}
+'sp-0.35i              \" reverse to make sure we hit all traps
+'wh-\\n(PTu ^B         \" restore ^B trap
+.if \\n(.tu<1i .sp\\n(.tu \" reverse to make sure we hit all traps
+..
+.de"1 \"------------- Page Trap for 2C/1C ------
+.br              \" get rid of last line
+.nr ~1 1         \" say we've been here to ^B
+.po\\n(~Ou       \" move offset over
+.wh-\\n(~Eu      \" remove trap
+.mk ~a           \" first column stopped here
+.sp|\\n(~Cu      \" return to first vertical position
+.wh-\\n(PTu ^B   \" restore ^B trap
+.ns              \" turn off spacing for better alignment
+..
+.detC \" ---------------- Table of Contents ------------------------
+.\" First do top of first page: only once!
+.if!\\n(tC \{.nrtC 1      \" ensures done only once
+.   nrtT 1                \" defeats extra spacing at first #1
+.\" Skip rest of this section if Ref. Manual Toc ($1=RM)
+.   if !\\$1RM \{'in6P \" wrapping indent
+.   af% i                 \" Change folio to roman
+'      ti0                   \" for chapter id
+.      H 1 "\s36\h|2P\v.35m\\*([h\v-.35m\s18\h|6P\\*([e" "Table of Contents"
+.      hy0                   \" turn hypenation off
+.      ll\\n(LLu-2P          \" shorten line length
+.      ta\\n(RUu-0.40i       \" set tab for folios
+.      rs
+.      sp|12P \}\}           \" space to starting point
+.\" Now handles FIG section for maintoc ($1=F)
+.ie \\$1F \{.if!\\n(tF \{.ifo .bp
+.   ti0                   \" force 0 indent
+.   H 1 "\s20\h|6PFigures and Tables\s0" "Table of Contents"
+.   nrtF 1                \" turn this code off
+.   rs
+.   ta\\n(RUu-0.40i       \" set tab for folios
+.   sp|12P                \" space for rule
+.   hy0                   \" turn hypenation off
+.   ll\\n(LLu-2P          \" shorten line length
+.   tl `\v0.05i\s9\D'l \\n(RUu 0i'\s0\v-0.05i```  \" draw rule
+.   sp0.5v \}             \" small space after rule
+.   ft\\*(@d              \" previous font
+.   "c 9p 11p 3v "" "" \\*(@e
+.   in \w\\$2u       \" size for indenting
+.   ti0                   \" no indent for 1st line
+\\$2\fP\\$3
+.  "c "" "" "" "" "" "" Y \\$4 \}   \" do page numbers
+.\" Handle .tC 1: $2=heading, $3=folio, $4=chap number for master
+.el.ie \\$11 \{.ie!\\n(tT=1 .sp1.5P
+.   el .rr tT
+.   "c 13p 15p 5v 6P "0" \\*(@e
+.   tl `\v0.05i\s9\D'l \\n(RUu 0i'\s0\v-0.05i```
+\h|2P\s24\v0.5v\\$5\v-0.5v\s0\h|6P\\$2
+.   "c "" "" "" "" "" "" Y \\$3 \}   \" do page numbers
+.\" H 2 heading in chapter toc: $1 = 2 
+.el.ie \\$12 \{."c 10p 12p 3v 7P 6P \\*(@d
+\\$2
+.   "c "" "" "" "" "" "" Y \\$3 \}  \" do page numbers
+.\" H 3 heading in chapter toc: $1 = 3
+.el.ie \\$13 \{.nr $4 7.1P+\w\(bx\0u \" Get actual indent amount
+.   "c 9p 11p 2v \\n($4u 7.1P \\*(@d
+\(bx\0\\$2
+.   "c "" "" "" "" "" "" Y \\$3 \}   \" do page numbers
+.\" Reference Manual table of contents file 1 = RM
+.el.if \\$1RM \{.br  \" force a break
+.   nh
+.   ta\\n(RUuR             \" set the tab amount and right justify
+.   ll\\n(RUu
+.   tc .                   \" replace tab space with dots
+.   ps\\n(PS-1             \" select slightly smaller point size
+.\" if there's too much for one line, got to force a wrap and adjust
+.ie (\w\\$2u+\w\\$3u+\w\\$4u+0.2i)>\\n(.lu \{.in0.25i
+.   ne2
+.   ti0
+.   ll(\\n(RUu-0.5i)  \" makes sure room for desc
+\\$2\^(\\$3)\|
+.nr @( \\n(.ku+\\n(.iu             \" get horiz. pos. of text above
+.   in0                            \" reset indent
+.   ll\\n(RUu                      \" reset line length
+.   ie (\\n(@(u+\w\\$4u+0.25i)<\\n(.lu \{.sp-1  \" go up to print desc
+\h\\n(@(u	\|\\$4\}
+.   el \h0.25i	\|\\$4\}
+.el \\$2\^(\\$3)\|	\|\\$4
+.   DT                     \" restore default tab settings
+.   tc                     \" restore tab spacing
+.   ps\\n(PS \}            \" restore point size
+..
+.de"c \"-------------- tC work done here ------------------
+.\" $1=ps, $2=vs, $3=ne, $4=in, $5=ti, $6=font
+.if\w\\$1 .ps\\$1
+.if\w\\$2 .vs\\$2
+.if\w\\$3 .ne\\$3
+.if\w\\$4 .in\\$4
+.if\w\\$5 .ti\\$5
+.if\w\\$6 .ft\\$6
+.\" Next case is for page numbers with H1 and H2
+.if\\$7Y \{.sp-1v   \" we're one line up
+.   ps9p                  \" folios in 9 point
+.   ti0                   \" force no indent
+.   ft\\*(@d            \" force font change
+.   ll\\n(LLu+1P      \" page numbers must fit, but just
+	\\$8          \" put out folio
+.   ps                \" return to previous point size
+.   br                \" force break for correct leading
+.   ll\\n(LLu-2P \}   \" return to shorter line length
+..
+.deL@ \" trap for variable list to help with two LIs in a row
+.rr L@
+..
+.\"=======================Permuted index===========================
+.dePx
+.nrtC 1
+.nr)y \\n(LLu-1.1i
+.nr)x \\n()yu/2u
+..
+.dexx
+.ta\\n(RUuR
+.ti 0
+.ps\\n(PSp-2p
+.vs\\n(VSp-2p
+.nf
+.ds[w
+.ds[x
+.if \w\\$2 .ds[w \0\|
+.if \w\\$4 .ds[x \0\|
+.\" test for length of line: if it fits, then print; else break line
+.ie (\w\\$3u+\w\\$4u+\w\\$5u)<(\\n(.lu-\\n()xu-0.25i) \
+\h\\n()xu-\w\\$1\\*([w\\$2\0\0\0u\\$1\\*([w\\$2\0\0\0\\$3\
+\\*([x\\$4\0\a\0\\$5
+.el \{.ne2
+\h\\n()xu-\w\\$1\\*([w\\$2\0\0\0u\\$1\\*([w\\$2\0\0\0\\$3\
+\\*([x\\$4\0
+.   br
+\h'\\n()xu'\a\0\\$5\}
+..
+.\" =========== Support for docmacs Macro Names ==============
+.\" --------------- Ch: Disperse to CH and BK  ---------------
+.deCh
+.\" If we presume arg #2 is section id, then send args to .CH
+.\" Else, invoke book title; and rearrange args for .CH
+.ie \w\\$2u<\wWWu .CH "\\$1" "\\$2" "\\$3"
+.el\{.BK "\\$2"
+.   CH "\\$1" "\\$3" \}
+.\" Define string for default "n" scaling in variable lists: old style
+.ds[y n
+..
+.\" ---- Old Admonition Invocations: Ns/Ne, Cs/Cn, Ws,We -------------
+.deNs
+.AB N
+..
+.deNe
+.AC
+..
+.deCs
+.AB C
+..
+.deCn
+.AC
+..
+.deWs
+.AB W
+..
+.deWe
+.AC
+..
+.deSs \"---------------- Screen Start ------------------
+.SS
+..
+.deSe \"------------------Screen End --------------------
+.SE
+..
+.\" ---------------- Name End Macro ----------------------
+.em "M
+.\" ---------------- Read In Supporting Files ---------------
+.\"===========================EOF========================= 

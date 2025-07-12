@@ -1,0 +1,58 @@
+'\"macro stdmacro
+.if n .pH gen.bp_mapin @(#)bp_mapin	40.2 of 1/7/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.nr X
+.if \nX=0 .ds x} bp_mapin D3DK "" "DDI/DKI" "\&"
+.if \nX=1 .ds x} bp_mapin D3DK "" "DDI/DKI"
+.if \nX=2 .ds x} bp_mapin D3DK "" "\&"
+.if \nX=3 .ds x} bp_mapin "" "" "\&"
+.TH \*(x}
+.IX "\f4bp_mapin\fP(D3DK)"
+.SH NAME
+\f4bp_mapin\fP \- allocate virtual address space for buffer page list
+.SH SYNOPSIS
+.nf
+.na
+\f4#include <sys/types.h>
+#include <sys/buf.h>
+.sp 0.5
+void bp_mapin(struct buf *\f2bp\fP);\f1
+.ad
+.fi
+.SH ARGUMENTS
+.RS 0n 10
+.IP "\f2bp\fP" 10n
+Pointer to the buffer header structure.
+.RE
+.SH DESCRIPTION
+The \f4bp_mapin\fP function is used to map virtual address space to
+a page list maintained by the buffer header [see \f4buf\fP(D4DK)] during a paged-I/O
+request.  A paged-I/O request is identified by the \f4B_PAGEIO\fP flag
+being set in the \f4b_flags\fP field of the buffer header passed
+to a driver's \f4strategy\fP(D2DK) routine.
+Before calling \f4bp_mapin\fP, the
+offset of the location in the first page where the I/O is to
+begin is stored in the \f4b_un.b_addr\fP field of the \f4buf\fP
+structure referenced by \f2bp\fP (for \f4strategy\fP routines, this is
+done for the driver by the system.)
+.P
+\f4bp_mapin\fP allocates system virtual address space,
+maps that space to the page list, and returns the 
+new virtual address in the \f4b_un.b_addr\fP field of the \f4buf\fP structure.
+This address is the virtual address of the start of the page mappings, plus
+the offset requested by the caller.
+After the I/O completes, the
+virtual address space can be deallocated using the \f4bp_mapout\fP(D3DK) function. 
+.SH RETURN VALUE
+None.
+.SH LEVEL
+Base only.
+.SH NOTES
+\f4B_PAGEIO\fP won't be set unless the driver has the \f4D_NOBRKUP\fP flag set
+[see \f4devflag\fP(D1DK).]
+.sp 0.5
+This routine may sleep if virtual space is not immediately available.
+.SH SEE ALSO
+.na
+\f4devflag\fP(D1DK), \f4strategy\fP(D2DK), \f4bp_mapout\fP(D3DK), \f4buf\fP(D4DK)
+.ad

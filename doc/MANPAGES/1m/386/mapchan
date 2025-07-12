@@ -1,0 +1,271 @@
+.if n .pH g1a.mapchan @(#)mapchan	40.5 of 5/23/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1990 AT&T
+'\"!  tbl | mmdoc
+'\"macro stdmacro
+.nr X
+.if \nX=0 .ds x} mapchan 1M "" "\&"
+.if \nX=1 .ds x} mapchan 1M ""
+.if \nX=2 .ds x} mapchan 1M "" "\&"
+.if \nX=3 .ds x} mapchan "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4mapchan\f1 \- Configure tty device mapping.
+.SH SYNOPSIS
+\f4mapchan\f1 [-\f4ans\f1] [-\f4f\f1 \f2mapfile\f1] [\f2channels . . .\f1]
+.br
+\f4mapchan\f1 [-\f4o\f1] [-\f4d\f1] [\f2channel\f1]
+.SH DESCRIPTION
+.PP
+\f4mapchan\f1 configures the mapping of information input and output of the
+UNIX system.
+The \f4mapchan\f1 utility is intended for users of applications
+that employ languages other than English (character sets other than 7 bit ASCII).
+.P
+\f4mapchan\f1 translates codes sent by peripheral devices, such as terminals,
+to the internal character set used by the UNIX system.
+\f4mapchan\f1 can also
+map codes in the internal character set to other codes
+for output to peripheral devices (such as terminals, printers,
+console screen, etc.).
+Note that PC keyboard configuration is accomplished through the
+\f4mapkey\f1(1) utility.
+.P
+\f4mapchan\f1 has several uses:
+to map a \f2channel\f1 (-\f4a\f1 or -\f4s\f1);
+to unmap a \f2channel\fP (\-\f4n\f1 and optionally -\f4a\f1);
+or to display the map
+on a \f2channel\fP (optionally -\f4o\f1,-\f4d\f1, \f2channels\f1).
+.P
+\f4mapchan\f1 with no options displays the map on the user's \f2channel\f1.
+The map displayed is suitable as input for \f4mapchan\f1.
+.sp 0.25
+The  options are :
+.br
+.IP "\f4-a\f1"
+When used alone, sets all \f2channels\f1 given in the default file
+(\f4/etc/default/mapchan\f1) with the specified map.
+When used with \f4-n\f1, it refers to all \f2channels\f1
+given in the default file.
+Superuser maps or unmaps all \f2channels\f1,
+other users map only \f2channels\f1 they own.
+The \f4-a\f1 option can not be used with the \f4-d\f1, \f4-o\f1, or \f4-s\f1
+options.
+.IP "\f4-d\f1"
+Causes the mapping table currently in use on the given device, \f2channel\f1,
+to be displayed in decimal instead of the default hexadecimal.
+An ASCII version is displayed on standard output.
+This output is suitable as an input
+file to \f4mapchan\f1 for another \f2channel\f1.
+Mapped values are displayed.
+Identical pairs are not output.
+The \f4-d\f1 option can not be used with \f4-a\f1, \f4-f\f1, \f4-n\f1,
+\f4-o\f1 or \f4-s\f1 options.
+.IP "\f4-f\f1"
+Causes the current \f2channel\f1 or list of channels to be mapped with 
+\f2mapfile\f1.
+The \f4-f\f1 option can not be used with \f4-d\f1, \f4-n\f1, \f4-s\f1, or
+\f4-o\f1 options.
+.IP "\f4-n\f1"
+Causes null mapping to be performed.
+All codes are input and output as received.
+Mapping is turned off for the user's \f2channel\f1 or for other \f2channels\f1,
+if given.
+\f4-a\f1 used with \f4-n\f1 will turn mapping off for all \f2channels\f1
+given in the default file.
+This is the default mapping for all \f2channels\f1
+unless otherwise configured.
+The \f4-n\f1 option can not be used with \f4-d\f1, \f4-f\f1,
+\f4-o\f1, or \f4-s\f1 options.
+.IP "\f4-o\f1"
+Causes the mapping table currently in use on the given device, \f2channel\f1,
+to be displayed in octal instead of the default hexadecimal.
+An ASCII version is displayed on standard output. 
+This output is suitable as an input file to \f4mapchan\f1 for another port.
+Mapped values are displayed.
+Identical pairs are not output.
+The \f4-o\f1 option can not be used with \f4-a\f1,
+\f4-d\f1, \f4-f\f1, \f4-n\f1, or \f4-s\f1 options.
+.IP "\f4-s\f1"
+Sets the user's current \f2channel\f1 with the \f2mapfile\f1 given in the 
+default file.
+The \f4-s\f1 option can not be used with any other option.
+.P
+The user must own the \f2channel\f1 in order to map it.
+The super-user can map any channel.
+Read or write permission is required to display the map on a \f2channel\f1.
+.P
+Each tty device \f2channel\f1 (display adapter and video monitor on computer,
+parallel port, serial port, etc.) can have a different map.
+When the UNIX system boots, mapping is off for all \f2channels\f1.
+.P
+\f4mapchan\f1 is usually invoked in the \f4/etc/rc2\f1 file.
+This file is
+executed when the system enters the multiuser mode and sets up the default
+mapping for the system.
+Users can invoke \f4mapchan\f1 when they log in 
+by including a \f4mapchan\f1 command line in their \f4.profile\f1 or
+\f4.login\f1 file.
+In addition, users can remap their \f2channel\f1 at
+any time by invoking \f4mapchan\f1 from the command line.
+\f2channels\f1 not listed in the default file are not automatically mapped.
+\f2channels\f1 are not changed on logout.
+Whatever mapping was in place for the last user
+remains in effect for the next user, unless they modify their \f4.profile\f1
+or \f4.login\f1 file.
+.P
+For example, the default file \f4/etc/default/mapchan\f1 can obtain:
+.TS
+center;
+l l.
+tty1
+tty2	ibm
+tty3	wy60.ger
+lp	ibm
+.TE
+The default directory containing \f2mapfiles\f1 is \f4/usr/lib/mapchan\f1.
+The default directory containing \f2channel\f1 files is \f4/dev\f1.
+Full pathnames may be used for \f2channels\f1 or \f2mapfiles\f1.
+If a \f2channel\f1 has no entry, or the entry field is blank,
+no mapping is enabled on that \f2channel\f1.
+Additional \f2channels\f1 added to the system (for example, adding
+a serial or parallel port), are not automatically entered in the \f4mapchan\f1
+default file.
+If mapping is required, the system administrator must make the entries.
+The format of the \f2mapfiles\f1 is documented in the \f4mapchan\f1(4)
+manual page.
+.SH Using a Mapped channel
+The input information is assumed to be 7-or 8-bit codes sent by the peripheral
+device.
+The device may make use of dead or compose keys to produce the codes.
+If the device does not have dead or compose keys, these keys
+can be simulated using \f4mapchan\f1.
+.P
+One to one mapped characters are displayed when the key is pressed and the 
+mapped value is passed to the kernel.
+.P
+Certain keys are designated as dead keys in the \f2mapfile\f1.
+Dead key sequences are two keystrokes that produce a single mapped value that is
+passed to the kernel.
+The dead key is usually a diacritical character, the
+second key is usually the letter being modified.
+For example, the sequence \f4'e\f1 could be mapped to the ASCII value 0xE9,
+and displayed as \f4e'\f1.
+.P
+One key is designated as the compose key in the \f2mapfile\f1.
+Compose key sequences are composed of three keystrokes that produce a single
+mapped value that is passed to the kernel.
+The compose key is usually a seldom used character or CTRL-\f2letter\f1
+combination.
+The second key is usually the letter being modified.
+The third key may be another character being combined, or a
+diacritical character.
+For example, if \f4@\fP is the 
+compose key, the sequence \f4 @ c O\f1 could be mapped to the ASCII value
+0xA9, and displayed as \f4\(co\f1.
+.P
+Characters are not echoed to the screen during a dead or compose sequence.
+The mapped character is echoed and passed to the kernel once the sequence
+is correctly completed.
+.P
+Characters are always put through the input map, even when part of dead
+or compose sequences.
+The character is then checked for the internal value.
+The value may also be mapped on output.
+This should be kept mind when preparing map files.
+.P
+The following conditions will cause an error during input:
+.TP
+1)
+non-recognized (not defined in the \f2mapfile\f1) dead or compose sequence.
+.TP
+2)
+restarting a compose sequence before completion by pressing the compose 
+key in the middle of a dead or compose sequence (this is an error, but
+a new compose sequence is initiated).
+.P
+If the \f2mapfile\f1 contains the keyword \f4beep\f1, a bell sounds when
+either of the above conditions occurs.
+In either case, the characters are
+not echoed to the screen, or passed to the kernel.
+.P
+In order to allow for character sequences sent to control the terminal
+(move the cursor, and so on) rather than to print characters on the
+screen, \f4mapchan\f1 allows characters sequences to be specified as
+special sequences which are not passed through the normal mapping
+procedure.
+Two sections may be specified, one for each of the input
+(keyboard) and output (screen) controls.
+.SH "Character Sets"
+.P
+The internal character set used is defined by the \f2mapfiles\f1 used.
+By default, this is the ISO 8859/1 character set which is also known
+as dpANS X3.4.2 and ISO/TC97/SC2.
+It supports most of the Latin
+alphabet and can represent most European languages.
+.P
+Several partial map files are provided as examples.
+They must be modified for use with specific peripheral devices.
+Consult your hardware manual for the codes needed to display
+the desired characters.
+Two map files are provided for use with the console device:
+\f4/usr/lib/mapchan/ibm\fP for systems with a standard PC
+character set ROM, and \f4/usr/lib/mapchan/iso\fP
+for systems with an optional ISO 8859/1 character set ROM.
+.P
+Care should be taken that the \f4stty\f1 settings [see \f4stty\fP(1M)]
+are correct for 8-bit terminals.
+The \f4/etc/gettydefs\f1 file may require modifications
+to allow logging with the correct settings.
+.P
+7-bit U.S ASCII (ANSI X3.4) should be used if no mapping is enabled
+on the \f2channel\f1.
+.SH FILES
+\f4/etc/default/mapchan\f1
+.br
+\f4/usr/lib/mapchan/*\f1
+.SH NOTES
+Some non-U.S keyboards and display devices do not support characters
+commonly used by command shells and the C programming language.
+It is not recommended that these devices be used for system administration
+tasks.
+.P
+Printers can be mapped, output only,
+and can either be sent 8-bit codes
+or one-to-many character strings using \f4mapchan\fP.
+Line printer spooler interface scripts can be used
+(\f4setuid root\fP)
+to change the output map on the printer when different maps
+are required (as in changing print wheels to display a
+different character set).
+See \f4lpadmin\fP(1M)
+and
+\f4lp\fP(7)
+for information on installing and administering interface scripts.
+.P
+Not all terminals or printers can display all the
+characters that can be represented using this utility.
+Refer to the device's hardware manual for information on the
+capabilities of the peripheral device.
+.P
+Use of \f2mapfiles\f1 that specify a different internal character set
+per channel, or a set other than the 8-bit ISO 8859 set supplied by default
+can cause strange side effects.
+It is especially important to retain the
+7-bit ASCII portion of the character set [see \f4ascii\f1(5)].
+System utilities and many applications assume these values.
+.P
+Media transported between machines with different internal code set mappings
+may not be portable as no mapping is performed on block devices, such
+as tape and floppy drives.
+However, \f4trchan\f1 with an appropriate 
+\f2mapfile\f1 can be used to translate from one internal character set
+to another.
+.P
+Do not set \f4ISTRIP\fP [see \f4stty\f1(1)] when using \f4mapchan\f1.
+This option causes the eighth bit to be stripped before mapping occurs.
+.SH SEE ALSO
+\f4ascii\f1(5), \f4keyboard\f1(7), \f4lp\f1(7), \f4lpadmin\f1(1M), 
+\f4mapchan\f1(4), \f4mapkey(1M)\f1.
+.br
+\f4stty\fP(1M) in the \f2User's Reference Manual\fP.

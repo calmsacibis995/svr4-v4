@@ -1,0 +1,73 @@
+'\"macro stdmacro
+.if n .pH g3.nice @(#)nice	40.10 of 4/24/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.\" Copyright (c) 1988 Sun Microsystems, Inc. - All Rights Reserved.
+.\"
+.nr X
+.if \nX=0 .ds x} nice 3C "BSD Compatibility Package" "\&"
+.if \nX=1 .ds x} nice 3C "BSD Compatibility Package"
+.if \nX=2 .ds x} nice 3C "" "\&"
+.if \nX=3 .ds x} nice "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4nice\f1 \- change priority of a process
+.SH SYNOPSIS
+\f4cc \f1[ \f2flag\f1\. \. \. ] \f2file\f1 \. \. \. \f4\-lucb\f1
+.P
+\f4int nice(incr)\f1
+.br
+\f4int incr;\f1
+.SH DESCRIPTION
+The scheduling priority of the process is augmented by
+.IR incr .
+Positive priorities get less service than normal.
+Priority 10 is recommended to users who wish
+to execute long-running programs without
+undue impact on system performance.
+.P
+Negative increments are illegal, except when
+specified by the privileged user.
+The priority is limited to the range \-20
+(most urgent) to 20 (least).
+Requests for values above or below these
+limits result in the scheduling
+priority being set to the corresponding limit.
+.P
+The priority of a process is passed to a child process by
+\f4fork\f1(2).
+For a privileged process to return to
+normal priority from an unknown state,
+\f4nice\f1
+should be called successively with
+arguments \-40 (goes to priority
+\-20 because of truncation), 20 (to get to 0),
+then 0 (to maintain compatibility with previous
+versions of this call).
+.SH "RETURN VALUE"
+Upon successful completion,
+\f4nice\f1
+returns 0.
+Otherwise, a value of \-1 is returned and
+\f4errno\f1
+is set to indicate the error.
+.SH ERRORS
+The priority is not changed if:
+.TP 10
+\f4EACCES\fP
+The value of
+.I incr
+specified was negative, and the effective user
+.SM ID
+is not the privileged user.
+.SH "SEE ALSO"
+\f4renice\fP(1M)
+.P
+\f4nice\fP(1),
+\f4priocntl\fP(2)
+in the \f2User's Reference Manual\f1
+.br
+\f4fork\fP(2),
+\f4getpriority\fP(2),
+\f4priocntl\fP(2)
+in the \f2Programmer's Reference Manual\f1

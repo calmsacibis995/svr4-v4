@@ -1,0 +1,33 @@
+'\"macro stdmacro
+.if n .pH g3n.rusers @(#)rusers	40.6 of 4/9/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.\" Copyright (c) 1988 Sun Microsystems, Inc. - All Rights Reserved.
+.\"
+.nr X
+.if \nX=0 .ds x} rusers 3N "" "\&"
+.if \nX=1 .ds x} rusers 3N ""
+.if \nX=2 .ds x} rusers 3N "" "\&"
+.if \nX=3 .ds x} rusers "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4rusers\f1 \- return information about users on remote machines
+.SH SYNOPSIS
+.nf
+.ft 4
+#include <rpcsvc/rusers.h>
+.sp
+int rusers(char *\f2host\fP, struct utmpidlearr *\f2up\fP);
+.ft 1
+.fi
+.P
+\f4rusers\f1
+fills the
+\f4utmpidlearr\f1
+structure with data about
+\f2host\f1,
+and returns 0 if successful.
+The function will fail if the underlying transport does not support
+broadcast mode.
+.SH SEE ALSO
+\f4rusers\fP(1)

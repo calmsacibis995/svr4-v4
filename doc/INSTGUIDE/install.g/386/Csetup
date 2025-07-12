@@ -1,0 +1,59 @@
+.if n .pH 386.Csetup @(#)Csetup	40.1.1.1
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.BK "Installation Guide" "System V Release 4" "" ""   
+.\ACRONYM	                  
+.CH "Basic System Setup" "" "Table of Contents" "4"
+.\CHAPTER	4
+.tC 1 "Introduction" 4-1  
+.Index: sysadm        	1
+.Index: sysadm (see OA&M interface)        	1
+.Index: OA&M interface        	1
+.Index: passwd file, editing      	1
+.Index: pwconv command       	1
+.tC 1 "Using the OA&M Interface" 4-2  
+.Index: OA&M interface, invoking        	2
+.Index: sysadm        	2
+.Index: sysadm, primary menu        	2
+.Index: sysadm, basics of using        	2
+.Index: OA&M interface, exiting        	3
+.tC 2 "Other Ways to use OA&M" 4-3  
+.Index: OA&M interface, alternate displays        	3
+.tC 1 "Setting the System Date and Time" 4-4  
+.Index: date, setting the        	4
+.Index: time, setting the        	4
+.tC 1 "Adding Users to the System" 4-5  
+.Index: users, adding        	5
+.Index: adding users        	5
+.Index: user ID       	5
+.Index: group ID       	5
+.Index: sysadm, permission       	5
+.Index: permission, sysadm       	5
+.tC 1 "Restoring Files" 4-6  
+.Index: files, restoring archived        	6
+.Index: \f4cpio\f1 command        	6
+.Index: cpio command, -Hodc options        	6
+.tC 2 "Restoring Pre-Release 4 System Files" 4-6  
+.Index: symbolic links        	6
+.Index: mv command       	6
+.Index: symbolic links       	6
+.tC 1 "Setting Up a Local Area Network" 4-8  
+.Index: Local Area Network, establishing        	8
+.Index: IP address        	8
+.Index: remote systems        	8
+.Index: system, name        	8
+.Index: sysadm, setting up LAN        	8
+.Index: system, name        	8
+.tC 1 "Backing Up the System " 4-10  
+.Index: system, backup        	10
+.Index: backup, system files        	10
+.tC 1 "Removing Packages" 4-11  
+.Index: packages, removing        	11
+.Index: pkgrm command        	11
+.tC 2 "Removing Packages Using pkgrm" 4-11  
+.Index: removing packages, pkgrm command        	11
+.tC 2 "Removing Packages Using OA&M" 4-11  
+.Index: removing packages, using OA&M        	11
+.tC 1 "Shutting the System Down" 4-12  
+.Index: shutdown        	12
+.tC 2 "Using OA&M to Shut Down the System " 4-12  
+.tC 2 "Using the shutdown Command to Shut Down the System" 4-12  

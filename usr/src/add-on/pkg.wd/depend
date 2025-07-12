@@ -1,0 +1,5 @@
+#ident	"@(#)pkg.wd:depend	1.1.1.1"
+
+P  nsu		Networking Support Utilities
+P  inet		Internet Utilities
+

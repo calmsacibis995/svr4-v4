@@ -1,0 +1,32 @@
+'\"macro stdmacro
+.if n .pH g7.console @(#)console	40.9 of 4/11/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} console 7 "" "\&"
+.if \nX=1 .ds x} console 7 ""
+.if \nX=2 .ds x} console 7 "" "\&"
+.if \nX=3 .ds x} console "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4console\f1 \- \s-1STREAMS\s+1-based console interface
+.SH DESCRIPTION
+The file \f4dev/console\f1 is the system console and refers to an asynchronous 
+serial data line originating from the system board.
+.PP
+The file \f4dev/contty\f1 refers to a second asynchronous serial data line 
+originating from the system board.
+.PP
+Both \f4/dev/console\f1 and \f4/dev/contty\f1 access the \s-1STREAMS\s0-based
+console driver, which when used in conjunction with the \s-1STREAMS\s+1 line
+discipline module
+\f4ldterm\f1, supports the \f4termio\fP(7) and \f4termios\fP(2) processing.
+.SH FILES
+\f4/dev/console\fP
+.br
+\f4/dev/contty\fP
+.SH SEE ALSO
+\f4crash\fP(1M), \f4termios\fP(2), \f4ldterm\fP(7), \f4termio\fP(7)
+.br
+\f2Programmer's Guide: \s-1STREAMS\s0\f1
+.Ee

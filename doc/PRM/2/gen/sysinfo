@@ -1,0 +1,169 @@
+'\"macro stdmacro
+.if n .pH g2.sysinfo @(#)sysinfo	40.5.1.3 of 4/30/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} sysinfo 2 "" "" "\&"
+.if \nX=1 .ds x} sysinfo 2 "" ""
+.if \nX=2 .ds x} sysinfo 2 "" "\&"
+.if \nX=3 .ds x} sysinfo "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4sysinfo\f1 \- get and set system information strings
+.SH SYNOPSIS
+\f4#include <sys/systeminfo.h>\fP
+.PP
+\f4long sysinfo (int command, char \(**buf, long count);\fP
+.SH DESCRIPTION
+\f4sysinfo\fP
+copies information relating to the
+.SM UNIX
+system on which the process is executing into the buffer pointed to by
+.IR buf ;
+\f4sysinfo\f1 can also set certain information where
+appropriate \fIcommands\fP are available.
+\f2count\f1 is the size of the buffer.
+.PP
+The POSIX P1003.1 interface
+\f4sysconf\fP [see \f4sysconf\fP(2)]
+provides a similar class of configuration information,
+but returns an integer rather than a string.
+.PP
+The
+.IR command s
+available are:
+.TP 0.75i
+.SM SI_SYSNAME
+Copy into the array pointed to by \fIbuf\fP
+the string that would be returned by
+\f4uname\fP [see \f4uname\fP(2)]
+in the
+.IR "sysname " field.
+This is the name of the implementation of the operating system, e.g.,
+.IR "System V " "or " UTS .
+.TP
+.SM SI_HOSTNAME
+Copy into the array pointed to by \fIbuf\fP
+a string that names the present host machine.
+This is the string that would be returned by
+.IR uname " [see " uname (2)]
+in the
+.IR "nodename " field.
+This hostname or nodename is often the name the machine is known by locally.
+.sp
+The \fIhostname\fP is the name of this machine as a node in some network;
+different networks may have different names for the node,
+but presenting the nodename to the appropriate
+network Directory or name-to-address mapping service should
+produce a transport end point address.
+The name may not be fully qualified.
+.sp
+Internet host names may be up to 256 bytes in
+length (plus the terminating null).
+.TP
+.SM SI_SET_HOSTNAME
+Copy the null-terminated contents of the array pointed to by \f2buf\fP
+into the string maintained by the kernel whose value will be
+returned by succeeding calls to \f4sysinfo\fP with
+the command \f4SI_HOSTNAME\fP.
+This command requires that the effective-user-id be super-user.
+.TP
+.SM SI_RELEASE
+Copy into the array pointed to by \f2buf\fP
+the string that would be returned by
+\f4uname\fP  [see \f4uname\fP(2)]
+in the
+.IR "release " field.
+Typical values might be
+.IR 4.0 " or " 3.2 .
+.TP
+.SM SI_VERSION
+Copy into the array pointed to by \fIbuf\fP
+the string that would be returned by
+\f4uname\fP [see \f4uname\fP(2)]
+in the
+.IR "version " field.
+The syntax and semantics of this string are defined by the system provider.
+.TP
+.SM SI_MACHINE
+Copy into the array pointed to by \fIbuf\fP
+the string that would be returned by
+\f4uname\fP [see \f4uname\fP(2)]
+in the
+.IR "machine " field,
+e.g.,
+.IR 3b2 " or " 580 .
+.TP
+.SM SI_ARCHITECTURE
+Copy into the array pointed to by \fIbuf\fP
+a string describing the instruction set architecture of the
+current system, e.g., \f2mc68030\fP, \f2m32100\fP, or \f2i80486\fP.
+These names may not match predefined names in the C language compilation system.
+.TP
+.SM SI_HW_PROVIDER
+Copies the name of the hardware manufacturer into the array
+pointed to by \fIbuf\fP.
+.TP
+.SM SI_HW_SERIAL
+Copy into the array pointed to by \f2buf\fP
+a string which is the ASCII representation of the
+hardware-specific serial number of the physical machine on which the
+system call is executed.
+Note that this may be implemented in Read-Only Memory, via software
+constants set when building the operating system, or by other means,
+and may contain non-numeric characters.
+It is anticipated that manufacturers will not issue the same ``serial
+number'' to more than one physical machine.
+The pair of strings returned by \f4SI_HW_PROVIDER\fP
+and \f4SI_HW_SERIAL\fP
+is likely to be unique across all vendor's System V implementations.
+.TP
+.SM SI_SRPC_DOMAIN
+Copies the Secure Remote Procedure Call
+domain name into the array pointed to by \f2buf\fP.
+.TP
+.SM SI_SET_SRPC_DOMAIN
+Set the string to be returned by
+\f4sysinfo\fP
+with the SI_SRPC_DOMAIN command
+to the value contained in the array pointed to by \f2buf\fP.
+This command requires that the effective-user-id be super-user.
+.P
+\f4sysinfo\fP will fail if one or both of the following are true:
+.TP
+\f4EPERM\f1
+The process does not have appropriate privilege for a SET commands.
+.TP
+\f4EINVAL\f1
+\f2buf\fP does not point to a valid address, or the data for
+a SET command exceeds the limits established by the implementation.
+.SH "DIAGNOSTICS"
+Upon successful completion,
+the value returned indicates the buffer size in bytes required
+to hold the complete value and the terminating null character.
+If this value is no greater than the value passed in \f2count\fP,
+the entire string was copied;
+if this value is greater than \f2count\fP, the string copied into
+.I buf
+has been truncated to \f2count\-1\fP bytes plus a terminating null character.
+.PP
+.PD
+Otherwise, a value of \-1 is returned and
+.I errno\^
+is set to indicate the error.
+.SH "USAGE"
+There is in many cases no corresponding programmatic
+interface to set these values;
+such strings are typically settable only by the system administrator
+modifying entries in the
+\f4master.d\f1
+directory or the code provided by 
+the particular OEM reading a serial number or code out of read-only memory,
+or hard-coded in the version of the operating system.
+.P
+A good starting guess for \f2count\fP is 257, which is likely
+to cover all strings returned by this interface in typical installations.
+.SH "SEE ALSO"
+\f4uname\fP(2), \f4sysconf\fP(3C).
+.br
+BSD compatibility package interfaces gethostname(3), gethostid(3).

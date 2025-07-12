@@ -1,0 +1,160 @@
+.if n .pH 386.appb @(#)appb	40.9 of 5/17/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.BK "Multibus Reference Manual"
+.CH "Appendix B" "B"
+.H 1 "Information Unique to Multibus Systems"
+This appendix provides information needed in creating block device
+drivers for Intel systems.  The \f4ivlab\f1 (volume label) structure
+and MDL (Manufacturer's Defect List) are both described in this appendix.
+.H 2 "Volume Label: ivlab Structure"
+This volume label is required to be on any block device which is to
+be used as the boot device in a system using Intel standard bootstrap
+loaders.  This includes the standard monitor PROMs in the System 320
+or 520.  Other bootstrap loaders will have other requirements of
+the volume label.  Some of the fields are defined for use with the
+Intel RMX\(rg II operating system and are not used by UNIX System V/386.
+.DS
+.ta .2i .7i 1.8i
+
+\f4struct	ivlab {
+	char	v_name[10];	/* volume name, blank padded */
+	char	v_flags;	/* flags byte--see below */
+	char	v_fdriver;	/* file-driver number */
+	ushort	v_gran;	/* volume-gran (bytes) */
+	ushort	v_size_l;	/* size (bytes) of volume (low) */
+	ushort	v_size_h;	/* size (bytes) of volume (high) */
+	ushort	v_maxfnode;	/* max fnode number, 0 in UNIX */
+	ushort	v_stfnode_l;	/* start of fnodes, 2 in UNIX, low */
+	ushort	v_stfnode_h;	/* start of hnodes, 2 in UNIX, high*/
+	ushort	v_szfnode;	/* size of fnode, 32 in UNIX */
+	ushort	v_rfnode;	/* root  fnode, 2 in UNIX */
+	ushort	v_devgran;	/* sector size (bytes) */
+	ushort	v_intl;	/* interleave; 0==> unknown */
+	ushort	v_trskew;	/* track skew; 0==> none */
+	ushort	v_sysid;	/* OS id for OS that formatted vol.*/
+	char	v_sysname[12];	/* OS name, blank filled */
+	char	v_dspecial[8];	/* device-special info */
+	ushort	v_fsdelta:	/* start of root file system */
+	char	v_freespace[4];	/* free space for future use */
+};\f1
+
+.DE
+.VL
+.LI "\f2v_name\f1"
+This is the name of the volume ASCII, right blank-filled.
+.LI "\f2v_flags\f1"
+These flags describe some of the characteristics of the physical
+device.  These characteristics are used by the PROM-based bootstrap loader.
+.LE
+The definition of this byte is defined by:
+.DS
+.ta 1.7i 2.1i
+.ft 4
+#define VF_AUTO	0x01	/* 1==>byte is valid */
+#define VF_DENSITY	0x02	/* 0==FM, 1=MFM */
+#define VF_SIDES	0x04	/* 1=double-sided */
+#define VF_MINI	0x08	/* 0=8, 1=5.25 */
+#define VF_NOT_FLOPPY	0x10	/* 0=flop track 0 is 128SD 
+				   1=not floppy */
+.ft 1
+.DE
+.VL
+.LI "\f2v_fdriver\f1"
+This field is the ID number of the file driver for this volume.  This
+is primarily used by the RMX Operating Systems, and is simply set to
+UNIX_FD (to be different from RMX).
+.LE
+.DS
+\f4#define  UNIX_FD     6     /* UNIX file-driver number */\f1
+.DE
+.VL
+.LI "\f2v_gran\f1"
+Volume granularity in bytes per sector.  This is a logical
+granularity, primarily used by RMX.  In UNIX System V/386, this is always
+set to 1024.
+.LI "\f2v_size_l\f1, \f2v_size_h\f1"
+Low and high order bytes of volume size expressed in bytes.  Not used
+by UNIX System V/386.
+.LI "\f2v_maxfnode\f1"
+This field is the maximum ordinal number of an fnode in RMX.
+An fnode is the RMX equivalent to an inode.  Set to 0, not used by
+UNIX System V/386.
+.LI "\f2v_stfnode_l\f1, \f2v_stfnode_h\f1
+Low and high order bytes of start of fnodes in RMX.  Set to 2, not
+used by UNIX System V/386.
+.LI "\f2v_szfnode\f1"
+Size of an fnode, in bytes.  Set to size of an inode: 32.
+.LI "\f2v_stfnode\f1"
+Start of fnodes.  Set to root inode: 2.
+.LI "\f2v_devgran\f1"
+Device granularity, in bytes per sector.  Physical device
+granularity, determined when device was formatted.
+.LI "\f2v_intl\f1"
+Physical device interleave.  When set to 0, indicates unknown.
+Not used in UNIX System V/386.
+.LI "\f2v_trskew\f1"
+Track skew.  When set to 0, indicates unknown.  Not used in UNIX System V/386.
+.LI "\f2v_sysid\f1"
+ID of operating system that formatted volume.  Set to 0x0040 for UNIX System V/386.
+.LI "\f2v_sysname\f1"
+Name of operating system that formatted volume.  Set to *System V: for
+UNIX System V/386.  Twelve ASCII characters, right blank-filled.
+.LI "\f2v_dspecial\f1"
+Eight bytes that contain device-specific information in the form of a
+driver table entry.  The format of the data is defined by the driver
+include file (\f4usr/include/sys/i214.h\f1) and is limited to 8 bytes.
+The format is controller dependent.  
+.LI "\f2dr_nalt\f1"
+This field changes to a density flag if the volume label is on a floppy
+device.  \f2dr_nalt\f1 set to 0 indicates a single-density, FM-format
+floppy, and \f2dr_nalt\f1 set to 1 indicates a double-density, MFM-format
+floppy.
+.LI "\f2v_fsdelta\f1"
+The absolute physical sector number of the start of the root  file system.
+.LI "\f2v_freespace\f1"
+Four bytes of unused space.
+.LE
+.H 2 "Manufacturer's Defect List: MDL Structure"
+The MDL is for disk drives using the ST506 interface that are supported
+by the Multibus II 186/224A or the Multibus 214 or 221 controllers, for
+example.  
+.P
+The ST506 MDL is written in the next to the last cylinder on four
+different tracks using a bytes/sector value of 128, 256, 512, and 1024.
+The track assignments within the cylinder are as follows:
+.DS I
+.ta 1.5i
+128 bytes/sec	Last track in cylinder
+256 bytes/sec	Last track - 1
+512 bytes/sec	Last track - 2
+1024 bytes/sec	Last track - 3
+.DE
+.P
+Each track contains four copies of the MDL starting at the beginning of
+the track and spaced every 2K-bytes (i.e., the byte offset within the
+track of each copy is 0K-bytes, 2K-bytes, 4K-bytes, and 8K-bytes).
+.DS
+.ta .5i 2i 2.5i
+.ft 4
+#define BBH506MAXDFCTS	255	/* max # of ST506 
+				   defects */
+.br
+struct st506mdl {		/* ST506 MDL */
+	struct st506hdr	header;
+	struct st506defect	defects [BBH506MAXDFCTS];
+	};
+
+struct st506hdr {		/* ST506 header 
+				   information */
+	unsigned short	bb_valid;
+	unsigned short	bb_num;
+	};
+
+struct st506defect {		/* ST506 individual defect 
+				   information */
+	unsigned short	be_cyl;
+	unsigned char	be_surface;
+	unsigned char	be_reserved;
+	};\f1
+.DE

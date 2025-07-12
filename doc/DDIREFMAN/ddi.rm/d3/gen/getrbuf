@@ -1,0 +1,92 @@
+'\"macro stdmacro
+.if n .pH gen.getrbuf @(#)getrbuf	40.2 of 1/7/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.nr X
+.if \nX=0 .ds x} getrbuf D3DK "" "DDI/DKI" "\&"
+.if \nX=1 .ds x} getrbuf D3DK "" "DDI/DKI"
+.if \nX=2 .ds x} getrbuf D3DK "" "\&"
+.if \nX=3 .ds x} getrbuf "" "" "\&"
+.TH \*(x}
+.IX "\f4getrbuf\fP(D3DK)"
+.SH NAME
+\f4getrbuf\f1 \- get a raw buffer header 
+.IX "buffer header"
+.SH SYNOPSIS
+.nf
+.na
+\f4#include <sys/buf.h>
+#include <sys/kmem.h>
+#include <sys/ddi.h>
+.sp 0.5
+buf_t *getrbuf(long \f2flag\f4);\f1
+.ad
+.fi
+.SH ARGUMENTS
+.RS 0n 10
+.IP "\f2flag\f1" 10n
+Indicates whether caller should sleep for free space.
+If \f2flag\f1 is set to \f4KM_SLEEP\f1, the caller will sleep
+if necessary until memory is available.
+If \f2flag\f1 is set to \f4KM_NOSLEEP\f1, the caller will not sleep,
+but \f4getrbuf\f1 will return \f4NULL\f1 if
+memory is not immediately available.
+.RE
+.SH DESCRIPTION
+\f4getrbuf\f1 
+allocates the space for a buffer header [see \f4buf\fP(D4DK)].  It is used
+when a block driver is performing raw I/O (character interface)
+and needs to set up a buffer header that is not associated with
+a system-provided data buffer.  The driver provides its own memory
+for the data buffer.
+.P
+After allocating the buffer header, the caller must set the \f4b_iodone\fP field
+to the address of an \f2iodone handler\fP to be invoked when the I/O is complete
+[see \f4biodone\fP(D3DK)].  The caller must also initialize the following fields:
+.IP \f4b_flags\f1 14n
+must be set to indicate the direction of data transfer.  Initially, it
+is set to indicate the transfer is from the user's buffer to the kernel.
+The driver must set the \f4B_READ\f1 flag if the transfer is from the kernel to
+the user's buffer.
+.IP \f4b_edev\f1 14n
+must be initialized to the proper device number.
+.IP \f4b_bcount\f1 14n
+must be set to the number of bytes to transfer.
+.IP \f4b_un.b_addr\f1 14n
+must be set to the virtual address of the caller-supplied buffer.
+.IP \f4b_blkno\f1 14n
+must be set to the block number to be accessed.
+.IP \f4b_resid\fP 14n
+must be set to the same value as \f4b_bcount\fP.
+.IP \f4b_bufsize\fP 14n
+can be used to remember the size of the data buffer associated with the buffer header.
+.P
+Typically,
+block drivers do not allocate buffers.
+The buffer is
+allocated by the kernel
+and the associated buffer header is used as an
+argument to the driver \f4strategy\f1 routine.
+However, to implement
+some special features, such as \f4ioctl\f1(D2DK) commands that
+perform I/O, the driver may need its own
+buffer space.  The driver can get the buffer space from the system by
+using \f4geteblk\fP(D3DK) or \f4ngeteblk\fP(D3DK).  Or the driver can choose
+to use its own memory for the buffer and only allocate a buffer header
+with \f4getrbuf\fP.
+.SH RETURN VALUE
+Upon successful completion, \f4getrbuf\f1 returns a pointer to the
+allocated buffer header.
+If \f4KM_NOSLEEP\f1 is specified and sufficient memory is not immediately
+available, \f4getrbuf\f1 returns a \f4NULL\f1 pointer.
+.SH LEVEL
+Base only if \f2flag\f1 is set to \f4KM_SLEEP\f1.
+Base or interrupt if \f2flag\f1 is set to \f4KM_NOSLEEP\f1.
+.SH NOTES
+May sleep if \f2flag\f1 is set to \f4KM_SLEEP\f1.
+.SH SEE ALSO
+.na
+\f4biodone\fP(D3DK),
+\f4biowait\fP(D3DK),
+\f4freerbuf\f1(D3DK),
+\f4buf\fP(D4DK)
+.ad

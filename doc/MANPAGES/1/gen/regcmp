@@ -1,0 +1,88 @@
+'\"macro stdmacro
+.if n .pH g1.regcmp @(#)regcmp	40.10.1.2 of 4/12/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} regcmp 1 "Advanced C Utilities" "\&"
+.if \nX=1 .ds x} regcmp 1 "Advanced C Utilities"
+.if \nX=2 .ds x} regcmp 1 "" "\&"
+.if \nX=3 .ds x} regcmp "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4regcmp\f1 \- regular expression compile
+.SH SYNOPSIS
+\f4regcmp\f1
+[\f4\-\f1]
+\f2file\f1 . . .
+.SH DESCRIPTION
+The
+\f4regcmp\fP
+command performs a function similar to
+\f4regcmp\fP
+and, in most cases, precludes
+the need for calling
+\f4regcmp\fP
+from C programs.
+Bypassing
+\f4regcmp\fP
+saves on both execution time and program size.
+The command
+\f4regcmp\fP
+compiles the regular expressions in
+.I file\^
+and places the output in
+\f2file\f4.i\f1.
+If the \f4\-\fP
+option is used, the output is placed in
+\f2file\f4.c\f1.
+The format of entries in
+.I file\^
+is a name (C variable) followed by one or more blanks followed by
+one or more regular expressions enclosed in double quotes.
+The output of
+\f4regcmp\fP
+is C source code.
+Compiled regular expressions are represented as
+\f4extern char\f1
+vectors.
+\f2file\f4.i\f1
+files may thus be
+\f4#include\f1d
+in C programs, or
+\f2file\f4.c\f1
+files may be compiled and later loaded.
+In the C program that uses the
+\f4regcmp\fP
+output,
+\f4regex(abc,line)\f1
+applies the regular expression named
+\f4abc\fP
+to
+\f4line\fP.
+Diagnostics are self-explanatory.
+.SH EXAMPLES
+.TP "\w'\f4telno\ \ \ \ \fP'u"
+\f4name\fP
+\f4"([A\-Za\-z][A\-Za\-z0\-9\_]\(**)$0"\fP
+.TP
+\f4telno\fP
+\f4"\|\\({0,1}([2\-9][01][1\-9])$0\\){0,1} \(**"
+.br
+"([2\-9][0\-9]{2})$1[ \-]{0,1}"
+.br
+"([0\-9]{4})$2"\f1
+.PP
+The three arguments to \f4telno\f1
+shown above must all be entered on one line.
+.PP
+In the C program that uses the \f4regcmp\fP output,
+.PP
+.RS
+.ft 4
+regex(telno, line, area, exch, rest)
+.ft 1
+.RE
+.PP
+applies the regular expression named \f4telno\fP to \f4line\fP.
+.SH SEE ALSO
+\f4regcmp\fP(3G).

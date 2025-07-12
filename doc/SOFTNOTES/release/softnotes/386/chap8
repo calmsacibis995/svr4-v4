@@ -1,0 +1,140 @@
+.if n .pH rn4.chap8 @(#)chap8	40.50
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.de MR 
+.P 
+MR \\$1 
+.P 
+..
+.de MR
+..
+.BK "Software Notes"
+.CH "Line Printer Spooling Utilities" "8"
+.H 1 "Line Printer Spooling Utilities Notes"
+.IX istart UNIX System V/386 Release 4, line printer notes
+The UNIX System V/386 Release 4 Line Printer (LP) Spooling Utilities package has been enhanced to include the following new features:
+.BL
+.LI
+Inclusion of new networking feature.
+.LI
+Addition of new \f4lpsystem\f1 command to define remote systems.
+.LI
+Conversion of printer administration to the new OA&M System Administration Menu
+format plus inclusion of the following new functionality:
+.DL
+.LI
+Addition of class administration feature
+.LI
+Addition of request administration feature
+.LI
+Addition of priority administration feature
+.LE
+.LI
+Implementation of \f4cancel -u\f1 option that provides ability to cancel
+all requests submitted by specified users.
+.LI
+Ability to define a printer with multiple printer-types or content-types using
+the \f4lpadmin\f1 command.
+.LI
+Inclusion of PostScript filters.
+.LE
+.P
+Please refer to the manual pages and the \f2System Administrator's Guide\fR
+for detailed information regarding the new features listed above.
+.H 2 "Compatibility"
+.IX LP print service, source compatibility
+The SVR4 Line Printer Spooling Utilities is not source compatible
+with SVR3.
+Specifically, the new networking capability is based
+on new functionality provided in SVR4.
+.H 2 "Known Problems"
+.H 3 "Networking"
+.IX LP print service, networking cautions
+.P
+Although the new Line Printer Spooling Utilities networking 
+feature works, it has not been thoroughly stress tested.
+It is possible that stressing the network capability 
+may result in suspending LP network activity
+requiring the administrator to restart \f4lpsched\f1.
+.P
+It is also possible that the networking feature may
+fault when attempting to network with a BSD system.
+.P 
+SVR4 does not support the \f4-R\f1 option to 
+the \f4lpstat\f1 command, as documented on the 
+\f4lpstat\f1(1) manual page. 
+This option should not be used.
+.P
+If a user's remote print request is cancelled by the
+administrator on the remote machine, the user is not
+notified by mail. Cancelling the request from the local
+machine generates the correct mail notification. In both
+cases the request is successfully cancelled. 
+.H 3 "BSD Compatibility Commands"
+.IX LP print service, BSD compatibility
+.P
+The BSD compatibility commands \f4lpc, lpq, lpr,\f1 and
+\f4lprm\f1 are operational, but may not be fully functional.
+\f4lprm\f1 has only partial functionality.
+Please use the Line Printer Spooling
+commands instead.
+.H 3 "Line Printer Spooling Utilities Directory Structure"
+.IX LP print service, directory structure
+.P
+In this release the LP spooling directory structure has been changed to
+follow the new standard directory conventions; many
+files have been moved but the formats have not been changed.
+Please refer to the \f2System Administrator's Guide\f1 for details on
+the new structure.
+.H 3 "Line Printer Spooling Utilities over RFS"
+.IX LP print service, RFS compatibility
+Due to directory structure changes, SVR4 LP is not
+compatible with SVR3 LP across RFS.
+Note that when you run the Line Printer Spooling
+Utilities over an RFS network, all machines in the network must be running 
+the same version of LP.
+.H 2 "Line Printer Spooling Utilities over NFS"
+.MR dm91-10901
+Always use \f4lp -c\f1 to print a file that is located on an nfs
+remote resource.  The \f4lp\f1 command, without \f4-c\f1, will hang
+if you try to print an inaccessible file from a remotely mounted nfs
+resource to a remote printer.  For example, mount an nfs resource on
+\f4/mnt/d1\f1 and print a file that has permissions closed to other
+(e.g. \f4lp -dprinter1 /mnt/d1/testfile\f1).  If \f4printer1\f1 is a
+remote printer, \f4lp\f1 will hang and loop indeterminately.  
+.H 2 "lpstat Command"
+.MR "bl90-04713
+If the output of 
+\f4lpstat -o -l\f1 always shows that a
+particular \f4lp\f1 request is cancelled, then 
+the following script should be
+run as root:
+.DS I UI
+lpshut
+cd /var/spool/lp
+find requests tmp ! -type d ! -name .SEQF -exec rm {} \\;
+/usr/lib/lp/lpsched
+.DE
+.H 2 "Printer Interface Concerns"
+.MR "bl90-11414
+.MR "bl90-07209
+Since an Apple laser printer interface is not standard, the
+user cannot just use a standard RS232 printer cable.
+The cable used must tie \f4DTR\f1 to \f4DCD\f1 to configure printer 
+with \f4O_NDELAY\f1 flag on.
+.H 2 "Batch Postscript"
+.MR "dm90-28476
+Many postscript printers support the option to
+run the printer in batch postscript mode over a
+parallel port.
+This is not supported by the line printer system.
+You must use interactive postscript mode over a
+serial line.
+.IX iend UNIX System V/386 Release 4, line printer notes
+.H 2 "lp Device"
+.MR dm91-07101
+The device: \f4/dev/lp\f1 should not be used directly.  The hardware
+is unable to signal the driver that no cable is attached.  Should
+the cable be disconnected during a print job it should be
+reattached.  The driver should eventually time out and resume
+printing.

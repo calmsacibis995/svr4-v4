@@ -1,0 +1,23 @@
+'\"macro stdmacro
+.if n .pH g1.banner @(#)banner	40.3.1.1 of 1/3/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} banner 1 "User Environment Utilities" "\&"
+.if \nX=1 .ds x} banner 1 "User Environment Utilities"
+.if \nX=2 .ds x} banner 1 "" "\&"
+.if \nX=3 .ds x} banner "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4banner\f1 \- make posters
+.SH SYNOPSIS
+\f4banner\f1
+.I strings
+.SH DESCRIPTION
+\f4banner\fP
+prints its arguments (each up to 10 characters long)
+in large letters on the standard output.
+.SH SEE ALSO
+\f4echo\fP(1).
+.\"	@(#)banner.1	6.2 of 9/2/83
+.Ee

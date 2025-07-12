@@ -1,0 +1,112 @@
+'\"macro stdmacro
+.if n .pH g1.w @(#)w	40.8 of 4/19/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+'\" macro stdmacro
+.\" Copyright (c) 1988 Sun Microsystems, Inc. - All Rights Reserved.
+.\"
+.nr X
+.if \nX=0 .ds x} w 1 "BSD Compatibility Package" "\&"
+.if \nX=1 .ds x} w 1 "BSD Compatibility Package"
+.if \nX=2 .ds x} w 1 "" "\&"
+.if \nX=3 .ds x} w "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4w\f1 \- who is logged in, and what are they doing
+.SH SYNOPSIS
+\f4/usr/ucb/w\f1
+[
+\f4\-hls\f1
+] [
+.I user
+]
+.SH DESCRIPTION
+The
+\f4w\f1
+command displays a summary of the current activity on the system,
+including what each user is doing.
+The heading line shows the current time of day, how long the system has
+been up, and the number of users logged into the system.
+.P
+The fields displayed are: the users login name, the name of the tty
+the user is on, the time of day the user logged on (in \f2hours:minutes\fP),
+the idle time\(emthat is, the number of minutes since the user last
+typed anything (in \f2hours:minutes\fP), the
+.SM CPU
+time used by all processes and their children on that terminal
+(in \f2minutes:seconds\fP), the
+.SM CPU
+time used by the currently active processes
+(in \f2minutes:seconds\fP), the name and arguments of the current process.
+.P
+If a
+.I user
+name is included, output is restricted to that user.
+.P
+The following options are available:
+.TP
+\f4\-h\f1
+Suppress the heading.
+.TP
+\f4\-l\f1
+Produce a long form of output, which is the default.
+.TP
+\f4\-s\f1
+Produce a short form of output.
+In the short form, the tty is abbreviated,
+the login time and
+.SM CPU
+times are left off, as are the arguments to commands.
+.SH EXAMPLE
+.ft 4
+.nf
+w
+7:36am  up 6 days, 16:45,  1 users
+User	tty	login@	idle	JCPU	PCPU	what
+ralph	console	7:10am	   1	10:05	4:31	w
+.ft 1
+.fi
+.SH FILES
+.PD 0
+.TP 20
+\f4/var/adm/utmp\f1
+.TP
+\f4/dev/kmem\f1
+.TP
+\f4/dev/drum\f1
+.PD
+.SH "SEE ALSO"
+\f4ps\fP(1),
+\f4who\fP(1)
+in the \f2User's Reference Manual\f1
+.br
+\f4utmp\fP(4),
+\f4whodo\fP(1M)
+in the \f2System Administrator's Reference Manual\f1
+.SH NOTES
+The notion of the ``current process'' is muddy.
+The current algorithm is
+`the highest numbered process on the terminal that is not ignoring
+interrupts, or, if there is none, the highest numbered process on the
+terminal'.
+This fails, for example, in critical sections of programs
+like the shell and editor, or when faulty programs running in the
+background fork and fail to ignore interrupts.
+In cases where no process can be found, \f4w\f1 prints \f5\-\f1.
+.P
+The
+.SM CPU
+time is only an estimate, in particular, if someone leaves a
+background process running after logging out, the person currently
+on that terminal is ``charged'' with the time.
+.P
+Background processes are not shown, even though they account for
+much of the load on the system.
+.P
+Sometimes processes, typically those in the background, are
+printed with null or garbaged arguments.
+In these cases, the name of the command is printed in parentheses.
+.P
+\f4w\f1
+does not know about the conventions for detecting background jobs.
+It will sometimes find a background job instead of the right one.

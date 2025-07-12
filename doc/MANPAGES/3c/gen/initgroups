@@ -1,0 +1,55 @@
+'\"macro stdmacro
+.if n .pH initgroups.3c  @(#)initgroups	40.12.1.1 of 1/3/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} initgroups 3C "" "\&"
+.if \nX=1 .ds x} initgroups 3C ""
+.if \nX=2 .ds x} initgroups 3C "" "\&"
+.if \nX=3 .ds x} initgroups "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4initgroups\f1 \- initialize the supplementary group access list
+.SH SYNOPSIS
+\f4#include <grp.h>\f1
+.br
+\f4#include <sys/types.h>\f1
+.P
+\f4int initgroups (const char \(**name, gid_t basegid)\f1
+.SH DESCRIPTION
+\f4initgroups\fP
+reads the group file, using
+\f4getgrent\fP,
+to get the group membership for the user specified by
+.I name
+and then initializes the supplementary group access list of the calling
+process using
+\f4setgroups\fP.
+The
+.I basegid
+group id is also included in the supplementary group access list.
+This is typically the real group
+id from the password file.
+.PP
+While scanning the group file,
+if the number of groups, including the
+.I basegid
+entry,
+exceeds \f4{NGROUPS_MAX}\f1,
+subsequent group entries are ignored.
+.PP
+\f4initgroups\fP
+will fail and not change the supplementary group access list
+if:
+.TP 15
+\f4EPERM\fP
+The effective user
+id is not superuser.
+.SH "SEE ALSO"
+\f4setgroups\fP(2), \f4getgrent\fP(3C).
+.SH "DIAGNOSTICS"
+Upon successful completion, a value of 0 is returned.
+Otherwise, a value of \-1 is returned and
+\f4errno\f1 is set to indicate the error.
+.\"	@(#)initgroups.3c	1 of 10/1/88
+.Ee

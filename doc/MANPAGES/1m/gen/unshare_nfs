@@ -1,0 +1,42 @@
+'\"macro stdmacro
+.if n .pH g1a.unshare_nfs @(#)unshare_nfs	40.8 of 1/3/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} unshare 1M "NFS" "\&"
+.if \nX=1 .ds x} unshare 1M "NFS"
+.if \nX=2 .ds x} unshare 1M "" "\&"
+.if \nX=3 .ds x} unshare "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4unshare\f1 \- make local NFS resource unavailable for mounting by remote systems
+.SH SYNOPSIS
+\f4unshare\f1
+[
+\f4\-F nfs\f1
+]
+.I pathname
+.SH DESCRIPTION
+.LP
+The 
+\f4unshare\f1
+command makes local resources unavailable
+for mounting by remote systems.
+The shared resource must correspond to a line with NFS as the 
+.I fstype
+in the file
+\f4/etc/dfs/sharetab\f1. 
+The
+\f4\-F\f1
+option may be omitted if NFS is the first file system type 
+listed in the files
+\f4/etc/dfs/fstypes\f1.
+.SH FILES
+.PD 0
+.TP 20
+\f4/etc/dfs/fstypes\f1
+.TP
+\f4/etc/dfs/sharetab \f1
+.SH "SEE ALSO"
+\f4share\f1(1M)
+.PD

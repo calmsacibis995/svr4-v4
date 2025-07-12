@@ -1,0 +1,93 @@
+'\"macro stdmacro
+.if n .pH g3e.elf_rand @(#)elf_rand	40.11 of 5/1/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.\"#ident	"@(#)ci5-doc:req/libelf/rand.man	1.1"
+.nr X
+.if \nX=0 .ds x} elf_rand 3E "ELF Library" "\&"
+.if \nX=1 .ds x} elf_rand 3E "ELF Library"
+.if \nX=2 .ds x} elf_rand 3E "" "\&"
+.if \nX=3 .ds x} elf_rand "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4elf_rand\f1 \- random archive member access
+.SH SYNOPSIS
+\f4cc\f1
+[\f2flag\fP \|.\|.\|.] \f2file\fP \|.\|.\|.
+\f4\-lelf\f1
+[\f2library\fP \|.\|.\|.]
+.PP
+.nf
+.ft 4
+#include <libelf.h>
+.sp 0.5
+size_t elf_rand(Elf \(**elf, size_t offset);
+.ft 1
+.fi
+.SH DESCRIPTION
+\f4elf_rand\fP,
+\f4elf_next\fP,
+and
+\f4elf_begin\fP
+manipulate simple object files and archives.
+.I elf
+is an
+.SM ELF
+descriptor previously returned from
+\f4elf_begin\fP.
+.P
+\f4elf_rand\fP
+provides random archive processing, preparing
+.I elf
+to access an arbitrary archive member.
+.I elf
+must be a descriptor for the archive itself, not a
+member within the archive.
+.I offset
+gives the byte offset from the beginning of
+the archive to the archive header of the desired member.
+See
+\f4elf_getarsym\fP(3E)
+for more information about archive member offsets.
+When
+\f4elf_rand\fP
+works, it returns
+.IR offset .
+Otherwise it returns 0, because an error occurred,
+.I elf
+was null, or the file was not an archive
+(no archive member can have a zero offset).
+A program may mix random and sequential archive processing.
+.SH EXAMPLE
+An archive starts with a ``magic string'' that has
+\f4SARMAG\f1
+bytes; the initial archive member follows immediately.
+An application could thus provide the following function
+to rewind an archive (the function returns \-1 for errors
+and 0 otherwise).
+.P
+.RS .5i
+.DT
+.nf
+.ft 4
+.ta 8u*\w' 'u +8u*\w' 'u +8u*\w' 'u +8u*\w' 'u +8u*\w' 'u +8u*\w' 'u
+.ne 12
+#include <ar.h>
+#include <libelf.h>
+
+int
+rewindelf(Elf \(**elf)
+{
+	if (elf_rand(elf, (size_t)SARMAG) =\^= SARMAG)
+		return 0;
+	return -1;
+}
+.fi
+.RE
+.SH "SEE ALSO"
+.na
+\f4elf\fP(3E),
+\f4elf_begin\fP(3E),
+\f4elf_getarsym\fP(3E),
+\f4elf_next\fP(3E),
+\f4ar\fP(4)

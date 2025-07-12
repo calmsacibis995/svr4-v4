@@ -1,0 +1,2 @@
+clone	ip		c	ip
+clone	inet/ip		c	ip

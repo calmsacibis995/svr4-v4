@@ -1,0 +1,168 @@
+'\"macro stdmacro
+.if n .pH g1a.rc2 @(#)rc2	40.5 of 1/4/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+'\"macro stdmacro
+.if n .pH g1a.rc2 @(#)rc2	40.5 of 9/19/89
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} rc2 1M "Essential Utilities" "\&"
+.if \nX=1 .ds x} rc2 1M "Essential Utilities"
+.if \nX=2 .ds x} rc2 1M "" "\&"
+.if \nX=3 .ds x} rc2 "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4rc2\f1 \- run commands performed for multi-user environment
+.SH SYNOPSIS
+\f4/etc/rc2\f1
+.SH DESCRIPTION
+This file is executed via an entry in
+\f4/etc/inittab\f1
+and is responsible for those initializations
+that bring the system to a ready-to-use state,
+traditionally state \f42\f1, called the "multi-user" state.
+.PP
+The actions performed by
+\f4rc2\f1
+are found in files in the directory
+\f4/etc/rc.d\f1
+and files beginning with \f4S\f1 in \f4/etc/rc2.d\f1.
+These files are executed by
+\f4/usr/bin/sh\f1
+in ASCII sort\-sequence order (see FILES for more information).
+When functions are added that need to be initialized when the
+system goes multi-user, an appropriate file should be added in
+\f4/etc/rc2.d\f1.
+.PP
+The functions done by
+the \f4rc2\f1
+command and associated
+\f4/etc/rc2.d\f1
+files include:
+.RS
+.sp .5
+Setting and exporting the \f4TIMEZONE\f1 variable.
+.sp .5
+Setting-up and mounting the user (\f4/usr\f1) file system.
+.sp .5
+Cleaning up (remaking) the
+\f4/tmp\f1
+and
+\f4/var/tmp\f1
+directories.
+.sp .5
+Loading the network interface and ports cards with program
+data and starting the associated processes.
+.sp .5
+Starting the
+\f4cron\fP
+daemon by executing
+\f4/usr/etc/cron\f1.
+.sp .5
+Cleaning up (deleting) \f4uucp\f1 locks 
+status, and temporary files in the
+\f4/var/spool/uucp\f1
+directory.
+.RE
+.PP
+Other functions can be added, as required, to support the
+addition of hardware and software features.
+.SH EXAMPLES
+The following are prototypical files found in
+\f4/etc/rc2.d\f1.
+These files are prefixed by an
+\f4S\f1
+and a number indicating the execution order
+of the files.
+.PP
+\f4MOUNTFILESYS
+.br
+.RS
+.nf
+.tr ~
+#~~~~Set up and mount file systems
+.sp
+cd /
+/etc/mountall /etc/fstab
+.fi
+.RE
+.PP
+\f4RMTMPFILES\f1
+.br
+.RS
+.nf
+\f4#~~clean up /tmp\f1
+\f4rm \-rf /tmp\f1
+\f4mkdir /tmp\f1
+\f4chmod 777 /tmp\f1
+\f4chgrp sys /tmp\f1
+\f4chown sys /tmp\f1
+.fi
+.RE
+.PP
+\f4uucp\f1
+.br
+.RS
+#~~~~clean-up uucp locks, status, and temporary files
+.br
+.sp
+rm \-rf /var/spool/locks/*\f1
+.br
+.RE
+.PP
+The file
+\f4/etc/TIMEZONE\f1
+is included early in
+\f4rc2\f1,
+thus establishing the default time zone for all commands that follow.
+.SH FILES
+Here are some hints about files in 
+\f4/etc/rc.d\f1:
+.PP
+The order in which files are executed is important.
+Since they are executed in ASCII sort\-sequence order,
+using the first character of the file name as a sequence
+indicator will help keep the proper order.
+Thus, files starting with the following characters would be:
+.RS
+.sp .5
+.nf
+[\f40-9\f1].~~~~very early
+[\f4A-Z\f1].~~~~early
+[\f4a-n\f1].~~~~later
+[o-z].~~~~last
+.sp .5
+3.mountfs
+.fi
+.RE
+.PP
+Files in
+\f4/etc/rc.d\f1
+that begin with a dot (\f4.\f1)
+will not be executed.
+This feature can be used to hide files that are
+not to be executed for the time being without removing them.
+The command can be used only by the super-user.
+.PP
+Files in
+\f4/etc/rc2.d\f1
+must begin with an
+\f4S\f1
+or a
+\f4K\f1
+followed by a number and the rest of the file name.
+Upon entering run level 2,
+files beginning with
+\f4S\f1
+are executed with the
+\f4start \f1
+option; files beginning with
+\f4K\f1,
+are executed with the
+\f4stop\f1
+option.
+Files beginning with other characters are ignored.
+.SH SEE ALSO
+\f4shutdown\fP(1M).
+.Ee

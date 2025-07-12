@@ -1,0 +1,271 @@
+'\"macro stdmacro
+.if n .pH g1a.i258 @(#)i258	40.9 of 5/30/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} i258 7iref "System Administration Utilities" "" "\&"
+.if \nX=1 .ds x} i258 7iref "System Administration Utilities" ""
+.if \nX=2 .ds x} i258 7iref "" "\&"
+.if \nX=3 .ds x} i258 "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4i258\f1 \- iSBC 386/258 peripheral controller device driver
+.SH DESCRIPTION
+The \f4i258\f1 device driver provides an interface to hard disk and
+flexible disk devices  controlled by the Peripheral Controller Interface
+(PCI) running on an Intel iSBC 386/258 peripheral controller board.
+[For cartridge tape support, see \f4i258tp\f1(7iref)].  The iSBC 386/258
+board supports the SCSI device interface. 
+.PP
+This driver supports up to four hard disk drives and two diskette drives
+on one controller board.  The driver supports one or two controller
+boards, with two boards as the default configuration.
+.PP
+The interface to the \f4i258\f1 driver is the standard UNIX System V/386 block
+and character device interface.  
+.SH CONFIGURATION
+The \f4i258\f1 driver communicates with the PCI, which in turn
+communicates with SCSI devices.  The PCI and SCSI interfaces address
+devices differently.  When configuring the driver, use the PCI unit
+addressing scheme to address devices; the PCI translates addresses received
+from the driver to the proper SCSI addresses.  For information on this
+address translation, see
+\f2How To Use The Peripheral Controller Interface (PCI) Server\f1.
+.PP
+By default, the \f4i258\f1 driver uses the first two instances of the PCI server executing on the 386/258 board(s), that are found by the two lowest slot positions.
+The \f4i258\f1 driver performs a LOCATE PCI function to determine the total instances
+of PCI (instances are counted from 1).  There are two ways to select a PCI 
+server instance and a 386/258 board instance:
+.IP "1."
+In the \f4/etc/conf/pack.d/i258/space.c file\f1:
+.RS
+.IP -
+Specify the instances of the 386/258 board (running PCI) in the
+\f4i258pci_bin\f1 array.
+.IP -
+Specify the instances of the PCI server in the \f4i258pci_sin\f1 array.
+.RE
+.IP
+Check that the \f4i258pci_bin\f1 and \f4i258pci_sin\f1 arrays match, since the 
+\f4i258\f1
+driver does not check for consistency.
+.IP "2."
+Add the following parameters in the \f4bps\f1 file \f4/etc/default/bootserver/config\f1 for the host booting System V/386:
+.IP
+\f4i258x = i258pci_bin:n1,i258pci_sin:n2;\f1
+.IP
+\f2n1\f1 and \f2n2\f1 are the desired instances and \f2x\f1 represents characters of your
+choice, if you have more than one PCI server or 386/258 board.
+.IP
+The \f4i258\f1 driver uses the \f4bps\f1 driver function \f4bps_get_wcval\f1 to retrieve parameters.
+.P
+Configuration for the \f4i258\f1 driver is handled by the following data structures: the minor table, the board table, the drive table, and the partition table.
+.IP "Minor Table"
+The minor table (\f4i258minor\f1 structure) maps a logical device's minor number to a partition
+on a physical device.  A physical device consists of a specific unit
+on a board.  The unit numbers in the \f4i258 minor table\f1 are the
+PCI unit numbers for the specified devices.  The table on the next page
+shows how the minor numbers are mapped onto the list of possible
+boards, devices, and PCI units.  For more information on minor number
+assignments, see \f4i258minor\f1 in the file
+\f4/etc/conf/pack.d/i258/space.c\f1.
+.IP "Board Table"
+The board table (\f4i258cfg\f1 structure) is an array of structures containing the
+information required to access each board in the system.  A board is
+selected by the board index in the \f4minor table\f1.  Each entry in
+this table contains the information required to communicate with the
+board, and a pointer to the drive table for each device connected to
+the board.  See \f4i258cfg\f1 in the file \f4/usr/include/sys/i258.h\f1.
+.IP "Drive Table"
+The drive table (\f4i258cdrt\f1 structure) is an array of structures.
+Each structure contains a physical description of the device and a pointer
+to the partition table for the device.
+There is at least one \f4drtab\f1 entry for each device known to the
+operating system.
+The unit index in the minor table is used to select which
+\f4drtab\f1 to use,
+and the \f4drtab\f1 entry is selected by the \f4drtab\f1 index.
+See \f4i258drtab\f1 and \f4i258cdrt\f1 in the
+file \f4/usr/include/sys/i258.h\f1.
+.IP "Partition Table"
+The partition table (\f4i258part structure\f1) is a description of logical
+portions of a given device.
+The entry in the partition table is selected by the 
+partition index in the minor table.
+See \f4i258part\f1 in the file \f4/usr/include/sys/i258.h\f4 and partition in the file \f4/usr/include/sys/vtoc.h\f1.
+.TS
+center,box;
+c | c | c | c.
+\f3Minor		PCI
+Table	Device	Unit	Board\f1
+_
+0 - 15	Wini0	2	0
+16 - 31	Wini1	3	0
+32 - 47	Wini2	4	0
+48 - 63	Wini3	5	0
+
+64 - 78	Floppy0	0	0
+79 - 93	Floppy1	1	0
+94 - 108	unsupported\(**		0
+120 - 123	Tape1	\(**\(**	0
+124,127	Tape0	6	0
+
+128 - 143	Wini0	2	1
+144 - 159	Wini1	3	1
+160 - 175	Wini2	4	1
+176 - 191	Wini3	5	1
+
+192 - 206	Floppy0	0	1
+207 - 221	Floppy1	1	1
+222 - 236	unsupported\(**		1
+248 - 251	Tape1	\(**\(**	1
+252 - 255	Tape0	6	1 
+.TE
+.P
+.TP 4
+\(**
+The i258 driver only supports two diskette drives.
+.TP 4
+\(**\(**
+The i258 driver only supports one tape drive.
+.P
+The device driver requires the Volume Label,
+Physical Description Information (pdinfo),
+and Volume Table of Contents (vtoc) information to access a given hard 
+disk drive.
+To allow disks to be interchangeable, the information is stored
+on the disk itself.
+All of this information is placed on the device during system installation.
+.IP "Volume Label"
+The driver reads the volume label to determine disk characteristics and
+to locate the pdinfo.
+The volume label is read when the driver first opens a device.
+For data structure definitions,
+see \f4ivlab\f1 in the file \f4/usr/include/sys/ivlab.h\f1.
+.IP pdinfo
+The \f4pdinfo\f1 contains additional device characteristics,
+and pointers to the \f4vtoc\f1 and alternate table.
+\f4pdinfo\f1 is read when the driver first opens a device.
+For data structure definitions, see \f4pdinfo\f1 in the file
+\f4/usr/include/sys/vtoc.h\f1.
+.IP vtoc
+The \f4vtoc\f1 contains the partition information required by
+the driver to access the hard disk drive.
+\f4vtoc\f1 is read when the driver first opens a device.
+For data structure definitions, see \f4vtoc\f1 in the file
+\f4/usr/include/sys/vtoc.h\f1.
+.IP "SW alt inf"
+This is the software bad block handling table.
+It resides the file \f4/usr/include/sys/alttbl.h\f1.
+.IP mdl
+Manufacturer's Defect List--This is the defective track list read from 
+the hard disk drive.
+It is in the file \f4/usr/include/sys/bbh.h\f1.
+.PP
+The \f4drive table\f1 and \f4partition table\f1 contain lists of the
+default configurations for devices controlled by the driver.
+When configuring the \f4i258\f1 driver, you may want to add devices with
+different characteristics than the default devices.  
+.PP
+The following steps provide an overview of the procedure you must follow
+to add a new device:
+.PP
+.TP 5
+1.
+Add an entry into the drive table for the new device type.  The
+drive table is in the file \f4/etc/conf/pack.d/i258/space.c\f1.
+Hard disks drives are defined in the structure \f4i258cdrt i258d00[]\f1,
+diskette drives in the structure \f4i258cdrt i258f00[]\f1, and tape
+drives in the structure \f4i258cdrt i258t00[]\f1.
+.TP 5
+2.
+Add an entry to the partition table for each partition on the new
+device type.  The \f4partition table\f1 is in the file
+\f4/etc/conf/pack.d/i258/space.c\f1.  Partitions for diskette drives
+are defined in the structure \f4i258cdrt i258Pf0[]\f1.  Partitions for
+tape drives are not configurable.  Partition information for hard disks
+is determined at runtime from the volume table of contents (vtoc) on
+the drive.  (See \f4/usr/include/sys/vtoc.h\f1 for information on the
+vtoc.)
+.TP 5
+3.
+Put an entry into the \f4minor table\f1 for each partition of the new
+device.  You may use the minor numbers listed as unsupported in the
+previous table, or replace a device currently in the minor table if
+you will no longer be using that device.  
+.TP 5
+4.
+Use the \f4mknod\f1(1M) command to create a node in the \f4/dev\f1
+directory.  Follow the naming conventions for the various device types
+listed in the \f4hd\f1(7iref), \f4fd
+\f1(7iref), and \f4td\f1(7iref) man pages.
+Be sure that the minor number you use in the \f4mknod\f1(1M) command
+is the same as the minor number in the minor table for the desired
+partition.
+.PP
+An example later in this driver description details the above procedure.
+.PP
+The partition table is in the \f4i258part\f1 structure in the file
+\f4/etc/conf/pack.d/i258/space.c\f1.
+.PP
+The configuration for the \f4i258tp\f1(7iref) driver is handled by the
+same data structures as the \f4i258\f1 driver.  The \f4i258\f1 driver must
+be configured into the system in order to configure the \f4i258tp\f1(7iref)
+driver.
+.SH "Hard Disk Information"
+This device driver requires certain information about a disk drive in
+order to access the drive.  This information is stored on the disks
+themselves.  \f4hd\f1(7iref) discusses the disk
+drive information that this and other disk device drivers need.
+Also, certain \f4ioctl\f1() calls are supported by all Multibus disk
+device drivers.  These calls are listed in the
+\f4hd\f1(7iref) man page.
+.SH "Flexible Disk Information"
+There is a device file in the \f4/dev\f1 directory for each type of
+valid  flexible disk drive.
+The device filenames follow a specific naming
+convention.
+See \f4fd\f1(7iref) man page for more information.
+.SH EXAMPLE
+Following is an example of adding a 3.5-inch diskette drive as unit 0 on board 0
+to the \f4i258\f1 driver configuration.
+.TP .25i
+1.
+Add the following to the i258minor structure in the 
+\f4/etc/conf/pack.d/i258/space.c\f1 file:
+.IP
+.ft 4
+.nf
+/* Board 0 - Floppy 0 */
+i258MINOR(0,0,9,45)  /* [ 94] 1.44 Mbytes - f03ht */
+i258MINOR(0,0,9,46)  /* [ 95] 1.44 Mbytes - f03hu */
+.fi
+.ft 1
+.TP .25i
+2.
+Use the following commands to create the device nodes for the new diskette drive
+in the proper device directories:
+.IP
+.ft 4
+.nf
+/etc/mknod  /dev/dsk/f03ht  b  0  94
+/etc/mknod  /dev/dsk/f03hu  b  0  95
+/etc/mknod  /dev/rdsk/f03ht  c  0  94
+/etc/mknod  /dev/rdsk/f03hu  c  0  95
+.fi
+.ft 1
+.TP .25i
+3.
+Rebuild the kernel and then shutdown and reboot the system.  To rebuild
+the kernel, enter \f4etc/conf/bin/idbuild\f1.  Rebuilding the kernel takes approximately five minutes.
+.SH FILES
+\f4/usr/include/sys/i258.h\f1
+.br
+\f4/etc/conf/pack.d/i258/space.c\f1
+.SH SEE ALSO 
+\f4fd\f1(7iref),
+\f4hd\f1(7iref),
+\f4i258tp\f1(7iref)
+.SH NOTES
+In the \f4/etc/conf/pack.d/i258/space.c\f1 file, the terms "board" and "pci server" mean the same.
+

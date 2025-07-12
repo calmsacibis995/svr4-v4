@@ -1,0 +1,33 @@
+'\"macro stdmacro
+.if n .pH 386.mps_get_tid @(#)mps_get_tid	40.5 of 7/1/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.nr X
+.if \nX=0 .ds x} mps_get_tid D3D "Multibus II" "DDI" "\&"
+.if \nX=1 .ds x} mps_get_tid D3D "Multibus II" "DDI" "\&"
+.if \nX=2 .ds x} mps_get_tid D3D "" "\&"
+.if \nX=3 .ds x} mps_get_tid "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4mps_get_tid\f1 \- allocates transaction ids.
+.SH SYNOPSIS
+.nf
+\f4#include <sys/mps.h>
+unsigned char mps_get_tid(\f2chan\fP)
+long chan;\f1
+.fi
+.SH ARGUMENTS
+.TP 11
+\f2chan\f1
+a channel number obtained from a previous call to \f4mps_open_chan\f1.
+.SH DESCRIPTION
+The \f4mps_get_tid\f1 function is used by users of the message handler to
+allocate transaction ids.
+.SH RETURN VALUE
+If no free transaction ids are available for the associated port id, or
+when \f2chan\f1 is an invalid channel number, 0 (zero) is returned; otherwise
+the allocated transaction id is returned.
+.SH LEVEL
+Base or Interrupt
+.SH SEE ALSO
+\f4mps_open_chan\f1(D3D),
+\f4mps_free_tid\f1(D3D)

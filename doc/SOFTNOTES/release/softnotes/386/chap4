@@ -1,0 +1,372 @@
+.if n .pH rn4.chap4 @(#)chap4	40.52
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.de MR 
+.P 
+MR \\$1 
+.P 
+..
+.de MR
+..
+.BK "Software Notes"
+.CH "Networking" "4"
+.H 1 "Networking Notes"
+.IX istart UNIX System V/386 Release 4, networking notes
+.H 2 "TCP/IP (DARPA Internet Protocol Suite)
+.H 3 "rlogin command"
+.MR ul90-32013
+\f4rlogin\f1 with the \f4-L\f1 option is used to run in literal
+output mode, which includes ignoring the parity bit.
+By default, the remote login session is not started igoring the parity bit,
+however.  To get it, type \f4stty ignpar\f1 once you have a
+successful remote log in.
+.H 3 "Domain Name Service (DNS)"
+.IX TCP/IP, \f4tlp\fP and \f4telnet\fP and using DNS
+.IX Domain Name Service (DNS), using \f4tlp\fP and \f4telnet\fP
+The default Internet services, including 
+.UI ftp 
+and 
+.UI telnet , 
+are not compiled to use the Domain Name Service.  For DNS, the
+programs must be compiled with the following libraries, in
+the following order: 
+.UI 
+.BL
+.LI
+-lresolv 
+.LI
+-lnsl
+.LI
+-lsocket
+.LE
+.H 3 "Pseudo-terminals"
+.IX TCP/IP, pseudo terminal configuration
+Pseudo-terminals must be configured for TCP/IP services, such
+as 
+\f4telnet\f1 and \f4rlogin\f1, to work.
+These may be selected when the NSU package is installed.
+.H 2 "NFS"
+.H 3 "Use NFS bg in /etc/vfstab"
+NFS file systems specified in \f4/etc/vfstab\f1 should use
+the \f4bg\f1 option to prevent the system
+from hanging or looping at boot time when the
+remote system is down.
+.H 3 "unsharing advertised resources"
+.MR "dm90-26479
+The \f4unshareall\f1 command may not always unshare an
+advertised resource. This problem is specific to
+the NFS \f4unshare\f1 command.
+.H 3 "Automounter"
+.IX NFS, automounter and maps
+.IX automounter, direct and indirect maps
+Direct map automounters do not always clean up after themselves.
+They may leave files that are symbolic links to automount daemon
+mount points for which the automount daemon no longer exists.
+Attempts to access these files will result in \f4server not
+responding\f1 messages.  These files can only be removed by
+unlinking them, then running \f4fsck\f1, or by rebooting and then 
+removing any remaining links.  The only other workaround is 
+to avoid using direct maps with the automounter.
+.P
+Note that the automount daemon for direct maps mounts itself
+on the mountpoint specified in the map, while the automounter
+for an indirect map mounts itself on the directory specified
+as the root for the indirect mount, i.e., one level above the
+mount point for the resource in the indirect map.
+This can be misleading to the user because the 
+user may not expect anything to be mounted above the 
+mount point of the resource.
+Because the daemon mounts itself there, the previous 
+contents of the directory are covered for the duration of 
+the life of the automounter.
+As with all file system mount points, it is a good policy 
+to use empty directories as automount root mount points.
+.P
+There is no entry in the \f4/etc/mnttab\f1 file corresponding to
+the mount of the automount daemon on the automount root 
+mount point.
+Therefore, it is possible for a user attempting to mount a 
+file system on a given mount point to get a \f4mount point 
+busy\f1 message even though that directory is not 
+noted in the \f4/etc/mnttab\f1 file as an existing mount
+point.
+.H 3 "sysadm Automount"
+.MR dm90-34679
+If you discontinue an nfs automount from \f4sysadm\f1, the entry is
+removed from \f4/etc/vfstab\f1 instead of being turned off.  (The
+way to turn off an nfs automount from \f4sysadm\f1 is \f4network_
+services\f1, \f4remote_files\f1, \f4remote_resources\f1,
+\f4unmount\f1, \f4nfs\f1, then select \f4yes\f1 to discontinue the
+automount.)
+The problem with removing this entry is that you may want to use
+the \f4mount\f1(1M) command later to mount the resource.  If you
+give \f4mount\f1 command partial information, it can use the
+\f4/etc/vfstab\f1 entry to fill in the rest.
+.H 3 "Lock Manager"
+.IX NFS, deadlock detection
+.IX deadlock, NFS lock manager
+.MR "bl89-26139"
+The lock manager does not always detect deadlock.
+.H 3 "Loopback"
+.IX istart \f4nfsd\fP
+.IX NFS, interrupted read or write
+If a large read or write operation to a loopback mount with 
+\f4biod\f1's running is interrupted, some of 
+the \f4nfsd\f1's can hang while waiting for the 
+STREAMS code to free a STREAMS message block.
+.IX iend \f4nfsd\fP
+.H 3 "Secure NFS mount"
+.IX Secure NFS, \f4mount\fP
+If a secure NFS mount is interrupted while waiting for
+the keyserver to respond, it is possible for the 
+file system to be mounted, but without a corresponding entry put
+in the \f4/etc/mnttab\f1 file.  This occurs because the signal will
+not be handled until after the mount system call has succeeded
+and returned to the \f4mount\f1 command.  The command process will then 
+be killed before it writes to \f4/etc/mnttab\f1.
+.H 3 "Transport Independence"
+.IX NFS and workarounds
+.IX NFS, transport independence
+.IX NFS, multiple transports
+NFS can run over multiple transports simultaneously, provided that:
+.AL a
+.LI
+both the client and the server agree on the maximum
+packet size for a given transport; or,
+the \f4-o rsize=,wsize=\f1 options are given to the 
+\f4mount\f1 command to reduce the read and write sizes to a value
+small enough for both machines (the minimum of the
+packet sizes of the two machines' transports).
+Note that the read and write transfer sizes should be
+about 430 bytes smaller than the transport's packet
+size to allow for RPC headers.
+.LI
+the transport can accept packets of at least a minimum
+size, of approximately 1400 bytes.
+.LE
+.P
+The NFS daemon (\f4nfsd\f1) does not listen on a specified address
+over transports other than UDP.  Therefore, if the \f4nfsd\f1's are
+killed and restarted it is likely that the new \f4nfsd\f1 will
+listen on an entirely different address causing
+any previously existing mounts to fail.
+.P
+The following are options to \f4nfsd\f1 that are not 
+documented on the \f4nfsd\f1 manual page:
+
+	\f4-a\f1		start \f4nfsd\f1's over all available connectionless transports
+
+	\f4-p\f1 \f2protocol\f1	start \f4nfsd\f1's over the specified protocol
+
+	\f4-t\f1 \f2device\f1 	start \f4nfsd\f1's for the transport specified by the given device 
+
+.P
+.IX \f4NETPATH\fP environment variable
+If the NETPATH environment variable is set then at least one of 
+the transports in the NETPATH path should be connectionless.
+.H 3 "share Resources Command"
+.IX istart \f4share_nfs\fP, read and write permissions
+If a resource is shared with a \f4ro= list\f1 and a \f4root= list\f1,
+any host that is on the \f4root= list\f1 will be given only read-only
+access, regardless of whether that host is specified in the \f4ro=
+list\f1, unless \f4rw\f1 is declared as the default, or 
+the host is mentioned in a \f4rw= list\f1. 
+The same is true if the resource is shared with \f4ro\f1
+as the default. For example, the following \f4share\f1 commands will
+give read-only permissions to \f4hostb\f1:
+.P
+.nf
+	\f4share -F nfs -oro=hosta,root=hostb /var
+.sp 1
+	share -F nfs -oro,root=hostb /var\f1
+.P
+While the following will give read/write permissions to hostb:
+.sp 1  
+	\f4share -F nfs -oro=hosta,rw=hostb,root=hostb /var
+.sp 1
+	share -F nfs -oroot=hostb /var\f1
+.br
+.IX iend \f4share_nfs\fP, read and write permissions
+.H 3  "Compatibility with UNIX V Release 3.2"
+A NFS mount from SVR4 to a SVR3.2 system
+running Lachman NFS 3.2.4 does not work.
+If the repeating error message, \f4Authenticate error\f1,
+is displayed on a SVR4 system, \f4root\f1 on that
+system belongs to too many groups.
+To mount a Lachman 3.2.4 system, \f4root\f1
+must not belong to more than eight groups.
+.P
+The workaround is to edit the \f1/etc/groups\f1
+file.
+The line for root should only contain seven entries 
+(including \f4root\f1).
+.AB N
+All users belong to group \f4other\fP even though it isn't 
+specified in their line in the \f4/etc/groups\fP file.
+.AC
+.H 2 "RFS"
+.IX RFS, compatibility with SVR4 implementation
+Remote File Sharing (RFS) has been 
+implemented as a file system type under VFS. 
+Even though the new implementation fully 
+supports the pre-SVR4 protocol, the new 
+protocol has implications for compatibility 
+and inter-operability with previous versions of RFS.
+.P
+Using \f4df\f1 with either the \f4-n\f1 or 
+\f4-g\f1 options on a remote resource advertised from a 
+pre-SVR4 system will give \f4unknown\f1 for the fstype.
+.P
+The \f4-c\f1 option to the \f4rfs\f1 specific \f4mount\f1 
+command function is done by \f4-o\f1 nocaching.
+.P
+The \f4-d\f1 option for the \f4mount\f1 command is provided 
+for compatibility, but its function is replaced by \f4-F rfs\f1, 
+so the \f4-d\f1 will be removed in a future release.
+.H 4 "Known Problems"
+Facilities new to System V/386 Release 4 cannot be provided
+by an older RFS server. Although a SVR4 
+RFS client can create a dynamic shared library 
+on a pre-SVR4 server, the shared library cannot 
+be \f4mmap\f1ped from that server, because the pre-SVR4
+protocol does not support file mapping
+or paging. The \f4rename\f1 system call 
+(used by the \f4mv\f1 command) is not fully 
+supported between SVR4 clients and SVR3 servers.
+An attempt to \f4rename\f1 a directory on an SVR3 server will
+fail with the error \f4EISDIR\f1.
+.P
+RFS does not support \f4mmap\f1ping of character devices
+or the allocation of remote swap files.
+.P
+Users and administrators of RFS clients and servers are reminded
+that the interpretation of absolute symbolic links encountered
+on the server can lead to unexpected results because they
+are relative to the root directory of the client.
+.P
+.MR "bl90-12232
+Setting up RFS via sysadm menus is not currently possible. 
+The menu function for RFS is unpredictable and problematic.
+.IX RFS, swap control
+.H 3 "RFS root crontabs entry"
+.MR ul90-33913
+If you remove the Remote File Sharing Utilities package, an rfs
+entry remains in the \f4root\f1 crontabs file
+(\f4/var/spool/cron/crontabs/root\f1).  This cron entry will try to
+run \f4/etc/rfs/rmnttry\f1 every 15 minutes to mount remote
+resources.  Each failure will result in a mail message to root.  To
+avoid the problem, remove the line containing the \f4rmnttry\f1
+command from the \f4root\f1 crontabs file.
+.H 3 "Swap Control"
+Swap will not work over RFS (i.e., a swap device 
+or file cannot be created on a resource mounted via RFS).  
+If this is attempted, an \f4ENOSYS\f1 error will result. 
+.H 2 "RFS: sysadm Initial Remote File Sharing Setup"
+.MR "bl90-05813
+When using the \f4add_nameserver\f1 - Adds Domain Name Servers
+feature, there are two errors that you may encounter.
+The first possible error message is:
+.DS I UI
+Name to Address Mapping has not been set up correctly.
+Select the Name to Address Mapping Management task from the 
+remote_files menu to setup Name to Address mapping.
+.DE
+If you are using TCP/IP as the transport provider, 
+this may indicate that there is not a listen service 
+in the \f4/etc/services\f1 file.
+When using the \f4Name to Address Mapping\f1 to add the entry the
+service will be listen and the port will be the port value
+used to setup the listener.
+The default listener port value for \f4tcp\f1 is ACE in 
+hexadecimal which is 2766 in decimal.
+The \f4Name to Address Mapping\f1 menu expects the value to 
+be in decimal.
+To get the listener address, you could 
+execute \f4nlsadmin -l tcp\f1.
+The port number will be the 5th through 8th numbers.
+.AB N
+RFS should be set up using command line input versus
+OA&M menus.
+.AC
+.H 2 "Secure RPC"
+.IX Secure RPC, with RFS
+.IX RFS, Secure RPC
+.H 3 "Secure RPC with RFS"
+.IX Secure RPC, administrative files
+The Secure RPC administrative files \f4/etc/masters\f1 and
+\f4/etc/slaves\f1 contain the unames of RPC masters and slaves
+respectively as documented in \f2Programmer's Guide: Networking
+Interfaces\f1.
+Note, however, that if RFS is used to share the files from the
+masters or the slaves, then those entries in either file should
+contain the RFS domain name for that master/server followed
+by a dot (.) and the uname, i.e., \f4rfsdomain.uname\f1.
+.P
+One of the Secure RPC administrative tasks of 
+a slave server is to share its \f4/etc\f1 directory, 
+writable to its master and readable to its clients. 
+.P
+Note, when NFS is used to share the \f4/etc\f1 directory, 
+the share command should be in the form 
+\f4share -F nfs -r rw=p,root=p,ro=i:j:k /etc\f1, 
+where \f4p\f1 is the slave's master and \f4i\f1,\f4j\f1, 
+and \f4k\f1 are the slave's clients.  
+.H 2 "OA&M - Remove System Name function"
+Due to some data parsing problems, the OA&M menu 
+item for removing a system name from a
+basic networking database does not function.
+This item was intended to be an interface to 
+the \f4/etc/uucp/Systems\f1 file.
+Administrators who want to remove a system from the 
+list of systems that the machine communicates with 
+must edit and delete the appropriate system name line in
+the \f4/etc/uucp/Systems\f1 file.
+.H 3 "Devconfig file"
+.MR dm91-05809
+STREAMS modules identified in the \f4/etc/uucp/Devconfig\f1 file
+must be seven characters or less.  These modules are pushed onto
+STREAMS devices to provide things like line disciplines and
+read/write services for \f4cu\f1 and \f4uucp\f1 basic networking
+services.
+.H 2 "Cable Disconnections During I/O via tty ports"
+.MR "bl90-12221.MR "bl90-12947
+.MR "dm90-12497
+If a cable is disconnected while reading from
+or writing to an asynchronous communications port
+(COM1 or COM2), the process will get a \f40\f1 in
+the case of reading (for end of file) and an I/O
+error in the case of writing.
+.P
+When the cable is reconnected to the port, the user
+will continue to get the above return values from
+read or write, rather than the input or output
+starting back up again successfully. 
+The only way around this is to close and then reopen the device.
+.P
+An explanation for this behavior is that upon detecting
+"carrier loss" (disconnecting the cable), the driver
+sends the message \f4M_HANGUP\f1 to the stream head.
+When the stream head recognizes this, it sets a flag such
+that from then on, any further reads or writes will
+return an I/O error or \f40\f1, respectively, to the
+user. 
+When the carrier comes back (by connecting
+the cable), the flag is not reset since the
+streamhead does not know anything about it.
+.H 2 "libnsl and the ABI"
+.IX libnsl and ABI
+In previous releases, three routines required for
+\f4libnsl\f1 by the ABI were actually placed in a
+different library. In this release,
+\f4getpublickey\f1 and \f4getsecretkey\f1 have been
+moved to match the ABI. 
+Another routine, \f4svc_getargs\f1, will be dropped
+from the \f4libnsl\f1 requirement in subsequent issues of
+the ABI.
+.H 2 "Dial Header File"
+.LI dm91-00279
+.IX dial.h header file
+The dial header file (\f4/usr/include/dial.h\f1) is not delivered
+with the UNIX System V Release 4/386 binary product.  It is only
+available to source customers.
+.IX iend UNIX System V/386 Release 4, networking notes

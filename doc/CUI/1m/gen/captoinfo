@@ -1,0 +1,93 @@
+'\"macro stdmacro
+.if n .pH g1a.captoinfo @(#)captoinfo	40.10 of 4/15/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} captoinfo 1M "Terminal Information Utilities" "\&"
+.if \nX=1 .ds x} captoinfo 1M "Terminal Information Utilities"
+.if \nX=2 .ds x} captoinfo 1M "" "\&"
+.if \nX=3 .ds x} captoinfo "" "" "\&"
+.TH \*(x}
+.\" ident	"@(#)svid_ti:ti_cmd/captoinfo	1.8"
+.if n .pH ti_cmd.tput @(#)tput	30.1
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.ds Ga \|\\v'-((\\n(.su-2u)*10u)'\\D'l (2u*\\n(.su) (2u*\\n(.su)'\
+\\v'(((\\n(.su-2u)*10u)-(2u*\\n(.su))'\|
+.ds Aa \\v'-((\\n(.su-4u)*10u)'\\D'l (2u*\\n(.su) -(2u*\\n(.su)'\
+\\v'((\\n(.su-2u)*10u)'\|
+.ds gA  \\v'-((\\n(.su-2u)*10u)'\\D'l (2u*\\n(.su) (2u*\\n(.su)'\
+\\v'(((\\n(.su-2u)*10u)-(2u*\\n(.su))'\|
+.ds aA \|\\v'-((\\n(.su-4u)*10u)'\\D'l (2u*\\n(.su) -(2u*\\n(.su)'\
+\\v'((\\n(.su-2u)*10u)'\|
+.SH NAME
+\f4captoinfo\f1 \(em convert a \f2termcap\f1 description into a \f2terminfo\f1 description
+.SH SYNOPSIS
+.na
+.ds [ \f1[\fP
+.ds ] \f1]\fP
+.ds | \f1\||\fP
+.ft 4
+captoinfo \*[-v \f1.\ .\ .\fP\*]
+\*[-V\*]
+\*[-1\*]
+\*[-w \f2width\fP\*]
+\f2file\f1 .\ .\ . 
+.ft 1
+.ad
+.SH DESCRIPTION
+\f4captoinfo\f1
+looks in
+.I file
+for \f4termcap\f1 descriptions.
+For each one found, 
+an equivalent \f4terminfo\f1
+description is written to standard output, along with any comments found.
+A description which is expressed as relative to another description (as
+specified in the
+\f4termcap\f1 \f4tc = field\f1)
+will be reduced to the minimum superset before being output.
+.P
+If no 
+.I file
+is given, then the environment variable
+\f4TERMCAP\f1
+is used for the filename or entry.
+If
+\f4TERMCAP\f1
+is a full pathname to a file, 
+only the terminal whose name is specified in the environment variable
+\f4TERM\f1
+is extracted from that file.
+If the environment variable
+\f4TERMCAP\f1
+is not set, 
+then the file \f4/usr/share/lib/termcap\f1 is read.
+.P
+.TP
+\f4\-v\f1
+print out tracing information on standard error as the program runs.
+Specifying additional \f4\-v\f1 options will
+cause more detailed information to be printed.
+.TP
+\f4\-V\f1
+print out the version of the program in use on standard error and exit.
+.TP
+\f4\-1\f1
+cause the fields to print out one to a line.
+Otherwise, the fields will be printed several to a line to a maximum width
+of 60 characters.
+.TP
+\f4\-w\f1
+change the output to \f2width\f1 characters.
+.SH FILES
+\f4\&/usr/share/lib/terminfo/?/*\f1    Compiled terminal description database.
+.SH NOTES
+.P
+\f4captoinfo\f1 should be used to convert \f4termcap\f1
+entries to \f4terminfo\f1 entries because the
+\f4termcap\f1 database (from earlier versions of UNIX System V)
+may not be supplied in future releases.
+.SH SEE ALSO
+\f4curses\fP(3X),
+\f4infocmp\fP(1M),
+\f4terminfo\fP(4)

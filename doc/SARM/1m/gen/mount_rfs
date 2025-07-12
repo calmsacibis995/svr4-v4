@@ -1,0 +1,82 @@
+'\"macro stdmacro
+.if n .pH g1a.mount_rfs @(#)mount_rfs	40.15.1.1 of 3/12/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} mount 1M "RFS" "\&"
+.if \nX=1 .ds x} mount 1M "RFS"
+.if \nX=2 .ds x} mount 1M "" "\&"
+.if \nX=3 .ds x} mount "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4mount\f1 \- mount remote resources
+.SH SYNOPSIS
+\f4mount [-F rfs] [-cr] [-o \f2specific_options\f4] \f2resource directory\f4
+.br
+.SH DESCRIPTION
+The
+\f4mount\f1
+command makes a remote \f2resource\f1
+available to users from the mount point \f2directory\f1.
+The command adds an entry to the table of mounted devices, \f4/etc/mnttab\f1.
+.P
+If multiple transport providers are installed and administrators attempt
+to mount a resource over them, the transport
+providers should be specified as network IDs in the
+\f4/etc/netconfig\f1 file.  The NETPATH environment variable
+can be used to specify the sequence of transport providers
+\f4mount\f1 will use to attempt a connection to a server machine
+(\f4NETPATH=tcp:starlan\f1).  If only one transport provider is
+installed and \f4/etc/netconfig\f1
+has not been set up, all resources will be mounted over this
+transport provider by default.
+.P
+The following options are available:
+.TP 0.75i
+\f4-F rfs\f1
+Specifies the \f4rfs\fP-FSType.
+.TP 0.75i
+\f4\-c\f1
+Disable client caching.
+This is the same as \f4\-o nocaching\f1.
+.TP 0.75i
+\f4\-r\f1
+\f2resource\f1 is to be mounted read-only.  If the
+\f2resource\f1 is write-protected, this flag or the \f4\-o ro\f1 
+specific option must be used.
+.TP 0.75i
+\f4\-o \f1
+Specify the \f4rfs\fP file system specific options in a
+comma-separated list.
+The available options are:
+.RS
+.IP \f4nocaching\f1 15
+Disable client caching.
+.IP \f4rw|ro\f1
+\f2resource\f1 is to be mounted read/write or read-only.
+The default is read/write.
+.IP \f4suid|nosuid\f1
+Set-uid bits are to be obeyed or ignored, respectively, on
+execution. The default is \f4nosuid\f1.
+.sp 0.5
+Note that mounting a resource from an untrusted server
+introduces possible security risks.
+While the use of \f4nosuid\fP protects against some risks, it is not
+completely effective.
+The best defense against such security risks is to avoid such mounts.
+.RE
+.SH FILES
+.PD 0
+.TP 20
+\f4/etc/mnttab\f1
+mount table
+.TP 20
+\f4/etc/netconfig\f1
+network configuration databse
+.TP 20
+\f4/etc/vfstab\f1
+table of automatically mounted resources
+.SH "SEE ALSO"
+\f4umount\fP(1M), \f4share\fP(1M), \f4fuser\fP(1M), \f4unshare\fP(1M),
+\f4dfshares\fP(1M), \f4dfmounts\fP(1M), \f4netconfig\fP(4), \f4mnttab\fP(4),
+\f4vfstab\f1(1M)

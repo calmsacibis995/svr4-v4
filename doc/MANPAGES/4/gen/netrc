@@ -1,0 +1,124 @@
+'\"macro stdmacro
+.if n .pH g4.netrc @(#)netrc	40.8 of 5/21/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.\" @(#)netrc.4 1.2 89/07/14 SMI;
+'\" macro stdmacro
+.\" Copyright (c) 1988 Sun Microsystems, Inc. - All Rights Reserved.
+.\"
+.nr X
+.if \nX=0 .ds x} netrc 4 "Internet Utilities" "\&"
+.if \nX=1 .ds x} netrc 4 "Internet Utilities"
+.if \nX=2 .ds x} netrc 4 "" "\&"
+.if \nX=3 .ds x} netrc "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4netrc\f1 \- file for ftp remote login data
+.SH DESCRIPTION
+.PP
+The
+\&\f4.netrc\f1
+file contains data for logging in to a
+remote host over the network for file transfers by
+\f4ftp\f1(1).
+This file resides in the user's home directory
+on the machine initiating the file transfer.
+Its permissions should be set to
+disallow read access by group and others [see
+\f4chmod\f1(1)].
+.PP
+The following tokens
+are recognized; they may be separated by
+\f4SPACE\f1, \f4TAB\f1, or \f4NEWLINE\f1 characters:
+.TP
+\f4machine\f2 name\f1
+Identify a remote machine name.
+The auto-login process searches the
+\f4\&.netrc\f1
+file for a
+\f4machine\f1
+token that matches the remote machine specified on the
+\f4ftp\f1
+command line or as an
+\f4open\f1
+command argument.
+Once a match is made, the subsequent
+\f4\&.netrc\f1
+tokens are processed, stopping when the
+.SM EOF
+is reached or another
+\f4machine\f1
+token is encountered.
+.TP
+\f4login\fP\f2 name\f1
+Identify a user on the remote machine.
+If this token is present, the auto-login
+process will initiate a login using the specified name.
+.TP
+\f4password\fP\f2 string\f1
+Supply a password.
+If this token is present,
+the auto-login process will supply the
+specified string if the remote server requires
+a password as part of the login process.
+Note: if this token is present in the
+\f4\&.netrc\f1
+file,
+\f4ftp\f1
+will abort the auto-login process if the
+\f4\&.netrc\f1
+is readable by anyone besides the user.
+.TP
+\f4account\f2 string\f1
+Supply an additional account password.
+If this token is present, the auto-login process
+will supply the specified string if the remote
+server requires an additional account password,
+or the auto-login process will initiate an
+\f4ACCT\fP
+command if it does not.
+.TP
+\f4macdef\f2 name\f1
+Define a macro.
+This token functions as the
+\f4ftp\f1
+\f4macdef\f1
+command functions.
+A macro is defined with the
+specified name; its contents begin with the next
+\f4\&.netrc\f1
+line and continue until a
+\f4NULL\fP
+line (consecutive
+.SM NEWLINE
+characters) is encountered.
+If a macro named
+\f4init\f1
+is defined, it is automatically executed
+as the last step in the
+auto-login process.
+.SH EXAMPLE
+.PP
+A 
+\f4\&.netrc\f1
+file containing the following line:
+.IP
+.ft 4
+machine ray login demo password mypassword
+.ft 1
+.PP
+allows an autologin to the machine 
+\f4ray\f1
+using the login name
+\f4demo\f1
+with password
+\f4mypassword\f1.
+.SH FILES
+.PD 0
+.TP 20
+\f4~/.netrc\f1
+.PD
+.SH SEE ALSO
+\f4chmod\fP(1),
+\f4ftp\fP(1),
+\f4ftpd\fP(1M)

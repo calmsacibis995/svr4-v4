@@ -1,0 +1,80 @@
+'\"macro stdmacro
+.if n .pH g3.bstring @(#)bstring	40.11 of 4/19/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.\" Copyright (c) 1988 Sun Microsystems, Inc. - All Rights Reserved.
+.\"
+.nr X
+.if \nX=0 .ds x} bstring 3 "BSD Compatibility Package" "\&"
+.if \nX=1 .ds x} bstring 3 "BSD Compatibility Package"
+.if \nX=2 .ds x} bstring 3 "" "\&"
+.if \nX=3 .ds x} bstring "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4bstring\f1:  \f4bcopy\f1, \f4bcmp\f1, \f4bzero\f1, \f4ffs\f1 \- bit and byte string operations
+.SH SYNOPSIS
+.nf
+\f4cc \f1[ \f2flag\f1\. \. \. ] \f2file\f1 \. \. \. \f4\-lucb\f1
+.sp .5
+\f4bcopy(b1, b2, length)\f1
+\f4char \(**b1, \(**b2;\f1
+\f4int length;\f1
+.P
+\f4int bcmp(b1, b2, length)\f1
+\f4char \(**b1, \(**b2;\f1
+\f4int length;\f1
+.P
+\f4bzero(b, length)\f1
+\f4char \(**b;\f1
+\f4int length;\f1
+.fi
+.SH DESCRIPTION
+.P
+The functions
+\f4bcopy\f1,
+\f4bcmp\f1,
+and
+\f4bzero\f1
+operate on variable length strings of bytes.
+They do not check for null bytes as the routines in
+\f4string\f1(3)
+do.
+.P
+\f4bcopy\f1
+copies
+.I length
+bytes from string
+.I b1
+to the string
+.IR b2 .
+Overlapping strings are handled correctly.
+.P
+\f4bcmp\f1
+compares byte string
+.I b1
+against byte string
+.IR b2 ,
+returning zero if they are identical, 1 otherwise.
+Both strings are assumed to be
+.I length
+bytes long.
+\f4bcmp\f1
+of length zero bytes always returns zero.
+.P
+.I bzero
+places
+.I length
+0 bytes in the string
+.IR b .
+.SH NOTES
+The
+\f4bcmp\f1
+and
+\f4bcopy\f1
+routines take parameters backwards from
+\f4strcmp\f1
+and
+\f4strcpy\f1.
+.SH SEE ALSO
+\f4string\fP(3C)
+in the \f2Programmer's Reference Manual\f1

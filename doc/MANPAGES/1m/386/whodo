@@ -1,0 +1,110 @@
+'\"macro stdmacro
+.if n .pH g1a.whodo @(#)whodo	40.4 of 1/3/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+'\"macro stdmacro
+.if n .pH g1a.whodo @(#)whodo	40.8 of 9/20/89
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.if \nX=0 .ds x} whodo 1M "System Administration Utilities" "\&"
+.if \nX=1 .ds x} whodo 1M "System Administration Utilities"
+.if \nX=2 .ds x} whodo 1M "" "\&"
+.if \nX=3 .ds x} whodo "" "" "\&"
+.nr X
+.TH \*(x} "" "386 Computer Only"
+.SH NAME
+\f4whodo\f1 \- who is doing what
+.SH SYNOPSIS
+\f4/usr/sbin/whodo\f1
+[\f4\-h\f1]
+[\f4\-l\f1]
+[\f2user\f1]
+.SH DESCRIPTION
+\f4whodo\fP
+produces formatted and dated output from 
+information in the
+\f4/var/adm/utmp\f1,
+\f4/etc/ps_data\f1,
+and \f4/proc/pid\f1 files.
+.P
+The display is headed by the date, time, and machine name. 
+For each user logged in, device name, user-\s-1ID\s+1 and login time is shown,
+followed by a list of active processes associated with the
+user-\s-1ID\s+1.  
+The list includes the device name, process-\s-1ID\s+1, \s-1CPU\s+1 minutes and
+seconds used, and process name.
+.P
+If
+\f2user\f1
+is specified, output is restricted to all sessions
+pertaining to that user.
+.P
+The following options are available:
+.TP
+\f4\-h\f1
+Suppress the heading.
+.TP
+\f4\-l\f1
+Produce a long form of output.
+The fields displayed are:
+the user's login name,
+the name of the tty the user is on,
+the time of day the user logged in (in \f2hours\f4:\f2minutes\f1),
+the idle time \(em that is, the time since the user
+last typed anything (in \f2hours\f4:\f2minutes\f1), the
+\s-1CPU\s+1
+time used by all processes and their children on that
+terminal (in \f2minutes\f4:\f2seconds\f1), the \s-1CPU\s+1
+time used by the currently active processes (in
+\f2minutes\f4:\f2seconds\f1), and
+the name and arguments of the current process.
+.SH EXAMPLE
+The command:
+.P
+.RS
+\f4whodo\f1
+.RE
+.P
+produces a display like this:
+.P
+.RS
+.nf
+\f4Tue Mar 12 15:48:03 1985
+bailey
+
+tty09    mcn       8:51
+    tty09   28158    0:29 sh
+
+tty52    bdr      15:23
+    tty52   21688    0:05 sh
+    tty52   22788    0:01 whodo
+    tty52   22017    0:03 vi
+    tty52   22549    0:01 sh
+
+xt162    lee      10:20
+    tty08    6748    0:01 layers
+    xt162    6751    0:01 sh
+    xt163    6761    0:05 sh
+    tty08    6536    0:05 sh\f1
+.fi
+.RE
+.SH FILES
+\f4/etc/passwd
+.br
+/etc/ps_data
+.br
+/var/adm/utmp
+.br
+/proc/pid\f1
+.SH DIAGNOSTICS
+If the \s-1PROC\s+1 driver is not installed or configured or if
+\f4/proc\f1
+is not mounted, a message to that effect is issued
+and \f4whodo\fP will fail.
+.P
+The exit status is zero on success,
+non-zero on failure.
+.SH SEE ALSO
+\f4ps\fP(1),
+\f4who\fP(1)
+in the \f2User's Reference Manual\f1.
+.Ee

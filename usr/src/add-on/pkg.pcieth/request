@@ -1,0 +1,20 @@
+#ident	"@(#)pkg.pcieth:request	1.1"
+#	@(#)request	1.1	1/23/91 21:47:12
+#	Copyright 1991  Locus Computing Corporation
+
+#	PCI will run with either "inet" or "WIN-TCP" packages on SVR4;
+#	unfortunately pkgadd doesn't support such alternate package
+#	dependencies.  This file is a workaround.
+
+prompt="Do you wish to continue installation of PC-Interface? "
+
+pkginfo -q inet || pkginfo -q WIN-TCP || {
+	echo
+	echo  'Neither the "inet" package nor the "WIN-TCP" package is'
+	echo  'currently installed; one of them must be installed for'
+	echo  'PC-Interface to operate.'
+	cont=`ckyorn -Q -d n -p "$prompt"`
+	[ "$cont" = n -o "$cont" = no -o "$cont" = N -o "$cont" = NO ] &&
+		exit 3
+}
+exit 0

@@ -1,0 +1,53 @@
+'\"macro stdmacro
+.if n .pH gen.biowait @(#)biowait	40.2 of 1/7/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.nr X
+.if \nX=0 .ds x} biowait D3DK "" DDI/DKI "\&"
+.if \nX=1 .ds x} biowait D3DK "" DDI/DKI
+.if \nX=2 .ds x} biowait D3DK "" "\&"
+.if \nX=3 .ds x} biowait "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4biowait\f1 \- suspend processes pending completion of block I/O
+.IX "\f4biowait\fP(D3DK)"
+.SH SYNOPSIS
+.nf
+.na
+\f4#include <sys/types.h>
+#include <sys/buf.h>
+.sp 0.5
+int biowait(\f4buf_t *\f2bp\f4);\f1
+.ad
+.fi
+.SH ARGUMENTS
+.RS 0n 10
+.IP "\f2bp\f1" 10n
+Pointer to the buffer header structure.
+.RE
+.SH DESCRIPTION
+The \f4biowait\f1 function suspends process execution during block I/O.
+Block drivers that have allocated their own buffers with \f4geteblk\fP(D3DK),
+\f4getrbuf\fP(D3DK), or \f4ngeteblk\fP(D3DK) can use \f4biowait\f1
+to suspend the current process execution while waiting for a read
+or write request to complete.
+.P
+Drivers using \f4biowait\f1 must use
+\f4biodone\f1(D3DK) in their I/O completion handlers to signal \f4biowait\fP
+when the I/O transfer is complete.
+.SH RETURN VALUE
+If an error occurred during the I/O transfer, the error number is returned.
+Otherwise, on success, 0 is returned.
+.SH LEVEL
+Base Only.
+.SH NOTES
+Can sleep.
+.SH SEE ALSO
+.na
+\f4intr\fP(D2D),
+\f4strategy\fP(D2DK),
+\f4biodone\f1(D3DK),
+\f4geteblk\fP(D3DK),
+\f4getrbuf\fP(D3DK),
+\f4ngeteblk\fP(D3DK),
+\f4buf\fP(D4DK)
+.ad

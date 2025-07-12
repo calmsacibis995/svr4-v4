@@ -1,0 +1,192 @@
+'\"macro stdmacro
+.if n .pH g2.sysi86 @(#)sysi86	40.3 of 1/3/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X 
+.if \nX=0 .ds x} sysi86 2 "" "\&"
+.if \nX=1 .ds x} sysi86 2 ""
+.if \nX=2 .ds x} sysi86 2 "" "\&"
+.if \nX=3 .ds x} sysi86 "" "" "\&"
+.TH \*(x}
+'\" t
+.SH NAME
+\f4sysi86\f1 \- machine specific functions
+.SH SYNOPSIS
+\f4#include <sys/sysi86.h>\f1
+.sp .5
+\f4int sysi86 (int cmd, ...);\f1
+.SH DESCRIPTION
+The \f4sysi86\fP system call implements machine specific functions.
+The
+\f2cmd\f1
+argument determines the function to be performed.
+The types of the arguments expected depend on the function.
+.SS "Command RTODC"
+When \f2cmd\f1 is \f4RTODC\f1, the expected argument is the
+address of a \f4struct rtc_t\f1
+(from the header file \f4sys/rtc.h\f1):
+.RS
+.nf
+\f4struct rtc_t {
+	char rtc_sec, rtc_asec, rtc_min, rtc_amin,
+	rtc_hr, rtc_ahr, rtc_dow, rtc_dom,
+	rtc_mon, rtc_yr, rtc_statusa,
+	rtc_statusb, rtc_statusc, rtc_statusd;
+};
+.fi
+.RE
+.PP
+This function reads the hardware time-of-day clock
+and returns the data in the structure
+referenced by the argument.
+This command is only available to the \f2super-user\f1.
+.SS "RDUBLK"
+This command reads the u-block
+(per process user information as defined
+by \f2structuser\f1 in the
+\f4sys/user\f1
+header file) for a given process.
+When \f2cmd\f1 is \f4RDUBLK\f1,
+\f4sysi86\f1 takes three additional arguments:
+the process ID, the address of a buffer,
+and the number of bytes to read; i.e.,
+.RS
+.nf
+\f4sysi86(RDULBK, pid, buf, n)
+	pid_t pid;
+	char *buf;
+	int n;  \f1
+.fi
+.RE
+.SS "Command SI86FPHW"
+This command expects the address of
+an integer as its argument.
+After successful return from the system call,
+the integer specifies how floating-point
+computation is supported.
+.PP
+The low-order byte of the integer contains
+the value of "fpkind",
+a variable that specifies whether an 80287 or 80387 floating-point
+coprocessor is present,
+emulated in software, or not supported.
+The values are defined in the header file \f4sys/fp.h\f1.
+.PP
+.RS
+.nf
+\f4FP_NO\f1 	no fp chip, no emulator (no fp support)
+\f4FP_SW\f1 	no fp chip, using software emulator
+\f4FP_HW\f1 	chip present bit
+\f4FP_287\f1	80287 chip present
+\f4FP_387\f1	80387 chip present
+.fi
+.RE
+.SS "Command SETNAME"
+This command, which is only available to the super-user,
+expects an argument of type \f2char *\f1
+which points to a NULL terminated string of
+at most 7 characters.
+The command will change the running system's
+\f2sysname\f1 and \f2nodename\f1
+[see \f4uname\f1(2)] to this string.
+.SS "Command STIME"
+When \f2cmd\f1 is STIME,
+an argument of type \f4long\f1 is expected.
+This function sets the system time and date
+(not the hardware clock).
+The argument contains the time as measured
+in seconds from 00:00:00 GMT January 1, 1970.
+Note that this command is only available to the super-user.
+.SS "Command SI86DSCR"
+This command sets a segment or gate descriptor in the kernel.
+The following descriptor types are accepted:
+.RS 3
+.nf
+\(bu executable and data segments in the LDT at DPL 3
+\(bu a call gate in the GDT at DPL 3 that points to a segment in the LDT
+.fi
+.RE
+.PP
+The argument is a pointer to a request structure
+that contains the values to be placed in the descriptor.
+The request structure is declared in the
+\f4sys/sysi86.h\f1
+header file.
+.SS "Command SI86MEM"
+This command returns the size of available memory in bytes.
+.SS "Command SI86SWPI"
+When \f2cmd\f1 is SI86SWPI,
+individual swapping areas may be added,
+deleted or the current areas determined.
+The address of an appropriately primed swap buffer is passed
+as the only argument.
+(Refer to the
+\f4sys/swap.h\f1
+header file for details of loading the buffer.)
+.PP
+The format of the swap buffer is:
+.PP
+.ta 1.75i
+.nf
+\f4 struct swapint {
+     char  si_cmd;	/\(**command: SI_LIST, SI_ADD, SI_DEL\(**/
+     char  \(**si_buf;	/\(**swap file path pointer\(**/
+     int  si_swplo;	/\(**start block\(**/
+     int  si_nblks;	/\(**swap size\(**/
+  }   \f1
+.fi
+.PP
+Note that the add and delete options of the command
+may only be exercised by the super-user.
+.PP
+Typically, a swap area is added by a single call to \f4sysi86\f1.
+First, the swap buffer is primed with appropriate entries
+for the structure members.
+Then \f4sysi86\f1 is invoked.
+.PP
+.RS
+.nf
+\f4#include <sys/sysi86.h>
+\f4#include <sys/swap.h>
+.sp .5
+struct swapint swapbuf;	/\(**swap into buffer ptr\(**/
+.sp .5
+sysi86(SI86SWPI, &swapbuf);   \f1
+.fi
+.RE
+.PP
+If this command succeeds,
+it returns 0 to the calling process.
+This command fails,
+returning -1,
+if one or more of the following is true:
+.PP
+.ta 1.25i
+.nf
+[\f4EFAULT\f1]	\f2swapbuf\f1 points to an invalid address  
+.sp .5
+[\f4EFAULT\f1]	\f2swapbuf.si_buf\f1 points to an invalid address
+.sp .5
+[\f4ENOTBLK\f1]	Swap area specified is not a block special device 
+.sp .5
+[\f4EEXIST\f1]	Swap area specified has already been added
+.sp .5
+[\f4ENOSPC\f1]	Too many swap areas in use (if adding)
+.sp .5
+[\f4ENOMEM\f1]	Tried to delete last remaining swap area
+.sp .5
+[\f4EINVAL\f1]	Bad arguments
+.sp .5
+[\f4ENOMEM\f1]	No place to put swapped pages when deleting a swap area
+.fi
+.SH SEE ALSO
+\f4uname\fP(2).
+.br
+\f4swap\fP(1M) in the \f2User's/System Administrator's Reference Manual\f1.
+.SH DIAGNOSTICS
+Upon successful completion, zero is returned;
+otherwise, \-1 is returned, and \f4errno\f1 is set
+to indicate the error.
+When the \f2cmd\f1 is invalid,
+\f4errno\f1 is set to \f4EINVAL\f1.
+.Ee

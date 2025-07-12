@@ -1,0 +1,89 @@
+'\"macro stdmacro
+.if n .pH gen.strlog @(#)strlog	40.2 of 1/7/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.nr X
+.if \nX=0 .ds x} strlog D3DK "STREAMS" "DDI/DKI" "\&"
+.if \nX=1 .ds x} strlog D3DK "STREAMS" "DDI/DKI"
+.if \nX=2 .ds x} strlog D3DK "" "\&"
+.if \nX=3 .ds x} strlog "" "" "\&"
+.TH \*(x}
+.IX "\f4strlog\fP(D3DK)"
+.SH NAME
+\f4strlog\f1 \- submit messages to the \f4log\f1 driver
+.SH SYNOPSIS
+.nf
+.na
+\f4#include <sys/types.h>
+#include <sys/stream.h>
+#include <sys/strlog.h>
+#include <sys/log.h>
+.sp 0.5
+int strlog(short \f2mid, \f4short \f2sid, \f4char \f2level, \f4ushort_t \f2flags,
+	\f4char *\f2fmt, \f4...\f2 /* args */\f4);\f1
+.ad
+.fi
+.SH ARGUMENTS
+.RS 0n 10
+.IP "\f2mid\f1" 10n
+Identification number of the module or driver submitting the message.
+.IP "\f2sid\f1" 10n
+Identification number for a particular minor device.
+.IP "\f2level\f1" 10n
+Tracing level for selective screening of low priority messages.
+.IP "\f2flags\f1" 10n
+Bitmask of flags indicating message purpose.  Valid flags are:
+.RS 15n
+.TP 14
+\f4SL_ERROR\f1
+Message is for error logger.
+.PD 0
+.TP
+\f4SL_TRACE\f1
+Message is for tracing.
+.TP
+\f4SL_CONSOLE\f1
+Message is for console logger.
+.TP
+\f4SL_NOTIFY\f1
+If \f4SL_ERROR\fP is also set, mail copy of message to system administrator.
+.TP
+\f4SL_FATAL\f1
+Modifier indicating error is fatal.
+.TP
+\f4SL_WARN\f1
+Modifier indicating error is a warning.
+.TP
+\f4SL_NOTE\f1
+Modifier indicating error is a notice.
+.PD
+.RE
+.IP "\f2fmt\f1" 10n
+\f4printf\f1(3S) style format string.  \f4%s\f1,
+\f4%e\f1, \f4%g\f1, and \f4%G\f1 formats are not allowed.
+.IP "\f2args\f1" 10n
+Zero or more arguments to \f4printf\f1 (maximum of \f4NLOGARGS\fP, currently three).
+.RE
+.SH DESCRIPTION
+\f4strlog\f1 submits formatted messages to the \f4log\f1(7) driver.
+The messages can be retrieved with the \f4getmsg\f1(2) system call.
+The \f2flags\f1 argument specifies the type of the message and where it is to be sent.
+\f4strace\f1(1M) receives messages from the \f4log\f1 driver and
+sends them to the standard output.
+\f4strerr\f1(1M) receives error messages from the \f4log\f1 driver
+and appends them to a file called \f4/var/adm/streams/error.\f2mm-dd\f1,
+where \f2mm-dd\f1 identifies the date of the error message.
+.SH RETURN VALUE
+\f4strlog\f1 returns 0 if the message is not seen by all the readers,
+\f41\f1 otherwise.
+.SH LEVEL
+Base or Interrupt.
+.SH NOTES
+Does not sleep.
+.SH SEE ALSO
+\f2STREAMS Programmer's Guide\f1
+.sp 0.5
+.na
+\f4strace\fP(1M),
+\f4strerr\fP(1M),
+\f4log\f1(7)
+.ad

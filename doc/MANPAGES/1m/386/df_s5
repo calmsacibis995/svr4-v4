@@ -1,0 +1,49 @@
+'\"macro stdmacro
+.if n .pH g1a.df_s5 @(#)df_s5	40.4 of 1/3/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+'\"macro stdmacro
+.if n .pH g1a.df_s5 @(#)df_s5	40.5 of 8/1/89
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.if \nX=0 .ds x} df 1M "s5" "\&"
+.if \nX=1 .ds x} df 1M "s5"
+.if \nX=2 .ds x} df 1M "" "\&"
+.if \nX=3 .ds x} df "" "" "\&"
+.nr X
+.TH \*(x} "" "386 Computer Only"
+.SH NAME
+\f4df\f1 (s5) \- report number of free disk blocks and i-nodes for \f4s5\f1 file systems
+.SH SYNOPSIS
+\f4df \f1 [\f4\-F s5\f1]
+[\f2generic_options\f1]
+[\f4\-f\f1]
+[\f2directory\f1 | \f2special\f1...]
+.SH DESCRIPTION
+.I generic_options
+are options supported by the generic \f4df\f1 command.
+.PP
+The \f4df\f1 command prints out the number of free blocks and free i-nodes
+in \f4s5\f1 file systems or  directories
+by examining the counts kept in the super-blocks.
+The \f2special\f1 device name (e.g., 
+\f4.dev/dsk/0s2\f1)
+or mount point \f2directory\f1 name (e.g., \f4/usr\f1) must be specified.
+If \f2directory\f1 is specified,
+the report presents information for the device that contains the directory.
+.PP
+The options are:
+.PP
+.TP 10
+\f4\-F s5\f1
+Specifies the \f4s5\f1-FSType.
+.TP 10
+\f4\-f\f1
+An actual count of the blocks in the free list is made, 
+rather than taking the figure from the super-block.
+.SH NOTE
+The \f4-f\fP option can be used with the \f4-t\fP, \f4-b\fP, and \f4-e\fP options.
+The \f4-k\fP option overrides the \f4-f\fP option.
+.SH FILES
+/dev/dsk/\(**
+.SH SEE ALSO
+generic \f4df\f1(1M).

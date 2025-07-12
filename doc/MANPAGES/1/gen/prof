@@ -1,0 +1,257 @@
+'\"macro stdmacro
+.if n .pH g1.prof @(#)prof	@(#)prof	40.16 of 5/22/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} prof 1 "Enhanced Programming Utilities" "\&"
+.if \nX=1 .ds x} prof 1 "Enhanced Programming Utilities"
+.if \nX=2 .ds x} prof 1 "" "\&"
+.if \nX=3 .ds x} prof "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4prof\f1 \- display profile data
+.SH SYNOPSIS
+\f4prof\f1
+\f1[\&\f4\-t \f1|\&\f4 c \f1|\&\f4 a \f1|\&\f4 n\f1]
+\f1[\&\f4\-o \f1|\&\f4 x\f1]
+\f1[\&\f4\-g \f1|\&\f4 l\f1]
+\f1[\&\f4\-z\f1]
+\f1[\&\f4\-h\f1]
+\f1[\&\f4\-s\f1]
+\f1[\f4\-m\f1
+.IR "mdata" "]"
+\f4\-V\f1
+[\f2prog\f1]
+.SH DESCRIPTION
+The
+\f4prof\fP
+command interprets a profile file
+produced by the
+\f4monitor\fP
+function.
+The symbol table in the object file
+.I prog\^
+\f1(\f4a.out\f1
+by default)
+is read and correlated with a profile file
+\f1(\f4mon.out\f1
+by default).
+For each external text symbol the percentage
+of time spent executing between the address of that symbol
+and the address of the next
+is printed, together with the number of times that function
+was called and the average number of milliseconds per call.
+.PP
+The mutually exclusive options
+\f4\-t\f1, \f4\-c\f1, \f4\-a\f1, and \f4\-n\f1
+determine the type of sorting of the output lines:
+.TP
+\f4\-t\f1
+Sort by decreasing percentage of total time (default).
+.TP
+\f4\-c\f1
+Sort by decreasing number of calls.
+.TP
+\f4\-a\f1
+Sort by increasing symbol address.
+.TP
+\f4\-n\f1
+Sort lexically by symbol name.
+.PP
+The mutually exclusive options
+\f4\-o\f1 and \f4\-x\f1
+specify the printing of the address of each symbol monitored:
+.TP
+\f4\-o\f1
+Print each symbol address (in octal) along with the symbol name.
+.TP
+\f4\-x\f1
+Print each symbol address (in hexadecimal) along with the symbol name.
+.PP
+The mutually exclusive options \f4\-g\f1 and \f4\-l\f1 control the 
+type of symbols to be reported.
+The \f4\-l\f1 option must be used with care;
+it applies the time spent in a static function to the preceding
+(in memory) global function, instead of giving
+the static function a separate entry in the report.
+If all static functions are properly located
+(see example below), this feature can be very useful.
+If not, the resulting report may be misleading.
+.PP
+Assume that \f4A\f1 and \f4B\f1 are global functions
+and only \f4A\f1 calls static function \f4S\f1.
+If \f(CWS\f1 is located immediately after \f(CWA\f1 in the source code (that is,
+if \f(CWS\f1 is properly located),
+then,
+with the \f(CW\-l\f1 option,
+the amount of time spent in \f(CWA\f1 can easily be determined,
+including the time spent in \f(CWS\f1.
+If,
+however,
+both \f(CWA\f1 and \f(CWB\f1 call \f(CWS\f1,
+then,
+if the \f(CW\-l\f1 option is used,
+the report will be misleading;
+the time spent during \f(CWB\f1's call to \f(CWS\f1 will be 
+attributed to \f(CWA\f1\^,
+making it appear as if more time had been spent
+in \f(CWA\f1 than really had.
+In this case,
+function \f(CWS\f1 cannot be properly located.
+.TP
+\f(CW\-g\f1
+Include static (non-global) functions.
+.TP
+\f(CW\-l\f1
+Do not include static (non-global) functions (default).
+.P
+The following options may be used in any combination:
+.TP
+\&\f(CW\-z\f1
+Include all symbols in the profile range,
+even if associated with zero number of calls and zero time.
+.TP
+\f4\-h\f1
+Suppress the heading normally printed on the report.
+(This is useful if the report is to be processed further.)
+.TP
+\f4\-s\f1
+Print a summary of several of the
+monitoring parameters and statistics on the standard error output.
+.TP
+\f4\-m \f2mdata\f1
+Use file
+\f2mdata\f1
+instead of
+\f4mon.out\f1
+as the input profile file.
+.TP
+\f4\-V\f1
+Print \f4prof\fP version information
+on the standard error output.
+.P
+A program creates a profile file if it has been link edited with
+the 
+\f(CW\-p\f1
+option of
+\f(CWcc\f1.
+This option to the
+\f(CWcc\f1
+command arranges for calls to
+\f(CWmonitor\f1
+at the beginning
+and end of execution.
+It is the call to
+\f(CWmonitor\f1
+at the end of
+execution that causes the system to write a profile file.
+The number of calls to a function is tallied
+if the
+\f(CW\-p\f1
+option
+was used when the file containing the
+function was compiled.
+.P
+The name of the file created by a profiled program is
+controlled by the environmental variable
+\f(CWPROFDIR\f1.
+If 
+\f(CWPROFDIR\f1
+is not set, \f(CWmon.out\f1 is produced in the directory current when the
+program terminates.
+If 
+\f(CWPROFDIR=\f2string\f1,
+\f2string\f(CW/\f2pid\f(CW.\f2progname\f1 is produced,
+where 
+\f2progname\f1
+consists of \f(CWargv[0]\f1 with any path prefix removed,
+and 
+\f2pid\f1
+is the process ID of the program.
+If
+\%\f(CWPROFDIR\f1
+is set, but null, no profiling output are produced.
+.P
+A single function may be split into subfunctions for profiling
+by means of the 
+\f(CWMARK\f1
+macro [see 
+\f4prof\f1(5)].
+.SH FILES
+.ta \w'\f4mon.out   \f1'u
+\f4mon.out\fP	default profile file
+.br
+\f4a.out\fP	default namelist (object) file
+.SH SEE ALSO
+\f4cc\fP(1),
+\f4lprof\fP(1),
+\f4exit\fP(2),
+\f4profil\fP(2),
+\f4monitor\fP(3C),
+\f4prof\fP(5)
+.br
+The ``\f4lprof\f1'' chapter in 
+the \f2Programmer's Guide: ANSI C and Programming Support Tools\f1
+.SH NOTES
+The times reported in successive identical runs may show variances
+because of varying cache-hit ratios that result from
+sharing the cache with other processes.
+Even if a program seems to be the only one using the
+machine, hidden background or asynchronous
+processes may blur the data.
+In rare cases, the clock ticks initiating recording
+of the program counter may ``beat'' with loops in a
+program, grossly distorting measurements.
+Call counts are always recorded precisely, however.
+.P
+Only programs that call \f(CWexit\f1
+or return from \f(CWmain\f1
+are guaranteed to produce a profile file,
+unless a final call to \f(CWmonitor\f1 is explicitly coded.
+.P
+The times for static functions
+are attributed to the preceding external
+text symbol if the
+\f4\-g\f1
+option is not used.
+However, the call counts for the preceding function are still correct;
+that is, the static function call counts are not added to
+the call counts of the external function.
+.P
+If more than one of the options \f4\-t\f1, \f4\-c\f1, \f4\-a\f1,
+and \f4\-n\f1 is specified, the last option specified is
+used and the user is warned.
+.P
+Profiling may be used with dynamically linked
+executables, but care must be applied.
+Currently, shared objects cannot be profiled with \f4prof\f1.
+Thus, when a profiled, dynamically linked program is
+executed, only the ``main'' portion of the image is sampled.
+This means that all time spent outside of the ``main''
+object, that is, time spent in a shared object,
+will not be included in the profile summary;
+the total time reported for the program
+may be less than the total time used by the program.
+.P
+Because the time spent in a shared object cannot be
+accounted for, the use of shared objects should
+be minimized whenever a program is profiled with \f4prof\f1.
+If possible, the program should be linked statically before being profiled.
+.P
+Consider an extreme case.
+A profiled program dynamically linked with the shared C library
+spends 100 units of time in some \f4libc\f1 routine, say, \f4malloc\f1.
+Suppose \f4malloc\f1 is called only
+from routine \f4B\f1 and \f4B\f1 consumes
+only 1 unit of time.
+Suppose further that routine \f4A\f1
+consumes 10 units of time, more than any other routine
+in the ``main'' (profiled) portion of the image.
+In this case, \f4prof\f1 will conclude
+that most of the time is being spent in \f4A\f1
+and almost no time is being spent in \f4B\f1.
+From this it will be almost impossible to tell
+that the greatest improvement can be made
+by looking at routine \f4B\f1 and not routine \f4A\f1\^.
+The value of the profiler in this case is severely degraded;
+the solution is to use archives as much as possible for profiling.

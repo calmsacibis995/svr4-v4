@@ -1,0 +1,8 @@
+.if n .pH portguide.CDISP @(#)Cdisp	40.2
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.BK "Programmer's Guide: Porting the Kernel" "" "" ""   
+.\ACRONYM	                  
+.CH "Directory - DISP" "" "Table of Contents" "10"
+.\CHAPTER	10
+.tC 2 "Directory - DISP" 10-1  
+.Index: DISP directory       	1

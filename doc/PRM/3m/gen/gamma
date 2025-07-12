@@ -1,0 +1,111 @@
+'\"! eqn | mmdoc
+'\"macro stdmacro
+.if n .pH g3m.gamma @(#)gamma	40.8 of 1/3/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} gamma 3M "Math Libraries" "\&"
+.if \nX=1 .ds x} gamma 3M "Math Libraries"
+.if \nX=2 .ds x} gamma 3M "" "\&"
+.if \nX=3 .ds x} gamma "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4gamma\f1, \f4lgamma\f1 \- log gamma function
+.SH SYNOPSIS
+\f4cc\f1
+[\f2flag\fP \|.\|.\|.] \f2file\fP \|.\|.\|.
+\f4\-lm\f1
+[\f2library\fP \|.\|.\|.]
+.PP
+\f4#include <math.h>\f1
+.PP
+\f4double gamma (double x);\f1
+.PP
+\f4double lgamma (double x);\f1
+.PP
+\f4extern int signgam;\f1
+.SH DESCRIPTION
+.EQ
+delim $$
+.EN
+\f4gamma\fP
+and
+\f4lgamma\fP
+return
+.P
+.RS
+$ln ( | GAMMA ( ^ x ) | )$
+.RE
+.PP
+where $GAMMA ( ^ x )$ is defined as
+.P
+.RS
+$int from 0 to inf e sup { - t } t sup { x - 1 } dt$
+.RE
+.PP
+The sign of
+.EQ
+GAMMA ( ^ x )
+.EN
+is returned in the external integer
+\f4signgam\fP.
+The argument
+.I x
+may not be a non-positive integer.
+.PP
+The following C program fragment might be
+used to calculate
+\(*G:
+.PP
+.RS
+.ft 4
+.nf
+if ((y = gamma(x)) > \s-1LN_MAXDOUBLE\s+1)
+	error(\|);
+y = signgam \(** exp(y);
+.fi
+.ft 1
+.RE
+.PP
+where
+\f4LN_MAXDOUBLE\fP
+is the least value that causes
+\f4exp\fP
+to return a range error, and is defined in the
+\f4values.h\fP
+header file.
+.SH SEE ALSO
+\f4exp\fP(3M), \f4matherr\fP(3M), \f4values\fP(5).
+.SH DIAGNOSTICS
+For non-positive integer arguments
+\f4HUGE\f1
+is returned
+and
+\f4errno\fP
+is set to
+\f4EDOM\f1.
+A message indicating
+\f4SING\fP
+error is printed on the standard error output.
+.PP
+If the correct value would overflow,
+\f4gamma\fP
+and
+\f4lgamma\fP
+return
+\f4HUGE\fP
+and set
+\f4errno\f1
+to
+\f4ERANGE\fP.
+.PP
+Except when the \f4\-Xc\f1 compilation option is used,
+these error-handling procedures may be changed with the function
+\f4matherr\fP.
+When the \f4\-Xa\f1 or \f4\-Xc\f1 compilation options are used, 
+\f4HUGE_VAL\f1
+is returned instead of 
+\f4HUGE\f1
+and no error messages are printed.
+.\"	@(#)gamma.3m	6.3 of 10/20/83
+.Ee

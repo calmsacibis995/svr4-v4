@@ -1,0 +1,258 @@
+'\"macro stdmacro
+.if n .pH @(#)sccsfile	40.14 of 4/11/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} sccsfile 4 "" "\&"
+.if \nX=1 .ds x} sccsfile 4 ""
+.if \nX=2 .ds x} sccsfile 4 "" "\&"
+.if \nX=3 .ds x} sccsfile "" "" "\&"
+.TH \*(x}
+.tr ~
+.ds K)  \f2\s-1DATA KEYWORDS\s+1\f1
+.ds D)  \f2\s-1DDDDD\s+1\f1
+.ds M)  \s-1MR\s+1
+.ds S)  \s-1SCCS\s+1
+.ds I)  \s-1SID\s+1
+.SH NAME
+\f4sccsfile\f1 \- format of \s-1SCCS\s+1 file
+.SH DESCRIPTION
+An \*(S) (Source Code Control System) file is an
+.SM ASCII
+file.
+It consists of six logical parts:
+the checksum,
+the delta table
+(contains information about each delta),
+user names
+(contains login names and/or numerical group \s-1ID\s+1s of users who may add deltas),
+flags
+(contains definitions of internal keywords),
+comments
+(contains arbitrary descriptive information about the file),
+and the
+body
+(contains the actual text lines intermixed with control lines).
+.PP
+Throughout an \*(S) file there are lines which begin with the
+.SM "ASCII SOH"
+(start of heading) character (octal 001).
+This character is hereafter referred to as
+the control character
+and will be represented graphically as \f4@\f1.
+Any line described below that is not depicted as beginning with
+the control character is prevented from beginning
+with the control character.
+.PP
+Entries of the form
+\*(D)
+represent a five-digit string
+(a number between 00000 and 99999).
+.PP
+Each logical part of an \*(S) file is described in detail below.
+.SS Checksum
+The checksum is the first line of an \*(S) file.
+The form of the line is:
+.PP
+.RS
+\f4@h\*(D)\f1
+.RE
+.P
+The value of the checksum is the sum of all characters, except
+those of the first line.
+The \f4@h\f1 provides a
+magic number
+of (octal) 064001, depending on byte order.
+.SS "Delta table"
+The delta table consists of a variable number of entries of one of the following forms:
+.P
+.RS
+.nf
+\f4@s\f1 \*(D)/\*(D)/\*(D)
+\f4@d\f1 <\f2type\f1> <\f2\s-1SCCS ID\s+1\f1>  \f2yr/mo/da hr:mi:se\f1  <\f2pgmr\f1>  \*(D)  \*(D)
+\f4@i\f1 \*(D) \f4...\f1
+\f4@x\f1 \*(D) \f4...\f1
+\f4@g\f1 \*(D) \f4...\f1
+\f4@m\f1 <\*(M) \f2number\f1>
+  \f1. . .
+\f4@c\f1 <\f2comments\f1> . . .
+  \f1. . .
+\f4@e\f1
+.fi
+.RE
+.P
+The first line
+(\f4@s\f1)
+contains the number of lines
+inserted/deleted/unchanged, respectively.
+The second line
+(\f4@d\f1)
+contains the type of the delta
+(normal: \f4D\f1
+or
+removed: \f4R\f1),
+the \*(S) \s-1ID\s+1 of the delta,
+the date and time of creation of the delta, the
+login name corresponding to the real user \s-1ID\s+1
+at the time the delta was created,
+and the serial numbers of the delta and its predecessor,
+respectively.
+.P
+The \f4@i\f1, \f4@x\f1, and \f4@g\f1 lines contain the serial
+numbers of deltas included, excluded, and ignored, respectively.
+These lines are optional.
+.P
+The \f4@m\f1 lines (optional) each contain one \*(M) number 
+associated with the delta; the \f4@c\f1 lines contain comments
+associated with the delta.
+The \f4@e\f1 line ends the delta table entry.
+.SS "User names"
+The list of login names and/or numerical group \s-1ID\s+1s of users 
+who may add deltas to the file, separated by new-lines.
+The lines
+containing these login names and/or numerical group \s-1ID\s+1s are
+surrounded by the bracketing lines \f4@u\f1 and \f4@U\f1.
+An empty
+list allows anyone to make a delta.
+Any line starting with a
+\f4!\f1
+prohibits the succeeding group or user from making deltas.
+.SS "Flags"
+Keywords used internally.
+See
+\f4admin\f1(1)
+for more information on their use.
+Each flag line takes the form:
+.P
+.RS
+\f4@f\f1 <\f2flag\f1>	<\f2optional text\f1>
+.RE
+.P
+The following flags are defined:
+.P
+.RS
+.TS
+l1 l2f2 l2 .
+\f4@f t\f1	<type of program>
+\f4@f v\f1	<program name>
+\f4@f i\f1	<keyword string>
+\f4@f b\f1
+\f4@f m\f1	<module name>
+\f4@f f\f1	<floor>
+\f4@f c\f1	<ceiling>
+\f4@f d\f1	<default-sid>
+\f4@f n\f1
+\f4@f j\f1
+\f4@f l\f1	<lock-releases>
+\f4@f q\f1	<user defined>
+\f4@f z\f1	<reserved for use in interfaces>
+.TE
+.RE
+.P
+The
+\f4t\f1
+flag defines the replacement for
+the \f4%\&Y%\f1 identification keyword.
+The
+\f4v\f1
+flag controls prompting for \*(M) numbers
+in addition to comments;
+if the optional text is present it defines
+an \*(M) number validity
+checking program.
+The
+\f4i\f1
+flag controls the warning/error
+aspect of the ``\f5No id keywords\fP'' message.
+When the
+\f4i\f1
+flag is not present,
+this message is only a warning;
+when the
+\f4i\f1
+flag is present,
+this message causes a fatal error
+(the file will not be ``gotten'', or the delta will not be made).
+When the
+\f4b\f1
+flag is present
+the
+\f4\-b\f1
+keyletter may be used on the
+\f4get\f1
+command to cause a branch in the delta tree.
+The
+\f4m\f1
+flag defines the first choice
+for the replacement text of the \f4%\&M%\f1 identification keyword.
+The
+\f4f\f1
+flag defines the floor release;
+the release below which no deltas may be added.
+The
+\f4c\f1
+flag defines the ceiling release;
+the release above which no deltas may be added.
+The
+\f4d\f1
+flag defines the default \*(I) to be used
+when none is specified on a
+\f4get\f1
+command.
+The
+\f4n\f1
+flag causes
+\f4delta\f1
+to insert a null delta (a delta that applies no changes)
+in those releases that are skipped when a delta is made in a new
+release (e.g., when delta 5.1 is made after delta 2.7, releases 3 and
+4 are skipped).
+The absence of the
+\f4n\f1
+flag causes skipped releases to be completely empty.
+The
+\f4j\f1
+flag causes
+\f4get\f1
+to allow
+concurrent edits of the same base \*(I).
+The
+\f4l\f1
+flag defines a
+\f2list\f1
+of releases that are locked against editing.
+The
+\f4q\f1
+flag defines the replacement for the \f4%\&Q%\f1 identification keyword.
+The
+\f4z\f1
+flag is used in specialized interface programs.
+.SS "Comments"
+Arbitrary text is surrounded by the bracketing lines \f4@t\f1 and \f4@T\f1.
+The comments section typically will contain a description of the file's purpose.
+.SS "Body"
+The body consists of text lines and control lines.
+Text lines do not begin with the control character,
+control lines do.
+There are three kinds of control lines:
+insert, delete, and end,
+represented by:
+.P
+.RS
+.nf
+\f4@I\f1 \*(D)
+\f4@D\f1 \*(D)
+\f4@E\f1 \*(D)
+.fi
+.RE
+.P
+respectively.
+The digit string is the serial number corresponding to the delta for the
+control line.
+.SH "SEE ALSO"
+\f4admin\fP(1),
+\f4delta\fP(1),
+\f4get\fP(1),
+\f4prs\fP(1)
+.\"	@(#)sccsfile.4	6.2 of 10/20/83
+.Ee

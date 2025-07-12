@@ -1,0 +1,96 @@
+'\"macro stdmacro
+.if n .pH g4.hosts.equiv @(#)hosts.equiv	40.12 of 5/21/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.\" @(#)hosts.equiv.4 1.2 89/07/14 SMI; from UCB 4.2
+'\" macro stdmacro
+.\" Copyright (c) 1988 Sun Microsystems, Inc. - All Rights Reserved.
+.\"
+.nr X
+.if \nX=0 .ds x} hosts.equiv 4 "Internet Utilities" "\&"
+.if \nX=1 .ds x} hosts.equiv 4 "Internet Utilities"
+.if \nX=2 .ds x} hosts.equiv 4 "" "\&"
+.if \nX=3 .ds x} hosts.equiv "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4hosts.equiv\f1, \f4.rhosts\f1 \- trusted hosts by system and by user
+.SH DESCRIPTION
+.PP
+The 
+\f4/etc/hosts.equiv\f1
+file contains a list of trusted hosts.
+When an
+\f4rlogin\f1(1)
+or
+\f4rsh\f1(1)
+request is received from a host listed in this file,
+and when the user making the request is listed in the
+\f4/etc/passwd\f1
+file, then the remote login is allowed with no further checking.
+The library routine
+\f4ruserok\f1 will make this verification.
+In this case,
+\f4rlogin\f1
+does not prompt for a password, and commands submitted through
+\f4rsh\f1
+are executed.
+Thus, a remote user with a local user
+.SM ID
+is said to have \(lqequivalent\(rq
+access from a remote host named in this file.
+.PP
+The format of the
+\f4hosts.equiv\f1
+file consists of a one-line entry for each host, of the form:
+.IP
+.IR hostname " [" username "] "
+.PP
+The
+.I hostname
+field normally contains the name of a trusted host from which a remote
+login can be made, and \f2username\fP represents a single user from that 
+host.
+However, an entry consisting of a single
+\f1`\f4+\f1'
+indicates that all known hosts are to be trusted for all users.
+A host name must be the \(lqofficial\(rq name as listed in the 
+\f4hosts\f1(4)
+database. 
+This is the first name given in the hosts database entry;
+\f2hostname\fP aliases are not recognized.
+.SS The User .rhosts File
+.PP
+Whenever a remote login is not allowed by \f4hosts.equiv\fP, the remote 
+login daemon checks for a
+\f4\&.rhosts\f1
+file in the home directory of the local login.
+The \f4.rhosts\fP file controls access only to the specific login where it
+resides.
+.PP
+The \f4.rhosts\f1 file has the same format as the \f4hosts.equiv\f1
+file, but the \f2username\fP entry has a different meaning.
+In the \f4hosts.equiv\fP file,
+a \f2username\fP entry restricts remote access to the specified
+remote user.
+In the \f4.rhosts\fP file, a \f2username\fP entry changes the identity 
+of user attempting to log in.
+The remote user specified by \f2username\fP can access the host as the local login and
+inherit the local login's permissions.
+.P
+.SH FILES
+.PD 0
+.TP 20
+\f4/etc/hosts.equiv\f1
+.TP
+\f4/etc/passwd\f1
+.TP
+\f4~/.rhosts\f1
+.TP
+\f4/etc\f1
+.PD
+.SH "SEE ALSO"
+\f4rlogin\fP(1),
+\f4rsh\fP(1),
+\f4hosts\fP(4),
+\f4passwd\fP(4)
+

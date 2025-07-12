@@ -1,0 +1,342 @@
+'\"!  tbl | mmdoc
+'\"macro stdmacro
+.if n .pH 386.app.mig @(#)app.mig	40.3 of 4/18/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.BK "DDI/DKI Reference Manual"
+.CH "Appendix A: Migration from Release 3.2 to Release 4.0" A
+.H 1 "Appendix A: Migration from Release 3.2 to Release 4.0"
+.IX istart "DDI/DKI (Device Driver Interface/Driver\(enKernel Interface), migration from Release 3.2 to Release 4.0"
+The
+.BT "UNIX System V Block and Character Interface (BCI) Reference Manual"
+defined the functions, routines, and structures appropriate for use by
+drivers in the UNIX System V 3.2 environment.
+Many, but not all, of the
+routines in the BCI have been incorporated into the Device Driver Interface
+as is or, in the case of macros, reimplemented as procedures.
+.P
+The functionality of some other BCI routines has been incorporated into the
+DDI/DKI either by renaming the BCI routine, but otherwise providing the
+identical interface, or by replacing the BCI routine with a different,
+but similar, interface.
+Still other BCI routines provide functionality
+that is obsolete; these routines have been dropped, and there are no
+DDI/DKI routines that provide similar functionality.
+In all cases
+the BCI routine is provided in Release 4.0 for backwards compatibility.
+.P
+While backward compatibility for BCI routines is provided, it is still
+desirable to convert drivers to use the DDI/DKI if possible because the
+older routines will not be supported in future releases.
+Table A-1 is intended to assist developers in this task by summarizing
+the correspondence between routines in the BCI and routines in the DDI/DKI.
+.P
+Each entry in the table lists the name of the BCI routine,
+some comments about changes made to the routine in the DDI/DKI,
+and the name of the corresponding DDI/DKI routine.
+Commonly occurring comments are:
+.BL
+.LI
+No change.  The BCI routine has been retained in the DDI/DKI with the same
+name, interface, and functionality.
+.LI
+Macro reimplemented as procedure.  A BCI macro has been retained in the DDI/DKI,
+but has been implemented as a procedure with the identical calling and
+return syntax.
+.LI
+Renamed.  The BCI routine has been retained in the DDI/DKI with a different
+name, but otherwise provides the same interface and functionality.
+.LI
+Replaced.  The BCI routine has been removed from the DDI/DKI.  The DDI/DKI
+provides a new interface that provides a similar function.
+.LI
+Obsolete interface supported for backward compatibility only.  The BCI
+routine has been removed from the DDI/DKI.  The DDI/DKI does not provide a new interface;
+the interface itself is obsolete.  For instance, the DDI/DKI does not support
+clist-based drivers; thus any routines dealing with clists have been removed
+from the DDI/DKI.
+.LE
+Again, please note that this table is a guide for programmers attempting
+to convert old driver source from BCI to DDI/DKI.  All BCI routines,
+regardless of their status in the DDI/DKI, are provided in System V/386
+Release 4.0 for backwards compatibility.
+.TB "3.2 to Release 4.0 Migration"
+.TS H
+center box;
+c | c | c
+lw(.85i) | lw(3i) | lw(.85i).
+BCI	Comments	DDI/DKI
+_
+.TH
+\f4adjmsg\f1	No change	\f4adjmsg\f1
+\f4allocb\f1	T{
+No change; for memory-mapped I/O, use \f4esballoc\f1
+T}	\f4allocb\f1	
+\f4backq\f1	T{
+Obsolete interface supported for backward compatibility only
+T}	\(em	
+\f4bcopy\f1	No change	\f4bcopy\f1
+\f4brelse\f1	No change	\f4brelse\fP
+\f4btoc\f1	Replaced	\f4btop\f1, \f4btopr\f1
+\f4bufcall\f1	T{
+No change; don't use with \f4esballoc\f1
+T}	\f4bufcall\f1
+\f4bzero\f1	T{
+Word alignment no longer required
+T}	\f4bzero\f1
+\f4canon\f1	T{
+Obsolete interface supported for backward compatibility only
+T}	\(em
+\f4canput\f1	T{
+No change; use \f4bcanput\f1 to test specific priority band
+T}	\f4canput\f1
+\f4clrbuf\f1	No change	\f4clrbuf\f1
+\f4cmn_err\f1	No change	\f4cmn_err\f1
+\f4copyb\f1	No change	\f4copyb\f1
+\f4copyin\f1	T{
+No change
+T}	T{
+\f4copyin\fP or \f4uiomove\f1
+T}
+\f4copymsg\f1	No change	\f4copymsg\f1
+\f4copyout\f1	T{
+No change
+T}	T{
+\f4copyout\fP or \f4uiomove\f1
+T}
+\f4ctob\f1	Replaced	\f4ptob\f1
+\f4datamsg\f1	No change	\f4datamsg\f1	
+\f4delay\f1	No change	\f4delay\f1
+\f4dma_alloc\f1	T{
+Obsolete interface supported for backward compatibility only
+T}	\(em
+.SK
+\f4dma_breakup\f1	Replaced	\f4dma_pageio\f1
+\f4dma_enable\fP	No change	\f4dma_enable\fP
+\f4dma_param\fP	Replaced	\f4dma_prog\fP
+\f4dma_relse\fP	T{
+Obsolete interface supported for backward compatibility only
+T}	\(em
+\f4dma_resid\fP	T{
+Obsolete interface supported for backward compatibility only
+T}	\(em
+\f4dma_start\fP	Replaced	\f4dma_swstart\fP
+\f4dupb\f1	No change	\f4dupb\f1
+\f4dupmsg\f1	No change	\f4dupmsg\f1
+\f4enableok\f1	T{
+Macro reimplemented as function
+T}	\f4enableok\f1
+\f4flushq\f1	T{
+No change; use \f4flushband\f1 to flush specific priority band
+T}	\f4flushq\f1
+\f4freeb\f1	T{
+No change
+T}	\f4freeb\f1
+\f4freemsg\f1	No change	\f4freemsg\f1
+\f4fubyte\f1	Replaced	T{
+\f4copyin\fP, \f4uiomove\f1, or \f4uwritec\fP
+T}
+\f4fuword\f1	Replaced	T{
+\f4copyin\fP, \f4uiomove\f1, or \f4uwritec\fP
+T}
+\f4getc\f1	T{
+Obsolete interface supported for backward compatibility only
+T}	\(em
+\f4getcb\f1	T{
+Obsolete interface supported for backward compatibility only
+T}	\(em
+\f4getcf\f1	T{
+Obsolete interface supported for backward compatibility only
+T}	\(em
+\f4geteblk\f1	T{
+No change;  use \f4ngeteblk\fP or \f4getrbuf\fP for alternate buffer sizes
+T}	\f4geteblk\fP
+\f4getq\f1	No change	\f4getq\f1
+\f4inb\f1	No change	\f4inb\f1
+.SK
+\f4ind\f1	Renamed only	\f4inl\f1
+\f4insq\f1	No change	\f4insq\f1
+\f4inw\f1	No change	\f4inw\f1
+\f4iodone\f1	Renamed only	\f4biodone\f1
+\f4iomove\f1	Replaced	\f4uiomove\fP
+\f4iowait\f1	Renamed only	\f4biowait\f1
+\f4kseg\f1	T{
+Obsolete interface supported for backward compatibility only
+T}	\f4kmem_alloc\fP
+\f4linkb\f1	No change	\f4linkb\f1
+\f4longjmp\f1	T{
+Obsolete interface supported for backward compatibility only
+T}	\(em
+\f4major\f1	T{
+Renamed; macro reimplemented as function
+T}	\f4getmajor\f1
+\f4makedev\f1	T{
+Renamed; macro reimplemented as function
+T}	\f4makedevice\f1	
+\f4malloc\f1	Renamed only	\f4rmalloc\f1
+\f4mapinit\f1	Renamed only	\f4rminit\f1
+\f4mapwant\f1	Renamed only	\f4rmsetwant\f1
+\f4max\f1	No change	\f4max\f1
+\f4mfree\f1	Renamed only	\f4rmfree\f1
+\f4min\f1	No change	\f4min\f1
+\f4minor\f1	T{
+Renamed; macro reimplemented as function
+T}	\f4getminor\f1
+\f4msgdsize\f1	No change	\f4msgdsize\f1
+\f4noenable\f1	T{
+Macro reimplemented as function
+T}	\f4noenable\f1
+\f4OTHERQ\f1	T{
+Macro reimplemented as function
+T}	\f4OTHERQ\f1
+\f4outb\fP	No change	\f4outb\fP
+\f4outd\fP	Renamed only	\f4outl\fP
+\f4outw\fP	No change	\f4outw\fP
+\f4physck\f1	T{
+Replaced; functionality included in \f4physiock\fP
+T}	\f4physiock\f1
+\f4physio\f1	T{
+Replaced; functionality included in \f4physiock\fP
+T}	\f4physiock\f1
+\f4psignal\f1	No change	\f4psignal\f1
+\f4pullupmsg\f1	No change	\f4pullupmsg\f1
+\f4putbq\f1	No change	\f4putbq\f1
+.SK
+\f4putc\f1	T{
+Obsolete interface supported for backward compatibility only
+T}	\(em
+\f4putcb\f1	T{
+Obsolete interface supported for backward compatibility only
+T}	\(em
+\f4putcf\f1	T{
+Obsolete interface supported for backward compatibility only
+T}	\(em
+\f4putctl\f1	No change	\f4putctl\f1
+\f4putctl1\f1	No change	\f4putctl1\f1
+\f4putnext\f1	T{
+Macro reimplemented as function
+T}	\f4putnext\f1
+\f4putq\f1	No change	\f4putq\f1
+\f4qenable\f1	T{
+No change
+T}	\f4qenable\f1
+\f4qreply\f1	T{
+No change
+T}	\f4qreply\f1
+\f4qsize\f1	No change	\f4qsize\f1	
+\f4RD\f1	T{
+Macro reimplemented as function
+T}	\f4RD\f1
+\f4repinsb\fP	No change	\f4repinsb\fP
+\f4repinsd\fP	No change	\f4repinsd\fP
+\f4repinsw\fP	No change	\f4repinsw\fP
+\f4repoutsb\fP	No change	\f4repoutsb\fP
+\f4repoutsd\fP	No change	\f4repoutsd\fP
+\f4repoutsw\fP	No change	\f4repoutsw\fP
+\f4rmvb\f1	No change	\f4rmvb\f1
+\f4rmvq\f1	No change	\f4rmvq\f1	
+\f4signal\f1	T{
+Obsolete interface supported for backward compatibility only
+T}	\(em
+\f4sleep\f1	No change	\f4sleep\f1
+\f4spl\f1	No change	\f4spl\f1
+\f4splx\f1	No change	\f4splx\f1
+\f4sptalloc\f1	T{
+Obsolete interface supported for backward compatibility only
+T}	T{
+\f4kmem_alloc\f1
+or
+\f4physmap\f1
+T}
+\f4sptfree\f1	T{
+Obsolete interface supported for backward compatibility only
+T}	\f4kmem_free\f1
+.SK	
+\f4strlog\f1	No change	\f4strlog\f1
+\f4subyte\f1	Replaced	T{
+\f4copyout\fP, \f4uiomove\f1, or \f4ureadc\fP
+T}
+\f4suser\f1	Replaced	\f4drv_priv\f1
+\f4suword\f1	Replaced	T{
+\f4copyout\fP, \f4uiomove\f1, or \f4ureadc\fP
+T}
+\f4testb\f1	T{
+Obsolete interface supported for backward compatibility only
+T}	\(em
+\f4timeout\f1	No change	\f4timeout\f1
+\f4ttclose\f1	T{
+Obsolete interface supported for backward compatibility only
+T}	\(em
+\f4ttin\f1	T{
+Obsolete interface supported for backward compatibility only
+T}	\(em
+\f4ttinit\f1	T{
+Obsolete interface supported for backward compatibility only
+T}	\(em
+\f4ttiocom\f1	T{
+Obsolete interface supported for backward compatibility only
+T}	\(em
+\f4ttioctl\f1	T{
+Obsolete interface supported for backward compatibility only
+T}	\(em
+\f4ttopen\f1	T{
+Obsolete interface supported for backward compatibility only
+T}	\(em
+\f4ttout\f1	T{
+Obsolete interface supported for backward compatibility only
+T}	\(em
+\f4ttread\f1	T{
+Obsolete interface supported for backward compatibility only
+T}	\(em
+\f4ttrstrt\f1	T{
+Obsolete interface supported for backward compatibility only
+T}	\(em
+\f4tttimeo\f1	T{
+Obsolete interface supported for backward compatibility only
+T}	\(em
+.SK
+\f4ttwrite\f1	T{
+Obsolete interface supported for backward compatibility only
+T}	\(em
+\f4ttxput\f1	T{
+Obsolete interface supported for backward compatibility only
+T}	\(em
+\f4ttyflush\f1	T{
+Obsolete interface supported for backward compatibility only
+T}	\(em
+\f4ttywait\f1	T{
+Obsolete interface supported for backward compatibility only
+T}	\(em
+\f4unkseg\f1	T{
+Obsolete interface supported for backward compatibility only
+T}	\f4kmem_free\fP
+\f4unlinkb\f1	No change	\f4unlinkb\f1
+\f4untimeout\f1	No change	\f4untimeout\f1	
+\f4useracc\f1	T{
+Replaced; functionality included in \f4physiock\fP
+T}	\f4physiock\f1
+\f4vtop\f1	No change	\f4vtop\f1
+\f4wakeup\f1	No change	\f4wakeup\f1
+\f4WR\f1	T{
+Macro reimplemented as function
+T}	\f4WR\f1
+.TE
+The
+.UI size (D2DK)
+entry point was not defined in Release 3.2.
+Drivers without a
+.UI size
+routine have the following peculiarities:
+.BL
+.LI
+They may not be able to use the last few sectors
+on the device partition.
+(The number of unusable sectors is
+.SB "disk_sectors_in_partition"
+.UI %
+.SB "disk_sectors_per_logical_block" .
+Typically this is zero; it must be smaller than the logical block size.)
+.LI
+They pay a performance penalty because the kernel avoids some pre-fetches
+on devices without a \f4size\fP routine.
+.LE
+.IX iend "DDI/DKI (Device Driver Interface/Driver\(enKernel Interface), migration from Release 3.2 to Release 4.0"

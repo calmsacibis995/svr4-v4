@@ -1,0 +1,63 @@
+'\"macro stdmacro
+.if n .pH gen.canput @(#)canput	40.2 of 1/7/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.nr X
+.if \nX=0 .ds x} canput D3DK "STREAMS" "DDI/DKI" "\&"
+.if \nX=1 .ds x} canput D3DK "STREAMS" "DDI/DKI"
+.if \nX=2 .ds x} canput D3DK "" "\&"
+.if \nX=3 .ds x} canput "" "" "\&"
+.TH \*(x}
+.IX "\f4canput\fP(D3DK)"
+.IX "STREAMS message queues"
+.IX "message (STREAMS)"
+.SH NAME
+\f4canput\f1 \- test for flow control in a stream
+.SH SYNOPSIS
+.nf
+.na
+\f4#include <sys/stream.h>
+.sp 0.5
+int canput(\f4queue_t *\f1\f2q\f4);\f1
+.SH ARGUMENTS
+.RS 0n 10
+.IP "\f2q\f1" 10n
+Pointer to the message queue.
+.RE
+.SH DESCRIPTION
+\f4canput\f1 searches through the stream (starting at \f2q\f1)
+until it finds a queue containing
+a service routine, or until it reaches
+the end of the stream.
+If found, the queue containing the service routine
+is tested to see if there is room for a message in the queue.
+If the queue is full, \f4canput\f1 marks the queue to automatically
+back-enable the caller's service routine when the amount of data
+in messages on the queue has reached its low water mark.
+.P
+It is possible because of race conditions to test for room using \f4canput\f1
+and get an indication that there is room for a message, and then have
+the queue fill up before subsequently enqueuing the message, causing
+a violation of flow control.
+This is not a problem, since the violation of flow control in this case
+is bounded.
+.SH RETURN VALUE
+\f4canput\fP returns 1 if a message can be sent in the stream, or 0 if
+the stream is flow-controlled.
+If \f4canput\fP reaches the end of the stream without finding a queue
+with a service routine, then it returns 1.
+.SH LEVEL
+Base or Interrupt.
+.SH NOTES
+Does not sleep.
+.sp 0.5
+The driver is responsible for both testing a queue with
+\f4canput\f1 and refraining from placing a message on the queue if
+\f4canput\f1 fails.
+.SH SEE ALSO
+.na
+\f4bcanput\f1(D3DK),
+\f4putbq\f1(D3DK),
+\f4putnext\f1(D3DK)
+.ad
+.SH EXAMPLE
+See the \f4bufcall\fP(D3DK) function page for an example of \f4canput\fP.

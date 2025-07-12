@@ -1,0 +1,72 @@
+'\"macro stdmacro
+.if n .pH g4.services @(#)services	40.8 of 5/21/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.\" Copyright (c) 1983 Regents of the University of California.
+.\" All rights reserved.  The Berkeley software License Agreement
+.\" specifies the terms and conditions for redistribution.
+.\"
+.\" @(#)services.4 1.12 89/07/14 SMI; from UCB 4.3 BSD 6.2
+'\" macro stdmacro
+.\" Copyright (c) 1988 Sun Microsystems, Inc. - All Rights Reserved.
+.\"
+.\"
+.nr X
+.if \nX=0 .ds x} services 4 "Internet Utilities" "\&"
+.if \nX=1 .ds x} services 4 "Internet Utilities"
+.if \nX=2 .ds x} services 4 "" "\&"
+.if \nX=3 .ds x} services "" "" "\&"
+.TH \*(x}
+.UC 5
+.SH NAME
+\f4services\f1 \- Internet services and aliases
+.SH DESCRIPTION
+The
+\f4services\f1
+file contains an entry for each service
+available through the
+.SM DARPA
+Internet.
+Each entry consists of a line of the form:
+.IP
+\f2service-name\ \ \ port\f4\|\f4/\|\f2protocol\ \ \ aliases\f1
+.TP 20
+.I service-name
+This is the official Internet service name.
+.TP
+\f2port\f4\|/\|\f2protocol\f1
+This field is composed of the port
+number and protocol through which
+the service is provided (for instance,
+\f4512/tcp\f1).
+.TP
+.I aliases
+This is a list of alternate names by which
+the service might be requested.
+.PP
+Fields can be separated by any number of
+.SM SPACE
+and/or
+.SM TAB\s0
+characters.
+A
+\f1`\f4#\f1'
+(pound-sign) indicates the beginning of a
+comment; characters up to the end of the
+line are not interpreted by routines which
+search the file.
+.PP
+Service names may contain any printable
+character other than a field delimiter,
+.SM NEWLINE\s0,
+or comment character.
+.SH FILES
+.PD 0
+.TP 20
+\f4/etc/services\f1
+.PD
+.SH "SEE ALSO"
+\f4getservent\fP(3N),
+\f4inetd.conf\fP(4)
+.SH NOTES
+A name server should be used instead of a static file.

@@ -1,0 +1,42 @@
+'\"macro stdmacro
+.if n .pH g1a.format @(#)format	40.3 of 1/3/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1990 AT&T
+.nr X
+.if \nX=0 .ds x} format 1M "" "\&"
+.if \nX=1 .ds x} format 1M ""
+.if \nX=2 .ds x} format 1M "" "\&"
+.if \nX=3 .ds x} format "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4format\f1 \- format floppy disk tracks
+.SH SYNOPSIS
+\f4/bin/format\f1 [\f4\-vVE\f1] [\f4\-f\f2 first\f1] [\f4\-l\f2 last\f1] [\f4\-i\f2 interleave\f1] \f2device\f1 [\f4t\f1]
+.SH DESCRIPTION
+The \f4format\f1 command
+formats floppy disks.
+Unless otherwise
+specified, formatting starts at track 0 and continues until an error
+is returned at the end of a partition.  
+.PP
+The \f4\-f\f1 and \f4\-l\f1 options specify the first and last track to be formatted.  
+The default interleave of 2 may be modified by using the \f4\-i\f1 option.
+\f2device\f1 must specify a raw (character) floppy device.
+The \f4t\f1 indicates the entire disk.
+Absence of this letter indicates that the first track
+of the diskette cannot be accessed.
+.TP 10
+\f4\-v\f1
+verbose.
+.TP
+\f4\-V\f1
+verify. After tracks are formatted, a random sector is chosen
+and a write of test data is done into it. The sector is then read back
+and a comparison is made.
+.TP
+\f4\-E\f1
+exhaustive verify. Every sector is verified by write/read/compare.
+.SH FILES
+\f4/dev/rdsk/\(**\f1     raw device for partition to be formatted
+.SH "SEE ALSO"
+\f4mkpart\f1(1M), \f4fd\f1(7).

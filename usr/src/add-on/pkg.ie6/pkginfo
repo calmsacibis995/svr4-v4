@@ -1,0 +1,14 @@
+#ident	"@(#)pkg.ie6:pkginfo	1.3"
+# ie6 pkginfo (for 3C503)
+
+PKG="ie6"
+NAME="3com IE6(3C503) Ethernet Driver"
+ARCH="i386"
+RELEASE="4.0"
+VERSION="1.1"
+VENDOR="Intel"
+CATEGORY="system,utilities"
+CLASSES="none"
+BASEDIR=""
+MAXINST="1"
+PREPEND="ie6"

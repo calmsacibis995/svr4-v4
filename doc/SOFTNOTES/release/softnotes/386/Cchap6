@@ -1,0 +1,13 @@
+.if n .pH 386.Cchap6 @(#)Cchap6	40.28
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.BK "Software Notes" "" "" ""   
+.\ACRONYM	                  
+.CH "Real Time Processing" "" "Table of Contents" "6"
+.\CHAPTER	6
+.tC 1 "Real Time Processing Notes" 6-1  
+.Index: istart UNIX System V/386 Release 4, real time processing notes	1
+.tC 2 "High-Resolution Timers" 6-1  
+.tC 3 "Source Compatibility" 6-1  
+.Index: \f4getitimer\fP(3C)        	1
+.tC 3 "Future Directions" 6-1  
+.Index: iend UNIX System V/386 Release 4, real time processing notes	1

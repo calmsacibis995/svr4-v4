@@ -1,0 +1,60 @@
+'\"macro stdmacro
+.if n .pH g2.sigprocmask @(#)sigprocmask	40.22 of 1/3/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} sigprocmask 2 "" "\&"
+.if \nX=1 .ds x} sigprocmask 2 ""
+.if \nX=2 .ds x} sigprocmask 2 "" "\&"
+.if \nX=3 .ds x} sigprocmask "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4sigprocmask\f1 \- change or examine signal mask
+.SH SYNOPSIS
+\f4#include <signal.h>\f1
+.PP
+\f4int sigprocmask(int how, const sigset_t *set, sigset_t *oset);\f1
+.SH DESCRIPTION
+The \f4sigprocmask\fP function is used to examine and/or change the
+calling process's signal mask.
+If the value is \f4SIG_BLOCK\fP,
+the set pointed to by the argument \f2set\f1 is added to the
+current signal mask.
+If the value is \f4SIG_UNBLOCK\fP, the set pointed
+by the argument \f2set\f1 is removed from the current signal mask.
+If the value is \f4SIG_SETMASK\fP, the current signal mask is
+replaced by the set pointed to by the argument \f2set\f1.
+If the argument \f2oset\fP
+is not \f4NULL\fP, the previous mask is stored in the space pointed to by
+\f2oset\fP.  If the value of the argument \f2set\fP is \f4NULL\fP, 
+the value \f2how\fP is not significant
+and the process's signal mask is unchanged; thus, the call can be used
+to enquire about currently blocked signals.
+.PP
+If there are any pending unblocked signals after the call to \f4sigprocmask\fP,
+at least one of those signals will be delivered before the call to
+\f4sigprocmask\fP returns.
+.PP
+It is not possible to block those signals that cannot be ignored
+[see \f4sigaction\fP(2)]; this restriction is silently 
+imposed by the system.
+.PP
+If \f4sigprocmask\fP fails, the process's signal
+mask is not changed.
+.PP
+\f4sigprocmask\fP fails if any of the following is true:
+.TP 15
+\f4EINVAL\fP
+The value of the \f2how\fP argument is not equal to one of the defined values.
+.TP
+\f4EFAULT\fP
+The value of \f2set\fP or \f2oset\fP points outside the process's allocated
+address space.
+.SH SEE ALSO
+\f4sigaction\fP(2), \f4signal\fP(2), \f4sigsetopts\fP(3C), \f4signal\fP(5).
+.SH DIAGNOSTICS
+.PP
+On success, \f4sigprocmask\fP returns zero.
+On failure, it returns \-1 and sets \f4errno\f1 to indicate the error.
+.\"	@(#)sigprocmask.2	1 of 9/28/88
+.Ee

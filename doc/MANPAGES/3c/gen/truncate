@@ -1,0 +1,148 @@
+'\"macro stdmacro
+.if n .pH g3c.truncate @(#)truncate	40.14 of 5/22/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} truncate 3C "C Development Set" "\&"
+.if \nX=1 .ds x} truncate 3C "C Development Set"
+.if \nX=2 .ds x} truncate 3C "C Development Set" "\&"
+.if \nX=3 .ds x} truncate "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4truncate\f1, \f4ftruncate\f1 \- set a file to a specified length
+.SH SYNOPSIS
+\f4#include <unistd.h>\f1
+.PP
+\f4int truncate (const char \(**path, off_t length);\f1
+.PP
+\f4int ftruncate (int fildes, off_t length);\f1
+.SH DESCRIPTION
+.IX  truncate  ""  \f4truncate\f1
+.IX  "file system"  truncate  ""  \f4truncate\f1
+.IX  ftruncate  ""  \f4ftruncate\f1
+.IX  "file system"  ftruncate  ""  \f4ftruncate\f1
+The file whose name is given by \f2path\f1 or referenced by the
+descriptor \f2fildes\f1 has its size set to \f2length\f1 bytes.
+.P
+If the file was previously longer than \f2length\f1,
+bytes past \f2length\f1 will no longer be accessible.
+If it was shorter, bytes from the
+.SM EOF
+before the call to the
+.SM EOF
+after the call will be read in as zeros.
+The effective user
+.SM ID
+of the process must have write permission for
+the file, and 
+for \f4ftruncate\f1 the file must be open for writing.
+.P
+\f4truncate\f1 fails if one or more of the following are true:
+.TP 18
+\f4EACCES\fP
+Search permission is denied on a component of the path prefix.
+.TP
+\f4EACCES\fP
+Write permission is denied for the file referred to by
+.IR path .
+.TP
+\f4EFAULT\fP
+.I path
+points outside the process's allocated address space.
+.TP
+\f4EINTR\fP
+A signal was caught during execution of the \f4truncate\f1 routine.
+.TP
+\f4EINVAL\fP
+.I path 
+is not an ordinary file.
+.TP
+\f4EIO\fP
+An I/O error occurred while reading from or writing to the file system.
+.TP
+\f4EISDIR\fP
+The file referred to by
+.I path
+is a directory.
+.TP
+\f4ELOOP\fP
+Too many symbolic links were encountered in translating
+.IR path .
+.TP
+\f4EMFILE\fP
+The maximum number of file descriptors available to the process has been
+reached.
+.TP
+\f4EMULTIHOP\fP 
+Components of
+.I path
+require hopping to multiple remote machines
+and file system type does not allow it.
+.TP
+\f4ENAMETOOLONG\fP
+The length of a \f2path\f1 component
+exceeds {NAME_MAX} characters,
+or the length of
+.I path
+exceeds {PATH_MAX} characters.
+.TP
+\f4ENFILE\fP
+Could not allocate any more space for the system file table.
+.TP
+\f4ENOENT\fP
+Either a component of the path prefix or the file referred to by
+.I path
+does not exist.
+.TP
+\f4ENOLINK\fP 
+.I path 
+points to a remote machine and the link to that machine is no longer
+active.
+.TP
+\f4ENOTDIR\fP
+A component of the path prefix of
+.I path
+is not a directory.
+.TP
+\f4EROFS\fP
+The file referred to by
+.I path
+resides on a read-only file system.
+.TP
+\f4ETXTBSY\fP
+The file referred to by
+.I path
+is a pure procedure (shared text) file that is being executed.
+.P
+\f4ftruncate\fP
+fails if one or more of the following are true:
+.TP 18
+\f4EAGAIN\fP
+The file exists, mandatory file/record locking is set, and there are
+outstanding record locks on the file [see \f4chmod\fP(2)].
+.TP
+\f4EBADF\fP
+.I fildes
+is not a file descriptor open for writing.
+.TP
+\f4EINTR\fP
+A signal was caught during execution of the \f4ftruncate\f1 routine.
+.TP
+\f4EIO\fP
+An I/O error occurred while reading from or writing to the file system.
+.TP
+\f4ENOLINK\fP 
+.I fildes
+points to a remote machine and the link to that machine is no longer
+active.
+.TP
+\f4EINVAL\fP
+.I fildes
+does not correspond to an ordinary file.
+.SH "SEE ALSO"
+\f4fcntl\fP(2), \f4open\fP(2)
+.SH DIAGNOSTICS
+Upon successful completion, a value of 0 is returned.
+Otherwise, a value of \-1 is returned and
+\f4errno\fP
+is set to indicate the error.

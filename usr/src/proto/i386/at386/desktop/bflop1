@@ -1,0 +1,7 @@
+#ident	"@(#)proto:i386/at386/desktop/bflop1	1.1"
+			[ -z "$ROOT" ] &&{
+				echo "ROOT must be set"
+				exit 1
+			}
+			cd $ROOT/var/spool/pkg
+			pkgtrans -s `pwd` diskette2 $*

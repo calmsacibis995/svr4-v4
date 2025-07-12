@@ -1,0 +1,145 @@
+'\"macro stdmacro
+.if n .pH g1a.pkgchk @(#)pkgchk	40.9 of 5/16/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+'\"macro stdmacro
+.if n .pH g1a.pkgchk @(#)pkgchk	40.8 of 9/22/89
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.if \nX=0 .ds x} pkgchk 1M "Essential Utilities" "\&"
+.if \nX=1 .ds x} pkgchk 1M "Essential Utilities"
+.if \nX=2 .ds x} pkgchk 1M "" "\&"
+.if \nX=3 .ds x} pkgchk "" "" "\&"
+.nr X
+.TH \*(x} "" "386 Computer Only"
+.SH NAME
+\f4pkgchk\f1 \- check accuracy of installation
+.SH SYNOPSIS
+.na
+.ds [ \f1[\fP
+.ds ] \f1]\fP
+.ds | \f1\||\fP
+.ft 4
+/usr/sbin/pkgchk \*[-l\*|-acfqv\*] \*[-nx\*] \*[-p \f2path1\fP\*[,\f2path2\fP \f1...\fP\*] \*[-i \f2file\fP\*] \*[\f2pkginst\f1. . .\fP\*]
+.sp .5
+/usr/sbin/pkgchk -d \f2device\fP \*[-l\*|v\*] \*[-p \f2path1\fP\*[,\f2path2\fP \f1...\fP\*] \*[-i \f2file\fP\*] \*[\f2pkginst\fP\f1. . .\fP\*]
+.sp .5
+/usr/sbin/pkgchk -m \f2pkgmap\fP \*[-e \f2envfile\fP\*] \*[-l\*|-acfqv\*] \*[-nx\*] \*[-i \f2file\fP\*]
+.br
+	\*[-p \f2path1\fP\*[,\f2path2\fP \f1. . .\fP\*]\*]
+.ft 1
+.ad
+.SH DESCRIPTION
+\f4pkgchk\f1
+checks the accuracy of installed files or,
+by use of the \f4\-l\f1 option,
+displays information about package files.
+The command checks the integrity of directory structures and the files.
+Discrepancies are reported
+on \f4stderr\f1 along with a detailed explanation of the problem.
+.PP
+The first synopsis defined above is used to list or check the
+contents and/or attributes of objects
+that are currently installed on the system.
+Package names may be listed on the command line,
+or by default the entire contents of a machine will be checked.
+.PP
+The second synopsis is used to list or check the contents of a package
+which has been spooled on the specified device, but not installed.
+Note that attributes cannot be checked for spooled packages.
+.PP
+The third synopsis is used to list or check the contents and/or attributes
+of objects which are described in the indicated \f2pkgmap\f1.
+.PP
+The option definitions are:
+.TP .5i
+\f4\-l\f1
+Lists information on the selected files that make up a package.
+It is not compatible with the \f4a\f1,
+\f4c\f1,
+\f4f\f1,
+\f4g\f1,
+and \f4v\f1 options.
+.TP
+\f4\-a\f1
+Audits the file attributes only, does not check file contents.
+Default is to check both.
+.TP
+\f4\-c\f1
+Audits the file contents only, does not check file attributes.
+Default is to check both.
+.TP
+\f4\-f\f1
+Corrects file attributes if possible.
+When \f4pkgchk\f1 is invoked with this option it creates directories, named
+pipes, links and special devices if they do not already exist.
+.TP
+\f4-q\f1
+Quiet mode.
+Does not give messages about missing files.
+.TP
+\f4-v\f1
+Verbose mode.
+Files are listed as processed.
+.TP
+\f4-n\f1
+Does not check volatile or editable files.
+This should be used for most post-installation checking.
+.TP
+\f4-x\f1
+Searches exclusive directories only,
+looking for files which exist that are not
+in the installation software database
+or the indicated \f2pkgmap\f1 file.
+If used with the \f4-f\fP option,
+hidden files are removed;
+no other checking is done.
+.TP
+\f4-p\f1
+Only checks the accuracy of the pathname or pathnames listed.
+\f2pathname\f1
+can be one or more pathnames separated by commas (or by white space, if
+the list is quoted).
+.TP
+\f4-i\f1
+Reads a list of pathnames from \f2file\f1 and compares this list against the
+in\%stallation software database
+or the indicated \f2pkgmap\f1 file.
+Pathnames which are not contained in \f2inputfile\f1 are not checked.
+.TP
+\f4\-d\f1
+Specifies the device on which a spooled package resides.
+\f2device\f1 can be
+a directory pathname or the identifiers for tape, floppy disk or removable disk
+(for example, \f4/var/tmp\f1 or \f4/dev/diskette\f1).
+.TP
+\f4\-m\f1
+Requests that the package be checked against the pkgmap file \f2pkgmap\f1.
+.TP
+\f4\-e\f1
+Requests that the pkginfo file named as \f2envfile\f1 be used to resolve
+parameters noted in the specified pkgmap file.
+.TP
+\f2pkginst\f1
+Specifies the package instance or instances to be checked.
+The format \f2pkginst\f4.\(**\f1 can be used
+to check all instances of a package.
+When using this format,
+enclose the command line in single quotes
+to prevent the shell from interpreting the \(** character.
+The default is to display all information about all installed
+packages.
+.SH NOTES
+To remove hidden files only,
+use the \f4-f\fP and \f4-x\fP options together.
+To remove hidden files and check attributes
+and contents of files, 
+use the \f4-f\fP, \f4-x\fP, \f4-c\fP,
+and \f4-a\fP options together.
+.SH SEE ALSO
+.na
+\f4pkgadd\f1(1M),
+\f4pkgask\f1(1M),
+\f4pkginfo\f1(1),
+\f4pkgrm\f1(1M),
+\f4pkgtrans\f1(1)
+.ad

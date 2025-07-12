@@ -1,0 +1,80 @@
+'\"macro stdmacro
+.if n .pH g1.x286emul @(#)x286emul	40.4 of 1/3/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1990 AT&T
+.nr X
+.if \nX=0 .ds x} x286emul 1 "C Software Development Set" "\&"
+.if \nX=1 .ds x} x286emul 1 "C Software Development Set"
+.if \nX=2 .ds x} x286emul 1 "" "\&"
+.if \nX=3 .ds x} x286emul "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4x286emul\f1 \- emulate XENIX 80286
+.SH SYNOPSIS
+\f4x286emul
+[\|\f2arg\fP\|.\|.\|.\|]
+prog286
+.SH DESCRIPTION
+\f4x286emul\f1
+is an emulator that
+allows programs from XENIX System\ V/286 Release\ 2.3 or
+SCO's XENIX System\ V/286 Release\ 2.3.2
+on the Intel 80286 to run on the Intel 80386 processor under
+UNIX System\ V.
+.PP
+The UNIX system recognizes an attempt to
+\f4exec\f1(2)
+a 286 program, and
+automatically
+\f4exec\f1's
+the 286 emulator with the 286 program name as an additional argument.
+It is not necessary to specify the \f4x286emul\f1 emulator
+on the command line.
+The 286 programs can be invoked using the same command format as
+on the XENIX System\ V/286.
+.PP
+\f4x286emul\f1
+reads the 286 program's text and data into
+memory and maps them through the
+LDT
+[via
+\f4sysi86\f1(2)]
+as 286 text and data segments.
+It also fills in the jam area, which is used by XENIX programs to do system
+calls and signal returns.
+\f4x286emul\f1
+starts the 286 program by
+jumping to its entry point.
+.PP
+When the 286 program attempts to do a system call,
+\f4x286emul\f1
+takes control.
+It does any conversions needed between the 286 system call and
+the equivalent 386 system call, and performs the 386 system call.
+The results are converted to the form the
+286 program expects, and the 286 program is resumed.
+.PP
+The following are some of the differences between a program
+running on a 286 and a 286 program using
+\f4x286emul\f1
+on a 386:
+.IP
+Attempts to unlink or write on the 286 program will
+fail on the 286 with
+\f4ETXTBSY\f1.
+Under
+\f4x286emul\f1,
+they will not fail.
+.IP
+\f4ptrace\f1(2)
+is not supported under
+\f4x286emul\f1.
+.IP
+The 286 program must be readable for the emulator to read it.
+.P
+The emulator must have this name and be in
+\f4/bin\f1
+if it is to be automatically invoked
+when
+\f4exec\f1(2)
+is used on a 286 program.

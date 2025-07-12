@@ -1,0 +1,326 @@
+'\"macro stdmacro
+.if n .pH g1.nroff @(#)nroff	40.7 of 4/18/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.\" Copyright (c) 1988 Sun Microsystems, Inc. - All Rights Reserved.
+.\"
+.nr X
+.if \nX=0 .ds x} nroff 1 "BSD Compatibility Package" "\&"
+.if \nX=1 .ds x} nroff 1 "BSD Compatibility Package"
+.if \nX=2 .ds x} nroff 1 "" "\&"
+.if \nX=3 .ds x} nroff "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4nroff\f1 \- format documents for display or line-printer
+.SH SYNOPSIS
+\f4/usr/ucb/nroff\f1
+[
+\f4\-ehiqz\f1
+]
+[
+\f4\-F\f2dir\f1
+]
+[
+\f4\-m\f2name\f1
+]
+[
+\f4\-n\f2N\f1
+]
+[
+\f4\-o\f2pagelist\f1
+]
+[
+\f4\-r\f2aN\f1
+]
+.ti +3
+[
+\f4\-s\f2N\f1
+]
+[
+\f4\-T\f2name\f1
+]
+[
+\f4\-u\f2N\f1
+]
+[
+.IR filename \ .\ .\ .
+]
+.SH DESCRIPTION
+\f4nroff\f1
+formats text in the named
+\f2filename\f1
+for typewriter-like devices.
+See also
+\f4troff\f1.
+.PP
+If no
+\f2filename\f1
+argument is present,
+\f4nroff\f1
+reads the standard input.
+An argument consisting of a
+\f1`\f4\-\f1'
+is taken to be a file name corresponding to the standard input.
+.PP
+The following options may appear in any order,
+but must appear
+\f2before\f1
+the files.
+.TP 0.7i
+\f4\-e\f1
+Produce equally-spaced words in adjusted lines,
+using full terminal resolution.
+.TP
+\f4\-h\f1
+Use output
+.SM TAB
+characters during horizontal spacing
+to speed output and reduce output character count.
+.SM TAB
+settings are assumed to be every 8 nominal character widths.
+.TP
+\f4\-i\f1
+Read the standard input after the input files are exhausted.
+.TP
+\f4\-q\f1
+Invoke the simultaneous input-output mode of the
+\f4rd\f1
+request.
+.TP
+\f4\-F\f2dir\f1
+Search directory
+\f2dir\f1
+for font tables
+instead of the system-dependent default.
+.TP
+\f4\-m\f2name\f1
+Prepend the macro file
+\f4/usr/share/lib/tmac/tmac.\f2name\f1
+to the input files.
+.TP
+\f4\-n\f2N\f1
+Number first generated page
+\f2N .
+.TP
+\f4\-o\f2pagelist\f1
+Print only pages whose page numbers appear in the comma-separated
+\f2list\f1
+of numbers and ranges.
+A range
+\f2N\f4\- M
+means pages
+\f2N\f1
+through
+\f2M\f1;
+an initial
+\f2\-N\f1
+means from the beginning to page
+\f2N\f1;
+and a final
+\f2N\f1\-
+means from
+\f2N\f1
+to the end.
+.TP
+\f4\-r\f2aN\f1
+Set register
+\f2a\f1
+(one-character) to
+\f2N\f1.
+.TP
+\f4\-s\f2N\f1
+Stop every
+\f2N\f1
+pages.
+\f4nroff\f1
+will halt prior to every
+\f2N\f1
+pages (default
+\f2N\f4=1\f1)
+to allow paper loading or changing, and will
+resume upon receipt of a
+\s-1NEWLINE\s0.
+.TP
+\f4\-T\f2name\f1
+Prepare output for a device of the specified
+\f4name\f1.
+Known
+\f4name\f1s
+are:
+.RS 0.7i
+.TP 0.75i
+\f437\f1
+Teletype Corporation Model 37 terminal \(em this is the default.
+.TP
+\f4crt\f1\ |\ \f4lpr\f1\ |\ \f4tn300\f1
+\s-1GE\s+1
+TermiNet\ 300, or any line printer or terminal without half-line
+capability.
+.TP
+\f4300\f1
+\s-1DASI\s0-300.
+.TP
+\f4300-12\f1
+\s-1DASI\s0-300
+\(em 12-pitch.
+.TP
+\f4300S\f1\ |\ \f4302\f1\ |\ \f4dtc\f1
+\s-1DASI\s0-300S.
+.TP
+\f4300S-12\f1\ |\ \f4302-12\f1\ |\ \f4dtc12\f1
+\s-1DASI\s0-300S.
+.TP
+\f4382\f1
+\s-1DASI\s0-382
+(fancy \s-1DTC\s0 382).
+.TP
+\f4382-12\f1
+\s-1DASI\s0-82
+(fancy \s-1DTC\s0 382 \(em 12-pitch).
+.TP
+\f4450\f1\ |\ \f4ipsi\f1
+\s-1DASI\s0-450
+(Diablo Hyterm).
+.TP
+\f4450-12\f1 \ |\ \f4ipsi12\f1
+\s-1DASI\s0-450
+(Diablo Hyterm) \(em
+12-pitch.
+.TP
+\f4450-12-8\f1
+\s-1DASI\s0-450
+(Diablo Hyterm) \(em 12-pitch and 8
+lines-per-inch.
+.TP
+\f4450X\f1
+\s-1DASI\s0-450X
+(Diablo
+Hyterm).
+.TP
+\f4832\f1
+\s-1AJ\s0
+832.
+.TP
+\f4833\f1
+\s-1AJ\s0
+833.
+.TP
+\f4832-12\f1
+\s-1AJ\s0
+832 \(em
+12-pitch.
+.TP
+\f4833-12\f1
+\s-1AJ\s0
+833 \(em
+12-pitch.
+.TP
+\f4epson\f1
+Epson FX80.
+.TP
+\f4itoh\f1
+\s-1C:ITOH\s0
+Prowriter.
+.TP
+\f4itoh-12\f1
+\s-1C:ITOH\s0
+Prowriter \(em
+12-pitch.
+.TP
+\f4nec	\f1
+\s-1NEC\s0
+55?0s0 or
+\s-1NEC\s0
+77?0s0
+Spinwriter.
+.TP
+\f4nec12\f1
+\s-1NEC\s0
+55?0 or
+\s-1NEC\s0
+77?0
+Spinwriter \(em 12-pitch.
+.TP
+\f4nec-t\f1
+\s-1NEC\s0
+55?0/77?0
+Spinwriter \(em Tech-Math/Times-Roman thimble.
+.TP
+\f4qume\f1
+Qume
+Sprint \(em 5 or9.
+.TP
+\f4qume12\f1
+Qume
+Sprint \(em 5 or 9,12-pitch.
+.TP
+\f4xerox\f1
+Xerox 17?0 or Diablo 16?0.
+.TP
+\f4xerox12\f1
+Xerox 17?0 or
+Diablo 16?0 \(em
+12-pitch.
+.TP
+\f4x-ecs\f1
+Xerox/Diablo 1730/630 \(em Extended Character
+Set.
+.TP
+\f4x-ecs12\f1
+Xerox/Diablo 1730/630 \(em Extended Character Set, 12-pitch.
+.RE
+.PD
+.TP 0.7i
+\f4\-u\f2N\f1
+Set emboldening factor for the font mounted on position 3 to
+\f4N\f1.
+Emboldening is accomplished by overstriking
+the specified number of times.
+.TP
+\f4\-z\f1
+Suppress formatted output.
+The only output will consist of diagnostic messages from
+\f4nroff\f1
+and messages output with the \f4.tm\f1 request.
+.br
+.ne 0.75i
+.SH EXAMPLE
+The following command:
+.IP
+\f4nroff \-s4 \-me users.guide\f1
+.PP
+formats
+\f4users.guide\f1
+using the
+\f4\-me\f1
+macro package, and stopping every 4 pages.
+.SH FILES
+.PD 0
+.TP 2.5i
+\f4/tmp/ta*\f1
+temporary file
+.TP
+\f4/usr/ucblib/doctools/tmac/tmac.*\f1
+standard macro files
+.TP
+\f4/usr/ucblib/doctools/term/*\f1
+terminal driving tables for
+\f4nroff\f1
+.TP
+\f4/usr/ucblib/doctools/term/README\f1
+index to terminal description files
+.PD
+.SH "SEE ALSO"
+\f4checknr\fP(1),
+\f4eqn\fP(1),
+\f4tbl\fP(1),
+\f4troff\fP(1),
+\f4man\fP(7),
+\f4me\fP(7),
+\f4ms\fP(7)
+.P
+\f4col\fP(1)
+in the \f2User's Reference Manual\f1
+.br
+\f4term\fP(4)
+in the \f2System Administrator's Reference Manual\f1

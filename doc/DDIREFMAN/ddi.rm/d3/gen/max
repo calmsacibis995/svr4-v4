@@ -1,0 +1,42 @@
+'\"macro stdmacro
+.if n .pH gen.max @(#)max	40.2 of 1/7/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.nr X
+.if \nX=0 .ds x} max D3DK "" "DDI/DKI" "\&"
+.if \nX=1 .ds x} max D3DK "" "DDI/DKI"
+.if \nX=2 .ds x} max D3DK "" "\&"
+.if \nX=3 .ds x} max "" "" "\&"
+.TH \*(x}
+.IX "\f4max\fP(D3DK)"
+.SH NAME 
+\f4max\f1 \- return the larger of two integers
+.SH SYNOPSIS
+.nf
+.na
+\f4#include <sys/ddi.h>
+.sp 0.5
+int max(int\f2 int1, \f4int \f2int2\f4);\f1
+.ad
+.fi
+.SH ARGUMENTS 
+.RS 0n 10
+.IP "\f2int1, int2\f1" 10n
+The integers to be compared.
+.RE
+.SH DESCRIPTION 
+\f4max\f1 compares two integers and returns the larger of two.
+If the \f2int1\f1 and \f2int2\f1 arguments are not of the specified type
+the results are undefined.
+.P
+Also, this interface may be implemented in a way that causes the arguments
+to be evaluated multiple times, so callers should beware of side effects.
+.SH "RETURN VALUE" 
+The larger of the two integers.
+.SH LEVEL
+Base or Interrupt.
+.SH NOTES
+Does not sleep.
+.SH "SEE ALSO" 
+.na
+\f4min\f1(D3DK)
+.ad

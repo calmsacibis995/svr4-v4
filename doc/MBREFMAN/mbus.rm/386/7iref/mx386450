@@ -1,0 +1,91 @@
+'\"macro stdmacro
+.if n .pH g1a.mix386/450 @(#)mx386450	40.4 of 5/17/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} mix386/450 7iref "" "" "\&"
+.if \nX=1 .ds x} mix386/450 7iref "" ""
+.if \nX=2 .ds x} mix386/450 7iref "" "\&"
+.if \nX=3 .ds x} mix386/450 "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4mix386/450\f1 \- MIX-based terminal controller module and baseboard
+.SH DESCRIPTION
+The MIX386/450 is the combination of a 386-based MIX base board and a MIX 450 
+terminal controller module.  Up to three MIX 450 modules can be connected to a 
+base board.  Each module has 12 serial channels.
+.P
+When the atcs server is running on the MIX386/450 it can support a maximum of 
+36 ports (which can be made up of 3 MIX modules, 3 iSBC MPI/450's, or a 
+combination of both).  If less than 3 MIX/450 modules are stacked on the MIX386 
+baseboard, the onboard \f4atcs\fP server will look in the next, numerically higher, 
+slots for iSBC MPI/450 boards until the maximum port limit of 36 is reached or 
+it finds a non-MPI/450 board.  The mapping of \f4atcs\f1 server line numbers to ports 
+will be 0 - 11 for the first MIX module or MPI/450, 12 - 23 for the second, and 
+24 - 35 for the third.
+.P
+The \f4atcs\fP firmware is loaded by MSA boot. 
+The images \f4mix450.bt\fP and \f4mix.stg2\fP in the \f4/usr/lib/cci\fP
+directory are loaded.
+MIX-specific information must be added to \f4/stand/config\fP.  For example, 
+if you have a system with an iSBC 386/258 in slot 0, the first UNIX system  processor 
+in slot 2, a second cpu in slot 3, and a mix386/450 in slot 5, your \f4config\fP file 
+would look something like this:
+.P
+.RS
+.nf
+.ft 4
+#
+# sample configuration file for mix386/450
+#
+#
+[BL_Host_id=GLOBAL];
+	pci_hosta = 0;
+	unix_hosta = 2;
+	unix_hostb = 3;
+	mix_hosta = 5;
+
+# PCI and UNIX host information
+		.
+		.
+		.
+
+# mix host
+[BL_Host_id=$mix_hosta; BL_method=Dependent];
+	BL_Second_stage = /usr/lib/cci/mix.stg2;
+	BL_Target_file = /usr/lib/cci/mix450.bt;
+.fi
+.RE
+.P
+When a MIX386/450 board and modules are added or removed from the system, the 
+\f4atcs_info\fP structure in \f4/etc/conf/space.c/atcs/space.c\fP must be altered as 
+described in \f4atcs\fP(7iref).  If an MPI/450 board is also added to be controlled 
+by the \f4atcs\fP server on the MIX386/450, this information must also be included.  
+For example, suppose there is a MIX386/450 board in slot 5 with 2 MIX modules 
+and an MPI/450 is in slot 7.  If the \f4atcs\fP minor numbers begin at 16 for this 
+board, the line added to the \f4atcs_info\fP structure to indicate that 36 channels 
+are being supported would be:
+.P
+.nf
+.ft 4
+{5, 16, 51, 0} /* ATCS server slot, beginning 
+                  and ending minor numbers, 
+                  first ATCS line number (port) */
+.ft 1
+.fi
+.SH FILES
+.TP 2.25i
+\f4/usr/lib/cci/mix450.bt\f1
+\f4atcs\fP firmware
+.TP
+\f4/usr/lib/cci/mix.stg2\f1
+second stage \f4bootloader\fP
+.TP
+\f4/stand/config\f1
+Multibus II configuration file
+.SH SEE ALSO
+\f4atcs\f1(7iref),
+\f4bootserver\f1(1iref),
+\f4cci(7iref),
+\f4config\f1(4iref),
+\f4mpi/450\f1(7iref).

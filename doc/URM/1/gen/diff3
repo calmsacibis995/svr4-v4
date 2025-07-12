@@ -1,0 +1,136 @@
+'\"macro stdmacro
+.if n .pH g1.diff3 @(#)diff3	40.9 of 4/12/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} diff3 1 "Directory and File Management Utilities" "\&"
+.if \nX=1 .ds x} diff3 1 "Directory and File Management Utilities"
+.if \nX=2 .ds x} diff3 1 "" "\&"
+.if \nX=3 .ds x} diff3 "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4diff3\f1 \- 3-way differential file comparison
+.SH SYNOPSIS
+\f4diff3\f1
+[
+\f4\-exEX3\f1
+]
+.I file1 file2 file3
+.SH DESCRIPTION
+\f4diff3\fP
+compares three versions of a file,
+and publishes disagreeing ranges of text
+flagged with these codes:
+.RS
+.TP 16
+\f4====\f1
+all three files differ
+.TP 16
+\f4====1\f1
+.IR file1 " is different"
+.TP 16
+\f4====2\f1
+.IR file2 " is different"
+.TP 16
+\f4====3\f1
+.IR file3 " is different"
+.RE
+.PP
+The type of change suffered in converting a given range
+of a given file to some other is
+indicated in one of these ways:
+.RS
+.TP 16
+\f2f\f4 : \f2n1\f4 a\f1
+Text is to be appended after line number
+.I n1\^
+in file
+.IR f ,
+where
+.I f\^
+= 1, 2, or 3.
+.TP 16
+\f2f\f4 : \f2n1\f4 , \f2n2\f4 c\f1
+Text is to be
+changed in the range line
+.I n1\^
+to line
+.IR n2 .
+If 
+.I n1\^
+=
+.IR n 2,
+the range may be abbreviated to
+.IR n1 .
+.RE
+.PP
+The original contents of the range follows immediately
+after a
+\f4c\f1
+indication.
+When the contents of two
+files are identical, the contents of the lower-numbered
+file is suppressed.
+.TP
+\f4\-e\f1
+Produce a script for the editor
+\f4ed\fP(1)
+that will incorporate into
+.I file1\^
+all changes between
+.I file2\^
+and
+.IR file3 ,
+that is, the changes that normally would be flagged \f4====\f1 and \f4====3\f1.
+.TP
+\f4\-x\f1
+Produce a script to incorporate
+only changes flagged \f4====\f1.
+.TP
+\f4\-3\f1
+Produce a script to incorporate
+only changes flagged \f4====3\f1.
+.TP
+\f4\-E\f1
+Produce a script that will incorporate all changes between
+.I file2
+and
+.IR file3 ,
+but treat overlapping changes (that is, changes that would
+be flagged with
+\f4====\f1
+in the normal listing) differently.
+The overlapping lines from both files will be inserted by
+the edit script, bracketed by
+\f4<<<<<<\f1
+and
+\f4>>>>>>\f1
+lines.
+.TP
+\f4\-X\f1
+Produce a script that will incorporate only changes flagged
+\f4====\f1,
+but treat these changes in the manner of the
+\f4\-E\f1
+option.
+.PP
+The following command will apply the resulting script to
+.IR file1 .
+.PP
+.ti 16n
+(cat script; echo \(fm1,$p\(fm) \(bv ed \- \f2file1\f1
+.sp -.5
+.SH FILES
+\f4/tmp/d3\(**\f1
+.br
+\f4/usr/lib/diff3prog\f1
+.SH "SEE ALSO"
+\f4diff\fP(1)
+.sp -.5
+.SH NOTES
+Text lines that consist of a single \f4.\f1 will defeat
+\f4\-e\f1.
+.br
+Files longer than 64K bytes will not work.
+.\"	@(#)diff3.1	6.2 of 9/2/83
+.Ee

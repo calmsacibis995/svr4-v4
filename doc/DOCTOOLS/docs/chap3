@@ -1,0 +1,1663 @@
+.if n .pH doctools.chap3 @(#)chap3	40.2
+.\" @(#) SCCS File: chap3; ID:1.6; DATED:1/5/90
+.\"
+.\"     Copyright (c) 1989 AT&T   
+.\"     All Rights Reserved       
+.\"
+.\"                  AT&T - PROPRIETARY
+.\"     THIS DOCUMENT CONTAINS PROPRIETARY INFORMATION OF
+.\"     AT&T AND IS NOT TO BE DISCLOSED OR USED EXCEPT IN
+.\"        ACCORDANCE WITH APPLICABLE AGREEMENTS.
+.\" 
+.\"
+.\"   Documenter's Tool Set User's Guide
+.\"   Written by: J.R. Okin SF E-308 attunix!jro 201-522-5105
+.\"
+.\"
+.PM DN "FINAL COPY"
+.BK "Documenter's Tool Set User's Guide" "Release 1.0"
+.CH "Manual Page Macros" 3
+.H 1 "Introduction"
+This chapter describes all the macros available
+for writing manual page source files.
+The macros have been grouped into sections
+according to their basic functionality;
+.IX macros, manual pages
+for instance, there is a section describing
+the macros that produce headings and another describing
+the macros that produce various sorts of paragraphs.
+The following figure displays an alphabetical listing of the macros
+.IX manual page macros
+(macro names shown in parentheses are synonyms):
+.FG "The Manual Page Macros"
+.DS I UI
+\&.B	\&.BI	\&.BR	\&.DT	\&.HP
+\&.I	\&.IB	\&.IP	\&.IR	\&.P(\&.PP)
+\&.PD	\&.PM	\&.RB	\&.RE	\&.RI
+\&.RS	\&.SH	\&.SM	\&.SS	\&.TH
+\&.TP
+.DE
+.H 1 "Manual Page Title"
+.H 2 "The \&.TH Macro"
+.IX \&.TH macro
+.IX macro, \&.TH
+.IX manual page title macro
+.IX macro, manual page title
+.IX title macro, manual pages
+.H 3 "Name"
+.UI \&.TH
+\- set manual page title heading.
+.H 3 "Synopsis"
+.UI \&.TH
+.SB title
+[
+.SB section
+] [
+.SB page-comment
+] [
+.SB book-note
+]
+.P
+where
+.VL "" "" SB
+.LI title
+specifies the manual page name.
+.LI section
+specifies the section identification for the manual page.
+.LI page-comment
+specifies additional title information pertaining to the
+manual page.
+.LI book-note
+specifies additional title information pertaining to the
+book.
+.LE
+.H 3 "Description"
+The
+.UI \&.TH
+macro sets the title heading and associated information
+and prints this text at the top of the manual page;
+it also restores default page parameters for indentation,
+font, and tab stop settings.
+The
+.UI \&.TH
+macro also serves to identify the file as a manual page and therefore
+must appear at or near the beginning of the source
+text file, before the first section heading macro,
+.UI \&.SH.
+.P
+As shown in the
+.ST Synopsis
+section, you only need to specify the first argument, the
+.SB title
+(the manual page name).
+However, since manual pages are most
+often separated into book sections,
+it's common for you to specify the second argument,
+.SB section ,
+as well.
+As shown in the
+.ST Examples
+section below,
+the
+.SB title
+will print at the top of each page of the manual page
+flush with both the right and left margins; and next
+to
+.SB title ,
+enclosed in parentheses, will print its
+.SB section
+identification, if specified.
+.P
+The third and fourth arguments to
+.UI \&.TH
+allow you to specify additional information
+to print in the title of the manual page.
+The third argument,
+.SB page-comment ,
+provides information that further identifies the manual
+page, quickly distinguishing it from surrounding
+manual pages.
+A common use of
+.SB page-comment
+is to specify the group of utilities to which the manual
+page belongs, such as the 
+.UI "Networking Support Utilities"
+or
+.UI "Remote File Sharing Utilities" .
+The fourth argument,
+.SB book-note ,
+provides information that further identifies the book
+as a whole, such as identifying which version
+of the operating system the book's manual pages
+describe.
+The
+.SB page-comment
+and
+.SB book-note ,
+if specified, print in the center of the title;
+.SB page-comment ,
+like
+.SB section ,
+is automatically enclosed in parentheses.
+.H 3 "Examples"
+.AL
+.LI
+The simplest case; specifying a title and section:
+.VL "0.7i"
+.LI Input:
+.DS "" UI
+\&.TH MBLCOUNT 1
+.DE
+.DS
+.LI Output:
+.BB
+.ft\*(@e
+\s-3MBLCOUNT(1)\h'2.2i'MBLCOUNT(1)\s0\fP
+.sp1
+\h'0.3i'\D'l 3.25i 0'
+\h'0.3i'\D'l 3.25i 0'
+\h'0.3i'\D'l 3.25i 0'
+\h'0.3i'\D'l 3.25i 0'
+.BC
+.DE
+.LE
+.LI
+More information; specifying a page comment:
+.VL "0.7i"
+.LI Input:
+.DS "" UI
+\&.TH MBLCOUNT 1 "Essential Utilities"
+.DE
+.DS
+.LI Output:
+.BB
+.ft\*(@e
+\s-3MBLCOUNT(1)\h'0.675i'(Essential Utilities)\h'0.675i'MBLCOUNT(1)\s0\fP
+.sp1
+\h'0.3i'\D'l 3.25i 0'
+\h'0.3i'\D'l 3.25i 0'
+\h'0.3i'\D'l 3.25i 0'
+\h'0.3i'\D'l 3.25i 0'
+.BC
+.DE
+.LE
+.LI
+Other information; specifying a book note:
+.VL "0.7i"
+.LI Input:
+.DS "" UI
+\&.TH MBLCOUNT 1 "" "System 7"
+.DE
+.DS
+.LI Output:
+.BB
+.ft\*(@e
+\s-3MBLCOUNT(1)\h'0.9i'System 7\h'0.9i'MBLCOUNT(1)\s0\fP
+.sp1
+\h'0.3i'\D'l 3.25i 0'
+\h'0.3i'\D'l 3.25i 0'
+\h'0.3i'\D'l 3.25i 0'
+\h'0.3i'\D'l 3.25i 0'
+.BC
+.DE
+.LE
+.LI
+The most information; specifying all arguments:
+.VL "0.7i"
+.ne10
+.LI Input:
+.DS "" UI
+\&.TH MBLCOUNT 1 "Essential Utilities" "System 7"
+.DE
+.DS
+.LI Output:
+.BB
+.ft\*(@e
+\s-3MBLCOUNT(1)\h'0.42i'System 7\|(Essential Utilities)\h'0.42i'MBLCOUNT(1)\s0\fP
+.sp1
+\h'0.3i'\D'l 3.25i 0'
+\h'0.3i'\D'l 3.25i 0'
+\h'0.3i'\D'l 3.25i 0'
+\h'0.3i'\D'l 3.25i 0'
+.BC
+.DE
+.LE
+.LE
+.H 2 "A Variation on the \&.TH Macro"
+Many existing manual page source files use a
+different convention for specifying the arguments
+to
+.UI \&.TH
+than shown above.
+Instead of the arguments to
+.UI \&.TH
+appearing on the same line
+as the
+.UI \&.TH ,
+they might appear on a previous line as part of
+a defined string.
+.IX defined strings, \&.TH macro
+.IX \&.TH macro, defined strings
+The defined string associates a single name with
+all the arguments you want to pass to
+.UI \&.TH .
+This should become clearer as we go through an example.
+.P
+The following six lines begin the manual page source
+file for the
+.UI cat
+command.
+.DS I UI
+\&.nr X
+\&.if \enX=0 .ds x} CAT 1 "Essential Utilities" "\e&"
+\&.if \enX=1 .ds x} CAT 1 "Essential Utilities"
+\&.if \enX=2 .ds x} CAT 1 "" "\e&"
+\&.if \enX=3 .ds x} CAT "" "" "\e&"
+\&.TH \e*(x}
+.DE
+The first line sets a number register called
+.UI X
+to be empty, which means it equals 0.
+The following four lines check the value of
+register
+.UI X :
+the first checks if
+.UI X
+equals 0, the next checks if
+.UI X
+equals 1, then 2, and finally 3.
+Depending on the value of register
+.UI X ,
+a string named 
+.UI x}
+is defined.
+In this example, since
+.UI X
+equals 0, the line
+.UI
+\&.if \enX=0 .ds x} CAT 1 "Essential Utilities" "\e&"
+.SF
+tests true and 
+.UI x}
+is defined as the following:
+.UI
+CAT 1 "Essential Utilities" "\e&"
+.SF
+.UI x}
+now contains the arguments we want to pass to
+.UI \&.TH :
+argument one, or
+.SB title ,
+is
+.UI CAT ;
+argument two, or
+.SB section ,
+is
+.UI 1 ;
+and so on.
+.P
+The final line is the
+.UI \&.TH
+macro itself.
+The argument,
+.UI \e*(x} ,
+indicates that whatever has been defined as string
+.UI x}
+is interpreted here.
+Therefore, the
+.UI \&.TH
+line effectively reads:
+.UI
+\&.TH CAT 1 "Essential Utilities" "\e&"
+.SF
+This would produce the following title heading:
+.BB
+.ft\*(@e
+\s-3CAT(1)\h'1.05i'Essential Utilities\h'1.05i'CAT(1)\s0\fP
+.sp1
+\h'0.3i'\D'l 3.25i 0'
+\h'0.3i'\D'l 3.25i 0'
+\h'0.3i'\D'l 3.25i 0'
+\h'0.3i'\D'l 3.25i 0'
+.BC
+This approach makes it easier to select one of several
+different title headings for the manual page.
+In this example, four title headings have already
+been defined; and simply by changing the value of
+.UI X ,
+you change the title heading that will print.
+For instance, you might change the first line so
+that
+.UI X
+is equal to 3 instead of being set equal to 0:
+.UI
+\&.nr X 3
+.SF
+The title heading would then look like the following:
+.BB
+.ft\*(@e
+\s-3CAT\h'3.15i'CAT\s0\fP
+.sp1
+\h'0.3i'\D'l 3.25i 0'
+\h'0.3i'\D'l 3.25i 0'
+\h'0.3i'\D'l 3.25i 0'
+\h'0.3i'\D'l 3.25i 0'
+.BC
+.H 1 "Headings"
+.IX heading macros, manual pages
+.IX manual page macros, headings
+.H 2 "The \&.SH Macro"
+.IX \&.SH macro
+.IX macro, \&.SH
+.IX manual page macros, section heading
+.IX section heading macro, \&.SH
+.H 3 "Name"
+.UI \&.SH
+\- start new section heading.
+.H 3 "Synopsis"
+.UI \&.SH
+.SB heading
+.P
+where
+.VL "" "" SB
+.LI heading
+specifies the section heading text.
+.LE
+.H 3 "Description"
+The
+.UI \&.SH
+macro specifies the start of a new section.
+The
+.SB heading
+text can contain up to six arguments.
+The
+.UI \&.SH
+macro automatically resets default values for font,
+point size, leading, indentation, and line length.
+.H 3 "Example"
+.AL
+.LI
+Two section headings with some intervening text:
+.VL "0.7i"
+.LI Input:
+.DS "" UI
+\&.TH MBLCOUNT 1
+\&.SH NAME
+mblcount \e- count marbles in a file
+\&.SH SYNOPSIS
+\ef4mblcount \ef2filename\ef1
+.DE
+.DS
+.LI Output:
+.BB
+.ft\*(@e
+\s-3MBLCOUNT(1)\h'2.2i'MBLCOUNT(1)\s0\fP
+.sp1
+.ft\*(@e
+\s-3NAME\s0
+.ft\*(-1
+\h'0.3i'\s-4mblcount \- count marbles in a file\s0
+.sp0.3
+.ft\*(@e
+\s-3SYNOPSIS\s0
+\h'0.3i'\s-4\f4mblcount \f2filename\f1\s0
+\h'0.3i'\D'l 3.25i 0'
+\h'0.3i'\D'l 3.25i 0'
+\h'0.3i'\D'l 3.25i 0'
+.BC
+.DE
+.LE
+.LE
+.H 2 "The \&.SS Macro"
+.IX \&.SS macro
+.IX macro, \&.SS
+.IX manual page macros, sub-section heading
+.IX sub-section heading, \&.SS macro
+.H 3 "Name"
+.UI \&.SS
+\- start new sub-section.
+.H 3 "Synopsis"
+.UI \&.SS
+.SB heading
+.P
+where
+.VL "" "" SB
+.LI heading
+specifies the sub-section text.
+.LE
+.H 3 "Description"
+The
+.UI \&.SS
+macro specifies the start of a sub-section.
+The
+.SB heading
+text can contain up to six arguments.
+As with the
+.UI \&.SH
+macro, the
+.UI \&.SS
+macro automatically resets default values for font,
+point size, leading, indentation, and line length.
+.H 3 "Example"
+.AL
+.LI
+A sub-section heading for a special option:
+.VL "0.7i"
+.LI Input:
+.DS "" UI
+\&.TH MBLCOUNT 1
+\&.SH NAME
+mblcount \e- count marbles in a file
+\&.SH SYNOPSIS
+\ef4mblcount \ef2filename\ef1
+\&.SS An Option for Privileged Users
+The \e-o option can be invoked by root
+to list the owners of marbles
+in \ef2filename\ef1.
+.DE
+.DS
+.LI Output:
+.BB
+.ft\*(@e
+\s-3MBLCOUNT(1)\h'2.2i'MBLCOUNT(1)\s0\fP
+.sp1
+.ft\*(@e
+\s-3NAME\s0
+.ft\*(-1
+\h'0.3i'\s-4mblcount \- count marbles in a file\s0
+.sp0.3
+.ft\*(@e
+\s-3SYNOPSIS\s0
+\h'0.3i'\s-4\f4mblcount \f2filename\f1\s0
+.ft\*(@e
+\h'0.15i'\s-3An Option for Privileged Users\s0
+.in+0.3i
+.ft\*(-1
+\s-4The \-o option can be invoked by root to list the owners of marbles in \f2filename\f1.\s0
+.in-0.3i
+\h'0.3i'\D'l 3.25i 0'
+\h'0.3i'\D'l 3.25i 0'
+.BC
+.DE
+.LE
+.LE
+.H 1 "Paragraphs"
+.IX paragraph macros, manual pages
+.IX manual page macros, paragraphs
+.H 2 "The \&.P Macro"
+.IX \&.P macro
+.IX macro, \&.P
+.IX standard paragraph macro, \&.P
+.IX manual page macros, \&.P
+.H 3 "Name"
+.UI \&.P
+\- begin standard paragraph.
+.AB N
+.UI \&.PP
+is a synonym for the
+.UI \&.P
+macro.
+.AC
+.H 3 "Synopsis"
+.UI \&.P
+.H 3 "Description"
+The
+.UI \&.P
+macro specifies the
+start of a new block paragraph while resetting default values for
+font and point size.
+The
+.UI \&.P
+macro also resets default paragraph indentation.
+See the descriptions of the
+.UI \&.TP ,
+.UI \&.IP ,
+and
+.UI \&.HP
+macros below for more information about paragraph indentation.
+.H 3 "Example"
+.AL
+.LI
+Two block paragraphs surrounding an indented paragraph with hanging
+tag:
+.VL "0.7i"
+.ne15
+.LI Input:
+.DS "" UI
+\&.P
+The following option is only available to super-users.
+Note that use of this option can
+strain system resources.
+\&.TP 0.5i
+\e-rot
+this option determines the average speed of rotation
+for the marbles currently in play.
+\&.P
+Other super-user options are rarely used,
+but they are listed in Appendix 37 of this manual.
+.DE
+.LI "Output"
+.DS "" "" F
+.ll4.25i
+.ad b
+.nh
+The following option is only available
+to super-users.
+Note that use of this
+option can strain system resources.
+.sp0.4
+.in+0.5i
+\h'-0.5i'\-rot\h'0.2i'this option determines
+the average speed of rotation
+for the marbles currently in play.
+.in-0.5i
+.sp0.4
+Other super-user options are rarely used,
+but they are listed in Appendix 37 of this
+manual.
+.ll
+.ad l
+.hy 14
+.DE
+.LE
+.LE
+.sp -1.0
+.H 2 "The \&.TP Macro"
+.IX \&.TP macro
+.IX macro, \&.TP
+.IX indented paragraph macros, \&.TP
+.IX manual page macros, \&.TP
+.H 3 "Name"
+.UI \&.TP
+\- start indented paragraph with hanging tag.
+.H 3 "Synopsis"
+.UI \&.TP
+[
+.SB indent
+]
+.P
+where
+.VL "" "" SB
+.LI indent
+specifies the amount of indentation for the paragraph.
+.LE
+.H 3 "Description"
+The
+.UI \&.TP
+macro specifies the start of an indented paragraph
+with a hanging tag.
+The first line of text following
+.UI \&.TP
+is interpreted as the tag.
+The indentation amount for the paragraph can be
+set by specifying
+.SB indent .
+If you do not specify
+.SB indent ,
+either the previous
+paragraph indentation is used (set by a prior
+.UI \&.TP ,
+.UI \&.HP ,
+or
+.UI \&.IP )
+or, if its the first
+indented paragraph
+in the section, a default of 6 ens is used.
+.P
+The paragraph will begin printing on the same line as the tag, if the tag
+can fit in the space left by the indentation; or, if it can not fit,
+the paragraph will begin printing on the following line.
+.H 3 "Example"
+.AL
+.LI
+Two indented paragraphs; one with a tag larger than the indentation:
+.VL "0.7i"
+.ne10
+.LI Input:
+.DS "" UI
+\&.TP 0.5i
+\e-f \ef2file\ef1
+This option is used to specify a filename.
+\&.TP
+\e-g \ef2filetype\ef1
+This option is used to specify a filetype.
+.DE
+.DS
+.LI Output:
+.VL 0.80i
+.LI "\-f \f2file\f1"
+This option is used to specify a filename.
+.LI "\-g \f2filetype\f1"
+This option is used to specify a filetype.
+.LE
+.DE
+.LE
+.LE
+.br
+.NE 14
+.H 2 "The \&.IP Macro"
+.IX \&.IP macro
+.IX macro, \&.IP
+.IX indented paragraph macro, \&.IP
+.IX manual page macros, \&.IP
+.H 3 "Name"
+.UI \&.IP
+\- start indented paragraph with hanging tag.
+.H 3 "Synopsis"
+.UI \&.IP
+[
+.SB tag
+]
+[
+.SB indent
+]
+.P
+where
+.VL "" "" SB
+.LI tag
+specifies text for the hanging tag.
+.LI indent
+specifies the amount of indentation for the paragraph.
+.LE
+.H 3 "Description"
+The
+.UI \&.IP
+macro, like the
+.UI \&.TP
+macro, specifies the start of an indented paragraph
+with a hanging tag.
+Unlike
+.UI \&.TP ,
+however, you specify the text for the hanging
+tag as the first argument to
+.UI \&.IP .
+This gives you the added ability of specifying
+an indented paragraph without a tag, as shown
+below in an example.
+.P
+Otherwise,
+.UI \&.IP
+functions the same as
+.UI \&.TP .
+The indentation amount for the paragraph can be
+set by specifying
+.SB indent .
+If you do not specify
+.SB indent ,
+either the previous
+paragraph indentation is used (set by a prior
+.UI \&.TP ,
+.UI \&.HP ,
+or
+.UI \&.IP )
+or, if it is the first
+indented paragraph
+in the section, a default of 6 ens is used.
+.P
+The paragraph will begin printing on the same line as the tag, if the tag
+can fit in the space left by the indentation; or, if it can not fit,
+the paragraph will begin printing on the following line.
+.H 3 "Example"
+.AL
+.LI
+Three indented paragraphs; the last without a tag:
+.VL "0.7i"
+.ne10
+.LI Input:
+.DS "" UI
+\&.IP "\ef2filelisting\ef1" 1.3i
+specifies a listing of files.
+\&.IP "\ef2filemake\ef1"
+specifies the make type of the file.
+\&.IP
+Note that make types are new to this release.
+.DE
+.DS
+.LI Output:
+.VL 1.3i
+.LI \f2filelisting\f1
+specifies a listing of files.
+.LI \f2filemake\f1
+specifies the make type of the file.
+.LI
+Note that make types are new to this release.
+.LE
+.DE
+.LE
+.LE
+.H 2 "The \&.HP Macro"
+.IX \&.HP macro
+.IX macro, \&.HP
+.IX hanging indentation paragraph macro, \&.HP
+.IX manual page macros, \&.HP
+.H 3 "Name"
+.UI \&.HP
+\- start paragraph with hanging indentation.
+.H 3 "Synopsis"
+.UI \&.HP
+[
+.SB indent
+]
+.P
+where
+.VL "" "" SB
+.LI indent
+specifies the amount of indentation for the paragraph.
+.LE
+.H 3 "Description"
+The
+.UI \&.HP
+macro specifies the start of paragraph with a hanging
+indentation.
+This means that the second and subsequent lines of
+the paragraph are indented a specified or default
+amount from the current left margin.
+.P
+Just as with
+.UI \&.TP
+and
+.UI \&.IP ,
+the indentation amount for the paragraph can be
+set by specifying
+.SB indent .
+If you do not specify
+.SB indent ,
+either the previous
+paragraph indentation is used (set by a prior
+.UI \&.TP ,
+.UI \&.HP ,
+or
+.UI \&.IP )
+or, if its the first
+indented paragraph
+in the section, a default of 6 ens is used.
+.H 3 "Example"
+.AL
+.LI
+A paragraph with a one-inch hanging indent:
+.VL "0.7i"
+.ne10
+.LI Input:
+.DS "" UI
+\&.HP 1i
+The command to count marbles is simple to use and
+can be made available to all users on the system
+by placing the command in an appropriate user
+bin and ensuring that permissions are set such
+that the command is executable by everyone.
+.DE
+.DS
+.LI Output:
+.nr zz \n(.i
+.in\n(zzu+1i
+.ti\n(zzu
+.ad b
+The command to count marbles is simple to use and
+can be made available to all users on the system
+by placing the command in an appropriate user
+bin and ensuring that permissions are set such
+that the command is executable by everyone.
+.ad l
+'in\n(zzu
+.rr zz
+.DE
+.LE
+.LE
+.H 2 "The \&.PD Macro"
+.IX \&.PD macro
+.IX macro, \&.PD
+.IX inter-paragraph spacing macro, \&.PD
+.IX manual page macros, \&.PD
+.H 3 "Name"
+.UI \&.PD
+\- set inter-paragraph spacing.
+.H 3 "Synopsis"
+.UI \&.PD
+[
+.SB lines
+]
+.P
+where
+.VL "" "" SB
+.LI lines
+specifies the number of lines that should separate subsequent paragraphs.
+.LE
+.H 3 "Description"
+The
+.UI \&.PD
+macro specifies the spacing between paragraphs.
+If you specify
+.SB lines ,
+you will override the default inter-paragraph distance
+of 0.4v in
+.CN troff (1)
+and 1v in
+.CN nroff (1).
+The most common use of
+.UI \&.PD
+is to specify
+.UI "\&.PD 0"
+to eliminate inter-paragraph spacing altogether;
+this is especially helpful when using
+.UI \&.TP
+or
+.UI \&.IP
+to create a glossary/variable list.
+.P
+If you specify
+.UI \&.PD
+without an argument, inter-paragraph spacing returns to the default.
+.AB N
+The
+.UI \&.PD
+macro functions differently in guide files.
+Instead of setting inter-paragraph spacing, it is used
+to set spacing between items in a list.
+See chapter 4 for more information.
+.AC
+.H 3 "Example"
+.AL
+.LI
+Three indented paragraphs, with zero inter-paragraph spacing:
+.VL "0.7i"
+.ne10
+.LI Input:
+.DS "" UI
+\&.PD 0
+\&.IP "\ef2color\ef1" 1i
+specifies a marble color.
+\&.IP "\ef2type\ef1"
+specifies a marble type.
+\&.IP
+Note that marble shading is also available. 
+\&.PD
+.DE
+.DS
+.LI Output:
+.PD0
+.VL 1i
+.LI \f2color\f1
+specifies a marble color.
+.LI \f2type\f1
+specifies a marble type.
+.LI
+Note that marble shading is also available.
+.LE
+.PD
+.DE
+.LE
+.LE
+.H 1 "Indentation"
+.H 2 "The \&.RS Macro"
+.IX \&.RS macro
+.IX macro, \&.RS
+.IX relative indentation macro, \&.RS
+.IX manual page macros, \&.RS
+.H 3 "Name"
+.UI \&.RS
+\- increase relative indentation.
+.H 3 "Synopsis"
+.UI \&.RS
+[
+.SB indent
+]
+.P
+where
+.VL "" "" SB
+.LI indent
+specifies an increase in the amount of indentation for subsequent
+text in a section.
+.LE
+.H 3 "Description"
+The
+\&.RS
+macro specifies an increase
+in relative indentation.
+It is used in conjunction with the
+.UI \&.RE
+macro, described below.
+You can nest
+.UI \&.RS
+macros to create more than one level of indentation.
+.P
+If you do not specify
+an amount for indentation,
+a default of 6 ens is added to the current indentation.
+.P
+Indentation set with the
+.UI \&.RS
+macro affects all text within a section or sub-section.
+However, both section macros,
+.UI \&.SH
+and
+.UI \&.SS ,
+reset indentation to the default and return the
+.UI \&.RS
+indentation level to zero.
+See the
+.UI \&.RE
+macro below for a description of indentation level.
+.H 3 "Example"
+.AL
+.LI
+Three levels of indentation:
+.VL "0.7i"
+.ne30
+.LI Input:
+.DS "" UI
+The following shows the division of marbles:
+\&.RS 0.25i
+Large
+\&.RS
+Blue
+\&.RS
+27 Dark
+\&.br
+14 Light
+\&.RE
+Red
+\&.RS
+10 Dark
+\&.br
+11 Light
+\&.RE 2
+Small
+\&.RS
+Blue
+\&.RS
+8 Dark
+\&.br
+32 Light
+\&.RE
+Red
+\&.RS
+15 Dark
+\&.br
+19 Light
+\&.RE 1
+As shown above, the statistics are not significant.
+.DE
+.DS
+.LI Output:
+.br
+The following shows the division of marbles:
+.in+0.25i
+Large
+.in+6n
+Blue
+.in+6n
+27 Dark
+.br
+14 Light
+.in-6n
+Red
+.in+6n
+10 Dark
+.br
+11 Light
+.in-12n
+Small
+.in+6n
+Blue
+.in+6n
+8 Dark
+.br
+32 Light
+.in-6n
+Red
+.in+6n
+15 Dark
+.br
+19 Light
+.in-12n
+.in-0.25i
+As shown above, the statistics are not significant.
+.DE
+.LE
+.LE
+.ne8
+.H 2 "The \&.RE Macro"
+.IX \&.RE macro
+.IX macro, \&.RE
+.IX relative indentation macro, \&.RE
+.IX manual page macros, \&.RE
+.H 3 "Name"
+.UI \&.RE
+\- return to a previous level of indentation.
+.H 3 "Synopsis"
+.UI \&.RE
+[
+.SB level
+]
+.P
+where
+.VL "" "" SB
+.LI level
+specifies return to a specific level of indentation.
+.LE
+.H 3 "Description"
+The
+.UI \&.RE
+macro specifies a return to a previous indentation level.
+It is used in conjunction with the
+.UI \&.RS
+macro, described above.
+If you do not specify
+.SB level ,
+indentation returns to the previous level of indentation.
+.P
+The first or original level of indentation, that
+which exists prior to your first use of
+.UI \&.RS ,
+is known as both level 1 and level 0.
+So, to return to the indentation level set by your
+first use of
+.UI \&.RS ,
+you would specify 2 for
+.SB level .
+.H 3 "Example"
+See the example in the
+.UI \&.RS
+macro section.
+.H 1 "Text Size"
+.IX text size
+.H 2 "The \&.SM Macro"
+.IX \&.SM macro
+.IX macro, \&.SM
+.IX reduce text size macro, \&.SM
+.IX manual page macros, \&.SM
+.H 3 "Name"
+.UI \&.SM
+\- reduce text size.
+.H 3 "Synopsis"
+.UI \&.SM
+[
+.SB text
+]
+.H 3 "Description"
+The
+.UI \&.SM
+macro reduces the type size of text to one point smaller
+than the default text size.
+You can specify up to six arguments to print in the
+reduced type size.
+If you do not specify an argument, the
+next line containing text to be printed will print
+in the reduced type size; this option allows you to combine
+.UI \&.SM
+with other macros,
+such as font change macros,
+as shown in the example.
+.P
+The
+.UI \&.SM
+macro is most commonly used to reduce the text
+size of words that must be printed in all upper-case
+characters.
+.H 3 "Example"
+.AL
+.LI
+Two ways to reduce text size:
+.VL "0.7i"
+.ne10
+.LI Input:
+.DS "" UI
+The
+\&.SM MBLCOUNT
+environment variable displays the current
+number of marbles in play.
+A new event called
+\&.SM
+\&.B "MBLMAHEM"
+will occur if too many marbles are released
+at one time.
+.DE
+.ne10
+.LI Output:
+.DS "" "" F
+.ll4.25i
+.ad b
+.nh
+The 
+.SM MBLCOUNT
+environment variable displays the current
+number of marbles in play.
+A new event called
+.B "\s-1MBLMAHEM\s0"
+will occur if too many marbles are released
+at one time.
+.ll
+.ad l
+.hy 14
+.DE
+.LE
+.LE
+.H 1 "Tab Distance"
+.IX tab distance
+.H 2 "The \&.DT Macro"
+.IX \&.DT macro
+.IX macro, \&.DT
+.IX tab stop macro, \&.DT
+.IX manual page macros, \&.DT
+.H 3 "Name"
+.UI \&.DT
+\- restore default distance for tab stops.
+.H 3 "Synopsis"
+.UI \&.DT
+.H 3 "Description"
+The
+.UI \&.DT
+macro restores tab settings to the default \- every 6 ens.
+If you change tab settings with
+.UI \&.ta ,
+you should use
+.UI \&.DT
+to reset tab settings to the default.
+.H 3 "Example"
+.AL
+.LI
+Adjusting tab stops:
+.VL "0.7i"
+.ne10
+.LI Input:
+.DS "" UI
+\&.ta 1i 2i 3i
+Marble1	Marble2	Marble3	Marble4
+gray	gray	red	blue
+mauve	green	purple	gray
+red	red	yellow	blue
+\&.DT
+.DE
+.DS
+.LI Output:
+.br
+.ta 1i 2i 3i
+Marble1	Marble2	Marble3	Marble4
+gray	gray	red	blue
+mauve	green	purple	gray
+red	red	yellow	blue
+.DT
+.DE
+.LE
+.LE
+.H 1 "Proprietary Markings and Draft Notices"
+.IX proprietary markings
+.IX draft notices
+.H 2 "The \&.PM Macro"
+.IX \&.PM macro
+.IX macro, \&.PM
+.IX proprietary marking macro, \&.PM
+.IX draft notice macro, \&.PM
+.IX manual page macros, \&.PM
+.H 3 "Name"
+.UI \&.PM
+\- print proprietary marking or draft notice.
+.H 3 "Synopsis"
+.UI \&.PM
+[
+.UI P
+|
+.UI RS
+|
+.UI RG
+|
+.UI CR
+|
+.UI UW
+|
+.UI CP
+|
+.UI DN
+[
+.SB text
+] ]
+.P
+where
+.VL 0.85i "" UI
+.LI P
+specifies the proprietary marking.
+.LI RS
+specifies the proprietary restricted marking.
+.LI RG
+specifies the proprietary registered marking.
+.LI CR
+specifies the copyright notice marking.
+.LI UW
+specifies the unpublished work marking.
+.LI CP
+specifies the see cover page marking
+.LI "DN \&\f1[ \f2text\f1 ]"
+specifies the draft copy notice; optional
+.SB text
+replaces the words "DRAFT COPY."
+.LE
+.H 3 "Description"
+The
+.UI \&.PM
+macro prints one of
+six types of proprietary markings, or a draft copy notice, at the bottom
+of each page.
+By default, a draft copy notice will print, centered above
+the current date and the file name.
+.H 3 "Example"
+.AL
+.LI
+Changing the default notice:
+.VL "0.7i"
+.LI Input:
+.DS "" UI
+\&.PM DN "CAMERA READY COPY"
+.DE
+.ne5
+.LI Output:
+.DS
+.ce3
+CAMERA READY COPY
+June 7, 1991
+File: chap3
+.DE
+.LE
+.LE
+.H 1 "Fonts"
+.IX fonts
+.IX font macros
+As described below,
+you can change fonts by using one of several macros
+or by using
+.UI troff
+font requests.
+.H 2 "The \&.I and \&.B Macros"
+.IX \&.I macro
+.IX macro, \&.I
+.IX \&.B macro
+.IX macro, \&.B
+.IX bold font macro, \&.B
+.IX italic font macro, \&.I
+.IX manual page macros, \&.I
+.IX manual page macros, \&.B
+.H 3 "Name"
+.UI \&.I
+\- make text italic.
+.br
+.UI \&.B
+\- make text bold.
+.H 3 "Synopsis"
+.UI \&.I
+[
+.SB text
+]
+.br
+.UI \&.B
+[
+.SB text
+]
+.H 3 "Description"
+The
+.UI \&.I
+and
+.UI \&.B
+macros cause text to print in italics or boldface, respectively.
+You can specify up to six arguments to print in italics
+or boldface.
+If you do not specify an argument, the
+next line containing text to be printed will print
+in italics or boldface; this option allows you to combine
+the font change with some other macro, such as
+.UI \&.SM ,
+as shown in the example.
+.AB N
+The
+.UI \&.I
+and
+.UI \&.B
+macros are also present in the guide macros.
+However, their syntax in the guide macros is
+different than in the manual page macros.
+See the
+.ST Fonts
+section in chapter 4 for more information.
+.AC
+.H 3 "Example"
+.AL
+.LI
+Specifying a font change:
+.VL "0.7i"
+.ne10
+.LI Input:
+.DS "" UI
+The concept of
+\&.B mblanemia
+appears to be connected to
+this graffiti found in New Orleans:
+\&.SM
+\&.I "THE PALER THE MARBLE, THE TRUER THE SHOT" 
+.DE
+.ne8
+.LI Output:
+.DS "" "" F
+.ll4.25i
+.ad b
+.nh
+The concept of
+.B mblanemia
+appears to be connected to
+this graffiti found in New Orleans:
+.I "\s-1THE PALER THE MARBLE, THE TRUER THE SHOT\s0"
+.ll
+.ad l
+.hy 14
+.DE
+.LE
+.LE
+.H 2 "The \&.RI, \&.RB, \&.IR, \&.IB, \&.BR, \&.BI Macros"
+.IX \&.RI macro
+.IX macro, \&.RI
+.IX \&.RB macro
+.IX macro, \&.RB
+.IX \&.IR macro
+.IX macro, \&.IR
+.IX \&.IB macro
+.IX macro, \&.IB
+.IX \&.BR macro
+.IX macro, \&.BR
+.IX \&.BI macro
+.IX macro, \&.BI
+.IX roman-italic font macro
+.IX roman-bold font macro
+.IX italic-roman font macro
+.IX italic-bold font macro
+.IX bold-roman font macro
+.IX bold-italic font macro
+.IX manual page macros, \&.RI
+.IX manual page macros, \&.RB
+.IX manual page macros, \&.IR
+.IX manual page macros, \&.IB
+.IX manual page macros, \&.BR
+.IX manual page macros, \&.BI
+.H 3 "Name"
+.UI \&.RI
+\- alternate roman and italic text.
+.br
+.UI \&.RB
+\- alternate roman and bold text.
+.br
+.UI \&.IR
+\- alternate italic and roman text.
+.br
+.UI \&.IB
+\- alternate italic and bold text.
+.br
+.UI \&.BR
+\- alternate bold and roman text.
+.br
+.UI \&.BI
+\- alternate bold and italic text.
+.H 3 "Synopsis"
+.UI \&.RI
+.SB "roman-text italic-text"
+.br
+.UI \&.RB
+.SB "roman-text bold-text"
+.br
+.UI \&.IR
+.SB "italic-text roman-text"
+.br
+.UI \&.IB
+.SB "italic-text bold-text"
+.br
+.UI \&.BR
+.SB "bold-text roman-text"
+.br
+.UI \&.BI
+.SB "bold-text italic-text"
+.H 3 "Description"
+The
+.UI \&.RI ,
+.UI \&.RB ,
+.UI \&.IR ,
+.UI \&.IB ,
+.UI \&.BR ,
+and
+.UI \&.BI
+macros cause the font for up to six text arguments to alternate
+between any two of the following three fonts:
+roman, italic, or bold.
+Text arguments are concatenated, which means that no spaces
+separate the arguments when printed;
+this is especially useful when you want to follow
+some italic or boldface text with punctuation.
+However, it also means that you need to include
+spaces in your arguments if you want spaces to separate
+the text arguments, as shown below.
+.H 3 "Example"
+.AL
+.LI
+Specifying alternating fonts:
+.VL "0.7i"
+.ne10
+.LI Input:
+.DS "" UI
+A single command is available that allows you to
+cheat at marbles:
+\&.BR tilttable .
+This command has the following syntax:
+\&.RS
+\&.BI tilttable " table-name" \-f " cheat-factor"
+\&.RE
+.DE
+.ne8
+.LI Output:
+.DS "" "" F
+.ll4.25i
+.ad b
+.nh
+A single command is available that allows you to
+cheat at marbles:
+.B tilttable .
+This command has the following syntax:
+\.sp0.4v
+\.in+6n
+\f3tilttable \f2table-name \f3\-f \f2cheat-factor\f1
+\.in-6n
+.ll
+.ad l
+.hy 14
+.DE
+.LE
+.LE
+.H 2 "Font Requests"
+.IX font requests
+.H 3 "Name"
+.UI \ef1
+.IX \ef1 font request
+.IX \ef2 font request
+.IX \ef3 font request
+.IX \ef4 font request
+.IX \ef5 font request
+.IX \&.ft1 font request
+.IX \&.ft2 font request
+.IX \&.ft3 font request
+.IX \&.ft4 font request
+.IX \&.ft5 font request
+.IX manual page macros, font requests
+or
+.UI \&.ft1
+\- change to font 1.
+.br
+.UI \ef2
+or
+.UI \&.ft2
+\- change to font 2.
+.br
+.UI \ef3
+or
+.UI \&.ft3
+\- change to font 3.
+.br
+.UI \ef4
+or
+.UI \&.ft4
+\- change to font 4.
+.br
+.UI \ef5
+or
+.UI \&.ft5
+\- change to font 5.
+.br
+.UI \efP
+\- change to the previous font.
+.H 3 "Synopsis"
+.UI \ef[12345P]
+.SB text
+.br
+.UI \&.ft[12345P]
+.H 3 "Description"
+You can change fonts for a single word, a series of words,
+or a block of text by explicitly specifying a font number.
+Since font positions, or font numbers, are location dependent
+variables, it is impossible to specify here precisely which
+font each of the five font numbers will invoke.
+However, here are some basic guidelines which should hold
+true.
+.BL
+.LI
+Font 1 is the default font and is used for the main
+body of running text.
+This font is frequently Times-Roman or Palatino-Roman.
+.LI
+Font 2 is normally an italic version of font 1
+and is the same font invoked by the
+.UI \&.I
+macro.
+Font 2 is often used for substitutable elements
+and book titles.
+This font is frequently Times-Italic or Palatino-Italic.
+.LI
+Font 3 is normally a boldface version of font 1
+and is the same font invoked by the
+.UI \&.B
+macro.
+Font 3 is often used to introduce new terminology
+or emphasize key words or phrases.
+This font is frequently Times-Bold or Palatino-Bold.
+.LI
+Font 4 has not traditionally been used.
+DOCTOOLS, however, expects font 4 to be some
+constant width font since it is used to mark
+user input text.
+Any names or data entered by a user are considered
+user input text.
+Examples of user input text are command names,
+command arguments/options, file names, routine names, and
+environment variable names.
+.LI
+Font 5 also has not traditionally been used.
+DOCTOOLS also expects font 5 to be some
+constant width font, perhaps a boldface or
+italic constant width font or the same constant width
+font used for font 4.
+Font 5 is used to mark computer output text.
+Data returned by the computer in response to some
+input are considered computer output text.
+Examples of computer output text are prompts,
+error messages, and diagnostic messages.
+.LI
+To change font for a word or two, use the
+.UI \ef[12345P]
+approach.
+Always use
+.UI \ef[12345P]
+in pairs: the first to turn on a particular font,
+the second to turn it off.
+Use
+.UI \efP
+to turn off a font change whenever possible, since
+you can not always be sure that the previous font was
+font 1.
+.LI
+To change font for a block of text, use the
+.UI \&.ft[12345P]
+approach.
+Again, remember to change back to the preceding font.
+.LE
+.H 3 "Examples"
+.AL
+.LI
+In-line font changes:
+.VL "0.7i"
+.ne10
+.LI Input:
+.DS "" UI
+If you use \ef4mblcount\efP without the \ef2filename\efP
+option, you will see the following error message:
+\&.RS
+\ef5No filename was specified\efP.
+\&.RE
+.DE
+.ne8
+.LI Output:
+.DS "" "" F
+.ll4.25i
+.ad b
+.nh
+If you use \f4mblcount\fP without the \f2filename\fP
+option, you will see the following error message:
+.sp0.4v
+.in+6n
+\f5No filename was specified\fP.
+.in-6n
+.ll
+.ad l
+.hy 14
+.DE
+.LE
+.LI
+Text block font changes:
+.VL "0.7i"
+.ne15
+.LI Input:
+.DS "" UI
+The following error messages could appear
+on your screen:
+\&.RS
+\&.ft5
+Can not throw negative marbles!
+\&.br
+Out of marbles!
+\&.br
+Passed marbling time!
+\&.ftP
+\&.RE
+.DE
+.LI Output:
+.DS
+The following error messages could appear on your screen:
+.sp0.4v
+.in+6n
+.ft5
+Can not throw negative marbles!
+Out of marbles!
+Passed marbling time!
+.in-6n
+.ftP
+.DE
+.LE
+.LE
+.H 1 "String Definitions"
+.IX string definitions, manual pages
+.IX trademark strings, manual pages
+.IX defined string, \e\(**R
+.IX defined string, \e\(**S
+.IX defined string, \e\(**(Tm
+.IX manual page defined strings
+The following strings are defined for manual pages:
+.VL 0.75i "" UI
+.LI \e\(**R
+print registered trademark indicator: \(rg with \f4troff\f1, (Reg.) with
+\f4nroff\f1.
+.LI \e\(**S
+change to default type size.
+.LI \e\(**(Tm
+print trademark indicator: \*(Tm.
+.LE
+.\" EOF

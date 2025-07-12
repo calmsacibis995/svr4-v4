@@ -1,0 +1,150 @@
+'\"!  tbl | mmdoc
+'\"macro stdmacro
+.if n .pH g3x.menus @(#)menus	40.5 of 4/11/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.\" ident	"@(#)svid_ti:ti_env/menus	1.9"
+.ds S ETI
+.nr X
+.if \nX=0 .ds x} menus 3X "" "\&"
+.if \nX=1 .ds x} menus 3X ""
+.if \nX=2 .ds x} menus 3X "" "\&"
+.if \nX=3 .ds x} menus "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4menus\fP \- character based menus package
+.SH SYNOPSIS
+\f4#include <menu.h>\f1
+.SH DESCRIPTION
+The \f4menu\f1 library is built using the \f4curses\f1
+library, and any program using \f4menus\fP routines must
+call one of the \f4curses\fP initialization routines, such as \f4initscr\f1.
+A program using these routines must be compiled with
+\f4\-lmenu\f1 and \f4\-lcurses\f1 on the \f4cc\f1 command line.
+.PP
+The \f4menus\fP package gives the applications programmer a terminal-independent
+method of creating and customizing menus for user interaction.
+The \f4menus\fP package includes:
+item routines, which are used to create and customize
+menu items; and
+menu routines, which are used to create and customize
+menus, assign pre- and post-processing routines, and display and interact
+with menus.
+.SS Current Default Values for Item Attributes
+The \f4menus\fP package establishes initial current default values for item
+attributes.
+During item initialization, each item attribute is assigned the
+current default value for that attribute.
+An application can change or retrieve a current default attribute value
+by calling the appropriate set or retrieve routine with a \f4NULL\fP
+item pointer.
+If an application changes a current default item attribute value,
+subsequent items created using \f4new_item\fP will have the new
+default attribute value.
+(The attributes of previously created items are not changed if a
+current default attribute value is changed.)
+.SS Routine Name Index
+The following table lists each \f4menus\fP routine and the name of the
+manual page on which it is described.
+.TS H
+l l
+lfCWw(2i) lw(2i).
+\f4menus\fP Routine Name	Manual Page Name
+.sp 0.5
+_
+.TH
+current_item	\f4menu_item_current\f1(3X)
+free_item	\f4menu_item_new\f1(3X)
+free_menu	\f4menu_new\f1(3X)
+item_count	\f4menu_items\f1(3X)
+item_description	\f4menu_item_name\f1(3X)
+item_index	\f4menu_item_current\f1(3X)
+item_init	\f4menu_hook\f1(3X)
+item_name	\f4menu_item_name\f1(3X)
+item_opts	\f4menu_item_opts\f1(3X)
+item_opts_off	\f4menu_item_opts\f1(3X)
+item_opts_on	\f4menu_item_opts\f1(3X)
+item_term	\f4menu_hook\f1(3X)
+item_userptr	\f4menu_item_userptr\f1(3X)
+item_value	\f4menu_item_value\f1(3X)
+item_visible	\f4menu_item_visible\f1(3X)
+menu_back	\f4menu_attributes\f1(3X)
+menu_driver	\f4menu_driver\f1(3X)
+menu_fore	\f4menu_attributes\f1(3X)
+menu_format	\f4menu_format\f1(3X)
+menu_grey	\f4menu_attributes\f1(3X)
+menu_init	\f4menu_hook\f1(3X)
+menu_items	\f4menu_items\f1(3X)
+menu_mark	\f4menu_mark\f1(3X)
+menu_opts	\f4menu_opts\f1(3X)
+menu_opts_off	\f4menu_opts\f1(3X)
+menu_opts_on	\f4menu_opts\f1(3X)
+menu_pad	\f4menu_attributes\f1(3X)
+menu_pattern	\f4menu_pattern\f1(3X)
+menu_sub	\f4menu_win\f1(3X)
+menu_term	\f4menu_hook\f1(3X)
+menu_userptr	\f4menu_userptr\f1(3X)
+menu_win	\f4menu_win\f1(3X)
+new_item	\f4menu_item_new\f1(3X)
+new_menu	\f4menu_new\f1(3X)
+pos_menu_cursor	\f4menu_cursor\f1(3X)
+post_menu	\f4menu_post\f1(3X)
+scale_menu	\f4menu_win\f1(3X)
+set_current_item	\f4menu_item_current\f1(3X)
+set_item_init	\f4menu_hook\f1(3X)
+set_item_opts	\f4menu_item_opts\f1(3X)
+set_item_term	\f4menu_hook\f1(3X)
+set_item_userptr	\f4menu_item_userptr\f1(3X)
+set_item_value	\f4menu_item_value\f1(3X)
+set_menu_back	\f4menu_attributes\f1(3X)
+set_menu_fore	\f4menu_attributes\f1(3X)
+set_menu_format	\f4menu_format\f1(3X)
+set_menu_grey	\f4menu_attributes\f1(3X)
+set_menu_init	\f4menu_hook\f1(3X)
+set_menu_items	\f4menu_items\f1(3X)
+set_menu_mark	\f4menu_mark\f1(3X)
+set_menu_opts	\f4menu_opts\f1(3X)
+set_menu_pad	\f4menu_attributes\f1(3X)
+set_menu_pattern	\f4menu_pattern\f1(3X)
+set_menu_sub	\f4menu_win\f1(3X)
+set_menu_term	\f4menu_hook\f1(3X)
+set_menu_userptr	\f4menu_userptr\f1(3X)
+set_menu_win	\f4menu_win\f1(3X)
+set_top_row	\f4menu_item_current\f1(3X)
+top_row	\f4menu_item_current\f1(3X)
+unpost_menu	\f4menu_post\f1(3X)
+.TE
+.SH RETURN VALUE
+Routines that return pointers always return \f4NULL\fP on error.
+Routines that return an integer return one of the following:
+.TS
+lfCWw(1.25i)1 c1 l .
+E_OK	\-	The routine returned successfully.
+E_SYSTEM_ERROR	\-	System error.
+E_BAD_ARGUMENT	\-	T{
+An incorrect argument was passed to the routine.
+T}
+E_POSTED	\-	The menu is already posted.
+E_CONNECTED	\-	One or more items are already connected
+		to another menu.
+E_BAD_STATE	\-	T{
+The routine was called from an initialization or termination function.
+T}
+E_NO_ROOM	\-	The menu does not fit within its subwindow.
+E_NOT_POSTED	\-	The menu has not been posted.
+E_UNKNOWN_COMMAND	\-	T{
+An unknown request was passed to the menu driver.
+T}
+E_NO_MATCH	\-	The character failed to match.
+E_NOT_SELECTABLE	\-	The item cannot be selected.
+E_NOT_CONNECTED	\-	No items are connected to the menu.
+E_REQUEST_DENIED	\-	T{
+The menu driver could not process the request.
+T}
+.TE
+.SH NOTES
+The header file \f4<menu.h>\fP automatically includes the header files
+\f4<eti.h>\fP and \f4<curses.h>\fP.
+.SH SEE ALSO
+\f4curses\fP(3X), and 3X pages whose names begin "\f4menu_\f1" for
+detailed routine descriptions.

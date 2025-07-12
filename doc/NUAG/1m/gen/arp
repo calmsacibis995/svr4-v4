@@ -1,0 +1,119 @@
+'\"macro stdmacro
+.if n .pH g1a.arp @(#)arp	40.6.1.1 of 1/3/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} arp 1M "TPC/IP" "\&"
+.if \nX=1 .ds x} arp 1M "TCP/IP"
+.if \nX=2 .ds x} arp 1M "" "\&"
+.if \nX=3 .ds x} arp "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4arp\f1 \- address resolution display and control
+.SH SYNOPSIS
+\f4arp\f1
+.I hostname
+.LP
+\f4arp \-a\f1
+[
+.I unix
+[
+.I kmem
+] ]
+.LP
+\f4arp \-d\f1
+.I hostname
+.LP
+\f4arp \-s\f1
+\f2hostname ether_address\f1
+[
+\f4temp\f1
+] [
+\f4pub\f1
+] [
+\f4trail\f1
+]
+.LP
+\f4arp \-f\f1
+.I filename
+.SH DESCRIPTION
+The
+\f4arp\f1
+program displays and modifies the
+Internet-to-Ethernet address translation
+tables used by the address resolution protocol
+[\f4arp\f1(7)].
+.LP
+With no flags, the program displays the current
+.SM ARP
+entry for
+.IR hostname .
+The host may be specified by name or by number,
+using Internet dot notation.
+.LP
+The following options are available:
+.TP
+\f4\-a\f1
+Display all of the current
+.SM ARP
+entries by reading the table
+from the file
+.I kmem
+(default
+\f4/dev/kmem\f1)
+based on the kernel file
+.I unix
+(default
+\f4/stand/unix\f1).
+.TP
+\f4\-d\f1
+Delete an entry for the host called
+.IR hostname .
+This option may only be used by the super-user.
+.TP
+\f4\-s\f1
+Create an
+.SM ARP
+entry for the host called
+.I hostname
+with the Ethernet address
+.IR ether_address .
+The Ethernet address is given as six hexadecimal bytes separated by colons.
+The entry will be permanent unless the word
+\f4temp\f1
+is given in the command.
+If the word
+\f4pub\f1
+is given, the entry will be published, for instance,
+this system will respond to
+.SM ARP
+requests for
+.I hostname
+even though the hostname is not its own.
+The word
+\f4trail\f1
+indicates that trailer encapsulations may be sent to this host.
+.TP
+\f4\-f\f1
+Read the file named
+.I filename
+and set multiple entries in the
+.SM ARP
+tables.  Entries
+in the file should be of the form
+.RS
+.IP
+\f2hostname ether_address\f1
+[
+\f4temp\f1
+] [
+\f4pub\f1
+] [
+\f4trail\f1
+]
+.RE
+.IP
+with argument meanings as given above.
+.SH "SEE ALSO"
+\f4ifconfig\f1(1M),
+\f4arp\f1(7).

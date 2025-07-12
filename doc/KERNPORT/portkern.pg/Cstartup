@@ -1,0 +1,10 @@
+.if n .pH portguide.CSTARTUP @(#)Cstartup	40.2
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.BK "Programmer's Guide: Porting the Kernel" "" "" ""   
+.\ACRONYM	                  
+.CH "Startup" "" "Table of Contents" "2"
+.\CHAPTER	2
+.tC 1 "Building UNIX" 2-1  
+.Index: \f4cunix\f1(1M)        	1
+.tC 2 "Startup Procedure" 2-1  
+.Index: startup procedure       	1

@@ -1,0 +1,13 @@
+.if n .pH 386.MasterToc @(#)MasterToc	40.10
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.CH "Table of Contents" "" "" "" Contents
+.BK "Read Me First" "" "" ""   
+.tC 1 "The SCP Product" "" "Table of Contents" "1"
+.tC 2 "Introduction" 1-1  
+.tC 1 "The Documentation Tape" "" "Table of Contents" "2"
+.tC 2 "Introduction" 2-1  
+.tC 2 "Copying Documentation Files from the Tape" 2-2  
+.tC 2 "Installing DOCTOOLS" 2-5  
+.tC 2 "Using DOCTOOLS to Print Documents" 2-7  
+.tC F "Table 1-1:\0" "Hard-copy Documents Delivered with SCP" 1-2
+.tC F "Table 2-1:\0" "Directory Contents" 2-3

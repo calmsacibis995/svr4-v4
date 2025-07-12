@@ -1,0 +1,91 @@
+'\"macro stdmacro
+.if n .pH g1a.ramd @(#)ramd	40.7 of 5/30/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} ramd 7iref "System Administration Utilities" "" "\&"
+.if \nX=1 .ds x} ramd 7iref "System Administration Utilities" ""
+.if \nX=2 .ds x} ramd 7iref "" "\&"
+.if \nX=3 .ds x} ramd "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4ramd\f1 \- Multibus RAM disk driver
+.SH DESCRIPTION
+The RAM disk driver provides block device access to system memory.
+It can be used to set up a RAM-based file system.  The memory for the
+RAM disk is mapped from system memory.  The roving RAM disk is built
+in \f4sysseg\f1 out of user memory.  Memory is defined by a structure
+that gives the starting address and size of the memory to be managed.
+The structure is called \f4ramdinfo\f1 and is defined in the file
+\f4/usr/include/sys/ramd.h\f1.  The format of the structure is:
+.nf
+
+.ta .10i 1.50i
+.ft 4
+struct ramd_info {
+   
+	ulong     ramd_size;	/* Size of disk in bytes */
+	ulong     ramd_flag;	/* State flags; see defs below */
+	dev_t     ramd_maj;	/* Major device for load */
+	dev_t     ramd_min;	/* Minor device for load */
+	ulong     ramd_state;	/* Runtime state */
+	caddr_t   ramd_paddr;	/* Kernel virtual address */
+   };
+.ft
+
+Flag definitions:
+
+.ft 4
+#define RAMD_STATIC  0x01 /*RAM Disk statically 
+                            allocated*/
+#define RAMD_RUNTIME 0x02 /*Runtime definable 
+                            RAM Disk*/
+#define RAMD_LOAD    0x04 /*Auto fill RAM disk 
+                            at init*/
+
+.ft 1
+.fi
+If the \f4RAMD_RUNTIME\f1 flag is chosen, the interface to the RAM disk
+driver functions is through four \f4ioctl\f1 calls.  A utility must be
+written that uses them to allocate and free up space.  The \f4ioctl\f1 calls
+are:
+
+.ta 1.75i
+.nf
+\f4RAMD_IOC_GET_INFO\f1	returns size, flags, and base
+\f4RAMD_IOC_R_ALLOC\f1	defines a roving ram disk
+\f4RAMD_IOC_R_FREE\f1	frees a roving ram disk
+\f4RAMD_IOC_LOAD\f1	loads a ramd partition
+
+.fi
+.PP
+The \f4ioclt\f1 calls use the \f4ramd_info\f1 structure, described above.
+The ioctl calls are defined in the file \f4/usr/include/sys/ramd.h\f1.
+.P
+The following is a list of error conditions that may be returned.
+.PP
+.TP 11
+\f4No Device or Address [ ENXIO ]\f1
+If the device specified is unknown, this message is printed.
+.TP 11
+\f4Not Enough Core [ ENOMEM ]\f1
+If the ram disk cannot be set up as specified, the memory is not
+available and this message is printed.
+.TP 11
+\f4Invalid Argument [ EINVAL ]\f1
+This message is printed if a bad \f4ioctl\f1 request is specified or the
+ram disk size specified is zero.
+.SH NOTES
+When configuring RAM disks, make sure the size of the RAM disk is
+specified in bytes and not blocks.  Also, the RAM disk size and starting
+address must be a multiple of 4Kb (which is the page size).
+.SH FILES
+.TP 2.25i
+\f4/usr/include/sys/ramd.h\f1
+Driver specific definitions
+.TP
+\f4/etc/conf/pack.d/ramd/space.c\f1
+Driver specific configuration
+.TP
+\f4/etc/conf/pack.d/ramd/Driver.o\fP
+RAM disk driver object module

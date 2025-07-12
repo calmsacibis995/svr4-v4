@@ -1,0 +1,116 @@
+.if n .pH g2.signal @(#)signal	40.26 of 1/3/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} signal 2 "" "\&"
+.if \nX=1 .ds x} signal 2 ""
+.if \nX=2 .ds x} signal 2 "" "\&"
+.if \nX=3 .ds x} signal "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4signal\f1, \f4sigset\f1, \f4sighold\f1, \f4sigrelse\f1, \f4sigignore\f1, \f4sigpause\f1 \- simplified signal management
+.SH SYNOPSIS
+.ft 4
+.nf
+#include <signal.h>
+.sp 0.5
+void (\(**signal(int sig, void (\(**disp)(int)))(int);
+.sp 0.5
+void (\(**sigset(int sig, void (\(**disp)(int)))(int);
+.sp 0.5
+int sighold(int sig);
+.sp 0.5
+int sigrelse(int sig);
+.sp 0.5
+int sigignore(int sig);
+.sp 0.5
+int sigpause(int sig);
+.fi
+.ft 1
+.SH DESCRIPTION
+These functions provide simplified
+signal management for application processes.
+See \f4signal\fP(5) for an explanation of general signal concepts.
+.PP
+\f4signal\fP and \f4sigset\fP
+are used to modify signal dispositions.
+\f2sig\f1 specifies the signal, which may be any signal except
+\f4SIGKILL\fP and \f4SIGSTOP\fP.
+\f2disp\f1 specifies the signal's disposition, which may be 
+\f4SIG_DFL\fP, \f4SIG_IGN\fP, or the address of a signal handler.
+If \f4signal\fP is used, \f2disp\f1 is the address of a
+signal handler, and \f2sig\f1 is not \f4SIGILL\fP,
+\f4SIGTRAP\fP, or \f4SIGPWR\fP, the system first sets the signal's disposition
+to \f4SIG_DFL\fP before executing the signal handler.
+If \f4sigset\fP is used and \f2disp\f1 is the address of a signal
+handler, the system adds \f2sig\f1 to the calling process's signal 
+mask before executing the signal handler;
+when the signal handler returns, the system restores the
+calling process's signal mask to its state prior to the delivery of
+the signal.
+In addition, if \f4sigset\fP is used and \f2disp\f1 is equal to \f4SIG_HOLD\fP,
+\f2sig\f1 is added to the calling process's signal mask and the
+signal's disposition remains unchanged.
+.PP
+\f4sighold\fP adds \f2sig\f1 to the calling process's signal mask.
+.PP
+\f4sigrelse\fP removes \f2sig\f1 from the calling process's signal mask.
+.PP
+\f4sigignore\fP sets the disposition of \f2sig\f1 to \f4SIG_IGN\fP.
+.PP
+\f4sigpause\fP removes \f2sig\f1 from the calling process's signal mask 
+and suspends the calling process until a signal is received.
+.PP
+These functions fail if any of the following are true.
+.TP 15
+\f4EINVAL\fP
+The value of the \f2sig\f1 argument is not a valid signal or
+is equal to \f4SIGKILL\fP or \f4SIGSTOP\fP.
+.TP 15
+\f4EINTR\fP
+A signal was caught during the system call \f4sigpause\fP.
+.SH NOTES
+\f4sighold\fP in conjunction with \f4sigrelse\fP or \f4sigpause\fP
+may be used to establish critical regions of code that require
+the delivery of a signal to be temporarily deferred.
+.P
+If \f4signal\fP or \f4sigset\fP is used to set 
+\f4SIGCHLD\fP's disposition to a signal handler, \f4SIGCHLD\fP will not
+be sent when the calling process's children are stopped or continued.
+.PP
+If any of the above functions are used to set
+\f4SIGCHLD\fP's
+disposition to
+\f4SIG_IGN\fP,
+the calling process's child processes will not create zombie processes when
+they terminate
+[see \f4exit\fP(2)].
+If the calling process subsequently
+waits for its children, it
+blocks until all of its children terminate;
+it then returns a value of \-1 with
+\f4errno\fP
+set to
+\f4ECHILD\fP
+[see \f4wait\fP(2), \f4waitid\fP(2)].
+.SH DIAGNOSTICS
+On success,
+\f4signal\fP returns the signal's previous disposition.
+On failure, it returns \f4SIG_ERR\fP and sets
+\f4errno\f1 to indicate the error.
+.PP
+On success,
+\f4sigset\fP returns
+\f4SIG_HOLD\fP if the signal had been blocked or the signal's
+previous disposition if it had not been blocked.
+On failure, it returns \f4SIG_ERR\fP and sets
+\f4errno\f1 to indicate the error.
+.PP
+All other functions return zero on success.
+On failure, they return \-1 and set \f4errno\f1 to indicate the error.
+.SH SEE ALSO
+\f4kill\fP(2), \f4pause\fP(2), \f4sigaction\fP(2),
+\f4sigsend\fP(2),
+\f4wait\fP(2), \f4waitid\fP(2),
+\f4signal\fP(5).
+.\"	@(#)signal.2	6.2 of 9/6/83

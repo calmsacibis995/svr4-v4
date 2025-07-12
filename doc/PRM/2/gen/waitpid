@@ -1,0 +1,130 @@
+'\"macro stdmacro
+.if n .pH g3c.waitpid @(#)waitpid	40.22 of 1/3/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} waitpid 2 "" "\&"
+.if \nX=1 .ds x} waitpid 2 ""
+.if \nX=2 .ds x} waitpid 2 "" "\&"
+.if \nX=3 .ds x} waitpid "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4waitpid\f1 \- wait for child process to change state
+.SH SYNOPSIS
+\f4#include <sys/types.h>\f1
+.br
+\f4#include <sys/wait.h>\f1
+.PP
+\f4pid_t waitpid (pid_t pid, int \(**stat_loc, int options);\f1
+.SH DESCRIPTION
+\f4waitpid\fP suspends the calling process until
+one of its children changes state;
+if a child process changed state prior to the call to
+\f4waitpid\fP,
+return is immediate.  \f2pid\f1
+specifies a set of child processes for which status is requested.
+.IP
+If 
+.IR pid
+is equal to \f4(pid_t)\-1\fP, status is requested for any child process.
+.IP
+If 
+.IR pid
+is greater than \f4(pid_t)0\fP, it specifies the process
+.SM ID
+of the child process for which status is requested.
+.IP
+If 
+.IR pid
+is equal to \f4(pid_t)0\fP status is requested for any child process whose
+process group 
+.SM ID
+is equal to that of the calling process.
+.IP
+If
+.IR pid
+is less than \f4(pid_t)\-1\fP, status is requested for any child process whose
+process group 
+.SM ID 
+is equal to the absolute value of
+.IR pid .
+.PP
+If
+\f4waitpid\fP
+returns because the status of a child process is available, then that 
+status may be evaluated with the macros defined by
+\f4wstat\fP(5) .  
+If the calling process had specified a non-zero value
+of \f2stat_loc\f1, the status of the child process will be stored in the
+location pointed to by \f2stat_loc\f1.
+.PP
+The
+.IR options
+argument is constructed from the bitwise inclusive OR of zero or more
+of the following flags, defined in the header file 
+\f4<sys/wait.h>\f1:
+.TP 15
+\f4WCONTINUED\fP
+the status of any continued child process specified by \f2pid\fP, whose status
+has not been reported since it continued, shall also be reported to the
+calling process.
+.TP 15
+\f4WNOHANG\fP
+\f4waitpid\fP
+will not suspend execution of the calling process if status is not
+immediately available for one of the child processes specified by 
+.IR pid .
+.TP 15
+\f4WNOWAIT\fP
+keep the process whose status is returned in \f2stat_loc\fP in a waitable
+state. The process may be waited for again with identical results.
+.TP 15
+\f4WUNTRACED\fP
+the status of any child processes specified by
+.I pid\^
+that are stopped, and whose status has not yet been reported since
+they stopped, shall also be reported to the calling process.
+.PP
+\f4waitpid\fP
+with
+.I options
+equal to \f4WUNTRACED\f1 and 
+.I pid\^
+equal to (pid_t)\-1 is identical to a call to 
+\f4wait\fP(2).
+.PP
+\f4waitpid\fP will fail if one or more of the following is true:
+.TP 15
+\f4EINTR\fP
+\f4waitpid\fP
+was interrupted due to the receipt of a signal sent by the calling process.
+.TP 15
+\f4EINVAL\fP
+An invalid value was specified for
+.IR options.
+.TP 15
+\f4ECHILD\fP
+The process or process group specified by
+.I pid\^
+does not exist or is not a child of the calling process
+or can never be in the states specified by \f2options\fP.
+.SH "SEE ALSO"
+\f4exec\fP(2), \f4exit\fP(2), \f4fork\fP(2), \f4intro\fP(2), \f4pause\fP(2), \f4ptrace\fP(2), \f4signal\fP(2), \f4sigaction\fP(2), \f4siginfo\fP(5), \f4wstat\fP(5)
+.SH DIAGNOSTICS
+If
+\f4waitpid\fP
+returns because the status of a child process is available, this
+function shall return a value equal to the process
+.SM ID
+of the child
+process for which status is reported.  If \f4waitpid\fP returns due
+to the delivery of a signal to the calling process, a value of \-1
+shall be returned and \f2errno\f1 shall be set to \f4EINTR\fP.  If this
+function was invoked with \f4WNOHANG\fP set in \f2options\f1, it has at 
+least one child process specified by \f2pid\f1 for which status is not
+available, and status is not available for any process specified by
+\f2pid\f1, a value of 0 shall be returned.  Otherwise, a value of \-1
+shall be returned, and \f2errno\f1 shall be set to indicate the
+error.
+.\"	@(#)waitpid.3c	1 of 10/6/88
+.Ee

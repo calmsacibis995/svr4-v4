@@ -1,0 +1,55 @@
+'\"macro stdmacro
+.if n .pH 386.repinsd @(#)repinsd	40.2 of 1/7/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.nr X
+.if \nX=0 .ds x} repinsd D3D "" "DDI" "\&"
+.if \nX=1 .ds x} repinsd D3D "" "DDI"
+.if \nX=2 .ds x} repinsd D3D "" "\&"
+.if \nX=3 .ds x} repinsd "" "" "\&"
+.TH \*(x}
+.IX "\f4repinsd\fP(D3D)"
+.SH NAME 
+\f4repinsd\f1 \- read 32 bit words from I/O port to buffer 
+.SH SYNOPSIS
+.nf
+.na
+\f4#include <sys/types.h>
+.sp 0.5
+void repinsd(int\f2 port, \f4ulong_t *\f2addr, \f4int\f2 cnt\f4);\f1
+.ad
+.fi
+.SH ARGUMENTS 
+.RS 0n 10
+.IP "\f2port\f1" 10n
+A valid 32 bit I/O port.
+.IP "\f2addr\f1" 10n
+The address of the buffer where data is stored after \f2cnt\f1
+reads of the I/O port.
+.IP  "\f2cnt\f1" 10n
+The number of 32 bit words to be read from the I/O port.
+.RE
+.SH DESCRIPTION
+The data from \f2cnt\f1 reads of the I/O port is stored in the data
+buffer pointed to by \f2addr\f1.
+The data buffer should be at least
+\f2cnt\f1 32 bit words in length.
+.SH "RETURN VALUE" 
+None.
+.SH LEVEL
+Base or Interrupt.
+.SH NOTES
+Does not sleep.
+.SH "SEE ALSO" 
+.na
+\f4inb\f1(D3D),
+\f4inl\f1(D3D),
+\f4inw\f1(D3D),
+\f4outb\f1(D3D),
+\f4outl\f1(D3D),
+\f4outw\f1(D3D),
+\f4repinsb\f1(D3D),
+\f4repinsw\f1(D3D),
+\f4repoutsb\f1(D3D),
+\f4repoutsd\f1(D3D),
+\f4repoutsw\f1(D3D)
+.ad

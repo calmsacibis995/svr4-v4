@@ -1,0 +1,155 @@
+'\"macro stdmacro
+.if n .pH g1.strchg @(#)strchg	40.9.1.1 of 1/3/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+'\"macro stdmacro
+.Sh BU_CMD
+.nr X
+.if \nX=0 .ds x} strchg 1 "" "\&"
+.if \nX=1 .ds x} strchg 1 ""
+.if \nX=2 .ds x} strchg 1 "" "\&"
+.if \nX=3 .ds x} strchg "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4strchg\f1, \f4strconf\f1 \- change or query stream configuration
+.SH SYNOPSIS
+\f4strchg \-h \f2module1\fP[,\f2module2\fP ...]
+.br
+\f4strchg \-p [\-a | \-u \f2module\fP]
+.br
+\f4strchg \-f \f2file
+.br
+\f4strconf [\-t | \-m \f2module\fP]\f1
+.fi
+.SH DESCRIPTION
+These commands are used to alter or query the configuration of the stream
+associated with the user's standard input.
+The \f4strchg\fP command pushes modules on and/or pops modules off the stream.
+The \f4strconf\fP command queries the configuration of the stream.
+Only the super-user or owner of a \s-1STREAMS\s+1
+device may alter the configuration of that stream.
+.PP
+With the \f4-h\fP option, \f4strchg\fP pushes modules
+onto a stream;
+it takes as arguments the names of one or more pushable streams modules.
+These modules are pushed in order; that is, \f2module1\fP is pushed first,
+\f2module2\fP is pushed second, etc.
+.PP
+The \f4-p\fP option pops modules off the stream.
+With the \f4-p\fP option alone, \f4strchg\fP pops the topmost module
+from the stream.
+With the \f4-p\fP and \f4-a\fP options, all the modules above the topmost
+driver are popped.
+When the \f4-p\fP option is followed by \f4-u\fP \f2module\fP, then all
+modules above but not including \f2module\fP are popped off the stream.
+The \f4-a\fP and \f4-u\fP options are mutually exclusive.
+.PP
+With the \f4-f\f1 option, the user can specify a \f2file\f1 that contains
+a list of modules representing the desired configuration of the stream.
+Each module name must appear on a separate line where the first name
+represents the topmost module and the last name represents the module
+that should be closest to the driver.
+The \f4strchg\fP command will determine the current configuration of 
+the stream and pop and push the necessary modules in order to end up 
+with the desired configuration. 
+.PP
+The \f4-h\fP, \f4-f\fP and \f4-p\fP options are mutually exclusive.
+.PP
+Invoked without any arguments, \f4strconf\fP prints a list of all the 
+modules in the stream as well as the topmost driver.
+The list is printed with one name per line where the first name printed
+is the topmost module on the stream (if one exists)
+and the last item printed is the name of the driver.
+With the \f4-t\fP option, only the topmost module (if one exists) is printed.
+The \f4-m\fP option determines if the named \f2module\fP is present on a stream.
+If it is, \f4strconf\fP prints the message
+\f4yes\f1 and returns zero.
+If not, \f4strconf\f1 prints the message \f4no\f1
+and returns a non-zero value.
+The \f4-t\f1 and \f4-m\f1 options are mutually exclusive.
+.SH EXAMPLES
+.PP
+The following command pushes the module \f4ldterm\fP on the stream associated
+with the user's standard input:
+.PP
+.ft CW
+	strchg -h ldterm
+.ft R
+.PP
+The following command pops the topmost module from the stream
+associated with \f4/dev/term/24\fP.
+The user must be the owner of this device or the super-user.
+.PP
+.ft CW
+	strchg -p < /dev/term/24
+.ft R
+.PP
+If the file \f4fileconf\f1 contains the following:
+.PP
+.ft CW
+	compat
+.br
+	ldterm
+.br
+	ptem
+.ft R
+.PP
+then the command
+.PP
+.ft CW
+	strchg -f fileconf
+.ft R
+.PP
+will configure the user's standard input stream so that the module
+\f4ptem\fP is pushed over the driver, followed by \f4ldterm\fP and
+\f4compat\fP closest to the stream head.
+.PP
+The \f4strconf\fP command with no arguments lists the modules and topmost 
+driver on the stream; for a stream that has only the module \f4ldterm\fP
+pushed above the \f4ports\fP driver, it would produce the following output:
+.PP
+.ft CW
+	ldterm
+.br
+	ports
+.ft R
+.PP
+The following command asks if \f4ldterm\fP is on the stream
+.PP
+.ft CW 
+	strconf -m ldterm
+.ft R
+.PP
+and produces the following output while returning an exit status of 0:
+.PP
+.ft CW
+	yes
+.ft R
+.SH SEE ALSO
+\f4streamio\fP(7) in the \f2Programmer's Guide: \s-1STREAMS\s0\f1.
+.SH DIAGNOSTICS
+.PP
+\f4strchg\fP returns zero on success.
+It prints an error message and returns non-zero status for various error 
+conditions, including usage error, bad module name, too many modules to push,
+failure of an ioctl on the stream, or failure to open \f2file\f1 from the 
+\f4-f\fP option.
+.PP
+\f4strconf\fP returns zero on success (for the \f4-m\fP or \f4-t\fP
+option, "success" means the named or topmost module is present).
+It returns a non-zero status if invoked with the \f4-m\fP or \f4-t\fP
+option and the module is not present.
+It prints an error message and returns non-zero status
+for various error conditions, including
+usage error or failure of an \f4ioctl\f1 on the stream.
+.SH "NOTES"
+If the user is neither the owner of the stream nor the super-user,
+the \f4strchg\fP command will fail.
+If the user does not have read permissions on the stream and
+is not the super-user, the \f4strconf\fP command will fail.
+.PP
+If modules are pushed in the wrong order, one could end
+up with a stream that does not function as expected.
+For ttys, if the line discipline module is not pushed in the
+correct place,
+one could have a terminal that does not respond to any commands.

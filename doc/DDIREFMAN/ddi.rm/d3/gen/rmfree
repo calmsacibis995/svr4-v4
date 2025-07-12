@@ -1,0 +1,77 @@
+'\"macro stdmacro
+.if n .pH gen.rmfree @(#)rmfree	40.2 of 1/7/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.nr X
+.if \nX=0 .ds x} rmfree D3DK "" "DDI/DKI" "\&"
+.if \nX=1 .ds x} rmfree D3DK "" "DDI/DKI"
+.if \nX=2 .ds x} rmfree D3DK "" "\&"
+.if \nX=3 .ds x} rmfree "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4rmfree\f1 \- free space into a private space management map
+.IX "\f4rmfree\fP(D3DK)"
+.SH SYNOPSIS
+.nf
+.na
+\f4#include <sys/types.h>
+#include <sys/map.h>
+#include <sys/ddi.h>
+.sp 0.5
+void rmfree(struct map *\f2mp, \f4size_t \f2size, \f4ulong_t \f2index\f4);\f1
+.ad
+.fi
+.SH ARGUMENTS
+.RS 0n 10
+.IP "\f2mp\f1" 10n
+Pointer to the map.
+.IP "\f2size\f1" 10n
+Number of units to free into the map.
+.IP "\f2index\f1" 10n
+Index of the first unit of the space being freed.
+.RE
+.SH DESCRIPTION
+\f4rmfree\f1 releases space into the private space management map
+pointed to by \f2mp\f1 and wakes up any processes that are waiting
+for space.
+\f4rmfree\f1 should be called to return space that had been allocated
+by a previous call to \f4rmalloc\f1(D3DK),
+in which case \f2index\f1 is the value returned from the corresponding
+call to \f4rmalloc\f1. 
+\f4rmfree\f1 should also be called to add space to a newly allocated
+map prior to the first call to \f4rmalloc\f1,
+in which case \f2index\f1 specifies the base of the space being added.
+.P
+Both size and index are in arbitrary units.
+The driver using the map places whatever semantics on the units are
+appropriate for the type of space being managed.
+For example, units may be byte addresses, pages of memory, or blocks
+on a device.
+.P
+If the space being returned is adjacent to other space
+in the map, \f4rmfree\f1 will coalesce the adjacent fragments.
+.SH RETURN VALUE
+None.
+.SH LEVEL
+Base or Interrupt.
+.SH NOTES
+Does not sleep.
+.sp 0.5
+If the \f4rmfree\f1 call causes the number of fragments in the
+map to exceed the number of map entries specified by \f4rminit\f1(D3K),
+the following warning message is displayed on the
+console:
+.P
+.RS
+\f4WARNING: rmfree map overflow \f2mp\f4 lost \f2size\f4 items at \f2index\f1
+.RE
+.P
+This implies that the driver should specify a larger number of map
+entries when initializing the map.
+.SH SEE ALSO
+.na
+\f4rmalloc\f1(D3DK),
+\f4rminit\f1(D3K),
+\f4rmsetwant\f1(D3K)
+.ad
+.SH EXAMPLE
+See \f4rmalloc\f1(D3DK).

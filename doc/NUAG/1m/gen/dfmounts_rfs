@@ -1,0 +1,55 @@
+'\"macro stdmacro
+.if n .pH g1a.dfmounts_rfs @(#)dfmounts_rfs	40.16 of 5/30/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} dfmounts 1M "RFS" "\&"
+.if \nX=1 .ds x} dfmounts 1M "RFS"
+.if \nX=2 .ds x} dfmounts 1M "" "\&"
+.if \nX=3 .ds x} dfmounts "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4dfmounts\f1 \- display mounted RFS resource information
+.SH SYNOPSIS
+\f4dfmounts\f1
+[\f4\-F rfs\f1]
+[\f4\-h\f1]
+[\f2resource_name ...\f1]
+.br
+.SH DESCRIPTION
+\f4dfmounts\f1
+shows the local resources shared through Remote File Sharing,
+along with a list of clients that have mounted the resource.
+The \f4\-F\f1 flag may be omitted if \f4rfs\f1 is the first file system type
+listed in the file \f4/etc/dfs/fstypes\f1.
+.P
+The output of \f2dfmounts\f1 consists of an optional header line
+(suppressed with the \f4\-h\f1 flag) followed by a list of lines
+containing whitespace-separated fields.  For each resource, the
+fields are:
+.PP
+.RS
+\f2resource server path clients ...\f1
+.RE
+where
+.RS
+.IP \f2resource\f1 13
+Specifies the resource name that must be given to the \f4mount(1M)\f1
+command.
+.IP \f2server\f1 13
+Specifies the system from which the resource was mounted.
+.IP \f2path\f1 13
+Specifies the full pathname that must be given to the \f4share(1M)\f1 command.
+.IP \f2clients\f1 13
+A comma-separated list of systems that have mounted the resource.
+.RE
+.P
+A field may be null. Each null field is indicated by a
+hyphen (\-) unless the remainder of the fields on the line
+are also null.  In this case, it may be omitted.
+.P
+Only a privileged user can execute this command.
+.SH "FILES"
+\f4/etc/dfs/fstypes\f1
+.SH "SEE ALSO"
+\f4dfmounts\fP(1M), \f4share\fP(1M), \f4unshare\fP(1M), \f4fumount\fP(1M), \f4mount\fP(1M)

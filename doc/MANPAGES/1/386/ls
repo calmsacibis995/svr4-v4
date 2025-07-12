@@ -1,0 +1,445 @@
+'\"macro stdmacro
+.if n .pH g1.ls @(#)ls	40.7 of 4/23/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+'\"macro stdmacro
+.if n .pH g1.ls @(#)ls	40.12 of 9/20/89
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} ls 1 "Essential Utilities" "\&"
+.if \nX=1 .ds x} ls 1 "Essential Utilities"
+.if \nX=2 .ds x} ls 1 "" "\&"
+.if \nX=3 .ds x} ls "" "" "\&"
+.nr X
+.nr X
+.TH \*(x} "" "386 Computer Only"
+.\" Copyright (c) 1988 Sun Microsystems, Inc. - All Rights Reserved.
+.SH NAME
+\f4ls\f1 \- list contents of directory
+.SH SYNOPSIS
+\f4ls\f1
+\f1[\f4\-RadLCxmlnogrtucpFbqisf1\f1]
+[\f2names\f1]
+.SH DESCRIPTION
+For each directory argument,
+\f4ls\fP
+lists the contents of the directory;
+for each file argument,
+\f4ls\fP
+repeats its name and any other information requested.
+The output is sorted alphabetically by default.
+When no argument is given, the current directory is listed.
+When several arguments are given,
+the arguments are first sorted appropriately,
+but file arguments appear
+before directories and their contents.
+.PP
+There are three major listing formats.
+The default format for output directed to a terminal
+is multi\-column with entries
+sorted down the columns.
+The
+\f4\-1\f1
+option allows single column output
+and
+\f4\-m\f1
+enables stream output format.
+In order to determine output formats for the
+\f4\-C\f1,
+\f4\-x\f1,
+and
+\f4\-m\f1
+options,
+\f4ls\fP
+uses an environment variable,
+\f4COLUMNS\f1,
+to determine the number of character positions available on one
+output line.
+If this variable is not set,
+the
+\f4terminfo\fP(4)
+database is used to determine the number of columns, based on the
+environment variable
+\f4TERM\f1.
+If this information cannot be obtained, 80 columns are assumed.
+.PP
+The 
+\f4ls\fP
+command has the following options:
+.TP
+\f4 \-R\f1
+Recursively list subdirectories encountered.
+.TP
+\f4 \-a\f1
+List all entries, including those that begin with a dot (\^\f4.\f1\^), which
+are normally not listed.
+.TP
+\f4 \-d\f1
+If an argument is a directory, list only its name
+(not its contents);
+often used with
+\f4\-l\f1
+to get the status
+of a directory.
+.TP
+\f4 \-L\f1
+When listing status,
+if an argument is a symbolic link, 
+list the status of the file or directory
+referenced by the link
+rather than that of the link itself.
+.TP
+\f4 \-C\f1
+Multi-column output with entries sorted down the columns.  This is the
+default output format.
+.TP
+\f4 \-x\f1
+Multi-column output with entries sorted across rather than
+down the page.
+.TP
+\f4 \-m\f1
+Stream output format; files are listed across the page, separated by commas.
+.TP
+\f4 \-l\f1
+List in long format, giving mode, number of links, owner, group,
+size in bytes, and time of last modification
+for each file (see below).
+If the file is a special file,
+the size field instead contains
+the major and minor device numbers rather than a size.
+If the file is a symbolic link, the filename is printed
+followed by
+\f1``\f4->\f1''
+and the pathname of the referenced file.
+.TP
+\f4 \-n\f1
+The same as
+\f4\-l\f1,
+except that the owner's
+\f4UID\f1
+and group's
+\f4GID\f1
+numbers are printed, rather than
+the associated character strings.
+.TP
+\f4 \-o\f1
+The same as
+\f4\-l\f1,
+except that the group is not printed.
+.TP
+\f4 \-g\f1
+The same as
+\f4\-l\f1,
+except that the owner is not printed.
+.TP
+\f4 \-r\f1
+Reverse the order of sort to get reverse alphabetic
+or oldest first as appropriate.
+.TP
+\f4 \-t\f1
+Sort by time stamp (latest first) instead of
+by name.
+The default is the last modification time.
+(See \f4\-n\f1 and \f4\-c\f1.)
+.TP
+\f4 \-u\f1
+Use time of last access instead of last
+modification for sorting (with the 
+\f4\-t\f1
+option) or printing (with the
+\f4\-l\f1
+option).
+.TP
+\f4 \-c\f1
+Use time of last modification of the i-node
+(file created, mode changed, etc.) for sorting
+\f1(\f4\-t\f1)
+or printing
+\f1(\f4\-l\f1).
+.TP
+\f4 \-p\f1
+Put a slash
+\f1(\f4/\f1)
+after each filename if the file is a directory.
+.TP
+\f4 \-F\f1
+Put a slash
+\f1(\f4/\f1)
+after each filename if the file is a directory,
+an asterisk
+\f1(\f4*\f1)
+if the file is an executable,
+and an ampersand
+\f1(\f4@\f1)
+if the file is a symbolic link.
+.TP
+\f4 \-b\f1
+Force printing of non-printable characters to be in the octal
+\f4\e\f2ddd\f1
+notation.
+.TP
+\f4 \-q\f1
+Force printing of non-printable characters in file names as
+the character question mark
+\f1(\f4?\f1).
+.TP
+\f4 \-i\f1
+For each file,
+print the i-node number in the first column of the report.
+.TP
+\f4 \-s\f1
+Give size in blocks,
+including indirect blocks, for each entry.
+.TP
+\f4 \-f\f1
+Force each argument to be interpreted as a directory
+and list the name found in each slot.
+This option turns off
+\f4\-l, \-t, \-s,\f1
+and
+\f4\-r,\f1
+and
+turns on
+\f4\-a;\f1
+the order is the order in which entries
+appear in the directory.
+.TP
+\f4 \-1\f1
+Print one entry per line of output.
+.PP
+The mode printed under the
+\f4\-l\f1
+option consists of ten characters.
+The first character may be one of the following:
+.PP
+.RS
+.PD 0
+.TP 4
+\f4d\f1
+the entry is a directory;
+.TP
+\f4l\f1
+the entry is a symbolic link;
+.TP
+\f4b\f1
+the entry is a block special file;
+.TP
+\f4c\f1
+the entry is a character special file;
+.TP
+\f4\m\f1
+the entry is XENIX shared data (memory) file;
+.TP
+\f4p\f1
+the entry is a fifo (a.k.a. ``named pipe'') special file;
+.TP
+\f4s\f1
+the entry is a XENIX semaphore;
+.TP
+\f4\-\f1
+the entry is an ordinary file.
+.RE
+.PD
+.PP
+The next 9 characters are interpreted
+as three sets of three bits each.
+The first set refers to the owner's permissions;
+the next to permissions of others in the user-group of the file;
+and the last to all others.
+Within each set, the three characters indicate
+permission to read, to write, and to
+execute the file as a program, respectively.
+For a directory, ``execute'' permission is interpreted
+to mean permission to search the directory
+for a specified file.
+.PP
+\f4ls \-l\f1 (the \f4l\f1ong list) prints its output as follows:
+.sp .5
+.RS
+.ft 4
+\-rwxrwxrwx\0\01\0smith\0\0dev\0\0\0\010876\0\0May\016\09:42\0part2
+.ft 1
+.RE
+.PP
+Reading from right to left, you see that the current directory holds
+one file, named
+\f4part2\f1.
+Next, the last time that file's contents were modified was 9:42 A.M. on
+May 16.
+The file contains 10,876 characters, or bytes.
+The owner of the file, or the user, belongs to the group
+\f4dev\f1
+(perhaps indicating ``development''), and his or her login name is
+\f4smith\f1.
+The number, in this case
+\f41\f1,
+indicates the number of links to file
+\f4part2\f1;
+see
+\f4cp\fP(1).
+Finally, the dash and letters tell you that
+user, group, and others
+have permissions to read, write, and execute
+\f4part2\f1.
+.PP
+The execute (\f4x\f1)
+symbol here occupies the third position of the three-character sequence.
+A \f4\-\f1 in the third position would have indicated a denial of
+execution permissions.
+.PP
+The permissions are indicated as follows:
+.PP
+.RS
+.PD 0
+.TP 4
+\f4r\f1
+the file is readable
+.TP
+\f4w\f1
+the file is writable
+.TP
+\f4x\f1
+the file is executable
+.TP
+\f4\-\f1
+the indicated permission is
+.I not\^
+granted
+.TP
+\f4l\f1
+mandatory locking occurs during access
+(the set-group-\s-1ID\s+1 bit
+is on and the group execution bit is off)
+.TP
+\f4s\f1
+the \f4s\f1et-user-\s-1ID\s+1 or \f4s\f1et-group-\s-1ID\s+1 bit is on,
+and the corresponding user or group execution bit is also on
+.TP
+\f4S\f1
+undefined bit-state (the set-user-\s-1ID\s+1 bit is on
+and the user execution bit is off)
+.TP
+\f4t\f1
+the 1000 (octal) bit, or sticky bit, is on [\^see \f4chmod\fP(1)\^],
+and execution is on
+.TP
+\f4T\f1
+the 1000 bit is turned on, and execution is off (undefined bit-state)
+.RE
+.PD
+.PP
+For user and group permissions,
+the third position is sometimes occupied by a character other
+than \f4x\f1 or \f4\-\f1.
+\f4s\f1 also may occupy this position,
+referring to the state of the \f4s\f1et-\s-1ID\s+1 bit, whether it be the
+user's or the group's.
+The ability to assume the same \s-1ID\s+1 as the user during
+execution is, for example, used during login when you begin as root
+but need to assume the identity of the user you login as.
+.PP
+In the case of the sequence of group permissions, \f4l\f1 may occupy
+the third position.
+\f4l\f1 refers to mandatory file and record \f4l\f1ocking.
+This permission describes a file's ability to
+allow other files to lock its reading or writing permissions during access.
+.PP
+For others permissions,
+the third position may be occupied by \f4t\f1 or \f4T\f1.
+These refer to the state of the sticky bit and execution permissions.
+.SH EXAMPLES
+.PP
+An example of a file's permissions is:
+.IP
+\f4\-rwxr\-\-r\-\-\fP
+.PP
+This describes a file that is readable, writable, and executable
+by the user and readable by the group and others.
+.PP
+Another example of a file's permissions is:
+.IP
+\f4\-rwsr\-xr\-x\fP
+.PP
+This describes a file that is readable, writable, and
+executable by the user,
+readable and executable by the group and others,
+and allows its user-\s-1ID\s+1 to be assumed, during execution,
+by the user presently executing it.
+.PP
+Another example of a file's permissions is:
+.IP
+\f4\-rw\-rwl\-\-\-\fP
+.PP
+This 
+describes a file that is readable and writable
+only by the user and the group and can be locked during access.
+.br
+.ne 6
+.PP
+An example of a command line:
+.IP
+\f4ls \|\-a\f1
+.PP
+This command prints the names of all files in the current directory,
+including those that begin with a dot (\^\f4.\f1\^), which normally
+do not print.
+.PP
+Another example of a command line:
+.IP
+\f4ls \|\-aisn\f1
+.PP
+This command provides information
+on \f4a\f1ll files, including those that begin with a dot (\f4a\f1),
+the \f4i\f1-number\(emthe memory
+address of the i-node associated with the file\(emprinted in the left-hand
+column (\f4i\f1);
+the \f4s\f1ize (in blocks) of the files, printed in the column
+to the right of the i-numbers (\f4s\f1);
+finally, the report is displayed in the \f4n\f1umeric version of the
+long list, printing the \f4\s-1UID\s+1\f1 (instead of user name)
+and \f4\s-1GID\s+1\f1 (instead of group name) numbers associated with the files.
+.PP
+When the sizes of the files in a directory
+are listed, a total count of blocks,
+including indirect blocks, is printed.
+.SH FILES
+.PD 0
+.TP 35
+\f4/etc/passwd\f1
+user
+.SM ID\*Ss
+for
+\f4ls \-l\f1
+and
+\f4ls \-o\f1
+.TP
+\f4/etc/group\f1
+group
+.SM ID\*Ss
+for
+\f4ls \-l\f1
+and
+\f4ls \-g\f1
+.TP
+\f4/usr/share/lib/terminfo/?/*\f1
+terminal information database
+.PD
+.SH SEE ALSO
+\f4chmod\fP(1),
+\f4find\fP(1).
+.SH NOTES
+In a Remote File Sharing environment,
+you may not have the permissions that the
+output of the \f4ls \-l\f1 command leads
+you to believe.
+For more information see the
+.IR "Getting Started" .
+.PP
+Unprintable characters in file names may confuse the
+columnar output options.
+.PP
+The total block count will be incorrect if
+if there are hard links among the files.
+.\"	@(#)ls.1	6.3 of 9/2/83
+.Ee

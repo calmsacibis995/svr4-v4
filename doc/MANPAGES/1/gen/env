@@ -1,0 +1,44 @@
+'\"macro stdmacro
+.if n .pH g1.env @(#)env	40.2.1.1 of 1/3/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} env 1 "User Environment Utilities" "\&"
+.if \nX=1 .ds x} env 1 "User Environment Utilities"
+.if \nX=2 .ds x} env 1 "" "\&"
+.if \nX=3 .ds x} env "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4env\f1 \- set environment for command execution
+.SH SYNOPSIS
+\f4env\f1
+\f1[\f4\-\f1]
+[ name=value ] ...
+[ command args ]
+.SH DESCRIPTION
+\f4env\fP
+obtains the current
+.IR environment ,
+modifies it according to its arguments,
+then executes the command with the modified environment.
+Arguments of the form
+\f2name\f4=\f2value\f1
+are merged into the inherited environment
+before the command is executed.
+The \f4\-\fP flag causes the inherited environment to be ignored
+completely,
+so that the command is executed with exactly the environment
+specified by the arguments.
+.PP
+If no command is specified,
+the resulting environment is printed,
+one name-value pair per line.
+.SH SEE ALSO
+\f4sh\fP(1).
+.br
+\f4exec\fP(2) in the \f2Programmer's Reference Manual\f1.
+.br
+\f4profile\fP(4),
+\f4environ\fP(5) in the \f2System Administrator's Reference Manual\f1.
+.\"	@(#)env.1	6.2 of 9/2/83
+.Ee

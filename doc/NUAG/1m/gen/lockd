@@ -1,0 +1,73 @@
+'\"macro stdmacro
+.if n .pH g1a.lockd @(#)lockd	40.3.1.1 of 4/15/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} lockd 1M "NFS" "\&"
+.if \nX=1 .ds x} lockd 1M "NFS"
+.if \nX=2 .ds x} lockd 1M "" "\&"
+.if \nX=3 .ds x} lockd "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4lockd\f1 \- network lock daemon
+.SH SYNOPSIS
+\f4/usr/lib/nfs/lockd\f1
+[
+\f4\-t\f1
+.I timeout
+] [
+\f4\-g\f1
+.I graceperiod
+]
+.SH DESCRIPTION
+.LP
+\f4lockd\f1
+processes lock requests that are either
+sent locally by the kernel or remotely by another lock daemon.
+\f4lockd\f1
+forwards lock requests for remote data to the server site's
+lock daemon through
+\s-1RPC/XDR\s0.
+\f4lockd\f1
+then requests the status monitor daemon,
+\f4statd\f1(1M),
+for monitor service.  The reply to the lock request will not be sent
+to the kernel until
+the status daemon and the server site's
+lock daemon have replied.
+.LP
+If either the
+status monitor or server site's lock daemon
+is unavailable, the reply to a lock request for remote data
+is delayed until all daemons become available.
+.LP
+When a server recovers,
+it waits for a grace period for all client-site lock daemons to submit
+reclaim requests.
+Client-site lock daemons, on the other hand, are notified by 
+the status monitor daemon
+of the server recovery and promptly resubmit previously
+granted lock requests.  If a lock daemon
+fails to secure a previously granted lock at the server site, the
+it sends
+.SM SIGLOST
+to a process.
+.SH OPTIONS
+.TP
+\f4\-t \f2timeout\f1
+Use
+\f2timeout \f4seconds\f1
+as the interval
+instead of the default value (15 seconds) to retransmit lock
+request to the remote server.
+.TP
+\f4\-g \f2graceperiod\f1
+Use
+\f2graceperiod \f4seconds\f1
+as the grace period
+duration instead of the default value (45 seconds).
+.SH "SEE ALSO"
+\f4statd\f1(1M),
+\f4fcntl\f1(2),
+\f4signal\f1(2),
+\f4lockf\f1(3C)

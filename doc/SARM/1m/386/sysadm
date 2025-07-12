@@ -1,0 +1,661 @@
+'\"macro stdmacro
+.if n .pH g1a.sysadm @(#)sysadm	40.7 of 2/20/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+'\"macro stdmacro
+.if n .pH g1a.sysadm @(#)sysadm	40.5 of 9/19/89
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} sysadm 1M "Essential Utilities" "\&"
+.if \nX=1 .ds x} sysadm 1M "Essential Utilities"
+.if \nX=2 .ds x} sysadm 1M "" "\&"
+.if \nX=3 .ds x} sysadm "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4sysadm\f1 \- visual interface to perform system administration
+.SH SYNOPSIS
+.nf
+\f4sysadm\f1 [ \f2menu name\f1 | \f2task name\f1 ]
+.fi
+.SH DESCRIPTION
+This command, when invoked without an argument, 
+presents a set of menus that help 
+you do administrative work.
+If you specify a menu or task on the command line,
+one of two things happens:
+if the requested menu or task is unique, it is 
+immediately displayed;
+if the menu or task is not unique, 
+a menu of choices is displayed.
+.P
+The \f4sysadm\fP command may be given a password.
+To assign a password,
+use the \f4password\f1 task 
+under the \f4system_setup\f1 menu.
+To change a password after it is assigned,
+use the \f4password\f1 command.
+.P
+When you invoke \f4sysadm\fP on
+a computer running UNIX System V Release 4,
+the main menu (a collection of twelve menus)
+appears as follows:
+.PP
+.nf
+                         \f4UNIX System V Administration
+
+backup_service   - Backup Scheduling, Setup, and Control
+.sp .5
+diagnostics      - Diagnosing System Errors
+.sp .5
+file_systems     - File System Creation, Checking and Mounting
+.sp .5
+machine          - Machine Configuration, Display and Powerdown
+.sp .5
+network_services - Network Services Administration
+.sp .5
+ports            - Port Access Services and Monitors
+.sp .5
+printers         - Printer Configuration and Services
+.sp .5
+restore_service  - Restore From Backup Data
+.sp .5
+software         - Software Installation and Removal
+.sp .5
+storage_devices  - Storage Device Operations and Definitions
+.sp .5
+system_setup     - System Name, Date/Time and Initial Password Setup
+.sp .5
+users            - User Login and Group Administration\f1
+.sp .5
+.fi
+.P
+If you install software packages other than 
+those delivered with 
+\s-1UNIX\s+1 System V Release 4,
+you will also see a menu entry 
+called \f4Administration for Available 
+Applications\fP (or \f4applications\fP)
+under which those packages are found.
+.P
+All menu items for 
+pre-Release 4 optional add-on packages
+other than those listed on the main menu
+under \f4packagmgmt\f1
+now appear under \f4old_sysadm\f1 on the main menu.
+(The entry \f4old_sysadm\f1 will appear
+on the main menu only if pre-Release 4 packages
+have been installed.)
+.P
+The rest of this section describes each menu
+listed on the main menu.
+.sp
+.TP
+\(bu \f4Backup Service Management\f1
+.sp .5
+This menu lists seven areas of administrative support 
+for the backup services.
+.TP
+\(bu\(bu \f4backup\f1 (\f4Start Backup Jobs\f1)
+.sp .5
+This task starts the backup scheduled for 
+the current day based on the default backup control table 
+or the specified backup control table.
+.TP
+\(bu\(bu \f4history\f1 (\f4Backup History Management\f1)
+.sp .5
+This task lets you display reports of backup
+operations that have completed successfully.
+.TP
+\(bu\(bu \f4reminder\f1 (\f4Schedule Backup Reminder\f1)
+.sp .5
+This menu lets you schedule 
+messages that will be sent to you 
+to remind you to perform backups.
+.TP
+\(bu\(bu \f4respond\f1 (\f4Respond to Backup Job Prompts\f1)
+.sp .5
+This task lets you reply to operator prompts
+from backup jobs.
+.TP
+\(bu\(bu \f4schedule\f1 (\f4Schedule Automatic Backups\f1)
+.sp .5
+This menu lets you
+schedule backups so that they will run automatically.
+Because the backups are scheduled to run automatically
+and are not associated with a terminal,
+you must choose to run them
+in either automatic or background mode. 
+.TP
+\(bu\(bu \f4setup\f1 (\f4Backup Control Table Management\f1)
+.sp .5
+This menu lets you modify or display backup registers.
+.TP
+\(bu\(bu \f4status\f1 (\f4Backup Status Management\f1)
+.sp .5
+This menu lets you 
+manage backup requests that are in progress.
+.sp
+.TP
+\(bu \f4Manage File Systems\fP
+.sp .5
+This menu provides eleven tasks that are 
+part of file system management.
+These tasks include checking for and
+repairing errors on a specific file system,
+monitoring disk usage for all file systems,
+tracking files based on age or size, listing
+all file systems currently mounted on your system, 
+creating a new file system, 
+and mounting and unmounting file systems.
+.TP
+\(bu\(bu \f4check\f1 (\f4Check a File System\f1)
+.sp .5
+This task lets you check a file system for errors
+and fix them, either interactively or automatically.
+.TP
+\(bu\(bu \f4defaults\f1 (\f4Manage Defaults\f1)
+.sp .5
+This task identifies 
+the percentage of hard disks
+currently occupied by files.
+.TP
+\(bu\(bu \f4diskuse\f1 (\f4Display Disk Usage\f1)
+.sp .5
+This task identifies the
+percentage of hard disks
+currently occupied by files.
+The information is presented as a list,
+organized by file system name.
+.TP
+\(bu\(bu \f4display\f1 (\f4Display Installed Types\f1)
+.sp .5
+This task displays a list of the file
+system types installed on your system.
+.TP
+\(bu\(bu \f4fileage\f1 (\f4List Files by Age\f1)
+.sp .5
+This task lets you print the names of old files
+in the directory you specify.
+If you do not specify an age, files older than 90 days are listed.
+.TP
+\(bu\(bu \f4filesize\f1 (\f4List Files by Size\f1)
+.sp .5
+This task lets you print the names of 
+the largest files in a specific directory.
+If you do not request a particular number of files, 
+the ten largest files are listed.
+.TP
+\(bu\(bu \f4identify\f1 (\f4Identify File System Type\f1)
+.sp .5
+This task tries to determine the type of any unmounted
+file system without damaging the data or the medium of the file system.
+.TP
+\(bu\(bu \f4list\f1 (\f4List Mounted File Systems\f1)
+.sp .5
+This task lets you list 
+all file systems mounted on your computer.
+.TP
+\(bu\(bu \f4make\f1 (\f4Create a File System\f1)
+.sp .5
+This task lets you create a new file system on a
+removable medium which
+can then store data you do not want to keep on hard disk.
+When mounted, the file system has all the properties
+of a file kept on hard disk.
+.TP
+\(bu\(bu \f4mount\f1 (\f4Mount a File System\f1)
+.sp .5
+This task lets you mount a file system located on a
+removable medium and make it available to users on your system.
+The file system may
+be unmounted using the \f4unmount\f1 task.
+.sp .5
+\s-1WARNING\s+1: \f1(1) \f4mount\fP does not
+prevent you from mounting a file system
+on a directory that's not empty.
+(2) Do not remove the medium 
+while the file system is still mounted.
+.TP
+\(bu\(bu \f4unmount\f1 (\f4Unmount a File System\f1)
+.sp .5
+This task lets you unmount
+a file system and thus lets you remove
+the medium on which it resides.
+Both \f4/\f1 and \f4/usr\f1 are excluded
+because unmounting these file systems 
+would cause a system crash.
+Once a file system has been unmounted,
+you may remove the medium on which it resided.
+.sp
+.TP
+\(bu \f4Machine Configuration Display and Powerdown\f1
+.sp .5
+This menu provides seven tasks for
+functions such as turning off the computer, 
+rebooting it, and
+changing to firmware mode.
+.TP
+\(bu\(bu \f4configuration\f1 (\f4System Configuration Display\f1)
+.sp .5
+This task allows you to check the current configuration 
+of the system.
+.TP
+\(bu\(bu \f4shutdown\f1 (\f4Stops All Running Programs and Turns Off Machine\f1)
+.sp .5
+This task lets you stop all running programs, 
+close any open files, write
+out information (such as directory information)
+to disk,
+and then bring the system down.
+.TP
+\(bu\(bu \f4reboot\f1 (\f4Stops All Running Programs and Reboots Machine\f1)
+.sp .5
+This task lets you reboot the computer after 
+all running programs have been stopped,
+any open files have been closed,
+and any necessary information 
+(such as directory information)
+has been written out to disk,
+This procedure can be used to resolve some types of
+system trouble, such as a process that cannot be killed.
+.TP
+\(bu\(bu \f4whos on\f1 (\f4Displays List of Users Logged onto Machine\f1)
+.sp .5
+This task prints the login \s-1ID\s+1,
+terminal device number, and sign-on time 
+of all users who are currently using the computer.
+.sp
+.TP
+\(bu \f4Network Services Management\fP
+.sp .5
+This menu provides four functions for managing networks.
+.TP
+\(bu\(bu \f4basic_networking\fP (\f4Basic Networking Utilities Management\fP)
+.sp .5
+This menu allows you to set up administrative files
+for \s-1UUCP\s+1 utilities.
+.TP
+\(bu\(bu \f4remote_files\fP (\f4Distributed File System Management\fP)
+.sp .5
+This menu allows you to set up administrative files
+for the Remote File Sharing (\s-1RFS\s+1) Utilities
+or the Network File Sharing (\s-1NFS\s+1) Utilities.
+.TP
+\(bu\(bu \f4selection\fP (\f4Network Selection Management\fP)
+.sp .5
+This menu allows you to set up administrative files for
+Network Selection; that is, 
+for dynamically selecting a transport protocol.
+.TP
+\(bu\(bu \f4name_to_address\fP (\f4Machine and Service Address Management\fP)
+.sp .5
+This menu allows you to define machine addresses 
+and service port information for 
+the protocols that exist on the machine.
+.sp
+.TP
+\(bu \f4Peripheral Setup\fP
+.sp .5
+This menu allows you to setup peripherals that were supported
+in pre-SVR4.0
+.sp
+.TP
+\(bu \f4Service Access Management\fP
+.sp .5
+This menu provides functions for managing 
+service access to the system.
+.TP
+\(bu\(bu \f4port_monitors\fP (\f4Port Monitor Management\fP)
+.sp .5
+This menu provides functions
+for managing port monitors 
+under the Service Access Facility.
+Specifically, it allows you to add, disable, enable,
+list, modify, remove, start, and stop port monitors.
+.TP
+\(bu\(bu \f4port_services\fP (\f4Port Service Management\fP)
+.sp .5
+This menu provides functions for managing port services
+provides by port monitors.
+Specifically, it allows you to add, disable, enable,
+list, modify, and remove port services.
+.TP
+\(bu\(bu \f4quick-terminal\f1
+.sp .5
+(Quick terminal Setup) This menu allows a user to easily setup
+a terminal and its speed.
+.TP
+\(bu\(bu \f4tty_settings\fP (\f4Terminal Line Setting Management\fP)
+.sp .5
+This menu provides functions for 
+managing tty line settings.
+Specifically, it allows you to create new tty settings and
+hunt sequences, and to display (on your screen) 
+and remove those settings.
+To modify an existing tty line setting,
+remove the entry for it and then recreate it,
+including the modifications.
+.sp
+.TP
+\(bu \f4Line Printer Services Configuration and Operation\f1
+.sp .5
+This menu provides functions for managing the printers
+and print services you can make available to your users 
+through the \s-1LP\s+1 print service.
+Specifically, this menu can help you 
+do the following:
+set up and control the 
+\s-1LP\s+1 print service;
+start and stop the print service,
+check the status of the print service and,
+if necessary, stop and start it;
+add new printers to your system,
+and change the configuration of existing printers;
+add, change, and mount forms, 
+add, change, and change filters,
+and monitor users' print requests.
+.TP
+\(bu\(bu \f4classes\fP (\f4Manage Classes of Related Printers\fP)
+.sp .5
+This menu allows you to add new classes and to display
+a list of the current classes.
+.TP
+\(bu\(bu \f4filters\fP (\f4Manage Filters for Special Processing\fP)
+.sp .5
+This menu allows you to manage
+filters for special processing.
+.TP
+\(bu\(bu \f4forms\fP (\f4Manage Pre-Printed Forms\fP)
+.sp .5
+This menu allows you to manage pre-printed forms.
+.TP
+\(bu\(bu \f4operations\fP (\f4Perform Daily Printer Service Operations\fP)
+.sp .5
+This menu allows you to perform daily printer operations
+such as enabling printers,
+starting the print service,
+and mounting forms.
+.TP
+\(bu\(bu \f4printers\fP (\f4Configure Printers for the Printer Service)
+.sp .5
+This menu allows you to configure printers for the
+\s-1LP\s+1 print service.
+.TP
+\(bu\(bu \f4priorities\fP (\f4Assign Print Queue Priorities to Users\fP)
+.sp .5
+This menu allows you to assign priority in the queue 
+for print requests.
+.TP
+\(bu\(bu \f4requests\fP (\f4Manage Active Print Requests\fP)
+.sp .5
+This menu allows you to hold and release
+pending print requests,
+to move print requests to new destinations,
+and to cancel print requests.
+.TP
+\(bu\(bu \f4status\fP (\f4Display Status of Printer Service\fP)
+.sp .5
+This menu allows you to display the current status of the 
+\s-1LP\s+1 print service.
+.TP
+\(bu\(bu \f4systems\fP (\f4Configure Connections to Remote Systems\fP)
+.sp .5
+This menu allows you to configure the connections between 
+your \s-1LP\s+1 print service system 
+and any other \s-1LP\s+1 print service.
+.sp
+.TP
+\(bu \f4Restore Service Management\f1
+.sp .5
+This menu provides tasks for restoring
+directories, files, file systems, and data partitions
+from archive volumes.
+.TP
+\(bu\(bu \f4operator\f1 (\f4Set/Display the Restore Operator\f1)
+.sp .5
+This task lets you set up and display the restore operator.
+.TP
+\(bu\(bu \f4respond\f1 (\f4Respond to Restore Job Prompts\f1)
+.sp .5
+This task lets you
+respond to restore job prompts.
+.TP
+\(bu\(bu \f4restore\f1 (\f4Restore from Backup Archives\f1)
+.sp .5
+This task lets you request the restoration of
+files, directories, file systems, and data
+partitions from an archived version.
+.TP
+\(bu\(bu \f4status\f1 (\f4Modify/Report Pending Restore Request Status\f1)
+.sp .5
+This menu lets you display and change
+the status of pending restore requests.
+.sp
+.TP
+\(bu \f4Schedule Automatic Task\f1
+.sp .5
+This menu permits users to modify the \f4cron\f1 file.  The
+\f4cron\f1 file allows users to request jobs to be run at
+specific times.
+.sp .5
+.TP
+\(bu\(bu \f4add\f1
+.sp .5
+Allows a user to add a \f4cron\f1 job.
+.sp .5
+.TP
+\(bu\(bu \f4change\f1
+.sp .5
+Allows a user to change an existion \f4cron\f1 job.
+.sp .5
+.TP
+\(bu\(bu \f4delete\f1
+.sp .5 
+Allows a user to delete cron job.
+.sp .5
+.TP
+\(bu\(bu \f4display\f1
+.sp .5
+Allows a user to display \f4cron\f1 jobs.
+.sp .5
+.TP
+\(bu \f4Software Installation and Information Management\fP
+.sp .5
+The tasks in this menu provide functions for software package
+installation, removal, and management of information pertaining
+to software packages.
+They include the ability to install and remove
+packages, and to check the accuracy of package installation.
+In addition, they include the ability to set installation defaults,
+store interactions with a particular package, store a package without
+actually installing it, and to list all installed packages.
+.TP
+\(bu\(bu \f4check\f1 (\f4Checks Accuracy of Installation\f1)
+.sp .5
+This task lets you check installed software packages for consistency,
+correct for inconsistencies, check for hidden files, and check
+the contents of files which are likely to have changed.
+.TP
+\(bu\(bu \f4defaults\f1 (\f4Sets Installation Defaults\f1)
+.sp .5
+This task allows you to decide, ahead of time, the way that the system
+should respond to an installation problem.
+.TP
+\(bu\(bu \f4install\f1 (\f4Installs Software Packages\f1)
+.sp .5
+This task lets you install software packages onto a spool, a hard disk,
+or a floppy diskette, and select the method that the system will use
+to respond to installation problems.
+.TP
+\(bu\(bu \f4interact\f1 (\f4Stores Interactions with Package\f1)
+.sp .5
+This task allows you to interact with the software
+installation process.
+.TP
+\(bu\(bu \f4list\f1 (\f4Displays Information about Packages\f1)
+.sp .5
+This task shows you the software packages that are installed
+on your system and tells you
+the name, location, and category of each.
+.TP
+\(bu\(bu \f4read_in\f1 (\f4Stores Packages Without Installing\fP)
+.sp .5
+This task lets you read in software packages without installing them.
+.TP
+\(bu\(bu \f4remove\f1 (\f4Removes Packages\f1)
+.sp .5
+This task lets you remove installed software packages.
+.sp
+.TP
+\(bu \f4Storage Device Operations and Definitions\f1
+.sp .5
+This menu contains tasks for 
+getting descriptions of 
+device aliases and attributes
+and for assigning device groups.
+.TP
+\(bu\(bu \f4descriptions\f1 (\f4Device Alias and Attribute Management\f1)
+.sp .5
+This menu contains tasks for listing, adding,
+removing, and modifying device descriptions
+and attributes.
+This menu also provides access to 
+device reservation services.
+.TP
+\(bu\(bu \f4groups\f1 (\f4Device Group Management\fP)
+.sp .5
+This menu provides access to
+tasks that let you list and administer
+device groups and their membership lists.
+.sp
+.TP
+\(bu \f4System Name, Date Time and Initial Password Setup\fP
+.sp .5
+This menu lets you set up your machine.
+The tasks in this menu include
+setting the system date and time, setting the node name of your system,
+doing initial system setup, 
+and assigning passwords to administrative logins on the system.
+.TP
+\(bu\(bu \f4datetime\f1 (\f4System Date and Time Information\f1)
+.sp .5
+This task lets you tell
+the computer the date, time, time zone, and whether
+you observe Daylight Savings Time 
+(\s-1DST\s+1).
+It is normally run once when the machine is first set up.
+If you observe \s-1DST\s+1,
+the computer automatically starts to observe it in the spring and
+returns to standard time in the fall.
+The machine must be turned
+off and turned back on again to guarantee that 
+\s-1ALL\s+1 times are
+reported correctly.
+Most times are correct the next time a user logs in.
+.TP
+\(bu\(bu \f4nodename\f1 (\f4System Name and Network Node Name of the Machine\f1)
+.sp .5
+This task lets you change the node name and system name of this machine.
+These names are used by various communications networks to identify
+this machine.
+.TP
+\(bu\(bu \f4password\f1 (\f4Assigns Administrative Login Passwords\f1)
+.sp .5
+This task lets you assign passwords to administrative logins.
+.TP
+\(bu\(bu \f4setup\f1 (\f4Sets up System Information for First Time\f1)
+.sp .5
+This task lets you define the first login, set the initial
+passwords on administration logins, and set the time zone
+for your location.
+.sp
+.TP
+\(bu \f4User Login and Group Administration\f1
+.sp .5
+This menu lets you manage the user 
+\s-1ID\s+1s
+and groups on your machine.
+Tasks include the ability to add, modify,
+and delete users or groups defined on your machine.
+You can place users in groups so that
+they can share access to files belonging to members
+of the group but protect these files
+from access by members of other groups.
+In addition, you can set defaults that are used for
+subsequent user definitions on your machine, and you can define or
+redefine user password information.
+.TP
+\(bu\(bu \f4add\f1 (\f4Adds Users or Groups\f1)
+.sp .5
+This task lets you define either a new user or a new group
+on your system.
+.TP
+\(bu\(bu \f4defaults\f1 (\f4Defines Defaults for Adding Users\f1)
+.sp .5
+This task lets you change some of the default values used when the
+\f4add user\f1 task creates a new login.
+Changing the default values does not affect any existing logins;
+it affects only those added subsequently.
+.TP
+\(bu\(bu \f4list\f1 (\f4Lists Users or Groups\f1)
+.sp .5
+This task lets you examine the attributes of the users and groups
+on your system.
+.TP
+\(bu\(bu \f4modify\f1 (\f4Modifies Attributes of Users or Groups\f1)
+.sp .5
+This task lets you modify either a user definition or a group
+definition on your system.
+.TP
+\(bu\(bu \f4password\f1 (\f4(Re-)defines User Password Information\f1)
+.sp .5
+This task lets you define or change a user's password.
+.TP
+\(bu\(bu \f4remove\f1 (\f4Removes Users or Groups\f1)
+.sp .5
+This task lets you remove a user from your system.
+.SH DIAGNOSTICS
+The \f4sysadm\f1 command exits with one of the following values:
+.TP
+\f40\f1
+Normal exit.
+.TP
+\f42\f1
+Invalid command syntax.
+Usage message of the \f4sysadm\f1 command is displayed.
+.TP
+\f44\f1
+The menu or task name given as an argument does not exist.
+.TP
+\f45\f1
+The menu name given as an argument is an empty placeholder menu, and
+therefore not available for use.
+.TP
+\f47\f1
+The \f4sysadm\f1 command is not available 
+because it cannot invoke \f4fmli\fP.
+(The \s-1FMLI\s+1 package may be corrupt or it may not have been installed.)
+.SH EXAMPLES
+\f4sysadm nodename\f1
+.SH NOTES
+The Release 3 version of the \f4sysadm\f1 command
+scrolled menus down the terminal screen.
+The Release 4 version of \f4sysadm\f1, however,
+displays menus in ``pop-up'' windows.
+.P
+Pre-Release 4 add-on packages
+other than those listed under \f4packagmgmt\fP 
+are listed under \f4old_sysadm\fP.
+.SH SEE ALSO
+\f4checkfsys\fP(1M),
+\f4delsysadm\fP(1M),
+\f4edsysadm\fP(1M),
+\f4makefsys\fP(1M),
+\f4mountfsys\fP(1M),
+\f4powerdown\fP(1M),
+\f4setup\fP(1M),
+\f4umountfsys\fP(1M).
+
+
+

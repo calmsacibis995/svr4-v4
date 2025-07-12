@@ -1,0 +1,47 @@
+'\"!  tbl | mmdoc
+'\"macro stdmacro
+.if n .pH g3x.menu_mark @(#)menu_mark	40.5 of 4/11/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.\" ident	"@(#)svid_ti:ti_lib/menu_mark	1.3"
+.nr X
+.if \nX=0 .ds x} menu_mark 3X "" "\&"
+.if \nX=1 .ds x} menu_mark 3X ""
+.if \nX=2 .ds x} menu_mark 3X "" "\&"
+.if \nX=3 .ds x} menu_mark "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4menu_mark\f1: \f4 set_menu_mark\f1, \f4menu_mark\f1 \- \f4menus\fP mark string routines
+.SH SYNOPSIS
+.nf
+.ft 4
+#include <menu.h>
+.sp
+int set_menu_mark(MENU *menu, char *mark);
+.sp 0.5
+char *menu_mark(MENU *menu);
+.ft 1
+.fi
+.SH DESCRIPTION
+\f4menus\fP displays mark strings to distinguish selected items in a
+menu (or the current item in a single-valued menu).
+\f4set_menu_mark\fP sets the mark string of \f2menu\f1 to \f2mark\f1.
+\f4menu_mark\fP returns a pointer to the mark string of \f2menu\f1.
+.SH RETURN VALUE
+\f4menu_mark\fP returns \f4NULL\fP on error.
+\f4set_menu_mark\fP returns one of the following:
+.TS
+lfCWw(1.25i)1 c1 l .
+E_OK	\-	The routine returned successfully.
+E_SYSTEM_ERROR	\-	System error.
+E_BAD_ARGUMENT	\-	An incorrect argument was passed to the routine.
+.TE
+.RE
+.SH NOTES
+The header file \f4<menu.h>\f1 automatically includes the header files
+\f4<eti.h>\fP and \f4<curses.h>\fP.
+.SH SEE ALSO
+.na
+\f4curses\fP(3X),
+\f4menus\fP(3X)
+.ad

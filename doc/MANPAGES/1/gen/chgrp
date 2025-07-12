@@ -1,0 +1,85 @@
+'\"macro stdmacro
+.if n .pH g1.chgrp @(#)chgrp	40.13.1.1 of 1/3/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.\" Copyright (c) 1983 Regents of the University of California.
+.\" All rights reserved.  The Berkeley software License Agreement
+.\" specifies the terms and conditions for redistribution.
+.\"
+.\" @(#)chgrp.1 1.19 88/08/25 SMI; from UCB 6.2 5/22/86
+.nr X
+.if \nX=0 .ds x} chgrp 1 "Essential Utilities" "\&"
+.if \nX=1 .ds x} chgrp 1 "Essential Utilities"
+.if \nX=2 .ds x} chgrp 1 "" "\&"
+.if \nX=3 .ds x} chgrp "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4chgrp\f1 \- change the group ownership of a file
+.SH SYNOPSIS
+\f4chgrp\fP [\f4\-R\fP] [\f4\-h\fP]\f2 group file \f1...
+.SH DESCRIPTION
+\f4chgrp\f1
+changes the group
+.SM ID
+of the
+.IR files
+given as arguments to
+\f2group\fP.
+The group may be either a decimal group
+.SM ID 
+or a group name found in the group
+.SM ID
+file, 
+\f4/etc/group\f1.
+.P
+You must be the owner of the
+file,
+or be the super-user to use this command.
+.P
+The operating system has a configuration option
+{\f4_POSIX_CHOWN_RESTRICTED\fP}, to restrict ownership changes.
+When this option is in effect, the owner of the file
+may change the group of the file only to a group to which
+the owner belongs.
+Only the super-user can arbitrarily change owner \f4ID\fPs whether this option is in effect or not.
+.P
+\f4chgrp\fP has one option:
+.TP
+\f4\-R\f1
+Recursive.
+\f4chgrp\f1
+descends through the directory, and any subdirectories,
+setting the specified group
+.SM ID
+as it proceeds.
+When symbolic links are encountered,
+they are traversed.
+.TP
+\f4\-h\fP
+If the file is a symbolic link, change the group
+of the symbolic link.
+Without this option, the group of the file referenced
+by the symbolic link is changed.
+.SH FILES
+.PD 0
+.TP 20
+\f4/etc/group\f1
+.PD
+.SH "SEE ALSO"
+\f4chmod\fP(1),
+\f4chown\fP(1),
+\f4id\fP(1M)
+.br
+\f4chown\fP(2)
+in the \f2Programmer's Reference Manual\f1.
+.br
+\f4group\fP(4),
+\f4passwd\fP(4)
+in the \f2System Administrator's Reference Manual\f1.
+.SH NOTES
+In a Remote File Sharing environment, you may not have the
+permissions that the output of the
+\f4ls \-l\f1
+command leads you to believe.
+For more information see the
+\f2Network User's and Administrator's Guide\f1.

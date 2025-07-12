@@ -1,0 +1,37 @@
+'\"macro stdmacro
+.if n .pH xnx.cvtomflib @(#)cvtomflib	40.1 of 6/6/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.nr X
+.if \nX=0 .ds x} cvtomflib 1 "" "" "\&"
+.if \nX=1 .ds x} cvtomflib 1 "" ""
+.if \nX=2 .ds x} cvtomflib 1 "" "\&"
+.if \nX=3 .ds x} cvtomflib "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4cvtomflib\fP - convert OMF (XENIX) libraries to ELF
+.SH SYNOPSIS
+\f4cvtomflib\fP [\f4-v\fP] [\f4-o\fP \f2outfile\f1] \f2library\fP [\f2library\fP. . .]
+.SH DESCRIPTION
+\f4cvtomflib\fP converts libraries of OMF objects to libraries of ELF objects.
+It is intended for use with application packages that provide only OMF
+libraries that could not otherwise be used with the
+Standard C Development Environment.
+.P
+The options have the following meanings.
+.TP
+\f4-v\fP
+Verbose output is produced for each converted object.
+Without this option, \f4cvtomflib\fP does its work silently.
+.TP
+\f4-o\fP
+This option allows the user to specify a new name, \f2outfile\fP, for the
+converted library without changing the original.
+This option is only available when a single library is being converted.
+.SH NOTES
+The original order of objects within the library is retained.
+.P
+Each library is converted in the directory in which it's located.
+Without the \f4-o\fP option, the converted library will overwrite the original;
+therefore, you may want to copy the original library before conversion.
+.\" .SH "SEE ALSO"
+.\" Whatever the application compatibility doc is called

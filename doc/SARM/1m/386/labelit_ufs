@@ -1,0 +1,66 @@
+'\"macro stdmacro
+.if n .pH g1a.labelit_ufs @(#)labelit_ufs	40.5 of 1/3/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+'\"macro stdmacro
+.if n .pH g1a.labelit_ufs @(#)labelit_ufs	40.5 of 7/17/89
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.if \nX=0 .ds x} labelit 1M "UFS" "\&"
+.if \nX=1 .ds x} labelit 1M "UFS"
+.if \nX=2 .ds x} labelit 1M "" "\&"
+.if \nX=3 .ds x} labelit "" "" "\&"
+.nr X
+.TH \*(x} "" "386 Computer Only"
+.SH NAME
+\f4labelit\f1 (ufs) \- provide labels for \f4ufs\f1 file systems
+.SH SYNOPSIS
+\f4labelit\f1
+[
+\f4\-F ufs\f1
+]
+[\f2generic_options\f1]
+.I special
+[
+.I fsname volume
+]
+.SH DESCRIPTION
+.I generic_options
+are options supported by the generic \f4labelit\f1 command.
+.PP
+\f4labelit\f1
+can be used to provide labels for unmounted disk
+file systems or file systems being copied to tape.
+.PP
+If neither \f2fsname\fP nor \f2volume\fP is specified,
+\f4labelit\fP prints the current values.
+.LP
+The
+.I special
+name should be the physical disk section (for
+example,
+\f4/dev/dsk/0s3\f1),
+or the cartridge tape (for example,
+\f4/dev/rmt/c0s0\f1).
+The device may not be on a remote machine.
+.P
+The
+.I fsname\^
+argument represents the mounted name (for example,
+\f4root\f1,
+\f4u1\f1,
+etc.)
+of the file system.
+.PP
+.I Volume\^
+may be used to equate an internal name to a volume
+name applied externally to the disk pack, diskette, or tape.
+.PP
+The option is:
+.PP
+.TP .6i
+\f4\-F ufs\f1
+Specifies the \f4ufs\f1-FSType.
+.SH "SEE ALSO"
+generic \f4labelit\fP(1M),
+\f4makefsys\fP(1M),
+\f4ufs\fP(4).

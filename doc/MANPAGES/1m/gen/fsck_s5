@@ -1,0 +1,208 @@
+'\"macro stdmacro
+.if n .pH g1a.fsck_s5 @(#)fsck_s5	40.10 of 1/3/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} fsck 1M "s5" "\&"
+.if \nX=1 .ds x} fsck 1M "s5"
+.if \nX=2 .ds x} fsck 1M "" "\&"
+.if \nX=3 .ds x} fsck "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4fsck\f1 (s5) \- check and repair \f4s5\f1 file systems 
+.SH SYNOPSIS
+\f4fsck\f1
+[\f4\-F s5\f1]
+[\f2generic_options\f1]
+[\f2special...\f1]
+.br
+\f4fsck\f1
+[\f4\-F s5\f1]
+[\f2generic_options\f1]
+[\f4\-y\f1]
+[\f4\-n\f1]
+[\f4\-p\f1]
+[\f4\-s\f2X\f1]
+[\f4\-S\f2X\f1]
+[\f4\-t\f2file\f1]
+[\f4\-l\f1]
+[\f4\-q\f1]
+[\f4\-D\f1]
+[\f4\-f\f1]
+[\f2special...\f1]
+.SH DESCRIPTION
+.I generic_options
+are options supported by the generic \f4fsck\f1 command.
+.PP
+The options are:
+.TP 10
+\f4\-F s5\f1
+Specifies the \f4s5\f1-FSType.
+.TP 10
+\f4\-y\f1
+Assume a \f4yes\f1 response to all questions asked by 
+\f4fsck\f1.
+.TP 10
+\f4\-n\f1
+Assume a \f4no\f1 response to all questions asked by 
+\f4fsck\f1;
+do not open the file system for writing.
+.TP 10
+\f4\-p\f1
+Correct inconsistencies that can be fixed automatically,
+that is, inconsistencies that are deemed harmless and
+can be fixed without confirmation by the administrator.
+Examples of such inconsistencies are unreferenced i-nodes,
+incorrect counts in the superblocks, and missing blocks
+in the free list.
+.TP 10
+\f4\-s\f2X\f1
+Ignore the actual free list and (unconditionally) reconstruct a new
+one by rewriting the super-block of the file system.  
+The file system should be unmounted while this is done; if this
+is not possible, care should be taken that the system is quiescent
+and that it is rebooted immediately afterwards.
+This precaution is necessary so that the old, bad, in-core copy
+of the superblock will not continue to be used, or written on the file system.
+.sp.5
+The
+\f4\-s\f2X\f1
+suboption allows for creating an optimal free-list organization.
+.sp.5
+If 
+.I X\^
+is not given,
+the values used when the file system was created
+are used.
+The format of \f2X\f1 is \f2cylinder size\f1:\f2gap size\f1.
+.TP 10
+\f4\-S\f2X\f1
+Conditionally reconstruct the free list. This suboption
+is like
+\f4\-s\f2X\f1
+above except that the free list is rebuilt only
+if there were no discrepancies discovered in the
+file system. Using
+\f4S\f1
+will force a \f4no\f1 response to all questions asked
+by
+\f4fsck\f1.
+This suboption is useful for forcing free list reorganization
+on uncontaminated file systems.
+.TP 10
+\f4\-t\f2file\f1
+If
+\f4fsck\f1
+cannot obtain enough memory to keep its tables,
+it uses a scratch file. If the \f4t\fP option is
+specified, the \f2file\f1 named
+is used as the scratch file, if needed.
+Without the
+\f4t\f1 option,
+\f4fsck\f1
+will prompt the user for the name of the
+scratch file. The file chosen should not be on the
+file system being checked, and if it is not
+a special file or did not already exist, it is
+removed when
+\f4fsck\f1
+completes.
+.TP 10
+\f4\-l\f1
+Identify damaged files by their logical names.
+.TP 10
+\f4\-q\f1
+Quiet
+\f4fsck\f1.
+Unreferenced
+\f4fifos\f1
+will silently be removed. 
+If
+\f4fsck\f1
+requires it, counts in the superblock will be automatically
+fixed and the free list salvaged.
+.TP 10
+\f4\-D\f1
+Directories are checked for bad blocks.
+Useful after system crashes.
+.TP 10
+\f4\-f\f1
+Fast check.
+Check block and sizes and check the free list.
+The free list will be reconstructed if it is necessary.
+.PP
+.ne 10
+Inconsistencies checked are as follows:
+.sp
+.RS
+.PD 0
+.TP 6
+1.
+Blocks claimed by more than one i-node or the free list.
+.TP 6
+2.
+Blocks claimed by an i-node or the free list outside the range of the file system.
+.TP 6
+3.
+Incorrect link counts.
+.TP 6
+4.
+Size checks:
+.IP "" 12
+Incorrect number of blocks.
+.br
+Directory size not 16-byte aligned.
+.TP 6
+5.
+Bad i-node format.
+.TP 6
+6.
+Blocks not accounted for anywhere.
+.TP 6
+7.
+Directory checks:
+.IP "" 12
+File pointing to unallocated i-node.
+.br
+I-node number out of range.
+.TP 6
+8.
+Super Block checks:
+.IP "" 12
+More than 65536 i-nodes.
+.br
+More blocks for i-nodes than there are in the file system.
+.TP 6
+9.
+Bad free block list format.
+.TP 6
+10.
+Total free block and/or free i-node count incorrect.
+.RE
+.PD
+.PP
+Orphaned files and directories (allocated but unreferenced) are,
+with the user's concurrence, reconnected by
+placing them in the 
+\f4lost+found\f1
+directory, if the files are nonempty.
+The user will be notified if the file or directory is empty or not.
+Empty files or directories are removed, as long as the 
+\f4n\f1
+suboption is not specified.
+\f4fsck\f1
+will force the reconnection of nonempty directories.
+The name assigned is the i-node number.
+.PP
+.SH NOTE
+Checking the raw device is almost always faster.
+.PP
+I-node numbers for \f4.\f1 and \f4.\|.\f1
+in each directory are not checked for validity.
+.SH "SEE ALSO"
+\f4checkfsys\f1(1M),
+\f4crash\f1(1M),
+generic \f4fsck\f1(1M),
+\f4mkfs\f1(1M),
+\f4ncheck\f1(1M),
+\f4fs\f1(4).

@@ -1,0 +1,74 @@
+'\"macro stdmacro
+.if n .pH g2.chsize @(#)chsize	40.11 of 6/18/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} chsize 2 "Application Compatibility Package" "\&"
+.if \nX=1 .ds x} chsize 2 "Application Compatibility Package"
+.if \nX=2 .ds x} chsize 2 "" "\&"
+.if \nX=3 .ds x} chsize "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4chsize\f1 \- change the size of a file
+.SH SYNOPSIS
+\f4cc \f1[\f2flag \f1. . .] \f2file\f1 . . . \f4-lx\f1
+.br
+\f4int chsize (int fildes, long size);\f1
+.SH DESCRIPTION
+\f2fildes\f1
+is a file descriptor obtained from a
+\f4create\f1,
+\f4open\f1,
+\f4dup\f1,
+\f4fcntl\f1,
+or
+\f4pipe\f1
+system call.
+\f4chsize\f1
+changes the size of the file associated with
+the file descriptor
+\f2fildes\f1
+to be exactly
+\f2size\f1
+bytes in length.
+The routine either truncates the file,
+or pads it with an appropriate number of bytes.
+If
+\f2size\f1
+is less than the initial size of the file,
+then all allocated disk blocks between
+\f2size\f1
+and the initial file size are freed.
+.P
+The maximum file size as set by
+\f4ulimit\f1(2)
+is enforced when
+\f4chsize\f1
+is called,
+rather than on subsequent writes.
+Thus
+\f4chsize\f1
+fails, and the file size remains unchanged
+if the new changed file size would exceed
+the 
+\f4ulimit\f1.
+.SH DIAGNOSTICS
+Upon successful completion, a value of \f40\f1 is returned.
+Otherwise, the value \f4\-1\f1 is returned and
+\f4errno\f1
+is set to indicate the error.
+.SH SEE ALSO
+\f4creat\f1(2),
+\f4dup\f1(2),
+\f4lseek\f1(2),
+\f4open\f1(2),
+\f4pipe\f1(2),
+\f4ulimit\f1(2)
+.SH NOTES
+In general if
+\f4chsize\f1
+is used to expand the size of a file,
+when data is written to the end of the file,
+intervening blocks are filled with zeros.
+In a some cases, reducing the file size may not remove
+the data beyond the new end-of-file.

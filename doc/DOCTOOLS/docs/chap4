@@ -1,0 +1,4325 @@
+'\"!  tbl | mmdoc
+.if n .pH doctools.chap4 @(#)chap4	40.2
+.\" @(#) SCCS File: chap4; ID:1.6; DATED:1/5/90
+.\"
+.\"     Copyright (c) 1989 AT&T   
+.\"     All Rights Reserved       
+.\"
+.\"                  AT&T - PROPRIETARY
+.\"     THIS DOCUMENT CONTAINS PROPRIETARY INFORMATION OF
+.\"     AT&T AND IS NOT TO BE DISCLOSED OR USED EXCEPT IN
+.\"        ACCORDANCE WITH APPLICABLE AGREEMENTS.
+.\" 
+.\"
+.\"   Documenter's Tool Set User's Guide
+.\"   Written by: J.R. Okin SF E-308 attunix!jro 201-522-5105
+.\"
+.\"
+.PM DN "FINAL COPY"
+.BK "Documenter's Tool Set User's Guide" "Release 1.0"
+.CH "Guide Macros" 4
+.H 1 "Introduction"
+.IX guide macros
+.IX introduction, guide macros
+This chapter describes all the macros available
+for writing source text files for producing user's
+guides, reference cards, primers, and other similar
+technical documents.
+The macros have been grouped into sections according to
+their basic functionality; for example, there is a section
+describing the macros that produce admonitions
+and another describing the macros that produce screens
+and boxes.
+The following figure displays an alphabetical listing
+of the macros:
+.FG "The Guide Macros"
+.DS I UI
+\&.1B	\&.1C	\&.2B	\&.2C	\&.2E	\&.2S
+\&.AB	\&.AC	\&.AL	\&.B	\&.BB	\&.BC
+\&.BK	\&.BL	\&.BP	\&.BT	\&.CH	\&.CN
+.IX guide macros
+\&.CO	\&.CT	\&.DE	\&.DL	\&.DS	\&.DT
+\&.EP	\&.EV	\&.FG	\&.H	\&.HK	\&.I
+\&.IX	\&.LE	\&.LI	\&.NE	\&.NF	\&.P
+\&.PC	\&.PD	\&.PM	\&.R	\&.RP	\&.SB
+\&.SE	\&.SF	\&.SK	\&.SO	\&.SP	\&.SS
+\&.ST	\&.TB	\&.UI	\&.VE	\&.VL	\&.VS
+.DE
+.IX guide macros, listing
+.H 1 "Book and Chapter Information"
+.H 2 "The \&.BK Macro"
+.IX \&.BK macro
+.IX macro, \&.BK
+.IX guide macros, book information
+.IX book information macro, \&.BK
+.H 3 "Name"
+.UI \&.BK
+\- specify book-specific information.
+.H 3 "Synopsis"
+.UI \&.BK
+.SB title
+[
+.SB release-info
+] [
+.SB abbreviated-title
+] [
+.SB book-acronym
+]
+.P
+where
+.VL "1.2i" "" SB
+.LI title
+is the full title of the book.
+.LI release-info
+is additional information relating to the book's publication,
+such as a release number.
+.LI abbreviated-title
+is an abbreviated title of the book.
+.LI book-acronym
+is an acronym used to identify the book
+when producing a master index.
+See chapter 6 for more information on indexing.
+.LE
+.H 3 "Description"
+The
+.UI \&.BK
+macro specifies book-specific information.
+This information prints in the running footer of verso (even-numbered)
+pages.
+Only the first argument is required; the remaining arguments
+are optional.
+.P
+In most instances, you will use
+.UI \&.BK
+to specify the book title of a document.
+You can, however, specify additional information to appear
+next to the title, such as release information.
+If your book title is too long to print in the footer, you
+have the option of specifying an abbreviated book title
+that will print in place of the full book title.
+.H 3 "Examples"
+.AL
+.LI
+The simplest case; specifying a book title:
+.VL "0.7i"
+.NE6
+.LI Input:
+.DS "" UI
+\&.BK "Marvin's Manual of Marbles"
+.DE
+.LI Output:
+.BB
+\D'l 3.25i 0'
+\D'l 3.25i 0'
+\D'l 3.25i 0'
+\D'l 3.25i 0'
+.sp3
+.ft\*(@e
+\s-32\h'1.9i'Marvin's Manual of Marbles\s0\fP
+.BC
+.LE
+.LI
+More information; specifying a release number:
+.VL "0.7i"
+.LI Input:
+.DS "" UI
+\&.BK "Marvin's Manual of Marbles" "Release 1.5"
+.DE
+.LI Output:
+.BB
+\D'l 3.25i 0'
+\D'l 3.25i 0'
+\D'l 3.25i 0'
+\D'l 3.25i 0'
+.sp3
+.ft\*(@e
+\s-32\h'1.3i'Marvin's Manual of Marbles : Release 1.5\s0\fP
+.BC
+.LE
+.LI
+A lengthy book title; specifying an abbreviated title:
+.AB N
+Since the arguments are too long to print correctly
+on the page, a backslash (\e) indicates where
+the line was broken for the example.
+However, when entering this information in a text file, it should be
+typed in on a single line.
+.AC
+.VL "0.7i"
+.LI Input:
+.DS "" UI
+\&.BK "Marvin Malacites' Magnificent Manual of Marbles" \e
+	 "Release 1.5" "Marvin's Marble Manual"
+.DE
+.LI Output:
+.BB
+\D'l 3.25i 0'
+\D'l 3.25i 0'
+\D'l 3.25i 0'
+\D'l 3.25i 0'
+.sp3
+.ft\*(@e
+\s-32\h'1.4i'Marvin's Marble Manual : Release 1.5\s0\fP
+.BC
+.LE
+.LE
+.sp -1.5
+.H 2 "The \&.CH Macro"
+.IX \&.CH macro
+.IX macro, \&.CH
+.IX guide macros, chapter information
+.IX chapter information macro, \&.CH
+.H 3 "Name"
+.UI \&.CH
+\- specify chapter-specific information.
+.H 3 "Synopsis"
+.UI \&.CH
+.SB title
+[
+.SB section
+] [
+.SB abbreviated-title
+]
+.P
+where
+.VL "1.2i" "" SB
+.LI title
+is the full title of the chapter.
+.LI section
+is a marker, such as a number or letter, that indicates
+the chapter's place with regard to other chapters in the book.
+.LI abbreviated-title
+is an abbreviated title of the chapter.
+.LE
+.H 3 "Description"
+The
+.UI \&.CH
+macro specifies chapter-specific information.
+This information prints in the running footer of recto (odd-numbered)
+pages.
+Only the first argument is required; the remaining arguments
+are optional.
+.P
+As with the
+.UI \&.BK
+macro,
+.UI \&.CH
+expects the first argument to be the full title, here the chapter
+title, and the third argument to be an abbreviated title.
+The second argument holds the chapter or section identification;
+most often this will be a number or letter, such as
+.UI 2
+for chapter 2 or
+.UI A
+for appendix A.
+.H 3 "Examples"
+.AL
+.LI
+The simplest case; specifying a chapter title:
+.VL 0.7i
+.NE5
+.LI Input:
+.DS "" UI
+\&.CH "Making the Most of Miniature Marbles"
+.DE
+.LI Output:
+.BB
+\D'l 3.25i 0'
+\D'l 3.25i 0'
+\D'l 3.25i 0'
+\D'l 3.25i 0'
+.sp3
+.ft\*(@e
+\s-3Making the Most of Miniature Marbles\h'1.5i'1\s0\fP
+.BC
+.LE
+.LI
+A multi-chapter book; specifying a section identification:
+.VL 0.7i
+.NE5
+.LI Input:
+.DS "" UI
+\&.CH "Making the Most of Miniature Marbles" "3"
+.DE
+.NE 2i
+.LI Output:
+.BB
+\D'l 3.25i 0'
+\D'l 3.25i 0'
+\D'l 3.25i 0'
+\D'l 3.25i 0'
+.sp3
+.ft\*(@e
+\s-3Making the Most of Miniature Marbles\h'1.4i'3-1\s0\fP
+.BC
+.LE
+.LE
+.H 1 "Chapter Sections"
+.IX chapter sections, heading macros
+.IX guide macros, chapter sections
+.IX heading macros
+.H 2 "The \&.H Macro"
+.IX \&.H macro
+.IX macro, \&.H
+.IX guide macros, chapter sections
+.IX chapter heading macro, \&.H
+.H 3 "Name"
+.UI \&.H
+\- specify heading information.
+.H 3 "Synopsis"
+.UI \&.H
+{
+.UI 1
+|
+.UI 2
+|
+.UI 3
+|
+.UI 4
+|
+.UI 5
+}
+.SB heading
+[
+.SB abbreviated-heading
+]
+.P
+where
+.VL "0.7i" "" UI
+.LI 1
+specifies a level-one heading (1 being the highest
+and 5 being the most subordinate).
+.LI 2
+specifies a level-two heading.
+.LI 3
+specifies a level-three heading.
+.LI 4
+specifies a level-four heading.
+.LI 5
+specifies a level-five heading.
+.LI heading SB
+is the section title.
+.LI abbreviated-heading SB
+is an abbreviated section title (used with a
+.UI "\&.H 1"
+heading only).
+.LE
+.H 3 "Description"
+The
+.UI \&.H
+macro specifies heading text that divides a chapter
+into sections.
+The first and second arguments are required since
+they specify the level of heading and the text
+to be printed.
+The third argument is optional and is only used with
+a level-one heading.
+.P
+A level-one heading,
+.UI "\&.H 1" ,
+should appear at the beginning of a chapter, either
+as the first macro or directly following the
+.UI \&.BK
+and/or
+.UI \&.CH
+macros.
+A level-one heading always causes a new page to be started;
+the heading text prints at the top of the page directly
+below a rule which runs the full width of the text page.
+On subsequent pages, the level-one heading text prints
+in a running header next to a rule.
+Since level-one heading text might be too long to print in a running
+header, you can specify an abbreviated level-one title
+as the third argument to
+.UI \&.H .
+.P
+Level-2 through level-5 headings are distinguished
+by various typographical means, such as point size
+and leading (the spacing between lines).
+.P
+All headings reset page default values for font, point
+size, leading, indentation, and line length.
+.H 3 "Examples"
+.AL
+.LI
+The simplest case; specifying a level-one heading:
+.VL 0.7i
+.NE5
+.LI Input:
+.DS "" UI
+\&.H 1 "Mastering Marbles"
+.DE
+.LI Output:
+.BB
+.sp0.5
+\D'l 3.25i 0'
+.ft\*(@e
+Mastering Marbles
+.sp2
+.ps-3
+.ft\*(-1
+To some, marbles are a way of life...
+\D'l 3.25i 0'
+\D'l 3.25i 0'
+\D'l 3.25i 0'
+\D'l 3.25i 0'
+.ps
+.BC
+At the top of the next page, it produces the following running
+header:
+.BB
+.ps-3
+.sp0.5
+.ft\*(@e
+Mastering Marbles
+.sp-1
+\h'\wMastering Marblesu+0.1i'\D'l 2.3i 0'
+.sp1
+.ft\*(-1
+As we saw in the previous example, marbles ...
+\D'l 3.25i 0'
+\D'l 3.25i 0'
+\D'l 3.25i 0'
+\D'l 3.25i 0'
+.ps
+.BC
+.LE
+Specifying the third argument to
+a level-one heading changes the text that prints in the running
+headers.
+.LI
+A page with many headings; specifying level-two through level-five
+headings:
+.VL 0.7i
+.NE10
+.LI Input:
+.DS "" UI
+\&.H 2 "A Level-Two Heading"
+Some marbles are bigger than others ...
+\&.H 3 "A Level-Three Heading"
+Some marbles have more fun ...
+\&.H 4 "A Level-Four Heading"
+Some marbles have all the fun ...
+\&.H 5 "A Level-Five Heading"
+Some marbles knock themselves out having fun ...
+.DE
+.NE20
+.LI Output:
+.BB
+.ps-3
+.sp0.5
+.ft\*(@e
+Mastering Marbles
+.sp-1
+\h'\wMastering Marblesu+0.1i'\D'l 2.35i 0'
+.ps
+.sp1
+.ps-1
+A Level-Two Heading
+.ps
+.sp0.5
+.ft\*(-1
+.ps-3
+Some marbles are bigger than others ...
+.ps
+.sp0.75
+.ps-2
+.ft\*(@e
+A Level-Three Heading
+.ps
+.sp0.25
+.ft\*(-1
+.ps-3
+Some marbles have more fun ...
+.ps
+.sp0.5
+.ps-3
+.ft\*(@e
+A Level-Four Heading
+.vs7
+.ft\*(-1
+Some marbles have all the fun ...
+.vs
+.sp0.5
+.ft\*(@e
+.vs7
+A Level-Five Heading\f1  Some marbles knock themselves out having
+fun ...
+.ps
+.vs
+\D'l 3.25i 0'
+\D'l 3.25i 0'
+\D'l 3.25i 0'
+.sp2
+.ft\*(@e
+\s-32\h'1.3i'Marvin's Manual of Marbles : Release 1.5\s0\fP
+.BC
+.LE
+The level-five heading, unlike the level-two through level-four
+headings, does not force a line break.
+This means that the lines
+of text following a level-five heading will start printing
+on the same line as the heading text, provided there is enough
+space.
+.LE
+.H 1 "Admonitions"
+.IX admonition macros
+.IX macros, admonitions
+.H 2 "The \&.AB Macro"
+.IX \&.AB macro
+.IX macro, \&.AB
+.IX guide macros, admonition begin
+.IX admonition begin macro, \&.AB
+.H 3 "Name"
+.UI \&.AB
+\- specify the beginning of an admonition.
+.H 3 "Synopsis"
+.UI \&.AB
+{
+.UI N
+|
+.UI C
+|
+.UI W
+}
+.P
+where
+.VL "0.35i" "" UI
+.LI N
+specifies a note admonition.
+.LI C
+specifies a caution admonition.
+.LI W
+specifies a warning admonition.
+.LE
+.H 3 "Description"
+The
+.UI \&.AB
+macro specifies the beginning of admonition text.
+It is used in conjunction with the
+.UI \&.AC
+macro, described below.
+Either
+.UI N ,
+.UI C ,
+or
+.UI W ,
+must be specified as the argument to
+.UI \&.AB
+in order to select the type of admonition to be printed.
+.P
+The three admonitions produce icons in the shape of road
+signs, with the text for the admonition printed to the right
+of the icon.
+The note admonition,
+.UI "\&.AB N" ,
+produces a rectangle atop a straight line, resembling
+a simple informational road sign such as one showing
+a speed limit.
+The caution admonition,
+.UI "\&.AB C" ,
+produces a triangle atop a straight line, resembling
+a yield sign.
+The warning admonition,
+.UI "\&.AB W" ,
+produces an octagon atop a straight line, resembling
+a stop sign.
+.H 3 "Examples"
+.AL
+.LI
+A note admonition:
+.VL 0.7i
+.NE12
+.LI Input:
+.DS "" UI
+\&.AB N
+Marble competitions involving gambling are
+strictly forbidden.
+Being caught in such a pursuit is punishable
+to the full
+extent of the law.
+\&.AC
+.DE
+.LI Output:
+.AB N
+Marble competitions involving gambling are strictly forbidden.
+Being caught in such a pursuit is punishable to the full
+extent of the law.
+.AC
+.LE
+.LI
+A caution admonition:
+.VL 0.7i
+.NE12
+.LI Input:
+.DS "" UI
+\&.AB C
+Be sure to wear proper eye protection when marbling
+at high speeds, or when more than three
+individuals are marbling simultaneously.
+\&.AC
+.DE
+.LI Output:
+.AB C
+Be sure to wear proper eye protection when marbling
+at high speeds, or when more than three individuals are
+marbling simultaneously.
+.AC
+.LE
+.LI
+A warning admonition:
+.VL 0.7i
+.NE12
+.LI Input:
+.DS "" UI
+\&.AB W
+Marbling on ice-covered rooftops could be hazardous
+to your health.  Consult a physician before attempting
+this particular type of marbling.
+\&.AC
+.DE
+.LI Output:
+.AB W
+Marbling on ice-covered rooftops could be hazardous
+to your health.  Consult a physician before attempting
+this particular type of marbling.
+.AC
+.LE
+.LE
+.H 2 "The \&.AC Macro"
+.IX \&.AC macro
+.IX macro, \&.AC
+.IX guide macros, admonition close
+.IX admonition close macro, \&.AC
+.H 3 "Name"
+.UI \&.AC
+\- specify the end of an admonition.
+.H 3 "Synopsis"
+.UI \&.AC
+.H 3 "Description"
+The
+.UI \&.AC
+macro specifies the end of admonition text.
+It is used in conjunction with the
+.UI \&.AB
+macro, described above.
+.H 3 "Examples"
+See the examples in the
+.UI \&.AB
+macro section.
+.H 1 "Screens and Boxes"
+.IX screen macros
+.IX box macros
+.IX macros, screens
+.IX macros, boxes
+.H 2 "The \&.SS Macro"
+.IX \&.SS macro
+.IX macro, \&.SS
+.IX guide macros, screen start
+.IX screen start macro, \&.SS
+.H 3 "Name"
+.UI \&.SS
+\- specify the beginning of a screen.
+.H 3 "Synopsis"
+.UI \&.SS
+[
+.UI UI
+|
+.UI CO
+|
+.UI PC
+]
+.P
+where
+.VL 0.5i "" UI
+.LI UI
+specifies user input as the default text type for the screen.
+.LI CO
+specifies computer output as the default text type for the screen.
+.LI PC
+specifies program code as the default text type for the screen.
+.LE
+.H 3 "Description"
+The
+.UI \&.SS
+macro specifies the start of a screen.
+It is used in conjunction with the
+.UI \&.SE
+macro, described below.
+.P
+By default, screen text will print as computer output;
+an example of computer output is text that prints on
+a user's screen after a command is executed.
+This default can be changed using one of the optional
+arguments.
+The
+.UI UI
+argument specifies that default screen text should print as
+user input; an example of user input is text that
+a user enters at his or her terminal to execute a command.
+The
+.UI PC
+argument specifies that default screen text should print
+as program code: an example of program code is a fragment
+of text from a C program.
+The
+.UI CO
+argument specifies that default screen text should
+print as computer output.
+This option has no effect since computer output text is currently the default
+text type for screen.  However, its inclusion protects
+against your forgetting the default.
+.P
+These arguments,
+.UI UI
+and
+.UI PC
+and
+.UI CO ,
+map to specialized display macros described later.
+The
+.UI \&.UI
+and
+.UI \&.PC
+and
+.UI \&.CO
+macros are used to distinguish user input text,
+program code text,
+and computer output text, respectively.
+They can be used within a screen to depict
+an interactive terminal session, such as one showing
+a user entering a line of text and the output generated
+by the computer.
+.H 3 "Examples"
+.AL
+.LI
+The simplest case; a screen of computer output:
+.VL 0.7i
+.NE12
+.LI Input:
+.DS "" UI
+\&.SS
+Error in execution:  *** Marble Overflow ***
+Too many marbles input.
+
+Marbles dumped.
+
+!!! Try again later !!!
+\&.SE
+.DE
+.LI Output:
+.SS
+Error in execution:  *** Marble Overflow ***
+Too many marbles input.
+
+Marbles dumped.
+
+!!! Try again later !!!
+.SE
+.LE
+.LI
+A different screen type; a piece of program code:
+.VL 0.7i
+.NE18
+.LI Input:
+.DS "" UI
+\&.SS PC
+# Shell function to count marbles
+marble count () {
+   echo "\etChecking on Number of Marbles.\en"
+   echo "\etPlease Wait.\en"
+   i=0;
+   for Marbles in `cat bagofmarbles`
+   do
+      Marbles=`expr ${Marbles} + 1`
+   done
+   echo "Got ${Marbles} Marbles in my bag."
+}
+\&.SE
+.DE
+.LI Output:
+.SS PC
+# Shell function to count marbles
+marblecount () {
+   echo "\etChecking on Number of Marbles.\en"
+   echo "\etPlease Wait.\en"
+   i=0;
+   for Marbles in `cat bagofmarbles`
+   do
+      Marbles=`expr ${Marbles} + 1`
+   done
+   echo "\etGot ${Marbles} Marbles in My Bag."
+}
+.SE
+.LE
+.LI
+Mixing text types; an interactive terminal session:
+.VL 0.7i
+.NE15
+.LI Input:
+.DS "" UI
+\&.SS
+aggie> \ec
+\&.UI "$HOME/bin/marblecount"
+
+      Checking on Number of Marbles.
+
+      Please Wait.
+
+      Got 46 Marbles in My Bag.
+aggie>
+\&.SE
+.DE
+.AB N
+The
+.UI \&.UI
+macro indicates that the command
+.UI $HOME/bin/marblecount
+is being entered as user input.
+Since we want it to appear on the same
+line as the prompt,
+.UI aggie> ,
+a
+.UI \ec
+was needed to specify that the next line should print
+on the same line as the
+.UI \ec .
+.AC
+.LI Output:
+.SS
+aggie> \c
+.UI "$HOME/bin/marblecount"
+
+      Checking on Number of Marbles.
+
+      Please Wait.
+
+      Got 46 Marbles in My Bag.
+aggie>
+.SE
+.LE
+.LE
+.NE 2i
+.H 2 "The \&.SE Macro"
+.IX \&.SE macro
+.IX macro, \&.SE
+.IX guide macros, screen end
+.IX screen end macro, \&.SE
+.H 3 "Name"
+.UI \&.SE
+\- specify the end of a screen.
+.H 3 "Synopsis"
+.UI \&.SE
+.H 3 "Description"
+The
+.UI \&.SE
+macro specifies the end of a screen.
+It is used in conjunction with the
+.UI \&.SS
+macro, described above.
+.H 3 "Examples"
+See examples in the
+.UI \&.SS
+macro section.
+.H 2 "The \&.BB Macro"
+.IX \&.BB macro
+.IX macro, \&.BB
+.IX guide macros, box begin
+.IX box begin macro, \&.BB
+.H 3 "Name"
+.UI \&.BB
+\- specify the beginning of a box.
+.H 3 "Synopsis"
+.UI \&.BB
+[
+.SB text
+] [
+.SB punctuation
+]
+.P
+where
+.VL 1.2i "" SB
+.LI text
+is one or more words to be enclosed in a box.
+.LI punctuation
+is some form of punctuation to be printed following the boxed text.
+.LE
+.H 3 "Description"
+The
+.UI \&.BB
+macro specifies the beginning of a box.
+If a
+.SB text
+argument is specified, the argument will print enclosed in a box,
+followed by
+.SB punctuation ,
+if specified.
+If a
+.SB text
+argument is not specified,
+.UI \&.BB
+is used in conjunction with
+.UI \&.BC
+to demarcate a block of text to be printed in a box.
+The width of the box is determined by the width
+of the longest line; and the length of the box
+is determined by how many lines of text are between
+the
+.UI \&.BB
+and
+.UI \&.BC
+macros.
+The box is automatically centered on the page.
+.H 3 "Examples"
+.AL
+.LI
+Boxing a couple of words:
+.VL 0.7i
+.NE8
+.LI Input:
+.DS "" UI
+In this particular sampling of marbles, we see a
+\&.BB "tiger eye"
+and an
+\&.BB aggie .
+.DE
+.LI Output:
+.DS "" "" F
+In this particular sampling of marbles, we see a
+.BB "tiger eye"
+and an
+.BB aggie .
+.DE
+.LE
+.LI
+Boxing a block of text:
+.VL 0.7i
+.NE17
+.LI Input:
+.DS "" UI
+\&.BB
+MARBLE MONTH IN MANHATTAN
+.sp
+Meet Marvin the Marble Master !
+.sp
+See the Marbles that Made History !
+.sp
+Exchange Marble Anecdotes !
+.sp
+.sp
+!! A Fun Time for All !!
+\&.BC
+.DE
+.NE15
+.LI Output:
+.BB
+MARBLE MONTH IN MANHATTAN
+.sp
+Meet Marvin the Marble Master !
+.sp
+See the Marbles that Made History !
+.sp
+Exchange Marble Anecdotes !
+.sp
+.sp
+!! A Fun Time for All !!
+.BC
+.LE
+.LE
+.H 2 "The \&.BC Macro"
+.IX \&.BC macro
+.IX macro, \&.BC
+.IX guide macros, box close
+.IX box close macro, \&.BC
+.H 3 "Name"
+.UI \&.BC
+\- specify the close of a box.
+.H 3 "Synopsis"
+.UI \&.BC
+.H 3 "Description"
+The
+.UI \&.BC
+macro specifies the end of a box.
+It is used in conjunction with the
+.UI \&.BB
+macro, described above.
+.H 3 "Examples"
+See examples in the
+.UI \&.BB
+macro section.
+.H 1 "Legends"
+.IX legends
+.IX figure legends
+.IX table legends
+.H 2 "The \&.FG Macro"
+.IX \&.FG macro
+.IX macro, \&.FG
+.IX guide macros, figure legends
+.IX figure legend macro, \&.FG
+.H 3 "Name"
+.UI \&.FG
+\- specify the beginning of a figure.
+.H 3 "Synopsis"
+.UI \&.FG
+.SB legend
+[
+.SB abbreviated-legend
+] [
+.SB reference
+]
+.P
+where
+.VL "" "" SB
+.LI legend
+is the text that composes the figure legend.
+.LI abbreviated-legend
+is a shortened form of the legend used as the continued
+figure legend for figures that span more than one page.
+.LI reference
+is a unique one or two character string name that dynamically
+references the figure number, both forwards and backwards, from
+anywhere in the file.
+.LE
+.H 3 "Description"
+The
+.UI \&.FG
+macro specifies a figure legend.
+When the file processes,
+.SB legend
+is prefixed with the word
+.UI Figure ,
+its associated reference, such as
+.UI 3-1
+for the first figure in chapter 3,
+and a colon.
+The
+.SB legend
+and its prefix are printed below a rule and precede
+the display or screen or illustration they are
+referencing; another rule is printed just below
+the figure's display, screen, or illustration.
+.P
+For figures that continue onto
+a second page, a second argument can be specified
+to the
+.UI \&.FG
+macro for an abbreviated legend to be used on the
+second and all subsequent pages.
+.P
+The third argument to
+.UI \&.FG
+enables you to identify the figure with a one or two character
+code which you can then reference elsewhere in the document.
+When you reference the figure, the reference is replaced with the word
+.UI Figure
+and the figure number, such as
+.UI "Figure 3-1" ;
+you can reference the figure from anywhere in the file,
+even before the
+.UI \&.FG .
+The
+.SB reference
+identifier becomes defined as a string as the file processes;
+therefore, you have to specify the reference
+as a string when including it in text.
+For example, if you specify
+.UI a1
+as the third argument to
+.UI \&.FG ,
+you would reference the figure with
+.UI \e*(a1 ,
+as shown here:
+.DS I UI
+See \e*(a1 in the beginning of this chapter ...
+.DE
+This would expand during processing and print as the following:
+.DS I CO
+See Figure 3-1 in the beginning of this chapter ...
+.DE
+.H 3 "Examples"
+.AL
+.LI
+The simplest case; a figure legend for a screen:
+.VL 0.7i
+.NE14
+.LI Input:
+.DS "" UI
+\&.FG "A Typical Marbles Error Message"
+\&.SS
+Error in execution:  *** Marble Overflow ***
+Too many marbles input.
+
+Marbles dumped.
+
+!!! Try again later !!!
+\&.SE
+.DE
+.NE20
+.LI Output:
+.FG "A Typical Marbles Error Message"
+.SS
+Error in execution:  *** Marble Overflow ***
+Too many marbles input.
+
+Marbles dumped.
+
+!!! Try again later !!!
+.SE
+.LE
+.LI
+The figure reference feature:
+.AB N
+The following example uses a pair of double quotation marks
+(\f4""\fP) to specify a null argument.
+Since the example uses arguments 1 and 3 to show how to enter a
+figure legend and reference, and we
+do not want to specify argument 2, the pair of double quotation
+marks act as a placeholder so that the arguments are interpreted
+correctly.
+.AC
+.VL 0.7i
+.NE18
+.LI Input:
+.DS "" UI
+See \e*(b8 for an example of a function
+that counts the number of marbles in a file.
+\&.FG "A Function that Counts Marbles" "" b8
+\&.SS UI
+# Shell function to count marbles
+marble count () {
+   echo "\etChecking on Number of Marbles.\en"
+   echo "\etPlease Wait.\en"
+   i=0;
+   for Marbles in `cat bagofmarbles`
+   do
+      Marbles=`expr ${Marbles} + 1`
+   done
+   echo "Got ${Marbles} Marbles in my bag."
+}
+\&.SE
+.DE
+.NE20
+.LI Output:
+.P
+.in+0.5i
+See \*(b8 for an example of a function
+that counts the number of marbles in a file.
+.FG "A Function That Counts Marbles" "" b8
+.SS UI
+# Shell function to count marbles
+marble count () {
+   echo "\etChecking on Number of Marbles.\en"
+   echo "\etPlease Wait.\en"
+   i=0;
+   for Marbles in `cat bagofmarbles`
+   do
+      Marbles=`expr ${Marbles} + 1`
+   done
+   echo "Got ${Marbles} Marbles in my bag."
+}
+.SE
+.LE
+.in-0.5i
+.LE
+.H 2 "The \&.TB Macro"
+.IX \&.TB macro
+.IX macro, \&.TB
+.IX guide macros, table legends
+.IX table legend macro, \&.TB
+.H 3 "Name"
+.UI \&.TB
+\- specify the beginning of a table.
+.H 3 "Synopsis"
+.UI \&.TB
+.SB legend
+[
+.SB abbreviated-legend
+] [
+.SB reference
+]
+.P
+where
+.VL 1.4i "" SB
+.LI legend
+is the text that composes the table legend.
+.LI abbreviated-legend
+is a shortened form of the legend used as the continued
+table legend for tables that span more than one page.
+.LI reference
+is a unique one or two character string name that dynamically
+references the table number, both forwards and backwards, from
+anywhere in the chapter.
+.LE
+.H 3 "Description"
+The
+.UI \&.TB
+macro functions the same as the
+.UI \&.FG
+macro described above.
+However, instead of being used with screens and displays and illustrations,
+it is used with tables.
+.H 3 "Examples"
+See examples in the
+.UI \&.FG
+macro section.
+.H 1 "Displays"
+.IX display macros
+.H 2 "The \&.DS Macro"
+.IX \&.DS macro
+.IX macro, \&.DS
+.IX guide macros, display start
+.IX display start macro, \&.DS
+.H 3 "Name"
+.UI \&.DS
+\- specify the start of a display.
+.H 3 "Synopsis"
+.UI \&.DS
+[
+.SB indent
+|
+.UI I 
+] [
+.UI UI
+|
+.UI CO
+|
+.UI PC
+] [
+.UI F
+]
+.P
+where
+.VL "0.7" "" UI
+.LI indent SB
+specifies an indentation amount for the display.
+.LI I
+specifies a set indentation of 1/2 inch for the display.
+.LI UI
+specifies that the default display text is user input.
+.LI CO
+specifies that the default display text is computer output.
+.LI PC
+specifies that the default display text is program code.
+.LI F
+specifies that display text should be printed in fill mode.
+.LE
+.H 3 "Description"
+The
+.UI \&.DS
+macro specifies the start of display text.
+It is used in conjunction with the
+.UI \&.DE
+macro, described below.
+.P
+The optional arguments enable you to specify a set indentation
+amount, using the
+.UI I
+argument, or any indentation amount you
+require.
+Also, you can specify the type of text that the display contains.
+For example, if your display contains
+a computer output from a program you are describing, you
+would specify
+.UI CO 
+as the second argument to
+.UI \&.DS .
+.P
+Displays can be nested.
+However, you cannot switch fill types in nested displays.
+Most displays will call for
+printing out the contents of the display in no-fill mode,
+where lines in the source text file are printed line-for-line.
+If you specify
+.UI F
+as the third argument to
+.UI \&.DS ,
+the display text will print in fill mode and lines
+will be filled and will wrap automatically.
+Nested displays will print in whatever mode the first
+display uses.
+.AB N
+If you have a display that you want indented and that
+you want printed as a certain text type, such as
+user input, you might want to use one of the specialized
+display macros described in the section,
+.ST "Specialized Displays and Special Text Elements." 
+The specialized displays do not, however, make sure
+that your text block prints together on the same page.
+.AC
+.H 3 "Examples"
+.AL
+.LI
+The simplest case; a standard indented display:
+.VL 0.7i
+.NE10
+.LI Input:
+.DS "" UI
+\&.DS I
+A Marble Head Count:
+   24 blue
+   37 yellow
+   28 green
+   66 black
+\&.DE
+.DE
+.NE10
+.LI Output:
+.DS I
+A Marble Head Count:
+   24 blue
+   37 yellow
+   28 green
+   66 black
+.DE
+.LE
+.LI 
+Error messages; specifying computer output for display text:
+.VL "" CO
+.NE12
+.LI Input:
+.DS "" UI
+\&.DS "" CO
+Error: Marble Count Exceeded Buffer Size
+
+       Trying to Recover ...
+
+       Core dumped ...
+
+       Marbles Lost !!
+\&.DE
+.DE
+.NE14
+.LI Output:
+.DS "" CO
+Error: Marble Count Exceeded Buffer Size
+
+       Trying to Recover ...
+
+       Core dumped ...
+
+       Marbles Lost !!
+.DE
+.LE
+.LE
+.H 2 "The \&.DE Macro"
+.IX \&.DE macro
+.IX macro, \&.DE
+.IX guide macros, display end
+.IX display end macro, \&.DE
+.H 3 "Name"
+.UI \&.DE
+\- specify the end of a display.
+.H 3 "Synopsis"
+.UI \&.DE
+.H 3 "Description"
+The
+.UI \&.DE
+macro specifies the end of display text.
+It is used in conjunction with the
+.UI \&.DS
+macro, described above.
+.H 3 "Examples"
+See the examples in the
+.UI \&.DS
+macro section.
+.H 1 "Lists"
+.IX lists
+.IX auto-incrementing lists
+.IX number lists
+.IX alphabetic lists
+.IX bullet lists
+.IX dash lists
+.IX variable lists
+Four types of lists are available:
+.BL
+.LI
+Auto-incrementing:
+.UI \&.AL .
+.LI
+Bullet:
+.UI \&.BL .
+.LI
+Dash:
+.UI \&.DL .
+.LI
+Variable:
+.UI \&.VL .
+.LE
+Variable lists can be nested up to two levels, while the other
+lists can be nested up to three levels.
+Any list type can be nested in any other list type.
+By default,
+.UI \&.AL
+and
+.UI \&.BL 
+and
+.UI \&.DL
+lists indent 1/4 inch from the current left margin.
+.H 2 "The \&.AL Macro"
+.IX \&.AL macro
+.IX macro, \&.AL
+.IX guide macros, auto-incrementing list start
+.IX auto-incrementing list start macro, \&.AL
+.H 3 "Name"
+.UI \&.AL
+\- specify the beginning of an auto-incrementing list.
+.H 3 "Synopsis"
+.UI \&.AL
+[
+.UI a
+|
+.UI A
+|
+.UI i
+|
+.UI I
+|
+.UI 1
+] [
+.SB indent
+]
+.P
+where
+.VL 0.55i "" UI
+.LI a
+specifies the incremental marker to begin with a (that is, a,b,c, .\ .\ .).
+.LI A
+specifies the incremental marker to begin with A (A,B,C, .\ .\ .).
+.LI i
+specifies the incremental marker to begin with i (i,ii,iii, .\ .\ .).
+.LI I
+specifies the incremental marker to begin with I (I,II,III, .\ .\ .).
+.LI 1
+specifies the incremental marker to begin with 1 (1,2,3, \. \. .).
+.LI indent SB
+specifies an indentation amount for the list.
+.LE
+.H 3 "Description"
+The
+.UI \&.AL
+macro initializes an auto-incrementing arabic number list.
+It is used in conjunction with the
+.UI \&.LI
+and
+.UI \&.LE
+macros, described below.
+.P
+The first argument allows you to select the type of
+auto-incrementing list.
+Recognized list types and their
+format are shown in the following table, along with the default.
+.P
+The second argument to
+.UI \&.AL
+specifies an indentation amount for the list.
+Since the numbers or letters for the mark items could be
+one, two, or three characters wide (for example, 1, 10, or 100),
+and alignment occurs at the decimal point following the number
+or letter, the indentation amount you specify will not exactly
+match the placement of mark items.  See the examples section
+below.
+.TB "Auto-Incrementing List Types"
+.TS
+center,tab(:);
+cf3 lf3
+c l.
+T{
+.UL Type
+T}:T{
+.UL Format
+T}
+.sp0.5
+a:a,b,c,. . .,z,aa,bb,. . .,zz,aaa,. . .
+A:A,B,C,. . .,Z,AA,BB,. . .,ZZ,AAA,. . .
+i:i,ii,iii,iv,v,. . .
+I:I,II,III,IV,V,. . .
+1:1,2,3,. . . (Default)
+.TE
+.H 3 "Examples"
+.AL
+.LI
+The simplest case; an arabic (default) number list:
+.VL 0.7i
+.NE14
+.LI Input:
+.DS "" UI
+\&.AL
+\&.LI
+Gather up stray marbles.
+\&.LI
+Organize all marbles by color.
+\&.LI
+Further organize all marbles by size.
+\&.LI
+Take a break.
+\&.LI
+Put each group of marbles into separate silk pouches.
+\&.LE
+.DE
+.NE14
+.LI Output:
+.AL
+.LI
+Gather up stray marbles.
+.LI
+Organize all marbles by color.
+.LI
+Further organize all marbles by size.
+.LI
+Take a break.
+.LI
+Put each group of marbles into separate silk pouches.
+.LE
+.LE
+.LI
+Another list type; specifying an indented alphabetic list:
+.VL 0.7
+.NE15
+.LI Input:
+.DS "" UI
+\&.AL A 0.75i
+\&.LI
+Remove marbles from silk pouches.
+\&.LI
+Mix all marbles together.
+\&.LI
+Divide marbles into groups of 10.
+\&.LI
+Put marbles into silk pouches.
+\&.LE
+.DE
+.NE10
+.LI Output:
+.AL A 0.75i
+.LI
+Remove marbles from silk pouches.
+.LI
+Mix all marbles together.
+.LI
+Divide marbles into groups of 10.
+.LI
+Put marbles into silk pouches.
+.LE
+.LE
+.LE
+.H 2 "The \&.BL Macro"
+.IX \&.BL macro
+.IX macro, \&.BL
+.IX guide macros, bullet list start
+.IX bullet list start macro, \&.BL
+.H 3 "Name"
+.UI \&.BL
+\- specify the beginning of a bullet list.
+.H 3 "Synopsis"
+.UI \&.BL
+[
+.SB indent
+]
+.P
+where
+.VL 0.55i "" SB
+.LI indent
+specifies an indentation amount for the list.
+.LE
+.H 3 "Description"
+The
+.UI \&.BL
+macro initializes a bullet list with square mark items.
+It is used in conjunction with the
+.UI \&.LI
+and 
+.UI \&.LE
+macros, described below.
+.P
+A first level bullet list uses a filled ballot box (\(bx)
+for its mark item; second and third level bullet lists use
+an unfilled ballot box (\(sq) in a slightly smaller point size
+than the filled ballot box.
+.P
+Just as with the
+.UI \&.AL
+list, the optional first argument allows you to specify an
+indentation amount for the list.
+.H 3 "Example"
+.AL
+.LI
+Not the simplest case, but close; a bullet list with a nested bullet
+list:
+.VL 0.7
+.NE22
+.LI Input:
+.DS "" UI
+\&.BL
+\&.LI
+Marbling Tournament in Rome: April 18th.
+\&.LI
+Marbling Tournament in Paris: May 4th.
+\&.LI
+Marbling Tournament in London:
+\&.BL
+\&.LI
+Oxford St. Marbling Tournament: June 2nd.
+\&.LI
+Blandford St. Marbling Tournament: June 4th.
+\&.LI
+Manchester St. Marbling Tournament: June 5th.
+\&.LE
+\&.LI
+Marbling Tournament in Geneva: July 14th.
+\&.LE
+.DE
+.NE20
+.LI Output:
+.BL
+.LI
+Marbling Tournament in Rome: April 18th.
+.LI
+Marbling Tournament in Paris: May 4th.
+.LI
+Marbling Tournament in London:
+.BL
+.LI
+Oxford St. Marbling Tournament: June 2nd.
+.LI
+Blandford St. Marbling Tournament: June 4th.
+.LI
+Manchester St. Marbling Tournament: June 5th.
+.LE
+.LI
+Marbling Tournament in Geneva: July 14th.
+.LE
+.LE
+.LE
+.H 2 "The \&.DL Macro"
+.IX \&.DL macro
+.IX macro, \&.DL
+.IX guide macros, dash list start
+.IX dash list start macro, \&.DL
+.H 3 "Name"
+.UI \&.DL
+\- specify the beginning of a dash list.
+.H 3 "Synopsis"
+.UI \&.DL
+[
+.SB indent
+]
+.P
+where
+.VL 0.7i "" SB
+.LI indent
+specifies an indentation amount for the list.
+.LE
+.H 3 "Description"
+The
+.UI \&.DL
+macro initializes a list with a dash (\-) for its
+mark item.
+It is used in conjunction with the
+.UI \&.LI
+and 
+.UI \&.LE
+macros, described below.
+.P
+Just as with the
+.UI \&.AL
+and
+.UI \&.BL
+lists, the optional first argument allows you to specify an
+indentation amount for the list.
+.H 3 "Example"
+.AL
+.LI
+The simplest case, almost: an indented dash list:
+.VL 0.7i
+.NE10
+.LI Input:
+.DS "" UI
+\&.DL 1.5i
+\&.LI
+Casual Marbling.
+\&.LI
+Tournament Marbling.
+\&.LI
+Marbling for Money.
+\&.LE
+.DE
+.NE10
+.LI Output:
+.DL 1.5i
+.LI
+Casual Marbling.
+.LI
+Tournament Marbling.
+.LI
+Marbling for Money.
+.LE
+.LE
+.LE
+.H 2 "The \&.VL Macro"
+.IX \&.VL macro
+.IX macro, \&.VL
+.IX guide macros, variable list start
+.IX variable list start macro, \&.VL
+.H 3 "Name"
+.UI \&.VL
+\- specify the beginning of a variable list.
+.H 3 "Synopsis"
+.UI \&.VL
+[
+.SB list-item-width
+] [
+.SB indent
+] [
+.UI CN
+|
+.UI SB
+|
+.UI EV
+|
+.UI UI
+|
+.UI CO
+|
+.UI PC
+]
+.P
+where
+.VL 0.55i "" UI
+.LI list-item-width SB
+specifies the column width for the mark item; the default is one inch.
+.LI indent SB
+specifies an indentation for the list as a whole.
+.LI CN
+specifies that the default mark item type is command name.
+.LI SB
+specifies that the default mark item type is substitutable element.
+.LI EV
+specifies that the default mark item type is environment variable.
+.LI UI
+specifies that the default mark item type is user input text.
+.LI CO
+specifies that the default mark item type is computer output text.
+.LI PC
+specifies that the default mark item type is program code.
+.LE
+.H 3 "Description"
+The
+.UI \&.VL
+macro initializes a variable list with a default mark indent of
+one inch.
+It is used in conjunction with the
+.UI \&.LI
+and
+.UI \&.LE
+macros.
+.P
+The mark item for a variable list, unlike the mark item
+for a auto-incrementing, bullet, or dash list, is specified
+as the first argument to the
+.UI \&.LI
+macros in the list; consequently, the mark item changes with
+each
+.UI \&.LI .
+.P
+If you do not specify a width for the mark items
+in your list by using argument one to
+.UI \&.VL ,
+a default width of one inch will be created.
+You can specify any width amount for your mark items,
+just as you can specify anything for the mark items themselves.
+If the mark item does not fit in the space provided,
+it will automatically cause a line break to occur in order
+to retain the list's two-column type format.
+.P
+Just as with the other lists described above, you can specify
+an amount to indent the entire list from the current left
+margin.
+Here, however, this is specified with the second argument.
+.P
+A third argument allows you to indicate the default type
+of mark items in your list.
+For example, if your mark items are all or mostly substitutable elements,
+you would specify
+.UI SB
+as the third argument.
+You can override this default for a specific mark item by
+including one of the valid mark item types as the second
+argument to
+.UI \&.LI .
+.H 4 "Hard Keys in a Variable List"
+As described above, you specify mark items for
+a variable list as the first argument to
+.UI \&.LI.
+A special case exists that allows you to have a hard
+key as your mark item.
+To specify a hard key you use the
+.UI \&.HK
+macro, as described in
+.ST "The \&.HK Macro"
+section later in this chapter.
+To specify a hard key as your mark item, you need
+to specify the
+.UI \&.HK
+macro on the same line as the
+.UI \&.LI .
+If, for example, you wanted to include the up-arrow hard
+key, you would specify:
+.UI
+\&.LI \&.HK UA
+.SF
+The
+.UI \&.HK
+must be the first argument to the
+.UI \&.LI
+and the type of hard key you want must be the second
+argument; therefore, do not use quotation marks
+around the
+.UI "\&.HK UA" .
+.H 3 "Examples"
+.AL
+.LI
+The absolute simplest case; a variable list using all defaults:
+.VL 0.7i
+.NE 18
+.LI Input:
+.DS "" UI
+\&.VL
+\&.LI "Step 1:"
+Take marble from silk purse.
+\&.LI "Step 2:"
+Roll marble in palm.
+\&.LI "Step 3:"
+Position marble on thumb nail.
+\&.LI "Step 4:"
+Spring-load thumb behind forefinger and
+position hand above playing
+field at 90 degree angle.
+\&.LI "Step 5:"
+Unspring thumb and stand back.
+\&.LE
+.DE
+.NE15
+.LI Output:
+.VL
+.LI "Step 1:"
+Take marble from silk purse.
+.LI "Step 2:"
+Roll marble in palm.
+.LI "Step 3:"
+Position marble on thumb nail.
+.LI "Step 4:"
+Spring-load thumb behind forefinger and
+position hand above playing
+field at 90 degree angle.
+.LI "Step 5:"
+Unspring thumb and stand back.
+.LE
+.LE
+.LI
+The most complicated case; specifying all the arguments:
+.VL 0.7i
+.NE14
+.LI Input:
+.DS "" UI
+\&.VL 0.7i 0.75i UI
+\&.LI mblcnt
+a command used to count marbles.
+\&.LI mblsrt
+a command used to sort marbles.
+\&.LI srttype SB
+an option that sets the type of marble
+sort to be performed.
+\&.LI mbldel
+a command used to delete marbles.
+\&.LE
+.DE
+.NE14
+.LI Output:
+.VL 0.7i 0.75i UI
+.LI mblcnt
+a command used to count marbles.
+.LI mblsrt
+a command used to sort marbles.
+.LI srttype SB
+an option that sets the type of marble sort to be performed.
+.LI mbldel
+a command used to delete marbles.
+.LE
+.LE
+.LE
+.H 2 "The \&.LI Macro"
+.IX \&.LI macro
+.IX macro, \&.LI
+.IX guide macros, list items
+.IX list item macro, \&.LI
+.H 3 "Name"
+.UI \&.LI
+\- specify a list item.
+.H 3 "Synopsis"
+.UI \&.LI
+[
+.SB mark
+] [
+.UI CN
+|
+.UI SB
+|
+.UI EV
+|
+.UI UI
+|
+.UI CO
+|
+.UI PC
+]
+.P
+where
+.VL 0.65i "" UI
+.LI mark SB
+specifies the list item mark to be printed.
+.LI CN
+specifies that this particular mark item type is command name.
+.LI SB
+specifies that this particular mark item type is substitutable element.
+.LI EV
+specifies that this particular mark item type is environment variable.
+.LI UI
+specifies that this particular mark item type is user input text.
+.LI CO
+specifies that this particular mark item type is computer output
+text.
+.LI PC
+specifies that this particular mark item type is program code.
+.LE
+.H 3 "Description"
+The
+.UI \&.LI
+macro specifies a list item.
+It is used in conjunction with one of the four list initializing
+macros,
+.UI \&.AL ,
+.UI \&.BL ,
+.UI \&.DL ,
+.UI \&.VL ,
+and with the
+.UI \&.LE
+macro.
+.P
+The first argument to
+.UI \&.LI
+allows you to set the mark item for a particular list item.
+This argument works differently for the different types of
+lists.
+In an auto-incremented list specifying the mark
+item enables you to start (or restart) the list at 
+point other than the initial default value of 1.
+For example, you might want to restart an auto-incremented
+list where it left off when you ended it.
+If the last mark number were 9, you would specify
+.UI "\&.LI 10"
+as the first list item in the new list and the list numbering
+would begin with 10.
+.P
+In a bullet or dash list, you can change the mark item from
+the default bullet or dash to something else.
+This change, however, will only print for the one list item
+where it is specified.
+.P
+In a variable list, you will almost always specify a list
+item mark since the mark is meant to change from list
+item to list item, as shown in the examples for
+.UI \&.VL .
+.P
+The second argument to
+.UI \&.LI
+can be used to specify the mark text type for the one
+list item where it is specified.
+This is only valid in a variable list and it will temporarily
+override the default mark text type for the one list item.
+.H 3 "Examples"
+See examples in the
+.UI \&.AL ,
+.UI \&.BL ,
+.UI \&.DL ,
+.UI \&.VL
+macro sections.
+.H 2 "The \&.LE Macro"
+.IX \&.LE macro
+.IX macro, \&.LE
+.IX guide macros, list end
+.IX list end macro, \&.LE
+.H 3 "Name"
+.UI \&.LE
+\- specify the end of a list.
+.H 3 "Synopsis"
+.UI \&.LE
+.H 3 "Description"
+The
+.UI \&.LE
+macro terminates the current list and restores previous page
+settings.
+It is used in conjunction with the
+.UI \&.AL ,
+.UI \&.BL ,
+.UI \&.DL ,
+.UI \&.VL ,
+.UI \&.LI
+macros, described above.
+.H 3 "Examples"
+See examples in the
+.UI \&.AL ,
+.UI \&.BL ,
+.UI \&.DL ,
+.UI \&.VL
+macro sections.
+.H 1 "Specialized Displays and Special Text Elements"
+.IX specialized displays
+.IX special text elements
+.IX text markup
+The macros in this section
+identify common text elements and print them according
+to preset guidelines.
+By using these macros
+to identify text elements in a source text file,
+file consistency will be improved, file maintenance will
+be simplified, and conformance to the typesetting specification
+will be raised.
+.P
+The first three macros described,
+.UI \&.CO ,
+.UI \&.UI ,
+.UI \&.PC ,
+can be used to identify
+particular fragments of text: computer output,
+user input, and program code, respectively.
+Each of these macros can be specified in conjunction with
+.UI \&.SF ,
+which is also described below,
+to demark a display block
+of no-fill text;
+the text is automatically indented
+one-half inch from the current left margin, except
+if the macro is specified within a screen or within another display.
+.P
+The specialized display macros,
+.UI \&.CO ,
+.UI \&.UI ,
+.UI \&.PC ,
+can be used instead of
+.UI \&.DS/\&.DE
+if you want an indented display of a particular text type,
+such as user input text.
+Specifying:
+.UI
+\&.DS I UI
+\f2text\fP
+\&.DE
+.SF
+is nearly identical to specifying:
+.UI
+\&.UI
+\f2text\fP
+\&.SF
+.SF
+The only difference is that using
+.UI \&.DS/\&.DE
+causes the intervening text to be kept together
+as a block of text on the same page;
+.UI \&.UI(\&.CO,\&.PC)/\&.SF
+make no attempt to ensure that the intervening text prints on the same page.
+However, if your intervening text consists
+of a single line, it's faster and simpler to use
+one of the specialized displays as opposed to using
+.UI \&.DS/\&.DE .
+.P
+.UI \&.CO ,
+.UI \&.UI ,
+and
+.UI \&.PC
+can also be specified on a
+single line, like
+.UI \&.B ,
+to include their text
+argument within running text; punctuation
+immediately following the text can be specified in the second argument.
+.P
+An interactive terminal session (one showing
+both computer output and user input) can be 
+produced by alternating
+.UI \&.CO
+and
+.UI \&.UI
+macros within a single display; this means that
+.UI \&.SF
+is specified only once.
+No further indentation will occur if these macros are nested;
+and if the nested macro
+is specified with an argument, that argument will be joined
+with the previous line as though in fill mode.
+.H 2 "The \&.CO Macro"
+.IX \&.CO macro
+.IX macro, \&.CO
+.IX guide macros, computer output
+.IX computer output macro, \&.CO
+.H 3 "Name"
+.UI \&.CO
+\- specify the beginning of computer output text.
+.H 3 "Synopsis"
+.UI \&.CO
+[
+.SB text
+] [
+.SB punctuation
+]
+.P
+where
+.VL "" "" SB
+.LI text
+is one or more words to be marked as computer output.
+.LI punctuation
+is some form of punctuation to be printed immediately
+following the computer output text.
+.LE
+.H 3 "Description"
+The
+.UI \&.CO
+macro specifies computer output text.
+If a
+.SB text
+argument is specified, it causes
+.SB text
+to be printed as computer output.
+If you specify a second argument, it will
+print immediately following the
+.SB text .
+.P
+If a
+.SB text
+argument is not specified,
+.UI \&.CO
+is used in conjunction with
+.UI \&.SF
+to demarcate a block of text to be printed as computer
+output.
+.H 3 "Examples"
+.AL
+.LI
+A typical in-line example; computer output in running text:
+.VL 0.7i
+.NE7
+.LI Input:
+.DS "" UI
+After you enter the command to count marbles, you
+might see the following error appear on your screen:
+\&.CO "Out of Memory; Try Again Later" .
+.DE
+.NE7
+.LI Output:
+After you enter the command to count marbles, you might
+see the following error appear on your screen:
+.CO "Out of Memory; Try Again Later" .
+.LE
+.LI
+A typical display example; a block of computer output text:
+.VL 0.7i
+.NE12
+.LI Input:
+.DS "" UI
+\&.CO
+Too many marbles in bag.
+Not enough memory.
+
+Bailing out now.
+Count failed.
+\&.SF
+.DE
+.NE12
+.LI Output:
+.CO
+Too many marbles in bag.
+Not enough memory.
+
+Bailing out now.
+Count failed.
+.SF
+.LE
+.LE
+.H 2 "The \&.UI Macro"
+.IX \&.UI macro
+.IX macro, \&.UI
+.IX guide macros, user input
+.IX user input macro, \&.UI
+.H 3 "Name"
+.UI \&.UI
+\- specify the beginning of user input text.
+.H 3 "Synopsis"
+.UI \&.UI
+[
+.SB text
+] [
+.SB punctuation
+]
+.P
+where
+.VL "" "" SB
+.LI text
+is one or more words to be marked as user input.
+.LI punctuation
+is some form of punctuation to be printed immediately
+following the user input text.
+.LE
+.H 3 "Description"
+The
+.UI \&.UI
+macro specifies user input text.
+It functions in the same way as the
+.UI \&.CO
+macro.
+See the description of the
+.UI \&.CO
+macro for more information.
+.H 3 "Examples"
+.AL
+.LI
+A typical in-line example; user input in running text:
+.VL 0.7i
+.NE8
+.LI Input:
+.DS "" UI
+Type
+\&.UI YES
+when asked if you wish to enter more information about
+your marble collection.
+.DE
+.NE8
+.LI Output:
+Type
+.UI YES
+when asked if you wish to enter more information about
+your marble collection.
+.LE
+.LI
+A typical display example; a block of user input text:
+.VL 0.7i
+.NE10
+.LI Input:
+.DS "" UI
+\&.UI
+This is a mail message in response
+to your request for more information
+about my antique marble from Persia.
+\&.SF
+.DE
+.NE10
+.LI Output:
+.UI
+This is a mail message in response
+to your request for more information
+about my antique marble from Persia.
+.SF
+.LE
+.LE
+.H 2 "The \&.PC Macro"
+.IX \&.PC macro
+.IX macro, \&.PC
+.IX guide macros, program code
+.IX program code macro, \&.PC
+.H 3 "Name"
+.UI \&.PC
+\- specify the beginning of program code text.
+.H 3 "Synopsis"
+.UI \&.PC
+[
+.SB text
+] [
+.SB punctuation
+]
+.P
+where
+.VL "" "" SB
+.LI text
+is one or more words to be marked as program code.
+.LI punctuation
+is some form of punctuation to be printed immediately
+following the program code text.
+.LE
+.H 3 "Description"
+The
+.UI \&.PC
+macro specifies program code text.
+It functions in the same way as the
+.UI \&.CO
+and
+.UI \&.UI
+macros.
+See the description of the
+.UI \&.CO
+macro for more information.
+.H 3 "Examples"
+.AL
+.LI
+A typical in-line example; program code in running text:
+.VL 0.7i
+.NE6
+.LI Input:
+.DS "" UI
+The marble header file includes a short line
+of code that reads:
+\&.PC "#include <marbles.h>" .
+.DE
+.NE6
+.LI Output:
+The marble header file includes a short line of code
+that reads:
+.PC "#include <marbles.h>" .
+.LE
+.LI
+A typical display example; a block of program code text:
+.VL 0.7i
+.NE10
+.LI Input:
+.DS "" UI
+\&.PC
+case ${MARBLE} in
+   y*|Y*) Response=Y;;
+   n*|N*) Response=N;;
+   *)     Response=Q;;
+esac
+\&.SF
+.DE
+.NE10
+.LI Output:
+.PC
+case ${MARBLE} in
+   y*|Y*) Response=Y;;
+   n*|N*) Response=N;;
+   *)     Response=Q;;
+esac
+.SF
+.LE
+.LE
+.H 2 "The \&.SF Macro"
+.IX \&.SF macro
+.IX macro, \&.SF
+.IX guide macros, standard format
+.IX standard format macro, \&.SF
+.H 3 "Name"
+.UI \&.SF
+\- specify a return to standard format text.
+.H 3 "Synopsis"
+.UI \&.SF
+.H 3 "Description"
+The
+.UI \&.SF
+macro closes a specialized text display and resets page layout
+parameters prior to the opening of the display.
+It is used in conjunction with the
+.UI \&.CO ,
+.UI \&.UI ,
+.UI \&.PC
+macros, described above.
+.H 3 "Examples"
+See examples in the
+.UI \&.CO ,
+.UI \&.UI ,
+.UI \&.PC 
+macro sections.
+.H 2 "The \&.CN Macro"
+.IX \&.CN macro
+.IX macro, \&.CN
+.IX guide macros, command name
+.IX command name macro, \&.CN
+.H 3 "Name"
+.UI \&.CN
+\- specify a command name.
+.H 3 "Synopsis"
+.UI \&.CN
+.SB text
+[
+.SB punctuation
+]
+.P
+where
+.VL "" "" SB
+.LI text
+is one or more words to be marked as a command name.
+.LI punctuation
+is some form of punctuation to be printed immediately
+following the command name text.
+.LE
+.H 3 "Description"
+The
+.UI \&.CN
+macro specifies one or more words as a command name.
+The command name text can be followed by punctuation
+by using the second argument.
+.H 3 "Example"
+.AL
+.LI
+A typical example:
+.VL 0.7i
+.NE8
+.LI Input:
+.DS "" UI
+The marble delete command,
+\&.CN mbldel ,
+removes one or more marbles
+from your bag.
+.DE
+.NE8
+.LI Output:
+The marble delete command,
+.CN mbldel ,
+removes one or more marbles
+from your bag.
+.LE
+.LE
+.H 2 "The \&.SB Macro"
+.IX \&.SB macro
+.IX macro, \&.SB
+.IX guide macros, substitutable element
+.IX substitutable element macro, \&.SB
+.H 3 "Name"
+.UI \&.SB
+\- specify a substitutable element.
+.H 3 "Synopsis"
+.UI \&.SB
+.SB text
+[
+.SB punctuation
+]
+.P
+where
+.VL "" "" SB
+.LI text
+is one or more words to be marked as a substitutable element.
+.LI punctuation
+is some form of punctuation to be printed immediately
+following the substitutable element text.
+.LE
+.H 3 "Description"
+The
+.UI \&.SB
+macro specifies one or more words as substitutable elements.
+The substitutable element text can be followed by punctuation
+by using the second argument.
+.H 3 "Example"
+.AL
+.LI
+A typical example:
+.VL 0.7i
+.NE10
+.LI Input:
+.DS "" UI
+The syntax for the
+\&.CN mblcnt
+command is as follows:
+\&.CN mblcnt
+\&.SB bagname
+where
+\&.SB bagname
+is replaced by the name of one of your marble bags.
+.DE
+.NE5
+.LI Output:
+The syntax for the
+.UI mblcnt
+command is as follows:
+.UI mblcnt
+.SB bagname
+where
+.SB bagname
+is replaced by the name of one of your marble bags.
+.LE
+.LE
+.H 2 "The \&.EV Macro"
+.IX \&.EV macro
+.IX macro, \&.EV
+.IX guide macros, environment variable
+.IX environment variable macro, \&.EV
+.H 3 "Name"
+.UI \&.EV
+\- specify an environment variable.
+.H 3 "Synopsis"
+.UI \&.EV
+.SB text
+[
+.SB punctuation
+]
+.P
+where
+.VL "" "" SB
+.LI text
+is one or more words to be marked as an environment variable.
+.LI punctuation
+is some form of punctuation to be printed immediately
+following the environment variable text.
+.LE
+.H 3 "Description"
+The
+.UI \&.EV
+macro specifies one or more words as an environment variable.
+The environment variable text can be followed by punctuation
+by using the second argument.
+.H 3 "Example"
+.AL
+.LI
+A typical example:
+.VL 0.7i
+.NE6
+.LI Input:
+.DS "" UI
+The environment variable
+\&.EV MARBLEFIELD
+contains the name of the
+marble playing field.
+.DE
+.NE4
+.LI Output:
+The environment variable
+.EV MARBLEFIELD
+contains the name of the
+marble playing field.
+.LE
+.LE
+.H 2 "The \&.BT Macro"
+.IX \&.BT macro
+.IX macro, \&.BT
+.IX guide macros, book title
+.IX book title macro, \&.BT
+.H 3 "Name"
+.UI \&.BT
+\- specify a book title.
+.H 3 "Synopsis"
+.UI \&.BT
+.SB text
+[
+.SB punctuation
+]
+.P
+where
+.VL "" "" SB
+.LI text
+is one or more words to be marked as a book title.
+.LI punctuation
+is some form of punctuation to be printed immediately
+following the book title text.
+.LE
+.H 3 "Description"
+The
+.UI \&.BT
+macro specifies one or more words as a book title.
+The book title text can be followed by punctuation
+by using the second argument.
+.H 3 "Example"
+.AL
+.LI
+A typical example:
+.VL 0.7i
+.NE6
+.LI Input:
+.DS "" UI
+See Marvin's other book,
+\&.BT "Marvin Marbles in Madison" ,
+for more information.
+.DE
+.NE5
+.LI Output:
+See Marvin's other book,
+.BT "Marvin Marbles in Madison" ,
+for more information.
+.LE
+.LE
+.H 2 "The \&.CT Macro"
+.IX \&.CT macro
+.IX macro, \&.CT
+.IX guide macros, chapter title
+.IX chapter title macro, \&.CT
+.H 3 "Name"
+.UI \&.CT
+\- specify a chapter title.
+.H 3 "Synopsis"
+.UI \&.CT
+.SB text
+[
+.SB punctuation
+]
+.P
+where
+.VL "" "" SB
+.LI text
+is one or more words to be marked as a chapter title.
+.LI punctuation
+is some form of punctuation to be printed immediately
+following the chapter title text.
+.LE
+.H 3 "Description"
+The
+.UI \&.CT
+macro specifies one or more words as a chapter title.
+The chapter title text can be followed by punctuation
+by using the second argument.
+.H 3 "Example"
+.AL
+.LI
+A typical example:
+.VL 0.7i
+.NE8
+.LI Input:
+.DS "" UI
+Marvin's new book has a chapter entitled
+\&.CT "Marbling Made Easy" ;
+it contains many interesting pointers
+on improving performance through some
+rather unusual techniques.
+.DE
+.NE6
+.LI Output:
+Marvin's new book has a chapter entitled
+.CT "Marbling Made Easy" ;
+it contains many interesting pointers
+on improving performance through some
+rather unusual techniques.
+.LE
+.LE 
+.H 2 "The \&.ST Macro"
+.IX \&.ST macro
+.IX macro, \&.ST
+.IX guide macros, section title
+.IX section title macro, \&.ST
+.H 3 "Name"
+.UI \&.ST
+\- specify a section title.
+.H 3 "Synopsis"
+.UI \&.ST
+.SB text
+[
+.SB punctuation
+]
+.P
+where
+.VL "" "" SB
+.LI text
+is one or more words to be marked as a section title.
+.LI punctuation
+is some form of punctuation to be printed immediately
+following the section title text.
+.LE
+.H 3 "Description"
+The
+.UI \&.ST
+macro specifies one or more words as a section title.
+The section title text can be followed by punctuation
+by using the second argument.
+.H 3 "Example"
+.AL
+.LI
+A typical example:
+.VL 0.7i
+.NE7
+.LI Input:
+.DS "" UI
+The first chapter in Marvin's mother's book,
+\&.BT "Mothering a Marbling Maniac" ,
+has a section called
+\&.ST "If Only I Had Known" .
+.DE
+.NE5
+.LI Output:
+The first chapter in Marvin's mother's book,
+.BT "Mothering a Marbling Maniac" ,
+has a section called
+.ST "If Only I Had Known" .
+.LE
+.LE
+.H 1 "Two-Column Formatting"
+.IX two-column formatting
+.IX 2-column formatting
+.H 2 "The \&.2C Macro"
+.IX \&.2C macro
+.IX macro, \&.2C
+.IX guide macros, two-column start
+.IX two-column start macro, \&.2C
+.H 3 "Name"
+.UI \&.2C
+\- specify the beginning of two-column text formatting.
+.H 3 "Synopsis"
+.UI \&.2C
+[
+.UI B
+]
+.P
+where
+.VL 0.4 "" UI
+.LI B
+specifies that columns one and two should be balanced.
+.LE
+.H 3 "Description"
+The
+.UI \&.2C
+macro specifies two-column text formatting.
+It is used in conjunction with the
+.UI \&.1C
+macro, described below.
+.P
+By default, text fills column one until it reaches the bottom of the
+page and then begins to fill column two.
+Specifying
+.UI B
+provides more control over mixing one-column and two-column
+text on a single page: the total size of the text is measured
+and an attempt is made to divide the text into two equal
+length columns.
+.H 3 "Example"
+.AL
+.LI
+A short example; balanced two-column text:
+.VL 0.7i
+.NE20
+.LI Input:
+.DS "" UI
+\&.2C B
+World-Class Marbling
+Champions are listed below:
+\&.SP
+Peter Potchkiss, Daymon Diagonal,
+Sarah Sipster, and David Dyster-Hugh
+all tied for top-place with
+monies earned exceeding 2.5 million
+dollars.  Trailing them, but not
+by much, are: Marvin Malacites,
+Susan Syndrake, and Devon Brown.
+\&.SP
+A recent study shows marbling on the rise
+with over 200,000 active adult players
+in the United States alone.
+\&.1C
+.DE
+.NE14
+.LI Output:
+.LE
+.LE
+.2C B
+World-Class Marbling
+Champions are listed below:
+.SP
+Peter Potchkiss, Daymon Diagonal,
+Sarah Sipster, and David Dyster-Hugh
+all tied for top-place with
+monies earned exceeding 2.5 million
+dollars.
+Trailing them, but not
+by much, are: Marvin Malacites,
+Susan Syndrake, and Devon Brown.
+.SP
+A recent study shows marbling on the rise
+with over 200,000 active adult players
+in the United States alone.
+.1C
+.H 2 "The \&.1C Macro"
+.IX \&.1C macro
+.IX macro, \&.1C
+.IX guide macros, one-column start
+.IX one-column start macro, \&.1C
+.H 3 "Name"
+.UI \&.1C
+\- specify the beginning one-column text formatting.
+.H 3 "Synopsis"
+.UI \&.1C
+.H 3 "Description"
+The
+.UI \&.1C
+macro specifies one-column text formatting.
+It is used in conjunction with the
+.UI \&.2C
+macro, described above.
+.H 3 "Examples"
+See the example in the
+.UI \&.2C
+macro section.
+.H 2 "The \&.2S Macro"
+.IX \&.2S macro
+.IX macro, \&.2S
+.IX guide macros, staggered two-column start
+.IX staggered two-column start macro, \&.2S
+.H 3 "Name"
+.UI \&.2S
+\- specify the start of staggered two-column text formatting .
+.H 3 "Synopsis"
+.UI \&.2S
+[
+.SB column1-width
+] [
+.SB indent
+]
+.P
+where
+.VL "1.2i" "" SB
+.LI column1-width
+specifies the column width for the first column.
+.LI indent
+specifies an indentation amount for both columns of text.
+.LE
+.H 3 "Description"
+The
+.UI \&.2S
+macro specifies the start of two-column formatting.
+It is used in conjunction with the
+.UI \&.2E
+and
+.UI \&.1B/\&.2B
+macros, described in this section.
+.P
+The width for column one defaults to two inches, 
+unless specified in argument one.
+There is no indentation from the current left margin,
+unless specified in argument two.
+.H 3 "Examples"
+.AL
+.LI
+The simplest case; using the defaults:
+.VL 0.7i
+.NE25
+.LI Input:
+.DS "" UI
+\&.2S
+\&.1B
+Italian Marbling Tournaments
+in 1990, Class 1 Competitions:
+\&.2B
+Pisa, January 1-3; Rome, February 5-8;
+Milan, June 2-6; Venice, August 22-26.
+\&.1B
+French Marbling Tournaments
+in 1990, Class 1 Competitions:
+\&.2B
+Nice, March 1-4; Marseille, June 22-25;
+Toulouse, December 10-12.
+\&.1B
+English Marbling Tournaments
+in 1990, Class 1 Competitions:
+\&.2B
+Cambridge, May 11-15.
+\&.2E
+.DE
+.NE15
+.LI Output:
+.LE
+.LE
+.2S
+.1B
+Italian Marbling Tournaments
+in 1990, Class 1 Competitions:
+.2B
+Pisa, January 1-3; Rome, February 5-8;
+Milan, June 2-6; Venice, August 22-26.
+.1B
+French Marbling Tournaments
+in 1990, Class 1 Competitions:
+.2B
+Nice, March 1-4; Marseille, June 22-25;
+Toulouse, December 10-12.
+.1B
+English Marbling Tournaments
+in 1990, Class 1 Competitions:
+.2B
+Cambridge, May 11-15.
+.2E
+.AL
+.LI 2
+Being more specific; changing the defaults:
+.VL 0.7i
+.NE25
+.LI Input:
+.DS "" UI
+\&.2S 1.5i 1.25i
+\&.1B
+Mayberry Marble Festival:
+\&.2B
+Every Saturday throughout the summer
+months.  Located at the State Fair grounds
+off Route 37.
+\&.1B
+Poughkeepsie Marble Festival:
+\&.2B
+Tuesday evenings at the Bingo Hall
+located next the the Cheyenne Diner
+on Main Street.  Children are welcome.
+\&.1B
+Salem Marble Festival:
+\&.2B
+Sunday afternoons on the Town Green
+from May through October.
+No pets allowed.
+\&.2E
+.DE
+.NE18
+.LI Output:
+.LE
+.LE
+.2S 1.5i 1.25i
+.1B
+Mayberry Marble Festival:
+.2B
+Every Saturday throughout the summer
+months.  Located at the State Fair grounds
+off Route 37.
+.1B
+Poughkeepsie Marble Festival:
+.2B
+Tuesday evenings at the Bingo Hall
+located next the the Cheyenne Diner
+on Main Street.  Children are welcome.
+.1B
+Salem Marble Festival:
+.2B
+Sunday afternoons on the Town Green
+from May through October.
+No pets allowed.
+.2E
+.H 2 "The \&.2E Macro"
+.IX \&.2E macro
+.IX macro, \&.2E
+.IX guide macros, staggered two-column end
+.IX staggered two-column end macro, \&.CH
+.H 3 "Name"
+.UI \&.2E
+\- specify the end of staggered two-column text formatting.
+.H 3 "Synopsis"
+.UI \&.2E
+.H 3 "Description"
+The
+.UI \&.2E
+macro specifies the end of two-column formatting.
+It is used in conjunction with the
+.UI \&.2S
+and
+.UI \&.1B/\&.2B
+macros, described in this section.
+.H 3 "Examples"
+See the examples in the
+.UI \&.2S
+section above.
+.H 2 "The \&.1B Macro"
+.IX \&.1B macro
+.IX macro, \&.1B
+.IX guide macros, column1 start
+.IX column1 start macro, \&.1B
+.H 3 "Name"
+.UI \&.1B
+\- specify the beginning of column1 in staggered two-column text
+formatting.
+.H 3 "Synopsis"
+.UI \&.1B
+.H 3 "Description"
+The
+.UI \&.1B
+macro specifies the beginning of text to be printed in column one of
+two-column formatted text.
+It is used in conjunction with the
+.UI \&.2S/\&.2E
+and
+.UI \&.2B
+macros, described in this section.
+.H 3 "Examples"
+See the examples in the
+.UI \&.2S
+section above.
+.H 2 "The \&.2B Macro"
+.IX \&.2B macro
+.IX macro, \&.2B
+.IX guide macros, column2 start
+.IX column2 start macro, \&.2B
+.H 3 "Name"
+.UI \&.2B
+\- specify the beginning of column2 in staggered two-column text
+.H 3 "Synopsis"
+.UI \&.2B
+.H 3 "Description"
+The
+.UI \&.2B
+macro specifies the beginning of text to be printed in column two
+of two-column formatted text.
+It is used in conjunction with the
+.UI \&.2S/\&.2E
+and
+.UI \&.1B
+macros, described above.
+.H 3 "Examples"
+See the examples in the
+.UI \&.2S
+section above.
+.H 1 "Paragraphs and Spacing"
+.IX paragraphs
+.IX spacing
+.H 2 "The \&.P Macro"
+.IX \&.P macro
+.IX macro, \&.P
+.IX guide macros, paragraph start
+.IX paragraph start macro, \&.P
+.H 3 "Name"
+.UI \&.P
+\- begin standard paragraph.
+.H 3 "Synopsis"
+.UI \&.P
+.H 3 "Description"
+The
+.UI \&.P
+macro specifies the
+start of a new block paragraph.
+.AB N
+A paragraph request made with
+.UI \&.P
+will be ignored if it occurs when spacing is strictly automated,
+such as directly after a heading.
+.AC
+.H 3 "Example"
+None provided.
+.H 2 "The \&.PD Macro"
+.IX \&.PD macro
+.IX macro, \&.PD
+.IX guide macros, list item spacing
+.IX spacing, list items
+.IX list item spacing macro, \&.PD
+.H 3 "Name"
+.UI \&.PD
+\- set list item spacing.
+.H 3 "Synopsis"
+.UI \&.PD
+[
+.SB lines
+]
+.P
+where
+.VL "" "" SB
+.LI lines
+specifies the number of lines that should separate subsequent
+list items.
+.LE
+.H 3 "Description"
+The
+.UI \&.PD
+macro specifies the spacing between list items .
+If you specify
+.SB lines ,
+you will override the default list item distance
+of 1/2 line (0.5v).
+The most common use of
+.UI \&.PD
+is to specify
+.UI "\&.PD 0"
+to eliminate list item spacing altogether;
+this is especially helpful when you have single line
+list items, as shown in the example.
+.P
+If you specify
+.UI \&.PD
+without an argument, list item spacing returns to the default.
+.H 3 "Example"
+.AL
+.LI
+A simple list, with zero list item spacing:
+.VL "0.7i"
+.NE10
+.LI Input:
+.DS "" UI
+\&.PD 0
+\&.VL "" "" SB
+\&.LI color
+specifies a marble color.
+\&.LI type
+specifies a marble type.
+\&.LI
+Note that marble shading is also available. 
+\&.PD
+.DE
+.DS
+.LI Output:
+.PD0
+.VL "" "" SB
+.LI color
+specifies a marble color.
+.LI type
+specifies a marble type.
+.LI
+Note that marble shading is also available.
+.LE
+.PD
+.DE
+.LE
+.LE
+.H 2 "The \&.SP Macro"
+.IX \&.SP macro
+.IX macro, \&.SP
+.IX guide macros, space down
+.IX spacing macro, \&.SP
+.H 3 "Name"
+.UI \&.SP
+\- specify lines to space on the current page.
+.H 3 "Synopsis"
+.UI \&.SP
+[
+.SB distance
+]
+.P
+where
+.VL "" "" SB
+.LI distance
+specifies the amount of vertical distance to move.
+.LE
+.H 3 "Description"
+The
+.UI \&.SP
+macro specifies some amount of vertical distance to move on the
+current page.
+Spacing defaults to one line if
+.SB distance
+is not specified.
+If
+.SB distance
+is specified, scaling defaults to
+\f3v\fPs, which are vertical line spaces;
+however, any scaling indicator can be used:
+for example,
+.UI i
+for inches or
+.UI c
+for centimeters.
+.AB N
+A spacing request made with
+.UI \&.SP
+will be ignored if it occurs when spacing is strictly automated,
+such as directly after a heading.
+.AC
+.H 3 "Example"
+.AL
+.LI
+A typical example; leaving space for an illustration in a display:
+.VL 0.7i
+.NE12
+.LI Input:
+.DS "" UI
+\&.DS
+The following illustration shows the
+molecular structure of a typical marble.
+\&.SP 1.5i
+This illustration was produced by an
+electron microscope at Cornell University.
+\&.DE
+.DE
+.NE2.5i
+.LI Output:
+.DS
+The following illustration shows the
+molecular structure of a typical marble.
+.SP 1.5i
+This illustration was produced by an
+electron microscope at Cornell University.
+.DE
+.LE
+.LE
+.H 2 "The \&.NE Macro"
+.IX \&.NE macro
+.IX macro, \&.NE
+.IX guide macros, need space
+.IX need space macro, \&.NE
+.H 3 "Name"
+.UI \&.NE
+\- specify space needed to print subsequent text on the current page.
+.H 3 "Synopsis"
+.UI \&.NE
+[
+.SB distance
+]
+.P
+where
+.VL "" "" SB
+.LI distance
+specifies the amount of vertical space needed.
+.LE
+.H 3 "Description"
+The
+.UI \&.NE
+macro specifies how much vertical space needs to be on
+the current page for subsequent text to start printing
+on the current page.
+If the current page has less than the amount needed,
+subsequent text will start printing at the top of the
+next page.
+.P
+The space needed defaults to one line if
+.SB distance
+is not specified.
+If
+.SB distance
+is specified, scaling defaults to
+\f3v\fPs, which are vertical line spaces;
+however, any scaling indicator can be used:
+for example,
+.UI i
+for inches or
+.UI c
+for centimeters.
+.H 3 "Example"
+.AL
+.LI
+A typical example; checking for space before an example:
+.VL 0.7i
+.NE12
+.LI Input:
+.DS "" UI
+\&.NE 8
+The following example shows how to examine
+the molecular structure of a typical marble.
+\&.UI
+peruse -z mole grey-marble
+\&.SF
+.DE
+.NE2.5i
+.LI Output:
+.DS
+The following example shows how to examine
+molecular structure of a typical marble.
+.UI
+peruse -z mole grey-marble
+.SF
+.DE
+.LE
+.LE
+.H 2 "The \&.SK Macro"
+.IX \&.SK macro
+.IX macro, \&.SK
+.IX guide macros, skip page
+.IX skip page macro, \&.SK
+.H 3 "Name"
+.UI \&.SK
+\- specify a page skip.
+.H 3 "Synopsis"
+.UI \&.SK
+[
+.SB page#
+]
+.P
+where
+.VL "" "" SB
+.LI page#
+specifies the page number for the following page.
+.LE
+.H 3 "Description"
+The
+.UI \&.SK
+macro specifies that the current page should be
+ended and a new page started.
+If
+.SB page#
+is specified, the next page will be numbered
+.SB page# .
+If a plus or minus sign (\(pl/\(mi) precede
+.SB page# ,
+the next page will be numbered plus or minus
+the indicated amount.
+.H 3 "Example"
+Practicality suggests not providing an example here.
+.H 1 "Preprocessing"
+.IX preprocessing macros
+.IX version control macros
+.H 2 "The \&.VS Macro"
+.IX \&.VS macro
+.IX macro, \&.VS
+.IX guide macros, version start
+.IX version start macro, \&.VS
+.H 3 "Name"
+.UI \&.VS
+\- specify the beginning of version-specific text.
+.H 3 "Synopsis"
+.UI \&.VS
+.SB version#
+[
+.SB text
+]
+.P
+where
+.VL "" "" SB
+.LI version#
+specifies a number to be associated with the section of text.
+.LI text
+specifies a short text segment to be associated with one version of the
+file.
+.LE
+.H 3 "Description"
+The
+.UI \&.VS
+macro associates text with a version number.
+Argument one,
+.SB version# ,
+must be specified and can be any integer from 1 through 99.
+.P
+This allows a file to contain version-specific text
+so that one source file can be used to produce different
+output.
+A version number can be specified with
+.UI -v
+when processing the file with
+.UI format
+to print a specific version of the file.
+.AB N
+By default, 
+.UI format
+processes version 1 specific text.
+To process a file for any other version, the
+version number must be specified.
+.AC
+.P
+Argument two can be used to specify
+a small amount of information to be associated with one version.
+Or
+.UI \&.VS
+can be used in conjunction with
+.UI \&.VE
+to delimit a larger amount of information
+for association with a specific version of the file.
+.H 3 "Examples"
+.AL
+.LI
+A short example; a machine-specific comment:
+.VL 0.7i
+.NE10
+.LI Input:
+.DS "" UI
+When the marbling simulation program
+is run on a
+\&.VS 1 386
+\&.VS 2 Macintosh
+computer, the number of available colors is
+limited to
+\&.VS 1 "64 ."
+\&.VS 2 "256 ."
+.DE
+.NE4
+.LI Output:
+When the marbling simulation program
+is run on a
+386
+computer, the number of available colors is limited to
+64 .
+.LE
+.LI
+A longer example; including macros in a block of version-specific
+text:
+.VL 0.7i
+.NE33
+.LI Input:
+.DS "" UI
+The following procedures should be
+used when loading the marbling software.
+\&.VS 1
+\&.AL
+\&.LI
+Insert disk1 into floppy drive 1.
+\&.LI
+Type
+\&.UI installpkg
+at the prompt.
+\&.LI
+Repeat steps one and two for
+the remaining 4 diskettes.
+\&.LE
+\&.VE
+\&.VS 2
+\&.AL
+\&.LI
+Insert diskA into floppy drive 2.
+\&.LI
+Type
+\&.UI "loaddisk 2" 
+at the prompt.
+\&.LI
+Repeat steps one and two for diskettes B and C.
+\&.LE
+\&.VE
+.DE
+.NE8
+.LI Output:
+.AL
+.LI
+Insert disk1 into floppy drive 1.
+.LI
+Type
+.UI installpkg
+at the prompt.
+.LI
+Repeat steps one and two for
+the remaining 4 diskettes.
+.LE
+.LE
+.LE
+.AB N
+What you see for the output of the above examples
+depends on how you processed this file.
+If you did not specify
+.UI -v2 ,
+the version one text will have printed.
+If you did specify
+.UI -v2 ,
+the version two text will have printed.
+.AC
+.H 2 "The \&.VE Macro"
+.IX \&.VE macro
+.IX macro, \&.VE
+.IX guide macros, version end
+.IX version end macro, \&.VE
+.H 3 "Name"
+.UI \&.VE
+\- specify the end of version-specific text.
+.H 3 "Synopsis"
+.UI \&.VE
+.H 3 "Description"
+The
+.UI \&.VE
+macro specifies the end of a block of text associated with
+a version number.
+It is used in conjunction with the
+.UI \&.VS
+macro, described above.
+.H 3 "Example"
+See the example in the
+.UI \&.VS
+macro section.
+.H 2 "The \&.RP Macro"
+.IX \&.RP macro
+.IX macro, \&.RP
+.IX guide macros, reference pointer
+.IX guide macros, page referencing
+.IX reference pointer macro, \&.RP
+.IX page referencing macro, \&.RP
+.H 3 "Name"
+.UI \&.RP
+\- specify a reference pointer to the current page number.
+.H 3 "Synopsis"
+.UI \&.RP
+.SB mark
+.P
+where
+.VL "0.65i" "" SB
+.LI mark
+is a marker consisting of one or more of any printable
+characters.
+.LE
+.H 3 "Description"
+The
+.UI \&.RP
+macro associates the specified
+.SB marker
+with the page number where the
+.UI \&.RP
+macro is input; this page number
+is determined as the file is processed by
+.UI troff .
+The
+.SB marker
+can be specified anywhere in the file to reference that
+particular page number by enclosing it in percent signs.
+For example, if you specified
+.UI "\&.RP a1" ,
+you would specify
+.UI %a1%
+to reference the page number.
+.P
+If you specified a chapter identification with the
+.UI \&.CH
+macro, the page number will be preceded by the chapter
+identification and a hyphen; in other words, it will
+match whatever appears as the folio in the footers
+of your file.
+.H 3 "Example"
+.AL
+.LI
+A typical example; referencing the page where a table is printed:
+.VL 0.7i
+.NE20
+.LI Input:
+.DS "" UI
+\&.TS
+center, tab(:);
+lf3 lf3
+l l.
+T{
+\&.UL Name
+T}:T{
+\&.UL Title
+T}
+\&.SP0.4
+\&.RP t1
+Fred Slate:Marbling Marvel
+Marvin Malacites:Marbling Maven
+\&.TE
+See the marble title table on page %\^t1\^%.
+.DE
+.NE10
+.LI Output:
+.TS
+center, tab(:);
+lf3 lf3
+l l.
+T{
+.UL Name
+T}:T{
+.UL Title
+T}
+.SP0.4
+.RP t1
+Fred Slate:Marbling Marvel
+Marvin Malacites:Marbling Maven
+.TE
+See the marble title table on page %t1%.
+.LE
+.LE
+.H 2 "The \&.SO Macro"
+.IX \&.SO macro
+.IX macro, \&.SO
+.IX guide macros, file inclusion
+.IX guide macros, file sourcing 
+.IX file sourcing macro, \&.SO
+.IX file inclusion macro, \&.SO
+.H 3 "Name"
+.UI \&.SO
+\- specify a file to be included for processing.
+.H 3 "Synopsis"
+.UI \&.SO
+.SB filename
+[
+.UI SYS
+]
+.P
+where
+.VL "" "" SB
+.LI filename
+specifies the file to be included.
+.LI SYS UI
+specifies that
+.SB filename
+is located in the defined system include directory.
+.LE
+.H 3 "Description"
+The
+.UI \&.SO
+macro specifies a file for inclusion in the processing
+of a job.
+The specified
+.SB filename
+will be read into the parent text file at the point
+where the macro is input.
+If
+.UI SYS
+is specified, a default system directory will be searched
+for the existence of 
+.SB filename ;
+otherwise the local directory will be searched
+for
+.SB filename ,
+or a path can be specified to locate the file.
+.AB N
+Unlike the
+.UI troff
+primitive
+.UI \&.so ,
+the
+.UI \&.SO
+macro can be used to include files that require preprocessing
+for tables, illustrations, and the like.
+.AC
+.H 3 "Example"
+Practicality suggests not providing an example here.
+.H 1 "PostScript File Inclusion"
+.AB N
+The
+.UI \&.BP
+and
+.UI \&.EP
+macros can only be used with PostScript printer
+destinations.
+.AC
+.H 2 "The \&.BP Macro"
+.IX \&.BP macro
+.IX macro, \&.BP
+.IX guide macros, begin PostScript picture
+.IX begin PostScript picture macro, \&.BP
+.IX PostScript picture begin macro, \&.BP
+.H 3 "Name"
+.UI \&.BP
+\- begin PostScript picture.
+.H 3 "Synopsis"
+.UI \&.BP
+.SB file
+[
+.SB height
+] [
+.SB width
+] [
+.SB position
+] [
+.SB offset
+] [
+.SB format
+]
+.P
+where
+.VL "" "" SB
+.LI file
+specifies the name of a PostScript language file.
+.LI height
+specifies the vertical space to be left on the page for
+the picture (default is 3 inches).
+.LI width
+specifies the horizontal space to be left on the page for
+the picture (default is current line length).
+.LI position
+can be
+.UI l ,
+.UI c ,
+or
+.UI r ,
+to specify left justify, center, or right justify the picture
+within the space, respectively.
+.LI offset
+specifies the distance from the left margin (default is 0).
+.LI format
+can be one or more of the following:
+.VL 0.3 "" UI
+.PD0
+.LI s
+scale the picture freely.
+.LI l
+left adjust.
+.LI r
+right adjust.
+.LI t
+top adjust.
+.LI b
+bottom adjust.
+.LI o
+outline the picture with a box.
+.LI w
+white out the picture before printing.
+.LI a[\&\f2angle\fP]
+rotate the picture clockwise by \f2angle\fP degrees
+(default is 90 degrees).
+.PD
+.LE
+.LE
+.H 3 "Description"
+The
+.UI \&.BP
+macro allows you to name and place a PostScript
+picture within a file.
+It should be used in conjunction with the
+.UI \&.EP
+macro, described below.
+.AB N
+If you want to use the
+.UI \&.FG
+macro to include a figure legend for your PostScript
+picture, surround the
+.UI \&.BP/\&.EP
+with
+.UI \&.DS/\&.DE .
+.AC
+You can create a PostScript picture file
+by writing PostScript code, creating a PostScript
+file with another tool, or by using the
+.UI post
+destination with
+.UI format ,
+as described in chapter 2.
+Your PostScript file can only contain a single picture
+or image since it must fit into an area no larger than a single page.
+.P
+Correctly fitting your PostScript picture into the
+space you've allotted on the page may require a small
+amount of additional work.
+If, after you print your file the first time, you find
+that the PostScript picture is much smaller than the allotted
+space or some part of the picture is being truncated, you
+need to adjust a PostScript operator called the
+.UI BoundingBox .
+Look in your PostScript file for a line that begins:
+.UI
+%%BoundingBox
+.SF
+After the word BoundingBox you should see four numbers.
+These numbers correspond to x and y coordinates of the 
+picture: the first and second numbers are the x and y coordinates of
+the lower left hand corner of the picture and the third
+and fourth numbers are the x and y coordinates of the upper
+right hand corner of the picture.
+You will need to adjust some if not all or these numbers.
+If you don't have a
+.UI BoundingBox
+line in your file, you will need to add one; add it in
+at the top of the file preceded by two percent signs, as
+shown above.
+.P
+To determine the four numbers for the
+.UI BoundingBox ,
+you need to print out the PostScript file on its
+own.
+There should be a way at your location of sending the PostScript
+file to your PostScript printer as is; if you don't know
+how to do this, ask your system administrator.
+Once you have this printout of the picture, measure in inches
+how far from the left hand edge of the page the closest
+mark appears; and then measure how far from the bottom
+edge of the page the closest mark appears.
+Multiply these numbers by 72; these are the first and second numbers for the
+.UI BoundingBox
+line, respectively.
+Next measure how far from the right edge of the page and the top
+edge of the page the closest marks appear.  Multiply these
+numbers by 72; these are the third and fourth numbers for
+the
+.UI BoundingBox
+line, respectively.
+.P
+After the
+.UI BoundingBox
+line has been changed (or added),
+reprint your file with
+.UI format .
+The picture should be positioned correctly.
+.H 3 "Example"
+None provided.
+.H 2 "The \&.EP Macro"
+.IX \&.EP macro
+.IX macro, \&.EP
+.IX guide macros, end PostScript picture text
+.IX end PostScript picture macro, \&.EP
+.IX PostScript picture end macro, \&.EP
+.H 3 "Name"
+.UI \&.EP
+\- end PostScript picture.
+.H 3 "Synopsis"
+.UI \&.EP
+.H 3 "Description"
+The
+.UI \&.EP
+macro is used in conjunction with the
+.UI \&.BP
+macro to specify the end of a PostScript picture.
+Any text between
+.UI \&.BP
+and
+.UI \&.EP
+will print to one side or on both sides of the
+picture, depending on whether you chose to justify
+or center the picture, and whether there is sufficient
+space.
+Determining where to place this macro with regard
+to having text flow around your picture will require
+some trial and error adjustments.
+.H 3 "Example"
+None provided.
+.H 1 "Key Representations"
+.IX key representations
+.H 2 "The \&.HK Macro"
+.IX \&.HK macro
+.IX macro, \&.HK
+.IX guide macros, hard keys
+.IX hard key macro, \&.HK
+.H 3 "Name"
+.UI \&.HK
+\- specify a key representation.
+.H 3 "Synopsis"
+.UI \&.HK
+{
+.UI RA
+|
+.UI LA
+|
+.UI UA
+|
+.UI DA
+|
+.UI EK
+|
+.SB text
+} [
+.SB punctuation
+]
+.P
+where
+.VL "0.85" "" UI
+.LI RA
+specifies a right arrow hard key.
+.LI LA
+specifies a left arrow hard key.
+.LI UA
+specifies an up arrow hard key.
+.LI DA
+specifies a down arrow hard key.
+.LI EK
+specifies an enter/return key hard key.
+.LI text SB
+specifies one or more characters or words to print as a hard key.
+.LI punctuation SB
+is some form of punctuation to be printed following the hard key.
+.LE
+.H 3 "Description"
+The
+.UI \&.HK
+macro produces a graphical representation of a hard key.
+The following defined hard keys are available by
+specifying one of the two-character mnemonic key names:
+.VL 0.75i 2i UI
+.PD0
+.LI RA
+.HK RA
+.LI LA
+.HK LA
+.LI UA
+.HK UA
+.LI DA
+.HK DA
+.LI EK
+.HK EK
+.PD
+.LE
+In addition to the defined hard keys shown above,
+any characters or words can be specified as a hard
+key.
+Punctuation following a hard key can be specified
+with argument two.
+.H 3 "Example"
+.AL
+.LI
+A typical example; hard keys referenced in a paragraph:
+.VL 0.7i
+.NE12
+.LI Input:
+.DS "" UI
+If you press
+\&.HK UA
+you will move the marble up one line.
+If you press
+\&.HK EK
+you will shoot the marble.
+If you press
+\&.HK CTRL\-Z
+the game will end.
+.DE
+.NE5
+.LI Output:
+If you press
+.HK UA
+you will move the marble up one line.
+If you press
+.HK EK
+you will shoot the marble.
+If you press
+.HK CTRL\-Z
+the game will end.
+.LE
+.LE
+.H 1 "Folio Format"
+.IX folio format
+.IX page-numbering format
+.H 2 "The \&.NF Macro"
+.IX \&.NF macro
+.IX macro, \&.NF
+.IX guide macros, folio format
+.IX folio format macro, \&.NF
+.H 3 "Name"
+.UI \&.NF
+\- specify a folio format.
+.H 3 "Synopsis"
+.UI \&.NF
+[
+.UI i
+|
+.UI 1
+]
+.P
+where
+.VL 0.4i
+.LI i
+specifies a roman (for example, i,ii,iii, .\ .\ .) page number format.
+.LI 1
+specifies an arabic (for example, 1,2,3, .\ .\ .) page number format.
+.LE
+.H 3 "Description"
+The
+.UI \&.NF
+macro specifies the page number (folio) format.
+The default format uses arabic numerals (for example, 1,2,3, .\ .\ .)
+for page numbers.
+If
+.UI i
+or
+.UI 1
+is specified, page format will be roman or arabic,
+respectively.
+If no argument is specified, the previous
+page format is used.
+.H 3 "Example"
+Practicality suggests not providing an example here.
+.H 1 "Text Size"
+.IX text size
+.H 2 "The \&.SM Macro"
+.IX \&.SM macro
+.IX macro, \&.SM
+.IX guide macros, reduced text size
+.IX reduced text size macro, \&.SM
+.H 3 "Name"
+.UI \&.SM
+\- reduce text size.
+.H 3 "Synopsis"
+.UI \&.SM
+.SB text
+[
+.SB punctuation
+]
+.P
+where
+.VL "" "" SB
+.LI text
+is one or more words to print in reduced point size.
+.LI punctuation
+is some form of punctuation to be printed following the reduced text.
+.LE
+.H 3 "Description"
+The
+.UI \&.SM
+macro reduces the type size of text to one point smaller
+than the default text size.
+.P
+The
+.UI \&.SM
+macro is most commonly used to reduce the text
+size of words that must be printed in all upper-case
+characters.
+.H 3 "Example"
+None provided.
+.H 1 "Tab Distance"
+.IX tab stops
+.H 2 "The \&.DT Macro"
+.IX \&.DT macro
+.IX macro, \&.DT
+.IX guide macros, tab stop distance
+.IX tab distance macro, \&.CH
+.H 3 "Name"
+.UI \&.DT
+\- restore default distance for tab stops.
+.H 3 "Synopsis"
+.UI \&.DT
+.H 3 "Description"
+The
+.UI \&.DT
+macro restores tab settings to the default \- every 1/2 inch.
+If you change tab settings with
+.UI \&.ta ,
+you should use
+.UI \&.DT
+to reset tab settings to the default.
+.H 3 "Example"
+.AL
+.LI
+Adjusting tab stops:
+.VL "0.7i"
+.NE10
+.LI Input:
+.DS "" UI
+\&.ta 1i 2i 3i
+Marble1	Marble2	Marble3	Marble4
+gray	gray	red	blue
+mauve	green	purple	gray
+red	red	yellow	blue
+\&.DT
+.DE
+.DS
+.LI Output:
+.br
+.ta 1i 2i 3i
+Marble1	Marble2	Marble3	Marble4
+gray	gray	red	blue
+mauve	green	purple	gray
+red	red	yellow	blue
+.DT
+.DE
+.LE
+.LE
+.H 1 "Proprietary Markings and Draft Notices"
+.IX proprietary markings
+.IX draft notices
+.H 2 "The \&.PM Macro"
+.IX \&.PM macro
+.IX macro, \&.PM
+.IX guide macros, proprietary markings
+.IX guide macros, draft notices
+.IX proprietary markings macro, \&.PM
+.IX draft notices macro, \&.PM
+.H 3 "Name"
+.UI \&.PM
+\- print proprietary marking or draft notice.
+.H 3 "Synopsis"
+.UI \&.PM
+[
+.UI P
+|
+.UI RS
+|
+.UI RG
+|
+.UI CR
+|
+.UI UW
+|
+.UI CP
+|
+.UI DN
+[
+.SB text
+] ]
+.P
+where
+.VL 0.85i "" UI
+.LI P
+specifies the proprietary marking.
+.LI RS
+specifies the proprietary restricted marking.
+.LI RG
+specifies the proprietary registered marking.
+.LI CR
+specifies the copyright notice marking.
+.LI UW
+specifies the unpublished work marking.
+.LI CP
+specifies the see cover page marking
+.LI "DN \&\f1[ \f2text\f1 ]"
+specifies the draft copy notice; optional
+.SB text
+replaces the words "DRAFT COPY."
+.LE
+.H 3 "Description"
+The
+.UI \&.PM
+macro prints one of
+six types of proprietary markings, or a draft copy notice, at the bottom
+of each page.
+By default, a draft copy notice will print, centered above
+the current date and the file name.
+.H 3 "Example"
+.AL
+.LI
+Changing the default notice:
+.VL "0.7i"
+.LI Input:
+.DS "" UI
+\&.PM DN "CAMERA READY COPY"
+.DE
+.NE8
+.LI Output:
+.DS
+.ce3
+CAMERA READY COPY
+June 7, 1991
+File: chap3
+.DE
+.LE
+.LE
+.H 1 "Fonts"
+.IX fonts
+As described below,
+you can change fonts by using one of several macros
+or by using
+.UI troff
+font requests.
+.H 2 "The \&.I, \&.B, and \&.R Macros"
+.IX \&.I macro
+.IX macro, \&.I
+.IX guide macros, italic text
+.IX italic text macro, \&.I
+.IX \&.B macro
+.IX macro, \&.B
+.IX guide macros, bold text
+.IX bold text macro, \&.B
+.IX \&.R macro
+.IX macro, \&.R
+.IX guide macros, regular text
+.IX regular text macro, \&.R
+.H 3 "Name"
+.UI \&.I
+\- make text italic.
+.br
+.UI \&.B
+\- make text bold.
+.br
+.UI \&.R
+\- make text roman.
+.H 3 "Synopsis"
+.UI \&.I
+[
+.SB text
+]
+[
+.SB punctuation
+]
+.br
+.UI \&.B
+[
+.SB text
+]
+[
+.SB punctuation
+]
+.br
+.UI \&.R
+.H 3 "Description"
+The
+.UI \&.I
+and
+.UI \&.B
+macros cause text to print in italics or boldface, respectively.
+You can use the second argument to specify punctuation that
+needs to follow the text without an intervening space.
+If you do not specify an argument, all
+subsequent lines of text will print in italics or boldface
+until either you change to another font or you use
+a macro that automatically resets the font, such as
+a heading macro.
+The
+.UI \&.R
+macro does not accept an argument.
+It changes font to the default text body font, font number 1,
+which is normally some version of roman, hence the R 
+for the macro name.
+You would likely use
+.UI \&.I
+or
+.UI \&.B
+with
+.UI \&.R
+to designate a block of text to print in italics or boldface and
+then to return to roman, the default, as shown below.
+.AB N
+The
+.UI \&.I
+and
+.UI \&.B
+macros for the manual pages have a different syntax.
+See the
+.ST Fonts
+section in chapter 3 for more information.
+.AC
+.H 3 "Example"
+.AL
+.LI
+Specifying a font change:
+.VL "0.7i"
+.NE10
+.LI Input:
+.DS "" UI
+If the term
+\&.B mblmania
+is new to you, read the following excerpt:
+\&.P
+\&.B
+A new concept in marbling tournaments today
+is: mblmania.
+Where it started and when it started, no one
+really knows; but the current mania for marbling
+is now an every day subject of conversation and,
+to some, a subject for concern.
+\&.R
+\&.P
+That should explain it.
+.DE
+.DS
+.NE10
+.LI Output:
+.br
+If the term
+.B mblmania
+is new to you, read the following excerpt:
+.P
+.B
+A new concept in marbling tournaments today
+is: mblmania.
+Where it started and when it started, no one
+really knows; but the current mania for marbling
+is now an every day subject of conversation and,
+to some, a subject for concern.
+.R
+.P
+That should explain it.
+.DE
+.LE
+.LE
+.sp -1.0
+.H 2 "Font Requests"
+.IX font requests
+.H 3 "Name"
+.IX \ef1 font request
+.IX \ef2 font request
+.IX \ef3 font request
+.IX \ef4 font request
+.IX \ef5 font request
+.IX \&.ft1 font request
+.IX \&.ft2 font request
+.IX \&.ft3 font request
+.IX \&.ft4 font request
+.IX \&.ft5 font request
+.IX guide macros, font requests
+.UI \ef1
+or
+.UI \&.ft1
+\- change to font 1.
+.br
+.UI \ef2
+or
+.UI \&.ft2
+\- change to font 2.
+.br
+.UI \ef3
+or
+.UI \&.ft3
+\- change to font 3.
+.br
+.UI \ef4
+or
+.UI \&.ft4
+\- change to font 4.
+.br
+.UI \ef5
+or
+.UI \&.ft5
+\- change to font 5.
+.br
+.UI \efP
+\- change to the previous font.
+.H 3 "Synopsis"
+.UI \ef[12345P]
+.SB text
+.br
+.UI \&.ft[12345P]
+.H 3 "Description"
+You can change fonts for a single word, a series of words,
+or a block of text by explicitly specifying a font number.
+Since font positions, or font numbers, are location dependent
+variables, it is impossible to specify here precisely which
+font each of the five font numbers will invoke.
+However, here are some basic guidelines which should hold
+true.
+.BL
+.LI
+Font 1 is the default font and is used for the main
+body of running text.
+This font is frequently Times-Roman or Palatino-Roman.
+.LI
+Font 2 is normally an italic version of font 1
+and is the same font invoked by the
+.UI \&.I
+macro.
+Font 2 is often used for substitutable elements
+and book titles.
+This font is frequently Times-Italic or Palatino-Italic.
+.LI
+Font 3 is normally a boldface version of font 1
+and is the same font invoked by the
+.UI \&.B
+macro.
+Font 3 is often used to introduce new terminology
+or emphasize key words or phrases.
+This font is frequently Times-Bold or Palatino-Bold.
+.LI
+Font 4 has not traditionally been used.
+DOCTOOLS, however, expects font 4 to be some
+constant width font and it is used to mark
+user input text.
+Any names or data entered by a user can be considered
+user input text.
+Examples of user input text are command names,
+command arguments/options, file names, routine names, and
+environment variable names.
+.LI
+Font 5 also has not traditionally been used.
+DOCTOOLS also expects font 5 to be some
+constant width font, perhaps a boldface or
+italic constant width font or the same constant width
+font used for font 4.
+Font 5 is used to mark computer output text.
+Data returned by the computer in response to some
+input can be considered computer output text.
+Examples of computer output text are prompts,
+error messages, and diagnostic messages.
+.LI
+Always use
+.UI \ef[12345P]
+in pairs: the first to turn on a particular font,
+the second to turn it off.
+Use
+.UI \efP
+to turn off a font change whenever possible, since
+you cannot always be sure that the previous font was
+font 1.
+.LI
+To change font for a block of text, use the
+.UI \&.ft[12345P]
+approach.
+Again, remember to change back to the preceding font.
+.LE
+.H 3 "Examples"
+.AL
+.LI
+In-line font changes:
+.VL "0.7i"
+.NE10
+.LI Input:
+.DS "" UI
+If you use \ef4mblcount\efP without the \ef2filename\efP
+option, you will see the following error message:
+\ef5No filename was specified\efP.
+.DE
+.DS
+.LI Output:
+.br
+If you use \f4mblcount\fP without the \f2filename\fP
+option, you will see the following error message:
+\f5No filename was specified\fP.
+.DE
+.LE
+.LI
+Text block font changes:
+.VL "0.7i"
+.NE15
+.LI Input:
+.DS "" UI
+The following error messages could appear
+on your screen:
+\&.ft5
+Can not throw negative marbles!
+\&.br
+Out of marbles!
+\&.br
+Passed marbling time!
+\&.ftP
+.DE
+.DS
+.LI Output:
+.br
+The following error messages could appear on your screen:
+.ft5
+Can not throw negative marbles!
+.br
+Out of marbles!
+.br
+Passed marbling time!
+.ftP
+.DE
+.LE
+.LE
+.AB N
+You are better off using available macros
+whenever possible to change fonts.
+This helps to make files more consistent and
+more readable.
+.AC
+.\" EOF

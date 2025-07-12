@@ -1,0 +1,13 @@
+.if n .pH fstw_guide.Capp1 @(#)Capp1	40.3
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.BK "Writing File System Types" "" "" ""   
+.\ACRONYM	                  
+.CH "Appendix" "" "Table of Contents" "A"
+.\CHAPTER	A
+.tC 1 "Recent Changes Affecting File System Types" A-1  
+.tC 2 "New vnode Operation" A-1  
+.tC 2 "Implementation Changes in Standard FS Types" A-1  
+.tC 2 "Additional VM Changes" A-2  
+.tC 1 "Inter-Version Compatibility of File System Types and the Kernel" A-4  
+.tC 2 "Version 2 File Systems Running on Version 3" A-4  
+.tC 2 "Version 3 File Systems Running on Version 2" A-4  

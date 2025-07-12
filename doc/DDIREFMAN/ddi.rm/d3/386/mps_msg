@@ -1,0 +1,97 @@
+'\"!  tbl | mmdoc
+'\"macro stdmacro
+.if n .pH 386.mps_msg @(#)mps_msg	40.5 of 6/24/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.nr X
+.if \nX=0 .ds x} mps_msg D3D "Multibus II" "DDI" "\&"
+.if \nX=1 .ds x} mps_msg D3D "Multibus II" "DDI"
+.if \nX=2 .ds x} mps_msg D3D "" "\&"
+.if \nX=3 .ds x} mps_msg "" "" "\&"
+.TH \*(x}
+.SH NAME
+.na
+\f4mps_msg: mps_msg_getsrcmid, mps_msg_getmsgtyp, mps_msg_getbrlen, mps_msg_getreqid, mps_msg_getlsnid, mps_msg_getsrcpid, mps_msg_gettrnsid, mps_msg_getudp, mps_msg_iscancel, mps_msg_iseot, mps_msg_iserror, mps_msg_iscompletion, mps_msg_isreq \f1 \- macros used to decode message handler message
+.SH SYNOPSIS
+.nf
+\f4#include <sys/mps.h>
+.fi
+.SH DESCRIPTION
+These macros are used to decode messages from the message handler.
+Each macro takes as its argument a pointer to the message buffer
+to be decoded.
+The following is a description of each macro and its return value.
+.TS
+center;
+c | c
+l | l .
+MACRO	RETURN VALUE
+.sp .15
+_
+.nf
+\f4mps_msg_\f1getsrcmid
+  \f1get source message id	8-bit unsigned
+.sp .15
+_
+.sp .15
+\f4mps_msg_\f1getmsgtyp	MG_UNSOL, MG_BRDCST,
+  \f1get message type	MG_BREQ, MG_BREJ
+.sp .15
+_
+.sp .15
+\f4mps_msg_\f1getbrlen
+  data length in a buf request msg	32-bit
+.sp .15
+_
+.sp .15
+\f4mps_msg_\f1getreqid
+  \f1get request id	8-bit unsigned
+.sp .15
+_
+.sp .15
+\f4mps_msg_\f1getlsnid
+  \f1get liaison id	8-bit unsigned
+.sp .15
+_
+.sp .15
+\f4mps_msg_\f1getsrcpid
+  \f1get source port id	16-bit unsigned
+.sp .15
+_
+.sp .15
+\f4mps_msg_\f1gettrnsid
+  \f1get transaction id	8-bit unsigned
+.sp .15
+_
+.sp .15
+\f4mps_msg_\f1getudp
+  \f1get user data portion of msg buf	32-bit char pointer
+.sp .15
+_
+.sp .15
+\f4mps_msg_iscancel
+  \f1is this a cancel message?	1 if cancel message, otherwise 0 (zero)
+.sp .15
+_
+.sp .15
+\f4mps_msg_iseot
+  \f1is this an EOT message?	1 if end of transaction, otherwise 0 (zero)
+.sp .15
+_
+.sp .15
+\f4mps_msg_\f1iserror
+  \f1is this an error message?	1 if error message, otherwise 0 (zero)
+.sp .15
+_
+.sp .15
+\f4mps_msg_\f1iscompletion
+  \f1is this a completion message?	1 if completion message, otherwise 0 (zero)
+.sp .15
+_
+.sp .15
+\f4mps_msg_\f1isreq
+  \f1is this a request phase message?	1 if request phase, otherwise 0 (zero)
+.TE
+.SH "RETURN VALUE"
+Listed above.
+.SH LEVEL
+Base or Interrupt

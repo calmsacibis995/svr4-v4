@@ -1,0 +1,67 @@
+'\"macro stdmacro
+.if n .pH gen.drv_usecwait @(#)drv_usecwait	40.3 of 3/26/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.nr X
+.if \nX=0 .ds x} drv_usecwait D3DK "" "DDI/DKI" "\&"
+.if \nX=1 .ds x} drv_usecwait D3DK "" "DDI/DKI"
+.if \nX=2 .ds x} drv_usecwait D3DK "" "\&"
+.if \nX=3 .ds x} drv_usecwait "" "" "\&"
+.TH \*(x}
+.IX "\f4drv_usecwait\fP(D3DK)"
+.SH NAME
+\f4drv_usecwait\f1 \- busy-wait for specified interval
+.SH SYNOPSIS
+.nf
+.na
+\f4#include <sys/types.h>
+#include <sys/ddi.h>
+
+.sp 0.5
+void drv_usecwait(clock_t \f2microsecs\f4);\f1
+.ad
+.fi
+.SH ARGUMENTS
+.RS 0n 10
+.IP "\f2microsecs\f1" 10n
+The number of microseconds to busy-wait.
+.RE
+.SH DESCRIPTION
+\f4drv_usecwait\f1 causes the caller to busy-wait for at least the number
+of microseconds specified by \f2microsecs\f1.
+The amount of time spent busy-waiting may be greater than the time specified
+by \f2microsecs\f1 but will not be less.
+\f4drv_usecwait\f1 should only be used to wait for short periods of time
+(less than a clock tick) or when it is necessary to wait without sleeping
+(for example, at interrupt level).
+When the desired delay is at least as long as clock tick and it is possible
+to sleep, the \f4delay\f1(D3DK) function should be used instead since it
+will not waste processor time busy-waiting as \f4drv_usecwait\f1 does.
+.P
+Because excessive busy-waiting is wasteful the driver should only
+make calls to \f4drv_usecwait\f1 as needed, and only for as much time as
+needed.
+\f4drv_usecwait\f1 does not raise the interrupt priority level;
+if the driver wishes to block interrupts for the duration of the wait,
+it is the driver's responsibility to set the priority level before the call
+and restore it to its original value afterward.
+.SH RETURN VALUE
+None.
+.SH LEVEL
+Base or Interrupt.
+.SH NOTES
+Does not sleep.
+.sp 0.5
+Busy-waiting can increase the preemption latency experienced by high priority
+processes.
+Since short and bounded preemption latency can be critical in a real time
+environment, drivers intended for use in such an environment should not use this
+interface or should limit the length of the wait to an appropriately short
+length of time.
+.SH SEE ALSO
+.na
+\f4delay\f1(D3DK),
+\f4drv_hztousec\f1(D3DK),
+\f4drv_usectohz\f1(D3DK),
+\f4timeout\f1(D3DK),
+\f4untimeout\f1(D3DK)
+.ad

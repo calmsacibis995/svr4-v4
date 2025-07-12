@@ -1,0 +1,92 @@
+'\"!  tbl | mmdoc
+'\"macro stdmacro
+.if n .pH g2.uadmin @(#)uadmin	40.3 of 1/3/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} uadmin 2 "" "\&"
+.if \nX=1 .ds x} uadmin 2 ""
+.if \nX=2 .ds x} uadmin 2 "" "\&"
+.if \nX=3 .ds x} uadmin "" "" "\&"
+.TH \*(x}
+'\" t
+.SH NAME
+\f4uadmin\f1 \- administrative control
+.SH SYNOPSIS
+\f4#include <sys/uadmin.h>\f1
+.PP
+\f4int uadmin(int \f2cmd\fP, int \f2fcn\fP, int \f2mdep\fP);\f1
+.SH DESCRIPTION
+\f4uadmin\fP
+provides control for basic administrative functions.
+This system call is tightly coupled to the system administrative procedures
+and is not intended for general use.
+The argument
+.I mdep
+is provided for machine-dependent use and is not defined here.
+.PP
+As specified by
+.IR cmd ,
+the following commands are available:
+.PP
+.TP 15
+\f4A_SHUTDOWN\fP
+The system is shut down.
+All user processes are killed, the buffer cache is flushed, and the root
+file system is unmounted.
+The action to be taken after the system has been shut down is specified by
+.IR fcn .
+The functions are generic;
+the hardware capabilities vary on 
+specific machines.
+.RS 15
+.TP 12
+\f4AD_HALT\fP
+Halt the processor and turn off the power.
+.TP
+\f4AD_BOOT\fP
+Reboot the system, using \f4/stand/unix\f1.
+.TP
+\f4AD_IBOOT\fP
+Interactive reboot; the system goes to firmware mode and
+if the user strikes any key immediately after \f4Booting UNIX\fP is displayed,
+they are prompted for a bootable program name.
+If \f2fcn\f1 is not supplied or is invalid, \f4AD_IBOOT\fP is used as
+the default.
+.RE
+.TP 15
+\f4A_REBOOT\fP
+The system stops immediately without any further processing.
+The action to be taken next is specified by
+.I fcn
+as above.
+.TP
+\f4A_REMOUNT\fP
+The root file system is mounted again after having been fixed.
+This should be used only during the startup process.
+.PP
+\f4uadmin\fP
+fails if any of the following are true:
+.TP 15
+\f4EPERM\fP
+The effective user ID is not super-user.
+.SH DIAGNOSTICS
+Upon successful completion, the value returned depends on
+.I cmd
+as follows:
+.PP
+.RS
+.TS
+l l.
+\f4A_SHUTDOWN\fP	Never returns.
+\f4A_REBOOT\fP	Never returns.
+\f4A_REMOUNT\fP	0
+.TE
+.RE
+.PP
+Otherwise, a value of \-1 is returned and
+\f4errno\fP
+is set to indicate the error.
+.SH SEE ALSO
+\f4sysi86\fP(2).
+.Ee

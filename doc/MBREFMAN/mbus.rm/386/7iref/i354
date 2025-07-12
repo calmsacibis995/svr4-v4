@@ -1,0 +1,64 @@
+'\"macro stdmacro
+.if n .pH g1a.i354 @(#)i354	40.7 of 5/17/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} i354 7iref "" "" "\&"
+.if \nX=1 .ds x} i354 7iref "" ""
+.if \nX=2 .ds x} i354 7iref "" "\&"
+.if \nX=3 .ds x} i354 "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4i354\f1 \- iSBX 354 dual channel serial-port device driver
+.SH DESCRIPTION
+The \f4i354\f1 device driver, together with the \f4iasy\f1(7iref) driver,
+provides a \f4termio\fP 
+interface to the iSBX 354 dual channel serial controller board on Multibus II 
+systems.  The board contains the Intel 82530 Serial Communications Controller 
+providing two serial channels to the local processor on which the board is 
+mounted.
+.P
+The \f4i354\f1 driver also supports the two onboard serial ports of the iSBC 386/133 
+and iSBC 486/1xx boards.
+.P
+The \f4i354\f1 device driver contains support for the console device (see 
+\f4console\f1(7iref)).   The \f4i354\f1 will automatically be configured 
+into the data 
+structure \f4conssw\fP [this data structure is used by \f4console\f1(7iref)].
+After the \f4i354\f1 driver is configured into \f4conssw\f1, it is used as the 
+console device.
+.P
+Minor numbers from 0 to 3 are reserved for this driver.  Minor numbers are 
+passed to the \f4iasy\f1 driver at boot time.  For information on how minor 
+numbers are assigned to device nodes, and on how device nodes are named,
+see \f4iasy\f1(7iref).
+The \f4i354\f1 driver is configured to communicate with the iSBX 354 module 
+first and the on board serial ports second.  If the driver finds an iSBX 354 
+module, the on board serial ports are ignored.
+.P
+To change the order the \f4i354\f1 driver searches for serial ports, edit 
+the \f4/etc/conf/pack.d/i354/sdev\f1 file.  Find the two lines that begin 
+with 'i354.'  Swap the position of these two lines.
+.SH FILES
+.TP 2.25i
+\f4/etc/conf/cf.d/mdevice\f1
+\f4mdevice\fP entries
+.TP
+\f4/etc/conf/sdevice.d/i354
+\f4sdevice\fP entries
+.TP
+\f4/etc/conf/pack.d/i354/Driver.o\f1
+\f4i354\f1 device driver object module
+.TP
+\f4/etc/conf/pack.d/i354/space.c\f1
+\f4i354\f1 specific declarations and initialization
+.TP
+\f4/usr/include/sys/i354.h\f1
+\f4i354\f1 specific definitions
+.TP
+\f4/usr/include/sys/i82530.h\f1
+i82530 SCC specific definitions
+.SH SEE ALSO
+\f4console\f1(7iref),
+\f4iasy\f1(7iref),
+\f4termio\f1(7)

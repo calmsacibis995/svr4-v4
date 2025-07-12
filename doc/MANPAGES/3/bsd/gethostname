@@ -1,0 +1,84 @@
+'\"macro stdmacro
+.if n .pH g2.gethostname @(#)gethostname	40.10 of 4/24/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.\" Copyright (c) 1988 Sun Microsystems, Inc. - All Rights Reserved.
+.\"
+.\" Copyright (c) 1983 Regents of the University of California.
+.\" All rights reserved.  The Berkeley software License Agreement
+.\" specifies the terms and conditions for redistribution.
+.\"
+.nr X
+.if \nX=0 .ds x} gethostname 3 "BSD Compatibility Package" "\&"
+.if \nX=1 .ds x} gethostname 3 "BSD Compatibility Package"
+.if \nX=2 .ds x} gethostname 3 "" "\&"
+.if \nX=3 .ds x} gethostname "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4gethostname\f1, \f4sethostname\f1 \- get/set name of current host
+.SH SYNOPSIS
+.nf
+\f4cc \f1[ \f2flag\f1\. \. \. ] \f2file\f1 \. \. \. \f4\-lucb\f1
+.P
+.ft 4
+int gethostname(name, namelen)
+char \(**name;
+int namelen;
+.ft 1
+.P
+.ft 4
+int sethostname(name, namelen)
+char \(**name;
+int namelen;
+.ft 1
+.fi
+.SH DESCRIPTION
+\f4gethostname\f1
+returns the standard host name for the current processor, as previously set by
+\f4sethostname\f1.
+The parameter
+.I namelen
+specifies the size of the array pointed to by
+.IR name .
+The returned name is null-terminated unless insufficient
+space is provided.
+.P
+\f4sethostname\f1
+sets the name of the host machine to be
+.IR name ,
+which has length
+.IR namelen .
+This call is restricted to the privileged user and
+is normally used only when the system is bootstrapped.
+.SH "RETURN VALUE"
+If the call succeeds a value of 0 is returned.
+If the call
+fails, then a value of \-1 is returned and an error code is
+placed in the global location
+\f4errno\f1.
+.SH ERRORS
+The following error may be returned by these calls:
+.TP 15
+\f4EFAULT\fP
+The
+.I name
+or
+.I namelen
+parameter gave an
+invalid address.
+.TP
+\f4EPERM\fP
+The caller was not the privileged user.
+Note: this error only applies to
+\f4sethostname\f1.
+.SH SEE ALSO
+\f4gethostid\fP(3)
+.P
+\f4uname\f1(2)
+in the \f2Programmer's Reference Manual\f1
+.SH NOTES
+Host names are limited to
+\f4MAXHOSTNAMELEN\fP
+characters, currently 256.
+(See the
+\f4param.h\f1 header file.)

@@ -1,0 +1,136 @@
+'\"macro stdmacro
+.if n .pH g1a.lpsched @(#)lpsched	40.11.1.3 of 7/11/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} lpsched 1M "Line Printer Spooling Utilities" "\&"
+.if \nX=1 .ds x} lpsched 1M "Line Printer Spooling Utilities"
+.if \nX=2 .ds x} lpsched 1M "" "\&"
+.if \nX=3 .ds x} lpsched "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4lpsched\f1, \f4lpshut\f1, \f4lpmove\f1 \- start/stop the \s-1LP\s+1 print service and move requests
+.SH SYNOPSIS
+\f4/usr/lib/lp/lpsched\f1
+.ig
+.br
+\f4/usr/lib/lp/lpsched \-q \f2integer\f1
+.br
+\f4/usr/lib/lp/lpsched \-a \f2integer\f1
+.br
+\f4/usr/lib/lp/lpsched \-p \f2integer\f1
+.br 
+\f4/usr/lib/lp/lpsched \-s \f2integer\f1
+..
+.br
+\f4lpshut\f1
+.br
+\f4lpmove\f2 requests\|\ \|dest\f1
+.br
+\f4lpmove\f2
+\f2dest1 dest2\f1
+.SH DESCRIPTION
+\f4lpsched\fP
+starts the LP print service;
+this can be done only by \f4root\f1 or \f4lp\f1.
+.PP
+\f4lpshut\fP
+shuts down the print service.
+All printers that are printing
+at the time \f4lpshut\fP is invoked
+will stop printing.
+When \f4lpsched\fP is started again,
+requests that were printing at the time
+a printer was shut down will be reprinted
+from the beginning.
+.PP
+\f4lpmove\fP moves requests that were queued by \f4lp\fP
+between \s-1LP\s+1
+destinations.
+The first form of the \f4lpmove\fP command shown above 
+(under \f3\s-1SYNOPSIS\s+1\f1)
+moves the named
+.I requests
+to the \s-1LP\s+1 destination
+.IR dest .
+.I Requests
+are request-\s-1ID\s+1s
+as returned by \f4lp\fP.
+The second form of the \f4lpmove\fP command 
+will attempt to move
+all requests for destination
+\f2dest1\fP
+to destination
+\f2dest2\fP;
+\f4lp\fP will then reject any new requests for
+\f2dest1\fP.
+.PP
+Note that when moving requests,
+\f4lpmove\fP never checks the acceptance status [see \f4accept\fP(1M)]
+of the new destination.
+Also, the request-\s-1ID\s+1s of the moved request are not changed,
+so that users can still find their requests.
+The \f4lpmove\fP command will not move requests that have options
+(content type, form required, and so on)
+that cannot be handled by the new destination.
+.PP
+If a request was originally queued for a
+class or the special destination \f4any\f1,
+and the first form of \f4lpmove\f1 was used,
+the destination of the request will be changed to \f2new-destination\f1.
+A request thus affected will be
+printable only on \f2new-destination\f1 and not on other
+members of the \f4class\f1 or other acceptable printers if the
+original destination was \f4any\f1.
+.ig
+.TP 5
+\f4\-q\f2\\f4integer\f1
+Specify the number of request structures 
+you want to allocate.
+.TP 5
+\f4\-a\f2\\f4integer\f1
+Specify the number of alert structures 
+you want to allocate.
+By default,
+forty empty alert structures are allocated
+in addition to one
+for each printer or form on the system.
+Structures will always be allocated for existing printers and forms.
+You can choose, however, to have
+more or fewer than the 
+forty extra, by using the \f4\-a\f1 option.
+For example, if you want only
+as many alert structures as you have
+printers and forms on your system,
+enter the following command:  \f4lpsched \-a 0\f1.
+.TP 5
+\f4\-p\f2\\f4integer\f1
+Specify the number of print status structures
+you want to allocate.
+By default,
+twenty-five empty printer status structures are allocated
+in addition to one
+for each printer on the system.
+Structures will always be allocated for existing printers.
+You can choose, however, to have
+more or fewer than the 
+forty extra, by using the \f4\-p\f1 option.
+.TP 5
+\f4\-s\f2\\f4integer\f1
+Specify the number of slow filters per printer that
+can be run simultaneously.
+..
+.SH FILES
+\f4/var/spool/lp/\(**\f1
+.SH SEE ALSO
+\f4accept\fP(1M),
+\f4lpadmin\fP(1M).
+.br
+\f4enable\fP(1),
+\f4lp\fP(1),
+\f4lpstat\fP(1) in the
+\f2User's Reference Manual\f1.
+.EQ
+delim off
+.EN
+.Ee

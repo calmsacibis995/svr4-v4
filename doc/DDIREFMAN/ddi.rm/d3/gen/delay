@@ -1,0 +1,55 @@
+'\"macro stdmacro
+.if n .pH gen.delay @(#)delay	40.2 of 1/7/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.nr X
+.if \nX=0 .ds x} delay D3DK "" "DDI/DKI" "\&"
+.if \nX=1 .ds x} delay D3DK "" "DDI/DKI"
+.if \nX=2 .ds x} delay D3DK "" "\&"
+.if \nX=3 .ds x} delay "" "" "\&"
+.TH \*(x}
+.IX "\f4delay\fP(D3DK)"
+.SH "NAME" 
+\f4delay\f1 \- delay process execution for a specified number of clock ticks
+.SH "SYNOPSIS" 
+.nf
+.na
+\f4void delay(long \f2ticks\f4);\f1
+.ad
+.fi
+.SH "ARGUMENTS" 
+.RS 0n 10
+.IP "\f2ticks\f1" 10n
+The number of clock ticks to delay.
+.RE
+.SH "DESCRIPTION" 
+\f4delay\f1 causes the caller to sleep for the amount of time specified
+by \f2ticks\f1, which is in units of clock ticks.
+The exact length of the delay is not guaranteed but it will not be less
+than \f2ticks\f1 clock ticks.
+The length of a clock tick can vary across different implementations and
+therefore drivers should not include any hard-coded assumptions about
+the length of a tick.
+The \f4drv_usectohz\f1(D3DK) and \f4drv_hztousec\f1(D3DK) functions
+can be used, as necessary, to convert between clock ticks and microseconds
+(implementation independent units).
+.P
+The \f4delay\f1 function calls
+\f4timeout\f1(D3DK) to schedule a wakeup after the specified amount of
+time has elapsed.  \f4delay\f1 then goes to sleep until \f4timeout\f1 wakes
+up the sleeping process.
+.SH "RETURN VALUE" 
+None.
+.SH "LEVEL" 
+Base Only.
+.SH NOTES
+Function sleeps.
+.SH "SEE ALSO" 
+.na
+\f4drv_hztousec\f1(D3DK),
+\f4drv_usectohz\f1(D3DK),
+\f4drv_usecwait\f1(D3DK),
+\f4sleep\f1(D3K),
+\f4timeout\f1(D3DK),
+\f4untimeout\f1(D3DK),
+\f4wakeup\f1(D3K)
+.ad

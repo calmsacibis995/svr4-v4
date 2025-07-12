@@ -1,0 +1,18 @@
+#ident	"@(#)doctools:index/doclean	1.1"
+# doclean
+#   Input:  string (blanks and tab) number
+#   Output: string (tab) number
+#
+# Get rid of extra blanks.
+# Convert to standard font: font 4 for CW.
+# Get rid of multiple \&.
+# Get rid of initial \&.
+
+sed '
+	s/ *	/	/
+	s/\\f(CW/\\f4/g
+	s/\\\&\\\&/\\\&/g
+	s/^\\\&//
+	s/^istart \\\&/istart /
+	s/^iend \\\&/iend /
+' $*

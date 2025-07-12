@@ -1,0 +1,186 @@
+'\"macro stdmacro
+.if n .pH g1.printf @(#)printf	40.17 of 5/9/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} printf 1 "Essential Utilities" "\&"
+.if \nX=1 .ds x} printf 1 "Essential Utilities"
+.if \nX=2 .ds x} printf 1 "" "\&"
+.if \nX=3 .ds x} printf "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4printf\f1 \- print formatted output
+.SH SYNOPSIS
+\f4printf \f2format \f1[\f2arg\f1 . . .] 
+.SH DESCRIPTION
+The
+\f4printf\fP
+command converts, formats, and prints its
+.IR arg s
+under control of the
+.IR format .
+It fully supports conversion
+specifications for strings (\f4%s\f1 descriptor);
+however, the results are undefined for the other conversion
+specifications supported by
+\f4printf\fP(3S).
+.PP
+.TP 10
+.I format
+a character string
+that contains
+three types of objects:
+1) plain characters, which are simply copied to the output stream;
+2) conversion specifications, each of which results in fetching zero or more
+.IR arg s;
+and 3) C-language escape sequences, which are translated into the corresponding characters.
+.TP 10
+.I arg
+string(s) to be printed under the control of
+.IR format .
+The results are undefined if there are insufficient
+.IR arg s
+for the format.
+If the format is exhausted while
+.IR arg s
+remain, the excess
+.IR arg s
+are simply ignored.
+.PP
+Each conversion specification is introduced by
+the character
+\f4%\f1.
+After the
+\f4%\f1,
+the following
+appear in sequence:
+.PP
+.RS
+An optional field, consisting of a decimal digit string followed by a 
+\f4$\f1,
+specifying the next 
+.I arg
+to be converted.
+If this field is not provided,
+the 
+.I arg
+following the last
+.I arg
+converted is used.
+.PP
+An optional decimal digit string specifying a minimum
+.IR "field width" .
+If the converted value has fewer characters
+than the field width,
+it is padded on the left (or right,
+if the left-adjustment flag `\f4\-\fP' has been
+given) to the field width.
+The padding is with blanks unless the field width digit string
+starts with a zero, in which case the padding is with zeros.
+.PP
+An optional
+.I precision\^
+that gives
+the maximum number of characters
+to be printed from a string in
+\f4%s\f1
+conversion.
+The precision takes the form of a period
+(\f4\&.\f1)
+followed by a decimal digit string;
+a null digit string is treated as zero (nothing is printed).
+Padding specified by the precision overrides 
+the padding specified by the field width.
+That is, if \f2precision\fP is specified, its value is used to control
+the number of characters printed.
+.PP
+A field width or precision or both may be
+indicated by an asterisk
+\f1(\f4\(**\f1)
+instead of a digit string.
+In this case, an integer
+.I arg\^
+supplies
+the field width or precision.
+The
+.I arg\^
+that is actually converted is not fetched until
+the conversion letter is seen, so the
+.IR arg s
+specifying field width or precision must appear
+.I before\^
+the
+.I arg\^
+(if any) to be converted.
+A negative field width argument is taken as a
+\f4`\-'\f1
+(left-adjustment)
+flag followed by a positive field width.
+If the precision argument is negative, 
+it is changed to zero
+(nothing is printed).
+In no case does a non-existent or small field width cause truncation of a field;
+if the result of a conversion is wider than the field width,
+the field is simply expanded to contain the conversion result.
+.RE
+.PP
+The conversion characters and their meanings are:
+.TP
+\f4%s\f1
+The
+.I arg\^
+is taken to be a string
+and characters from the string are printed until
+a null character
+\f1(\f4\e0\f1)
+is encountered or
+the number of characters indicated by the precision
+specification is reached.
+If the precision is missing, it is taken to be infinite, so
+all characters up to the first null character are printed.
+A 
+null
+value for
+.I arg\^
+yields undefined results.
+.TP
+\f4%%\f1
+Print a
+\f4%\f1;
+no argument is converted.
+.SH EXAMPLES
+The command
+.PP
+.RS
+\f4printf '%s %s %s\\n' Good Morning World\fP
+.RE
+.PP
+results in the output:
+.PP
+.RS
+\f5Good Morning World\fP
+.RE
+.PP
+The following command produces the same output.
+.PP
+.RS
+\f4printf '%2$s %s %1$s\\n' World Good Morning\fP
+.RE
+.PP
+Here is an example that prints the first 6 characters of \f4$PATH\fP
+left-adjusted in a 10-character field:
+.PP
+.RS
+\f4printf 'First 6 chars of %s are %-10.6s.\en' $PATH $PATH\fP
+.RE
+.PP
+If \f4$PATH\fP has the value \f4/usr/bin:/usr/local/bin\fP,
+then the above command would print the following output:
+.PP
+.RS
+\f4First 6 chars of /usr/bin:/usr/local/bin are /usr/b    .
+.RE
+.SH SEE ALSO
+\f4printf\fP(3S) in the
+\f2Programmer's Reference Manual\f1
+.Ee

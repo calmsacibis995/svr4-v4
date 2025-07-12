@@ -1,0 +1,28 @@
+#ident	"@(#)doctools:index/index.head	1.1"
+.\"  XX macro marks new index entry.
+.de XX
+.	br
+.	ti 0
+.	ne 2
+.	vs 12
+\s10\f1\\$1\0 \s8\fH\\$2\f1
+..
+.\"  header between letters of the alphabet
+.de YY
+.	sp 2
+.	ne 4
+\fH\s16\\$2\s0\f1
+.	sp 0.5
+..
+.\"  markup surrounding book acronym
+.ds B{
+.ds }B
+.\"  markup surrounding chapter number
+.ds C{ " 
+.ds }C :\ 
+.vs 12
+.ps 8
+.CH "Index" I 
+.H 1 "Index"
+.2C
+.in +2

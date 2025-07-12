@@ -1,0 +1,94 @@
+'\"macro stdmacro
+.if n .pH g1a.pkgparam @(#)pkgparam	40.8 of 4/22/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+'\"macro stdmacro
+.if n .pH g1.pkgparam @(#)pkgparam	40.11 of 8/25/89
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.if \nX=0 .ds x} pkgparam 1 "Essential Utilities" "\&"
+.if \nX=1 .ds x} pkgparam 1 "Essential Utilities"
+.if \nX=2 .ds x} pkgparam 1 "Essential Utilities" "\&"
+.if \nX=3 .ds x} pkgparam "Essential Utilities" "\&"
+.nr X
+.TH \*(x} "" "386 Computer Only"
+.SH NAME
+\f4pkgparam\f1 \- displays package parameter values
+.SH SYNOPSIS
+\f4pkgparam \f1[\f4\-v\f1]\f4\f1[\f4\-d \f2device\f4\f1]\f4 \f2pkginst\f4 \f1[\f4\f2param\f4\f1[\f4 . . .\f1]\|\f4\f1]\f4
+.br
+pkgparam \-f \f2file\f4 \f1[\f4\-v\f1]\f4 \f1[\f4\f2param\f4\f1[\f4 . . .\f1]\|\f4\f1]\f4
+.SH DESCRIPTION
+\f4pkgparam\f1
+displays the value associated with the parameter or parameters
+requested on the command line.
+The values are located in either the
+\f4pkginfo\f1 file for \f2pkginst\f1 or from the
+specific file named with the
+\f4\-f\f1 option.
+.P
+One parameter value is
+shown per line.
+Only the value of a parameter is given unless the \f4\-v\f1
+option is used.
+With this option, the output of the command is in this format:
+.P
+.in +.5i
+.nf
+\f2parameter1\f4='\f2value1\f4'\f1
+\f2parameter2\f4='\f2value2\f4'\f1
+\f2parameter3\f4='\f2value3\f4'\f1
+.fi
+.in -.5i
+.P
+If no parameters are specified on the command line, values for all parameters
+associated with the package are shown.
+.P
+Options and arguments for this command are:
+.TP 8
+\f4\-v\f1
+Specifies verbose mode.
+Displays name of parameter and its value.
+.TP 8
+\f4\-d\f1
+Specifies the \f2device\f1 on which a \f2pkginst\f1 is stored.
+It can be
+a full pathname to a directory or the identifiers for tape, floppy disk or removable disk
+(for example, \f4/var/tmp\f1,
+\f4/dev/dsk/f0t\f1, and
+\f4/dev/dsk/0s2\f1).
+The default device is the installation spool directory.
+If no instance name is given, 
+parameter information for all packages residing in \f2device\f1 is shown.
+.TP 8
+\f4\-f\f1
+Requests that the command read \f2file\f1 for parameter values.
+.TP 8
+\f2pkginst\f1
+Defines a specific package instance for which parameter
+values should be displayed.
+The format \f2pkginst\f1.\(** can be used to indicate all instances of a package.
+When using this format,
+enclose the command line in single quotes
+to prevent the shell from interpreting the \(** character.
+.TP 8
+\f2param\f1
+Defines a specific parameter whose value should be displayed.
+.SH ERRORS 
+If parameter information is not available for the indicated package, the
+command exits with a non-zero status.
+.SH NOTES 
+The \f4\-f\f1 synopsis allows you to specify the file from which 
+parameter values should be extracted.
+This file should be in the same 
+format as a \f4pkginfo\f1
+file.
+As an example,
+such a file might be created during package development
+and used while testing software during this stage.
+.SH SEE ALSO
+.na
+\f4pkgmk\fP(1),
+\f4pkgparam\fP(3x),
+\f4pkgproto\fP(1),
+\f4pgktrans\fP(1)
+.ad

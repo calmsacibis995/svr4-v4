@@ -1,0 +1,215 @@
+.if n .pH fstw_guide.Cfstwg @(#)Cfstwg	40.7
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.BK "Programmer's Guide:  Writing File System Types" "" "" ""   
+.\ACRONYM	                  
+.CH "Writing File System Types" "" "Table of Contents" "1"
+.\CHAPTER	1
+.tC 1 "Introduction" 1-1  
+.tC 2 "Principles of VFS Architecture" 1-1  
+.tC 2 "What are File System Types?" 1-2  
+.tC 2 "Developing File System Types" 1-3  
+.tC 1 "Some Basic Structures" 1-6  
+.tC L "Figure 1-1:\0" "\&\f4vfssw\f1 table" 1-7
+.tC 2 "Path Names" 1-7  
+.Index: istart pathnames       	7
+.Index: iend pathnames       	9
+.tC 2 "I/O Data Structures" 1-10  
+.Index: istart I/O data structures     	10
+.tC L "Figure 1-2:\0" "I/O data structures" 1-10
+.tC 2 "Credentials" 1-11  
+.tC L "Figure 1-3:\0" "User credentials" 1-11
+.Index: iend I/O data structures     	12
+.tC 1 "VFS Operations" 1-13  
+.Index: istart VFS operations      	13
+.tC L "Figure 1-4:\0" "\&\f4vfs\f1 type definitions" 1-13
+.tC 2 "vfs_init" 1-15  
+.Index: VFS operations, vfs_init      	15
+.tC 2 "vfs_mount" 1-15  
+.Index: VFS operations, vfs_mount      	15
+.tC 2 "vfs_unmount" 1-16  
+.Index: VFS operations, vfs_mount      	16
+.tC 2 "vfs_root" 1-16  
+.Index: VFS operations, vfs_root      	16
+.tC 2 "vfs_statvfs" 1-17  
+.Index: VFS operations, vfs_statvfs      	17
+.tC 2 "vfs_sync" 1-18  
+.Index: VFS operations, vfs_sync      	18
+.tC 2 "vfs_vget" 1-18  
+.Index: VFS operations, vfs_vget      	18
+.tC 2 "vfs_mountroot" 1-18  
+.Index: VFS operations, vfs_mountroot      	18
+.Index: iend VFS operations      	19
+.tC 1 "Vnode Operations" 1-20  
+.Index: istart vnode operations      	20
+.tC L "Figure 1-5:\0" "\&\f4vnode\f1 type definitions" 1-20
+.tC L "Figure 1-6:\0" "\&\f4vnode\f1 operations" 1-21
+.tC 2 "vop_open" 1-22  
+.Index: vnode operations, vop_open      	22
+.tC 2 "vop_close" 1-23  
+.Index: vnode operations, vop_close      	23
+.tC 2 "vop_read & vop_write" 1-23  
+.Index: vnode operations, vop_read      	23
+.Index: vnode operations, vop_write      	23
+.tC 2 "vop_ioctl" 1-24  
+.Index: vnode operations, vop_ioctl      	24
+.tC 2 "vop_setfl" 1-24  
+.Index: vnode operations, vop_setfl      	24
+.tC 2 "vop_getattr" 1-25  
+.Index: vnode operations, vop_getattr      	25
+.tC 2 "vop_setattr" 1-26  
+.Index: vnode operations, vop_setattr      	26
+.tC 2 "vop_access" 1-27  
+.Index: vnode operations, vop_access      	27
+.tC 2 "vop_lookup" 1-27  
+.Index: vnode operations, vop_lookup      	27
+.tC 2 "vop_create" 1-28  
+.Index: vnode operations, vop_create      	28
+.tC 2 "vop_remove" 1-28  
+.Index: vnode operations, vop_remove      	28
+.tC 2 "vop_link" 1-28  
+.Index: vnode operations, vop_link      	28
+.tC 2 "vop_rename" 1-29  
+.Index: vnode operations, vop_rename      	29
+.tC 2 "vop_mkdir" 1-29  
+.Index: vnode operations, vop_mkdir      	29
+.tC 2 "vop_rmdir" 1-29  
+.Index: vnode operations, vop_rmdir      	29
+.tC 2 "vop_readdir" 1-30  
+.Index: vnode operations, vop_readdir      	30
+.tC 2 "vop_symlink" 1-30  
+.Index: vnode operations, vop_symlink      	30
+.tC 2 "vop_readlink" 1-31  
+.Index: vnode operations, vop_readlink      	31
+.tC 2 "vop_fsync" 1-31  
+.Index: vnode operations, vop_fsync      	31
+.tC 2 "vop_inactive" 1-31  
+.Index: vnode operations, vop_inactive      	31
+.tC 2 "vop_fid" 1-32  
+.Index: vnode operations, vop_fid      	32
+.tC 2 "vop_rwlock & vop_rwunlock" 1-32  
+.Index: vnode operations, vop_rwlock      	32
+.Index: vnode operations, vop_rwunlock      	32
+.tC 2 "vop_seek" 1-33  
+.Index: vnode operations, vop_seek      	33
+.tC 2 "vop_cmp" 1-33  
+.Index: vnode operations, vop_cmp      	33
+.tC 2 "vop_frlock" 1-34  
+.Index: vnode operations, vop_frlock      	34
+.tC 2 "vop_space" 1-34  
+.Index: vnode operations, vop_space      	34
+.tC 2 "vop_realvp" 1-35  
+.Index: vnode operations, vop_realvp      	35
+.tC 2 "vop_getpage" 1-35  
+.Index: vnode operations, vop_getpage      	35
+.tC 2 "vop_putpage" 1-36  
+.Index: vnode operations, vop_putpage      	36
+.tC 2 "vop_map" 1-37  
+.Index: vnode operations, vop_map      	37
+.tC 2 "vop_addmap" 1-38  
+.Index: vnode operations, vop_addmap      	38
+.tC 2 "vop_delmap" 1-38  
+.Index: vnode operations, vop_delmap      	38
+.tC 2 "vop_poll" 1-39  
+.Index: vnode operations, vop_poll      	39
+.tC 2 "vop_pathconf" 1-39  
+.Index: vnode operations, vop_pathconf      	39
+.tC 2 "vop_allocstore" 1-40  
+.Index: vnode operations, vop_allocstore      	40
+.Index: iend vnode operations      	40
+.tC 1 "VM Interaction" 1-41  
+.Index: istart VM interaction      	41
+.Index: iend VM interaction      	41
+.tC 1 "Additional Kernel Interfaces" 1-42  
+.Index: istart additional kernel interfaces     	42
+.tC 2 "vn_open" 1-42  
+.Index: additional kernel interfaces, vn_open     	42
+.tC 2 "vn_create" 1-42  
+.Index: additional kernel interfaces, vn_create     	42
+.tC 2 "vn_rdwr" 1-43  
+.Index: additional kernel interfaces, vn_rdwr     	43
+.tC 2 "vn_remove" 1-43  
+.Index: additional kernel interfaces, vn_remove     	43
+.tC 2 "vn_link" 1-43  
+.Index: additional kernel interfaces, vn_link     	43
+.tC 2 "vn_rename" 1-44  
+.Index: additional kernel interfaces, vn_rename     	44
+.Index: iend additional kernel interfaces     	44
+.tC 1 "Common Vnode Operations" 1-45  
+.Index: istart common vnode operations     	45
+.tC 2 "fs_nosys" 1-45  
+.Index: common vnode operations, fs_nosys     	45
+.tC 2 "fs_sync" 1-45  
+.Index: common vnode operations, fs_sync     	45
+.tC 2 "fs_rwlock & fs_rwunlock" 1-45  
+.Index: common vnode operations, fs_rwlock     	45
+.Index: common vnode operations, fs_rwunlock     	45
+.tC 2 "fs_cmp" 1-46  
+.Index: common vnode operations, fs_cmp     	46
+.tC 2 "fs_frlock" 1-46  
+.Index: common vnode operations, fs_frlock     	46
+.tC 2 "fs_setfl" 1-46  
+.Index: common vnode operations, fs_setfl     	46
+.tC 2 "fs_poll" 1-47  
+.Index: common vnode operations, fs_poll     	47
+.tC 2 "fs_vcode" 1-47  
+.Index: common vnode operations, fs_vcode     	47
+.tC 2 "fs_pathconf" 1-47  
+.Index: common vnode operations, fs_pathconf     	47
+.Index: iend common vnode operations     	47
+.tC 1 "Storage Allocation" 1-48  
+.Index: istart storage allocation      	48
+.Index: iend storage allocation      	49
+.tC 1 "Name Cache" 1-50  
+.Index: istart name cache      	50
+.Index: iend name cache      	52
+.tC 1 "Special File Systems" 1-53  
+.Index: istart special file systems     	53
+.Index: iend special file systems     	53
+.tC 1 "Block I/O" 1-54  
+.Index: istart block I/O      	54
+.tC 2 "struct buf" 1-54  
+.Index: block I/O, struct buf     	54
+.tC 2 "bread" 1-55  
+.Index: block I/O, bread      	55
+.tC 2 "bwrite" 1-56  
+.Index: block I/O, bwrite      	56
+.tC 2 "brelse" 1-56  
+.Index: block I/O, brelse      	56
+.tC 2 "biowait" 1-56  
+.Index: block I/O, biowait      	56
+.tC 2 "biodone" 1-56  
+.Index: block I/O, biodone      	56
+.tC 2 "binval" 1-57  
+.Index: block I/O, binval      	57
+.Index: iend block I/O      	57
+.tC 1 "fbio" 1-58  
+.Index: istart fbio       	58
+.tC 2 "fbread" 1-58  
+.Index: fbio, fbread       	58
+.tC 2 "fbwrite" 1-59  
+.Index: fbio, fbwrite       	59
+.tC 2 "fbwritei" 1-59  
+.Index: fbio, fbwritei       	59
+.tC 2 "fbiwrite" 1-59  
+.Index: fbio, fbiwrite       	59
+.tC 2 "fbrelse" 1-59  
+.Index: fbio, fbrelse       	59
+.tC 2 "fbrelsei" 1-60  
+.Index: fbio, fbrelsei       	60
+.tC 2 "fbzero" 1-60  
+.Index: fbio, fbzero       	60
+.Index: iend fbio       	60
+.tC 1 "File System Administrative Commands" 1-61  
+.Index: istart administrative commands      	61
+.Index: iend administrative commands      	61
+.tC 1 "Configuration/Booting" 1-62  
+.Index: istart configuration       	62
+.Index: istart booting       	62
+.Index: iend configuration       	63
+.Index: iend booting       	63
+.tC 1 "File System Hardening" 1-64  
+.Index: istart file system hardening     	64
+.Index: iend file system hardening     	64
+.tC 1 "Glossary" 1-65  
+.Index: istart glossary       	65
+.Index: iend glossary       	66

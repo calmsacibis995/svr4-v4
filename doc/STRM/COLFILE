@@ -1,0 +1,37 @@
+.if n .pH streams.pg.COLFILE.mp @(#)COLFILE.mp	40.10.1.1
+.# This book ("Programmer's Guide:  STREAMS (Manual Pages)")
+.# contains the following files,
+.# listed in the order in which they are printed.
+.# Next to each file name is its SCCS delta number.
+.FT
+streams.pg/titlepage.mp	40.3
+streams.pg/copyright	40.9
+1/gen/strchg	40.9.1.1
+1m/gen/autopush	40.9
+1m/gen/fdetach	40.5
+1m/gen/strace	40.8
+1m/gen/strclean	40.8
+1m/gen/strerr	40.7
+2/gen/getmsg	40.23.1.1
+2/gen/poll	40.19
+2/gen/putmsg	40.17.1.1
+3c/gen/fattach	40.6.1.1
+3c/gen/fdetach	40.7
+3c/gen/grantpt	40.6
+3c/gen/isastream	40.6
+3c/gen/ptsname	40.6
+3c/gen/unlockpt	40.6
+7/gen/clone	40.7
+7/gen/connld	40.6
+7/gen/console	40.9
+7/gen/ldterm	40.10
+7/gen/log	40.5.1.1
+7/gen/pckt	40.9
+7/3b2/ports	40.8
+7/gen/ptem	40.8
+7/gen/sad	40.10
+7/gen/streamio	40.19.1.1
+7/gen/sxt	40.4
+7/gen/timod	40.7
+7/gen/tirdwr	40.7
+7/gen/xt	40.10

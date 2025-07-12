@@ -1,0 +1,129 @@
+.if n .pH g1m.syslogd @(#)syslogd	40.11 of 5/9/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+'\" macro stdmacro
+.\" Copyright (c) 1988 Sun Microsystems, Inc. - All Rights Reserved.
+.\"
+.\" Copyright (c) 1983,1986 Regents of the University of California.
+.\" All rights reserved.  The Berkeley software License Agreement
+.\" specifies the terms and conditions for redistribution.
+.\"
+.nr X
+.if \nX=0 .ds x} syslogd 1M "BSD Compatibility Package" "\&"
+.if \nX=1 .ds x} syslogd 1M "BSD Compatibility Package"
+.if \nX=2 .ds x} syslogd 1M "" "\&"
+.if \nX=3 .ds x} syslogd "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4syslogd\f1 \- log system messages
+.SH SYNOPSIS
+\f4/usr/sbin/syslogd\f1
+[
+\f4\-d\f1
+] [
+\f4\-f\f2configfile\f1
+] [
+\f4\-m \f2interval\f1
+]
+.SH DESCRIPTION
+\f4syslogd\f1
+reads and forwards system messages to the appropriate log files
+and/or users, depending upon the priority of a message and the
+system facility from which it originates.
+The configuration file
+\f4/etc/syslog.conf\f1
+[see \f4syslog.conf\f1(5)]
+controls where messages are forwarded.
+\f4syslogd\f1
+logs a mark 
+.nh
+(timestamp)
+.hy
+message every
+\f2interval\f1
+minutes (default 20) at priority
+\f4LOG_INFO\fP
+to the facility whose name is given as
+\f4mark\f1
+in the
+\f4syslog.conf\f1
+file.
+.PP
+A system message consists of a single line of text, which may be
+prefixed with a priority code number enclosed in angle-brackets
+\f1(\f4<\|>\f1);
+priorities are defined in
+\f4sys/syslog.h\f1.
+.PP
+\f4syslogd\f1
+reads from the
+STREAMS log driver,
+\f4/dev/log\f1,
+from any transport provider specified in
+\f4/etc/netconfig\f1,
+\f4/etc/net/\f2transport\f4/hosts\f1,
+and
+\f4/etc/net/\f2transport\f4/services\f1,
+and from the special device
+\f4/dev/klog\f1
+(for kernel messages).
+.PP
+\f4syslogd\f1
+reads the configuration file when it starts up, and again
+whenever it receives a
+\s-1HUP\s0
+signal, at which time it also closes all files it has open,
+re-reads its configuration file, and then opens only the log
+files that are listed in that file.
+\f4syslogd\f1
+exits when it receives a
+\f4TERM\fP
+signal.
+.PP
+As it starts up,
+\f4syslogd\f1
+creates the file
+\f4/etc/syslog.pid\f1,
+if possible, containing its process
+\s-1ID\s0
+(\s-1PID\s0).
+.PP
+The following options are available:
+.TP 17
+\f4\-d\f1
+Turn on debugging.
+.TP
+\f4\-f\f2configfile\f1
+Specify an alternate configuration file.
+.TP
+\f4\-m \f2interval\f1
+Specify an interval, in minutes, between mark messages.
+.SH FILES
+.PD 0
+.TP 20
+\f4/etc/syslog.conf\f1
+configuration file
+.TP
+\f4/etc/syslog.pid\f1
+process
+\s-1ID\s0
+.TP
+\f4/dev/log\f1
+STREAMS log driver
+.TP
+\f4/etc/netconfig\f1
+specifies the transport providers available on the system
+.TP
+\f4/etc/net/\f2transport\f4/hosts\f1
+network hosts for each transport
+.TP
+\f4/etc/net/\f2transport\f4/services\f1
+network services for each transport
+.PD
+.SH SEE ALSO
+\f4logger\fP(1),
+\f4syslog\fP(3),
+\f4syslog.conf\fP(4)
+.P
+\f4log\fP(7)
+in the \f2System Administrator's Reference Manual\f1

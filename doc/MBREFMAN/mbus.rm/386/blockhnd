@@ -1,0 +1,76 @@
+.if n .pH 386.blockhnd @(#)blockhnd	40.12 of 5/17/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.BK "Multibus Reference Manual"
+.CH "Static Bad Block Handling" 7
+.H 1 "Overview"
+This chapter describes the Bad Block Handler software module for the
+UNIX System V/386 operating system.  This chapter also includes information
+needed in creating drivers for Multibus based systems.
+.P
+The Bad Block Handler (BBH) is a set of routines that compensates for
+the unusable sectors (blocks) of a hard disk drive.  Each bad block of
+a disk is remapped so that all references to the bad block are
+transparently diverted to a known usable block.  This transparent
+redirection causes the disk to appear to be flawless even though it may
+contain several unusable blocks.
+.H 1 "Architecture"
+.H 2 " Overview"
+The BBH compensates for the unusable blocks of a hard disk by
+transparently substituting a usable block for each bad block.  This
+transparent redirection is actually performed by the controller hardware
+not the BBH software.  Instead, the BBH manages the remapping process
+by telling the controller which usable block is to be substituted for
+each bad block on the disk.
+.P
+Static bad blocks are remapped during the format phase of disk
+initialization.  A list of static bad blocks is generated either from
+the Manufacturer's Defect List (see ``Appendix C'') or from the user.
+As the disk is being formatted, each track containing a bad block is
+formatted using one of the remapping methods supported by the
+controller hardware.  All future references to the bad block are
+redirected to the substitute block.  BBH related structures and
+definitions are located in the file \f4/usr/include/sys/bbh.h\f1.
+.H 2 "Disk Partitions"
+Each physical disk drive in the system must provide support for the
+Bad Block Handler.  The BBH requires a few reserved sections of the
+media.  Each disk drive must provide the following reserved sections.
+.H 3 "Manufacturer's Defect List"
+The Manufacturer's Defect List (MDL) is a reserved portion of the disk
+that contains a list of the known bad blocks on the disk.  The list
+includes static bad blocks and any dynamic bad blocks that have been
+remapped since the disk was last initialized. In most cases, the defect
+list is written on the disk prior to initialization.  If the
+Manufacturer's Defect List is not written on the disk, a defect list
+will be created during the initialization procedure (see ``Appendix C'' for
+additional information).  
+.H 3 "Surrogate Block Pool"
+In order to remap a bad block to a known usable block, a portion of
+the disk must be set aside to form a pool of surrogate blocks.  The
+various remapping methods allocate surrogate blocks using different
+methods and therefore require different pools of surrogate blocks.
+A disk driver that supports more than one remapping method requires
+more than one surrogate block pool.  Each pool of surrogate blocks
+is used exclusively by the disk driver and not by any other component
+of the BBH.  Following are three remapping methods.
+.H 4 "Software Remapping"
+This remapping method uses a pool of individual blocks that are
+allocated one at a time.  A software table is used to map the bad blocks
+to their surrogate blocks.  The table is scanned during each I/O request
+with a match resulting in the referenced block being substituted with
+the previously assigned surrogate.  Since the use of Software Remapping
+invalidates some of the functional requirements of the BBH, it is not
+intended to be used as a primary remapping method.  However, it should
+be supported by all disk drivers, as a last resort, so the disk remains usable.
+.H 4 "Alternate Tracking"
+This remapping method uses a pool of surrogate (alternate) tracks.
+Each track containing one or more bad blocks is remapped to one of the
+alternate tracks.  The entire track, not just the blocks that are
+bad, is remapped.  The remapping is performed by the controller hardware
+and is transparent to the disk driver software.
+.H 4 "Sector Slipping"
+This remapping method requires that a certain number of blocks on each
+track is reserved for surrogate blocks.  When a bad block is remapped, one
+of the reserved blocks within the same track is used as the surrogate.
+The number of bad blocks on a single track can not be greater than the
+number of reserved blocks within that track.

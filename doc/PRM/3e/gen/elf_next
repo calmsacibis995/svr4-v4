@@ -1,0 +1,70 @@
+'\"macro stdmacro
+.if n .pH g3e.elf_next @(#)elf_next	40.10 of 5/1/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.\"#ident	"@(#)ci5-doc:req/libelf/next.man	1.3"
+.nr X
+.if \nX=0 .ds x} elf_next 3E "ELF Library" "\&"
+.if \nX=1 .ds x} elf_next 3E "ELF Library"
+.if \nX=2 .ds x} elf_next 3E "" "\&"
+.if \nX=3 .ds x} elf_next "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4elf_next\f1 \- sequential archive member access
+.SH SYNOPSIS
+\f4cc\f1
+[\f2flag\fP \|.\|.\|.] \f2file\fP \|.\|.\|.
+\f4\-lelf\f1
+[\f2library\fP \|.\|.\|.]
+.PP
+.nf
+.ft 4
+#include <libelf.h>
+.sp 0.5
+Elf_Cmd elf_next(Elf \(**elf);
+.ft 1
+.fi
+.SH DESCRIPTION
+\f4elf_next\fP,
+\f4elf_rand\fP,
+and
+\f4elf_begin\fP
+manipulate simple object files and archives.
+.I elf
+is an
+.SM ELF
+descriptor previously returned from
+\f4elf_begin\fP.
+.P
+\f4elf_next\fP
+provides sequential access to the next archive member.
+That is, having an
+.SM ELF
+descriptor,
+.IR elf ,
+associated with an archive member,
+\f4elf_next\fP
+prepares the containing archive to access the following member
+when the program calls
+\f4elf_begin\fP.
+After successfully positioning an archive for the
+next member,
+\f4elf_next\fP
+returns the value
+\f4ELF_C_READ\f1.
+Otherwise, the open file was not an archive,
+.I elf
+was null, or an error occurred, and
+the return value is
+\f4ELF_C_NULL\f1.
+In either case, the return value may be passed as
+an argument to
+\f4elf_begin\fP,
+specifying the appropriate action.
+.SH "SEE ALSO"
+.na
+\f4elf\fP(3E),
+\f4elf_begin\fP(3E),
+\f4elf_getarsym\fP(3E),
+\f4elf_rand\fP(3E),
+\f4ar\fP(4)

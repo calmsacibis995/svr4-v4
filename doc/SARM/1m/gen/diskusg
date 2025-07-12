@@ -1,0 +1,120 @@
+'\"macro stdmacro
+.if n .pH g1a.diskusg @(#)diskusg	40.8.1.1 of 1/3/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} diskusg 1M "Job Accounting Utilities" "\&"
+.if \nX=1 .ds x} diskusg 1M "Job Accounting Utilities"
+.if \nX=2 .ds x} diskusg 1M "" "\&"
+.if \nX=3 .ds x} diskusg "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4diskusg\f1 \- generate disk accounting data by user ID
+.SH SYNOPSIS
+\f4/usr/lib/acct/diskusg\f1
+[\^\f2options\fP\^] [\^\f2files\fP\^]
+.SH DESCRIPTION
+\f4diskusg\fP
+generates intermediate disk accounting information
+from data in
+.I files,
+or the standard input if omitted.
+\f4diskusg\fP
+output lines on the standard output, one per user, in the following format:
+.I "uid\0\|login\0\|#blocks"
+.P
+where
+.PD 0
+.TP 12
+uid
+the numerical user ID of the user.
+.TP 12
+login
+the login name of the user; and
+.TP 12
+#blocks
+the total number of disk blocks
+allocated to this user.
+.PD
+.P
+\f4diskusg\fP
+normally reads only the inodes
+of file systems for disk accounting.
+In this case,
+.I files
+are the special filenames of these devices.
+.P
+\f4diskusg\fP
+recognizes the following options:
+.TP 12
+\f4\-s\f1
+the input data
+is already in
+\f4diskusg\fP
+output
+format.
+\f4diskusg\fP
+combines
+all lines for a single user
+into a single line.
+.TP 12
+\f4\-v\f1
+verbose.  Print a list on standard error
+of all files that are charged to no one.
+.TP 12
+\f4\-i\f2 fnmlist \f1
+ignore the data on those file systems whose
+file system name is in
+.I fnmlist.
+.I fnmlist
+is a list of file system names separated
+by commas or enclosed within quotes.
+\f4diskusg\fP
+compares each name in this list with the file system
+name stored in the volume \s-1ID\s+1 [see \f4labelit\f1(1M)].
+.TP 12
+\f4\-p\f2 file \f1
+use
+.I file
+as the name of the password file to generate
+login names.
+\f4/etc/passwd\f1 is used by default.
+.TP 12
+\f4\-u\f2 file \f1
+write records to
+.I file
+of files that are charged to no one.
+Records consist of the special file name,
+the inode number, and the user ID.
+.P
+The output of
+\f4diskusg\fP
+is normally the input to
+\f4acctdisk\fP
+[see
+\f4acct\fP(1M)]
+which generates total
+accounting records that can be
+merged with other accounting records.
+\f4diskusg\fP
+is normally run in
+\f4dodisk\fP
+[see
+\f4acctsh\fP(1M)].
+.SH EXAMPLES
+The following will generate daily disk accounting information
+for \f4root\f1 on \f4/dev/dsk/c1d0s0\f1:
+.P
+\f4diskusg /dev/dsk/c1d0s0 | acctdisk > disktacct\f1
+.SH FILES
+.TP 20
+\f4/etc/passwd\fP
+used for user ID to login name conversions
+.SH SEE ALSO
+\f4acct\fP(1M), \f4acctsh\fP(1M),
+\f4acct\fP(4)
+.SH NOTES
+\f4diskusg\f1 only works for \f4S5\f1 file systems.  \f4acctdusg\f1
+(see \f4acct(1M)\f1) works for all file systems, but is slower than
+\f4diskusg\f1.
+.\"     @(#)diskusg.1m	1.2 of 9/2/83

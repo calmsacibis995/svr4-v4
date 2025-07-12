@@ -1,0 +1,41 @@
+'\"macro stdmacro
+.if n .pH xnx.fixshlib @(#)fixshlib	40.2 of 6/18/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.nr X
+.if \nX=0 .ds x} fixshlib 1M "Application Compatibility Package" "\&"
+.if \nX=1 .ds x} fixshlib 1M "Application Compatibility Package"
+.if \nX=2 .ds x} fixshlib 1M "" "\&"
+.if \nX=3 .ds x} fixshlib "" "" "\&"
+.TH \*(x}
+.SH NAME
+fixshlib \- alters executables to call SCO UNIX System V/386 Release 3.2-compatible libnsl
+.SH SYNOPSIS
+\f4fixshlib\fP \f2filename\fP
+.SH DESCRIPTION
+SCO applications installed with the custom command [see custom(1M) in
+the \f2System Administrator's Reference Manual\fP]
+will automatically have references to \f4libnsl\fP changed
+to reference an SCO UNIX System V/386 Release 3.2-compatible \f4libnsl\fP
+(\f4shlib/libNSL_s\fP).
+However, you may need to run \f4fixshlib\fP on any SCO UNIX System V/386
+Release 3.2 application that is not installed using the \f4custom\fP
+command.
+The \f4fixshlib\fP command will alter the executable to use the
+SCO UNIX System V/386 Release 3.2-compatible \f4libnsl\fP.
+.P
+When executing the command,
+\f2filename\fP is the pathname of the executable to be modified.
+.SH "DIAGNOSTICS"
+If \f4filename\fP is not a COFF format \f4a.out\fP executable, you will see
+the following error message:
+.RS
+\f4unknown file type - possibly bad magic: Error 0\fP
+.RE
+.SH "SEE ALSO"
+\f4custom\fP(1M) in the \f2System Administrator's Reference Manual\fP
+.SH NOTES
+Using the \f4fixshlib\fP command on a COFF executable built or intended to
+run on non-SCO UNIX system implementations could cause the executable to fail.
+If your executable fails because of this, there is no way to restore the
+executable.
+The associated application should be re-installed.

@@ -1,0 +1,226 @@
+'\"macro stdmacro
+.if n .pH g3.ieee_handler @(#)ieee_handler	40.9 of 4/24/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.\" Copyright (c) 1988 Sun Microsystems, Inc. - All Rights Reserved.
+.\"
+.nr X
+.if \nX=0 .ds x} ieee_handler 3M "BSD Compatibility Package" "\&"
+.if \nX=1 .ds x} ieee_handler 3M "BSD Compatibility Package"
+.if \nX=2 .ds x} ieee_handler 3M "" "\&"
+.if \nX=3 .ds x} ieee_handler "" "" "\&"
+.TH \*(x}
+.UC 4
+.de Pi		\" PI stuff sign
+.if n \\
+\\$2pi\\$1
+.if t \\
+\\$2\\(*p\\$1
+..
+.ds up \f2ulp\f1
+.SH NAME
+\f4ieee_handler\f1 \- IEEE exception trap handler function
+.SH SYNOPSIS
+.nf
+\f4cc \f1[ \f2flag\f1\. \. \. ] \f2file\f1 \. \. \. \f4\-lucb\f1
+.P
+\f4#include <fp.h>\f1
+.P
+\f4int ieee_handler(action,exception,hdl)\f1
+\f4char action[\|], exception[\|];\f1
+\f4sigfpe_handler_type hdl;\f1
+.fi
+.SH DESCRIPTION
+.P
+This function provides easy exception handling to
+exploit
+.SM ANSI/IEEE
+Std 754-1985 arithmetic in a C program.
+All arguments are pointers to strings.
+Results arising from invalid arguments and invalid combinations
+are undefined for efficiency.
+.P
+There are three types of
+.I action :
+\f4get\fP, \f4set\fP, and \f4clear\fP.
+There are five types of
+.I exception :
+.RS
+.PD 0
+.TP 15
+\f4inexact\fP
+.TP
+\f4division\fP
+division by zero exception
+.TP
+\f4underflow\fP
+.TP
+\f4overflow\fP
+.TP
+\f4invalid\fP
+.TP
+\f4all\fP
+all five exceptions above
+.TP
+\f4common\fP
+invalid, overflow, and division exceptions
+.PD
+.RE
+.P
+Note: \f4all\fP and \f4common\fP only make sense with \f4set\fP or \f4clear\fP
+.P
+\f4hdl\f1
+contains the address of a signal-handling routine.
+\f4<fp.h>\f1
+defines
+.IR sigfpe_handler_type .
+.P
+\f4get\fP will get the location of the current handler routine for
+.I exception
+in
+\f4hdl .\f1
+\f4set\fP will set the routine pointed at by
+\f4hdl\f1
+to be the handler routine
+and at the same time enable the trap on
+.IR exception ,
+except when
+\f4hdl\f1
+==
+\f4SIGFPE_DEFAULT\f1
+or
+\f4SIGFPE_IGNORE\f1;
+then
+\f4ieee_handler\f1
+will disable the trap on
+.IR exception .
+When
+\f4hdl\f1
+==
+\f4SIGFPE_ABORT\f1,
+any trap on
+.I exception
+will dump core using
+\f4abort\f1(3).
+\f4clear all\fP disables trapping on all five exceptions.
+.P
+Two steps are required to intercept an
+.SM IEEE\s0-related
+\f4SIGFPE\f1
+code with
+\f4ieee_handler\f1:
+.TP
+1)
+Set up a handler with
+\f4ieee_handler\f1.
+.TP
+2)
+Perform a floating-point operation that generates
+the intended 
+.SM IEEE
+exception.
+.P
+Unlike
+\f4sigfpe\f1(3),
+\f4ieee_handler\f1
+also adjusts floating-point hardware mode bits affecting
+.SM IEEE
+trapping.
+For \f4clear\fP, \f4set\fP
+\f4SIGFPE_DEFAULT\f1,
+or \f4set\fP
+\f4SIGFPE_IGNORE\f1,
+the hardware trap is disabled.
+For any other \f4set\fP, the hardware trap is enabled.
+.P
+\f4SIGFPE\f1
+signals can be handled using
+\f4sigvec\f1(2),
+\f4signal\f1(3),
+\f4signal\f1(3F),
+\f4sigfpe\f1(3),
+or
+\f4ieee_handler\f1(3M).
+In a particular program, to avoid confusion,
+use only one of these interfaces to handle
+\f4SIGFPE\f1
+signals.
+.SH "RETURN VALUE"
+\f4ieee_handler\f1
+normally returns 0.
+In the case of \f4set\fP, 1 will be returned
+if the action is not available (for instance, not supported in hardware).
+.br
+.ne 25
+.SH EXAMPLE
+.P
+A user-specified signal handler might look like this:
+.RS
+.ft 4
+.nf
+void sample_handler( sig, code, scp, addr)
+int sig ;               /* sig == SIGFPE always */
+int code ;
+struct sigcontext *scp ;
+char *addr ;
+{
+	/*
+	   Sample user-written sigfpe code handler.
+	   Prints a message and continues.
+	   struct sigcontext is defined in <signal.h>.
+	 */
+	printf("ieee exception code %x occurred at pc %X \en",
+	 code,scp->sc_pc);
+}
+.fi
+.RE
+.P
+and it might be set up like this:
+.nf
+.RS
+.ft 4
+extern void sample_handler;
+main
+{
+	sigfpe_handler_type hdl, old_handler1, old_handler2;
+/*
+* save current overflow and invalid handlers
+*/
+	ieee_handler("get","overflow",old_handler1);
+	ieee_handler("get","invalid", old_handler2);
+/*
+* set new overflow handler to sample_handler and set new
+* invalid handler to SIGFPE_ABORT (abort on invalid)
+*/
+	hdl = (sigfpe_handler_type) sample_handler;
+	if(ieee_handler("set","overflow",hdl) != 0)
+		printf("ieee_handler can't set overflow \en");
+	if(ieee_handler("set","invalid",SIGFPE_ABORT) != 0)
+		printf("ieee_handler can't set invalid \en");
+	.\|.\|.
+/*
+* restore old overflow and invalid handlers
+*/
+	ieee_handler("set","overflow", old_handler1);
+	ieee_handler("set","invalid", old_handler2);
+}
+.fi
+.RE
+.ft 1
+.SH FILES
+.PD 0
+.TP 20
+\f4/usr/include/fp.h\f1
+.TP
+\f4/usr/include/signal.h\f1
+.PD
+.SH SEE ALSO
+\f4floatingpoint\fP(3),
+\f4ieee_handler\f1(3),
+\f4sigfpe\fP(3),
+\f4signal\fP(3)
+\f4sigvec\fP(3),
+.br
+\f4signal\fP(2),
+\f4abort\f1(3C)
+in the \f2Programmer's Reference Manual\f1

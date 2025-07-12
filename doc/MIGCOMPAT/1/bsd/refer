@@ -1,0 +1,162 @@
+'\"macro stdmacro
+.if n .pH g1.refer @(#)refer	40.8 of 4/18/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} refer 1 "BSD Compatibility Package" "\&"
+.if \nX=1 .ds x} refer 1 "BSD Compatibility Package"
+.if \nX=2 .ds x} refer 1 "" "\&"
+.if \nX=3 .ds x} refer "" "" "\&"
+.TH \*(x}
+.\" Copyright (c) 1988 Sun Microsystems, Inc. - All Rights Reserved.
+.\"
+.SH NAME
+\f4refer\f1 \- expand and insert references from a bibliographic database
+.SH SYNOPSIS
+\f4/usr/ucb/refer\f1 [ \f4\-b\f1 ] [ \f4\-e\f1 ] [ \f4\-n\f1 ] [ \f4\-a\f2r\f1 ] [ \f4\-c\f2string\f1 ] [ \f4\-k\f2x\f1 ] [ \f4\-l\f2m,n\f1 ]
+.br
+               [ \f4\-p\f2 filename\f1 ] [ \f4\-s\f2keys\f1 ] \f2filename\f1 .\ .\ .
+.SH DESCRIPTION
+\f4refer\f1
+is a preprocessor for
+\f4nroff\f1(1),
+or
+\f4troff\f1(1),
+that finds and formats references.
+The input files (standard input by
+default) are copied to the standard output, except for lines between
+\f1`\f4.\|[\f1'
+and
+\f1`\f4.\|]\f1'
+command lines.
+Such lines are assumed to contain keywords as for
+\f4lookbib\f1(1),
+and are replaced by information from a bibliographic data base.  The
+user can avoid the search, override
+fields from it, or add new fields.
+The reference data, from whatever source, is assigned to a set of
+\f4troff\f1
+strings.  Macro packages such as
+\f4ms\f1(7)
+print the finished reference text from
+these strings.  A flag is placed
+in the text at the point of reference.
+By default, the references are
+indicated by numbers.
+.P
+When
+\f4refer\f1
+is used with
+\f4eqn\f1(1),
+\f4neqn\f1,
+or
+\f4tbl\f1(1),
+\f4refer\f1
+should be used first in the sequence, to minimize the
+volume of data passed through pipes.
+.P
+The following options are available:
+.TP
+\f4\-b\f1
+Bare mode \(em do not put any flags in
+text (neither numbers or labels).
+.TP
+\f4\-e\f1
+Accumulate references instead of leaving
+the references where encountered,
+until a sequence of the form:
+.RS
+.RS
+.sp .5
+.nf
+.ft 4
+\&.[
+$LIST$
+\&.]
+.fi
+.RE
+.RE
+.IP
+is encountered, and then write out all references collected so far.
+Collapse references to the same source.
+.TP
+\f4\-n\f1
+Do not search the default file.
+.TP
+\f4\-a\f2r\f1
+Reverse the first
+.I r
+author names (Jones, J. A. instead of J. A. Jones).  If
+.I r
+is omitted, all author names are reversed.
+.TP
+\f4\-c\f2string\f1
+Capitalize (with
+.SM SMALL CAPS\s0)
+the fields whose key-letters are in
+.IR string .
+.TP
+\f4\-k\f2x\f1
+Instead of numbering references, use key labels
+as specified in a reference
+data line beginning with the characters
+.IR %x ;
+By default,
+\f4%\f2x\f1
+is
+\f4%L\f1.
+.TP
+\f4\-l\f2m,n\f1
+Instead of numbering references, use labels
+from the senior author's last
+name and the year of publication.
+Only the first
+.I m
+letters of the last name and the last
+.I n
+digits of the date are used.
+If either of
+.I m
+or
+.I n
+is omitted, the entire name or date, respectively, is used.
+.TP
+\f4\-p\f2 filename\f1
+Take the next argument as a file of references to be searched.
+The default file is searched last.
+.TP
+\f4\-s\f2keys\f1
+Sort references by fields whose key-letters are in the
+.I keys
+string, and permute reference numbers in the text accordingly.
+Using this option implies the
+\f4\-e\f1
+option.
+The key-letters in
+.I keys
+may be followed by a number indicating how many such fields are used,
+with a
+\f4+\f1
+sign taken as a very large number.
+The default is
+.SM
+\f4AD\f1,
+which sorts on the senior author and date.
+To sort on all authors and
+then the date, for instance, use the options
+\f1`\f4\-sA+T\f1'.
+.SH FILES
+.nf
+\f4/usr/ucblib/reftools/papers  \f1default publication lists and indexes
+\f4/usr/ucblib/reftools         \f1programs
+.fi
+.SH "SEE ALSO"
+\f4addbib\fP(1),
+\f4eqn\fP(1),
+\f4indxbib\fP(1),
+\f4lookbib\fP(1),
+\f4nroff\fP(1),
+\f4roffbib\fP(1),
+\f4sortbib\fP(1),
+\f4tbl\fP(1),
+\f4troff\fP(1)

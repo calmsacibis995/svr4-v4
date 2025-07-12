@@ -1,0 +1,85 @@
+'\"!  tbl | mmdoc
+'\"macro stdmacro
+.if n .pH g7.rtc @(#)rtc	40.5 of 1/3/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} rtc 7 "" "\&"
+.if \nX=1 .ds x} rtc 7 ""
+.if \nX=2 .ds x} rtc 7 "" "\&"
+.if \nX=3 .ds x} rtc "" "" "\&"
+.nr X
+.TH \*(x} "" "386 Computer Only"
+.SH NAME
+\f4rtc\f1 \- real time clock interface
+.SH DESCRIPTION
+The \f4rtc\f1 driver supports the real time clock chip,
+allowing it to be set with the correct local time
+and allowing the time to be read from the chip.
+.SS Ioctl Calls
+.TP
+\f4RTCRTIME\f1
+This call is used to read the local time from the real time clock chip.
+The argument to the
+.I ioctl
+is the address of a buffer of
+\f4RTCNREG\f1
+unsigned characters
+(\f4RTCNREG\f1 is defined in
+\f4<sys/rtc.h>\f1 ).
+The \f4ioctl\f1 will fill in the buffer
+with the contents of the chip registers.
+Currently,
+\f4RTCNREG\f1
+is 14,
+and the meanings of the byte registers are as follows:
+.PP
+.TS
+center box tab(:) ;
+cB | cB
+c | l .
+Register:Contents
+.sp .2v
+_
+0:Seconds
+1:Second alarm
+2:Minutes
+3:Minute alarm
+4:Hours
+5:Hour alarm
+6:Day of week
+7:Date of month
+8:Month
+9:Year
+A:Status register A
+B:Status register B
+C:Status register C
+D:Status register D
+.sp .2v
+.TE
+.PP
+.IP
+For further information on the functions of these registers,
+see your hardware technical reference manual.
+.TP
+\f4RTCSTIME\f1
+This call is used to set the time into the real time clock chip.
+The argument to
+\f4ioctl\f1
+is the address of a buffer of
+\f4RTCNREGP\f1
+unsigned characters
+(\f4RTCNREGP\f1
+is defined in
+\f4<sys/rtc.h>\f1).
+These bytes should be the desired chip register contents.
+Currently,
+\f4RTCNREGP\f1
+is 10, representing registers 0\-9 as shown above.
+Note that only the super-user may open the
+real time clock device for writing and that the
+\f4RTCSTIME\f1
+\f4ioctl\f1
+will fail for any other than the super-user.
+.SH FILES
+\f4/dev/rtc\f1

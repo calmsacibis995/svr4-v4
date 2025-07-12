@@ -1,0 +1,93 @@
+'\"macro stdmacro
+.if n .pH g1a.fwtmp @(#)fwtmp	40.8 of 1/3/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} fwtmp 1M "Job Accounting Utilities" "\&"
+.if \nX=1 .ds x} fwtmp 1M "Job Accounting Utilities"
+.if \nX=2 .ds x} fwtmp 1M "" "\&"
+.if \nX=3 .ds x} fwtmp "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4fwtmp\f1, \f4wtmpfix\f1 \- manipulate connect accounting records
+.SH SYNOPSIS
+\f4/usr/lib/acct/fwtmp\f1
+\f1[\^\f4\-ic\f1\^]
+.br
+\f4/usr/lib/acct/wtmpfix\f1
+[\^\f2files\f1\^]
+.SH DESCRIPTION
+\f4fwtmp\fP reads from the standard input and
+writes to the standard output,
+converting binary records of the type found in
+\f4/var/adm/wtmp\fP to formatted \s-1ASCII\s0 records.
+The \s-1ASCII\s0 version is useful when it is necessary to edit 
+bad records.
+.PP
+The argument \f4\-ic\fP is used 
+to denote that input is in \s-1ASCII\s0 form,
+and output is to be written in binary form.
+.PP
+\f4wtmpfix\fP
+examines the standard input or named files in
+\f4utmp.h\fP format, corrects the time/date stamps to make the
+entries consistent, and writes to the standard output.
+A \f4\-\fP can be used in place of \f2files\fP to indicate
+the standard input.
+If time/date corrections are not performed,
+\f4acctcon\fP
+will fault when it encounters certain date-change records.
+.PP
+Each time the date is set,
+a pair of date change records are written to \f4/var/adm/wtmp\f1.
+The first record is the old date denoted
+by
+the string
+"\f4old time\f1"
+placed in
+the \f4line\f1 field and the
+flag
+.SM
+\f4OLD_TIME\f1
+placed
+in the \f4type\f1 field of the \f4utmp\f1 structure.
+The second record specifies the new date and is
+denoted by the string
+\f4new time\f1
+placed in the \f4line\fP field and the flag
+.SM
+\f4NEW_TIME\f1
+placed in the \f4type\fP field.
+\f4wtmpfix\fP
+uses these records to synchronize all time stamps in the file.
+.PP
+In addition to correcting time/date stamps,
+\f4wtmpfix\fP will check the validity
+of the \f4name\f1 field to ensure that it consists
+solely of alphanumeric characters
+or spaces.
+If it encounters a name that is considered invalid,
+it will change the login name to
+.SM
+\f4INVALID\f1
+and write a diagnostic to the standard error.
+In this way,
+\f4wtmpfix\fP
+reduces the chance that
+\f4acctcon\fP
+will fail when processing connect accounting records.
+.SH FILES
+\f4/var/adm/wtmp\f1
+.br
+\f4/usr/include/utmp.h\f1
+.SH SEE ALSO
+\f4acct\fP(1M), \f4acctcms\fP(1M), \f4acctcon\fP(1M), \f4acctmerg\fP(1M), \f4acctprc\fP(1M),
+\f4acctsh\fP(1M), \f4runacct\fP(1M),
+\f4acct\fP(4), \f4utmp\fP(4)
+.br
+\f4acctcom\fP(1), \f4ed\fP(1) in the \f2User's Reference Manual\f1
+.br
+\f4acct\fP(2)
+in the \f2Programmer's Reference
+Manual\f1
+.\"	@(#)fwtmp.1m	6.2 of 9/2/83

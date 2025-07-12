@@ -1,0 +1,7 @@
+.if n .pH portguide.CIO @(#)Cio	40.2
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.BK "Programmer's Guide: Porting the Kernel" "" "" ""   
+.\ACRONYM	                  
+.CH "Directory - IO" "" "Table of Contents" "7"
+.\CHAPTER	7
+.tC 2 "Directory - IO" 7-1  

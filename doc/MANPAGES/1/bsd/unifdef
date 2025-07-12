@@ -1,0 +1,127 @@
+'\"macro stdmacro
+.if n .pH g1.unifdef @(#)unifdef	40.10 of 5/21/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+'\" macro stdmacro
+.\" Copyright (c) 1988 Sun Microsystems, Inc. - All Rights Reserved.
+.\"
+.nr X
+.if \nX=0 .ds x} unifdef 1 "BSD Compatibility Package" "\&"
+.if \nX=1 .ds x} unifdef 1 "BSD Compatibility Package"
+.if \nX=2 .ds x} unifdef 1 "" "\&"
+.if \nX=3 .ds x} unifdef "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4unifdef\f1 \- resolve and remove \f4ifdef\f1'ed lines from \f4C\f1 program source
+.SH SYNOPSIS
+.na
+\f4/usr/ucb/unifdef\f1 [ \f4\-clt\f1 ] [ \f4\-D\f2name\f1 ] [ \f4\-U\f2name\f1 ] [ \f4\-iD\f2name\f1 ]
+[ \f4\-iU\f2name\f1 ] \&.\ .\ .\ [\ \f2filename\f1\ ]
+.SH DESCRIPTION
+\f4unifdef\f1
+removes
+\f4ifdef\f1ed
+lines from a file while otherwise leaving the file alone.
+It is smart enough to deal with the nested
+\f4ifdef\f1s,
+comments, single and double quotes of C
+syntax, but it does not do any including or interpretation of macros.
+Neither does it strip out comments,
+though it recognizes and ignores them.
+You specify which symbols you want defined with
+\f4\-D\f1
+options, and which you want undefined with
+\f4\-U\f1
+options.
+Lines within those
+\f4ifdef\f1s
+will be
+copied to the output, or removed, as appropriate.
+Any
+\f4ifdef\f1,
+\f4ifndef\f1,
+\f4else\f1,
+and
+\f4endif\f1
+lines associated with
+.I filename
+will also be removed.
+.P
+\f4ifdef\f1s
+involving symbols you do not specify are untouched and copied out
+along with their associated
+\f4ifdef\f1,
+\f4else\f1,
+and
+\f4endif\f1
+lines.
+.P
+If an
+\f4ifdef\f2X\f1
+occurs nested inside another
+\f4ifdef\f2X\f1,\f1
+then the inside
+\f4ifdef\f1
+is treated as if it were an unrecognized symbol.
+If the same symbol appears in more than one argument, only the first
+occurrence is significant.
+.P
+\f4unifdef\f1
+copies its output to the standard output
+and will take its input from the standard input
+if no
+.I filename
+argument is given.
+.P
+The following options are available:
+.TP 10
+\f4\-c\f1
+Complement the normal operation.
+Lines that would have been removed or blanked
+are retained, and vice versa.
+.TP
+\f4\-l\f1
+Replace ``lines removed'' lines with blank lines.
+.TP
+\f4\-t\f1
+Plain text option.
+\f4unifdef\f1
+refrains from attempting to recognize
+comments and single and double quotes.
+.TP
+\f4\-iD\f2name\f1
+Ignore, but print out, lines associated with the defined symbol
+.IR name .
+If you use
+\f4ifdef\f1s
+to delimit non-C
+lines, such as comments or code which is
+under construction, then you must tell
+\f4unifdef\f1
+which symbols are used for that purpose so that it will
+not try to parse
+for quotes and comments within them.
+.TP
+\f4\-iU\f2name\f1
+Ignore, but print out, lines associated with the undefined symbol
+.IR name .
+.SH "SEE ALSO"
+\f4cc\f1(1)
+.P
+\f4cc\f1(1)
+in the \f2Programmer's Reference Manual\f1
+.br
+\f4diff\fP(1)
+in the \f2User's Reference Manual\f1
+.SH DIAGNOSTICS
+.TP 20
+\f4Premature EOF\f1
+Inappropriate
+\f4else\f1
+or
+\f4endif\f1.
+.P
+Exit status is 0 if output is exact copy of input,
+1 if not, 2 if 
+\f4unifdef\f1
+encounters problems.

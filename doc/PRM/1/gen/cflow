@@ -1,0 +1,193 @@
+'\"macro stdmacro
+.if n .pH g1.cflow @(#)cflow	40.14.1.2 of 4/12/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} cflow 1 "Advanced C Utilities" "\&"
+.if \nX=1 .ds x} cflow 1 "Advanced C Utilities"
+.if \nX=2 .ds x} cflow 1 "" "\&"
+.if \nX=3 .ds x} cflow "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4cflow\f1 \- generate C flowgraph
+.SH SYNOPSIS
+\f4cflow [\-r] [\-ix] [\-i_] [\-d\f2num\f4] \f2files\f1
+.SH DESCRIPTION
+The
+\f4cflow\fP
+command analyzes a collection of
+.SM C\*S,
+\f4yacc\fP, \f4lex\fP, assembler, and object files
+and builds a graph charting the external function references.
+Files suffixed with
+\f4\&.y\f1,
+\f4\&.l\f1,
+and
+\f4\&.c\f1
+are processed by \f4yacc\fP, \f4lex\fP, and the C compiler as appropriate.
+The results of the preprocessed files, 
+and files suffixed with
+\f4\&.i\f1,
+are then run through the first pass of
+\f4lint\fP.
+Files suffixed with
+\f4\&.s\f1
+are assembled.
+Assembled files, and files suffixed with
+\f4\&.o\f1,
+have information extracted from their symbol tables.
+The results are 
+collected and turned into a graph of external references
+that is written on the standard output.
+.PP
+Each line of output begins with a reference
+number, followed by a suitable number of tabs
+indicating the level,
+then the name of the global symbol
+followed by a colon
+and its definition.
+Normally only function names that do not begin with
+an underscore are listed (see the 
+\f4\-i\f1
+options below).
+For information extracted from C source,
+the definition consists of an abstract type declaration
+(e.g.,
+\f4char \(**\f1),
+and, delimited by angle brackets,
+the name of the source file
+and the line number
+where the definition was found.
+Definitions extracted from object files
+indicate the file name and location
+counter under which the symbol appeared
+(e.g.,
+.IR text ).
+Leading underscores in C-style external names are deleted.
+Once a definition of a name has been printed,
+subsequent references to that name contain
+only the reference number of the line
+where the definition may be found.
+For undefined references, only
+\f4<\|>\f1
+is printed.
+.PP
+As an example, suppose the following code is in
+\f4file.c\f1:
+.P
+.RS
+.ft 4
+.nf
+int	i;
+.sp 0.5
+main()
+{
+	f();
+	g();
+	f();
+}
+.sp 0.5
+f()
+{
+	i = h();
+}
+.ft 1
+.fi
+.RE
+.P
+The command
+.P
+.RS
+.nf
+.ft 4
+cflow \-ix file.c
+.ft 1
+.fi
+.RE
+.P
+produces the output
+.P
+.RS
+.ft 4
+.nf
+1	main: int(), <file.c 4>
+2		f: int(), <file.c 11>
+3			h: <>
+4			i: int, <file.c 1>
+5		g: <>
+.fi
+.ft 1
+.RE
+.PP
+When the nesting level becomes too deep, the output of
+\f4cflow\fP
+can be piped to the
+\f4pr\fP command,
+using the
+\f4\-e\f1
+option, to compress the tab expansion to something
+less than every eight spaces.
+.PP
+In addition to the 
+\f4\-D\f1,
+\f4\-I\f1,
+and
+\f4\-U\f1
+options [which are interpreted just as they are
+by \f4cc\fP],
+the following options are interpreted by
+\f4cflow\fP:
+.TP \w'\f4\-d\fPnum\ \ 'u
+\f4\-r\f1
+Reverse the ``caller:callee'' relationship producing an inverted listing
+showing the callers of each function.
+The listing is also sorted in
+lexicographical order by callee.
+.TP
+\f4\-ix\f1
+Include external and static data symbols.
+The default is to include
+only functions in the flowgraph.
+.TP
+\f4\-i_\f1
+Include names that begin with an underscore.
+The default is to exclude
+these functions (and data if \f4\-ix\f1 is used).
+.TP
+\f4\-d\f2num\f1
+The
+.I num
+decimal integer indicates the depth at which the flowgraph
+is cut off.
+By default this number is very large.
+Attempts to set
+the cutoff depth to a nonpositive integer will be ignored.
+.SH "SEE ALSO"
+\f4as\fP(1),
+\f4cc\fP(1),
+\f4lex\fP(1),
+\f4lint\fP(1),
+\f4nm\fP(1),
+\f4yacc\fP(1)
+.br
+\f4pr\fP(1) in the
+\f2User's Reference Manual\f1
+.SH DIAGNOSTICS
+Complains about multiple definitions and only believes the first.
+.SH NOTES
+Files produced by
+\f4lex\fP
+and
+\f4yacc\fP
+cause the reordering of line number declarations, which can
+confuse
+\f4cflow\fP.
+To get proper results, feed
+\f4cflow\fP
+the
+\f4yacc\fP
+or
+\f4lex\fP
+input.
+.\"	@(#)cflow.1	5.2 of 5/18/82
+.Ee

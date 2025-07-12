@@ -1,0 +1,154 @@
+.if n .pH doctools.Cchap2 @(#)Cchap2	40.2
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.PM "DN" "FINAL COPY"
+.BK "Documenter's Tool Set User's Guide" "Release 1.0" "" ""   
+.\ACRONYM	                  
+.CH "Formatting Files" "" "Table of Contents" "2"
+.\CHAPTER	2
+.tC 1 "Getting Started" 2-1  
+.Index: formatting files       	1
+.Index: format        	1
+.Index: format options       	1
+.Index: file types       	1
+.Index: manual page files      	1
+.Index: guide files       	1
+.Index: memoranda files       	1
+.Index: collection files       	1
+.tC 1 "Command Mode" 2-2  
+.Index: command mode       	2
+.Index: format command line      	2
+.Index: options, format       	2
+.Index: format options       	2
+.Index: -c option       	2
+.Index: chapter tables of contents     	2
+.Index: master tables of contents     	2
+.Index: tables of contents      	2
+.Index: permuted index       	2
+.Index: -d option       	2
+.Index: destinations        	2
+.Index: printers        	2
+.Index: usage message       	2
+.Index: -l option       	2
+.Index: landscape orientation       	2
+.Index: -m option       	2
+.Index: mail confirmation       	2
+.Index: -o option       	2
+.Index: selected page processing      	2
+.Index: page processing, selected pages     	2
+.Index: page numbering       	2
+.Index: -p option       	2
+.Index: -s option       	2
+.Index: page sizes       	2
+.Index: -v option       	2
+.Index: version control       	2
+.Index: -w option       	2
+.Index: silent processing       	2
+.Index: format behavior       	2
+.tC 2 "Table of Contents:  The \-c Option" 2-3  
+.Index: -c option       	3
+.Index: tables of contents      	3
+.Index: chapter tables of contents     	3
+.Index: master tables of contents     	3
+.Index: permuted index       	3
+.tC 3 "Chapter Table of Contents" 2-3  
+.Index: chapter tables of contents     	3
+.Index: STOC variable       	3
+.Index: variables, STOC       	3
+.Index: \&.profile        	3
+.tC 3 "Master Table of Contents" 2-4  
+.Index: master tables of contents     	4
+.Index: MasterToc file       	4
+.Index: collection files       	4
+.tC 3 "Reference Manual Table of Contents and Permuted Index" 2-5  
+.Index: permuted index       	5
+.Index: reference manual table of contents    	5
+.tC 2 "Destinations:  The \-d Option" 2-5  
+.Index: destinations        	5
+.Index: -d option       	5
+.Index: default destination       	5
+.Index: destination, default       	5
+.Index: DEFDEST variable       	5
+.Index: variables, DEFDEST       	5
+.tC L "Figure 2-1:\0" "Displaying Valid Destinations" 2-6
+.Index: proof destination       	6
+.Index: null destination       	6
+.Index: post destination       	7
+.Index: archive destination       	7
+.Index: cpio        	7
+.Index: archive files       	7
+.tC 2 "Page Orientation:  The \-l Option" 2-7  
+.Index: page orientation       	7
+.Index: -l option       	7
+.Index: portrait orientation       	7
+.Index: landscape orientation       	7
+.tC 2 "Confirmation Mail:  The \-m Option" 2-8  
+.Index: confirmation mail       	8
+.Index: -m option       	8
+.tC 2 "Selected Pages:  The \-o Option" 2-8  
+.Index: selected pages       	8
+.Index: -o option       	8
+.tC 2 "Starting Page Number:  The \-p Option" 2-8  
+.Index: page numbering       	8
+.Index: -p option       	8
+.tC 2 "Page Size:  The \-s Option" 2-9  
+.Index: page size       	9
+.Index: -s option       	9
+.tC L "Table 2-1:\0" "Available Page Sizes" 2-9
+.Index: page sizes       	9
+.tC 2 "Version Control:  The \-v Option" 2-9  
+.Index: version control       	9
+.Index: -v option       	9
+.Index: \&.VS macro       	9
+.Index: \&.VE macro       	9
+.tC 2 "Silent Processing:  The \-w Option" 2-10  
+.Index: silent processing       	10
+.Index: -w option       	10
+.tC 2 "Less Visible Manual Page Parameters:  The \-r Options" 2-10  
+.Index: manual page options      	10
+.Index: reference manual options      	10
+.Index: continuous page numbering      	10
+.Index: -rC1 option       	10
+.Index: -rS option       	10
+.Index: manual page section number     	10
+.tC 1 "Interactive Mode" 2-11  
+.Index: interactive mode       	11
+.Index: interactive behavior       	11
+.Index: error messages       	11
+.Index: printing options       	11
+.Index: destinations        	11
+.Index: formatting options       	11
+.Index: table of contents      	12
+.Index: selected pages       	12
+.Index: page numbering       	12
+.Index: page orientation       	12
+.Index: landscape orientation       	12
+.Index: portrait orientation       	12
+.Index: version control       	12
+.Index: page size       	12
+.Index: mail confirmation       	13
+.Index: entering file names      	13
+.tC L "Figure 2-2:\0" "Confirming Your Formatting Selections" 2-13
+.Index: formatting confirmation screen      	13
+.tC 1 "File Types" 2-15  
+.Index: file types       	15
+.Index: manual page files      	15
+.Index: guide files       	15
+.Index: memoranda files       	15
+.Index: collection files       	15
+.Index: unique file identifiers      	15
+.tC 2 "Manual Page Files" 2-15  
+.Index: manual page files      	15
+.Index: man (5) macros      	15
+.Index: \&.TH macro       	15
+.tC 2 "Guide Files" 2-16  
+.Index: guide files       	16
+.Index: \&.CH macro       	16
+.tC 2 "Memoranda Files" 2-16  
+.Index: memoranda files       	16
+.Index: mm (5) macros      	16
+.Index: \&.MT macro       	16
+.tC 2 "Collection Files" 2-16  
+.Index: collection files       	16
+.Index: \&.FT macro       	16
+.tC 1 "Source Code Controlled Files" 2-17  
+.tC 1 "Error Messages" 2-19  

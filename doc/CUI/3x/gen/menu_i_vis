@@ -1,0 +1,35 @@
+'\"macro stdmacro
+.if n .pH g3x.menu_i_vis @(#)menu_i_vis	40.5 of 4/11/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.\" ident	"@(#)svid_ti:ti_lib/menu_i_vis	1.2"
+.nr X
+.if \nX=0 .ds x} menu_item_visible 3X "" "\&"
+.if \nX=1 .ds x} menu_item_visible 3X ""
+.if \nX=2 .ds x} menu_item_visible 3X "" "\&"
+.if \nX=3 .ds x} menu_item_visible "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4menu_item_visible\f1: \f4 item_visible\f1 \- tell if \f4menus\fP item is visible
+.SH SYNOPSIS
+.nf
+.ft 4
+#include <menu.h>
+.sp
+int item_visible(ITEM *item);
+.ft 1
+.fi
+.SH DESCRIPTION
+A menu item is visible if it currently
+appears in the subwindow of a posted menu.
+\f4item_visible\fP returns \f4TRUE\fP if \f2item\fP is visible,
+otherwise it returns \f4FALSE\fP.
+.SH NOTES
+The header file \f4<menu.h>\f1 automatically includes the header files
+\f4<eti.h>\fP and \f4<curses.h>\fP.
+.SH SEE ALSO
+.na
+\f4curses\fP(3X),
+\f4menus\fP(3X),
+\f4menu_new\fP(3X)
+.ad

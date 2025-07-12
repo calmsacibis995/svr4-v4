@@ -1,0 +1,163 @@
+'\"macro stdmacro
+.if n .pH xnx.custom @(#)custom	40.12 of 6/27/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} custom 1 "Application Compatibility Package" "\&"
+.if \nX=1 .ds x} custom 1 "Application Compatibility Package"
+.if \nX=2 .ds x} custom 1 "" "\&"
+.if \nX=3 .ds x} custom "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4custom\fP \- install specific portions of certain UNIX or XENIX packages
+.SH SYNOPSIS
+\f4custom \f1[\f4-s\f2 set\f1] [\f4-ilr\f1] [\f2package\f1] ] [\f4-f\f1 [\f2file\f1] ] [\f4-m\f2 device\f1]
+.SH DESCRIPTION
+\f4custom\f1 allows the super-user to create a custom installation
+by selectively installing or deleting portions of UNIX or XENIX packages
+to or from the 386 operating system.
+It can be used interactively
+or it can be invoked from the command line with applicable command
+options.
+.PP
+Files are extracted or deleted in \f2packages\f1.
+A \f2package\f1
+is a collection of individual files that are grouped together in
+\f2sets\f1.
+.PP
+When in interactive mode, \f4custom\f1 prompts you for volume 1 of
+the new product distribution and extracts the product information
+necessary to support it.
+The following menu provides support for 
+adding or removing a package:
+.P
+.PD 0
+.RS
+.TP 3
+1.
+Install one or more packages
+.TP
+2.
+Remove one or more packages
+.TP
+3.
+List available packages
+.TP
+4.
+List the files in a package
+.TP
+5.
+Install a single file
+.TP
+6.
+Select a new set to customize
+.TP
+7.
+Display current disk usage
+.TP
+8.
+Help
+.RE
+.PD
+.PP
+When you enter a menu option, you are prompted for further
+information.
+The following describes what actions are necessary
+for each menu option:  
+.sp .5
+1.  Install one or more packages
+.in +2P
+.sp .5
+Prompts for one or more package names.
+Enter the name of the desired package(s).
+.sp 0.5
+Calculates which installation volumes (distribution media) are
+needed and then prompts the user for the correct volume numbers.
+If multiple packages are specified, the names should be separated
+by spaces on the command line.
+.PP
+This option, as well as options 2 and 3, displays a list of 
+available packages in the selected set.
+Each line describes the package name, whether the package is fully 
+installed, not installed or partially installed, the size of
+the package (in 512 byte blocks), and a one line description of
+the package contents.
+.sp .5
+2.  Remove one or more packages
+.in +2P
+.sp .5
+Prompts for one or more package names.
+Enter the name of the desired package(s).
+.sp 0.5
+Deletes the correct files in the specified package.
+If multiple packages are specified, the names should be separated by spaces
+on the command line.
+.br
+.ne 1i
+.PP
+3.  List available packages
+.in +2P
+.sp .5
+Prompts for one or more package names.
+Enter the name of the desired package(s).
+.sp .5
+Displays available packages (see option 1).
+.br
+.ne 1i
+.PP
+4.  List the files in a package
+.in +2P
+.sp .5
+Lists all files in the specified package.
+.sp 0.5
+Prompts for one or more package names.
+Enter the name of the desired package(s).
+.PP
+5.  Install a single file
+.in +2P
+.sp .5
+Retrieves the specified file from the distribution set.
+.sp .5
+Filename should be a full pathname relative to the root directory (\f4/\fP).
+.PP
+6.  Select a new set to customize
+.in +2P
+.sp .5
+Allows the user to work from a different set .
+.PP
+7.  Display current disk usage
+.in +2P
+.sp .5
+Tells current disk usage.
+.PP
+8.  Help
+.in +2P
+.sp .5
+Prints a page of instructions to help you use \f4custom\f1.
+.SS Options
+.TP
+\f4-s\f1
+A set identifier
+.TP
+\f4-i\f1
+Install the specified package(s)
+.TP
+\f4-r\f1
+Remove the specified package(s)
+.TP
+\f4-l\f1
+List the files in the specified package(s)
+.TP
+\f4-f\f1
+Install the specified file
+.TP
+\f4-m\f1
+Install from device (\f2device\fP must be \f4/dev/install\fP for
+floppy drive 0 or \f4/dev/install1\fP for floppy drive 1)
+.SH FILES
+\f4/etc/perms/*\f1
+.SH "SEE ALSO"
+\f4df\f1(1M),
+\f4du\f1(1M),
+\f4fixperm\f1(1M),
+\f4install\f1(1M)

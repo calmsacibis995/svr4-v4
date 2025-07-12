@@ -1,0 +1,54 @@
+'\"macro stdmacro
+.if n .pH g1.wait @(#)wait	40.4.1.1 of 1/3/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} wait 1 "Essential Utilities" "\&"
+.if \nX=1 .ds x} wait 1 "Essential Utilities"
+.if \nX=2 .ds x} wait 1 "" "\&"
+.if \nX=3 .ds x} wait "" "" "\&"
+.ds OK [\|
+.ds CK \|]
+.TH \*(x}
+.SH NAME
+\f4wait\f1 \- await completion of process
+.SH SYNOPSIS
+\f4wait\fP \*(OK \f2n\^\fP \*(CK
+.SH DESCRIPTION
+Wait for your background process whose process id is
+.I n\^
+and report its termination status.
+If
+.I n\^
+is omitted,
+all your shell's currently active background processes are waited for
+and the return code will be zero.
+.PP
+The shell itself executes
+\f4wait\fP,
+without creating a new process.
+.SH "SEE ALSO"
+\f4sh\fP(1).
+.SH NOTES
+If you get the error message
+\f4cannot fork, too many processes\fP,
+try using the
+\f4wait\fP
+command to clean up your background processes.
+If this doesn't help,
+the system process table is probably full or you have too many active foreground processes.
+(There is a limit to the number of process ids
+associated with your login,
+and to the number the system can keep track of.)
+.PP
+Not all the processes of a 3- or more-stage
+pipeline are children of the shell, and
+thus cannot be waited for.
+.PP
+If
+.I n\^
+is not an active process id,
+all your shell's currently active background processes are waited for
+and the return code will be zero.
+.\"	@(#)wait.1	6.2 of 9/2/83
+.Ee

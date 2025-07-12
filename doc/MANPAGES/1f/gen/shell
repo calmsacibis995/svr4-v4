@@ -1,0 +1,50 @@
+'\"macro stdmacro
+.if n .pH g1f.shell @(#)shell	40.12 of 4/29/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989 AT&T
+.nr X
+.if \nX=0 .ds x} shell 1F "Form and Menu Language Interpreter Utilities" "\&"
+.if \nX=1 .ds x} shell 1F "Form and Menu Language Interpreter Utilities"
+.if \nX=2 .ds x} shell 1F "" "\&"
+.if \nX=3 .ds x} shell "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4shell\f1 \- run a command using shell
+.SH SYNOPSIS
+\f4shell\f1
+\f2command\f1 [ \f2command\f1 ] . . .
+.SH DESCRIPTION
+The \f4shell\f1 function concatenates its arguments,
+separating each by a space,
+and passes this string to the UNIX system shell
+(\f4$SHELL\f1 if set, otherwise
+\f4/usr/bin/sh\f1).
+.SH EXAMPLES
+Since the Form and Menu Language does not directly support background processing,
+the \f4shell\f1 function can be used instead.
+.PP
+.RS
+\f4`shell "build prog > /dev/null &"`\f1
+.RE
+.PP
+If you want the user to continue to be able to interact
+with the application while the background job is running,
+the output of an executable run by \f4shell\fP in the background
+must be redirected: to a file if you want to save the output, or
+to \f4/dev/null\fP if you don't want to save it (or if there is no output),
+otherwise your
+application may appear to be hung until the background job finishes processing.
+.PP
+\f4shell\f1 can also be used to execute a command that has the same name
+as an FMLI built-in function.
+.SH NOTES
+The arguments to \f4shell\f1 will be concatenated using spaces,
+which may or may not do what is expected.
+The variables set in local environments will not be expanded
+by the shell because ``local'' means ``local to the current process.''
+.SH "SEE ALSO"
+\f4sh\f1(1)
+.ig
+BUILT-IN FMLI
+..
+.Ee

@@ -1,0 +1,54 @@
+'\"macro stdmacro
+.if n .pH g3.string @(#)string	40.8 of 4/24/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+'\" macro stdmacro
+.\" Copyright (c) 1988 Sun Microsystems, Inc. - All Rights Reserved.
+.\"
+.nr X
+.if \nX=0 .ds x} string 3 "BSD Compatibility Package" "\&"
+.if \nX=1 .ds x} string 3 "BSD Compatibility Package"
+.if \nX=2 .ds x} string 3 "" "\&"
+.if \nX=3 .ds x} string "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4string\f1:  \f4strcasecmp\f1, \f4strncasecmp\f1 \- string operations
+.SH SYNOPSIS
+.nf
+\f4cc \f1[ \f2flag\f1\. \. \. ] \f2file\f1 \. \. \. \f4\-lucb\f1
+.P
+\f4int strcasecmp(s1, s2)\f1
+\f4char *s1, *s2;\f1
+.PP
+\f4int strncasecmp(s1, s2, n)\f1
+\f4char *s1, *s2;\f1
+\f4int n;\f1
+.fi
+.SH DESCRIPTION
+.PP
+The 
+\f4strcasecmp\f1
+and 
+\f4strncasecmp\f1
+routines compare the strings and ignore differences in case. 
+These routines assume the
+\s-1ASCII\s0
+character set when equating lower
+and upper case characters.
+.PP
+These functions operate on null-terminated strings.
+They do not check for overflow of
+any receiving string.
+.SH SEE ALSO
+\f4bstring\fP(3)
+.P
+\f4malloc\fP(3C),
+\f4string\fP(3C)
+in the \f2Programmer's Reference Manual\f1
+.SH NOTES
+\f4strcasecmp\f1
+and
+\f4strncasecmp\f1
+use native character comparison as above and assume the 
+\s-1ASCII\s0
+character set. 

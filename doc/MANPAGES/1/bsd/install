@@ -1,0 +1,140 @@
+'\"macro stdmacro
+.if n .pH g1.install @(#)install	40.13 of 5/21/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} install 1 "BSD Compatibility Package" "\&"
+.if \nX=1 .ds x} install 1 "BSD Compatibility Package"
+.if \nX=2 .ds x} install 1 "" "\&"
+.if \nX=3 .ds x} install "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4install\f1 \- install files
+.SH SYNOPSIS
+.na
+\f4/usr/ucb/install\f1
+\f1[\f4 \-cs \f1]
+\f1[\f4 \-g \f1
+.IR group " ]"
+\f1[\f4 \-m \f1
+.IR mode " ]"
+\f1[\f4 \-o \f1
+.IR owner " ]"
+.I file1 file2
+.P
+.na
+\f4/usr/ucb/install\f1
+\f1[\f4 \-cs \f1]
+\f1[\f4 \-g \f1
+.IR group " ]"
+\f1[\f4 \-m \f1
+.IR mode " ]"
+\f1[\f4 \-o \f1
+.IR owner " ]"
+.IR "file " .\ .\ . " directory"
+.P
+.na
+\f4/usr/ucb/install\f1
+\f4\-d \f1
+\f1[\f4 \-g \f1
+.IR group " ]"
+\f1[\f4 \-m \f1
+.IR mode " ]"
+\f1[\f4 \-o \f1
+.IR owner " ]"
+.I directory
+.SH DESCRIPTION
+.IX  install  ""  "\fLinstall\fP \(em install files"
+.IX  "programming tools"  "install"  ""  "\fLinstall\fP \(em install files"
+.IX  "system administration"  "install"  ""  "\fLinstall\fP \(em install files"
+Install is used within makefiles to copy new versions of
+files into a destination directory and to create the destination
+directory itself.
+.P
+The first two forms are similar to the
+\f4cp\f1(1)
+command with the addition
+that executable files can be stripped during the copy and the
+owner, group, and mode of the installed file(s) can be given.
+.P
+The third form can be used to create a destination directory with
+the required owner, group and permissions.
+.P
+Note:
+\f4install\f1
+uses no special privileges to copy files from one place to another.
+The implications of this are:
+.P
+.RS
+.PD 0
+.TP 3
+\(bu
+You must have permission to read the files to be installed.
+.TP 3
+\(bu
+You must have permission to copy into the destination file or directory.
+.TP 3
+\(bu
+You must have permission to change the modes on the final copy of the
+file if you want to use the
+\f4\-m\f1
+option to change modes. 
+.TP 3
+\(bu
+You must be superuser if you want to specify the ownership of the
+installed file with
+\f4\-o\f1.
+If you are not the super-user, or if
+\f4\-o\f1
+is not in effect, the installed file will be owned by you,
+regardless of who owns the original.
+.PD
+.RE
+.SH OPTIONS
+.TP 10
+\f4\-g\f2 group\f1
+Set the group ownership of the installed file or directory.
+(staff by default)
+.TP
+\f4\-m\f2 mode\f1
+Set the mode for the installed file or directory.
+(0755 by default)
+.TP
+\f4\-o\f2 owner\f1
+If run as root, set the ownership of the installed file to the
+user-ID of
+.IR owner .
+.TP
+\f4\-c\f1
+Copy files.
+In fact
+\f4install\f1
+.I always
+copies files, but the
+\f4\-c\f1
+option is retained for backwards compatibility with old shell
+scripts that might otherwise break.
+.TP
+\f4\-s\f1
+Strip executable files as they are copied.
+.TP
+\f4\-d\f1
+Create a directory.
+Missing parent directories are created as required
+as in
+\f4mkdir \-p\f1.
+If the directory already exists, the owner, group and mode
+will be set to the values given on the command line.
+.ne 6
+.SH "SEE ALSO"
+\f4chown\fP(1)
+.sp .5
+\f4chgrp\fP(1),
+\f4chmod\fP(1),
+\f4cp\fP(1),
+\f4mkdir\fP(1),
+\f4strip\fP(1)
+in the \f2User's Reference Manual\f1
+.br
+\f4install\fP(1M)
+in the \f2System Administrator's Reference Manual\f1

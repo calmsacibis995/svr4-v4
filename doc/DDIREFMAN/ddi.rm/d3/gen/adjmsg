@@ -1,0 +1,54 @@
+'\"macro stdmacro
+.if n .pH gen.adjmsg @(#)adjmsg	40.3 of 3/19/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.nr X
+.if \nX=0 .ds x} adjmsg D3DK "STREAMS" "DDI/DKI" "\&"
+.if \nX=1 .ds x} adjmsg D3DK "STREAMS" "DDI/DKI"
+.if \nX=2 .ds x} adjmsg D3DK "" "\&"
+.if \nX=3 .ds x} adjmsg "" "" "\&"
+.TH \*(x}
+.IX "\f4adjmsg\fP(D3DK)"
+.SH NAME
+\f4adjmsg\f1 \- trim bytes from a message 
+.IX "STREAMS messages"
+.SH SYNOPSIS
+.nf
+.na
+\f4#include <sys/stream.h>
+.sp 0.5
+int adjmsg(\f4mblk_t *\f1\f2mp, \f4int\f2 len\f4);\f1
+.ad
+.fi
+.SH ARGUMENTS
+.RS 0n
+.IP "\f2mp\f1" 10n
+Pointer to the message to be trimmed.
+.IP "\f2len\f1" 10n
+The number of bytes to be removed.
+.RE
+.SH DESCRIPTION
+\f4adjmsg\f1 removes bytes from a message.
+|\^\f2len\fP\^| (the absolute value of \f2len\fP) specifies how many bytes
+are to be removed.
+If \f2len\f1 is greater than \f40\f1, bytes 
+are removed from the head of the message.
+If \f2len\f1 is less than \f40\f1, 
+bytes are removed from the tail.
+\f4adjmsg\f1 fails if |\^\f2len\fP\^| is greater than the number of
+bytes in \f2mp\f1.  If \f2len\fP spans more than one message block in the
+message, the messages blocks must be the same type, or else \f4adjmsg\fP
+will fail.
+.SH RETURN VALUE
+If the message can be trimmed successfully, 1 is returned.  Otherwise,
+0 is returned.
+.SH LEVEL
+Base or Interrupt.
+.SH NOTES
+Does not sleep.
+.sp 0.5
+If \f2len\fP is greater than the amount of data in a single message block, that
+message block is not freed.  Rather, it is left linked in the message, and its
+read and write pointers are set equal to each other, indicating no data present
+in the block.
+.SH SEE ALSO
+\f4msgb\fP(D4DK)

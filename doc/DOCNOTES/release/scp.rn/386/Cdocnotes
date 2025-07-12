@@ -1,0 +1,83 @@
+.if n .pH 386.Cdocnotes @(#)Cdocnotes	40.13.1.1
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.BK "Source Code Product Machine Readable Documentation Release Notes" "" "SCP MRD Release Notes" ""   
+.\ACRONYM	                  
+.CH "SCP MRD Release Notes" "" "Table of Contents" ""
+.\CHAPTER	
+.tC 1 "Introduction" 1  
+.tC 2 "Release History" 1  
+.tC 2 "Highlights of Version 4 Changes" 1  
+.tC 2 "Summary of Changes for the Version 4 Documentation Set" 2  
+.tC 1 "Detailed Description of Documentation Changes" 3  
+.tC 2 "Installation Guide" 3  
+.tC 3 "Document Description" 3  
+.tC 3 "Document Outline" 3  
+.tC 3 "Document Changes" 3  
+.tC 2 "Programmer's Guide:  System Services and Application Packaging Tools (SSAPT)" 4  
+.tC 3 "Document Description" 4  
+.tC 3 "Document Changes" 4  
+.tC 2 "Integrated Software Development Guide (ISDG)" 5  
+.tC 3 "Document Description" 5  
+.tC 3 "Document Outline" 5  
+.tC 3 "Document Changes" 6  
+.tC 3 "Reasons for Document Revision" 8  
+.tC 3 "Document Mapping" 8  
+.tC 2 "Migration and Compatibility Guide (MCG)" 10  
+.tC 3 "Document Description" 10  
+.tC 3 "Document Outline" 11  
+.tC 3 "Document Changes" 11  
+.tC 3 "Document Mapping" 13  
+.tC 2 "Mouse Driver Administrator's Guide" 15  
+.tC 3 "Document Description" 15  
+.tC 3 "Document Changes" 15  
+.tC 2 "Multibus Installation and Configuration Guide" 16  
+.tC 3 "Document Description" 16  
+.tC 3 "Document Outline" 16  
+.tC 3 "Document Changes" 16  
+.tC 2 "Multibus Reference Manual" 17  
+.tC 3 "Document Description" 17  
+.tC 3 "Document Outline" 17  
+.tC 3 "Document Changes" 17  
+.tC 2 "Multibus Transport Application Interface Guide" 18  
+.tC 3 "Document Description" 18  
+.tC 3 "Document Outline" 18  
+.tC 3 "Document Changes" 18  
+.tC 2 "Network User's and Administrator's Guide" 19  
+.tC 3 "Document Description" 19  
+.tC 3 "Document Outline" 19  
+.tC 3 "Document Changes" 20  
+.tC 2 "PC-Interface Administrator's Guide" 21  
+.tC 3 "Document Description" 21  
+.tC 3 "Document Outline" 21  
+.tC 3 "Document Changes" 21  
+.tC 2 "Product Overview and Master Index" 22  
+.tC 3 "Document Description" 22  
+.tC 3 "Document Outline" 22  
+.tC 3 "Document Changes" 22  
+.tC 2 "Programmer's Guide:  Networking Interfaces" 23  
+.tC 3 "Document Description" 23  
+.tC 3 "Document Outline" 23  
+.tC 3 "Document Changes" 23  
+.tC 2 "Programmer's Guide:  SCSI Driver Interface (SDI)" 25  
+.tC 3 "Document Description" 25  
+.tC 3 "Document Outline" 25  
+.tC 3 "Document Changes" 25  
+.tC 2 "Programmer's Reference Manual" 26  
+.tC 3 "Document Description" 26  
+.tC 3 "Document Outline" 26  
+.tC 3 "Document Changes" 26  
+.tC 2 "System Administrator's Guide" 28  
+.tC 3 "Document Description" 28  
+.tC 3 "Document Outline" 28  
+.tC 3 "Document Changes" 28  
+.tC 2 "System Administrator's Reference Manual" 29  
+.tC 3 "Document Description" 29  
+.tC 3 "Document Outline" 29  
+.tC 3 "Document Changes" 29  
+.tC 2 "User's Reference Manual" 33  
+.tC 3 "Document Description" 33  
+.tC 3 "Document Outline" 33  
+.tC 3 "Document Changes" 33  
+.tC 2 "Graphics Documents" 36  
+.tC 1 "Special Printing Instructions" 37  
+.tC 2 "Release Documents" 37  

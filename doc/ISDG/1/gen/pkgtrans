@@ -1,0 +1,137 @@
+'\"macro stdmacro
+.if n .pH g1.pkgtrans @(#)pkgtrans	40.20 of 4/3/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} pkgtrans 1 "Essential Utilities" "\&"
+.if \nX=1 .ds x} pkgtrans 1 "Essential Utilities"
+.if \nX=2 .ds x} pkgtrans 1 "Essential Utilities" "\&"
+.if \nX=3 .ds x} pkgtrans "Essential Utilities" "\&"
+.TH \*(x}
+.SH NAME
+\f4pkgtrans\f1 \- translate package format
+.SH SYNOPSIS
+\f4pkgtrans \f1[\f4-ions\f1] \f2device1 device2 \f1[\f2 pkginst1\f1 [\f2 pkginst2\f1 [ . . . ] ] ]
+.SH DESCRIPTION
+.hw data-stream
+\f4pkgtrans\f1 translates an installable package from one format 
+to another.
+It translates:
+.IP
+a filesystem format to a datastream
+.IP
+a datastream to a filesystem format
+.IP
+a filesystem format to another filesystem format
+.P
+The options and arguments for this command are:
+.TP 13
+\f4\-i\f1
+Copies only the \f4pkginfo\fP and \f4pkgmap\fP files.
+.P
+.TP 13
+\f4-o\f1
+Overwrites the same instance on the destination device,
+package instance will be overwritten if it already exists.
+.TP 13
+\f4-n\f1
+Creates a new instance
+if any instance of this package already exists.
+.TP 13
+\f4-s\f1
+Indicates that the package should be written to \f2device2\fP
+as a datastream rather than as a filesystem.
+The default behavior
+is to write a filesystem format on devices that support
+both formats.
+.TP 13
+\f2device1\f1
+Indicates the source device.
+The package or packages on this device will be
+translated and placed on \f2device2\f1.
+.TP 13
+\f2device2\f1
+Indicates the destination device.
+Translated packages will be placed on this
+device.
+.TP 13
+\f2pkginst\f1
+Specifies which package instance or instances
+on \f2device1\f1 should be translated.
+The token \f4all\f1 may be used to indicate all packages.
+\f2pkginst\f4.\(**\f1 can be used to indicate all instances of a package.
+(When using this format,
+enclose the command line in single quotes
+to prevent the shell from interpreting the \(** character.)
+If no packages are defined,
+a prompt shows all packages on the device and asks which to translate. 
+.SH NOTES
+Device specifications can be either the special node name (\f4/dev/diskette\fP) 
+or the device alias (\f4diskette1\fP).
+The device \f4spool\f1 indicates the default spool directory.
+Source and destination devices may not be the same. 
+.P
+By default, \f4pkgtrans\f1 will not transfer
+any instance of a package if any
+instance of that package already exists on the destination device.
+Use of
+the \f4-n\f1 option will create a new instance if
+an instance of this package already exists.
+Use of the \f4-o\f1 option will overwrite the same instance
+if it already exists.
+Neither of
+these options are useful if the destination device is a datastream.
+.P
+If you're transferring a package in datastream format
+to floppies and the package spans multiple floppies,
+use the filesystem format.
+(The datastream format is not supported across
+multiple floppies.)
+.P
+\f4pkgtrans\fP depends on the integrity of the \f4/etc/device.tab\fP file
+to determine whether a device can support a datastream and/or
+filesystem formats. Problems in transferring a device in a particular
+format could mean corruption of \f4/etc/device.tab\fP.
+.SH EXAMPLE
+The following example translates all packages on the floppy 
+drive \f4/dev/diskette\f1 and places the translations on
+\f4/tmp\f1. 
+.P
+.RS
+.ft 4
+pkgtrans /dev/diskette /tmp all
+.ft 1
+.RE
+.P
+The next example translates packages \f4pkg1\f1
+and \f4pkg2\f1 on \f4/tmp\f1 and places
+their translations (that is, a datastream) on the \f49track1\f1 output device.
+.P
+.RS
+.ft 4
+pkgtrans /tmp 9track1 pkg1 pkg2
+.ft 1
+.RE
+.P
+The next example translates \f4pkg1\f1 and \f4pkg2\f1 on \f4tmp\f1
+and places them on the diskette in a datastream format.
+.P
+.RS
+.ft 4
+pkgtrans -s /tmp /dev/diskette pkg1 pkg2
+.ft 1
+.RE
+.SH FILES
+\f4/etc/device.tab\fP
+.SH SEE ALSO
+.na
+\f4installf\fP(1M),
+\f4pkgadd\fP(1M),
+\f4pkgask\fP(1M),
+\f4pkginfo\fP(1),
+\f4pkgmk\fP(1),
+\f4pkgparam\fP(1),
+\f4pkgproto\fP(1),
+\f4pkgrm\fP(1M),
+\f4removef\fP(1M).
+.ad

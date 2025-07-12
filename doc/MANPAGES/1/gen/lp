@@ -1,0 +1,511 @@
+'\"! eqn |mmdoc
+'\"macro stdmacro
+.if n .pH g1.lp @(#)lp	40.18.1.4 of 4/8/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} lp 1 "Line Printer Spooling Utilities" "\&"
+.if \nX=1 .ds x} lp 1 "Line Printer Spooling Utilities"
+.if \nX=2 .ds x} lp 1 "" "\&"
+.if \nX=3 .ds x} lp "" "" "\&"
+.EQ
+delim $$
+.EN
+.TH \*(x}
+.SH NAME
+\f4lp\f1, \f4cancel\f1 \- send/cancel requests to an \s-1LP\s+1 print service
+.SH SYNOPSIS
+\f4lp\fP [\f2printing-options\fP] [\f2files\fP]
+.br
+\f4lp\fP \f4-i\fP \f2request-IDs\fP \f2printing-options\fP
+.br
+\f4cancel\fP [\f2request-IDs\fP] [\f2printers\fP]
+.br
+\f4cancel \-u\fP \f2login-ID-list\fP [\f2printers\fP]
+.SH DESCRIPTION
+The first form of the \f4lp\fP command 
+arranges for the named \f2files\fP and associated information
+(collectively called a
+.IR request )
+to be printed.
+If no file names are specified on the command line,
+the standard input is assumed.
+The standard input may be specified
+along with named \f2files\f1
+on the command line by listing the file name(s) and specifying
+\f4\-\f1
+for the standard input.
+The \f2files\f1 will be printed
+in the order in which they appear on the shell command line.
+.PP
+The LP print service
+associates a unique \f2request-ID\f1 with each request 
+and displays it on the standard output.
+This \f2request-ID\f1 can be used later
+when canceling or changing a request, or 
+when determining its status.
+[See the section on \f4cancel\fP for details about canceling a request,
+and \f4lpstat\fP(1) for information
+about checking the status of a print request.]
+.PP
+The second form of \f4lp\fP is used to change the options for a request.
+The print request identified by
+the \f2request-ID\f1 is changed according to the
+printing options specified with this shell command.
+The printing options available are the same as those
+with the first form of the \f4lp\fP shell command.
+If the request has
+finished printing,
+the change is rejected.
+If the request is already printing,
+it will be stopped and restarted
+from the beginning (unless the \f4\-P\f1 option has been given).
+.PP
+The \f4cancel\fP command allows users to cancel print requests
+previously sent with the \f4lp\fP command.
+The first form of \f4cancel\fP permits cancellation of requests
+based on their \f2request-ID\fP.
+The second form of cancel permits cancellation of requests based
+on the \f2login-ID\fP of their owner.
+.ig
+The wait may be considerable if changing a print
+request sent to a remote machine.
+..
+.SS "Sending a Print Request"
+The first form of the \f4lp\fP command is used to
+send a print request to a particular printer or group of
+printers.
+.PP
+Options to
+\f4lp\fP
+must always precede file names,
+but may be specified in any order.
+The following options are available for \f4lp\fP:
+.TP .75i
+\f4\-c\f1
+Make copies
+of the
+.I files
+before printing.
+Normally,
+.I files
+will not be copied,
+but will be linked
+whenever possible.
+If the
+\f4\-c\f1
+option is not given,
+then the user
+should be careful
+not to remove
+any of the
+.I files
+before the request
+has been printed
+in its entirety.
+It should also be noted
+that if the \f4\-c\f1 option is not specified,
+any changes made to the named
+.I files
+after the request
+is made
+but before it is printed
+will be reflected
+in the printed output.
+.TP
+\f4\-d \f2dest\f1
+Choose \f2dest\f1 as the printer or class of printers
+that is to do the printing.
+If \f2dest\f1 is a printer,
+then the request will be printed only
+on that specific printer.
+If \f2dest\f1 is a class of printers,
+then the request will be printed on the first
+available printer that is a member of the class.
+If \f2dest\fP is \f4any\fP, then the request will
+be printed on any printer which can handle it.
+Under certain conditions
+(unavailability of printers,
+file space limitations, and so on)
+requests for specific destinations
+may not be accepted
+[see
+\f4lpstat\fP(1)].
+By default,
+.I dest
+is taken from
+the environment variable
+\f4\s-1LPDEST\s+1\f1 (if it is set).
+Otherwise, a default destination (if one exists)
+for the computer system is used.
+Destination names vary between systems
+[see \f4lpstat\fP(1)].
+.TP
+\f4\-f \f2form-name\f1 [\f4\-d any\f1]
+Print the request on the form \f2form-name\f1.
+The LP print service ensures that the form is mounted on the printer.
+If \f2form-name\f1 is requested with a printer destination that cannot support
+the form, the request is rejected.
+If \f2form-name\f1 has not been defined for the system, 
+or if the user is not allowed to use the form, 
+the request is rejected [see \f4lpforms\fP(1M)].
+When the \f4\-d any\f1 option is given, the request 
+is printed on any printer that has the requested form mounted
+and can handle all other needs of the print request.
+.TP
+\f4\-H \f2special-handling\f1
+Print the request according to the value of \f2special-handling\f1.
+Acceptable values for \f2special-handling\f1 are
+defined below:
+.RS .75i
+.TP .75i
+\f4hold\f1
+Don't print the request until notified.
+If printing has already begun, stop it.
+Other print requests will go ahead of a held request until it is resumed.
+.TP .75i
+\f4resume\f1
+Resume a held request.
+If it had been printing when held,
+it will be the next request printed, unless subsequently bumped by an
+\f4immediate\f1 request.
+The \f4\-i\fP option (followed by a \f2request-ID\fP)
+must be used whenever this argument is specified.
+.TP .75i
+\f4immediate\f1
+(Available only to LP administrators)
+.br
+Print the request next.
+If more than one request is assigned
+\f4immediate\f1, the requests are printed in
+the reverse order queued.
+If a request is currently printing on the desired
+printer, you have to put it on hold to allow the
+immediate request to print.
+.RE
+.TP
+\f4\-m\f1
+Send mail [see \f4mail\f1(1)]
+after the files have been printed.
+By default, no mail is sent
+upon normal completion of the print request.
+.TP
+\f4\-n \f2number\f1
+Print
+.I number
+copies (default is 1) of the output.
+.TP
+\f4\-o \f2option\f1
+Specify printer-dependent
+.IR options .
+Several such \f2options\f1
+may be collected by specifying 
+the \f4\-o\f1 keyletter more than once
+(\f4\-o $option sub 1$\f4
+\-o $option sub 2$\f2 ... \f4\-o $option sub n$\f1),
+or by specifying a list of options 
+with one \f4\-o\f1 keyletter enclosed in double quotes
+(that is, \f4\-o "$option sub 1$\f4
+$option sub 2$\f4 \f2... $option sub n$\f4"\f1).
+The standard interface recognizes
+the following options:
+.RS .75i
+.TP .75i
+\f4nobanner\f1
+Do not print a banner page with this request.
+(The administrator can disallow this option at any time.)
+.TP .75i
+\f4nofilebreak\f1
+Do not insert a form feed between the files given,
+if submitting a job to print more than one file.
+.TP .75i
+\f4length\f1=\f2scaled-decimal-number\f1
+Print this request with pages
+\f2scaled-decimal-number\f1 lines long.
+A \f2scaled-decimal-number\f1 is an optionally
+scaled decimal number that gives a size in lines,
+columns, inches, or centimeters,
+as appropriate.
+The scale is indicated by appending 
+the letter ``i'' for inches,
+or the letter ``c'' for centimeters.
+For length or width settings, an unscaled number indicates
+lines or columns;
+for line pitch or character pitch settings, an unscaled number indicates
+lines per inch or characters per inch 
+(the same as a number scaled with ``i'').
+For example, \f4length=66\f1 indicates a page length of 66 lines,
+\f4length=11i\f1 indicates a page length of 11 inches, and
+\f4length=27.94c\f1 indicates a page length of 27.94 centimeters.
+.sp .5
+This option may not be used with the \f4\-f\f1 option.
+.TP .75i
+\f4width\f2=scaled-decimal-number\f1
+Print this request with page-width set to 
+\f2scaled-decimal-number\f1 columns wide.
+(See the explanation of \f2scaled-decimal-numbers\f1
+in the discussion of \f4length\f1, above.)
+This option may not be used with the \f4\-f\f1 option.
+.TP .75i
+\f4lpi\f1=\f2scaled-decimal-number\f1
+Print this request 
+with the line pitch set to
+\f2scaled-decimal-number\f1 lines per inch.
+This option may not be used with the
+\f4\-f\f1 option.
+.TP .75i
+\f4cpi\f1=\f2scaled-decimal-number\f1
+Print this request
+with the character pitch set to
+\f2scaled-decimal-number\f1 characters per inch.
+Character pitch can also be set to
+\f4pica\f1 
+(representing 10 characters per inch) 
+or \f4elite\f1
+(representing 12 characters per inch),
+or it can be \f4compressed\f1
+(representing as many characters as a printer can handle).
+There is no standard number of characters per inch for all printers;
+see the Terminfo database [\f4terminfo\fP(4)]
+for the default character pitch for your printer.
+.sp .5
+This option may not be used with the
+\f4\-f\f1 option.
+.TP .75i
+\f4stty\f1=\f4'\f2stty-option-list\f4'\f1
+A list of options valid for the \f4stty\f1 command;
+enclose the list with single quotes if it contains blanks.
+.RE
+.TP .75i
+\f4\-P \f2page-list\f1
+Print the pages specified in \f2page-list\f1.
+This option can be used only
+if there is a filter available to handle it;
+otherwise, the print request will be rejected.
+.IP
+The \f2page-list\f1 may consist of range(s) of numbers,
+single page numbers, or
+a combination of both.
+The pages will be printed in ascending order.
+.TP
+\f4\-q \f2priority-level\f1
+Assign this request \f2priority-level\f1 in the printing queue.
+The values of \f2priority-level\f1 range from 0, the highest priority,
+to 39, the lowest priority.
+If a priority is not specified, the default for the print service is
+used, as assigned by the system administrator.
+A priority limit may be assigned to individual users by the
+system administrator.
+.TP
+\f4\-s\f1
+Suppress messages from \f4lp\f1
+such as those that begin with \f4request id is\f1.
+.PD 0
+.TP
+\f4\-S \f2character-set \f1[\f4\-d any\f1]
+.TP
+\f4\-S \f2print-wheel\f1 [\f4\-d any\f1]
+.PD
+Print this request using the specified \f2character-set\f1
+or \f2print-wheel\f1.
+If a form was requested and it requires a character set or
+print wheel other than
+the one specified with the \f4\-S\f1 option, the
+request is rejected.
+.IP
+For printers that take print wheels:  if
+the print wheel specified is not one
+listed by the administrator as acceptable 
+for the printer specified in this request, 
+the request is rejected
+unless the print wheel is already mounted on the
+printer.
+.IP
+For printers that use selectable or programmable character sets: if
+the \f2character-set\f1 specified is not one
+defined in the Terminfo database for the printer [see \f4terminfo\fP(4)],
+or is not an alias defined by the administrator,
+the request is rejected.
+.IP
+When the \f4\-d any\f1 option is used, the request
+is printed on any printer that
+has the print wheel mounted or 
+any printer that can select the character set,
+and that can handle any other needs of the request.
+.TP
+\f4\-t \f2title\f1
+Print
+.I title
+on the banner page of the output.
+The default is no title.
+Enclose \f2title\fP in quotes if it contains blanks.
+.TP
+\f4\-T \f2content-type\f1 [\f4\-r\f1]
+Print the request on a printer that can support 
+the specified \f2content-type\f1.
+If no printer accepts this type directly,
+a filter will be used to convert the content into an acceptable type.
+If the \f4\-r\f1 option is specified, a filter will not be used.
+If \f4\-r\f1 is specified, and no printer accepts the
+\f2content-type\f1 directly, the request is rejected.
+If the \f2content-type\f1 is not acceptable to any printer,
+either directly or with
+a filter, the request is rejected.
+.IP
+In addition to ensuring that no filters will be used,
+the \f4-r\fP option will force the equivalent
+of the \f4-o 'stty=-opost' option.
+.TP
+\f4\-w\f1
+Write a message on the user's terminal after the
+.I files
+have been printed.
+If the user is not logged in, 
+then mail will be sent instead.
+.TP
+\f4\-y \f2mode-list\f1
+Print this request 
+according to the printing modes listed in \f2mode-list\f1.
+The allowed values for \f2mode-list\f1 are locally defined.
+This option may be used only if there is a filter
+available to handle it;
+otherwise, the print request will be rejected.
+.SS "Canceling a Print Request"
+The 
+\f4cancel\fP
+command cancels requests for print jobs made with the
+\f4lp\f1 command.
+The first form allows a user to specify one or more \f2request-IDs\fP of
+print jobs to be canceled.
+Alternatively, the user can specify one or more \f2printers\fP, on
+which only the currently printing job will be canceled.
+.PP
+The second form of \f4cancel\fP permits a user to cancel all of
+his or her own jobs on all printers.
+In this form the \f2printers\fP option can be used to restrict
+the printers on which the user's jobs will be canceled.
+Note that in this form, when the \f2printers\fP option is used, all jobs
+queued for those printers will be canceled.
+A printer class is not a valid argument.
+.PP
+Users without special privileges can cancel only 
+requests associated with their own login IDs.
+The system administrator can cancel jobs submitted by any user.
+The \f2login-ID-list\fP must be enclosed in quotes if it contains
+blanks.
+.ig
+That is, a user can issue only the following type of command:
+.PP
+.TP .5i
+\f4cancel \-u \f2loginID\f1
+Cancels print requests associated with the login_ID 
+of the person making the request.
+.IP
+Administrators and superusers 
+(but not users without special privileges) 
+can issue the following types of commands to cancel print jobs:
+.TP
+\f4cancel \-u ``\f2login_ID_list\f1'' all\f1 
+Cancels all requests by the specified user(s),
+including those for jobs currently being printed.
+The argument \f2login_ID_list\f1 
+may include any or all of the following constructs: 
+.RS .5i
+.TP 1.35i
+\f2login_ID\f1
+A user on the local system
+.TP
+\f2system_name\f4!\f2login_ID\f1
+A user on \f2system_name\f1
+.TP
+\f2system_name\f4!all\f1
+All users on \f2system_name\f1
+.TP
+\f4all!\f2login_ID\f1
+A user not on the local system
+.TP
+\f4all!all\f1
+All users not on the local system
+.TP
+\f4all\f1
+All users on the local system
+.RE
+.TP .5i
+\f4cancel \-u all ``\f2printer_1, printer_2, printer_n''\f1
+Cancels all requests for the specified printer(s),
+including those for jobs currently being printed.
+(For a complete list of printers available on your system,
+run the \f4lpstat\f1 command.)
+.TP
+\f4cancel \-u ``\f2login_ID_list\f1'' printer\f1
+Cancels all requests by the specified users for the specified printer,
+including those for jobs currently being printed on that printer.
+(For a list of acceptable forms of the \f2login_ID_list\f1 argument,
+see \f4cancel \-u ``\f2login_ID_list\f1'' above.)
+.TP
+\f4cancel \-u all all\f1
+Cancels all print requests in the system
+(that is, requests by \f4all\f1 users for \f4all\f1 printers),
+including those for jobs currently being printed.
+.TP
+\f4cancel \-u all!\f2user_name\f1
+Cancels print requests from a user not on the local system
+.TP
+\f4cancel \-u all!all\f1
+Cancels print requests from all users not on the local system
+.TP
+\f4cancel \-u all\f1
+Cancels print requests from all users on the local system
+.PP
+In any of these cases,
+the cancellation of a request that is currently printing
+frees the printer to print its next available request.
+..
+.SH NOTES
+Printers for which requests are not being accepted 
+will not be considered 
+when the \f4lp\f1 command is run and 
+the destination is \f4any\f1.
+(Use the \f4lpstat \-a\f1 command to see
+which printers are accepting requests.)
+On the other hand,
+if (1) a request is destined
+for a class of printers
+and (2) the class itself is accepting requests,
+then \f2all\f1 printers in the class will be considered,
+regardless of their acceptance status.
+.PP
+For printers that take mountable print wheels or font cartridges,
+if you do not specify a particular print wheel or font with the \f4\-S\f1
+option, whichever one happens to be mounted at the time your
+request is printed will be used.
+Use the \f4lpstat \-p \f2printer\f4 \-l\f1 command 
+to see which print wheels
+are available on a particular printer,
+or the \f4lpstat \-S \-l\f1 command to find out
+what print wheels are available and on which printers.
+For printers that have selectable character sets,
+you will get the standard character set
+if you don't use the \f4\-S\f1 option.
+.SH FILES
+\f4/var/spool/lp/\(**\f1
+.SH SEE ALSO
+\f4enable\f1(1),
+\f4lpstat\f1(1),
+\f4mail\f1(1).
+.br
+\f4accept\f1(1M),
+\f4lpadmin\f1(1M),
+\f4lpfilter\f1(1M),
+\f4lpforms\f1(1M),
+\f4lpsched\f1(1M),
+\f4lpsystem\f1(1M),
+\f4lpusers\f1(1M)
+in the \f2System Administrator's Reference Manual\f1.
+.br
+\f4terminfo\f1(4) in the \f2Programmer's Reference Manual\f1.
+.\"	@(#)lp.1	6.2 of 9/2/83
+.Ee
+.EQ
+delim off
+.EN

@@ -1,0 +1,72 @@
+'\"macro stdmacro
+.if n .pH g3.ualarm @(#)ualarm	40.9 of 4/24/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.\" Copyright (c) 1988 Sun Microsystems, Inc. - All Rights Reserved.
+.\"
+.\" Copyright (c) 1980 Regents of the University of California.
+.\" All rights reserved.  The Berkeley software License Agreement
+.\" specifies the terms and conditions for redistribution.
+.\"
+.nr X
+.if \nX=0 .ds x} ualarm 3 "BSD Compatibility Package" "\&"
+.if \nX=1 .ds x} ualarm 3 "BSD Compatibility Package"
+.if \nX=2 .ds x} ualarm 3 "" "\&"
+.if \nX=3 .ds x} ualarm "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4ualarm\f1 \- schedule signal after interval in microseconds
+.SH SYNOPSIS
+.nf
+\f4cc \f1[ \f2flag\f1\. \. \. ] \f2file\f1 \. \. \. \f4\-lucb\f1
+.P
+\f4unsigned ualarm(value, interval)\f1
+.P
+\f4unsigned value;\f1
+\f4unsigned interval;\f1
+.fi
+.SH DESCRIPTION
+.P
+\f4ualarm\f1
+sends signal
+\f4SIGALRM\f1
+[see \f4signal\f1(3)],
+to the invoking process
+in a number of microseconds given by the
+.I value
+argument.
+Unless caught or ignored,
+the signal terminates the process.
+.P
+If the
+.I interval
+argument is non-zero, the
+\f4SIGALRM\fP
+signal will be sent to the process every
+.I interval
+microseconds after the timer expires (for instance, after
+.I value
+microseconds have passed).
+.P
+Because of scheduling delays,
+resumption of execution of when the signal is
+caught may be delayed an arbitrary amount.
+The longest specifiable delay time is
+2147483647 microseconds.
+.P
+The return value is the amount of time previously remaining in the alarm clock.
+.SH NOTES
+\f4ualarm\fP
+is a simplified interface to
+\f4setitimer\f1; see
+\f4getitimer\f1(2).
+.SH "SEE ALSO"
+\f4sigpause\fP(3),
+\f4sigvec\fP(3),
+\f4signal\fP(3),
+\f4sleep\fP(3),
+\f4usleep\fP(3)
+.P
+\f4alarm\fP(2),
+\f4getitimer\fP(3)
+in the \f2Programmer's Reference Manual\f1

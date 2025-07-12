@@ -1,0 +1,89 @@
+'\"macro stdmacro
+.if n .pH g3.isnand @(#)isnan	40.13.1.3 of 4/24/91
+.\" Copyright 1989 AT&T
+.nr X
+.if \nX=0 .ds x} isnan 3C "C Programming Language Utilities" "\&"
+.if \nX=1 .ds x} isnan 3C "C Programming Language Utilities"
+.if \nX=2 .ds x} isnan 3C "" "\&"
+.if \nX=3 .ds x} isnan "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4isnan\f1, \f4isnand\f1, \f4isnanf\f1, \f4isnanl\fP, \f4finite\f1, \f4finitel\fP, \f4fpclass\f1, \f4fpclassl\fP, \f4unordered\f1, \f4unorderedl\fP \- determine type of floating-point number
+.SH SYNOPSIS
+\f4\#include <ieeefp.h>
+.PP
+\f4int isnand (double dsrc);\f1
+.PP
+\f4int isnanf (float fsrc);\f1
+.PP
+\f4int isnanl (long double dsrc);\f1
+.PP
+\f4int finite (double dsrc);\f1
+.PP
+\f4int finitel (long double dsrc);\f1
+.PP
+\f4fpclass_t fpclass (double dsrc);\f1
+.PP
+\f4fpclass_t fpclassl (long double dsrc);\f1
+.PP
+\f4int unordered (double dsrc1, double dsrc2);\f1
+.PP
+\f4int unorderedl (long double dsrc1, long double dsrc2);\f1
+.PP
+\f4\#include <math.h>
+.PP
+\f4int isnan (double dsrc);\f1
+.SH DESCRIPTION
+\f4isnan\fP, \f4isnand\fP,
+\f4isnanf\fP,
+and
+\f4isnanl\fP
+return true (1) if the argument
+.I dsrc
+or
+.I fsrc
+is a NaN; 
+otherwise they return false (0).
+The functionality of \f4isnan\fP is identical to that of \f4isnand\fP.
+.PP
+\f4isnanf\fP
+is implemented as a macro included in the \f4ieeefp.h\fP header file.
+.PP
+\f4fpclass\fP and \f4fpclassl\fP
+return the class the
+.I dsrc
+belongs to.
+The 10 possible classes are as follows:
+.RS
+.TS
+l l.
+\f4FP_SNAN	signaling NaN
+FP_QNAN	quiet NaN
+FP_NINF	negative infinity
+FP_PINF	positive infinity
+FP_NDENORM	negative denormalized non-zero
+FP_PDENORM	positive denormalized non-zero
+FP_NZERO	negative zero
+FP_PZERO	positive zero
+FP_NNORM	negative normalized non-zero
+FP_PNORM	positive normalized non-zero\f1
+.TE
+.RE
+.PP
+\f4finite\fP and \f4finitel\fP
+return true (1) if the argument
+.I dsrc
+is neither infinity nor NaN;
+otherwise they return false (0).
+.PP
+\f4unordered\fP and \f4unorderedl\fP
+return true (1) if one of the two arguments is unordered
+with respect to the other argument.  This is equivalent
+to reporting whether either argument is NaN.  If neither
+of the arguments is NaN, false (0) is returned.
+.PP
+None of these routines generate any exception, even for signaling NaNs.
+.SH "SEE ALSO"
+\f4fpgetround\fP(3C),
+\f4intro\fP(3M).
+.Ee

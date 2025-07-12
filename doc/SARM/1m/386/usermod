@@ -1,0 +1,164 @@
+'\"macro stdmacro
+.if n .pH g1a.usermod @(#)usermod	40.8 of 1/3/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.if n .pH g1a.usermod @(#)usermod	40.12
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.if \nX=0 .ds x} usermod 1M "Essential Utilities" "\&"
+.if \nX=1 .ds x} usermod 1M "Essential Utilities"
+.if \nX=2 .ds x} usermod 1M "" "\&"
+.if \nX=3 .ds x} usermod "" "" "\&"
+.nr X
+.TH \*(x} "" "386 Computer Only"
+.SH NAME
+\f4usermod\f1 \- modify a user's login information on the system
+.SH SYNOPSIS
+.nf
+\f4/usr/sbin/usermod\f1 [\f4\-u\f2 uid\f1 [\f4\-o\f1] [\f4\-g\f2 group\f1] [\f4\-G\f2 group\f1[\f4,\f2group\fP...]] [\f4\-d\f2 dir\f1 [\f4\-m\f1]]
+.br
+     [\f4\-s\f2 shell\f1] [\f4\-c\f2 comment\f1] [\f4\-l\f2 new_logname\f1] [\f4\-f\f2 inactive\f1] [\f4\-e\f2 expire\f1] \f2login\fP 
+.fi
+.SH DESCRIPTION
+The \f4usermod\f1 command modifies a user's login definition
+on the system.
+It changes the definition of the specified login and makes the
+appropriate login-related system file and file system changes.
+.P
+The system file entries created with this command have a limit of 512
+characters per line.
+Specifying long arguments to several options may exceed this limit.
+.P
+The following options are available:
+.TP 1.2i
+\f4\-u \f2uid\f1
+New 
+UID
+for the user.
+It must be a non-negative decimal integer below \f4MAXUID\f1 as defined in 
+\f4<param.h>\f1.
+.TP
+\f4\-o\f1
+This option allows the specified 
+UID 
+to be duplicated (non-unique).
+.TP
+\f4\-g \f2group\f1
+An existing group's integer 
+ID
+or character-string name.
+It redefines the user's primary group membership.
+.TP
+\f4\-G \f2group\f1
+An existing group's integer 
+"ID" ","
+or character string name.
+It redefines the user's supplementary group membership.
+Duplicates between
+\f4group\fP with the \f4\-g\f1 and \f4\-G\f1 options are ignored.
+No more than \f4NGROUPS_UMAX\f1 groups may be specified as defined in 
+\f4<param.h>\f1.
+.TP
+\f4\-d \f2dir\f1
+The new home directory of the user.
+It defaults to \f2base_dir/login\fP, where \f2base_dir\f1 is
+the base directory for new login home directories,
+and \f2login\fP is the new login.
+.TP
+\f4\-m\f1
+Move the user's home directory to
+the new directory specified with the \f4\-d\f1 option.
+If the directory already exists,
+it must have permissions read/write/execute
+by \f2group\fP, where \f2group\f1 is the user's primary group.
+.TP
+\f4\-s \f2shell\f1
+Full pathname of the program that is used as the user's shell on login.
+The value of \f2shell\f1 must be a valid executable file.
+.TP
+\f4\-c \f2comment\f1
+Any text string.
+It is generally a short description of the login, and
+is currently used as the field for the user's full name.
+This information is stored in the user's \f4/etc/passwd\f1 entry.
+.TP
+\f4\-l \f2new_logname\f1
+A string of printable characters that specifies the new login name for
+the user.
+It may not contain a colon (\f4:\f1) or a newline (\f4\\n\f1).
+.TP
+\f4\-e \f2expire\f1
+The date on which a login can no longer be used;
+after this date,
+no user will be able to access this login.
+(This option is useful for creating temporary logins.)
+You may type the value of the argument \f2expire\fP 
+(which is a date) in any format\p
+.br
+.ne 3
+you like
+(except a Julian date).
+For example, you may enter
+\f410/6/90\fP or \f4October 6, 1990\f1.
+A value of \f4""\f1 defeats
+the status of the expired date.
+.TP
+\f4\-f \f2inactive\f1
+The maximum number of days allowed 
+between uses of a login
+\f4ID\f1 before that login \f4ID\f1 is declared valid.
+Normal values are positive integers.
+A value of \f4\-1\f1 defeats the status.
+.TP
+\f2login\fP
+A string of printable characters that specifies the existing login name
+of the user.
+It must exist and may not contain a colon 
+(\f4:\f1), or a newline (\f4\\n\f1).
+.SH FILES
+\f4/etc/passwd\f1, \f4/etc/shadow\f1, \f4/etc/group\f1
+.SH SEE ALSO
+\f4groupadd\fP(1M),
+\f4groupdel\fP(1M),
+\f4groupmod\fP(1M),
+\f4logins\fP(1M),
+\f4passwd\fP(1),
+\f4passwd\fP(1M),
+\f4useradd\fP(1M),
+\f4userdel\fP(1M),
+\f4users\fP(1).
+.SH DIAGNOSTICS
+The \f4usermod\f1 command exits with one of the following values:
+.TP
+\f40\f1
+The command was executed successfully.
+.TP
+\f42\f1
+The command syntax was invalid.
+A usage message for the \f4usermod\f1 command is displayed.
+.TP
+\f43\f1
+An invalid argument was provided to an option.
+.TP
+\f44\f1
+The \f2uid\f1 given with the \f4\-u\f1 option is already in use.
+.TP
+\f46\f1
+The login to be modified does not exist or \f2group\fP does not exist.
+.TP
+\f48\f1
+The login to be modified is in use.
+.TP
+\f49\f1
+The \f2new_logname\f1 is already in use.
+.TP
+\f410\f1
+Cannot update the \f4/etc/group\f1 file.
+Other update requests will be implemented.
+.TP
+\f411\f1
+Insufficient space to move the home directory (\f4\-m\f1 option).
+Other update requests will be implemented.
+.TP
+\f412\f1
+Unable to complete the move
+of the home directory to the new home directory.

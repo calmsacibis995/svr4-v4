@@ -1,0 +1,11 @@
+#ident	"@(#)pkg.edit:pkginfo	1.2.2.1"
+
+PKG="ed"
+CLASSES="none"
+NAME="Editing Package"
+RELEASE="4.0"
+VERSION="1"
+VENDOR="USL"
+CATEGORY="applications,tools"
+ARCH="i386"
+PREDEPEND="ed"

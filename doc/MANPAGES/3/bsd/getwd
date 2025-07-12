@@ -1,0 +1,36 @@
+'\"macro stdmacro
+.if n .pH g3.getwd @(#)getwd	40.9 of 4/24/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.\" Copyright (c) 1988 Sun Microsystems, Inc. - All Rights Reserved.
+.\"
+.nr X
+.if \nX=0 .ds x} getwd 3 "BSD Compatibility Package" "\&"
+.if \nX=1 .ds x} getwd 3 "BSD Compatibility Package"
+.if \nX=2 .ds x} getwd 3 "" "\&"
+.if \nX=3 .ds x} getwd "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4getwd\f1 \- get current working directory pathname
+.SH SYNOPSIS
+\f4cc \f1[ \f2flag\f1\. \. \. ] \f2file\f1 \. \. \. \f4\-lucb\f1
+.P
+\f4#include <sys/param.h>\f1
+.P
+.nf
+\f4char *getwd(pathname)\f1
+\f4char pathname[MAXPATHLEN];\f1
+.fi
+.SH DESCRIPTION
+\f4getwd\f1
+copies the absolute pathname of the current working directory to
+.I pathname
+and returns a pointer to the result.
+.SH "RETURN VALUE"
+\f4getwd\f1
+returns zero and places a message in
+.I pathname
+if an error occurs.
+.SH SEE ALSO
+\f4getcwd\f1(3C)
+in the \f2Programmer's Reference Manual\f1

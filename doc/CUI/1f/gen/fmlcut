@@ -1,0 +1,128 @@
+'\"macro stdmacro
+.if n .pH g1f.fmlcut @(#)fmlcut	40.15 of 4/12/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} fmlcut 1F "" "\&"
+.if \nX=1 .ds x} fmlcut 1F ""
+.if \nX=2 .ds x} fmlcut 1F "" "\&"
+.if \nX=3 .ds x} fmlcut "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4fmlcut\f1 \- cut out selected fields of each line of a file
+.SH SYNOPSIS
+\f4fmlcut\f1 \f4\-c\f2\^list\f1 [\|\f2file\f1 .\ .\ .]
+.br
+\f4fmlcut\f1 \f4\-f\f2\^list\f1 [\f4\-d\f2\|char\|\f1] [\f4\-s\f1] [\|\f2file\f1 .\ .\ .]
+.SH DESCRIPTION
+The \f4fmlcut\f1 function
+cuts out columns from a table or fields from each line in \f2file\f1;
+in database parlance, it implements the projection of a relation.
+\f4fmlcut\f1
+can be used as a filter;
+if\f2 file\f1 is not specified or is \f4-\f1, the standard input is read.
+\f2list\f1 specifies the fields to be selected.
+Fields can be fixed length (character positions) or variable length (separated
+by a field delimiter character),
+depending on whether \f4-c\f1 or \f4-f\f1 is specified.
+.PP
+Note that either the
+\f4\-c\f1
+or the
+\f4\-f\f1
+option must be specified.
+.PP
+The meanings of the options are:
+.br
+.TP "\w'\-d\ char\ \ 'u"
+\f2list\f1
+A comma-separated list of integer field numbers (in increasing order),
+with optional \f4\-\fP to indicate ranges
+For example:
+\f41,4,7\f1;
+\f41\-3,8\f1;
+\f4\-5,10\f1
+(short for \f41\-5,10\f1);
+or
+\f43\-\f1
+(short for third through last field).
+.TP
+\f4\-c\fP\^\f2list\fP
+If \f4-c\f1 is specified, \f2list\f1
+specifies character positions (for example,
+\f4\-c1\-72\f1
+would pass the first 72 characters of each line).
+Note that no space intervenes between \f4-c\f1 and \f2list\f1.
+.TP
+\f4\-f\^\f2list\f1
+If \f4-f\f1 is specified,  \f2list\f1
+is a list of fields assumed to be separated in the file
+by the default delimiter character, \f4TAB\f1, or by \f2char\f1 if
+the \f4-d\f1 option is specified.
+For example,
+\f4\-f1,7\f1
+copies the first and seventh field only.
+Lines with no delimiter characters are passed through intact
+(useful for table subheadings), unless
+\f4\-s\f1
+is specified.
+Note that no space intervenes between \f4-f\f1 and \f2list\f1.
+The following options can be used if you have specified \f4-f\f1.
+.RS .5i
+.TP .5i
+\f4\-d\fP\^\f2char\fP
+If
+\f4\-d\f1 is specified,
+\f2char\f1 is the field delimiter.
+Space or other characters with special meaning to FMLI
+must be quoted.
+Note that no space intervenes between \f4-d\f1 and \f2char\f1.
+The default field delimiter is \f4TAB\f1.
+.TP
+\f4\-s\f1
+Suppresses lines with no delimiter characters.
+If \f4\-s\f1 is not specified,
+lines with no delimiters will be passed through untouched.
+.RE
+.SH EXAMPLES
+\f4fmlcut \-d: \-f1,5 /etc/passwd\f1	gets login IDs and names
+.sp
+\f4\(gawho am i | fmlcut \-f1 \-d" "\(ga\f1	gets the current login name
+.SH DIAGNOSTICS
+.PP
+\f4fmlcut\f1 returns the following exit values:
+.sp
+0   when the selected field is successfully cut out
+.br
+2   on syntax errors
+.sp
+.PP
+The following error messages may be displayed on the FMLI message line:
+.TP 1i
+\f4ERROR:  line too long\f1
+A line has more than 1023 characters or fields,
+or there is no new-line character.
+.TP
+\f4ERROR:  bad list for c\|/\|f option\f1
+Missing \f4\-c\f1 or \f4\-f\f1
+option or incorrectly specified \f2list\f1.
+No error occurs if a line has fewer fields than the \f2list\f1
+calls for.
+.TP
+\f4ERROR:  no fields\f1
+The \f2list\f1 is empty.
+.TP
+\f4ERROR:  no delimiter\f1
+Missing
+\f2char\f1
+on
+\f4\-d\f1
+option.
+.SH NOTES
+\f4fmlcut\f1 cannot correctly process
+lines longer than 1023 characters, or lines
+with no newline character.
+.SH SEE ALSO
+\f4fmlgrep\f1(1F)
+.\"	@(#)fmlcut.1	6.3 of 9/2/83
+.Ee

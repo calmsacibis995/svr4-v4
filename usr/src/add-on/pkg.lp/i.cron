@@ -1,0 +1,14 @@
+#ident	"@(#)pkg.lp:pkg.lp/i.cron	1.1.1.1"
+
+while read src dest
+do
+	if [ "${src}" = "/dev/null" ]
+	then
+		continue
+	fi
+
+	user=`basename ${dest}`
+	su "${user}" -c crontab <${src} || exit 2
+done
+
+exit 0

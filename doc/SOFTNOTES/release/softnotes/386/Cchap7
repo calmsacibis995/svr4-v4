@@ -1,0 +1,61 @@
+.if n .pH rn4.Cchap7 @(#)Cchap7	40.32
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.BK "Software Notes" "" "" ""   
+.\ACRONYM	                  
+.CH "C Programming Language" "" "Table of Contents" "7"
+.\CHAPTER	7
+.tC 1 "C Language Notes" 7-1  
+.Index: istart UNIX System V/386 Release 4, C language notes	1
+.tC 2 "Directory Layout" 7-1  
+.Index: directory layout       	1
+.Index: executable and linking format     	1
+.Index: \f4/usr/ccs/bin\f1        	1
+.Index: compatibility, symbolic links      	1
+.tC 2 "External Data/Automatics Order" 7-1  
+.Index: data and automatics      	1
+.tC 2 "long double" 7-1  
+.tC 2 "Floating Point Arithmetic" 7-2  
+.Index: floating point operations      	2
+.tC 2 "ifiles No Longer Supported" 7-2  
+.Index: \f4ifiles\f1 not supported      	2
+.tC 2 "Null Pointer References" 7-2  
+.Index: null pointer references      	2
+.tC 2 "Optimizer and asms" 7-2  
+.Index: optimizer        	2
+.tC 2 "Performance Tradeoffs" 7-2  
+.Index: arrays, \f4_ _iob\f1      	2
+.Index: arrays, \f4_ _ctype\f1      	2
+.tC 2 "Dynamic Libraries" 7-3  
+.Index: dynamic libraries and executables     	3
+.tC 2 "Shared Libraries" 7-3  
+.Index: shared libraries       	3
+.Index: unsupported commands, \f4mkshlib\f1      	3
+.Index: unsupported commands, \f4chkshlib\f1      	3
+.tC 2 "libPW relocation" 7-3  
+.tC 2 "Commands and Functions" 7-3  
+.tC 3 "ctrace Command" 7-3  
+.Index: \f4ctrace\f1        	3
+.tC 3 "dump Command" 7-3  
+.Index: \f4dump\f1 command       	3
+.tC 3 "ld Command" 7-4  
+.Index: \f4ld\f1        	4
+.tC 3 "lint Command" 7-4  
+.Index: \f4lint\f1        	4
+.tC 3 "lprof Command" 7-4  
+.Index: \f4lprof\f1        	4
+.tC 3 "nm Command" 7-4  
+.Index: \f4nm\f1        	4
+.tC 3 "SCCS Commands" 7-4  
+.Index: sccs commands       	4
+.tC 3 "sdb Command" 7-5  
+.Index: \f4sdb\f1        	5
+.tC 3 "free Function" 7-5  
+.Index: \f4free\f1        	5
+.tC 3 "mmap Function" 7-5  
+.Index: \f4mmap\f1        	5
+.tC 3 "nlist Function" 7-5  
+.Index: \f4nlist\f1 function       	5
+.tC 3 "realloc Function" 7-5  
+.Index: \f4realloc\f1 function       	5
+.tC 2 "Bitfields" 7-5  
+.Index: iend UNIX System V/386 Release 4, C language notes	6

@@ -1,0 +1,49 @@
+'\"macro stdmacro
+.if n .pH g3x.panel_show @(#)panel_show	40.5 of 4/11/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.\" ident	"@(#)svid_ti:ti_lib/panel_show	1.5"
+.nr X
+.if \nX=0 .ds x} panel_show 3X "" "\&"
+.if \nX=1 .ds x} panel_show 3X ""
+.if \nX=2 .ds x} panel_show 3X "" "\&"
+.if \nX=3 .ds x} panel_show "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4panel_show\f1: \f4 show_panel\f1, \f4hide_panel\f1, \f4panel_hidden\f1 \- \f4panels\fP deck manipulation routines
+.SH SYNOPSIS
+.nf
+.ft 4
+#include <panel.h>
+.sp
+int show_panel(PANEL *panel);
+.sp 0.5
+int hide_panel(PANEL *panel);
+.sp 0.5
+int panel_hidden(PANEL *panel);
+.ft 1
+.fi
+.SH DESCRIPTION
+\f4show_panel\fP makes \f2panel\f1, previously hidden, visible and places
+it on top of the deck of panels.
+.PP
+\f4hide_panel\fP removes \f2panel\f1 from the panel deck and, thus,
+hides it from view.
+The internal data structure of the panel is retained.
+.PP
+\f4panel_hidden\fP returns \f4TRUE\f1 (\f41\f1) or
+\f4FALSE\f1 (\f40\f1)
+indicating whether or not \f2panel\f1 is in the deck of panels.
+.SH RETURN VALUE
+\f4show_panel\fP and \f4hide_panel\fP
+return the integer \f4OK\fP upon
+successful completion or \f4ERR\fP upon error.
+.SH NOTES
+The header file \f4<panel.h>\f1 automatically includes the header file
+\f4<curses.h>\f1.
+.SH SEE ALSO
+.na
+\f4curses\fP(3X),
+\f4panels\fP(3X),
+\f4panel_update\fP(3X)
+.ad

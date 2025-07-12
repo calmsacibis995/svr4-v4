@@ -1,0 +1,65 @@
+'\"macro stdmacro
+.if n .pH g4.ttydefs @(#)ttydefs	40.6 of 1/3/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} ttydefs 4 "" "\&"
+.if \nX=1 .ds x} ttydefs 4 ""
+.if \nX=2 .ds x} ttydefs 4 "" "\&"
+.if \nX=3 .ds x} ttydefs "" "" "\&"
+.TH \*(x}
+.SH NAME
+ttydefs \- file contains terminal line settings information for \f4ttymon\f1
+.SH DESCRIPTION
+\f4/etc/ttydefs\f1 is an administrative file that contains information
+used by \f4ttymon\f1 to
+set up the speed and terminal settings for a TTY port.
+.P
+The \f4ttydefs\f1 file contains the following fields:
+.TP 15
+\f2ttylabel\f1
+The string \f4ttymon\f1 tries to match against the
+TTY port's \f2ttylabel\f1 field in the port monitor administrative file.
+It often describes the speed at which the
+terminal is supposed to run, for example, \f41200\f1.
+.TP
+\f2initial-flags\f1
+Contains the initial \f4termio\fP(7) settings to which the
+terminal is to be set.
+For example, the system administrator will be able to specify what the
+default erase and kill characters will be.
+\f2initial-flags\f1 must be specified in the syntax recognized by the
+\f4stty\f1 command.
+.TP
+\f2final-flags\f1
+\f2final-flags\f1 must be specified in the same format as
+\f2initial-flags\f1.
+\f4ttymon\f1
+sets these final settings after a connection request has
+been made and immediately prior to invoking a port's service.
+.TP
+\f2autobaud\f1
+If the autobaud field contains the character `A', autobaud will be enabled.
+Otherwise, autobaud will be disabled.
+\f4ttymon\fP
+determines what line speed to set the TTY port to by analyzing the
+carriage returns entered.
+If autobaud has been disabled, the hunt sequence is used for baud
+rate determination.
+.TP
+\f2nextlabel\f1
+If the user indicates that the current terminal setting is not
+appropriate by sending a BREAK, \f4ttymon\f1 searchs for
+a \f4ttydefs\f1 entry whose \f2ttylabel\f1 field matches 
+the \f2nextlabel\f1 field.
+If a match is found,
+\f4ttymon\f1 uses that field as its \f2ttylabel\f1 field.
+A series of speeds is often linked together in this way into a
+closed set called a hunt sequence.
+For example, \f44800\f1 may be linked to \f41200\f1,
+which in turn is linked to \f42400\f1, which is finally linked to
+\f44800\f1.
+.SH "SEE ALSO"
+\f4ttymon\f1(1M), \f4sttydefs\f1(1M)
+.br
+\f2System Administrator's Guide\f1, ``Service Access''

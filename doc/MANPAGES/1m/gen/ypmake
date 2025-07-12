@@ -1,0 +1,86 @@
+'\"macro stdmacro
+.if n .pH g1a.ypmake @(#)ypmake	40.5 of 1/3/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.\" @(#)ypmake.8 1.7 89/09/28 SMI;
+.\" Copyright (c) 1988 Sun Microsystems, Inc. - All Rights Reserved.
+.nr X
+.if \nX=0 .ds x} ypmake 1M "" "\&"
+.if \nX=1 .ds x} ypmake 1M ""
+.if \nX=2 .ds x} ypmake 1M "" "\&"
+.if \nX=3 .ds x} ypmake "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4ypmake\fP \- rebuild YP database
+.SH SYNOPSIS
+\f4cd /var/yp ; make\f1
+[
+\f2map\f1
+]
+.SH DESCRIPTION
+.P
+The file called
+\f4Makefile\f1
+in
+\f4/var/yp\f1
+is used by
+\f4make\f1
+to build the YP name service database.
+With no arguments,
+\f4make\f1
+creates
+\f4dbm\f1
+databases for any
+\s-1YP\s0
+maps that are out-of-date,
+and then executes
+\f4yppush\f1(1M)
+to notify slave databases that there has been a change.
+.P
+If 
+\f2map\f1
+is supplied on the command line,
+\f4make\f1
+will update that map only.
+.P
+There are three special variables used by
+\f4make\f1:
+\f4DIR\f1,
+which gives the directory of the source files;
+\f4NOPUSH\f1,
+which when non-null inhibits doing a
+\f4yppush\f1
+of the new database files;
+and
+\f4DOM\f1,
+used to construct a domain
+other than the master's default domain.
+The default for
+\f4DIR\f1
+is
+\f4/etc\f1,
+and the default for
+\f4NOPUSH\f1
+is the null string.
+.P
+\f4ypmake\f1
+also creates an entry in
+\f4/var/yp/aliases\f1.
+.P
+Refer to
+\f4ypfiles\f1(4)
+and
+\f4ypserv\f1(1M)
+for an overview of the 
+\s-1YP\s0.
+.SH FILES
+.PD 0
+.TP 20
+\f4/var/yp\f1
+.PD
+.SH "SEE ALSO"
+\f4make\f1(1),
+\f4makedbm\f1(1M),
+\f4yppush\f1(1M),
+\f4ypserv\f1(1M),
+\f4ypfiles\f1(4)

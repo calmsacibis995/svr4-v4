@@ -1,0 +1,14 @@
+.if n .pH release/scp.rmf/386/COLFILE @(#)COLFILE	40.43.1.1
+.# This book ("Read Me First")
+.# contains the following files,
+.# listed in the order in which they are printed.
+.# Next to each file name is its SCCS delta number.
+.FT
+release/scp.rmf/386/titlepage	40.11
+release/scp.rmf/386/copyright	40.8.1.1
+release/scp.rmf/386/preface	40.12
+release/scp.rmf/386/MasterToc	40.10
+release/scp.rmf/386/Cintro	40.12
+release/scp.rmf/386/intro	40.17
+release/scp.rmf/386/Cdoctape	40.8
+release/scp.rmf/386/doctape	40.9

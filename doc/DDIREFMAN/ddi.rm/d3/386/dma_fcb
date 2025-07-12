@@ -1,0 +1,40 @@
+'\"macro stdmacro
+.if n .pH 386.dma_fcb @(#)dma_fcb	40.3 of 6/24/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.nr X
+.if \nX=0 .ds x} dma_free_cb D3X "" "DDI" "\&"
+.if \nX=1 .ds x} dma_free_cb D3X "" "DDI"
+.if \nX=2 .ds x} dma_free_cb D3X "" "\&"
+.if \nX=3 .ds x} dma_free_cb "" "" "\&"
+.TH \*(x}
+.IX "\f4dma_free_cb\fP(D3X)"
+.SH NAME
+\f4dma_free_cb\f1 \- free a previously allocated DMA command block
+.SH SYNOPSIS
+.nf
+.na
+\f4#include <sys/dma.h>
+.sp 0.5
+\f4void dma_free_cb(struct dma_cb \f2*dmacbptr\f4);\f1
+.ad
+.fi
+.SH ARGUMENTS
+.RS 0n 10
+.IP "\f2dmacbptr\f1" 10n
+Address of the allocated DMA command block to be returned.
+.RE
+.SH DESCRIPTION
+\f4dma_free_cb\f1 frees a DMA command block.
+The \f2dmacbptr\fP argument must specify the address
+of a DMA command block previously allocated by \f4dma_get_cb\fP(D3X).
+.SH "RETURN VALUE"
+None.
+.SH LEVEL
+Base or Interrupt.
+.SH NOTES
+Does not sleep.
+.SH "SEE ALSO"
+.na
+\f4dma_get_cb\f1(D3X),
+\f4dma_cb\f1(D4X)
+.ad

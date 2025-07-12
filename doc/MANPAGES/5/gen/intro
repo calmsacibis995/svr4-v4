@@ -1,0 +1,18 @@
+'\"macro stdmacro
+.if n .pH g5.intro @(#)intro	40.5 of 4/12/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} intro 5 "" "\&"
+.if \nX=1 .ds x} intro 5 ""
+.if \nX=2 .ds x} intro 5 "" "\&"
+.if \nX=3 .ds x} intro "" "" "\&"
+.TH \*(x}
+'\" et
+.SH NAME
+\f4intro\f1 \- introduction to miscellany
+.SH DESCRIPTION
+This section describes miscellaneous facilities such as
+macro packages, character set tables, and so forth.
+.\"	@(#)intro.5	6.2 of 9/6/83
+.Ee

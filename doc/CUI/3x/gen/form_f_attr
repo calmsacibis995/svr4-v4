@@ -1,0 +1,66 @@
+'\"!  tbl | mmdoc
+'\"macro stdmacro
+.if n .pH g3x.form_f_attr @(#)form_f_attr	40.5 of 4/10/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.\" ident	"@(#)svid_ti:ti_lib/form_f_attr	1.2"
+.nr X
+.if \nX=0 .ds x} form_field_attributes 3X "" "\&"
+.if \nX=1 .ds x} form_field_attributes 3X ""
+.if \nX=2 .ds x} form_field_attributes 3X "" "\&"
+.if \nX=3 .ds x} form_field_attributes "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4form_field_attributes\f1: \f4 set_field_fore\f1, \f4field_fore\f1, \f4set_field_back\f1, \f4field_back\f1, \f4set_field_pad\f1, \f4field_pad\f1 \- format the general display attributes of \f4forms\fP
+.SH SYNOPSIS
+.nf
+.ft 4
+#include <form.h>
+.sp
+int set_field_fore(FIELD *field, chtype attr);
+chtype field_fore(FIELD *field);
+.sp 0.5
+int set_field_back(FIELD *field, chtype attr);
+chtype field_back(FIELD *field);
+.sp 0.5
+int set_field_pad(FIELD *field, int pad);
+int field_pad(FIELD *field);
+.ft 1
+.fi
+.SH DESCRIPTION
+\f4set_field_fore\fP sets the foreground attribute of \f2field\f1.
+The foreground attribute is the low-level \f4curses\fP display attribute used
+to display the field contents.
+\f4field_fore\fP returns the foreground attribute of \f2field\f1.
+.PP
+\f4set_field_back\fP sets the background attribute of \f2field\f1.
+The background attribute is the low-level \f4curses\fP display attribute used
+to display the extent of the field.
+\f4field_back\fP returns the background attribute of \f2field\f1.
+.PP
+\f4set_field_pad\fP sets the pad character of \f2field\f1 to \f2pad\f1.
+The pad character is the character used to fill within the field.
+\f4field_pad\fP returns the pad character of \f2field\f1.
+.SH RETURN VALUE
+\f4field_fore\fP,
+\f4field_back\fP and
+\f4field_pad\fP return default values if \f2field\fP is
+\f4NULL\fP.
+If \f2field\fP is not \f4NULL\fP and is not a valid \f4FIELD\fP
+pointer, the return value from these routines is undefined.
+.P
+\f4set_field_fore\fP,
+\f4set_field_back\fP and
+\f4set_field_pad\fP return one of the following:
+.TS
+lfCWw(1.25i)1 c1 l .
+E_OK	\-	The function returned successfully.
+E_SYSTEM_ERROR	\-	System error.
+E_BAD_ARGUMENT	\-	An argument is incorrect.
+.TE
+.SH NOTES
+The header file \f4<form.h>\f1 automatically includes the header files
+\f4<eti.h>\fP and \f4<curses.h>\fP.
+.SH SEE ALSO
+\f4curses\fP(3X),
+\f4forms\fP(3X)

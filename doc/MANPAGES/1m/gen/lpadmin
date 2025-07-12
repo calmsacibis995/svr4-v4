@@ -1,0 +1,1005 @@
+'\"! eqn | tbl | mmdoc
+'\"macro stdmacro
+.if n .pH g1a.lpadmin @(#)lpadmin	40.17.1.4 of 7/11/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} lpadmin 1M "Line Printer Spooling Utilities" "\&"
+.if \nX=1 .ds x} lpadmin 1M "Line Printer Spooling Utilities"
+.if \nX=2 .ds x} lpadmin 1M "" "\&"
+.if \nX=3 .ds x} lpadmin "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4lpadmin\f1 \- configure the \s-1LP\s+1 print service
+.SH SYNOPSIS
+\f4lpadmin \-p \f2printer\|\ \|options\f1
+.br
+\f4lpadmin \-x \f2dest\f1
+.br
+\f4lpadmin \-d \f1[\f2dest\f1]
+.br
+\f4lpadmin \-S \f2print-wheel\f4 \f4\-A \f2alert-type\f1 [\f4\-W \f2minutes\f1] [\f4\-Q\f1 \f2requests\f1]
+.ig
+\f4lpadmin \-S \f2print-wheel\f4 \f4\-A \f2alert-type\f1 [\f4\-W $integer sub 1$] [\f4\-Q\f1 $integer sub 2$]
+..
+.SH DESCRIPTION
+\f4lpadmin\fP
+configures the
+\s-1LP\s0
+print service 
+by defining printers
+and devices.
+It is used to add and change printers, to remove printers
+from the service,
+to set or change the system default destination,
+to define alerts for printer faults, and to mount print wheels.
+.ig
+and to define printers for remote printing services.
+(See also \f2lpsystem\f1(1M).)
+..
+.SS "Adding or Changing a Printer"
+The first form of the \f4lpadmin\fP command
+(\f4lpadmin \-p\f2 printer \f2options\f1)
+is used to configure a new printer
+or to change the configuration of an existing printer.
+The following
+.I options
+may appear in any order.
+.TP 5
+\f4\-A \ \f2alert-type\f1 [\f4\-W\f2 minutes\f1] 
+The \f4\-A\f1 option
+is used to define an alert to inform the administrator
+when a printer fault is detected,
+and periodically thereafter,
+until the printer fault is cleared by the administrator.
+The \f2alert-types\f1 are:
+.RS 5
+.TP 8
+\f4mail\f1
+Send the alert message via mail 
+[see \f4mail\fP(1)] to the administrator.
+.TP 8
+\f4write\f1
+Write the message to the terminal on which the
+administrator is logged in.
+If the administrator is logged in on several
+terminals, one is chosen arbitrarily.
+.TP 8
+\f4quiet\f1
+Do not send messages for the current condition.
+An administrator can use this option to
+temporarily stop receiving further messages about
+a known problem.
+Once the fault has been cleared and printing resumes,
+messages will again be sent when another fault
+occurs with the printer.
+.TP 8
+\f4none\f1
+Do not send messages;
+any existing alert definition for the printer will be removed.
+No alert will be sent when the printer faults until
+a different alert-type (except \f4quiet\f1) is used.
+.TP
+.I shell-command
+Run the 
+\f2shell-command\f1 each time the alert needs to
+be sent.
+The shell command should expect the message in
+standard input.
+If there are blanks embedded in the command,
+enclose the command in quotes.
+Note that the \f4mail\f1 and \f4write\f1 values for
+this option are equivalent to the values
+\f4mail\f1 \f2user-name\f1 and \f4write\f1 
+\f2user-name\f1 respectively, where \f2user-name\f1
+is the current name for the administrator.
+This will be the login name of the person submitting
+this command unless he or she has used the
+\f4su\fP command to change to another user ID.
+If the \f4su\fP command has been used to change the user ID,
+then the \f2user-name\f1 for the new ID is used.
+.TP
+\f4list\f1
+Display the type of the alert for the printer fault.
+No change is made to the alert.
+.PP
+The message sent appears as follows:
+.sp
+.in +2m
+\s-1\f4The printer \f2printer\fP has stopped printing for
+the reason given below.
+Fix the problem and bring the printer back on line.
+Printing has stopped, but will be restarted
+in a few minutes;
+issue an enable command if you want to restart sooner.
+\f4Unless someone issues a change request
+.sp .5
+.in +2m
+lp \-i \f2request-id\fP \-P ...
+.in -2m
+.sp .5
+to change the page list to print,
+the current request will be reprinted from
+the beginning.
+.sp .5
+The reason(s) it
+stopped (multiple reasons indicate reprinted attempts):
+.sp .5
+.in +2m
+\f2reason\f1
+.in -2m
+.in -2m
+.fi
+.PP
+The
+.SM LP
+print service can detect printer faults only
+through an adequate fast filter and only when
+the standard interface program or a suitable customized
+interface program is used.
+Furthermore, the level of recovery after a fault
+depends on the capabilities of the filter.
+.PP
+If the \f2printer\f1 is \f4all\f1, the alerting
+defined in this command applies to all existing printers.
+.PP
+If the \f4\-W\f1 option
+is not used to arrange
+fault alerting for \f2printer\fP, the default procedure
+is to mail one message to the administrator of
+\f2printer\fP per fault.
+This is equivalent to specifying
+\f4\-W once\fP or \f4\-W 0\fP.
+If \f2minutes\f1 is a number greater than zero,
+an alert will be sent 
+at intervals specified by \f2minutes\fP.
+.RE
+.TP
+\f4\-c \f2class\f1
+Insert \f2printer\fP into the specified \f2class\f1.
+\f2Class\f1
+will be created
+if it does not already exist.
+.TP 
+\f4\-D \f2comment\f1
+Save this \f2comment\f1 for display whenever a user asks for
+a full description of \f2printer\fP
+[see \f4lpstat\f1(1)].
+The \s-1LP\s+1
+print service does not interpret this comment.
+.TP
+\f4\-e \f2printer1\fP
+Copy the
+interface program of an existing \f2printer1\fP to be 
+the interface program
+for \f2printer\fP.
+(Options \f4\-i\fP and \f4\-m\fP
+may not be specified with this option.)
+.TP 5
+\f4\-F \f2fault-recovery\f1
+This option specifies the recovery to be
+used for any print request that is stopped because
+of a printer fault,
+according to the
+value of \f2fault-recovery\f1:
+.RS 5
+.TP 8
+\f4continue\f1
+Continue printing on the top of the page where
+printing stopped.
+This requires a filter to wait for
+the fault to clear
+before automatically continuing.
+.TP
+\f4beginning\f1
+Start printing the request again from the beginning.
+.TP
+\f4wait\f1
+Disable printing on \f2printer\fP and wait for the
+administrator or a user to enable printing again.
+.IP
+During the wait the administrator or the user who
+submitted the stopped print request can issue a
+change request that specifies where printing should
+resume.
+(See the \f4\-i\fP option of the \f4lp\fP command.)
+If no change request is made before printing is
+enabled, printing will resume at the top of the page
+where stopped, if the filter allows; otherwise,
+the request will be printed from the beginning.
+.RE
+.TP
+\f4\-f allow:\f2form-list\f1
+.sp -.5
+.TP
+\f4\-f deny:\f2form-list\f1
+Allow or deny
+the forms in \f2form-list\f1 to be printed on \f2printer\fP.
+By default no forms are allowed on a new printer.
+.IP
+For each printer, the
+.SM LP
+print service keeps two lists of forms:  an
+``allow-list'' of forms that may be used
+with the printer, and a ``deny-list'' of forms that
+may not be used with the printer.
+With the \f4\-f allow\f1 option, the forms listed are
+added to the allow-list and removed from the deny-list.
+With the \f4\-f deny\f1 option, the forms listed are 
+added to the deny-list and 
+removed from the allow-list.
+.IP
+If the allow-list is not empty, 
+only the forms in the list may be used on
+the printer, 
+regardless of the contents of the deny-list.
+If the allow-list is empty, 
+but the deny-list is not,
+the forms in the deny-list 
+may not be used with the printer. 
+All forms can be excluded from a printer 
+by specifying \f4\-f deny:all\fP.
+All forms can be used on a printer
+(provided the printer can handle 
+all the characteristics of each form)
+by specifying \f4\-f allow:all\fP.
+.IP
+The
+.SM LP
+print service uses this information as 
+a set of guidelines for determining
+where a form can be mounted.
+Administrators, however, are not restricted from mounting a form
+on any printer.
+If mounting a form on a particular printer is in
+disagreement with the information in the allow-list or deny-list,
+the administrator is warned but the mount is accepted.
+Nonetheless, if a user attempts to issue a print or change
+request for a form and printer combination that is in
+disagreement with the information, the request is accepted only if the
+form is currently mounted on the printer.
+If the form is later unmounted before the request can print,
+the request is canceled and the user is notified by mail.
+.IP
+If the administrator tries to specify a form
+as acceptable for use on a printer
+that doesn't have the capabilities needed by the form,
+the command is rejected.
+.IP
+Note the other use of \f4\-f\f1, with the \f4\-M\fP option, below.
+.\" .TP
+.\" \f4\-H\fP \f2strms_mod\fP	
+.\" Pushes
+.\" \s-1STREAMS\s+1 modules specified by the \f2strms_mod\fP argument 
+.\" (one or more comma separated modules) 
+.\" onto the stream before printing is begun.
+.\" Valid only with the \f4\-v\fP option.
+.TP
+\f4\-h\f1
+Indicate that
+the device associated with the printer
+is hardwired.
+If neither of the mutually exclusive options,
+\f4\-h\fP and \f4\-l\fP, is specified,
+this option is assumed.
+.TP
+\f4\-I \f2content-type-list\f1
+Allow \f2printer\fP to handle print requests 
+with the content types listed in a
+\f2content-type-list\f1.
+If the list includes names of more than one type,
+the names must be separated by commas or blank spaces.
+(If they are separated by blank spaces,
+the entire list must be enclosed in double quotes.)
+.IP
+The type \f4simple\f1 is recognized as 
+the default content type for files in the 
+.SM UNIX 
+system.
+A \f4simple\f1 type of file is
+a data stream containing only printable 
+.SM ASCII 
+characters and the following control characters.
+.sp .5
+.TS
+center;
+c c c
+l c l .
+Control Character	Octal Value	Meaning
+_
+.sp .35
+backspace	10\d\s-28\s0\u	move back one character, except
+		\0\0\0\0\0at beginning of line
+tab	11\d\s-28\s0\u	move to next tab stop
+linefeed (newline)	12\d\s-28\s0\u	move to beginning of next line
+form feed	14\d\s-28\s0\u	move to beginning of next page
+carriage return	15\d\s-28\s0\u	move to beginning of current line
+.TE
+.sp
+To prevent
+the print service from considering \f4simple\f1
+a valid type for the printer,
+specify either an explicit value (such as the printer type)
+in the \f2content-type-list\f1, or an empty list.
+If you do want \f4simple\f1 included along
+with other types,
+you must include \f4simple\f1 in the \f2content-type-list\f1.
+.IP
+Except for \f4simple\f1, each \f2content-type\f1
+name is freely determined by the administrator.
+If the printer type is specified by the \f4\-T\fP
+option, then the printer type is implicitly considered
+to be also a valid content type.
+.TP
+\f4\-i \f2interface\f1
+Establish a new interface program for
+.IR printer .
+.I Interface
+is the pathname of the new program.
+(The \f4\-e\fP and \f4\-m\fP options 
+may not be specified with this option.)
+.TP
+\f4\-l\f1
+Indicate that the device associated with
+\f2printer\fP is a login terminal.
+The \s-1LP\s+1 scheduler (\f4lpsched\fP)
+disables all login terminals automatically
+each time it is started.
+(The \f4\-h\fP option 
+may not be specified with this option.)
+.TP
+\f4\-M \-f \f2form-name\f1 [\f4\-a\f1 [\f4\-o filebreak\f1]]
+Mount the form \f2form-name\f1 on \f2printer\fP.
+Print requests that need the pre-printed
+form \f2form-name\f1 will be printed on \f2printer\f1.
+If more than one printer has the form mounted
+and the user has specified \f4any\f1 (with the \f4\-d\f1
+option of the \f4lp\f1 command) as the printer destination,
+then
+the print request will be printed on 
+the one printer that also meets 
+the other needs of the request.
+.IP
+The page length and width, and character and line
+pitches needed by the form are compared with those
+allowed for the printer, by checking the
+capabilities in the \f4terminfo\fP database for
+the type of printer.
+If the form requires attributes that are not
+available with the printer, the administrator is
+warned but the mount is accepted.
+If the form lists a print wheel as mandatory, but
+the print wheel mounted on the printer is
+different, the administrator is also warned but the
+mount is accepted.
+.IP
+If the \f4\-a\f1 option is given,
+an alignment pattern is printed,
+preceded by the same initialization of the physical printer 
+that precedes a normal print request, with one exception:  no banner
+page is printed.
+Printing is assumed to start at the top of the
+first page of the form.
+After the pattern is printed, the administrator can
+adjust the mounted form in the printer and press
+return for another alignment pattern (no
+initialization this time), and can continue
+printing as many alignment patterns as desired.
+The administrator can quit the printing of alignment patterns 
+by typing \f4q\f1.
+.IP
+If the \f4\-o filebreak\f1 option is given,
+a formfeed is inserted between each copy of the alignment pattern.
+By default, the alignment pattern is assumed to correctly fill a form,
+so no formfeed is added.
+.IP
+A form is ``unmounted'' 
+either by mounting a new form in its place 
+or by using the \f4\-f none\f1 option.
+By default, a new printer has no form mounted.
+.IP
+Note the other use of \f4\-f\f1 without the \f4\-M\fP option above. 
+.TP
+\f4\-M \-S \f2print-wheel\f1
+Mount the \f2print-wheel\f1 on \f2printer\fP.
+Print requests that need the \f2print-wheel\f1
+will be printed on \f2printer\f1.
+If more than one printer has \f2print-wheel\f1 mounted
+and the user has specified \f4any\f1 
+(with the \f4\-d\f1 option of the \f4lp\f1 command) 
+as the printer destination,
+then the print request will be printed 
+on the one printer that also meets 
+the other needs of the request.
+.IP
+If the \f2print-wheel\f1 is not listed 
+as acceptable for the printer,
+the administrator is warned but the mount is accepted.
+If the printer does not take print wheels, the command is rejected.
+.IP
+A print wheel is ``unmounted'' 
+either by mounting a new print wheel in its place 
+or by using the option \f4\-S none\f1.
+By default, a new printer has no print wheel mounted.
+.IP
+Note the other uses of the \f4\-S\f1 option without the \f4\-M\fP option described below.
+.TP
+\f4\-m \f2model\f1
+Select \f2model\fP interface program,
+provided with the
+.SM LP
+print service, for the printer.
+(Options \f4\-e\fP and \f4\-i\fP
+may not be specified
+with this option.)
+.TP
+\f4\-o \f2printing-option\f1
+Each \f4\-o\f1 option in the list below is
+the default given to an interface program if
+the option is not taken from a preprinted form description
+or is not explicitly given by the user submitting a request
+[see \f4lp\fP(1)].
+The only \f4\-o\f1 options that can have defaults defined
+are listed below.
+.sp .5
+.ta .75i
+.nf
+	\f4length\f1=\f2scaled-decimal-number\f1
+	\f4width\f1=\f2scaled-decimal-number\f1
+	\f4cpi\f1=\f2scaled-decimal-number\f1
+	\f4lpi\f1=\f2scaled-decimal-number\f1
+	\f4stty\f1=\f2'stty-option-list'\f1
+.fi
+.sp .5
+The term ``scaled-decimal-number''
+refers to a non-negative number
+used to indicate a unit of size.
+The type of unit is shown 
+by a ``trailing'' letter attached to the number.
+Three types of scaled decimal numbers
+can be used with the \s-1LP\s+1 print service: numbers
+that show sizes in centimeters
+(marked with a trailing \f4c\fP);
+numbers that show sizes in inches
+(marked with a trailing \f4i\fP);
+and numbers that show sizes in units appropriate to use
+(without a trailing letter),
+that is, lines, characters, lines per inch, or characters per inch.
+.IP
+The first four default option values must agree
+with the capabilities of the type of physical printer,
+as defined in the \f4terminfo\fP database for the
+printer type.
+If they do not, the command is rejected.
+.IP
+The \f2stty-option-list\f1 is not checked
+for allowed values, but is passed directly to the
+\f4stty\fP program by the standard interface program.
+Any error messages produced by \f4stty\fP
+when a request is processed
+(by the standard interface program)
+are mailed to the user submitting the request.
+.IP
+For each printing option not specified,
+the defaults for the following attributes
+are defined in the \f4terminfo\fP entry
+for the specified printer type.
+.sp .5
+.ta .75i 1.1i
+.nf
+	\f4length\f1
+	\f4width\f1
+	\f4cpi\f1
+	\f4lpi\f1
+.fi
+.sp .5
+The default for \f4stty\f1 is
+.sp .5
+.ta .75i 1.1i
+.nf
+	\f4stty='9600 cs8 \-cstopb \-parenb ixon 
+		\-ixany opost \-olcuc onlcr \-ocrnl \-onocr
+		\-onlret \-ofill nl0 cr0 tab0 bs0 vt0 ff0'\f1
+.fi
+.sp .5
+You can set any of the \f4\-o\f1 options
+to the default values
+(which vary for different types of printers),
+by typing them without assigned values, as follows:
+.sp .5
+.ta .75i
+.nf
+	\f4length\f1=
+	\f4width\f1=
+	\f4cpi\f1=
+	\f4lpi\f1=
+	\f4stty\f1=
+.fi
+.TP
+\f4\-o nobanner\f1
+Allow a user to submit a print request
+specifying that no banner page be printed.
+.TP
+\f4\-o banner\f1
+Force a banner page to be printed with
+every print request, even
+when a user asks for no banner page.
+This is the default; you must specify
+\f4\-o nobanner\f1 if you want
+to allow users to be able to specify 
+\f4\-o nobanner\f1 with the \f4lp\f1 command.
+.ig
+.TP
+\f4\-R\ \f2machine-list\f1
+Sets up remote machines in \f2machine-list\f1
+to share print services.
+The
+.SM LP
+print service arranges for the advertising and mounting
+of all necessary resources and for automatic
+recovery of shared print services when the machine is brought to a
+state where \s-1RFS\s+1 is run.
+.IP
+The 
+.SM LP
+Spooler keeps the parts of the print service owned by
+each machine separate, so that the
+administrator on one machine can change only the
+service provided by his or her machine.
+The
+.SM LP
+Spooler provides for no centrally managed print service
+using RFS.
+..
+.TP
+\f4\-r \f2class\f1
+Remove \f2printer\fP
+from the specified
+.IR class .
+If \f2printer\fP
+is the last member of 
+.IR class ,
+then
+.I class
+will be removed.
+.TP
+\f4\-S \f2list\f1
+Allow either the print wheels or aliases for character sets
+named in \f2list\f1 to be used on the printer.
+.IP
+If the printer is a type that takes print wheels,
+then \f2list\f1 is a comma or space separated list of print wheel names.
+(Enclose the list with quotes if it contains blanks.)
+These will be the only print wheels
+considered mountable on the printer.
+(You can always force a different print wheel to be mounted,
+however.)
+Until the option is used to specify a list,
+no print wheels will be considered mountable on the printer,
+and print requests
+that ask for a particular print wheel
+with this printer will be rejected.
+.IP
+If the printer is a type that has selectable character sets,
+then \f2list\f1 is a comma or blank separated list
+of character set name ``mappings'' or aliases.
+(Enclose the list with quotes if it contains blanks.)
+Each ``mapping'' is of the form
+.sp .5
+\f2known-name=alias\f1
+.sp .5
+The \f2known-name\f1 is a character set number preceded by \f4cs\f1
+(such as \f4cs3\f1 for character set three)
+or a character set name from the \f4Terminfo\fP database entry \f4csnm\f1.
+[See \f4terminfo\fP(4) in the \f2Programmer's Reference Manual\f1.]
+If this option is not used to specify a list,
+only the names already known from the Terminfo database 
+or numbers with a prefix of \f4cs\f1
+will be acceptable for the printer.
+.sp
+If \f2list\f1 is the word \f4none\f1,
+any existing print wheel lists
+or character set aliases will be removed.
+.IP
+Note the other uses of the \f4\-S\f1 with the \f4\-M\fP option described above.
+.TP
+\f4\-s \f2system-name\f4\f1[!\f2printer-name\f1]
+Make a remote printer 
+(one that must be accessed through another system)
+accessible to users on your system.
+\f2System-name\f1 is the name of the remote system
+on which the remote printer is located;
+it must be listed in the systems table
+(\f4/etc/lp/Systems\f1).
+\f2Printer-name\f1 is the name used on the remote system
+for that printer.
+For example,
+if you want to access 
+\f2printer1\fP on \f2system1\fP
+and you want it called 
+\f2printer2\fP
+on your system,
+enter \f4\-p \f2printer2\fP
+\f4\-s \f2system1\f4!\f2printer1\f1
+.TP
+\f4\-T\fP \f2printer-type-list\fP
+Identify the printer 
+as being of one or more \f2printer-type\fPs.
+Each \f2printer-type\f1 is used to extract data
+from the \f4terminfo\fP database;
+this information is used to initialize the printer before
+printing each user's request.
+Some filters may also use a \f2printer-type\f1
+to convert content for the printer.
+If this option is not used,
+the default \f2printer-type\f1
+will be \f4unknown\f1;
+no information
+will be extracted from \f4terminfo\fP
+so each user request will be printed without
+first initializing the printer.
+Also, this option 
+must be used if the 
+following are to work:  \f4\-o cpi\f1,
+\f4\-o lpi\f1,
+\f4\-o width\f1,
+and
+\f4\-o length\f1
+options of the \f4lpadmin\f1
+and \f4lp\f1 commands,
+and the \f4\-S\f1 and \f4\-f\f1 options of the \f4lpadmin\f1 command.
+.IP
+If the \f2printer-type-list\fP contains more than
+one type, then the \f2content-type-list\fP of the
+\f4\-I\fP option must either be specified as \f4simple\fP,
+as empty (\f4\-I ""\fP), or not specified at all.
+.ig
+FIND OUT FROM STEVE WHETHER I SHOULD REPLACE
+THE PREVIOUS .TP SECTION WITH THIS ONE.
+.TP
+\f4\-T \f2printer-type-list\fP
+Identifies the printer 
+as being of type \f2printer-type\fP.
+If more than one \f2printer-type\fP is specified,
+then the printer is identified as
+being able to emulate each of the
+\f2printer-types\fP listed.
+(The list is comma or space separated;
+enclose the list in quotes if it is space separated.)
+The \f2printer-type\f1 is used to extract data
+from the \f4terminfo\fP database;
+this information is used to initialize the printer before
+printing each user's request.
+Some filters may also use \f2printer-type\f1
+to convert content for the printer.
+If this option is not used,
+the default \f2printer-type\f1
+will be \f4unknown\f1;
+no information
+will be extracted from \f4terminfo\fP
+so each user request will be printed without
+first initializing the printer.
+Also, this option 
+must be used if the 
+following are to work:  \f4\-o cpi\f1,
+\f4\-o lpi\f1,
+\f4\-o width\f1,
+and
+\f4\-o length\f1
+options of the \f4lpadmin\f1
+and \f4lp\f1 commands,
+and the \f4\-S\f1 and \f4\-f\f1 options of the \f4lpadmin\f1 command.
+..
+.TP
+\f4\-u allow:\f2login-ID-list\f1
+.sp -.5
+.TP
+\f4\-u deny:\f2login-ID-list\f1
+Allow or deny
+the users in \f2login-ID-list\f1 access to the printer.
+By default all users are allowed on a new printer.
+The \f2login-ID-list\f1 argument
+may include any or all of the following constructs: 
+.RS
+.TP 1.40i
+\f2login-ID \f1
+a user on the local system
+.TP
+\f2system-name\f4!\f2login-ID\f1
+a user on system \f2system-name\f1
+.TP
+\f2system-name\f4!all\f1
+all users on system \f2system-name\f1
+.TP
+\f4all!\f2login-ID\f1
+a user on all systems
+.TP
+\f4all\f1
+all users on the local system
+.TP
+\f4all!all\f1
+all users on all systems
+.RE
+.IP
+For each printer the
+.SM LP
+print service keeps two lists of users: an
+``allow-list'' of people allowed to use the printer,
+and a ``deny-list'' of people denied access to the printer.
+With the \f4\-u allow\f1 option,
+the users listed
+are added to the allow-list and removed from the deny-list.
+With the \f4\-u deny\f1 option,
+the users listed are 
+added to the deny-list and removed from the allow-list.
+.IP
+If the allow-list is not empty, 
+only the users in the list may use
+the printer, 
+regardless of the contents of the deny-list.
+If the allow-list is empty, 
+but the deny-list is not,
+the users in the deny-list 
+may not use the printer. 
+All users can be denied access to the printer 
+by specifying \f4\-u deny:all\fP.
+All users may use the printer
+by specifying \f4\-u allow:all\fP.
+.TP
+\f4\-U \f2dial-info\f1
+The \f4\-U\f1 option
+allows your print service to access a remote printer.
+(It does not enable your print service
+to access a remote printer service.)
+Specifically, \f4\-U\f1
+assigns the ``dialing'' information \f2dial-info\f1 to the printer.
+\f2Dial-info\f1 is used with the \f4dial\fP
+routine to call the printer.
+Any network connection supported by the Basic
+Networking Utilities will work.
+\f2Dial-info\f1 can be either a phone number for a modem
+connection, or a system name for other
+kinds of connections.
+Or, if \f4\-U\f1 \f4direct\f1 is given, no dialing will take place,
+because the name \f4direct\f1 is reserved for a printer that is
+directly connected.
+If a system name is given, it is used to
+search for connection details from the file
+\f4/etc/uucp/Systems\f1 or related files.
+The Basic Networking Utilities are required to support
+this option.
+By default, \f4\-U direct\f1 is assumed.
+.TP
+\f4\-v \f2device\f1
+Associate a
+.I device
+with \f2printer\fP.
+.I Device
+is the path name of a file
+that is writable by
+\f4lp\fP.
+Note that
+the same
+.I device
+can be associated
+with more than one printer.
+.SS "Restrictions"
+When creating a new printer,
+one of three options (\f4\-v\fP, \f4\-U\fP, 
+or \f4\-s\fP\) must be supplied.
+In addition,
+only one of the following may be supplied: \f4\-e\f1,
+\f4\-i\f1,
+or
+\f4\-m\f1;
+if none of these three options is supplied,
+the model standard is used.
+The
+\f4\-h\f1
+and
+\f4\-l\f1
+options
+are mutually exclusive.
+Printer and class names
+may be no longer than 14 characters
+and must consist entirely of the characters
+\f4A\f1-\f4Z\f1,
+\f4a\f1-\f4z\f1,
+\f40\f1-\f49\f1
+and
+\f4_\f1
+(underscore).
+If \f4\-s\fP is specified,
+the following options are invalid: \f4\-A\fP,
+\f4\-e\fP, \f4\-F\fP, \f4\-h\fP, \f4\-i\fP,
+\f4\-l\fP,
+\f4\-M\fP,
+\f4\-m\fP,
+\f4\-o\fP,
+\f4\-U\fP,
+\f4\-v\fP, and
+\f4\-W\fP.
+.SS "Removing a Printer Destination"
+The \f4\-x \f2dest\f1 option
+removes the destination
+.I dest
+(a printer or a class), from the
+.SM LP
+print service.
+If
+.I dest
+is a printer
+and is the only member of a class,
+then the class will be deleted, too.
+If \f2dest\f1 is \f4all\f1,
+all printers and classes are removed.
+No other \f2options\f1
+are allowed with
+\f4\-x\f1.
+.SS "Setting/Changing the System Default Destination"
+The \f4\-d \f1[\f2dest\f1] option
+makes
+.IR dest ,
+an existing printer or class,
+the new system default destination.
+If
+.I dest
+is not supplied,
+then there is no system default destination.
+No other \f2options\f1
+are allowed with
+\f4\-d\f1.
+.SS "Setting an Alert for a Print Wheel"
+.TP 5
+\f4\-S \f2print-wheel \f4\-A \ \f2alert-type \f1[\f4\-W \f2minutes\f1] [\f4\-Q \f2requests\f1]
+The \f4\-S \f2print-wheel\f1 option
+is used with the
+\f4\-A \f2alert-type\f1 option
+to define an alert
+to mount the print wheel when
+there are jobs queued for it.
+If this command is not used to arrange
+alerting for a print wheel, no alert will be sent for 
+the print wheel.
+Note the other use of \f4\-A\fP, with the \f4\-p\fP option, above.
+.IP
+The \f2alert-types\f1 are:
+.RS 5
+.TP 8
+\f4mail\f1
+Send the alert message via the \f4mail\fP command
+to the administrator.
+.TP 8
+\f4write\f1
+Write the message,
+via the \f4write\fP command,
+to the terminal on which the
+administrator is logged in.
+If the administrator is logged in on several
+terminals, one is arbitrarily chosen. 
+.TP 8
+\f4quiet\f1
+Do not send messages for the current condition.
+An administrator can use this option to
+temporarily stop receiving further messages about
+a known problem.
+Once the \f2print-wheel\f1 has been mounted
+and subsequently unmounted,
+messages will again be sent when the number of print requests
+reaches the threshold specified by the \f4\-Q\fP option.
+.TP 8
+\f4none\f1
+Do not send messages until the \f4\-A\f1 option
+is given again with a different \f2alert-type\f1
+(other than \f4quiet\f1).
+.TP
+.I shell-command
+Run the \f2shell-command\f1 each time the alert needs to
+be sent.
+The shell command should expect the message in
+standard input.
+If there are blanks embedded in the command,
+enclose the command in quotes.
+Note that the \f4mail\f1 and \f4write\f1 values for
+this option are equivalent to the values
+\f4mail\f1 \f2user-name\f1 and \f4write\f1 
+\f2user-name\f1 respectively, where \f2user-name\f1
+is the current name for the administrator.
+This will be the login name of the person submitting this command
+unless he or she has used the \f4su\fP command
+to change to another user ID.
+If the \f4su\fP command has been used to change the user ID,
+then the \f2user-name\f1 for the new ID is used.
+.TP
+\f4list\f1
+Display the type of the alert for the print wheel
+on standard output.
+No change is made to the alert.
+.PP
+The message sent appears as follows:
+.sp
+.nf
+.RS 3
+\f4The print wheel \f2print-wheel\fP needs to be mounted 
+on the printer(s):
+\f2printer\fP (\f2integer1 \f4requests)
+\f2integer2 \f4print requests await this print wheel.\f1
+.fi
+.RE
+.PP
+The printers listed are those that the administrator had
+earlier specified were candidates for this print wheel.
+The number 
+\f2integer\d\s-21\s0\u\f1 listed next to each printer
+is the number of requests eligible for the printer.
+The number \f2integer\d\s-22\s0\u\f1 shown after
+the printer list is the total number of requests awaiting the
+print wheel.
+It will be less than the sum of the other numbers if some requests
+can be handled by more than one printer.
+.P
+If the \f2print-wheel\f1 is \f4all\f1, the alerting
+defined in this command applies to all print wheels
+already defined to have an alert.
+.ig
+.P
+Only one administrator per print wheel can be alerted.
+If this command is run by more than one
+administrator for the same print wheel,
+the last command run applies.
+..
+.P
+If the \f4\-W\fP option is not given,
+the default procedure is that
+only one message will be sent per need to mount the print wheel.
+Not specifying the \f4\-W\f1 option 
+is equivalent to specifying
+\f4\-W once\fP or \f4\-W 0\fP.
+If \f2minutes\fP is a number greater than zero,
+an alert will be sent at intervals
+specified by \f2minutes\fP.
+.P
+If the \f4\-Q\f1 option is also given,
+the alert will be sent when 
+a certain number
+(specified by the argument \f2requests\fP)
+of print requests that need the print wheel are waiting.
+If the \f4\-Q\f1 option is not given, or
+\f2requests\fP
+is 1 or the word \f4any\f1
+(which are both the default),
+a message is sent as soon as 
+anyone submits a print request
+for the print wheel when it is not mounted.
+.RE
+.ig
+.SH "\f4Defining Remote Printers for Remote Printing Services\f1"
+The fourth form of the \f4lpadmin\fP command
+is used to define the remote printer,
+\f2printer-name\d\s-22\s0\u\f1, and its machine,
+\f2machine-name\f1,
+that will handle remote print requests from the
+local machine. The remote printer will be be
+referred to as \f2printer-name\d\s-21\s0\u\f1 
+on the local machine.
+In order to establish a file transfer mechanism for
+remote print services, the \f2lpnetwork\f1(1M)
+command must be used.
+..
+.SH FILES
+\f4/var/spool/lp/\(**\f1
+.br
+\f4/etc/lp\f1
+.SH "SEE ALSO"
+\f4accept\fP(1M),
+\f4lpsched\fP(1M), and
+\f4lpsystem\fP(1M).
+.br
+\f4enable\fP(1),
+\f4lp\fP(1),
+\f4lpstat\fP(1), and
+\f4stty\fP(1) in the
+\f2User's Reference Manual\f1.
+.br
+\f4dial\fP(3C), \f4terminfo\fP(4) 
+in the \f2Programmer's Reference Manual\f1.

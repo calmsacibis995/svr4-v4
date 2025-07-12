@@ -1,0 +1,58 @@
+'\"macro stdmacro
+.if n .pH g1.soelim @(#)soelim	40.8 of 4/18/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} soelim 1 "BSD Compatibility Package" "\&"
+.if \nX=1 .ds x} soelim 1 "BSD Compatibility Package"
+.if \nX=2 .ds x} soelim 1 "" "\&"
+.if \nX=3 .ds x} soelim "" "" "\&"
+.TH \*(x}
+.\" Copyright (c) 1988 Sun Microsystems, Inc. - All Rights Reserved.
+.\"
+.SH NAME
+\f4soelim\f1 \- resolve and eliminate .so requests from nroff or troff input
+.SH SYNOPSIS
+\f4/usr/ucb/soelim\f1 [ \f2filename\f1 .\ .\ . ]
+.SH DESCRIPTION
+The
+\f4soelim\f1
+command reads the specified files
+or the standard input and
+performs the textual inclusion implied by the
+\f4nroff\f1(1)
+directives of the form
+.IP
+\f4\&.so\f2 somefile\f1
+.P
+when they appear at the beginning of input lines.
+This is useful since programs such as
+\f4tbl\f1(1)
+do not normally do this;
+it allows the placement of individual tables in
+separate files to be run as a part of a large document.
+.P
+An argument consisting of
+\f1`\f4\-\f1'
+is taken to be a file name corresponding to the standard input.
+.P
+Note: inclusion can be suppressed by using
+\f1`\|\f4\'\f1\|'
+instead of
+`\|\f4\.\fP\|',
+that is,
+.IP
+\f4\' so /usr/ucblib/doctools/tmac/tmac.s\f1
+.SH EXAMPLE
+.P
+A sample usage of
+\f4soelim\f1
+would be
+.IP
+\f4soelim exum?.n | tbl | nroff \-ms | col | lpr\f1
+.SH SEE ALSO
+\f4nroff\fP(1),
+\f4tbl\fP(1)
+.P
+\f4more\fP(1)
+in the \f2User's Reference Manual\f1

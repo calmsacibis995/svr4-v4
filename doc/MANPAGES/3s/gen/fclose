@@ -1,0 +1,74 @@
+'\"macro stdmacro
+.if n .pH g3s.fclose @(#)fclose	40.10 of 5/22/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} fclose 3S "C Development Set" "\&"
+.if \nX=1 .ds x} fclose 3S "C Development Set"
+.if \nX=2 .ds x} fclose 3S "" "\&"
+.if \nX=3 .ds x} fclose "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4fclose\f1, \f4fflush\f1 \- close or flush a stream
+.SH SYNOPSIS
+\f4#include <stdio.h>\f1
+.PP
+\f4int fclose (FILE \(**stream);\f1
+.PP
+\f4int fflush (FILE \(**stream);\f1
+.SH DESCRIPTION
+\f4fclose\fP
+causes any buffered data
+waiting to be written
+for the named
+.I stream\^
+[see \f4intro\fP(3)]
+to be written out,
+and the
+.I stream\^
+to be closed.
+If the underlying file pointer is not already at end of file, and the file is one
+capable of seeking, the file pointer is adjusted so that the next operation on the
+open file pointer deals with the byte after the last one read from or written to
+the file being closed.
+.PP
+\f4fclose\fP
+is performed automatically for all open files upon
+calling
+\f4exit\fP.
+.PP
+If \f2stream\fP points to an output stream or an update stream on which the
+most recent operation was not input,
+\f4fflush\fP
+causes any buffered data
+waiting to be written
+for the named
+.I stream\^
+to be 
+written to that file.
+Any unread data buffered in \f2stream\fP is discarded.
+The
+.I stream\^
+remains open.
+If \f2stream\fP is open for reading, the underlying file pointer is not
+already at end of file, and the file is one capable of seeking, the file pointer
+is adjusted so that the next operation on the open file pointer deals with the
+byte after the last one read from or written to the stream.
+.PP
+When calling
+\f4fflush\f1,
+if
+.I stream
+is a null pointer,
+all files open for writing are flushed.
+.SH "SEE ALSO"
+\f4close\fP(2),
+\f4exit\fP(2),
+\f4intro\fP(3),
+\f4fopen\fP(3S),
+\f4setbuf\fP(3S), \f4stdio\fP(3S).
+.SH DIAGNOSTICS
+Upon successful completion these functions return a value of zero. Otherwise
+\f4EOF\f1 is returned.
+.\"	@(#)fclose.3s	6.2 of 10/20/83
+.Ee

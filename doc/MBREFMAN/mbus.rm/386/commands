@@ -1,0 +1,60 @@
+.if n .pH 386.commands @(#)commands	40.12 of 5/17/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.BK "Multibus II Reference Manual"
+.CH "Commands" 2
+.H 1 "Commands"
+This chapter alphabetically lists UNIX System V/386 Release 4 commands for
+Multibus\ II.  They are:
+.PP
+.PD 0
+.BL
+.LI
+\f4bootserver\f1
+.LI
+\f4cciattach\f1
+.LI
+\f4ccibind\f1
+.LI
+\f4ccidetach\f1
+.LI
+\f4ccifree\f1
+.LI
+\f4ccildinfo\f1
+.LI
+\f4ccildlist\f1
+.LI
+\f4ccilinfo\f1
+.LI
+\f4cciload\f1
+.LI
+\f4ccisrvinfo\f1
+.LI
+\f4ccisubinfo\f1
+.LI
+\f4cciswitch\f1
+.LI
+\f4cciunbind\f1
+.LI
+\f4ckperms\fP
+.LI
+\f4cpout\fP
+.LI
+\f4download\f1
+.LI
+\f4enetinfo\f1
+.LI
+\f4enetload\f1
+.LI
+\f4hdformat\fP
+.LI
+\f4mdl\fP
+.LI
+\f4mpscnv\f1
+.LI
+\f4sgib\fP
+.LI
+\f4ttyswitch\f1
+.LE
+.PD
+.P

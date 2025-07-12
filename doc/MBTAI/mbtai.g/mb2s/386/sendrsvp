@@ -1,0 +1,155 @@
+'\"macro stdmacro
+.if n .pH mb2s.sendrsvp @(#)sendrsvp	40.5 of 1/9/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} mb2s_sendrsvp 3tai "" "\&"
+.if \nX=1 .ds x} mb2s_sendrsvp 3tai ""
+.if \nX=2 .ds x} mb2s_sendrsvp 3tai "" "\&"
+.if \nX=3 .ds x} mb2s_sendrsvp "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4mb2s_sendrsvp\f1 \- Sends a request message and receives a response.
+.SH SYNOPSIS
+.ft 4
+.nf
+#include <sys/types.h>
+#include <sys/mb2taiusr.h>
+int mb2s_sendrsvp(fd, msginfoptr, reqcbufptr, reqdbufptr, rescbufptr,
+    resdbufptr)
+int fd;
+mb2_msginfo *msginfoptr;
+mb2_buf *reqcbufptr;
+mb2_buf *reqdbufptr;
+mb2_buf *respcbufptr;
+mb2_buf *respdbufptr;
+.fi
+.ft
+.SH DESCRIPTION
+This routine is used for \f4send_rsvp\fP transactions by sending request and
+receiving response messages.
+Only \f4Multibus II\f1 transport clients use this
+routine.
+.TP 15
+\f4fd\f1
+specifies a synchronous mode file descriptor referencing an
+open port.
+.TP
+\f4msginfoptr\f1
+is a pointer to a \f4mb2_msginfo\fP structure.
+The
+\f4socketid\f1 field identifies the socket ID of the destination socket.
+.TP
+\f4reqcbufptr\f1
+is a pointer to a structure describing the control
+portion of the request message of the transaction.
+.TP
+\f4reqdbufptr\f1
+is a pointer to a structure describing the data
+portion of the request message of the transaction.
+.TP
+\f4respcbufptr\f1
+is a pointer to a structure describing the control
+portion of the response message to be received.
+The \f4msgtyp\fP field of the
+\f4mb2_msginfo\fP structure identifies the type of response message received.
+.TP
+\f4respdbufptr\f1
+is a pointer to a structure describing the data
+portion of the response message to be received.
+The \f4msgtyp\fP field of the
+\f4mb2_msginfo\fP structure identifies the type of response message received.
+.P
+In order to send the data portion of the request message, \f4reqdbufptr\fP
+must be non-NULL and the \f4len\fP field of \f4reqdbufptr\fP must have a value greater
+than 0.
+When a NULL data portion of the request message is being sent,
+\f4reqdbufptr\f1
+can be set to NULL or the \f4len\f1 field of \f4reqdbufptr\f1 can be set to 0.
+Similarly, when sending the control portion or NULL control portion of
+the request message, corresponding values must be set for \f4reqcbufptr\f1.
+A NULL request message can be sent
+if both \f4respcbufptr\f1 and \f4reqdbufptr\f1 are NULL
+or have their \f4len\f1 field set to 0.
+The maximum length of a control request
+message is 20 bytes when no data portion is present.
+The maximum length is 16
+bytes if the request message has a non-NULL data portion.
+.P
+In order to receive the data portion of the response message, the
+\f4maxlen\fP field of \f4respdbufptr\f1
+must be greater than 0.
+When a NULL data portion
+is to be received, \f4respdbufptr\f1
+can either be NULL or the \f4maxlen\fP field of
+\f4respdbufptr\f1 can be set to 0.
+Similarly, when receiving the control portion or
+NULL control portion of the response message, the corresponding values in
+\f4respcbufptr\fP must be set.
+A NULL response message can be received if both
+\f4respcbufptr\fP and \f4respdbufptr\fP are NULL or have their \f4maxlen\fP fields set to 0.
+
+This call returns when the response message for the transaction has been
+received.
+The actual length of the data portion of the response message
+received is indicated by the value in the \f4len\f1 field of
+\f4respdbufptr\f1 and the
+actual length of the
+control portion is indicated by the value of the \f4len\f1 field of
+\f4respcbufptr\fP.
+The types of messages received as responses to a \f4send-rsvp\fP
+request message as indicated by the \f4msgtyp\fP field of \f4msginfoptr\fP can be a
+response message (\f4MB2_RESP_MSG\f1) or
+a cancel message (\f4MB2_CANCEL_MSG\f1).
+\f4mb2s_sendrsvp\f1 blocks when waiting for the response message.
+If no response
+message arrives within the timeout interval specified when the port is opened,
+the transaction is canceled and a value of -1 is returned and an \f4errno\fP is set
+to \f4ETIME\f1.
+Internal flow control conditions could cause outgoing request
+messages to block when waiting for availability of buffers.
+Similarly, flow
+control conditions can cause the receipt of the response message to block.
+.P
+Upon successful completion of the routine, a value of 0 is returned.
+A
+value of -1 is returned and an \f4errno\fP is set if there were errors.
+The
+following is a list of applicable errors for this routine.
+.TP 10
+\f4EAGAIN\f1
+buffers could not be allocated for the message
+to be sent or received.
+.TP
+\f4EBADF\f1
+\f4fd\fP is not a valid file descriptor.
+.TP
+\f4EFAULT\f1
+\f4ctlbufptr\fP, \f4databufptr\fP or \f4msginfoptr\fP points
+outside the allocated address space.
+.TP
+\f4EINTR\f1
+a signal was caught during the\f4mb2s_sendrsvp\fP
+call.
+.TP
+\f4EINVAL\f1
+an invalid value was specified in one of the
+argument buffers.
+.TP
+\f4ENOSTR\f1
+\f4fd\fP is not a file descriptor to a \f4Multibus II\f1
+transport endpoint.
+.TP
+\f4ENXIO\f1
+a hardware error condition was generated when sending
+or receiving a message.
+.TP
+\f4ETIME\f1
+a \f4send-rsvp\fP timeout occured while waiting for a
+response.
+.TP
+\f4ERANGE\f1
+the size of the control or the data part of the
+message is outside the range of the minimum/ maximum allowable message size.
+.SH SEE ALSO
+\f4getmsg\f1(2), \f4putmsg\f1(2), \f4mb2s_openport\f1(3tai)

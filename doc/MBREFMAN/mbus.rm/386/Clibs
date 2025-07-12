@@ -1,0 +1,7 @@
+.if n .pH 386.Clibs @(#)Clibs	40.9
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.BK "Multibus Reference Manual" "" "" ""   
+.\ACRONYM	                  
+.CH "Functions and Libraries" "" "Table of Contents" "3"
+.\CHAPTER	3
+.tC 1 "Interconnect-Space Application Interface" 3-1  

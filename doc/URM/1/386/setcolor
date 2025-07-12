@@ -1,0 +1,91 @@
+.if n .pH g1.setcolor @(#)setcolor	40.4 of 5/31/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1990 AT&T
+'\"!  tbl | mmdoc
+'\"macro stdmacro
+.nr X
+.if \nX=0 .ds x} setcolor 1 "" "\&"
+.if \nX=1 .ds x} *(x} setcolor 1 ""
+.if \nX=2 .ds x} *(x} setcolor 1 "" "\&"
+.if \nX=3 .ds x} *(x} setcolor 1 "" "\&"
+.TH \*(x}
+.SH "NAME"
+\f4setcolor, setcolour\f1 \- set screen color
+.SH "SYNOPSIS"
+\f4setcolor\f1 [\f4-nbrgopc\f1] \f2argument\f1 [\f2argument\f1]
+.br
+\f4setcolour\f1 [\f4-nbrgopc\f1] \f2argument\f1 [\f2argument\f1]
+.SH "DESCRIPTION"
+\f4setcolor\f1 and \f4setcolour\f1 allow the user to set the screen to a specific
+color.
+Both foreground and background colors can be set
+independently in a range of 16 colors.  
+\f4setcolor\fP can also set the reverse video and graphics character colors.
+\f4setcolor\f1 with no arguments produces a usage message that
+displays all available colors, then resets the screen to its
+previous state.
+.P
+For example, the following strings are possible colors:
+.TS
+center,tab(%);
+lf4w(.5i) lf4w(.5i) lf4w(.5i) lf4w(.5i).
+blue%magenta%brown%black
+lt_blue%lt_magenta%yellow%gray
+cyan%white%green%red
+lt_cyan%hi_white%lt_green%lt_red
+.TE
+.SH OPTIONS
+The following options are available for \f4setcolor\fP and \f4setcolour\fP.
+In the arguments below,
+\f2color\fP is taken from the above list.
+.TP 15
+\f4-n\f1
+Sets the screen to normal white characters on black background.
+.TP
+\f2color \f1[\f2color\f1]
+Sets the foreground to the first color.
+Sets background to second color if a second color choice is specified.
+.TP
+\f4-b\f2 color\f1
+Sets the background to the specified color.
+.TP
+\f4\-r\f2 color color\f1
+Set the foreground reverse video characters to the first color.
+Set reverse video characters' background to second color.
+.TP
+\f4\-g\f2 color color\f1
+Set the foreground graphics characters to the first color. Set
+graphics characters' background to second color.
+.TP
+\f4-o\f2 color\f1
+Sets the color of the screen border (over scan region).
+To reset border color, use \f4\-o black\f1.
+.TP
+\f4\-p\f2 pitch duration\f1
+Set the pitch and duration of the bell.
+Pitch is the period in microseconds, and duration is measured
+in fifths of a second.
+When using this option, a control-G (bell) must be echoed to
+the screen for the command to work.  For example:
+.sp .5
+.nf
+.ft 4
+	setcolor -p 2500 2
+	echo ^G
+.ft 1
+.fi
+.TP
+\f4\-c\f2first last\f1
+Set the first and last scan lines of the cursor.
+.SH NOTES
+The ability of \f4setcolor\f1 to set any of these described
+functions is ultimately dependent on the ability of devices to
+support them.
+For example, the \f4-o\f1 option does not work
+on the Color Graphics Adapter (CGA).
+.P
+\f4setcolor\f1 emits an escape sequence that
+may or may not have an effect on monochrome devices.
+.P
+Occasionally changing the screen color can help prolong the life of
+your monitor.

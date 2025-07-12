@@ -1,0 +1,84 @@
+#ident	"@(#)doctools:shells/defs.h.src	1.3"
+#
+#       Copyright (c) 1990, 1991 UNIX System Laboratories, Inc.
+#       Copyright (c) 1984, 1986, 1987, 1988, 1989, 1990 AT&T
+#         All Rights Reserved
+#
+#       THIS IS UNPUBLISHED PROPRIETARY SOURCE CODE OF
+#       UNIX System Laboratories, Inc.
+#       The copyright notice above does not evidence any
+#       actual or intended publication of such source code.
+#
+#       defs.h: printer specific defintions; called by format shell
+#
+#     Modified by: M. Shapiro
+#                 UNIX System Laboratories
+#                 attunix!mxs   201-522-5181
+#                   
+#
+# First list destination information
+# Destination=token (letter "d" plus number 0-n)
+#    Description=tokenDE
+#    Location=tokenLO
+#    Troff Type=tokenTY
+#    Troff Postprocessing=tokenPP
+#    Portrait Page Orientation=tokenOP
+#    Landscape Page Orientation=tokenOL
+#    Mail Send=tokenMA
+#    Job Spooling=tokenLP
+#
+# NOTE: The token (d plus number, e.g., d0, d1, d2)
+#       prefaces each piece of information.  If you
+#       are going to copy one definition to use for
+#       another definition with a couple of changes,
+#       as is likely, remember to change all references
+#       to the token.  Use something like:
+#          linestart,lineend s/d0/d7/g
+#       to make sure you change all the references.
+#
+d0=dp1
+   d0DE="PostScript Printer"
+   d0LO="Room 2-338"
+   d0TY="-Tpost"
+   d0PP=" >>${TF}-ALL"
+   d0OP="-pport";d0OL="-pland"; d0MA="-omail=${MACHINE}%${USER}"
+   d0LP="cat ${TF}-ALL |dpost ${DPOPTS}  ${ORIENT:-$d0OP} \
+        |lp -opost -d${d0} -t${FNS} ${LPOPTS} 1>>${TF}-lp" 
+d1=apple
+   d1DE="PostScript Printer"
+   d1LO="Room 2-338"
+   d1TY="-Tpost"
+   d1PP=" >>${TF}-ALL"
+   d1OP="-pport";d1OL="-pland"; d1MA="-omail=${MACHINE}%${USER}"
+   d1LP="cat ${TF}-ALL |dpost ${DPOPTS}  ${ORIENT:-$d1OP} \
+        |rlp -opost -d${d1} -t${FNS} ${LPOPTS} 1>>${TF}-lp" 
+d2=xerox
+   d2DE="Xerox Laser Printer"
+   d2LO="Floor 1, Comp.  Center"
+   d2TY="-Tpost -rl1"
+   d2PP=" >> ${TF}-ALL"
+   d2OP=""; d2OL=""; d2MA="-m"
+   d2LP="cat ${TF}-ALL|sed '/x X PS/d;s/PA/R/g;s/PI/I/g;s/PB/B/g' \
+        |dx9700 -TX97.ti10p 2>${LOG} \
+        |lp -d${d2} -o'-a' -t${FNS} ${LPOPTS} 1>>${TF}-lp"
+d3=proof
+   d3DE="PostScript Proofing"
+   d3TY="-Tpost"
+   d3PP=" >> ${TF}-ALL"
+   d3LP="proof -w ${TF}-ALL;cp ${TF}-ALL ./prf.${OFN}; \
+         echo '\n\tCopied file - prf.${FN} - to current directory' >>${TF}-lp"
+d4=null
+   d4DE="Null Device for Producing PostScript Toc File"
+   d4TY="-Tpost"
+   d4PP=">/dev/null;"
+   d4LP="echo '\n\tFinished processing job for - null - device' >>${TF}-lp"
+d5=post
+   d5DE="Null Device for Producing PostScript Graphics File"
+   d5TY="-Tpost"
+   d5PP=" >> ${TF}-ALL"
+   d5LP="cat ${TF}-ALL |dpost ${DPOPTS}  >${TF}-PosT; cp ${TF}-PosT ./ps.${OFN}; \
+          echo '\n\tCopied file - ps.${FN} - to current directory' >>${TF}-lp"
+d6=archive
+   d6DE="Archive Files using cpio"
+   d6LP="echo '\n\tArchiving Request Completed Without Error' >>${TF}-lp"
+# EOF

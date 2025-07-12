@@ -1,0 +1,282 @@
+.if n .pH g1.dos @(#)dos	40.10 of 7/8/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+'\"!  tbl | mmdoc
+'\"macro stdmacro
+.\" Copyright 1990 AT&T
+.nr X 2
+.if \nX=0 .ds x} dos 1 "Base System" "\&
+.if \nX=1 .ds x} dos 1 "Base System"
+.if \nX=2 .ds x} dos 1 "i386" "Base System" "\&"
+.if \nX=3 .ds x} dos "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4dos: doscat, doscp, dosdir, dosformat, dosmkdir, dosls, dosrm, dosrmdir\f1 \- access and manipulate DOS files
+.SH "SYNOPSIS"
+\f4doscat\^\f1 [\f4\-r\f1 |\f4 \-m\f1\|]\f2 \^file\f1 ...
+.PP
+\f4doscp\^\f1 [\f4\f4-r\f1 |\f4 \-m\f1\|]\f2 \^file1 file2\f1
+.PP
+\f4doscp\^\f1 [\f4\-r\f1 |\f4 \-m\f1\|]\f2 \^file\f1 \^... \f2\^directory\f1
+.PP
+\f4dosdir\f2 \^directory\f1
+.PP
+\f4dosformat\^\f1 [\f4\-fqv\f1\|] \f2\^drive\f1
+.PP
+\f4dosls\f2 \^directory\f1 \^...
+.PP
+\f4dosmkdir\f2 \^directory\f1 \^...
+.PP
+\f4dosrm\f2 \^file\f1 \^...
+.PP
+\f4dosrmdir\f2 \^directory\f1 \^...
+.SH "DESCRIPTION"
+The \f4dos\f1 commands allow access to files and
+directories on a DOS hard disk partition or diskette.
+The DOS partition must be bootable, although not active.
+.PP
+Below is a description of the \f4dos\f1 commands:
+.TP 12
+\f4doscat\fP
+Copies one or more DOS files to the standard output.
+If \f4-r\f1
+is given, the files are copied without newline conversions.
+If \f4-m\f1 is given, the files are copied with newline conversions.
+.TP
+\f4doscp\f1
+Copies files from/to a DOS diskette or a DOS hard disk partition
+to/from a UNIX file system.
+\f4doscp\fP will rename a file while it is copying.
+For example, the command:
+.RS 1.5i
+\f4doscp a:file1 file2\fP
+.RE
+.IP
+copies the file named \f4file1\fP from the DOS disk
+to the UNIX file system and renames it file2.
+.IP
+If \f2directory\f1 is given, one or more
+\f2files\f1 are copied to that directory.
+If \f4-r\f1 is given,
+the files are copied without new line conversions.
+If \f4-m\f1
+is given, the files are copied with newline conversions.
+.TP
+\f4dosdir\f1
+Lists DOS files in the standard DOS style directory format.
+(See the DOS \f4DIR\f1 command.)
+.TP
+\f4dosformat\f1
+Creates a DOS 2.0 formatted diskette.
+It cannot be used to format a hard disk partition.
+The drive must be specified using the UNIX special file names.
+For example, if your system has two floppy drives, the first a
+3.5" and the second a 5.25", then the following
+special file names would be used to format low and high density
+floppies:
+.TS
+center box;
+cb|cb
+l|lf4.
+DOS Format	UNIX special file name
+_
+1.4 MB	/dev/rdsk/f03ht
+720 KB	/dev/rdsk/f03dt
+1.2 MB	/dev/rdsk/f15ht
+360 KB	/dev/rdsk/f15d9t
+.TE
+In the above special file names, \f4f0\fP refers to the
+first floppy drive,
+and \f4f1\fP refers to the second floppy drive.
+.IP
+The \f4-f\f1 option suppresses the interactive feature.
+The
+\f4-q\f1 (quiet) option is used to suppress information normally
+displayed during \f4dosformat\f1, but it does not
+suppress the interactive feature.
+The \f4-v\f1 option prompts
+the user for a volume label after the diskette has been
+formatted.
+The maximum size of the volume label is 11
+characters.
+.TP
+\f4dosls\f1
+Lists DOS directories and files in a UNIX system style format [see
+\f4ls\f1(1)].
+.TP
+\f4dosrm\f1
+Removes DOS files.
+.TP
+\f4dosmkdir\f1
+Creates DOS directories.
+.TP
+\f4dosrmdir\f1
+Deletes DOS directories.
+.PP
+The \f2file\f1 and \f2directory\f1 arguments for DOS files and
+directories have the form:
+.PP
+.RS
+\f2device\f4:\f2name\f1
+.RE
+.PP
+where \f2device\f1 is a UNIX system path name for the special device
+file containing the DOS disk, and \f2name\f1 is a path name to a file
+or directory on the DOS disk.
+The two components are separated
+by a colon (:).
+For example, the argument:
+.PP
+.RS
+\f4/dev/rdsk/f0t:/src/file.c\f1
+.RE
+.PP
+specifies the DOS file \f4file.asm\f1 in the directory
+\f4/src\f1 on diskette \f4/dev/rdsk/fd0t\f1.
+Note
+that slashes (and not backslashes) are used as file name
+separators for DOS path names.
+Arguments without a \f2device\f4:\f1
+are assumed to be UNIX files.
+.PP
+For convenience, the user-configurable default file
+\f4/etc/default/msdos\f1 can define DOS drive names to be used
+in place of the special device file path names.
+It may contain the following lines:
+.PP
+.RS
+.nf
+\f4A=/dev/rdsk/f0t
+C=/dev/rdsk/0s5
+D=/dev/rdsk/1s5\f1
+.fi
+.RE
+.PP
+The drive letter \f4A\f1 may be used in place of special device file
+path name \f4/dev/rdsk/f0t\f1 when referencing DOS files (see
+``Examples'' below).
+The drive letter \f4C\f1 or \f4D\f1 refer to the DOS
+partition on the first or second hard disk.
+.PP
+The commands operate on the following types of disks:
+.PP
+.RS
+.nf
+DOS partitions on a hard disk
+5-1/4 inch DOS
+3-1/2 inch DOS
+8, 9, 15, or 18 sectors per track
+40 tracks per side
+1 or 2 sides
+DOS versions 1.0, 2.0, or 3.0
+.fi
+.RE
+.PP
+In the case of \f4doscp\f1, certain name conversions can
+be performed
+when copying a UNIX system file.
+File names with a base name longer
+than eight characters are truncated.
+Filename extensions (the
+part of the name following the separating period) longer than
+three characters are truncated.
+For example, the file
+123456789.12345 becomes 12345678.123.
+A message informs the
+user that the name has been changed and the altered name is
+displayed.
+File names containing illegal DOS characters are
+stripped when writing to the DOS format.
+A message informs
+the user that characters have been removed and displays the name
+as written.
+.PP
+All DOS text files use a carriage-return/linefeed combination,
+CR-LF, to indicate a newline.
+UNIX system text files use a single newline LF
+character.
+When the \f4doscat\f1 and \f4doscp\f1 commands
+transfer DOS text files to UNIX system text files,
+they automatically strip the
+CR.
+When text files are transferred to DOS, the commands insert
+a CR before each LF character.
+.PP
+Under some circumstances, the automatic newline conversions do
+not occur.
+The \f4-m\f1 option may be used to ensure the
+newline conversion.
+The \f4-r\f1 option can be used to override 
+the automatic conversion and force the command to perform a true byte
+copy regardless of file type.
+.SH EXAMPLES
+\f4doscat /dev/rdsk/f0t:tmp/output.1\f1
+.br
+\f4doscat /tmp/f1 /tmp/f2/A:prog/output.1\f1
+.PP
+\f4dosdir /dev/rdsk/f0t:/prog\f1
+.br
+\f4dosdir /D:/prog\f1
+.PP
+\f4doscp /mine/file.out/dev/rdsk/f0t:/mine/file.2\f1
+.br
+\f4doscp /tmp/f1 /tmp/f2 D:\f1
+.PP
+\f4dosformat /dev/rdsk/f0d8dt\f1
+.PP
+\f4dosls /dev/rdsk:/src\f1
+.br
+\f4dosls B:\f1
+.PP
+\f4dosmkdir /dev/fd0:/usr/docs\f1
+.PP
+\f4dosrm /dev/rdsk:/docs/memo.txt\f1
+.br
+\f4dosrm /A:/docs/memo1.txt\f1
+.PP
+\f4dosrmdir /dev/rdsk:/usr/docs\f1
+.SH FILES
+.TS
+tab(;);
+l l.
+\f4/etc/default/msdos\f1;Default information
+\f4/dev/rdsk/f0t\f1;Floppy disk devices
+\f4/dev/rdsk/0s5\f1;Hard disk devices
+.TE
+.SH "SEE ALSO"
+\f4directory\fP(3C) in the \f2Programmer's Reference Manual\fP
+.P
+See your MS-DOS Documentation.
+.SH NOTES
+It is not possible to refer to DOS directories with wild card
+specifications.
+.P
+The programs mentioned above cooperate among
+themselves so no two programs will access the same DOS disk simultaneously.
+If a process attempts to access a device already in use, it displays the
+error message \f4Device Busy\f1, and exits with and exit code of 1.
+.PP
+The device argument to dosformat must be specific.
+For example, use
+\f4/dev/rdsk/f03ht\f1 not \f4/dev/rdsk/f0t\f1 or \f4a:\f1.
+.P
+The DOS partition hard disk device names correspond as follows:
+.TP 20n
+/dev/dsk/0s5
+is equivalent to /dev/hd0d
+.TP
+/dev/rdsk/0s5
+is equivalent to /dev/rhd0d
+.TP
+/dev/dsk/1s5
+is equivalent to /dev/hd1d
+.TP
+/dev/rdsk/1s5
+is equivalent to /dev/rhd1d
+.P
+All of the DOS utilities leave temporary files in
+\f4/tmp\fP.
+These files are automatically removed when the system is rebooted.
+They can also be manually removed.
+.P
+You must have DOS 3.3 or earlier.
+Extended DOS partitions are not supported.

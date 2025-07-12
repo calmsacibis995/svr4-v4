@@ -1,0 +1,51 @@
+'\"macro stdmacro
+.if n .pH g1a.rwall @(#)rwall	40.5 of 4/16/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.\" @(#)rwall.1c 1.3 89/09/09 SMI;
+'\" macro stdmacro
+.\" Copyright (c) 1988 Sun Microsystems, Inc. - All Rights Reserved.
+.\"
+.nr X
+.if \nX=0 .ds x} rwall 1M "" ""
+.if \nX=1 .ds x} rwall 1M ""
+.if \nX=2 .ds x} rwall 1M "" "\&"
+.if \nX=3 .ds x} rwall "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4rwall\f1 \- write to all users over a network
+.SH SYNOPSIS
+\f4/usr/sbin/rwall\f1
+\f2hostname\f1 .\ .\ .
+.SH DESCRIPTION
+.P
+\f4rwall\f1
+reads a message from standard input until
+\s-1EOF\s0.
+It then sends this message,
+preceded by the line:
+.IP
+.ft 4
+Broadcast Message .\|.\|.
+.ft 1
+.P
+to all users logged in on the specified host machines.
+.P
+A machine can only receive such a message if it is running
+\f4rwalld\f1(1M),
+which may be started by
+\f4inetd\f1(1M)
+or
+\f4listen\f1(1M).
+.SH NOTES
+The timeout is fairly short to allow transmission to
+a large group of machines (some of which may be down)
+in a reasonable amount of time.
+Thus the message may not get through to a heavily loaded machine.
+.SH "SEE ALSO"
+\f4inetd\fP(1M),
+\f4listen\fP(1M),
+\f4pmadm\fP(1M),
+\f4rwalld\fP(1M),
+\f4sacadm\fP(1M),
+\f4wall\fP(1)

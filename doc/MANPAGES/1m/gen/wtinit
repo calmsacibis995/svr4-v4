@@ -1,0 +1,71 @@
+'\"macro stdmacro
+.if n .pH g1a.wtinit @(#)wtinit	40.13 of 5/21/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} wtinit 1M "Layers Windowing Utilities" "\&"
+.if \nX=1 .ds x} wtinit 1M "Layers Windowing Utilities"
+.if \nX=2 .ds x} wtinit 1M "" "\&"
+.if \nX=3 .ds x} wtinit "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4wtinit\f1 \- object downloader for the 5620 \s-1DMD\s0 terminal
+.SH SYNOPSIS
+\f4/usr/lib/layersys/wtinit [\-d] [\-p] \f2file\f1
+.SH DESCRIPTION
+The
+\f4wtinit\fP
+utility
+downloads the named
+\f2file\f1
+for execution in the AT&T 5620
+\s-1DMD\s0 terminal connected to its standard output.
+\f2file\f1
+must be a \s-1DMD\s0 object file.
+\f4wtinit\fP performs
+all necessary bootstrap and protocol procedures.
+.P
+There are two options.
+.TP
+\f4\-d\f1
+Prints out the sizes of the text, data, and bss
+portions of
+the downloaded \f2file\f1 
+on standard error.
+.TP
+\f4\-p\f1
+Prints the down-loading protocol statistics and a trace on
+standard error.
+.PP
+The environment variable
+\f4JPATH\fP
+is the analog of the shell's
+\f4PATH\fP
+variable to define a set of directories in which to search for
+\f2file\f1.
+.PP
+If the environment variable
+\f4DMDLOAD\f1
+has the value
+\f4hex\f1,
+\f4wtinit\fP
+will use a hexadecimal download protocol that uses only printable characters.
+.P
+Terminal Feature Packages for specific
+versions of \s-1AT&T\s0 windowing terminals will include terminal-specific
+versions of \f4wtinit\fP under those installation sub-directories.
+\f4/usr/lib/layersys/wtinit\f1 is used for \f4layers\fP(1)
+initialization only when no Terminal Feature Package is in use
+(i.e., the $\f4DMD\fP shell variable is not set).
+.SH DIAGNOSTICS
+Returns \f40\f1 upon successful completion,
+\f41\f1 otherwise.
+.SH NOTES
+Standard error should be redirected when using the
+\f4\-d\f1
+or
+\f4\-p\f1
+options.
+.SH SEE ALSO
+\f4layers\fP(1) in the \f2User's Reference Manual\f1
+.Ee

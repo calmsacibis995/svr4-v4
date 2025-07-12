@@ -1,0 +1,220 @@
+'\"macro stdmacro
+.if n .pH g4.admin @(#)admin	40.13 of 5/1/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} admin 4 "Essential Utilities" "\&"
+.if \nX=1 .ds x} admin 4 "Essential Utilities"
+.if \nX=2 .ds x} admin 4 "Essential Utilities" "\&"
+.if \nX=3 .ds x} admin 4 "Essential Utilities" "\&"
+.TH \*(x}
+.SH NAME
+\f4admin\f1 \- installation defaults file
+.SH DESCRIPTION
+\f4admin\fP
+is a generic name for an
+.SM ASCII
+file that defines default installation actions by assigning values to
+installation parameters.
+For example,
+it allows administrators to define
+how to proceed when the package being installed already exits on the system.
+.PP
+\f4/var/sadm/install/admin/default\f1
+is the default \f4admin\f1 file delivered with System V Release 4.0.
+The default file is not writable, so to
+assign values different from this file, create a new \f4admin\f1 file.
+There are no naming restrictions for \f4admin\f1 files.
+Name the file when installing a package with the \f4\-a\f1 option of
+\f4pkgadd\f1.
+If the \f\-a\f1 option is not used, the default \f4admin\f1 file is used.
+.PP
+Each entry in the \f4admin\fP file is a line that establishes the value of a
+parameter in the following form:
+.PP
+.RS
+\f2param\f4=\f2value\f1
+.RE
+.PP
+Eleven parameters can be defined in an \f4admin\f1 file.
+A file is not required to assign values to all eleven parameters.
+If a value is not assigned, \f4pkgadd\f1 asks the installer how to
+proceed.
+.PP
+The eleven parameters and their possible values are shown below
+except as noted.
+They may be specified in any order.
+Any of these parameters can be assigned the value \f4ask\f1,
+which means that if the situation occurs the installer is
+notified and asked to supply instructions at that time.
+.TP 0.75i
+\f4basedir\f1
+Indicates the base directory where relocatable packages are to be installed.
+The value may contain \f4$PKGINST\f1 to indicate a base directory that is to
+be a function of the package instance.
+.TP 0.75i
+\f4mail\f1
+Defines a list of users to whom mail should be sent following installation of a
+package.
+If the list is empty, no mail is sent.
+If the parameter is not present in the \f4admin\f1 file, the default value
+of \f4root\f1 is used.
+The \f4ask\f1 value cannot be used with this parameter.
+.TP 0.75i
+\f4runlevel\f1
+Indicates resolution if the run level is not correct for the installation or
+removal of a package.
+Options are:
+.RS 0.75i
+.TP 12
+\f4nocheck\fP
+Do not check for run level.
+.TP 12
+\f4quit\fP
+Abort installation if run level is not met.
+.RE
+.TP 0.75i
+\f4conflict\f1
+Specifies what to do if an installation expects to overwrite a previously
+installed file, thus creating a conflict between packages.
+Options are:
+.RS 0.75i
+.TP 12
+\f4nocheck\fP
+Do not check for conflict; files in conflict will be overwritten.
+.TP 12
+\f4quit\fP
+Abort installation if conflict is detected.
+.TP 12
+\f4nochange\fP
+Override installation of conflicting files; they will not be installed.
+.RE
+.TP 0.75i
+\f4setuid\fP
+Checks for executables which will have setuid or setgid bits enabled after
+installation.
+Options are:
+.RS 0.75i
+.TP 12
+\f4nocheck\fP
+Do not check for setuid executables.
+.TP 12
+\f4quit\fP
+Abort installation if setuid processes are detected.
+.TP 12
+\f4nochange\fP
+Override installation of setuid processes;
+processes will be installed without setuid bits enabled.
+.RE
+.TP 0.75i
+\f4action\f1
+Determines if action scripts provided by package developers contain possible
+security impact.
+Options are:
+.RS 0.75i
+.TP 12
+\f4nocheck\fP
+Ignore security impact of action scripts.
+.TP 12
+\f4quit\fP
+Abort installation if action
+scripts may have a negative security impact.
+.RE
+.TP 0.75i
+\f4partial\f1
+Checks to see if a version of the package is already partially installed on the
+system.
+Options are:
+.RS 0.75i
+.TP 12
+\f4nocheck\fP
+Do not check for a partially installed package.
+.TP 12
+\f4quit\fP
+Abort installation if a partially installed package exists.
+.RE
+.TP 0.75i
+\f4instance\f1
+Determines how to handle installation if a previous version
+of the package (including a partially installed instance)
+already exists.
+Options are:
+.RS 0.75i
+.TP 12
+\f4quit\fP
+Exit without installing if an instance of the package already exists
+(does not overwrite existing packages).
+.TP 12
+\f4overwrite\fP
+Overwrite an existing package if only one instance exists.
+If there is more than one instance, but only one has the same architecture,
+it overwrites that
+instance.
+Otherwise, the installer is prompted with existing instances and
+asked which to overwrite.
+.TP 12
+\f4unique\fP
+Do not overwrite an existing instance of a package.
+Instead, a new instance of the package is created.
+The new instance will be
+assigned the next available instance identifier.
+.RE
+.TP 0.75i
+\f4idepend\f1
+Controls resolution if other packages depend on the one to be installed.
+Options are:
+.RS 0.75i
+.TP 12
+\f4nocheck\fP
+Do not check package dependencies.
+.TP 12
+\f4quit\fP
+Abort installation if package dependencies are not met.
+.RE
+.TP 0.75i
+\f4rdepend\f1
+Controls resolution if other packages depend on the one to be removed.
+Options are:
+.RS 0.75i
+.TP 12
+\f4nocheck\fP
+Do not check package dependencies.
+.TP 12
+\f4quit\fP
+Abort removal if package dependencies are not met.
+.RE
+.TP 0.75i
+\f4space\f1
+Controls resolution if disk space requirements for package are not met.
+Options are:
+.RS 0.75i
+.TP 12
+\f4nocheck\fP
+Do not check space requirements
+(installation fails if it runs out of space).
+.TP 12
+\f4quit\fP
+Abort installation if space requirements are not met.
+.RE
+.SH NOTES
+The value \f4ask\f1 should not be defined in an \f4admin\f1 file
+that will be used for non-interactive installation (since by
+definition, there is no installer interaction).
+Doing so causes installation to fail when input is needed.
+.SH EXAMPLE
+.RS
+.ft 4
+.nf
+basedir=default
+runlevel=quit
+conflict=quit
+setuid=quit
+action=quit
+partial=quit
+instance=unique
+idepend=quit
+rdepend=quit
+space=quit
+.fi
+.ft 1
+.RE

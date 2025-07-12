@@ -1,0 +1,44 @@
+'\"macro stdmacro
+.if n .pH gen.start @(#)start	40.2 of 1/7/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.nr X
+.if \nX=0 .ds x} start D2DK "" "DDI/DKI" "\&"
+.if \nX=1 .ds x} start D2DK "" "DDI/DKI"
+.if \nX=2 .ds x} start D2DK "" "\&"
+.if \nX=3 .ds x} start "" "" "\&"
+.TH \*(x}
+.IX "\f4start\fP(D2DK)"
+.SH NAME
+\f4start\fP \- initialize a device at system start-up
+.SH SYNOPSIS
+.nf
+.na
+\f4void \f2prefix\fPstart();\f1
+.ad
+.fi
+.SH DESCRIPTION
+The \f4start\fP routine is called at system boot time after system services are
+available and interrupts have been enabled.  It can be used to initialize
+the driver's data structures and/or hardware.
+.P
+The \f4start\fP routine may perform the following types of activities:
+.PD 0.2v
+.IP
+initialize data structures for device access
+.IP
+allocate buffers for private buffering schemes
+.IP
+map the device into the system's virtual address space
+.IP
+initialize hardware
+(for example, perform a system generation and reset the board)
+.PD
+.P
+Functions that may result in the caller sleeping, or that require user context, such as
+\f4sleep\fP(D3K), may not be called.
+.SH NOTES
+This entry point is optional.
+.SH SEE ALSO
+.na
+\f4init\fP(D2D)
+.ad

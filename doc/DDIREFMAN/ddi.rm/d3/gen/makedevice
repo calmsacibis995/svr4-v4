@@ -1,0 +1,89 @@
+'\"macro stdmacro
+.if n .pH gen.makedevice @(#)makedevice	40.4 of 3/26/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.nr X
+.if \nX=0 .ds x} makedevice D3DK "" "DDI/DKI" "\&"
+.if \nX=1 .ds x} makedevice D3DK "" "DDI/DKI"
+.if \nX=2 .ds x} makedevice D3DK "" "\&"
+.if \nX=3 .ds x} makedevice "" "" "\&"
+.TH \*(x}
+.IX "\f4makedevice\fP(D3DK)"
+.SH NAME
+\f4makedevice\f1 \- make device number from major and minor numbers
+.SH SYNOPSIS
+.nf
+\f4#include <sys/types.h>
+#include <sys/ddi.h>
+.sp 0.25
+dev_t makedevice(major_t \f2majnum, \f4minor_t \f2minnum\f4);\f1
+.fi
+.SH ARGUMENTS
+.PD 0
+.RS 0n 10
+.IP "\f2majnum\f1" 10n
+Major number.
+.IP "\f2minnum\f1" 10n
+Minor number.
+.RE
+.PD
+.SH DESCRIPTION
+The \f4makedevice\f1 function creates a device number from a 
+major and minor device number.
+\f4makedevice\f1 should be used
+to create device numbers so that the driver will port easily to
+releases that treat device numbers differently.
+.SH RETURN VALUE
+The device number, containing both the major number and the minor
+number, is returned.
+No validation of the major or minor numbers is performed.
+.SH LEVEL
+Base or Interrupt.
+.SH NOTES
+Does not sleep.
+.SH SEE ALSO
+.na
+\f4getemajor\f1(D3DK),
+\f4geteminor\f1(D3DK),
+\f4getmajor\f1(D3DK),
+\f4getminor\f1(D3DK)
+.ad
+.SH EXAMPLE
+In the following example, \f4makedevice\f1 is used to create
+the device number selected during a clone open.
+If the \f4CLONEOPEN\fP
+flag is set (line 9), we search through the list of minor devices looking
+for one that is available (lines 10-11).
+If we find an unused minor, we
+break off the search, create a new device number, and store it in the
+memory location pointed to by \f4devp\fP (line 15).
+If no unused minor
+was found, we return the error \f4ENXIO\fP.
+.P
+.nf
+.ft 4
+.ps 7
+.vs 9
+1  xxxopen(q, devp, oflag, sflag, crp)
+2	queue_t *q;
+3	dev_t *dev;
+4	int oflag;
+5	int sflag;
+6	cred_t *crp;
+7  {
+8	minor_t minnum;
+
+9	if (sflag == CLONEOPEN) {
+10		for (minnum = 0; minnum < XXXMAXMIN; minnum++)
+11			if (!INUSE(minnum))
+12				break;
+13		if (minnum >= XXXMAXMIN)
+14			return(ENXIO);
+15		*devp = makedevice(getemajor(*devp), minnum);
+16	}
+	...
+.vs
+.ps
+.ft 1
+.fi
+.IX "\f4makedevice\fP(D3DK), example"
+.IX "\f4getemajor\fP(D3DK), example"

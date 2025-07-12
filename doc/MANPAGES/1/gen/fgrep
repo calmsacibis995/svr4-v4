@@ -1,0 +1,120 @@
+'\"macro stdmacro
+.if n .pH g1.fgrep @(#)fgrep	40.4.1.4 of 4/17/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} fgrep 1 "Directory and File Management Utilities" "\&"
+.if \nX=1 .ds x} fgrep 1 "Directory and File Management Utilities"
+.if \nX=2 .ds x} fgrep 1 "" "\&"
+.if \nX=3 .ds x} fgrep "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4fgrep\f1 \- search a file for a character string
+.SH SYNOPSIS
+\f4fgrep\f1 [\f2options\f1] \f2string\f1 [\f2file\f1 . . . ]
+.SH DESCRIPTION
+\f4fgrep\fP (fixed string \f4grep\fP)
+searches files for a character string 
+and prints all lines that contain that string.
+\f4fgrep\fP is different from 
+\f4grep\fP and \f4egrep\fP
+because it searches for a string
+instead of searching for 
+a pattern that matches an expression.
+It uses a fast and compact algorithm.
+.PP
+The characters
+\f4$\f1,
+\f4\(**\f1,
+\f4[\f1,
+\f4^\f1,
+\(bv,
+\f4(\f1,
+\f4)\f1,
+and
+\f4\e\f1
+are interpreted literally by 
+\f4fgrep\fP,
+that is,
+\f4fgrep\fP
+does not recognize full regular expressions as does
+\f4egrep\fP.
+Because these characters 
+have special meaning to the shell, 
+it is safest to enclose the entire
+.I string\^
+in single quotes
+\f4\&\|\(fm\f1 . . . \f4\(fm\f1.
+.PP
+If no files are specified,
+\f4fgrep\fP assumes standard input.
+Normally, each line found is copied to the standard output.
+The filename is printed before each line found 
+if there is more than one input file.
+.PP
+Command line options are:
+.PP
+.PD 0
+.TP 6
+\f4\-b\f1
+Precede each line by 
+the block number on which it was found.
+This can be useful in 
+locating block numbers by context (first block is 0).
+.TP
+\f4\-c\f1
+Print only a count of the lines that contain the pattern.
+.TP
+\f4\-h\f1
+Suppress printing of filenames when searching multiple files.
+.TP
+\f4\-i\f1
+Ignore uppercase/lowercase distinction during comparisons.
+.TP
+\f4\-l\f1
+Print the names of files with matching lines once,
+separated by newlines.
+Does not repeat the names of files 
+when the pattern is found more than once.
+.TP
+\f4\-n\f1
+Precede each line by its line number in the file (first line is 1).
+.TP
+\f4\-v\f1
+Print all lines except those that contain the pattern.
+.TP
+\f4\-x\f1
+Print only lines matched entirely.
+.TP
+\f4\-e\f2 special_string\^\f1
+Search for a
+.I "special_string\^"
+.RI ( string\^
+begins with a
+\f4\-\f1).
+.TP
+\f4\-f\f2 file\^\f1
+Take the list of
+.I strings\^
+from 
+.IR file .
+.PD
+.PP
+.SH SEE ALSO
+\f4ed\fP(1),
+\f4egrep\fP(1),
+\f4grep\fP(1),
+\f4sed\fP(1),
+\f4sh\fP(1).
+.SH DIAGNOSTICS
+Exit status is 0 if any matches are found,
+1 if none, 2 for syntax errors or inaccessible files
+(even if matches were found).
+.SH NOTES
+Ideally there should be only one \f4grep\fP command,
+but there is not a single algorithm 
+that spans a wide enough range of space-time tradeoffs.
+Lines are limited to \f4BUFSIZ\fP characters;
+longer lines are truncated.
+\f4BUFSIZ\fP is defined in \f4/usr/include/stdio.h\f1.
+.Ee

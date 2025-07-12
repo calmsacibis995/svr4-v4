@@ -1,0 +1,50 @@
+'\"macro stdmacro
+.if n .pH g3c.catgets @(#)catgets	40.6.1.1 of 1/3/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+'\"macro stdmacro
+.if n .pH g3.catgets @(#)nls 1.1
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.nr X
+.if \nX=0 .ds x} catgets 3C "" "\&"
+.if \nX=1 .ds x} catgets 3C ""
+.if \nX=2 .ds x} catgets 3C "" "\&"
+.if \nX=3 .ds x} catgets "" "" "\&"
+.TH \*(x}
+.SH "NAME\s+1\f1"
+\f4catgets\f1 \- read a program message
+.SH "SYNOPSIS"
+.nf
+\f4#include <nl_types.h>
+.P
+\f4char *catgets (nl_catd catd, int set_num, int msg_num, char *s);\fP
+.fi
+.SH "DESCRIPTION"
+\f4catgets\fP
+attempts to read message 
+.IR msg_num ,
+in set
+.IR set_num ,
+from the message catalogue identified by 
+.IR catd . 
+.I catd 
+is a catalogue descriptor returned from an earlier call to 
+\f4catopen\fP.
+.I s 
+points to a default message string which will be returned by 
+\f4catgets\fP
+if the identified message catalogue is not currently available.
+.SH "SEE ALSO"
+\f4catopen\fP(3C).
+.SH DIAGNOSTICS
+If the identified message is retrieved successfully, 
+\f4catgets\fP
+returns a pointer 
+to an internal buffer area containing the 
+null terminated message string.
+If the call is unsuccessful because the message catalogue
+identified by
+.I catd 
+is not currently available, a pointer to
+.I s
+is returned.

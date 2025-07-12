@@ -1,0 +1,283 @@
+'\"macro stdmacro
+.if n .pH g1a.slink @(#)slink	40.10 of 5/21/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} slink 1M "Internet Utilities" "\&"
+.if \nX=1 .ds x} slink 1M "Internet Utilities"
+.if \nX=2 .ds x} slink 1M "" "\&"
+.if \nX=3 .ds x} slink "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4slink\f1 \- streams linker
+.SH SYNOPSIS
+\f4slink\f1 [ \f4\-v\f1 ] [ \f4\-p\f1 ] [
+\f4\-u\f1 ] [ \f4\-f\f1 ] [ 
+\f4\-c \f2file\f1 ] [ \f4func\f1 [\f2arg1 arg2\f1 .\ .\ . ]]
+.SH DESCRIPTION
+\f4slink\f1
+is a 
+.SM STREAMS 
+configuration utility which is used to link together the
+various 
+.SM STREAMS 
+modules and drivers required for 
+\s-1STREAMS TCP/IP\s0.
+Input to
+\f4slink\f1
+is in the form of a script specifying the 
+.SM STREAMS 
+operations to be performed.
+Input is normally taken from the file
+\f4/etc/strcf\f1.
+.PP
+The following options may be specified on the
+\f4slink\f1
+command line:
+.TP 8
+\f4\-c \f2file\f1
+Use \f2file\f1 instead of
+\f4/etc/strcf\f1.
+.TP 8
+\f4\-v\f1
+Verbose mode (each operation is logged to
+\f4stderr\f1).
+.TP 8
+\f4\-p\f1
+Don't use persistent links (i.e., slink will remain in the background).
+.TP 8
+\f4\-f\f1
+Don't use persistent links and don't fork (i.e., slink will remain in foreground).
+.TP 8
+\f4\-u\f1
+Unlink persistent links (i.e., shut down network).
+.PP
+The configuration file contains a list of
+\f2functions\f1,
+each of which is composed of a list of
+\f2commands\f1.
+Each command is a call to one of the functions defined in the configuration
+file or to one of a set of built-in functions.  Among the built-in functions
+are the basic STREAMS operations
+\f4open\f1, \f4link\f1, and \f4push\f1,
+along with several TCP/IP-specific functions.
+.PP
+\f4slink\f1
+processing consists of parsing the input file, then calling
+the user-defined function
+\f4boot\f1,
+which is normally used to set up the standard configuration at boot time.
+If a function is specified on the
+\f4slink\f1
+command line, that function will be called instead of
+\f4boot\f1.
+.PP
+By default,
+\f4slink\f1
+establishes streams with persistent links (\f4I_PLINK\f1) and exits 
+following the execution of the specified function.
+If the
+\f4\-p\f1
+flag is specified,
+\f4slink\f1
+establishes streams with regular links (\f4I_LINK\f1) and
+remains idle in the background, holding open whatever file
+descriptors have been opened by the configuration commands.
+If the
+\f4\-f\f1
+flag is specified,
+\f4slink\f1
+establishes streams with regular links (\f4I_LINK\f1) and
+remains in the foreground, holding open whatever file
+descriptors have been opened by the configuration commands.
+.PP
+A function definition has the following form:
+.P
+.RS
+.nf
+.ft 4
+function-name {
+	command1
+	command2
+	...
+}
+.ft 1
+.fi
+.RE
+.LP
+The syntax for commands is:
+.P
+.RS
+\f2function arg1 arg2 arg3\f1 .\ .\ .
+.RE
+or
+.RS
+\f4var = \f2function arg1 arg2 arg3\f1 .\ .\ .
+.RE
+.P
+The placement of newlines is
+important: a newline must follow the left and right braces and
+every command.  Extra newlines are allowed, i.e. where
+one newline is required, more than one may be used.
+A backslash (\f4\e\f1) followed immediately by a newline is considered
+equivalent to a space, i.e. may be used to continue a command on a new line.
+The use of other white
+space characters (spaces and tabs) is at the discretion of the user,
+except that there must be white space separating the function name and
+the arguments of a command.
+.PP
+Comments are delimited by \f4#\f1 and newline, and are considered equivalent
+to a newline.
+.PP
+Function and variable names may be any string of characters
+taken from A-Z, a-z, 0-9, and \f4_\f1, except that the first character
+cannot be a digit.  Function names and variable names occupy separate
+name spaces.  All functions are global and may be forward referenced.
+All variables are local to the functions in which they occur.
+.PP
+Variables are defined when they appear to the left of an equals (\f4=\f1)
+on a command line; for example,
+.IP
+\f4tcp = open /dev/tcp\f1
+.LP
+The variable acquires the value returned by the command.  In the above
+example, the value of the variable
+\f4tcp\f1
+will be the file descriptor returned by the
+\f4open\f1
+call.
+.PP
+Arguments to a command may be either variables, parameters, or strings.
+.PP
+A variable that appears as an argument must have been assigned a value
+on a previous command line in that function.
+.PP
+Parameters take the form
+of a dollar sign (\f4$\f1) followed by one or two decimal digits, and are
+replaced with the corresponding argument from the function call.  If
+a given parameter was not specified in the function call, an error results
+(e.g. if a command references $3 and only two arguments were passed
+to the function, an execution error will occur).
+.PP
+Strings are sequences of characters optionally enclosed in double quotes
+(\f4"\f1).  Quotes may be used to prevent a string from being interpreted
+as a variable name or a parameter, and to allow the inclusion of 
+spaces, tabs, and the special characters \f4{\f1, \f4}\f1, \f4=\f1, 
+and \f4#\f1.
+The backslash (\f4\e\f1) may also be used to quote the 
+characters \f4{\f1, \f4}\f1, \f4=\f1, \f4#\f1, \f4"\f1, and \f4\e\f1 individually.
+.PP
+The following built-in functions are provided by
+\f4slink\f1:
+.TP 22
+\f4open \f2path\f1
+Open the device specified by pathname
+\f2path\f1.
+Returns a file descriptor referencing the open stream.
+.TP 22
+\f4link \f2fd1 fd2\f1
+Link the stream referenced by
+\f2fd2\f1
+beneath the stream referenced by
+\f2fd1\f1.
+Returns the link identifier associated with the link.
+Unless the
+\f4\-f\f1
+or
+\f4\-p\f1
+flag is specified on the command line, the streams will
+be linked with persistent links.
+Note:
+\f2fd2\f1
+cannot be used after this operation.
+.TP 22
+\f4push \f2fd module\f1
+Push the module
+\f2module\f1
+onto the stream referenced by
+\f2fd\f1.
+.TP 22
+\f4sifname \f2fd link name\f1
+Send a \f4SIOCSIFNAME\f1 
+(set interface name) ioctl down the stream referenced
+by
+\f2fd\f1
+for the link associated with link identifier
+\f2link\f1
+specifying the name
+\f2name\f1.
+.TP 22
+\f4unitsel \f2fd unit\f1
+Send a \f4IF_UNITSEL\f1 
+(unit select) ioctl down the stream referenced by
+\f2fd\f1
+specifying unit
+\f2unit\f1.
+.TP 22
+\f4dlattach \f2fd unit\f1
+Send a \f4DL_ATTACH_REQ\f1 message down the stream referenced by
+\f2fd\f1
+specifying unit
+\f2unit\f1.
+.TP 22
+\f4initqp \f2path qname lowat hiwat ...\f1
+Send an 
+\f4INITQPARMS\f1 (initialize queue parameters) ioctl to the driver
+corresponding to pathname
+\f2path\f1.
+\f2qname\f1
+specifies the queue for which the low and high water marks will be set,
+and must be one of:
+.P
+.RS 1.5i
+.PD 0
+.TP .5i
+\f4hd\f1
+stream head
+.TP
+\f4rq\f1
+read queue
+.TP
+\f4wq\f1
+write queue
+.TP
+\f4muxrq\f1
+multiplexor read queue
+.TP
+\f4muxwq\f1
+multiplexor write queue
+.PD
+.RE
+.P
+.TP 22
+\0
+\f2lowat\f1
+and 
+\f2hiwat\f1
+specify the new low and high water marks for the queue.  Both
+\f2lowat\f1
+and 
+\f2hiwat\f1
+must be present.  To change only one of these parameters, the other
+may be replaced with a dash (\f4\-\f1).  Up to five
+\f2qname lowat hiwat\f1
+triplets may be present.
+.TP 22
+\f4strcat \f2str1 str2\f1
+Concatenate strings
+\f2str1\f1
+and 
+\f2str2\f1
+and return the resulting string.
+.TP 22
+\f4return \f2val\f1
+Set the return value for the current function to
+\f2val\f1.
+.br
+Note: executing a
+\f4return\f1
+command does not terminate execution of the current function.
+.SH FILES
+\f4/etc/strcf\f1
+.SH SEE ALSO
+\f4strcf\f1(4)

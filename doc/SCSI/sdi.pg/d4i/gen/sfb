@@ -1,0 +1,69 @@
+'\"macro stdmacro
+.if n .pH gen.sfb @(#)sfb	40.1 of 2/22/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.nr X
+.if \nX=0 .ds x} sfb D4I SDI "\&"
+.if \nX=1 .ds x} sfb D4I SDI
+.if \nX=2 .ds x} sfb D4I "" "\&"
+.if \nX=3 .ds x} sfb "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4sfb\fP \- SCSI function block structure
+.SH SYNOPSIS
+\f4#include <sys/sdi.h>\fP
+.SH DESCRIPTION
+The SCSI function block serves as a mechanism for sending control information
+from a target driver to the host adapter or to a SCSI device.  (The
+\f4scb\f1(D4I)
+is sent to the device, the \f4sfb\f1 is generally sent to all other receiving
+entities.)
+.P
+An \f4sfb\f1 is sent to the device when an abort or reset message is
+required.  (Abort and reset messages have a different protocol than do the
+commands sent to the SCSI device with a CDB.)
+.SH STRUCTURE MEMBERS
+.ft 4
+.nf
+unsigned long   sf_comp_code;   /* Current job status */
+void            (*sf_int)();    /* Target driver intr handler */
+struct scsi_ad  sf_dev;         /* SCSI device address */
+unsigned long   sf_func;        /* Function to be performed */
+int             sf_wd           /* Target driver word */
+.fi
+.ft 1
+.P
+The \f4sf_comp_code\f1 is identical to the \f4sc_comp_code\f1 in the
+\f4scb\f1, and it takes on the same values; see \f4scb\f1(D4I).
+.P
+The \f4sf_int\f1 and \f4sf_dev\f1 entries are used the same as in
+the \f4scb\f1 structure.  The only field which the host adapter changes
+in the \f4sfb\f1 structure is \f4sf_comp_code\f1.
+.P
+The \f4sf_func\f1 member indicates the operation to be performed:
+.RS 3n
+.TP 16n
+\f4SFB_ABORTM\fP
+Send an abort message to the addressed logical unit.
+.TP
+\f4SFB_FLUSHR\fP
+Flush a logical queue unit.
+.TP
+\f4SFB_NOPF\fP
+The target driver is not to perform an operation.
+.TP
+\f4SFB_RESETM\fP
+Send a bus device reset message to the
+addressed controller.
+.TP
+\f4SFB_RESUME\fP
+Permit normal job flow to a logical unit.
+This command is used after \f4SFB_SUSPEND\fP, but no error results if \f4SFB_RESUME\fP is
+called first.
+.TP
+\f4SFB_SUSPEND\fP
+Suspend a queue.  This indicates 
+that normal job flow to the logical unit is halted until the queue is 
+resumed by the target driver.
+.RE
+.SH SEE ALSO
+\f4scb\f1(D4I)

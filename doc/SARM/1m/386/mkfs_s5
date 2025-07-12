@@ -1,0 +1,214 @@
+'\"!  tbl | mmdoc
+'\"macro stdmacro
+.if n .pH g1a.mkfs_s5 @(#)mkfs_s5	40.5 of 1/3/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+'\"!  tbl | mmdoc
+'\"macro stdmacro
+.if n .pH g1a.mkfs_s5 @(#)mkfs_s5	40.10 of 9/2/89
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.if \nX=0 .ds x} mkfs 1M "s5" "\&"
+.if \nX=1 .ds x} mkfs 1M "s5"
+.if \nX=2 .ds x} mkfs 1M "" "\&"
+.if \nX=3 .ds x} mkfs "" "" "\&"
+.nr X
+.TH \*(x} "" "386 Computer Only"
+.SH NAME
+\f4mkfs\f1 (s5) \- construct an \f4s5\f1 file system
+.SH SYNOPSIS
+\f4mkfs\f1
+[\f4\-F s5\f1] [\f2generic_options\f1] \f2special\f1
+.br
+\f4mkfs\f1
+[\f4\-F s5\f1] [\f2generic_options\f1] [\f4\-b\f2 block_size\f1] \f2special blocks\f1[:\f2i-nodes\f1] [\f2gap blocks/cyl\f1] 
+.br
+\f4mkfs\f1
+[\f4\-F s5\f1]
+[\f2generic_options\f1]
+[\f4\-b\f2 block_size\f1] \f2special proto\f1 [\f2gap blocks/cyl\f1] 
+.SH DESCRIPTION 
+.I generic_options
+are options supported by the generic \f4mkfs\f1 command.
+.PP
+\f4mkfs\f1
+constructs an \f4s5\f1 file system by writing on the 
+.I special\^
+file using the values found in the remaining arguments of the
+command line.
+\f4mkfs\fP builds a file system with a \f4root\fP directory
+and a \f4lost+found\fP directory.
+.PP
+The options are:
+.TP 12
+\f4\-F s5\f1
+Specifies an \f4s5\f1-FSType.
+.TP 12
+\f4\-b\f2 blocksize\f1
+Specifies the logical block size for the
+file system.
+The logical block size is the number of bytes
+read or written by the operating system in a single I/O operation.
+Valid values for
+.I blocksize\^
+are
+512,
+1024,
+and
+2048.
+The default is 1024.
+.PP
+If the second argument to
+\f4mkfs\f1
+is a string of digits, 
+the size of the file system is the value of
+.I blocks\^
+interpreted as a decimal number. 
+This is the number of
+.I physical\^
+(512 byte) disk blocks the file system will occupy.
+If the
+number of i-nodes is not given, the default
+is approximately the number of
+.I logical\^
+blocks divided by 4.
+\f4mkfs\f1
+builds a file system with a single empty directory
+on it. 
+The boot program block (block zero) is left uninitialized. 
+.PP
+If the second argument is the name of a file 
+that can be opened,
+\f4mkfs\f1
+assumes it to be a prototype file
+.IR proto ,
+and will take its directions from that file.
+The prototype file
+contains tokens separated by spaces or
+new-lines.
+A sample prototype specification follows (line numbers have been added to
+aid in the explanation):
+.PP
+.nf
+.in +5
+1.       \f4/dev/rdsk/0s0\f1
+2.	\f44872 110\f1
+3.	\f4d\-\-777 3 1\f1
+4.	\f4usr	d\-\-777 3 1\f1
+5.		\f4sh	\-\-\-755 3 1 /sbin/sh\f1
+6.		\f4ken	d\-\-755 6 1\f1
+7.			\f4$\f1
+8.		\f4b0	b\-\-644 3 1 0 0\f1
+9.		\f4c0	c\-\-644 3 1 0 0\f1
+10.		\f4slnk	l\-\-777 2 2	/var/tmp\f1
+11.		\f4$\f1
+12.	\f4$\f1
+.in -5
+.fi
+.PP
+Line 1 in the example is the name of a file
+to be copied onto block zero as
+the bootstrap program.
+.ne 3
+.PP
+Line 2 specifies the number of
+.I physical\^
+(512 byte) blocks the file system is to occupy
+and the number of i-nodes in the file system.
+.PP
+Lines 3-10 tell
+\f4mkfs\f1
+about files and directories to
+be included in this file system.
+.PP
+Line 3 specifies the root directory.
+.PP
+Lines 4-6 and 8-10 specify other directories and files.
+.PP
+Line 10 specifies the symbolic link \f4slnk\fP
+set up in \f4/usr\fP and containing \f4/var/tmp\fP.
+.PP
+The $ on line 7 tells 
+\f4mkfs\f1
+to end the branch of the file system it is on, and continue
+from the next higher directory.
+The $ on lines 11 and 12 end the process, since no additional
+specifications follow.
+.PP
+File specifications give the mode,
+the user \s-1ID\s0,
+the group \s-1ID\s0,
+and the initial contents of the file.
+Valid syntax for the contents field
+depends on the first character of the mode.
+.PP
+The mode for a file is specified by a 6-character string.
+The first character
+specifies the type of the file.
+The character range is
+\f4\-bcdl\f1
+to specify regular, block special,
+character special, directory, and symbolic link files
+respectively.
+The second character of the mode
+is either
+\f4u\f1
+or
+\f4\-\f1
+to specify set-user-id mode or not.
+The third is
+\f4g\f1
+or
+\f4\-\f1
+for the set-group-id mode.
+The rest of the mode
+is a 3 digit octal number giving the
+owner, group, and other read, write, execute
+permissions (see
+.IR chmod (1)).
+.PP
+Two decimal number
+tokens come after the mode; they specify the
+user and group \s-1ID\s0s of the owner of the file.
+.PP
+If the file is a regular file,
+the next token of the specification may be a path name
+whence the contents and size are copied.
+If the file is a block or character special file,
+two decimal numbers 
+follow which give the major and minor device numbers.
+If the file is a directory,
+\f4mkfs\f1
+makes the entries
+\f4.\f1
+and
+\f4..\f1
+and then
+reads a list of names and
+(recursively)
+file specifications for the entries
+in the directory.
+As noted above, the scan is terminated with the
+token
+\f4$\f1.
+.PP
+The 
+.I gap blocks/cyl\^
+argument in both forms of the command specifies the rotational gap
+and the number of blocks/cylinder.
+If the
+.I gap
+and
+.I blocks/cyl
+are not specified or are considered illegal values
+a default value of gap size 10 and 162 blocks/cyl is used.
+.SH NOTES
+With a prototype file there is no way to specify hard links.
+.P
+The maximum number of i-nodes configurable is 65500.
+.SH FILES
+\f4/etc/vtoc/\(**\f1
+.SH SEE ALSO
+generic \f4mkfs\f1(1M), \f4dir\f1(4), \f4fs\f1(4).
+.br
+\f4chmod\f1(1) in the
+\f2User's Reference Manual\f1.

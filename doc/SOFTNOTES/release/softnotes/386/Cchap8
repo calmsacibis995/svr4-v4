@@ -1,0 +1,25 @@
+.if n .pH 386.Cchap8 @(#)Cchap8	40.29
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.BK "Software Notes" "" "" ""   
+.\ACRONYM	                  
+.CH "Line Printer Spooling Utilities" "" "Table of Contents" "8"
+.\CHAPTER	8
+.tC 1 "Line Printer Spooling Utilities Notes" 8-1  
+.Index: istart UNIX System V/386 Release 4, line printer notes	1
+.tC 2 "Compatibility" 8-1  
+.Index: LP print service, source compatibility    	1
+.tC 2 "Known Problems" 8-1  
+.tC 3 "Networking" 8-1  
+.Index: LP print service, networking cautions    	1
+.tC 3 "BSD Compatibility Commands" 8-2  
+.Index: LP print service, BSD compatibility    	2
+.tC 3 "Line Printer Spooling Utilities Directory Structure" 8-2  
+.Index: LP print service, directory structure    	2
+.tC 3 "Line Printer Spooling Utilities over RFS" 8-2  
+.Index: LP print service, RFS compatibility    	2
+.tC 2 "Line Printer Spooling Utilities over NFS" 8-2  
+.tC 2 "lpstat Command" 8-2  
+.tC 2 "Printer Interface Concerns" 8-3  
+.tC 2 "Batch Postscript" 8-3  
+.Index: iend UNIX System V/386 Release 4, line printer notes	3
+.tC 2 "lp Device" 8-3  

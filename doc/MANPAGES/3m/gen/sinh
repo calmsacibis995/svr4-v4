@@ -1,0 +1,108 @@
+'\"macro stdmacro
+.if n .pH g3m.sinh @(#)sinh	40.10 of 5/21/91
+.\" Copyright 1989 AT&T
+.nr X
+.if \nX=0 .ds x} sinh 3M "Math Libraries" "\&"
+.if \nX=1 .ds x} sinh 3M "Math Libraries"
+.if \nX=2 .ds x} sinh 3M "" "\&"
+.if \nX=3 .ds x} sinh "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4sinh\f1, \f4sinhf\f1, \f4cosh\f1, \f4coshf\f1, \f4tanh\f1, \f4tanhf\f1, \f4asinh\f1, \f4acosh\f1, \f4atanh\f1 \- hyperbolic functions
+.SH SYNOPSIS
+\f4cc\f1
+[\f2flag\fP \|.\|.\|.] \f2file\fP \|.\|.\|.
+\f4\-lm\f1
+[\f2library\fP \|.\|.\|.]
+.PP
+\f4#include <math.h>\f1
+.PP
+\f4double sinh (double \f2x\fP);\f1
+.PP
+\f4float sinhf (float \f2x\fP);\f1
+.PP
+\f4double cosh (double \f2x\fP);\f1
+.PP
+\f4float coshf (float \f2x\fP);\f1
+.PP
+\f4double tanh (double \f2x\fP);\f1
+.PP
+\f4float tanhf (float \f2x\fP);\f1
+.PP
+\f4double asinh (double \f2x\fP);\f1
+.PP
+\f4double acosh (double \f2x\fP);\f1
+.PP
+\f4double atanh (double \f2x\fP);\f1
+.SH DESCRIPTION
+\f4sinh\fP,
+\f4cosh\fP,
+and
+\f4tanh\fP
+and the single-precision versions
+\f4sinhf\fP,
+\f4coshf\fP,
+and
+\f4tanhf\fP
+return, respectively, the hyberbolic sine, cosine, and tangent
+of their argument.
+.PP
+\f4asinh\fP,
+\f4acosh\fP,
+and
+\f4atanh\fP
+return, respectively, the inverse hyperbolic sine, cosine, and tangent
+of their argument.
+.SH SEE ALSO
+\f4matherr\fP(3M)
+.SH DIAGNOSTICS
+\f4sinh\fP,
+\f4sinhf\fP,
+\f4cosh\fP,
+and
+\f4coshf\fP
+return
+\f4HUGE\f1
+(and
+\f4sinh\fP
+and
+\f4sinhf\fP
+may return
+\f4\-HUGE\f1
+for negative
+.IR x )
+when the correct value would overflow and set
+\f4errno\fP
+to
+\f4ERANGE\fP.
+.PP
+\f4acosh\fP
+returns \f4NaN\f1 and sets
+\f4errno\fP
+to
+\f4EDOM\f1
+when the argument
+\f2x\f1
+is less than 1.
+A message indicating
+\f4DOMAIN\fP error is
+printed on the standard error output.
+.PP
+\f4atanh\fP
+returns \f4NaN\f1 and sets
+\f4errno\fP
+to
+\f4EDOM\f1
+if | \f2x\f1\|| \(>= 1.
+If | \f2x\f1\|| = 1, a message indicating
+\f4SING\fP error is printed on the standard error output;
+if | \f2x\f1\|| > 1 the message will indicate \f4DOMAIN\fP error.
+.PP
+Except when the \f4\-Xc\f1 compilation option is used,
+these error-handling procedures may be changed with the function
+\f4matherr\fP.
+When the \f4\-Xa\f1 or \f4\-Xc\f1 compilation options are used,
+\f4HUGE_VAL\f1
+is returned instead of
+\f4HUGE\f1
+and no error messages are printed.

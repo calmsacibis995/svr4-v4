@@ -1,0 +1,46 @@
+'\"macro stdmacro
+.if n .pH 386.mps_AMPsd_d @(#)mps_AMPsd_d	40.5 of 7/1/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.nr X
+.if \nX=0 .ds x} mps_AMPsend_data D3D "Multibus II" "DDI" "\&"
+.if \nX=1 .ds x} mps_AMPsend_data D3D "Multibus II" "DDI" "\&"
+.if \nX=2 .ds x} mps_AMPsend_data D3D "" "\&"
+.if \nX=3 .ds x} mps_AMPsend_data "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4mps_AMPsend_data\f1 \- sends solicited data that is not part of any
+request-response transaction
+.SH SYNOPSIS
+.nf
+\f4#include <sys/mps.h>
+long mps_AMPsend_data(\f2chan\fP, \f2omsg\fP, \f2obuf\fP)
+long chan;
+mps_msgbuf_t *omsg;
+struct dma_buf *obuf;\f1
+.fi
+.SH ARGUMENTS
+.PP
+.PD 0
+.TP 11
+\f2chan\f1
+Channel number received from a previous \f4mps_open_chan\f1.
+.TP 11
+\f2omsg\f1
+Points to a message buffer containing an unsolicited message used to
+initiate the data transfer.
+This message should be constructed using
+\f4mps_mk_sol\f1 with a transaction id of 0 (zero).
+.TP 11
+\f2obuf\f1
+Specifies the data buffer for the data that is to be sent.
+.SH DESCRIPTION
+\f4mps_AMPsend_data\f1 is asynchronous in operation.
+This routine is
+used for solicited data transmission that is not part of any
+request-response transaction.
+.SH RETURN VALUE
+If no error is detected, 0 (zero) is returned.
+When an error is detected, \-1 is returned.
+.SH SEE ALSO
+\f4mps_open_chan\f1(D3D),
+\f4mps_mk_sol\f1(D3D)

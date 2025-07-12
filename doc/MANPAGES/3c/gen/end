@@ -1,0 +1,59 @@
+'\"macro stdmacro
+.if n .pH g3c.end @(#)end	40.12.1.1 of 1/29/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} end 3C "C Programming Language Utilities" "\&"
+.if \nX=1 .ds x} end 3C "C Programming Language Utilities"
+.if \nX=2 .ds x} end 3C "" "\&"
+.if \nX=3 .ds x} end "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4end\f1, \f4etext\f1, \f4edata\f1 \- last locations in program
+.SH SYNOPSIS
+.PP
+\f4extern etext;\f1
+.PP
+\f4extern edata;\f1
+.PP
+\f4extern end;\f1
+.SH DESCRIPTION
+These names refer neither to routines
+nor to locations with interesting contents;
+only their addresses are meaningful.
+.TP
+\f4etext\fP
+The address of \f4etext\fP
+is the first address above the program text.
+.TP
+\f4edata\fP
+The address of \f4edata\fP
+is the first address above the initialized
+data region.
+.TP
+\f4end\fP
+The address of \f4end\fP is the first
+address above the uninitialized data region.
+.SH "SEE ALSO"
+\f4cc\fP(1), \f4brk\fP(2), \f4malloc\fP(3C), \f4stdio\fP(3S).
+.SH NOTE
+When execution begins, the program break
+(the first location beyond the data)
+coincides with
+\f4end\fP,
+but the program break may be reset by
+the routines
+\f4brk\fP,
+\f4malloc\fP, 
+the standard input/output library
+[see \f4stdio\fP(3S)],
+by the profile
+\f1(\f4\-p\f1)
+option of 
+\f4cc\fP,
+and so on.
+Thus, the current value of the program break
+should be determined by
+\f4sbrk (0)\f1
+[see
+\f4brk\fP(2)].

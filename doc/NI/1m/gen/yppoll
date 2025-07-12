@@ -1,0 +1,61 @@
+'\"macro stdmacro
+.if n .pH g1a.yppoll @(#)yppoll	40.6 of 5/16/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.\" @(#)yppoll.8 1.8 89/09/28 SMI;
+.\" Copyright (c) 1988 Sun Microsystems, Inc. - All Rights Reserved.
+.nr X
+.if \nX=0 .ds x} yppoll 1M "" "\&"
+.if \nX=1 .ds x} yppoll 1M ""
+.if \nX=2 .ds x} yppoll 1M "" "\&"
+.if \nX=3 .ds x} yppoll "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4yppoll\fP \- return current version of the map at the NIS 
+server host
+.SH SYNOPSIS
+\f4/usr/sbin/yppoll\f1
+[
+\f4\-d\f1
+\f2ypdomain\f1
+]
+[
+\f4\-h\f1
+\f2host\f1
+]
+\f2mapname\f1
+.SH DESCRIPTION
+.P
+The
+\f4yppoll\f1
+command asks a
+\f4ypserv\f1(1M)
+process what the order number is, and which host
+is the master
+\s-1NIS\s0
+server for the named map.
+.P
+The following options are available:
+.TP 16
+\f4\-d \f2ypdomain\f1
+Use
+\f2ypdomain\f1
+instead of the default domain.
+.TP
+\f4\-h \f2host\f1
+Ask the
+\f4ypserv\f1
+process at
+\f2host\f1
+about the map parameters.
+If
+\f2host\f1
+is not specified, the
+\s-1NIS\s0
+server for the local host is used.
+That is, the default host is the one returned by
+\f4ypwhich\f1(1).
+.SH "SEE ALSO"
+\f4ypserv\f1(1M),
+\f4ypwhich\f1(1),
+\f4ypfiles\f1(4)

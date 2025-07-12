@@ -1,0 +1,97 @@
+'\"macro stdmacro
+.if n .pH g4.core @(#)core	@(#)core	40.13 of 5/1/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} core 4 "" "\&"
+.if \nX=1 .ds x} core 4 ""
+.if \nX=2 .ds x} core 4 "" "\&"
+.if \nX=3 .ds x} core "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4core\f1 \- core image file
+.SH DESCRIPTION
+The
+.SM UNIX
+system writes out a core image of a
+process when it is terminated due to the receipt of some signals.
+The core image is called
+\f4core\f1
+and is written in the process's
+working directory (provided it can be;
+normal access controls apply).
+A process with an effective user
+.SM ID
+different from the real user
+.SM ID
+will not produce a core image.
+.PP
+The core file contains all the process information 
+pertinent to debugging: contents of hardware registers,
+process status and process data.
+The format of a core file is object file specific.
+.PP
+For \s-1ELF\s+1 executable programs [see \f4a.out\fP(4)],
+the core file generated is also an \s-1ELF\s+1 file, containing
+\s-1ELF\s+1 program and file headers.
+The \f4e_type\fP field
+in the file header has type \f4ET_CORE\fP.
+The program header
+contains an entry for every loadable and writable segment
+that was part of the process address space, including shared
+library segments.
+The contents of the segments themselves
+are also part of the core image.
+.PP
+The program header of an \s-1ELF\s+1 core file also contains 
+a \f4NOTE\fP segment.
+This segment may contain the following
+entries.
+Each has entry name \f4"CORE"\fP and presents the contents
+of a system structure:
+.TP
+\f4prstatus_t\fP
+The entry containing this structure has a \f4NOTE\fP type of 1.
+This structure contains things of interest to a debugger
+from the operating system's u-area, such as the general registers,
+signal dispositions, state, reason for stopping, process ID and
+so forth.
+The structure is defined in \f4sys/procfs.h\fP.
+.TP
+\f4fpregset_t\fP
+This entry is present only if the process used the floating-point
+hardware.
+It has a \f4NOTE\fP type of 2 and contains the
+floating-point registers.
+The \f4fpregset_t\fP structure is defined
+in \f4sys/regset.h\fP.
+.TP
+\f4prpsinfo_t\fP
+The entry containing this structure has a \f4NOTE\fP type of 3.
+It contains information of interest to the \f4ps\fP(1) command,
+such as process status, cpu usage, "nice" value, controlling terminal,
+user ID, process ID, the name of the executable and so forth.
+The structure is defined in \f4sys/procfs.h\fP.
+.PP
+\s-1COFF\s+1 executable programs produce core files consisting of two
+parts: the first section is a copy of the system's per-user data
+for the process, including the general registers.
+The format
+of this section is defined in the header files \f4sys/user.h\fP
+and \f4sys/reg.h\fP.
+The remainder of a \s-1COFF\s+1 core image represents
+the actual contents of the process data space.
+.PP
+The size of the core file created by a process may be controlled
+by the user [see \f4getrlimit\fP(2)].
+.SH "SEE ALSO"
+\f4sdb\fP(1), \f4getrlimit\fP(2), 
+\f4setuid\fP(2), \f4elf\fP(3E), \f4a.out\fP(4), \f4signal\fP(5)
+.br
+\f4crash\fP(1M) in the
+\f2System Administrator's Reference Manual\f1
+.br
+The ``Object Files'' chapter in the 
+\f2Programmer's Guide: ANSI C and Programming Support Tools\fP
+.\"	@(#)core.4	6.2 of 10/20/83
+.Ee

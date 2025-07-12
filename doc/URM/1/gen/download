@@ -1,0 +1,145 @@
+'\"macro stdmacro
+.if n .pH g1.download @(#)download	40.6 of 5/21/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} download 1 "Line Printer Spooling Utilities" "\&"
+.if \nX=1 .ds x} download 1 "Line Printer Spooling Utilities"
+.if \nX=2 .ds x} download 1 "" "\&"
+.if \nX=3 .ds x} download "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4download\fP \- host resident PostScript font downloader
+.SH SYNOPSIS
+\f4download\fP [\f2options\fP] [\f2files\fP]
+.SH DESCRIPTION
+\f4download\fP prepends host resident fonts to
+.I files
+and writes the results on the standard output.
+If no
+.I files
+are specified, or if \f4\-\fP is one of the input
+.I files,
+the standard input is read.
+\f4download\fP
+assumes the input
+.I files
+make up a single PostScript job and that requested fonts
+can be included at the start of each input
+.I file.
+The following
+.I options
+are understood:
+.TP 12n
+\f4\-f\fP
+Force a complete scan of each input
+.I file.
+In the absence of an explicit comment pointing
+\f4download\fP
+to the end of the file, the default scan stops
+immediately after the PostScript header comments.
+.TP
+\f4\-p\fP \f2printer\fP
+Before downloading,
+check the list of printer-resident fonts
+in \f4/etc/lp/printers/\f2printer\f4/residentfonts\f1.
+.TP
+\f4\-m\fP \f2name\fP
+Use
+.I name
+as the font map table.
+A
+.I name
+that begins with \f4/\fP is the full pathname of the
+map table and is used as is.
+Otherwise
+.I name
+is appended to the pathname of the host font directory.
+.TP
+\f4\-H\fP \f2dir\fP
+Use
+.I dir
+as the host font directory.
+The default is \f4/usr/lib/lp/postscript\fP.
+.PP
+Requested fonts are named in
+a comment (marked with \f4%%DocumentFonts:\fP)
+in the input
+.IR files .
+Available fonts are the ones listed in the map table
+selected using the
+\f4\-m\fP
+option.
+.PP
+The map table consists of fontname\-filename pairs.
+The fontname is the full name of the PostScript font,
+exactly as it would appear in a \&\f4%%DocumentFonts:\fP
+comment.
+The filename is the pathname of the host resident font.
+A filename that begins with a \f4/\fP is used as is.
+Otherwise the pathname is relative to the host font
+directory.
+Comments are introduced by % (as in PostScript) and
+extend to the end of the line.
+.PP
+The only candidates for downloading are
+fonts listed in the map table
+that point \f4download\fP to readable files.
+A font is downloaded once, at most.
+Requests for unlisted fonts or inaccessible files
+are ignored.
+All requests are ignored if the map table can't be read.
+.SH EXAMPLES
+The following
+map table could be used to control the downloading
+of the Bookman font family:
+.P
+.ft4
+.nf
+
+  %
+  % The first string is the full PostScript font name.
+  % The second string is the file name - relative to the
+  % host font directory unless it begins with a /.
+  %
+    Bookman-Light            bookman/light
+    Bookman-LightItalic      bookman/lightitalic
+    Bookman-Demi             bookman/demi
+    Bookman-DemiItalic       bookman/demiitalic
+.fi
+.ps
+.ft
+.PP
+Using the file \f4myprinter/map\fP
+(in the default host font directory)
+as the map table,
+you could download fonts
+by issuing the following command:
+.PP
+.RS
+\f4download \-m\fP \f2myprinter/map file\fP
+.RE
+.SH DIAGNOSTICS
+An exit status of \f40\fP is returned if
+.I files
+were successfully processed.
+.SH NOTES
+The \f4download\fP program
+should be part of a more general program.
+.PP
+\f4download\fP
+does not look for \&\f4%%PageFonts:\fP comments
+and there is no way to force multiple downloads of
+a particular font.
+.PP
+We do not recommend the use of full pathnames
+in either map tables or the names of map tables.
+.SH SEE ALSO
+\f4dpost\fP(1),
+\f4postdaisy\fP(1),
+\f4postdmd\fP(1),
+\f4postio\fP(1),
+\f4postmd\fP(1),
+\f4postprint\fP(1),
+.br
+\f4posttek\fP(1)

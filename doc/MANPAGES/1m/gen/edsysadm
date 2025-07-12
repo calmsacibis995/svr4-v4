@@ -1,0 +1,175 @@
+'\"macro stdmacro
+.if n .pH g1a.edsysadm @(#)edsysadm	40.11 of 1/3/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} edsysadm 1M "Essential Utilities" "\&"
+.if \nX=1 .ds x} edsysadm 1M "Essential Utilities"
+.if \nX=2 .ds x} edsysadm 1M "Essential Utilities" "\&"
+.if \nX=3 .ds x} edsysadm 1M "Essential Utilities" "\&"
+.TH \*(x}
+.SH NAME
+\f4edsysadm\f1 \- \f4sysadm\fP interface editing tool
+.SH SYNOPSIS
+\f4edsysadm\f1
+.SH DESCRIPTION
+\f4edsysadm\f1
+is an interactive tool that
+adds or changes either menu and task definitions in
+the \f4sysadm\f1 interface.
+It can be used to make changes directly on-line on a specific machine or
+to create changes that will become part of a software
+package.
+The command creates the administration files
+necessary to achieve the requested changes
+in the interface and either places them in the appropriate place for on-line
+changes or saves them to be included in a software package.
+.P
+\f4edsysadm\f1
+presents several screens, first prompting for which type of menu item you want
+to change, \f4menu\f1 or \f4task\f1,
+and then for what type of action to take, \f4add\f1 or \f4change\f1.
+When you select \f4add\f1, a blank menu or task
+definition (as described below) is provided for you to fill in.
+When you select \f4change\f1, a series
+of screens is presented to help identify the definition you wish to change.
+The final screen presented is the menu or task definition filled in with its
+current values, which you can then edit.
+.P
+The menu definition prompts and their descriptions are:
+.P
+.TP 25
+\f4Menu Name\f1
+The name of the new menu (as it should appear in the lefthand column of the
+screen).
+This field has a maximum length of 16 alphanumeric characters.
+.TP 25
+\f4Menu Description\f1
+A description of the new menu (as it should appear in the righthand
+column of the screen).
+This field has a maximum length of 58 characters and can consist of
+any alphanumeric character except at sign (@), carat (^), tilde (~),
+back grave (`), grave ('), and double quotes (").
+.TP 25
+\f4Menu Location\f1
+The location of the menu in the menu hierarchy,
+expressed as a menu pathname.
+The pathname should begin
+with the main menu followed by all
+other menus that must be traversed (in the order they are traversed) to access
+this menu.
+Each menu name must be separated by colons.
+For example, the menu location for a menu entry being added to the Applications
+menu is \f(CWmain:applications\f1.
+\f2Do not include the menu name in this location definition.\f1
+The complete pathname to this menu entry will be the menu location plus the
+menu name defined at the first prompt.
+.sp .5
+This is a scrollable field, showing a maximum of 50 alphanumeric characters
+at a time.
+.br
+.ne 1i
+.TP 25
+\f4Menu Help File Name\f1
+Pathname to the item help file for this menu entry.
+If it resides in the directory from which you invoked \f(CWedsysadm\f1,
+you do not need to give a full pathname.
+If you name an item help file that does not exist,
+you are placed in an
+editor (as defined by $EDITOR) to create one.
+The new file is created in the current directory and named \f(CWHelp\f1.
+.P
+The task definition prompts and their descriptions are:
+.P
+.TP 25
+\f4Task Name\f1
+The name of the new task (as it should appear in the lefthand column of the
+screen).
+This field has a maximum length of 16 alphanumeric characters.
+.TP 25
+\f4Task Description\f1
+A description of the new task (as it should appear in the righthand
+column of the screen).
+This field has a maximum length of 58 characters and can consist of
+any alphanumeric character except at sign (@), carat (^), tilde (~),
+back grave (`), grave ('), and double quotes (").
+.TP 25
+\f4Task Location\f1
+The location of the task in the menu hierarchy,
+expressed as a pathname.
+The pathname should begin with the main menu
+followed by all other menus that must be traversed (in the order they are
+traversed) to access this task.
+Each menu name must be separated by colons.
+For example, the task location for a task entry being added to the applications
+menu is \f(CWmain:applications\f1.
+\f2Do not include the task name in this location definition\f1.
+The complete pathname to this task entry will be the task location
+as well as the task name defined at the first prompt.
+.sp .5
+This is a scrollable field, showing a maximum of 50 alphanumeric characters
+at a time.
+.TP 25
+\f4Task Help File Name\f1
+Pathname to the item help file for this task entry.
+If it resides in the directory from which you invoked \f(CWedsysadm\f1,
+you do not need to give a full pathname.
+If you name an item help file that does not exist,
+you are placed in an
+editor (as defined by $EDITOR) to create one.
+The new file is created in the current directory and named \f(CWHelp\f1.
+.TP 25
+\f4Task Action\f1
+The FACE form name or executable that will be run when this task is selected.
+This is a scrollable field, showing a maximum of 58 alphanumeric characters
+at a time.
+This pathname can be relative to the current directory as well as absolute.
+.TP 25
+\f4Task Files\f1
+Any FACE objects or other executables that support the task action
+listed above and might be called from within that action.
+\f2Do not include the help file name or the task action in this
+list\f1.
+Pathnames can be relative to the current directory as well as
+absolute.
+A dot (.) implies "all files in the current directory" and includes
+files in subdirectories.
+.sp .5
+This is a scrollable field, showing a maximum of 50 alphanumeric characters
+at a time.
+.P
+Once the menu or task has been defined, screens for
+installing the menu or task or saving them for packaging are presented.
+The package creation or
+on-line installation is verified and you are informed upon completion.
+.SH NOTES
+For package creation or modification, this command automatically
+creates a menu information file and a \f4prototype\fP
+file in the current directory (the directory from which the
+command is executed).
+The menu information file is used during package installation
+to modify menus in the menu structure.
+A \f4prototype\fP file is an installation file which gives a listing of package
+contents.
+The \f4prototype\fP file created by \f4edsysadm\f1 lists the files defined
+under task action and gives them the special installation class of "admin".
+The contents of this \f4prototype\fP file must be incorporated in the package
+\f4prototype\fP file.
+.P
+For on-line installation, \f4edsysadm\f1 automatically creates a menu
+information file and adds or modifies the interface menu structure
+directly.
+.P
+The item help file must follow the format shown in the
+\f2Application Programmer's Guide\f1
+in the ``Customizing the Administration Interace'' chapter or in
+the \f2System Administrator's Guide\f1 in
+the ``Customizing the \f4sysadm\f1 Interface'' appendix.
+.SH SEE ALSO
+\f4delsysadm\fP(1M),
+\f4pkgmk\fP(1),
+\f4prototype\fP(4),
+\f4sysadm\fP(1M)
+.\"	@(#)edsysadm.1M	5.2 of 6/16/87
+.Ee
+

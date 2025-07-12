@@ -1,0 +1,34 @@
+'\"macro stdmacro
+.if n .pH @(#)issue	40.7 of 4/11/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} issue 4 "" "\&"
+.if \nX=1 .ds x} issue 4 ""
+.if \nX=2 .ds x} issue 4 "" "\&"
+.if \nX=3 .ds x} issue "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4issue\f1 \- issue identification file
+.SH DESCRIPTION
+The file
+\f4/etc/issue\f1
+contains the
+issue
+or project identification
+to be printed as a login prompt.
+\f4issue\fP
+is an
+.SM ASCII
+file that is read by program
+\f4getty\fP
+and then written to any terminal spawned or respawned from the
+.I lines
+file.
+.SH FILES
+\f4/etc/issue\fP
+.SH "SEE ALSO"
+\f4login\fP(1) in the
+\f2User's Reference Manual\f1
+.\"	@(#)issue.4	6.2 of 10/20/83
+.Ee

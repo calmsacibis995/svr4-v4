@@ -1,0 +1,89 @@
+'\"macro stdmacro
+.if n .pH g1a.tic @(#)tic	40.13.1.1 of 1/3/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} tic 1M "Terminal Information Utilities" "\&"
+.if \nX=1 .ds x} tic 1M "Terminal Information Utilities"
+.if \nX=2 .ds x} tic 1M "" "\&"
+.if \nX=3 .ds x} tic "" "" "\&"
+.TH \*(x}
+'\" ident	"@(#)svid_ti:ti_cmd/tic	1.9"
+.if n .pH ti_cmd.tic @(#)tic	30.1
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.SH NAME
+\f4tic\f1 \- \f2terminfo\f1 compiler
+.SH SYNOPSIS
+.na
+.ds [ \f1[\fP
+.ds ] \f1]\fP
+.ds | \f1\||\fP
+.ft 4
+tic \*[-v\*[\f2n\fP\*]\*] \*[-c\*] \f2file\f1
+.ft 1
+.ad
+.SH DESCRIPTION
+The command \f4tic\f1
+translates a \f4terminfo\f1 file from the source format
+into the compiled format.
+The results are placed in the directory \f4/usr/share/lib/terminfo\f1.
+The compiled format is necessary for use with the library routines
+in \f4curses\fP(3X).
+.TP 8
+\f4\-v\f2n\f1
+specifies that (verbose) output be written to standard
+error trace information showing \f4tic\f1's progress.
+The optional integer \f2n\f1 is a number from 1 to 10,
+inclusive, indicating the desired level of detail of information.
+If \f2n\f1 is omitted, the default level is 1.
+If \f2n\f1 is specified and greater
+than 1, the level of detail is increased.
+.TP
+\f4\-c\f1
+specifies to check only \f2file\f1 for errors.
+Errors in \f4use=\f1 links are not detected.
+.TP
+\f2file\f1
+contains one or more \f4terminfo\f1 terminal
+descriptions in source format [see \f4terminfo\fP(4)].
+Each description in the file describes the
+capabilities of a particular terminal.
+When a \f4use\f2=entry-name\f1 field is discovered
+in a terminal entry currently being compiled,
+\f4tic\f1 reads in the binary from
+\f4/usr/share/lib/terminfo\f1 to complete the entry.
+(Entries created from \f2file\f1 will be used first.
+If the environment variable
+\f4TERMINFO\f1
+is set,
+that directory is searched instead of \f4/usr/share/lib/terminfo\f1.)
+\f4tic\f1 duplicates the capabilities in \f2entry-name\f1
+for the current entry, with the exception of those
+capabilities that explicitly are defined in the
+current entry.
+.P
+If the environment variable \f4TERMINFO\f1 is set,
+the compiled results are placed
+there instead of \f4/usr/share/lib/terminfo\f1.
+.P
+Total compiled entries cannot exceed 4096 bytes.
+The name field cannot exceed 128 bytes.
+Terminal names exceeding 14 characters will
+be truncated to 14 characters and a warning message
+will be printed.
+.SH FILES
+\f4/usr/share/lib/terminfo/?/*\f1   Compiled terminal description database.
+.SH NOTES
+.P
+When an entry, e.g., \f4entry_name_1\f1, contains a
+\f4use=\f2entry_name_2\f1
+field,
+any canceled capabilities in \f2entry_name_2\f1 must also
+appear in \f4entry_name_1\f1 before \f4use=\f1
+for these capabilities to be canceled in \f4entry_name_1\f1.
+'''\"	moved these lines here to fix next page header
+.SH SEE ALSO
+\f4curses\fP(3X),
+\f4captoinfo\fP(1M),
+\f4infocmp\fP(1M),
+\f4terminfo\fP(4).

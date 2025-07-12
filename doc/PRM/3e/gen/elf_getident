@@ -1,0 +1,107 @@
+'\"!  tbl | mmdoc
+'\"macro stdmacro
+.if n .pH g3e.elf_getident @(#)elf_getident	40.10 of 5/1/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.\"#ident	"@(#)ci5-doc:req/libelf/getident.man	1.3"
+.nr X
+.if \nX=0 .ds x} elf_getident 3E "ELF Library" "\&"
+.if \nX=1 .ds x} elf_getident 3E "ELF Library"
+.if \nX=2 .ds x} elf_getident 3E "" "\&"
+.if \nX=3 .ds x} elf_getident "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4elf_getident\f1 \- retrieve file identification data
+.SH SYNOPSIS
+\f4cc\f1
+[\f2flag\fP \|.\|.\|.] \f2file\fP \|.\|.\|.
+\f4\-lelf\f1
+[\f2library\fP \|.\|.\|.]
+.PP
+.nf
+.na
+.ft 4
+#include <libelf.h>
+.sp 0.5
+char \(**elf_getident(Elf \(**elf, size_t \(**ptr);
+.ft 1
+.ad
+.fi
+.SH DESCRIPTION
+As
+\f4elf\fP(3E)
+explains,
+.SM ELF
+provides a framework for various
+classes of files, where basic objects may have 32 bits,
+64 bits, etc.
+To accommodate these differences, without forcing the
+larger sizes on smaller machines, the initial bytes in
+an
+.SM ELF
+file hold identification information common
+to all file classes.
+Every
+.SM ELF
+header's \f4e_ident\fP has \f4EI_NIDENT\fP bytes
+with the following interpretation.
+.P
+.ne 20
+.TS
+center;
+c c c
+lf4 | lf4 | l.
+\f4e_ident\fP Index	Value	Purpose
+.sp .3v
+_
+EI_MAG0	ELFMAG0	File identification
+EI_MAG1	ELFMAG1	\^
+EI_MAG2	ELFMAG2	\^
+EI_MAG3	ELFMAG3	\^
+.sp .3v
+_
+EI_CLASS	ELFCLASSNONE	File class
+\^	ELFCLASS32	\^
+\^	ELFCLASS64	\^
+_
+EI_DATA	ELFDATANONE	Data encoding
+\^	ELFDATA2LSB	\^
+\^	ELFDATA2MSB	\^
+_
+EI_VERSION	EV_CURRENT	File version
+.sp .3v
+_
+7-15	0	Unused, set to zero
+_
+.TE
+.P
+Other kinds of files [see
+\f4elf_kind\fP(3E)]
+also may have identification data, though they would not
+conform to \f4e_ident\fP.
+.P
+\f4elf_getident\fP
+returns a pointer to the file's ``initial bytes.''
+If the library recognizes the file, a conversion
+from the file image to the memory image may occur.
+In any case, the identification bytes are guaranteed not to have been modified,
+though the size of the unmodified area depends on the file type.
+If
+.I ptr
+is non-null, the library
+stores the number of identification bytes in the location to which
+.I ptr
+points.
+If no data are present,
+.I elf
+is null, or an error occurs,
+the return value is a null pointer,
+with zero optionally stored through
+.IR ptr .
+.SH "SEE ALSO"
+.na
+\f4elf\fP(3E),
+\f4elf_begin\fP(3E),
+\f4elf_getehdr\fP(3E),
+\f4elf_kind\fP(3E),
+\f4elf_rawfile\fP(3E)

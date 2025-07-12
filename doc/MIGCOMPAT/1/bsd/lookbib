@@ -1,0 +1,98 @@
+'\"macro stdmacro
+.if n .pH g1.lookbib @(#)lookbib	40.8 of 4/18/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.\" @(#)lookbib.1 1.2 89/01/25 SMI; from UCB 4.1
+.nr X
+.if \nX=0 .ds x} lookbib 1 "BSD Compatibility Package" "\&"
+.if \nX=1 .ds x} lookbib 1 "BSD Compatibility Package"
+.if \nX=2 .ds x} lookbib 1 "" "\&"
+.if \nX=3 .ds x} lookbib "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4lookbib\f1 \- find references in a bibliographic database
+.SH SYNOPSIS
+\f4/usr/ucb/lookbib\f1
+.I database
+.SH DESCRIPTION
+.P
+A bibliographic reference is a set of lines,
+constituting fields of bibliographic information. 
+Each field starts on a line beginning with a
+\f1`\f4%\f1',
+followed by a key-letter, then a blank, and finally the
+contents of the field, which may continue
+until the next line starting with
+\f1`\f4%\f1'.
+See
+\f4addbib\f1.
+.P
+\f4lookbib\f1
+uses an inverted index made by
+\f4indxbib\f1
+to find sets of bibliographic references. 
+It reads keywords typed after the
+\f1`\f4>\f1'
+prompt on the terminal, and retrieves records
+containing all these keywords.
+If nothing matches, nothing is returned
+except another
+\f1`\f4>\f1'
+prompt.
+.P
+It is possible to search multiple databases, as long as they have a
+common index made by
+\f4indxbib\f1.
+In that case, only the first argument given to
+\f4indxbib\f1
+is specified to
+\f4lookbib\f1.
+.P
+If
+\f4lookbib\f1
+does not find the index files (the
+\f4\&.i[abc]\f1
+files), it looks for a
+reference file with the same name as the argument,
+without the suffixes.
+It creates a file with a
+\f4\&.ig\f1
+suffix, suitable for use with
+\f4fgrep \f1
+(see \f4grep\f1).
+\f4lookbib\f1
+then uses this
+\f4fgrep\f1
+file to find references. 
+This method is simpler to use, but the
+\f4\&.ig\f1
+file is slower to use than the
+\f4\&.i[abc]\f1
+files, and does not allow the use of multiple reference files.
+.SH FILES
+.PD 0
+.TP 10
+\f4*.ia\f1
+.TP
+\f4*.ib\f1
+index files
+.TP
+\f4*.ic\f1
+.sp .5
+.TP
+\f4*.ig\f1
+reference file
+.PD
+.SH SEE ALSO
+\f4addbib\fP(1),
+\f4indxbib\fP(1),
+\f4refer\fP(1),
+\f4roffbib\fP(1),
+\f4sortbib\fP(1)
+.P
+\f4grep\fP(1)
+in the \f2User's Reference Manual\f1
+.SH NOTES
+Probably all dates should be indexed,
+since many disciplines refer to literature
+written in the 1800s or earlier.

@@ -1,0 +1,47 @@
+.if n .pH portguide.DISP @(#)disp	40.4
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.BK "Programmer's Guide: Porting the Kernel"
+.CH "Directory - DISP" 10
+.H 2 "Directory - DISP"
+.IX DISP directory
+The following are the notes for the \f3disp\f1 directory, which contains the
+code for process scheduling.
+.P
+.BL
+.LI
+\f3disp.c  -  MD\f1
+.br
+.BL
+.LI
+\f4pswtch  -  MD\f1
+.br
+\f4pswtch\fP selects a process to run and, if different from current
+process, performs part of the context switch to the new process. 
+In the porting base code, this involves saving the floating point registers of the
+current process, and then loading the MMU registers for sections 2
+and 3 (user sections), and finally loading the floating point registers
+for the new process.
+.br
+.sp
+The remainder of the context switch takes place elsewhere (see \f4swtch\f1 and
+\f4ps_swtch\f1 in the \f3ml\f1 directory).
+.LE
+.LI
+\f3priocntl.c  -  NCR\f1
+.br
+This is a code for \f4priocntl\f1 and \f4nice\f1 system calls.
+.LI
+\f3rt.c  -  NCR\f1
+.br
+This is a class-specific code for real-time scheduling.
+.LI
+\f3sysclass.c  -  NCR\f1
+.br
+This is a class-specific code for system class.
+.LI
+\f3ts.c  -  NCR\f1
+.br
+This has a class-specific code for time-sharing scheduling class.
+.LE
+

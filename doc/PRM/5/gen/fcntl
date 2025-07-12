@@ -1,0 +1,118 @@
+'\"macro stdmacro
+.if n .pH g5.fcntl @(#)fcntl	40.18 of 5/1/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} fcntl 5 "" "\&"
+.if \nX=1 .ds x} fcntl 5 ""
+.if \nX=2 .ds x} fcntl 5 "" "\&"
+.if \nX=3 .ds x} fcntl "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4fcntl\f1 \- file control options
+.SH SYNOPSIS
+.ft 4
+#include <fcntl.h>
+.ft 1
+.SH DESCRIPTION
+The \f4fcntl.h\f1 header
+defines the following
+requests and arguments for use by the functions
+\f4fcntl\f1 [see \f4fcntl\fP(2)]
+and
+\f4open\f1 [see \f4open\fP(2)].
+.P
+.in +3
+.TS
+tab (@);
+l s s.
+Values for \f2cmd\f1 used by \f4fcntl\f1 (the following values are unique):@@
+.T&
+l l l.
+ @\f4F_DUPFD\f1@Duplicate file descriptor
+ @\f4F_GETFD\f1@Get file descriptor flags
+ @\f4F_SETFD\f1@Set file descriptor flags
+ @\f4F_GETFL\f1@Get file status flags
+ @\f4F_SETFL\f1@Set file status flags
+ @\f4F_GETLK\f1@Get record locking information
+ @\f4F_SETLK\f1@Set record locking information
+ @\f4F_SETLKW\f1@Set record locking information;@
+ @@wait if blocked
+.SP
+.T&
+l s s.
+File descriptor flags used for \f4fcntl\f1:
+.T&
+l l l.
+@\f4FD_CLOEXEC\f1@Close the file descriptor upon
+@@execution of an exec function [see \f4exec\fP(2)]
+.SP
+.T&
+l s s.
+Values for \f4l_type\f1 used for record locking with \f4fcntl\f1
+(the following values are unique):
+.T&
+l l l.
+ @\f4F_RDLCK\f1@Shared or read lock
+ @\f4F_UNLCK\f1@Unlock
+ @\f4F_WRLCK\f1@Exclusive or write lock
+.SP
+.T&
+l s s.
+The following three sets of values are bitwise distinct:
+Values for \f4oflag\f1 used by \f4open\f1:
+.T&
+l l l.
+@\f4O_CREAT\f1@Create file if it does not exist
+@\f4O_EXCL\f1@Exclusive use flag
+@\f4O_NOCTTY\f1@Do not assign controlling tty
+@\f4O_TRUNC\f1@Truncate flag
+.SP
+.T&
+l s s.
+File status flags used for \f4open\f1 and \f4fcntl\f1:
+.T&
+l l l.
+@\f4O_APPEND\f1@Set append mode
+@\f4O_NDELAY\f1@Non-blocking mode
+@\f4O_NONBLOCK\f1@Non-blocking mode (POSIX)
+@\f4O_SYNC\f1@Synchronous writes
+.SP
+.T&
+l s s.
+Mask for use with file access modes:
+.T&
+l l l.
+@\f4O_ACCMODE\f1@Mask for file access modes
+.T&
+l s s.
+File access modes used for \f4open\f1 and \f4fcntl\f1:
+.T&
+l l l.
+@\f4O_RDONLY\f1@Open for reading only
+@\f4O_RDWR\f1@Open for reading and writing
+@\f4O_WRONLY\f1@Open for writing only
+.TE
+.in -3
+.br
+.ne 1i
+.P
+The structure \f4flock\f1 describes a file lock.
+It includes the following members:
+.P
+.in +3
+.ft 4
+.nf
+short   l_type;     /* Type of lock */
+short   l_whence;   /* Flag for starting offset */
+off_t   l_start;    /* Relative offset in bytes */
+off_t   l_len;      /* Size; if 0 then until EOF */
+long    l_sysid;    /* Returned with F_GETLK */
+pid_t   l_pid;      /* Returned with F_GETLK */
+.fi
+.ft 1
+.in -3
+.ft 1
+.in -3
+.SH "SEE ALSO"
+\f4creat\fP(2), \f4exec\fP(2), \f4fcntl\fP(2), \f4open\fP(2)

@@ -1,0 +1,61 @@
+'\"macro stdmacro
+.if n .pH 386.dma_swst @(#)dma_swst	40.3 of 6/24/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.nr X
+.if \nX=0 .ds x} dma_swstart D3X "" "DDI" "\&"
+.if \nX=1 .ds x} dma_swstart D3X "" "DDI"
+.if \nX=2 .ds x} dma_swstart D3X "" "\&"
+.if \nX=3 .ds x} dma_swstart "" "" "\&"
+.TH \*(x}
+.IX "\f4dma_swstart\fP(D3X)"
+.SH NAME
+\f4dma_swstart\f1 \- initiate a DMA operation via software request
+.SH SYNOPSIS
+.nf
+.na
+\f4#include <sys/types.h>
+#include <sys/dma.h>
+.sp 0.5
+\f4void dma_swstart(struct dma_cb \f2*dmacbptr\f4, int \f2chan\f4, uchar_t \f2mode\f4);\f1
+.ad
+.fi
+.SH ARGUMENTS
+.RS 0n 10
+.IP "\f2dmacbptr\f1" 10n
+Pointer to a DMA command block specifying the DMA operation.
+.IP "\f2chan\f1" 10n
+Channel over which the operation is to take place.
+.IP "\f2mode\f1" 10n
+Specifies whether the caller should sleep waiting
+for the operation to complete.
+If \f2mode\fP is set to \f4DMA_NOSLEEP\fP, then \f4dma_swstart\fP
+simply starts the operation but does not wait for the operation
+to complete and instead returns to the caller immediately.
+If \f2mode\fP is set to \f4DMA_SLEEP\fP, then \f4dma_swstart\fP
+starts the operation and then waits for the operation to
+complete, and returns to the caller after the operation has finished.
+.RE
+.SH DESCRIPTION
+\f4dma_swstart\f1 initiates a DMA operation previously
+programmed by \f4dma_swsetup\fP(D3X).
+If \f2mode\fP is \f4DMA_SLEEP\fP,
+then \f4dma_swstart\fP returns to the caller
+after the operation completes.
+If \f2mode\fP is \f4DMA_NOSLEEP\fP, then \f4dma_swstart\fP
+returns to the caller immediately after starting the operation.
+.SH "RETURN VALUE"
+None.
+.SH LEVEL
+Base only if \f2mode\fP is set to \f4DMA_SLEEP\fP.
+Base or Interrupt if \f2mode\fP is set to \f4DMA_NOSLEEP\fP.
+.SH NOTES
+The operation being initiated must have already been
+programmed on the specified channel by \f4dma_swsetup\fP.
+.P
+Will sleep if \f2mode\fP is set to \f4DMA_SLEEP\fP.
+.SH "SEE ALSO"
+.na
+\f4dma_stop\fP(D3X),
+\f4dma_swsetup\f1(D3X),
+\f4dma_cb\fP(D4X)
+.ad

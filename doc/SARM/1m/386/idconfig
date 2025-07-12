@@ -1,0 +1,130 @@
+'\"macro stdmacro
+.if n .pH g1a.idconfig @(#)idconfig	40.7 of 1/3/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.if \nX=0 .ds x} idconfig 1M "i386" "\&"
+.if \nX=1 .ds x} idconfig 1M "i386"
+.if \nX=2 .ds x} idconfig 1M "" "\&"
+.if \nX=3 .ds x} idconfig "" "" "\&"
+.nr X
+.TH \*(x} "" "386 Computer Only"
+.SH NAME
+\f4idconfig\f1 \- produce a new kernel configuration
+.SH SYNOPSIS
+\f4/etc/conf/bin/idconfig\f1
+.SH DESCRIPTION
+The \f4idconfig\f1 command takes as its input a collection of files
+specifying the configuration of the next UNIX System to be built.
+A collection of output files for use by \f4idmkunix\f1 is produced.
+.PP
+The input files expected by \f4idconfig\f1 are as follows:
+.sp .5
+.RS
+.nf
+\f4mdevice\f1 \- Master device specifications
+\f4sdevice\f1 \- System device specifications
+\f4mtune\f1 \- Master parameter specifications
+\f4stune\f1 \- System parameter specifications
+\f4mfsys\f1 \- File system type master data
+\f4sfsys\f1 \- File system type system data
+\f4sassign\f1 \- Device Assignment File
+.fi
+.RE
+.PP
+The output files produced by \f4idconfig\f1 are as follows:
+.sp .5
+.RS
+.nf
+\f4conf.c\f1 \- Kernel data structures and function definitions
+\f4config.h\f1 \- Kernel parameter and device definitions
+\f4vector.c\f1 \- Interrupt vector definitions
+\f4direct\f1 \- Listing of all driver components included in the build
+\f4fsconf.c\f1 \- File system type configuration data
+.fi
+.RE
+.PP
+The command line options are as follows:
+.TP \w'\-o\ directory\ \ \ 'u
+\f4\-o\f1 \f2directory\f1
+Output files will be created in the directory specified rather than
+\f4/etc/conf/cf.d\f1 .
+.TP
+\f4\-i\f1  \f2directory\f1
+Input files that normally reside in
+\f4/etc/conf/cf.d\f1
+can be found in the directory specified.
+.TP
+\f4\-r\f1  \f2directory\f1
+The directory specified will be used as the ID "root" directory
+rather than
+\f4/etc/conf\f1 .
+.TP
+\f4\-d\f1  \f2file\f1
+Use \f2file\f1 name rather than \f4sdevice\f1 for input.
+.TP
+\f4\-t\f1  \f2file\f1
+Use \f2file\f1 name rather than \f4stune\f1 for input.
+.TP
+\f4\-T\f1  \f2file\f1
+Use \f2file\f1 name rather than \f4mtune\f1 for input.
+.TP
+\f4\-a\f1  \f2file\f1
+Use \f2file\f1 name rather than \f4sassign\f1 for input.
+.TP
+\f4\-c\f1  \f2file\f1
+Redirect \f4conf.c\f1 output to \f2file\f1 name.
+.TP
+\f4\-h\f1  \f2file\f1
+Redirect \f4config.h\f1 output to \f2file\f1 name.
+.TP
+\f4\-v\f1  \f2file\f1
+Redirect \f4vector.c\f1 output to \f2file\f1 name.
+.TP
+\f4\-p\f1  \f2file\f1
+Redirect \f4direct\f1 output to \f2file\f1 name.
+.br
+.ne 6
+.TP
+\f4\-D\f1, \f4\-m\f1, \f4\-s\f1
+These options are no longer supported.
+.TP
+\f4\-#\f1
+Print debugging information.
+.P
+This version of UNIX supports multiple major numbers for
+drivers.  \f4idconfig\f1 generates additional constants (via
+defines) in the \f4config.h\f1 file so that they can be used
+by the driver (as they will get referenced in the
+\f4space.c\f1 file to generate appropriate data structures.
+The information provided by these constants is how many major
+numbers were assigned to the device and what are their values.
+The names of the constants are as follows:
+.sp .5
+	\f4PRFX_CMAJOR_X\f1
+.sp .5
+	\f4PRFX_BMAJOR_X\f1
+.sp .5
+where \f4PRFX\f1 stands for device prefix.
+In case of a SCSI device,
+it would be a SCSI device.
+The \f4X\f1 stands for the list
+subscript, starting with subscript 0.
+.P
+In addition, the configuration file \f4conf.c\f1 that
+initializes \f4bdevsw\f1[] and \f4cdevsw\f1[] tables will also add entries
+for each of the major numbers and, as such, the same driver
+entry points will be repeated for each one of the entries.
+.SH ERROR MESSAGES
+An exit value of zero indicates success.
+If an error \f4i\f1 was encountered,
+\f4idconfig\f1
+will exit with a non-zero value and report an error message.
+All error messages are designed to be self-explanatory.
+.SH SEE ALSO
+\f4dmkunix\f1(1M),
+\f4idbuild\f1(1M),
+\f4idinstall\f1(1M),
+\f4mdevice\f1(4),
+\f4mtune\f1(4),
+\f4sdevice\f1(4),
+\f4stune\f1(4).

@@ -1,0 +1,31 @@
+'\"macro stdmacro
+.if n .pH g1a.dma @(#)dma	40.7 of 5/20/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} dma 7iref "System Administration Utilities" "" "\&"
+.if \nX=1 .ds x} dma 7iref "System Administration Utilities" ""
+.if \nX=2 .ds x} dma 7iref "" "\&"
+.if \nX=3 .ds x} dma "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4dma\f1 \- DMA device driver
+.SH DESCRIPTION
+The \f4dma\f1 driver implements the internal DMA interface for device
+drivers as described in the \f2Driver
+Interface/Driver-Kernel Interface (DDI/DKI) Reference Manual\f1.
+.PP
+There are no configurable variables for the \f4dma\f1 driver.
+.PP
+There are no ioctls for the \f4dma\f1 driver.  The \f4dma\f1 driver is
+used to support the DMA interface required by the
+\f2Device Driver Interface/Driver-Kernel Interface (DDI/DKI)
+Reference Manual\f1, which is used in turn to implement other
+drivers that have ioctl interfaces.
+.SH FILES
+\f4/etc/conf/pack.d/Drivers.o\fP     Device driver object module
+.SH SEE ALSO
+\f4i258\f1(7iref).
+.br
+\f2Device Driver Interface/Driver-Kernel Interface (DDI/DKI)
+Reference Manual\f1

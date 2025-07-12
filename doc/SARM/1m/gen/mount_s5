@@ -1,0 +1,79 @@
+'\"macro stdmacro
+.if n .pH g1a.mount_s5 @(#)mount_s5	40.8.1.3 of 4/19/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} mount 1M "s5" "\&"
+.if \nX=1 .ds x} mount 1M "s5"
+.if \nX=2 .ds x} mount 1M "" "\&"
+.if \nX=3 .ds x} mount "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4mount\f1 (s5) \- mount an \f4s5\f1 file system
+.SH SYNOPSIS
+\f4mount\f1 [\f4\-F s5\f1]
+[\f2generic_options\f1]
+[\f4\-r\f1] [\f4\-o\f2 specific_options\f1] {\f2special | mount_point\f1}
+\f4mount\f1 [\f4\-F s5\f1]
+[\f2generic_options\f1]
+[\f4\-r\f1] [\f4\-o\f2 specific_options\f1] \f2special  mount_point\f1
+.SH DESCRIPTION
+.I generic_options
+are options supported by the generic \f4mount\f1 command.
+.PP
+\f4mount\f1 notifies the system that \f2special\f1,
+an \f4s5\f1 block special device, is available to users
+from the \f2mount_point\f1 which must exist before \f4mount\f1 is called;
+it becomes the name of the root of the newly mounted \f2special\f1.
+.PP
+The options are:
+.TP 10
+\f4\-F s5\f1
+Specify an \f4s5\f1 FSType.
+.TP 10
+\f4\-r\f1 
+Mount the file system read-only.
+.TP 10
+\f4\-o\f1 
+Specify \f4s5\f1 file-specific options in a comma-separated list.
+The avilable options are:
+.RS 10
+.TP 10
+\f4rw\f1 | \f4ro\f1 
+Read/write or read-only. Default is \f4rw\f1.
+.TP 10
+\f4suid\f1 | \f4nosuid\f1 
+Setuid is honored or ignored on execution
+Default is \f4suid\f1.
+.sp 0.5
+Note that a \f4mount\fP of an unprotected medium (such as a floppy disk)
+introduces possible security risks.
+While the use of \f4nosuid\fP protects against some risks, it is not
+completely effective.
+The best defense against such security risks is to avoid mounting 
+unprotected media.
+.TP 10
+\f4remount\f1 
+Used in conjunction with \f4rw\f1. A file system 
+mounted read-only can be \f2remounted\f1 read-write. Fails if the
+file system is not currently mounted
+or if the file system is mounted \f4rw\f1.
+Option is in force only when specified.
+.RE
+.PP
+Only a privileged user can mount file systems.
+.SH FILES
+.TP 17
+\f4/etc/mnttab\f1
+mount table
+.SH "SEE ALSO"
+generic \f4mount\f1(1M),
+\f4mountfsys\f1(1M), 
+\f4setmnt\f1(1M).
+.br
+\f4mount\f1(2),
+\f4setuid\f1(2),
+in the \f2Programmer's Reference Manual\f1.
+.br
+\f4mnttab\f1(4)
+in the \f2System Administrator's Reference Manual\f1.

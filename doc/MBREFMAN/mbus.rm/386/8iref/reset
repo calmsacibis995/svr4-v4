@@ -1,0 +1,53 @@
+'\"macro stdmacro
+.if n .pH g1a.reset @(#)reset	40.7 of 5/30/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} reset 8iref "System Administration Utilities" "" "\&"
+.if \nX=1 .ds x} reset 8iref "System Administration Utilities" ""
+.if \nX=2 .ds x} reset 8iref "" "\&"
+.if \nX=3 .ds x} reset "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4reset\f1 \- resets the processor in a given slot
+.SH SYNOPSIS
+\f4/usr/lbin/reset\f1 [\-\f4b\f1]  [\-\f4v\f1]  [\-\f4m\f1 \| \-\f4n\f1 \| \-\f4i\f1 index] \f2slot-ID\f1
+.SH DESCRIPTION
+The \f4reset\f1 command issues a local reset to the processor in a given
+slot of the bus through interconnect space.  This allows the operator to
+shut down one of the processors in a system and reboot it, without being
+required to shut the entire system down.  Valid slot numbers are 0 through 20.
+.P
+Command line options are:
+.TP
+\-\f4b\f1
+The BIST complete bit in the BIST master status register is not set.
+Default is to set the bit.
+.TP
+\-\f4v\f1
+Verbose.  Diagnostic information is displayed during execution of the reset
+command.
+.TP
+\-\f4m\f1
+The contents of the program table index register (PTIR) are updated to
+invoke the debug monitor.  This is the same as specifying \-\f4i 248\f1.
+.TP
+\-\f4n\f1
+The contents of the PTIR are left unchanged.  This allows the user to
+sequence through the entries in the program table.
+.TP
+\-\f4i\f1
+Set the value of the program table index register (PTIR) to index.  The
+default is 0.
+.SH FILES
+\f4/usr/lbin/reset\f1
+.SH SEE ALSO
+\f4dbon\f1(8iref),
+\f4ics\f1(8iref),
+\f4initbp\f1(8iref).
+.SH NOTES
+For additional information on the values of the program table index register
+(PTIR), see the
+\f2Multibus II Initialization and Diagnostics Specification\f1.
+Also note that when using the \f4reset\f1 command, any processor
+can be reset; resulting in a loss of data.

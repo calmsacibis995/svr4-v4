@@ -1,0 +1,103 @@
+'\"macro stdmacro
+.if n .pH g1a.yppush @(#)yppush	40.6 of 5/16/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.\" @(#)yppush.8 1.9 89/09/28 SMI;
+.\" Copyright (c) 1988 Sun Microsystems, Inc. - All Rights Reserved.
+.nr X
+.if \nX=0 .ds x} yppush 1M "" "\&"
+.if \nX=1 .ds x} yppush 1M ""
+.if \nX=2 .ds x} yppush 1M "" "\&"
+.if \nX=3 .ds x} yppush "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4yppush\fP \- force propagation of a changed NIS map
+.SH SYNOPSIS
+\f4/usr/sbin/yppush\f1
+[
+\f4\-v\f1
+] [
+\f4\-d\f1
+\f2ypdomain\f1
+]
+\f2mapname\f1
+.SH DESCRIPTION
+.P
+\f4yppush\f1
+copies a new version of the NIS
+name service map from the master
+\s-1NIS\s0
+server to the slave
+\s-1NIS\s0
+servers.
+It is normally run only on the master
+\s-1NIS\s0
+server by the
+\f4Makefile\f1
+in
+\f4/var/yp\f1
+after the master databases are changed.
+It first constructs a list of
+\s-1NIS\s0
+server hosts by reading the
+\s-1NIS\s0
+map
+\f4ypservers\f1
+within the
+\f2ypdomain\f1,
+or if the map is not set up,
+the local file is used.
+Keys within the map
+\f4ypservers\f1
+are the
+\s-1ASCII\s0
+names of the machines on which the
+\s-1NIS\s0
+servers run.
+.P
+A \(lqtransfer map\(rq request is sent to the
+\s-1NIS\s0
+server at each host,
+along with the information needed by the transfer agent (the program
+that actually moves the map) to call back the
+\f4yppush\f1.
+When the attempt has completed (successfully
+or not), and the transfer agent has sent
+\f4yppush\f1
+a status message, the results may be printed to stdout. 
+Messages
+are also printed when a transfer is not possible; for
+instance when the request message is
+undeliverable, or when the timeout period
+on responses has expired.
+.P
+Refer to
+\f4ypfiles\f1(4)
+and
+\f4ypserv\f1(1M)
+for an overview of the NIS name service.
+.P
+The following options are available:
+.TP 16
+\f4\-v\f1
+Verbose.
+Print messages when each server is called,
+and for each response.
+If this flag is omitted, only error messages are printed.
+.TP
+\f4\-d \f2ypdomain\f1
+Specify a
+\f2ypdomain \f1
+other than the default domain.
+.SH FILES
+.PD 0
+.TP 2.75i
+\f4/var/yp/\f2ypdomain\f4/ypservers.{\f2dir\f4,\f2pag\f4}\f1
+local file
+.TP
+\f4/var/yp\f1
+.PD
+.SH SEE ALSO
+\f4ypserv\f1(1M),
+\f4ypxfr\f1(1M),
+\f4ypfiles\f1(4)

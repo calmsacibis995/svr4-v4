@@ -1,0 +1,63 @@
+'\"macro stdmacro
+.if n .pH g1a.iasy @(#)iasy	40.6 of 5/17/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} iasy 7iref "System Administration Utilities" "" "\&"
+.if \nX=1 .ds x} iasy 7iref "System Administration Utilities" ""
+.if \nX=2 .ds x} iasy 7iref "" "\&"
+.if \nX=3 .ds x} iasy "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4iasy\f1 \- asynchronous (terminal) device driver
+.SH DESCRIPTION
+The \f4iasy\f1 driver handles the interface between Multibus terminal device drivers 
+and applications as described by the \f4termio\f1(7) specification.
+.P
+The \f4iasy\f1 driver also supports the \f4termio\f1(7) \f4ioctls\fP
+for use by applications.
+.SS Configuration
+To configure the \f4iasy\f1 driver, modify the following variables in the  
+\f4/etc/conf/pack.d/iasy/space.c\f1 file:
+.TP 1i
+\f2nserial\f1
+Indicates the number of terminal devices supported by the system
+.  This number cannot exceed 256.
+.SS "Device Node Naming Convention (/dev/tty*)"
+Multibus serial device drivers (\f4i354\f1, \f4atcs\f1, for example)
+register themselves, along with the minor numbers they will use,
+with the \f4iasy\f1 driver.
+Once this is done, a startup script assigns node names (\f4/dev/tty000\f1,
+\f4/dev/tty001\f1, and so on) to the minor number devices.
+The node names are assigned in ascending order.
+.P
+For example, suppose the \f4i354\fP driver registers minor numbers 0 through 3 and 
+the \f4atcs\fP driver assigns minor numbers 6 through 8.
+The following device nodes are created:
+.TS
+center,box;
+c | c.
+\f3Device Node	Minor Number\f1
+_
+/dev/tty000	0
+/dev/tty001	1
+/dev/tty002	2
+/dev/tty003	3
+/dev/tty004	6
+/dev/tty005	7
+/dev/tty006	8
+.TE
+.SH FILES
+.TP 2.25i
+\f4/dev/tty*\f1
+tty device nodes, one per tty device
+.TP
+\f4/usr/include/sys/iasy.h\f1
+definitions for data structures
+.TP
+\f4/etc/conf/pack.d/iasy/space.c\f1
+configuration information
+.SH SEE ALSO
+\f4termio\f1 (7), 
+\f4atcs\f1 (7iref), 
+\f4i354\f1 (7iref)

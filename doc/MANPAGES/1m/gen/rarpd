@@ -1,0 +1,106 @@
+'\"macro stdmacro
+.if n .pH g1a.rarpd @(#)rarpd	40.9 of 5/21/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} rarpd 1M "Internet Utilities" "\&"
+.if \nX=1 .ds x} rarpd 1M "Internet Utilities"
+.if \nX=2 .ds x} rarpd 1M "" "\&"
+.if \nX=3 .ds x} rarpd "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4rarpd\f1 \- \s-1DARPA\s0 Reverse Address Resolution Protocol server
+.SH SYNOPSIS
+\f4rarpd\f1
+.I interface
+[
+.I hostname
+]
+.LP
+\f4/usr/sbin/rarpd -a\f1
+.SH DESCRIPTION
+\f4rarpd\f1
+starts a daemon that responds to Reverse Address Resolution Protocol
+(\s-1RARP\s0) requests.
+The daemon forks a copy of itself that runs in background.
+It must be run as root.
+.LP
+\s-1RARP\s0 is used by machines at boot time to discover their
+Internet Protocol (\s-1IP\s0) address.
+The booting machine provides its Ethernet Address in 
+a
+.SM RARP 
+request message.
+Using the \f4ethers\f1 and \f4hosts\f1 databases,
+\f4rarpd\f1
+maps this Ethernet Address into the corresponding IP address
+which it returns to the booting machine in an RARP reply message.
+The booting machine must be listed in both databases for
+\f4rarpd\f1
+to locate its IP address.
+\f4rarpd\f1
+issues no reply when it fails to locate an IP address.
+.LP
+In the first synopsis, the
+.I interface 
+parameter names the network interface upon which 
+\f4rarpd\f1
+is to listen for requests.
+The
+.I interface
+parameter takes the ``name unit'' form used by
+\f4ifconfig\f1(1M).
+The second argument,
+.IR hostname ,
+is used to obtain the IP address of that interface.
+An IP address in ``decimal dot'' notation may be used for
+.IR hostname .
+If
+.I hostname
+is omitted, the address of the interface will be obtained from the kernel.
+When the first form of the command is used,
+\f4rarpd\f1
+must be run separately for each interface
+on which \s-1RARP\s0 service is to be supported.
+A machine that is a router may invoke
+\f4rarpd\f1
+multiple times, for example:
+.LP
+.RS
+\f4/usr/sbin/rarpd emd1 host\f1
+.br
+\f4/usr/sbin/rarpd emd2 host-backbone\f1
+.RE
+.LP
+In the second synopsis,
+\f4rarpd\f1
+locates all of the network interfaces present on the system
+and starts a daemon process for each one that supports \s-1RARP\s0.
+.SH "FILES"
+.PD 0
+.TP 20
+\f4/etc/ethers\f1
+.\" .TP 
+.\" .BI /var/yp/ domainname /ethers.byaddr.*
+.\" .TP
+.\" .BI /var/yp/ domainname /ethers.byname.*
+.TP
+\f4/etc/hosts\f1
+.\" .TP
+.\" .BI /var/yp/ domainname /hosts.byname.*
+.PD
+.SH "SEE ALSO"
+\f4ifconfig\f1(1M),
+\f4ethers\f1(4),
+\f4hosts\f1(4),
+\f4netconfig\f1(4),
+\f4boot\f1(8)
+.LP
+Finlayson, Ross, Timothy Mann, Jeffrey Mogul, and Marvin Theimer,
+.IR "A Reverse Address Resolution Protocol" ,
+.SM RFC
+903,
+Network Information Center,
+.SM SRI
+International, Menlo Park, Calif.,
+June 1984.

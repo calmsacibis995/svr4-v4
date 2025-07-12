@@ -1,0 +1,62 @@
+'\"macro stdmacro
+.if n .pH 386.trchan @(#)trchan	40.2 of 5/31/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.nr X
+.if \nX=0 .ds x} trchan 1 "" "\&"
+.if \nX=1 .ds x} trchan 1 ""
+.if \nX=2 .ds x} trchan 1 "" "\&"
+.if \nX=3 .ds x} trchan "" "" "\&"
+.TH \*(x}
+.SH NAME
+trchan \- translate character sets
+.SH SYNOPSIS
+\f4trchan\fP [\f4-ciko\fP] \f2mapfile\fP
+.SH DESCRIPTION
+\f4trchan\fP performs mapping as a filter, using the same format of
+\f2mapfile\fP
+as 
+\f4mapchan\fP [see \f4mapchan\fP(4) for \f2mapfile\fP format].
+This allows a file consisting of
+one internal character set to be translated to another
+internal character set.
+.P
+\f4trchan\fP reads standard input, maps it, and writes to standard output.
+A \f2mapfile\fP must be given on the command line.
+Errors cause \f4trchan\fP to stop processing unless \f4-c\fP is specified.
+.P
+The following options can be used with \f4trchan\fP:
+.TP
+\f4-c\fP
+causes errors to be echoed on \f4stderr\fP, and processing is continued.
+.TP
+\f4-i\fP
+specifies that the input section of the \f2mapfile\fP
+is used when translating data.
+.TP
+\f4-k\fP
+specifies that the dead and compose sections of the
+\f2mapfile\fP are used when translating data.
+.TP
+\f4-o\fP
+specifies that the output section of the
+\f2mapfile\fP is used when translating data.
+.IP
+The
+\f4-i\fP,
+\f4-k\fP
+and
+\f4-o\fP
+options can be specified in any combination;
+if none are specified, \f4trchan\fP uses the entire
+\f2mapfile\fP, as if all three were specified together.
+.SH FILES
+.nf
+/usr/lib/mapchan/*
+.fi
+.SH "SEE ALSO"
+\f4ascii\fP(5),
+\f4mapchan\fP(4),
+\f4mapchan\fP(1M)
+.SH NOTES
+\f4trchan\fP
+currently ignores the control sections of the \f2mapfile\fP.

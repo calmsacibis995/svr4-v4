@@ -1,0 +1,103 @@
+'\"macro stdmacro
+.if n .pH g1a.shutdown @(#)shutdown	40.11.1.5 of 4/30/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} shutdown 1M "Essential Utilities" "\&"
+.if \nX=1 .ds x} shutdown 1M "Essential Utilities"
+.if \nX=2 .ds x} shutdown 1M "" "\&"
+.if \nX=3 .ds x} shutdown "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4shutdown\f1 \- shut down system, change system state
+.SH SYNOPSIS
+\f4shutdown\f1
+[
+\f4\-y\f1
+]
+[
+\f4\-g\f2grace_period
+[
+\f4\-i\f2init_state\f1
+]
+.SH DESCRIPTION
+This command is executed by the super-user to change the state of the
+machine.
+In most cases, it is used to change from the multi-user state
+(state 2) to another state (see below).
+.P
+By default, it brings the system to a state where only the console has
+access to the UNIX system.
+This state is called single-user (see below).
+.PP
+The command sends a warning message and a final message before it starts
+actual shutdown activities.
+By default, the command asks for confirmation before it starts shutting down
+daemons and killing processes.
+The options are used as follows:
+.PP
+.TP .5i
+\f4\-y\f1
+pre-answers the confirmation question so the command
+can be run without user intervention.
+A default of 60 seconds is allowed between the warning message and
+the final message.
+Another 60 seconds is allowed between the final message and the
+confirmation.
+.TP .5i
+\f4\-g\f2grace_period\f1
+allows the super-user to change the number of seconds from the
+60-second default.
+.TP .5i
+\f4\-i\f2init_state\f1
+specifies the state that
+\f4init\fP is to be put in following the warnings, if any.
+By default, system state ``\f4s\f1'' is used.
+.PP
+Other recommended system state definitions are:
+.TP .5i
+state 0
+Shut the machine down so it is safe to remove the power.
+Have the machine remove power if it can.
+The \f4rc0\f1 procedure is called to do this work.
+.TP .5i
+state 1
+State 1 is referred to as the administrative state.
+In state 1 filesystems required for multi-user operations
+are mounted, and logins
+requiring access to multi-user filesystems can be used.
+When the system comes up from firmware mode into state 1,
+only the console is active and other multi-user (state 2)
+services are unavailable.
+Note that not all user processes are stopped when transitioning from
+multi-user state to state 1.  
+.TP .5i
+state s, S
+State s (or S) is referred to as the single-user state.
+All user processes are stopped on transitions to this state.
+In the single-user state, filesystems required for multi-user logins
+are unmounted
+and the system can only be accessed through the console.
+Logins requiring access to multi-user file systems cannot be used.
+.TP .5i
+state 5
+Stop the UNIX system and go to firmware mode.
+.TP .5i
+state 6
+Stop the UNIX system and reboot to the state defined by the
+\f4initdefault\f1 entry in \f4/etc/inittab\f1;  configure a new
+bootable operating system, if necessary, before the reboot.
+The \f4rc6\f1 procedure is called to do this work.
+.SH NOTES
+\f4shutdown\fP(1M) behaves differently depending on the number of
+users logged in.  If several users are logged in, three messages
+are displayed, warning, final and confirmation, with grace period
+between each message.  If only the user issuing \f4shutdown\fP(1M)
+is logged in, two messages are displayed, the final and confirmation
+message, with grace period between them.
+.SH SEE ALSO
+\f4init\fP(1M),
+\f4rc0\fP(1M),
+\f4rc2\fP(1M),
+\f4rc6\fP(1M),
+\f4inittab\fP(4).

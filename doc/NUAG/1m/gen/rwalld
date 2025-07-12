@@ -1,0 +1,35 @@
+'\"macro stdmacro
+.if n .pH g1a.rwalld @(#)rwalld	40.6 of 4/15/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.\" Copyright (c) 1988 Sun Microsystems, Inc. - All Rights Reserved.
+.\"
+.nr X
+.if \nX=0 .ds x} rwalld 1M "" "\&"
+.if \nX=1 .ds x} rwalld 1M ""
+.if \nX=2 .ds x} rwalld 1M "" "\&"
+.if \nX=3 .ds x} rwalld "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4rpc.rwalld\f1 \- network rwall server
+.SH SYNOPSIS
+\f4/usr/lib/netsvc/rwall/rpc.rwalld\f1
+.SH DESCRIPTION
+\f4rwalld\f1
+is a server that handles
+\f4rwall\f1(1M)
+requests.
+It is implemented by calling
+\f4wall\f1(1M)
+on all the appropriate network machines.
+The
+\f4rwalld\f1
+daemon may be started by
+\f4inetd\f1(1M)
+or
+\f4listen\f1(1M).
+.SH "SEE ALSO"
+\f4inetd\fP(1M),
+\f4listen\fP(1M),
+\f4rwall\fP(1M),
+\f4wall\fP(1M)

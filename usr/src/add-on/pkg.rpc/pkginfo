@@ -1,0 +1,15 @@
+#ident	"@(#)pkg.rpc:pkginfo	1.2.2.2"
+
+# RPC pkginfo
+
+PKG="rpc"
+NAME="Remote Procedure Call Utilities"
+ARCH="i386"
+RELEASE="4.0"
+VERSION="1"
+VENDOR="USL"
+CATEGORY="system"
+CLASSES="none"
+PREDEPEND="rpc"
+BASEDIR=""
+MAXINST="1"

@@ -1,0 +1,36 @@
+'\"macro stdmacro
+.if n .pH g2.gethostid @(#)gethostid	40.12 of 4/24/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.\" Copyright (c) 1988 Sun Microsystems, Inc. - All Rights Reserved.
+.\"
+.nr X
+.if \nX=0 .ds x} gethostid 3 "BSD Compatibility Package" "\&"
+.if \nX=1 .ds x} gethostid 3 "BSD Compatibility Package"
+.if \nX=2 .ds x} gethostid 3 "" "\&"
+.if \nX=3 .ds x} gethostid "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4gethostid\f1 \- get unique identifier of current host
+.SH SYNOPSIS
+.nf
+\f4cc \f1[ \f2flag\f1\. \. \. ] \f2file\f1 \. \. \. \f4\-lucb\f1
+.P
+.ft 4
+gethostid()
+.fi
+.SH DESCRIPTION
+\f4gethostid\f1
+returns the 32-bit identifier for the current host,
+which should be unique across all hosts.
+This number is usually taken from the
+.SM CPU
+board's
+.SM ID PROM\s0.
+.PP
+This routine resides in \f4libucb\f1.
+.SH SEE ALSO
+\f4hostid\fP(1)
+.br
+\f4sysinfo\fP(2)
+in the \f2Programmer's Reference Manual\f1

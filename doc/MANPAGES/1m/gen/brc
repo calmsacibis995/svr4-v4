@@ -1,0 +1,49 @@
+'\"macro stdmacro
+.if n .pH g1a.brc @(#)brc	40.12 of 5/1/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} brc 1M "Essential Utilities" "\&"
+.if \nX=1 .ds x} brc 1M "Essential Utilities"
+.if \nX=2 .ds x} brc 1M "" "\&"
+.if \nX=3 .ds x} brc "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4brc\f1, \f4bcheckrc\f1 \- system initialization procedures
+.SH SYNOPSIS
+\f4/sbin/brc\f1
+.PP
+\f4/sbin/bcheckrc\f1
+.SH DESCRIPTION
+These shell procedures are executed via
+entries in \f4/etc/inittab\f1
+by \f4init\f1 whenever the system is booted.
+.PP
+First, the \f4bcheckrc\f1
+procedure checks the status of the root file system.
+If the root file system is found to be bad,
+\f4bcheckrc\f1 repairs it.
+.PP
+Then, \f4bckeckrc\f1 mounts the \f4/stand\f1, \f4/proc\f1, and
+\f4/var\f1 (if it exists) file systems (\f4/var\f1 may exist as a
+directory in the root file system, or as a separate file system).
+.PP
+The \f4brc\f1 script performs administrative tasks related to file
+sharing.
+.PP
+After these two procedures have executed, \f4init\f1
+checks for the \f4initdefault\f1 value in \f4/etc/inittab\f1.
+This tells \f4init\f1 in which run level to place the system.
+If, for example, \f4initdefault\f1 is set to \f42\f1,
+the system will be placed in the multi-user state via the
+\f4rc2\f1 procedure.
+.PP
+Note that \f4bcheckrc\f1 should always be executed before \f4brc\f1.
+Also, these shell procedures may be used for several run-level states.
+.SH SEE ALSO
+\f4fsck\fP(1M),
+\f4init\fP(1M),
+\f4rc2\fP(1M),
+\f4shutdown\fP(1M),
+\f4inittab\fP(4),
+\f4mnttab\fP(4)

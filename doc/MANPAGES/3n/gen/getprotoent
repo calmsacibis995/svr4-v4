@@ -1,0 +1,106 @@
+.\" @(#)getprotoent 40.9 91/05/10 SMI; from UCB 4.3
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.\" Copyright (c) 1988 Sun Microsystems, Inc. - All Rights Reserved.
+.\" Copyright (c) 1983 Regents of the University of California.
+.\" All rights reserved.  The Berkeley software License Agreement
+.\" specifies the terms and conditions for redistribution.
+.nr X
+.if \nX=0 .ds x} getprotoent 3N "" "\&"
+.if \nX=1 .ds x} getprotoent 3N ""
+.if \nX=2 .ds x} getprotoent 3N "" "\&"
+.if \nX=3 .ds x} getprotoent "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4getprotoent, getprotobynumber, getprotobyname, setprotoent, endprotoent\fP \- get protocol entry
+.SH SYNOPSIS
+.nf
+.ft 4
+.\"please check the location of the following include file
+\f4#include <netdb.h>
+.sp .5
+struct protoent \(**getprotoent(void);
+.sp .5
+struct protoent \(**getprotobyname(char \(**name);
+.sp .5
+struct protoent \(**getprotobynumber(int proto);
+.sp .5
+int setprotoent(int stayopen);
+.sp .5
+int endprotoent(void);\fP
+.fi
+.SH DESCRIPTION
+\f4getprotoent\fP,
+\f4getprotobyname\fP,
+and
+\f4getprotobynumber\fP
+each return a pointer to an object with the
+following structure containing the broken-out
+fields of a line in the network protocol data base,
+\f4/etc/protocols\f1.
+.P
+The \f4protoent\fP structure include the following members:
+.RS
+.nf
+.ft 4
+char   \(**p_name;        /* official name of protocol */
+char   \(**\(**p_aliases;    /* alias list */
+int    p_proto;        /* protocol number */
+.ft 1
+.fi
+.RE
+.P
+The members of this structure are:
+.RS
+.TP 20
+\f2p_name\f1
+The official name of the protocol.
+.TP
+\f2p_aliases\f1
+A zero terminated list of alternate names for the protocol.
+.TP
+\f2p_proto\f1
+The protocol number.
+.RE
+.P
+\f4getprotoent\fP
+reads the next line of the file, opening the file if necessary.
+.P
+\f4setprotoent\fP
+opens and rewinds the file.
+If the
+\f2stayopen\f1
+flag is non-zero,
+the net data base will not be closed after each call to
+\f4getprotoent\fP
+(either directly, or indirectly through one of
+the other \*(lqgetproto\*(rq calls).
+.P
+\f4endprotoent\fP
+closes the file.
+.P
+\f4getprotobyname\fP
+and
+\f4getprotobynumber\fP
+sequentially search from the beginning
+of the file until a matching protocol name or
+protocol number is found, or until an
+\f4EOF\f1
+is encountered.
+.SH FILES
+.PD 0
+.TP 20
+\f4/etc/protocols\f1
+.PD
+.SH "SEE ALSO"
+\f4protocols\f1(4)
+.SH DIAGNOSTICS
+A
+\f4NULL\f1
+pointer is returned on an
+\f4EOF\f1
+or error.
+.P
+All information is contained in a static area
+so it must be copied if it is to be saved.
+Only the Internet protocols are currently understood.

@@ -1,0 +1,88 @@
+'\"macro stdmacro
+.if n .pH g3c.sigsetjmp @(#)sigsetjmp	40.18 of 6/2/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} sigsetjmp 3C "" "\&"
+.if \nX=1 .ds x} sigsetjmp 3C ""
+.if \nX=2 .ds x} sigsetjmp 3C "" "\&"
+.if \nX=3 .ds x} sigsetjmp "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4sigsetjmp\f1, \f4siglongjmp\f1 \- a non-local goto with signal state
+.SH SYNOPSIS
+.nf
+\f4#include <setjmp.h>\f1
+.PP
+\f4int sigsetjmp (sigjmp_buf env, int savemask);\f1
+.PP
+\f4void siglongjmp (sigjmp_buf env, int val)\f1;
+.SH DESCRIPTION
+These functions are useful for dealing with errors 
+and interrupts encountered in
+a low-level subroutine of a program.
+.PP
+\f4sigsetjmp\fP saves the calling process's registers
+and stack environment [see \f4sigaltstack\fP(2)] in \f2env\fP
+(whose type, \f4sigjmp_buf\fP, is defined in the <\f4setjmp.h\fP> 
+header file) for later use by \f4siglongjmp\fP. If \f2savemask\fP 
+is non-zero, the calling process's signal mask [see \f4sigprocmask\fP(2)]
+and scheduling parameters [see \f4priocntl\fP(2)] are also saved.  
+\f4sigsetjmp\fP returns the value 0.
+.PP
+\f4siglongjmp\fP
+restores the environment saved by the last call of
+\f4sigsetjmp\fP
+with the corresponding
+\f2env\fP
+argument.
+After
+\f4siglongjmp\fP
+is completed, program execution
+continues as if the corresponding call of 
+\f4sigsetjmp\fP
+had just returned the value
+\f2val\fP.
+\f4siglongjmp\fP
+cannot cause
+\f4sigsetjmp\fP
+to return the value zero.  If
+\f4siglongjmp\fP
+is invoked with a second argument of zero,
+\f4sigsetjmp\fP
+will return 1.
+At the time of the second return from
+\f4sigsetjmp\fP,
+all external and static variables have
+values as of the time
+\f4siglongjmp\fP
+is called. The values of register and automatic variables are undefined.
+Register or automatic variables
+whose value must be relied upon
+must be declared as
+\f4volatile\f1.
+.PP
+If a signal-catching function interrupts \f(CWsleep\f1
+and calls \f(CWsiglongjmp\f1 to restore an environment
+saved prior to the \f(CWsleep\f1 call, the action
+associated with \f(CWSIGALRM\f1 and time it is scheduled
+to be generated are unspecified. It is also unspecified
+whether the \f(CWSIGALRM\f1 signal is blocked, unless the
+process's signal mask is restored as part of the
+environment.
+.P
+The function \f(CWsiglongjmp\f1 restores the saved signal mask if and
+only if the \f2env\f1 argument was initialized by a call to the \f(CWsigsetjmp\f1
+function with a non-zero \f2savemask\f1 argument.
+.SH SEE ALSO
+\f4getcontext\fP(2), \f4priocntl\fP(2), \f4sigaction\fP(2), \f4sigaltstack\fP(2), \f4sigprocmask\fP(2), \f4setjmp\fP(3C).
+.SH NOTES
+If
+\f4siglongjmp\fP
+is called even though
+\f2env\fP
+was never primed by a call to \%\f4sigsetjmp\fP,
+or when the last such call was in a function that has since returned,
+the behavior is undefined.
+.\"	@(#)sigsetjmp.3c	1 of 9/6/88
+.Ee

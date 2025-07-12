@@ -1,0 +1,192 @@
+'\"macro stdmacro
+.if n .pH g7.if_tcp @(#)if_tcp	40.6 of 4/11/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} if 7 "TCP/IP" "\&"
+.if \nX=1 .ds x} if 7 "TCP/IP"
+.if \nX=2 .ds x} if 7 "" "\&"
+.if \nX=3 .ds x} if "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4if\f1 \- general properties of Internet Protocol network interfaces
+.SH DESCRIPTION
+A network interface is a device for sending and receiving packets
+on a network.
+A network interface is usually a hardware device, although
+certain interfaces such as the loopback interface,
+\f4lo\f1(7),
+are implemented in software.
+Network interfaces used by the Internet Protocol
+(\s-1IP\s0) must be
+.SM STREAMS
+devices conforming to the Datalink Provider Interface
+(\s-1DLPI\s0).
+.LP
+An interface becomes available to
+.SM IP
+when it is linked below the
+.SM IP STREAMS
+device with the
+.SM
+\f4I_LINK\f1
+\f4ioctl(\|)\f1
+call.
+This may be initiated by the kernel at boot time 
+or by a user program some time after the system
+is running.
+Each
+.SM IP
+interface must have a \(lqname\(rq
+assigned to it with the 
+\f4SIOCSIFNAME\f1
+\f4ioctl(\|)\f1.
+This name is used as a unique handle on the
+interface by all of the other network interface
+\f4ioctl(\|)\f1
+calls.
+Each interface must be assigned an
+.SM IP
+address with the
+\f4SIOCSIFADDR\f1
+\f4ioctl(\|)\f1
+before it can be used.
+On interfaces where
+the network-to-link layer address mapping is static, only the
+network number is taken from the
+\f4ioctl(\|)\f1
+request; the remainder is found
+in a hardware specific manner.
+On interfaces which provide
+dynamic network-to-link layer address mapping facilities [for example,
+10Mb/s Ethernets using
+\f4arp\f1(7)],
+the entire address specified in the
+\f4ioctl(\|)\f1
+is used.
+A routing table entry for
+destinations on the network of the interface
+is installed automatically when an interface's address is set.
+.SH IOCTLS
+.LP
+The following
+\f4ioctl(\|)\f1
+calls may be used to manipulate
+.SM IP
+network interfaces.
+Unless
+specified otherwise, the request takes an
+\f4ifreq\f1
+structure as its parameter.
+This structure has the form:
+.LP
+.ps -1
+.vs -1
+.nf
+.ft 4
+/* Interface request structure used for socket ioctl's.  All */
+/* interface ioctl's must have parameter definitions which */
+/* begin with ifr_name.  The remainder may be interface specific. */
+.sp .5
+struct  ifreq {
+#define IFNAMSIZ     16
+    char         ifr_name[IFNAMSIZ];      /* if name, for example "emd1" */
+    union {
+         struct  sockaddr ifru_addr;
+         struct  sockaddr ifru_dstaddr;
+         char    ifru_oname[IFNAMSIZ];        /* other if name */
+         struct  sockaddr ifru_broadaddr;
+         short   ifru_flags;
+         int     ifru_metric;
+         char    ifru_data[1];                /* interface dependent data */
+         char    ifru_enaddr[6];
+    } ifr_ifru;
+#define ifr_addr      ifr_ifru.ifru_addr      /* address */
+#define ifr_dstaddr   ifr_ifru.ifru_dstaddr   /* other end of p-to-p link */
+#define ifr_oname     ifr_ifru.ifru_oname     /* other if name */
+#define ifr_broadaddr ifr_ifru.ifru_broadaddr /* broadcast address */
+#define ifr_flags     ifr_ifru.ifru_flags     /* flags */
+#define ifr_metric    ifr_ifru.ifru_metric    /* metric */
+#define ifr_data      ifr_ifru.ifru_data      /* for use by interface */
+#define ifr_enaddr    ifr_ifru.ifru_enaddr    /* ethernet address */
+};
+.ft 1
+.fi
+.ps +1
+.vs +1
+.TP 20
+\f4SIOCSIFADDR\f1
+Set interface address.
+Following the address
+assignment, the \(lqinitialization\(rq routine for
+the interface is called.
+.TP
+\f4SIOCGIFADDR\f1
+Get interface address.
+.TP
+\f4SIOCSIFDSTADDR\f1
+Set point to point address for interface.
+.TP
+\f4SIOCGIFDSTADDR\f1
+Get point to point address for interface.
+.TP
+\f4SIOCSIFFLAGS\f1
+Set interface flags field.
+If the interface is marked down,
+any processes currently routing packets through the interface
+are notified.
+.TP
+\f4SIOCGIFFLAGS\f1
+Get interface flags.
+.TP
+\f4SIOCGIFCONF\f1
+Get interface configuration list.
+This request takes an
+\f4ifconf\f1
+structure (see below) as a value-result parameter.
+The
+\f4ifc_len\f1
+field should be initially set to the size of the buffer
+pointed to by
+\f4ifc_buf\f1.
+On return it will contain the length, in bytes, of the
+configuration list.
+.br
+.ne 20
+.LP
+The
+\f4ifconf\f1
+structure has the form:
+.P
+.RS
+.ft 4
+.ps -1
+.vs -1
+.nf
+/*
+ * Structure used in SIOCGIFCONF request.
+ * Used to retrieve interface configuration
+ * for machine (useful for programs which
+ * must know all networks accessible).
+ */
+struct	ifconf {
+	int     ifc_len;           /* size of associated buffer */
+	union {
+	        caddr_t ifcu_buf;
+	        struct  ifreq *ifcu_req;
+	} ifc_ifcu;
+#define ifc_buf ifc_ifcu.ifcu_buf  /* buffer address */
+#define ifc_req ifc_ifcu.ifcu_req  /* array of structures returned */
+};
+.ft 1
+.fi
+.ps +1
+.vs +1
+.RE
+.TP
+\f4SIOCSIFNAME\f1
+Set the name of the interface.
+.SH "SEE ALSO
+\f4arp\f1(7),
+\f4ip\f1(7),
+\f4lo\f1(7)

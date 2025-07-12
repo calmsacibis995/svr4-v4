@@ -1,0 +1,15 @@
+#ident	"@(#)pkg.pcieth:pkginfo	1.2.1.2"
+#	Copyright (c) 1989  Locus Computing Corporation
+#	All Rights Reserved
+#
+#	@(#)pkginfo	1.1	11/20/89 14:54:50
+#
+PKG="pcieth"
+NAME="PC-Interface Ethernet service"
+VERSION="3.1"
+CATEGORY="system,utilities"
+VENDOR="Locus Computing Corporation"
+#HOTLINE=
+#EMAIL=
+RSTATES="S s 1 2"
+PREDEPEND="yes"

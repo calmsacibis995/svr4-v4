@@ -1,0 +1,458 @@
+#ident	"@(#)proto:i386/at386/desktop/hd.instl.3	1.1.1.14"
+
+# The generic hd.instl.3  Prompt for add-ons and rebuild kernel.
+
+PATH=/sbin:/etc:/usr/sbin:/usr/bin
+export PATH
+set +e
+[ -f /tmp/PKG_INFO ] || {
+	cp /tmp/PKG_INFO.flop /tmp/PKG_INFO
+}
+. /tmp/PKG_INFO
+PKG_HOME=$SPOOL
+PKG_RESP=/tmp/r
+PKG_DEFAULT=/tmp/deflt.$$
+NTAPE='Ntape1:/dev/rmt/c0s0n:::desc="Cartridge Tape Drive" volume="cartridge tape" type="ctape" removable="true" mkdtab="false" capacity="120000" bufsize="20480" norewind="/dev/rmt/c0s0n" erasecmd="/usr/lib/tape/tapecntl -e" display="true" rewindcmd="/usr/lib/tape/tapecntl -w"'
+
+export PKG_HOME PKG_RESP PKG_DEFAULT 
+do_flush () {
+	STTY=`stty -g`
+	stty icanon
+	stty $STTY
+}
+make_default () {
+	cat >$PKG_DEFAULT <<-END
+	mail=root
+	instance=overwrite
+	partial=nocheck
+	runlevel=nocheck
+	idepend=ask
+	rdepend=nocheck
+	space=ask
+	setuid=nocheck
+	conflict=nocheck
+	list_files=nocheck
+	action=nocheck
+	basedir=default
+	END
+	#
+	# make sure to get the real type of f0t
+	#
+	/usr/sadm/sysadm/bin/mkdtab >/dev/null 2>&1 
+	sync
+}
+get_pkgs () {
+	if [ -f /usr/lib/tape/tapecntl ];then
+		rm -f /etc/scsi/tapecntl  >/dev/null 2>&1
+		ln -s /usr/lib/tape/tapecntl /etc/scsi/tapecntl
+	fi
+	if [ -f /tmp/tape.count ];then
+		PKG_MEDIA=Ntape1
+		PKG_OPT="-O"
+		if (grep '^Ntape' /etc/device.tab >/dev/null 2>&1 )
+		then
+			echo 
+		else
+		echo "$NTAPE" >>/etc/device.tab
+		fi
+	else
+		PKG_MEDIA=diskette1
+		PKG_OPT=""
+	fi
+	
+	IDCMD=/etc/conf/bin
+	[ -f $IDCMD/S.idbuild ] || cp $IDCMD/idbuild $IDCMD/S.idbuild
+	>$IDCMD/idbuild
+	[ -f $IDCMD/S.idreboot ] || cp $IDCMD/idreboot $IDCMD/S.idreboot
+	>$IDCMD/idreboot
+	buildflg=0
+	for i in $PKG_GROUPS
+	do
+		if [ -f /tmp/.$i ];then
+			. /tmp/.$i
+			echo "\nInstalling from The $i Package Set\n"		
+#
+# if pkgadd gets fixed so that pkgadd xxx pkg1 pkg5 pkg 7 works
+# most of this should go away, and just the eval gets appended
+# to the pkgadd line
+#
+			for x in  `eval echo \\$$i`
+			do
+				case $x in
+					skip) [ $PKG_MEDIA = "Ntape1" ] && tapecntl -p1
+						  continue
+						  ;;
+				esac
+#
+# hack for yet another pkgadd problem:
+# is you use -r directory, some of the
+# packages barf in very strange ways
+#
+				while [ 1 ]
+				do
+				[ $PKG_MEDIA  != Ntape1 ] && echo "\nPlease insert the <$x> diskette\n"
+				if [ -f $PKG_RESP/$x ];then
+					pkgadd $PKG_OPT -d $PKG_MEDIA \
+						-r$PKG_RESP/$x -a$PKG_DEFAULT $x
+					resp=$?
+				else
+					pkgadd $PKG_OPT -d $PKG_MEDIA -a$PKG_DEFAULT $x
+					resp=$?
+				fi
+				if [ "$resp" = 10 -o "$resp" = 20 ]
+				then
+					buildflg=1
+				fi
+				if [ $PKG_MEDIA = "Ntape1" ];then
+					break
+				fi
+				case $resp in
+					0|10|20) break ;; 
+					1|11|21) echo "You may have inserted the wrong floppy."
+							 echo "You may check this floppy or insert another\
+floppy and try again."
+							 echo "If you don't wish to try again, the package\
+will be skipped."
+							 echo "Do you wish to try again (y/n) [y] ? \c"
+							 read ans
+							 case $ans in
+								y*|Y*) continue;;
+								n*|N*) echo "The $x package will not be installed";break;;
+								*|'') continue;;
+							 esac
+							 ;;
+					99) echo "There is an error with this floppy"
+						 echo "You may check this floppy or insert another\
+floppy and try again."
+						 echo "If you don't wish to try again, the package\
+will be skipped."
+				    	echo "Do you wish to try again (y/n) [y] ? \c"
+					 	read ans
+						case $ans in
+							y*|Y*) continue;;
+							n*|N*) echo "The $x package will not be installed";break;;
+							*|'') continue;;
+					   esac
+					   ;;
+					*) break
+					   ;;
+				esac
+
+				done
+			done
+		else
+			echo "\nSkipping $i Package Set\n"		
+			for x in `eval echo \\$$i`
+			do
+				[ $PKG_MEDIA = "Ntape1" ] && tapecntl -p1
+			done
+		fi
+	done
+	if [ -f /tmp/tape.count ];then 
+		tapecntl -w
+		echo "It is safe to remove the cartridge tape."
+	fi
+
+	echo "Installation of selected packages is complete."
+	echo "Do you wish to install any floppy based packages"
+	echo "before the system is rebuilt and rebooted (y/n) [n] ?\c" 
+	read ans
+	case $ans in
+		y*|Y*) /usr/sbin/pkgadd -d diskette1 ;;
+	esac
+
+	cp /etc/conf/bin/S.idbuild  /etc/conf/bin/idbuild
+	cp /etc/conf/bin/S.idreboot /etc/conf/bin/idreboot
+	rm -f /etc/conf/bin/S.id*
+	rm -f $PKG_DEFAULT
+}
+
+make_dummy() {
+	pkg=$1
+	base=/var/sadm/pkg
+	if [ ! -f /tmp/.list ];then
+		for i in  $PKG_GROUPS
+		do
+			[ -f /tmp/.$i ] && cat /tmp/.$i >>/tmp/.list
+		done
+	fi
+	if  grep $pkg  /tmp/.list >/dev/null 2>&1 ;then
+		[ -d $base/$pkg ] || mkdir -p $base/$pkg
+		echo "CATEGORY=dummy" >$base/$pkg/pkginfo
+	fi
+}
+remove_dummy() {
+	pkg=$1
+	base=/var/sadm/pkg
+	rm -rf $base/$pkg
+}
+
+read_config_flop() {
+	echo "Please insert the UNIX System \"System Configuration\" "
+	echo "Floppy Disk 1 of 1 and then strike ENTER. \c"
+	read a
+	retry=`expr 0`
+	cpio -icBmdu -I/dev/dsk/f0 2>/dev/null
+	while [ $? -ne 0 -a $retry -le 2 ]
+		do
+			retry=`expr $retry + 1`
+			cpio -icBmdu -I/dev/dsk/f0 2>/dev/null
+		done
+	if [ $retry -gt 2 ];then 
+		echo "Unable to read floppy disk.  Installation terminated."
+		echo "You may attempt to restart the installation process, \c"
+		echo "but if this problem"
+		echo "recurs, please contact your support representative \c"
+		echo "immediately."
+		exit 1
+	fi
+}
+
+make_response () {
+
+	cat /etc/conf/sdevice.d/* > /etc/conf/cf.d/sdevice 
+	if [ -f /tmp/qt ];then
+		grep qt /tmp/.HARDWARE >/dev/null 2>&1  && \
+		echo "qt	Y	1	6	1	5	300	301	0	0 " >>/etc/conf/cf.d/sdevice
+	fi
+	IDCMD=/etc/conf/bin
+	[ -f $IDCMD/S.idbuild ] || cp $IDCMD/idbuild $IDCMD/S.idbuild
+
+	[ -d $PKG_RESP ] || mkdir $PKG_RESP
+	cd $PKG_HOME
+	rm -f $PKG_RESP/*
+#
+# make sure any pkgs which will be installed are present for the
+# request scripts, currently other pkgs depend on 
+# fmli,oam, and face being present at request script time
+#
+# PCI depends on inet
+	make_dummy fmli
+	make_dummy oam
+	make_dummy face
+        make_dummy inet
+
+	for i in  $PKG_GROUPS
+	do
+		if [ -f /tmp/.$i ];then
+			. /tmp/.$i
+			for x in `eval echo \\$$i`
+			do
+				do_flush
+				case $x in
+					skip) continue;;
+					qt)	if [ -f /tmp/qt ];then
+							cp /tmp/qt $PKG_RESP/qt
+							continue
+						fi
+						;;
+				esac
+				if [ -f $PKG_HOME/$x/install/request ];then
+					clear
+					pkgask -a $PKG_DEFAULT -r $PKG_RESP/$x $x
+					if [ $? -eq 0 ];then
+						sleep 3
+					else
+						#pkgask prints error msg.
+						#remove pkg from the list to
+						#not to install it
+						cat /tmp/.$i |sed "s/$x/skip/" >/tmp/.foo
+						cp /tmp/.foo /tmp/.$i
+						echo "Type Return to continue"
+						read cont
+					fi
+				fi
+			done
+		fi
+	done
+	remove_dummy fmli
+	remove_dummy oam
+	remove_dummy face
+        remove_dummy inet
+	cp /etc/conf/bin/S.idbuild  /etc/conf/bin/idbuild
+}
+
+Scsi_install () {
+	/etc/conf/bin/idinstall -d sd01 >/dev/null 2>&1
+	/etc/conf/bin/idinstall -d st01 >/dev/null 2>&1
+	/etc/conf/bin/idinstall -d sc01 >/dev/null 2>&1
+	/etc/conf/bin/idinstall -d sw01 >/dev/null 2>&1
+	/etc/conf/bin/idinstall -d scsi >/dev/null 2>&1
+	sed -e '/^hd	/d' /etc/conf/cf.d/mdevice > /tmpdev
+	cat /tmpdev > /etc/conf/cf.d/mdevice
+	rm -rf  /etc/conf/pack.d/hd 
+	rm -rf /etc/conf/sdevice.d/hd 
+	sed -e 's/	hd	/	sd01	/g' /etc/conf/cf.d/sassign > /tmpdev
+	cat /tmpdev > /etc/conf/cf.d/sassign
+	rm -f /tmpdev
+	
+	cd /usr/src/pkg
+	if [ -f /ad1542 ];then 
+		ln -s scsi.in.src/scsi scsi
+		NAME="ADAPTEC"
+	fi
+	if [ -f /wd7000 ];then
+		ln -s scsi.src/scsi scsi
+		NAME="WESTERN DIGITAL"
+	fi
+	if [ -f /dpt ];then
+		read_config_flop
+		ln -s dpt.in.src/dpt scsi
+		NAME="DPT"
+	fi
+	if [ -f /special ];then
+		read_config_flop
+		ln -s `cat /special`.in.src/`cat /special` scsi
+		echo "\nInstalling the `cat /special` drivers\n"
+	fi
+	echo "\nInstalling the $NAME SCSI drivers\n"
+	cd scsi
+	if [ -f /ad1542 ];then
+	     sed -e 's/INT	IOA	IOE/11	330	333/g' System > S
+	     sed -e 's/0	0	1	2	DMA/0	4	1	2	5/g' Master > M
+	fi
+	if [ -f /wd7000 ];then
+	     sed -e 's/INT	IOA	IOE/15	350	353/g' System > S
+	     sed -e 's/0	0	1	1	DMA/0	4	1	1	6/g' Master > M
+	fi
+	if [ -f /dpt ];then
+	     sed -e 's/no change/needed here/g' System > S
+		 sed -e 's/0	0	1	2	DMA/0	4	1	2	-1/g' Master > M
+	fi
+	if [ -f /special ];then
+	     sed -e 's/no change/needed here/g' System > S
+	     sed -e 's/no change/needed here/g' Master > M
+	fi
+	cat S > System
+	cat M > Master
+	rm -f M S
+	cd ../..
+
+	ln -s scsi.in.src/st01 st01
+	cd st01
+	sed -e 's/0	0	0/0	10	0/g' Master > M
+	cat M > Master
+	rm -f M 
+	cd ../..
+
+	ln -s scsi.src/sd01 sd01
+	cd sd01
+	sed -e 's/0-6	0-6	0/35-41	35-41	0/g' Master > M
+	cat M > Master
+	rm -f M 
+	cd ../..
+
+	ln -s scsi.in.src/sc01 sc01 > /dev/null 2>&1
+	ln -s scsi.in.src/sw01 sw01 > /dev/null 2>&1
+	cp scsi.in.src/sys/* /usr/include/sys > /dev/null 2>&1
+	if [ -d dpt.in.src ];then
+		cp dpt.in.src/sys/* /usr/include/sys > /dev/null 2>&1
+	fi
+	cp scsi.src/sys/* /usr/include/sys > /dev/null 2>&1
+	if [ -f /special ];then
+		if [ -d `cat /special`.in.src ];then
+			cp `cat /special`.in.src/sys/* /usr/include/sys > /dev/null 2>&1
+		fi
+	fi
+	mv scsi.src/sd01/space.c scsi.src/sd01/Space.c > /dev/null 2>&1
+	mv scsi.src/scsi/space.c scsi.src/scsi/Space.c > /dev/null 2>&1
+
+	for i in sd01 scsi st01 sc01 sw01
+	do
+		cd $i
+		/etc/conf/bin/idinstall -a $i
+		cd ../..
+	done
+	if [ -d /usr/src/pkg/scsi.in.src ];then
+		cd /usr/src/pkg/scsi.in.src/cmd
+		rm -f /etc/scsi/scsiformat
+		find * -print |cpio -pdmu /etc/scsi > /dev/null 2>&1
+		cd /
+	sync
+	fi
+}
+
+#
+# Start real code
+#
+set +e
+[ -x /etc/initial ] && /etc/initial
+make_default
+make_response
+echo "\nThe question session is complete.\n"		
+echo "The packages you have selected will now be installed.\n"		
+# tune system parameters based on amount of memory
+
+ONEMB=1048576
+MEM=`memsize`
+if [ `expr $MEM % $ONEMB` -ne 0 ];then
+	MEM=`expr $MEM / $ONEMB + 1`
+else
+	MEM=`expr $MEM / $ONEMB`
+fi
+
+if [ $MEM -ge 8 ];then
+	cd /etc/conf/cf.d
+	> stune.tmp
+	while read line
+	do
+		var=`expr "$line" : "\(.*\)	.*" > /dev/null 2>&1`
+		if [ "$var" != "BUFHWM" -a "$var" != "NINODE" -a "$var" != "NUFSINODE" ]
+		then
+			echo $line >> stune.tmp
+		fi
+	done < stune
+	# machine has between 8 and 16 meg of memory
+	if [ $MEM -lt 16 ];then
+		echo "BUFHWM	400" >> stune.tmp
+		echo "NINODE	500" >> stune.tmp
+		echo "UFSNINODE	500" >> stune.tmp
+		echo "SPTMAP	300" >> stune.tmp
+		echo "SYSSEGSZ	3072" >> stune.tmp
+	fi
+	# machine has greater than or equal to 16 meg of memory
+	if [ $MEM -ge 16 ];then
+		echo "BUFHWM	1024" >> stune.tmp
+		echo "NINODE	600" >> stune.tmp
+		echo "UFSNINODE	600" >> stune.tmp
+		echo "SPTMAP	600" >> stune.tmp
+		echo "SYSSEGSZ	4096" >> stune.tmp
+	fi
+	cp stune.tmp stune
+	rm stune.tmp
+fi
+
+#
+# copy things to /opt/unix, where ADD.base can use them later
+# remove the package info that was on the
+# base cpio, which was used to generate the request scripts
+#
+cd /var/spool 
+find pkg -print |cpio -pdmu /opt/unix >/dev/null 2>&1
+cd /
+rm -rf $PKG_HOME/*
+#
+#Build a basic kernel before installing packages.
+#This will hopefully go away once all block drivers are in
+#the base kernel
+#
+cp /stand/unix /stand/unix.old
+[ -f /ad1542 ] && Scsi_install ad1542
+[ -f /wd7000 ] && Scsi_install wd7000
+[ -f /dpt ] && Scsi_install dpt
+[ -f /special ] && Scsi_install special
+/etc/conf/bin/idbuild
+get_pkgs
+if [ "$buildflg" = 1 ]
+then
+	/etc/conf/bin/idbuild
+fi
+#
+# move archive lib version of dd (dd.arch) on top of shlib version.
+mv /usr/bin/dd.arch /usr/sbin/dd
+rm -rf /tape /wd7000 /ad1542 /dpt /special /etc/initial 
+rm -rf /usr/src/pkg/scsi.in.src /usr/src/pkg/scsi.src
+rm -rf /usr/src/pkg/s?01 /usr/src/pkg/scsi /usr/src/pkg/scsi.in
+rmdir /usr/src/pkg >/dev/null 2>&1 
+rmdir /usr/src >/dev/null 2>&1 
+sync

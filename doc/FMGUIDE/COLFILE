@@ -1,0 +1,29 @@
+.if n .pH release/tfilemap.g/386/COLFILE @(#)COLFILE	40.16
+.# This book ("Technology File Mapping Guide")
+.# contains the following files,
+.# listed in the order in which they are printed.
+.# Next to each file name is its SCCS delta number.
+.FT
+release/tfilemap.g/386/titlepage	40.5
+release/tfilemap.g/386/copyright	40.5
+release/tfilemap.g/386/MasterToc	40.12
+release/tfilemap.g/386/Cpreface	40.10
+release/tfilemap.g/386/preface	40.7
+release/tfilemap.g/386/Cintro	40.12
+release/tfilemap.g/386/intro	40.12
+release/tfilemap.g/386/Ctechlic	40.8
+release/tfilemap.g/386/techlic	40.10
+release/tfilemap.g/386/Ckernel	40.6
+release/tfilemap.g/386/kernel	40.15
+release/tfilemap.g/386/Csystsvcs	40.5
+release/tfilemap.g/386/systsvcs	40.11
+release/tfilemap.g/386/Cshelcmds	40.5
+release/tfilemap.g/386/shelcmds	40.9
+release/tfilemap.g/386/Csysadmin	40.6
+release/tfilemap.g/386/sysadmin	40.13
+release/tfilemap.g/386/Ccompat	40.6
+release/tfilemap.g/386/compat	40.14
+release/tfilemap.g/386/Cprogtool	40.5
+release/tfilemap.g/386/progtool	40.8
+release/tfilemap.g/386/Cnetwork	40.5
+release/tfilemap.g/386/network	40.10

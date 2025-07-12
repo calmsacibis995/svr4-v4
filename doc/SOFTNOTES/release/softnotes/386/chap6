@@ -1,0 +1,31 @@
+.if n .pH rn4.chap6 @(#)chap6	40.42
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.de MR 
+.P 
+MR \\$1 
+.P 
+..
+.de MR
+..
+.BK "Software Notes"
+.CH "Real Time Processing" "6"
+.H 1 "Real Time Processing Notes"
+.IX istart UNIX System V/386 Release 4, real time processing notes
+.H 2 "High-Resolution Timers"
+.H 3 "Source Compatibility"
+In UNIX System V/386 Release 4, \f4gettimeofday\f1 and \f4settimeofday\f1 
+take one argument.  The second argument used with the
+respective BSD calls (and in the BSD compatibility library)
+has long been obsolete and is ignored.
+.P
+In \f4libucb.a\f1, the \f4alarm\f1 and \f4sleep\f1 functions
+are written using \f4setitimer\f1 [see \f4getitimer\fP(3C)].
+.IX \f4getitimer\fP(3C)
+In \f4libc.a\f1, \f4alarm\f1 is independent of \f4setitimer\f1.
+In SVR4, a \f4sleep\fP following a \f4setitimer\fP wipes out
+knowledge of the user signal handler. Therefore do not use \f4setitimer\fP with \f4sleep\fP.
+.H 3 "Future Directions"
+These routines will be included in SVR4 until the POSIX P1003.4
+standard on Real Time System Interfaces is completed.
+.IX iend UNIX System V/386 Release 4, real time processing notes

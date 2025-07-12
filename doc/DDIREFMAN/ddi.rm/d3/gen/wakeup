@@ -1,0 +1,55 @@
+'\"macro stdmacro
+.if n .pH gen.wakeup @(#)wakeup	40.2 of 1/7/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.nr X
+.if \nX=0 .ds x} wakeup D3K "" "DKI" "\&"
+.if \nX=1 .ds x} wakeup D3K "" "DKI"
+.if \nX=2 .ds x} wakeup D3K "" "\&"
+.if \nX=3 .ds x} wakeup "" "" "\&"
+.TH \*(x}
+.IX "\f4wakeup\fP(D3K)"
+.SH NAME
+\f4wakeup\f1 \- resume suspended process execution
+.SH SYNOPSIS
+.nf
+.na
+\f4#include <sys/types.h>
+.sp 0.5
+void wakeup(caddr_t\f2 event\f4);\f1
+.ad
+.fi
+.SH ARGUMENTS
+.RS 0n 10
+.IP "\f2event\f1" 10n
+Address that was passed to the corresponding call to \f4sleep\f1(D3K)
+which caused the process to be suspended.
+.RE
+.SH DESCRIPTION
+\f4wakeup\f1 awakens all processes sleeping on the address specified
+by \f2event\f1 and makes them eligible for scheduling.
+The same \f2event\f1 argument must be used for corresponding calls to
+\f4sleep\f1 and \f4wakeup\f1.
+It is recommended
+for code readability and for efficiency to have a one-to-one
+correspondence between events and \f4sleep\f1 addresses.
+.P
+Whenever a driver returns from a call to \f4sleep\f1, it should test to ensure
+that the event for which the driver slept actually occurred.
+There is an interval between the time the process that called \f4sleep\f1 is
+awakened and the time it resumes execution where the state forcing the
+\f4sleep\f1 may have been reentered.  This can occur because all
+processes waiting for an event are awakened at the same time.  The first
+process selected for execution by the scheduler usually gains control of the
+event.  All other processes awakened should recognize that they cannot
+continue and should reissue 
+the \f4sleep\f1 call.
+.SH RETURN VALUE
+None.
+.SH LEVEL
+Base or Interrupt.
+.SH NOTES
+Does not sleep.
+.SH SEE ALSO
+.na
+\f4sleep\f1(D3K)
+.ad

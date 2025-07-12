@@ -1,0 +1,140 @@
+'\"macro stdmacro
+.if n .pH g5.varargs @(#)varargs	40.11 of 4/11/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} varargs 5 "" "\&"
+.if \nX=1 .ds x} varargs 5 ""
+.if \nX=2 .ds x} varargs 5 "" "\&"
+.if \nX=3 .ds x} varargs "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4varargs\f1 \- handle variable argument list
+.SH SYNOPSIS
+\f4#include <varargs.h>\f1
+.P
+\f4va_alist\f1
+.P
+\f4va_dcl\f1
+.P
+\f4va_list pvar;\f1
+.P
+\f4void va_start(va_list pvar);\f1
+.P
+\f4\f2type\f4 va_arg(va_list pvar, \f2type\f4);\f1
+.P
+\f4void va_end(va_list pvar);\f1
+.SH DESCRIPTION
+This set of macros allows portable procedures that accept variable
+argument lists to be written.
+Routines that have variable argument lists [such as
+\f4printf\fP(3S)]
+but do not use 
+\f4varargs\fP
+are inherently non-portable, as different
+machines use different argument-passing conventions.
+.PP
+\f4va_alist\f1
+is used as the parameter list in a function header.
+.PP
+\f4va_dcl\f1
+is a declaration for 
+\f4va_alist\fP.
+No semicolon should follow
+\f4va_dcl\fP.
+.PP
+\f4va_list\f1
+is a type defined for the variable
+used to traverse the list.
+.PP
+\f4va_start\f1
+is called to initialize
+\f4pvar\f1
+to the beginning of the list.
+.PP
+\f4va_arg\f1
+will return the next argument in the list
+pointed to by
+\f4pvar\f1.
+.I type
+is the type the argument is expected to be.
+Different types can be mixed, but it is up
+to the routine to know what type of argument is
+expected, as it cannot be determined at runtime.
+.PP
+\f4va_end\f1
+is used to clean up.
+.PP
+Multiple traversals, each bracketed by
+\f4va_start\fP
+and
+\f4va_end\fP,
+are possible.
+.SH EXAMPLE
+This example is a possible implementation of 
+\f4execl\fP [see \f4exec\fP(2)].
+.P
+.RS
+.nf
+.ft 4
+#include <unistd.h>
+#include <varargs.h>
+#define MAXARGS	100
+
+/\(**	execl is called by
+		execl(file, arg1, arg2, .\ .\ ., (char \(**)0);
+\(**/
+execl(va_alist)
+va_dcl
+{
+	va_list ap;
+	char \(**file;
+	char \(**args[MAXARGS];		/\(** assumed big enough\(**/
+	int argno = 0;
+
+	va_start(ap);
+	file = va_arg(ap, char \(**);
+	while ((args[argno++] = va_arg(ap, char \(**)) != 0)
+		;
+	va_end(ap);
+	return execv(file, args);
+}
+.ft 1
+.fi
+.RE
+.SH SEE ALSO
+\f4exec\fP(2), \f4printf\fP(3S), \f4vprintf\fP(3S), \f4stdarg\fP(5)
+.SH NOTES
+It is up to the calling routine to specify in some manner how many arguments
+there are, since it is not always possible to determine the number of
+arguments from the stack frame.
+For example, \f4execl\fP
+is passed a zero pointer to signal the end of the list.
+\f4printf\fP can tell how many arguments are there by the format.
+.PP
+It is non-portable to specify a second argument of
+\f4char\fP,
+\f4short\fP,
+or
+\f4float\fP
+to 
+\f4va_arg\fP,
+since arguments seen by the called function are not
+\f4char\fP,
+\f4short\fP,
+or
+\f4float\fP.
+C converts 
+\f4char\fP
+and 
+\f4short\fP
+arguments to 
+\f4int\fP
+and
+converts
+\f4float\fP
+arguments to
+\f4double\fP
+before passing them to a function.
+.PP
+\f4stdarg\f1 is the preferred interface.

@@ -1,0 +1,9 @@
+#ident	"@(#)pkg.terminf:terminf/pkginfo	1.4.2.1"
+
+PKG="terminf"
+CLASSES="none"
+NAME="Terminal Information Utilities"
+VERSION="4.0"
+VENDOR="USL"
+CATEGORY="system,essential"
+PREDEPEND="terminf"

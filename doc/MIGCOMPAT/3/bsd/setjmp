@@ -1,0 +1,226 @@
+'\"macro stdmacro
+.if n .pH g3.setjmp @(#)setjmp	40.10 of 4/24/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.\" Copyright (c) 1988 Sun Microsystems, Inc. - All Rights Reserved.
+.\"
+.hw sigsetjmp
+.nr X
+.if \nX=0 .ds x} setjmp 3 "BSD Compatibility Package" "\&"
+.if \nX=1 .ds x} setjmp 3 "BSD Compatibility Package"
+.if \nX=2 .ds x} setjmp 3 "" "\&"
+.if \nX=3 .ds x} setjmp "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4setjmp\f1, \f4longjmp\f1, \f4_setjmp\f1, \f4_longjmp\f1, \f4sigsetjmp\f1, \f4siglongjmp\f1 \- non-local goto
+.SH SYNOPSIS
+.nf
+\f4cc \f1[ \f2flag\f1\. \. \. ] \f2file\f1 \. \. \. \f4\-lucb\f1
+.P
+\f4#include <setjmp.h>\f1
+.P
+\f4int setjmp(env)\f1
+\f4jmp_buf env;\f1
+.P
+\f4longjmp(env, val)\f1
+\f4jmp_buf env;\f1
+\f4int val;\f1
+.P
+\f4int _setjmp(env)\f1
+\f4jmp_buf env;\f1
+.P
+\f4_longjmp(env, val)\f1
+\f4jmp_buf env;\f1
+\f4int val;\f1
+.P
+\f4int sigsetjmp(env, savemask)\f1
+\f4sigjmp_buf env;\f1
+\f4int savemask;\f1
+.P
+\f4siglongjmp(env, val)\f1
+\f4sigjmp_buf env;\f1
+\f4int val;\f1
+.fi
+.SH DESCRIPTION
+\f4setjmp\f1
+and
+\f4longjmp\f1
+are useful for dealing with errors and interrupts
+encountered in a low-level subroutine of a program.
+.P
+\f4setjmp\f1
+saves its stack environment in
+.I env
+for later use by
+\f4longjmp\f1.
+A normal call to
+\f4setjmp\f1
+returns zero.
+\f4setjmp\f1
+also saves the register environment.
+If a
+\f4longjmp\f1
+call will be made, the routine which called
+\f4setjmp\f1
+should not return until after the
+\f4longjmp\f1
+has returned control (see below).
+.P
+\f4longjmp\f1
+restores the environment saved by the last call of
+\f4setjmp\f1,
+and then returns in such a way that execution
+continues as if the call of
+\f4setjmp\f1
+had just returned the value
+.I val
+to the function that invoked
+\f4setjmp\f1;
+however, if
+.I val
+were zero, execution would continue as if the call of
+\f4setjmp\f1
+had returned one.
+This ensures that a ``return'' from
+\f4setjmp\f1
+caused by a call to
+\f4longjmp\f1
+can be distinguished from a regular return from
+\f4setjmp\f1.
+The calling function must not itself have returned in the interim,
+otherwise
+\f4longjmp\f1
+will be returning control to a possibly non-existent environment.
+All memory-bound data have values as of the time
+\f4longjmp\f1
+was called.
+The
+.SM CPU
+and floating-point data registers are restored to the values they had at
+the time that
+\f4setjmp\f1
+was called.
+But, because the
+\f4register\f1
+storage class is only a hint to the C compiler, variables declared as
+\f4register\f1
+variables may not necessarily be assigned to machine registers, so
+their values are unpredictable after a
+\f4longjmp\f1.
+This is especially a problem for programmers trying to write
+machine-independent C routines.
+.P
+\f4setjmp\f1
+and
+\f4longjmp\f1
+save and restore the signal mask (see
+\f4sigsetmask\f1(2)),
+while
+\f4_setjmp\f1
+and
+\f4_longjmp\f1
+manipulate only the C stack and registers.
+If the
+.I savemask
+flag to
+\f4sigsetjmp\f1
+is non-zero, the signal mask is saved, and a subsequent
+\f4siglongjmp\f1
+using the same
+.I env
+will restore the signal mask.
+If the
+.I savemask
+flag is zero, the signal mask is not saved, and a subsequent
+\f4siglongjmp\f1
+using the same
+.I env
+will not restore the signal mask.
+In all other ways,
+\f4_setjmp\f1
+and
+\f4sigsetjmp\f1
+function in the same way that
+\f4setjmp\f1
+does, and
+\f4_longjmp\f1
+and
+\f4siglongjmp\f1
+function in the same way that
+\f4longjmp\f1
+does.
+.P
+None of these functions save or restore any floating-point status or control
+registers.
+.SH EXAMPLE
+.P
+The following code fragment indicates the flow of control of the
+\f4setjmp\f1
+and
+\f4longjmp\f1
+combination:
+.RS
+.P
+.nf
+.I function declaration
+\&.\|.\|.
+.ft 4
+	jmp_buf	my_environment;
+	\f1\&.\|.\|.\fP
+	if (\|setjmp\|(\|my_environment\|)\|)  {
+	  /* register variables have unpredictable values */
+.I		code after the return from longjmp
+		\&.\|.\|.
+.ft 4
+	} else {
+	  /* do not modify register vars in this leg of code */
+.I		this is the return from setjmp
+		\&.\|.\|.
+.ft 4
+	}
+.ft 1
+.fi
+.RE
+.SH "SEE ALSO"
+\f4cc\fP(1),
+\f4signal\fP(3),
+\f4sigsetmask\fP(3),
+\f4sigvec\fP(3)
+.P
+\f4cc\fP(1),
+\f4signal\fP(2),
+\f4setjmp\fP(3C)
+in the \f2Programmer's Reference Manual\f1
+.SH NOTES
+\f4setjmp\f1
+does not save the current notion of whether the process is
+executing on the signal stack.  The result is that a
+\f4longjmp\f1
+to some place on the signal stack leaves the signal stack state incorrect.
+.P
+On some systems \f4setjmp\f1
+also saves the register environment.
+Therefore, all data that are bound to registers
+are restored to the values they had at the time that
+\f4setjmp\f1
+was called.
+All memory-bound data have values as of the time
+\f4longjmp\f1
+was called.
+However, because the
+\f4register\f1
+storage class is only a hint to the C compiler, variables declared as
+\f4register\f1
+variables may not necessarily be assigned to machine registers, so
+their values are unpredictable after a
+\f4longjmp\f1.
+When using compiler options that specify automatic register allocation (see
+\f4cc\f1(1V)),
+the compiler will not attempt to assign variables to
+registers in routines that call
+\f4setjmp\f1.
+.P
+\f4longjmp\f1 never causes \f4setjmp\f1
+to return zero, so programmers should
+not depend on \f4longjmp\f1 being able to cause
+\f4setjmp\f1 to return zero.

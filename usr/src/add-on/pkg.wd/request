@@ -1,0 +1,216 @@
+#	Copyright (c) 1990  Intel Corporation
+#	All Rights Rreserved
+#
+#	INTEL CORPORATION PROPRIETARY INFORMATION
+#
+#	This software is supplied to AT & T under the terms of a license 
+#	agreement with Intel Corporation and may not be copied nor 
+#	disclosed except in accordance with the terms of that agreement.
+#
+
+#ident	"@(#)pkg.wd:request	1.2.1.2"
+
+#	request script for wd package installation
+
+trap 'exit 3' 15
+
+CONFBIN=/etc/conf/bin
+VFILE=/tmp/varfile
+POST_FILE=$1
+rm -rf $VFILE
+
+RETVCHK=0
+VECTMSG=""
+for VECT in 3 4 5 6 7 9
+do
+	${CONFBIN}/idcheck -v $VECT
+	RETVCHK=$?
+	if [ "$VECT" = 9 ]
+	then
+		VECT=2
+	fi
+	if [ "$RETVCHK" = 0 ]
+	then
+		VECTMSG="${VECT}\t"
+		echo $VECTMSG >> $VFILE
+		VECTLIST="${VECTLIST} ${VECT}"
+	fi
+done
+	
+if [ "$VECTLIST" = "" ]
+then
+	message "The ${PKG} cannot be installed because interrupts \
+2, 3, 4, 5, 6 and 7 are in use"
+	exit 1
+fi
+DEFLT=3
+cat $VFILE | grep $DEFLT > /dev/null
+if [ $? != 0 ]
+then 
+	DEFLT=`sed -n '1p' $VFILE`
+fi
+REQINTV=`ckitem -u -l "These are the interrupts that may be available" -p "Type the interrupt you want the ethernet controller to be configured for." -d $DEFLT -f $VFILE` || exit $? 
+
+echo "REQINTV=$REQINTV" >>$POST_FILE || exit 1
+rm -rf $VFILE
+# Prompt script to allow the user to select installation
+# of addresses of their choice 
+#
+ADDRS="
+base 200 21F
+base 220 23F
+base 240 25F
+base 260 27F
+base 280 29F
+base 2A0 2BF
+base 2C0 2DF
+base 2E0 2FF
+base 300 31F
+base 320 33F
+base 340 35F
+base 360 37F
+base 380 39F
+base 3A0 3BF
+base 3C0 3DF
+base 3E0 3FF
+ram8 80000 81FFF
+ram8 84000 85FFF
+ram8 88000 89FFF
+ram8 8C000 8DFFF
+ram8 A0000 A1FFF
+ram8 A4000 A5FFF
+ram8 A8000 A9FFF
+ram8 AC000 ADFFF
+ram8 B0000 B1FFF
+ram8 B4000 B5FFF
+ram8 B8000 B9FFF
+ram8 BC000 BDFFF
+ram8 C0000 C1FFF
+ram8 C4000 C5FFF
+ram8 C8000 C9FFF
+ram8 CC000 CDFFF
+ram8 D0000 D1FFF
+ram8 D4000 D5FFF
+ram8 D8000 D9FFF
+ram8 DC000 DDFFF
+ram8 E0000 E1FFF
+ram8 E4000 E5FFF
+ram8 E8000 E9FFF
+ram8 EC000 EDFFF
+ram8 F0000 F1FFF
+ram8 F4000 F5FFF
+ram8 F8000 F9FFF
+ram8 FC000 FDFFF"
+
+IOAMSG=""
+for LADR in 200 220 240 260 280 2A0 2C0 2E0 300 320 340 360 380 3A0 3C0 3E0 
+do
+	ADDCHK=`echo "$ADDRS" | grep "base $LADR"` 
+	set `echo $ADDCHK`
+	LADR=$2
+	HADR=$3
+	${CONFBIN}/idcheck -a -l $LADR -u $HADR > /dev/null 2>&1
+	if [ "$?" = 0 ]
+	then
+		IOAMSG="${LADR}\t${HADR}"
+		echo $IOAMSG >> $VFILE
+		IOALIST="${IOALIST} ${LADR}"
+	fi
+done
+if [ "$IOALIST" = "" ]
+then
+	message "The ${PKG} cannot be installed because all available \
+I/O addresses are in use"
+	exit 1
+fi
+DEFLT=280
+cat $VFILE | grep $DEFLT > /dev/null
+if [ $? != 0 ]
+then 
+	set `sed -n '1p' $VFILE`
+	DEFLT=$1
+fi
+echo "\n\nThe following is a list of I/O address ranges at which your"
+echo "ethernet controller may be jumpered."
+
+REQLADD=`ckitem -l "I/O address range" -p "Type the corresponding menu number at which your ethernet controller is jumpered." -d $DEFLT -f $VFILE` || exit $?
+
+rm -rf $VFILE
+
+# Prompt for ethernet board type.
+#
+REQBOARD=`ckitem -u -l "There are two ethernet boards available" -p "Type the one present in your system." -d WD8003E "WD8003E" "WD8013E"` || exit $? 
+
+if [ "$REQBOARD" = "WD8003E" -o "$REQBOARD" = "WD8013E" ]
+	then
+		REQMEM=8
+fi
+echo "REQMEM=$REQMEM" >>$POST_FILE || exit 1
+
+IOAMSG=""
+for RLADR in 80000 84000 88000 8C000 A0000 A4000 A8000 AC000 B0000 B4000 \
+B8000 BC000 C0000 C4000 C8000 CC000 D0000 D4000 D8000 DC000 E0000 \
+E4000 E8000 EC000 F0000 F4000 F8000 FC000
+do
+	ADDCHK=`echo "$ADDRS" | grep "ram$REQMEM $RLADR"` 
+	set `echo $ADDCHK`
+	RLADR=$2
+	RHADR=$3
+	${CONFBIN}/idcheck -c -l $RLADR -u $RHADR > /dev/null 2>&1
+	if [ "$?" = 0 ]
+	then
+		IOAMSG="${RLADR}\t${RHADR}"
+		echo $IOAMSG >> $VFILE
+		IOALIST="${IOALIST} ${RLADR}"
+	fi
+done
+if [ "$IOALIST" = "" ]
+then
+	message "The ${PKG} cannot be installed because all available \
+ram memory addresses are in use"
+	exit 1
+fi
+DEFLT=D8000
+cat $VFILE | grep $DEFLT > /dev/null
+if [ $? != 0 ]
+then 
+	set `sed -n '1p' $VFILE`
+	DEFLT=$1
+fi
+# Prompt script to allow the user to select installation
+# of addresses of their choice 
+#
+
+echo "\n\nThe following is a list of ram high and low addresses" 
+echo "at which your ethernet controller may be jumpered"
+
+REQRLADD=`ckitem -l "RAM address range" -p "Type the corresponding menu number at which your ethernet controller is jumpered." -d $DEFLT -f $VFILE` || exit $?
+
+rm -rf $VFILE
+
+if [ "$REQINTV" = 2 ]
+then
+	REQINTV=9
+fi
+
+ADDCHK=`echo "$ADDRS" | grep "base $REQLADD"` 
+set `echo $ADDCHK`
+REQLADD=$2
+REQHADD=$3
+
+ADDCHK=`echo "$ADDRS" | grep "ram$REQMEM $REQRLADD"` 
+set `echo $ADDCHK`
+REQRLADD=$2
+REQRHADD=$3
+
+echo "REQLADD=$REQLADD" >>$POST_FILE || exit 1
+echo "REQHADD=$REQHADD" >>$POST_FILE || exit 1
+echo "REQRLADD=$REQRLADD" >>$POST_FILE || exit 1
+echo "REQRHADD=$REQRHADD" >>$POST_FILE || exit 1
+
+if [ -f ${CONFBIN}/S.idbuild ]
+then
+	echo "wd	Y	32	6	1	$REQINTV	$REQLADD	$REQHADD	$REQRLADD	$REQRHADD" >> /etc/conf/cf.d/sdevice
+fi
+exit 0
+

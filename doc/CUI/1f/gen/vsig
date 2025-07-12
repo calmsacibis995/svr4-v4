@@ -1,0 +1,45 @@
+'\"macro stdmacro
+.if n .pH g1f.vsig @(#)vsig	40.13 of 5/29/91
+.\" Copyright 1989 AT&T
+.nr X
+.if \nX=0 .ds x} vsig 1F "Form and Menu Language Interpreter Utilities" "\&"
+.if \nX=1 .ds x} vsig 1F "Form and Menu Language Interpreter Utilities"
+.if \nX=2 .ds x} vsig 1F "" "\&"
+.if \nX=3 .ds x} vsig "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4vsig\f1 \- synchronize a co-process with the controlling FMLI application
+.SH SYNOPSIS
+\f4vsig\f1
+.SH DESCRIPTION
+The \f4vsig\f1 executable sends a \f4SIGUSR2\fP signal to the controlling FMLI process.
+This signal/alarm causes FMLI to execute the FMLI built-in command \f4checkworld\f1
+(see Chapter 2 in the \f2Character User Interface Programmer's Guide\f1),
+which causes all posted objects with a \f4reread\f1 descriptor evaluating to \f4TRUE\fP
+to be reread.
+\f4vsig\f1 takes no arguments.
+.SH EXAMPLES
+.PP
+The following is a segment of a shell program:
+.PP
+.RS
+.nf
+\f4echo "Sending this string to an FMLI process"
+vsig\f1
+.fi
+.RE
+.PP
+The \f4vsig\f1 executable flushes the output buffer
+\f2before\f1 it sends the \f4SIGUSR2\fP
+signal to make sure the string is actually in the pipe created by
+the \f4cocreate\f1 function.
+.SH NOTES
+Because \f4vsig\f1 synchronizes with FMLI, it should be used
+rather than \f4kill\f1 to send a \f4SIGUSR2\f1 signal to FMLI.
+.SH "SEE ALSO"
+\f4coproc\f1(1F)
+.br
+\f4kill\f1(1), in the \f2 UNIX System V User's Reference Manual\f1
+.br
+\f4kill\f1(2),
+\f4signal\f1(2), in the \f2UNIX System V Programmer's Reference Manual\f1

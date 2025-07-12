@@ -1,0 +1,48 @@
+#ident	"@(#)doctools:index/formati	1.1"
+nawk ' # formati - put troff markup into index
+#   Input: sort key (tab) index term (tab) [book::[chap: numlist]+ ]+
+#   Output: troff source file
+BEGIN {	FS = "\t"
+	s = "ABCDEFGHIJKLMNOPQRSTUVWXYZ abcdefghijklmnopqrstuvwxyz "
+	# set upper["a"] = "A"
+	for (i = 1; i <= 27; i++) upper[substr(s,i+27,1)] = substr(s,i,1)
+	# set lower["a"] =  lower["A"] ="a"
+	for (i = 1; i <= 27; i++) {
+		lower[substr(s,i,1)] = substr(s,i+27,1)
+		lower[substr(s,i+27,1)] = substr(s,i+27,1)
+	}
+      }
+      {	# Mark change between letters with .YY
+
+	this = substr($1,1,1)
+	if (!(this in lower)) lower[this] = " "
+	this = lower[this]
+	if ((this != last) && (this != " "))
+		print ".YY", this, upper[last=this]
+
+	#  Clean up for printing.
+
+	gsub(/ +,/, ",", $2)	# get rid of extra space before commas
+	gsub(/ +$/, "", $3)  	# get rid of extra space at end of pagelist
+	gsub(/9[0-9][0-9][0-9] /, "", $3)  # get rid of phony numbers for non-numeric chapters
+	gsub(/ +\;/, ";", $3)	# dont add comma before end-of-book
+	gsub(/ /, ", ", $3)	# add commas between page numbers
+	gsub(/\;/, "; ", $3)	# add space after each book
+
+	#  Print index term and page refs, but watch out for cross-references.
+	#  Restore default and point size for "see also", otherwise they print like page numbers.
+
+	if (i = index($2, "\(See also")) {
+		$3 = $3 " \\f1\\s10" substr($2,i)
+		$2 = substr($2,1,i-1)
+	} else if (i = index($2, "\(see also")) {
+		$3 = $3 " \\f1\\s10" substr($2,i)
+		$2 = substr($2,1,i-1)
+	} else if (i = index($2, "\(See")) {
+		$3 = ""
+	} else if (i = index($2, "\(see")) {
+		$3 = ""
+	}
+	printf ".XX \"\\&%s\" \"%s\"\n", $2, $3
+      }
+' $*

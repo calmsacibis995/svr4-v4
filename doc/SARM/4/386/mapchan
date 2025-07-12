@@ -1,0 +1,225 @@
+.if n .pH g4.mapchan @(#)mapchan	40.3 of 1/3/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1990 AT&T
+'\"macro stdmacro
+.nr X
+.if \nX=0 .ds x} mapchan 4 "" "\&"
+.if \nX=1 .ds x} mapchan 4 ""
+.if \nX=2 .ds x} mapchan 4 "" "\&"
+.if \nX=3 .ds x} mapchan "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4mapchan\f1 \- Format of tty device mapping files.
+.SH SYNOPSIS
+\f4mapchan\f1
+.SH DESCRIPTION
+\f4mapchan\f1 configures the mapping of information input and output of
+UNIX.
+.P
+Each unique channel map requires a 2048-byte buffer for mapping the
+input and output of characters.
+No buffers are required if no channels are mapped.
+.P
+A method of sharing maps is implemented for channels that have the
+same map in place.
+Each additional, unique map allocates an additional buffer.
+The maximum number of map buffers available on a system is
+configured in the kernel, and is adjustable via the link kit \f4NEMAP\f1
+parameter [see \f4config\f1(ADM) and \f4configure\f1(ADM)].
+Buffers of maps no longer in use are returned for use by other maps.
+.SH "EXAMPLES of a MAP FILE" 
+The internal character set used by UNIX System V/386 is defined by the
+right column of the  input map, and the first column of the output
+map in place on that line.
+The default internal character set is the
+8-bit ISO 8859/1 character set, which is also known as dpANS X3.4.2
+and ISO/TC97/SC2.
+It supports the Latin alphabet and can represent most European languages.
+.P
+Any character value not given is assumed to be a straight mapping.
+Only the differences are shown in the \f2mapfile\f1 [see \f4mapchan\fP(1M)].
+The left hand column must be unique.
+More than one occurence of any entry is an error.
+Right hand column characters can appear more than once.
+This is many to one mapping.
+Nulls can be produced with compose sequences
+or as part of an output string.
+.P
+It is recommended that no mapping be enabled on the channel
+used to create or modify the mapping files.
+This prevents any confusion of the actual values being entered due to mapping.
+It is also recommended that numeric rather than character representations
+be used in most cases, as these are not likely to be subject to mapping.
+Use comments to identify the characters represented.
+Refer to the \f4ascii\f1(5) manual page and hardware reference
+manual of the device being mapped for the values to assign.
+.sp .5
+.RS
+.ft 4
+.nf
+#
+#sharp/pound/cross-hatched is the comment character 
+#however, a quoted # ('#') is 0x23, not a comment
+#
+#beep, input, output, dead, compose and control
+#are special keywords and should appear as shown.
+#
+beep				#sound bell when errors occur
+input
+
+.br
+\f2a b
+c d\fP
+
+dead \f2p\fP
+\f2q r\fP				# \f2p\fP followed by \f2q\fP yields \f2r\fP.
+\f2s t\fP				# \f2p\fP followed by \f2s\fP yields \f2t\fP.
+
+dead \f2u\fP
+\f2v w\fP				# \f2u\fP followed by v yields w.
+
+compose \f2x\fP			# \f2x\fP is the compose key (only one allowed).
+\f2y z a		
+B C D\fP				#\f2x\fP followd by B and C yields D.
+
+output
+\f2e f\fP				# e is mapped to \f2f\fP.
+\f2g h i j\fP				# g is mapped to \f2hij\fP- one to many.
+\f2k l m n o\fP			# k is mapped \f2lmno\fP
+
+control			# The control must be last
+
+input
+\f2E 1\fP				# The character E is followed by 1 or more
+				  unmapped character
+
+output
+\f2FG 2 \fP				# The characters \f2FG\fP are followed by 2 more
+				  unmapped characters
+.in 0
+.br
+.fi
+.RE
+.sp .5
+.P 
+All of the single letters above preceding the control section must
+be in one of these formats:
+.sp .5
+.RS
+.DS
+.nf
+56	# decimal
+045	# octal
+0xfa	# hexadecimal
+\'b\'	# quoted char
+\'\\076\'	# quoted octal
+\'\\x4a\'	# quoted hex
+.fi
+.DE
+.RE
+.sp .5
+.P
+All of the above formats are translated to a single byte values.
+.P
+The control sections (which must be the last in the file) contain
+specifications of character sequences which should be passed through
+to or from the terminal device without going through the normal \f4mapchan\f1
+processing.
+These specifications consist of two parts: a fixed sequence of
+one or more defined characters indicating the start of a no-map sequence,
+followed by a number of characters of which the actual values are unspecified.
+.P
+To illustrate this, consider a cursor-control sequence which should be passed
+directly to the terminal without being mapped.
+Such a sequence would typically
+begin with a fixed escape sequence instructing the terminal to interpret the
+following two characters as a cursor postion; the values of the following
+two characters are variable, and depend on the cursor position requested.
+Such a control sequence would be specified as:
+.br
+.DS
+.nf
+
+      \E= 2       # Cursor control: escape = <x> <y>
+.fi
+.DE
+.P
+There are two subsections under the control section: the input section,
+which is used to filter data sent from the terminal to UNIX System V/386, and
+the output section, which is used to filter data sent from UNIX System V/386
+to the terminal.
+The two fields in each control sequence are separated
+by white space, that is the SPACE or TAB characters.
+Also the \f4#\fP (HASH) character introduces a comment,
+causing the remainder of the line to be ignored.
+Therefore, if any of these three characters are required
+in the specification itself, they should be entered using one of alternative
+means of entering characters, as follows:
+.IP "\f4^\f2x\f1"
+The character produced by the terminal on pressing the CONTROL and
+\f2x\f1 keys together.
+.IP "\f4\E\f1 or \f4\e\f1"
+The ESCAPE character, octal 033.
+.IP "\f4\e\f2c\f1"
+Where \f2c\fP is one of \f4b\fP, \f4f\fP, \f4l\fP, \f4n\fP, \f4r\fP or \f4t\fP,
+produces BACKSPACE, FORMFEED, LINEFEED, NEWLINE, CARRIAGE RETURN or
+TAB characters, respectively.
+.IP "\f4\O\f1"
+Since the NULL character can not be represented, this sequence is not
+stored as the character with octal value 0200, which behaves as a NULL
+on most terminals.
+.IP "\f4\nn\f1 or \f4\nn\f2n\f1"
+Specifies the octal value of the character directly.
+.IP "\"
+Followed by any any other character is interpreted as that character.
+This can be used to enter SPACE, TAB, or HASH charaacters.
+.SH DIAGNOSTICS
+\f4mapchan\f1 performs these error checks when processing the \f2mapfile\fP:
+.P
+.nf
+More than one compose key.
+Characters mapped to more than one thing. 
+Syntax errors in the byte values.
+Missing input or output keywords.
+Dead or compose keys also occuring in the input section.
+Extra information on a line.
+Mapping a character to null.
+Starting an output control sequence with a character that is already mapped.
+.fi
+.P
+If characters are displayed as the 7-bit value instead of the 8-bit value,
+use \f4stty -a\f1 [see stty(1) in the \f2User's Reference Manual\fP]
+to verify that \f4-strip\f1 is set.
+Make sure \f4input\f1 is mapping to the 8859 character set.
+Dead and compose sequences are \f4input\f1 mapping and should be going to 8859.
+.SH FILES
+\f4/etc/default/mapchan
+.br
+/usr/lib/mapchan/*
+.SH NOTES
+Some non-U.S keyboards and display devices do not support characters
+commonly used by UNIX command shells and the C programming language.
+Do not attempt to use such devices for system administration tasks.
+.P
+Not all terminals or printers can display all the characters that
+can be represented using this utility.
+Refer to the device's hardware
+manual for information on the capabilities of the peripheral device.
+.SH WARNINGS
+Use of mapping files that specify a different internal character
+set per-channel, or a set other than the 8-bit ISO 8859 set supplied
+by default can cause strange side effects.
+It is especially important
+to retain the 7-bit ASCII portion of the character set [see \f4ascii\f1(5)]
+UNIX System V/386 utilities and applications assume these values.
+Media transported between machines with different internal code set mappings
+may not be portable as no mapping is performed on block devices, such 
+as tape and floppy drives.
+\f4trchan\f1 can be used to translate from one internal character set to another.
+.sp
+Do not set ISTRIP [see \f4stty\f1(1)] on channels that have mapping
+that includes eight bit character set.
+.SH SEE ALSO
+ascii(5), keyboard(7), lp(7), mapchan(1M), trchan(1), mapkey(1M), tty(7).
+.br
+\f4stty\fP(1) in the \f2User's Reference Manual\fP.

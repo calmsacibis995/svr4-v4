@@ -1,0 +1,83 @@
+'\"!  tbl | mmdoc
+'\"macro stdmacro
+.if n .pH gen.msgb @(#)msgb	40.6 of 7/1/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.nr X
+.if \nX=0 .ds x} msgb D4DK "STREAMS" "DDI/DKI" "\&"
+.if \nX=1 .ds x} msgb D4DK "STREAMS" "DDI/DKI"
+.if \nX=2 .ds x} msgb D4DK "" "\&"
+.if \nX=3 .ds x} msgb "" "" "\&"
+.TH \*(x}
+.IX "\f4msgb\fP(D4DK)"
+.SH NAME
+\f4msgb\fP \- STREAMS message block structure
+.SH SYNOPSIS
+.nf
+\f4#include <sys/types.h>
+#include <sys/stream.h>\fP
+.fi
+.SH DESCRIPTION
+A STREAMS message is made up of one or more message blocks, referenced by a
+pointer to a \f4msgb\fP structure.
+When a message is on a queue, all
+fields are read-only to drivers and modules.
+.SH STRUCTURE MEMBERS
+.TS
+lf4p8 2 lf4p8 2 lf4p8.
+struct msgb	*b_next;	/* next message on queue */
+struct msgb	*b_prev;	/* previous message on queue */
+struct msgb	*b_cont;	/* next block in message */
+uchar_t	*b_rptr;	/* 1st unread data byte of buffer */
+uchar_t	*b_wptr;	/* 1st unwritten data byte of buffer */
+struct datab	*b_datap;	/* pointer to data block */
+uchar_t	b_band;	/* message priority  */
+ushort_t	b_flag;	/* used by stream head  */
+.TE
+.P
+The \f4b_next\fP and \f4b_prev\fP pointers are used to link
+messages together on a \f4queue\fP(D4DK).
+These fields can be used
+by drivers and modules to create linked lists of messages.
+.P
+The \f4b_cont\fP pointer links message blocks together when a message is
+composed of more than one block.
+Drivers and modules can use this
+field to create complex messages from single message blocks.
+.P
+The \f4b_rptr\fP and \f4b_wptr\fP pointers describe the valid data
+region in the associated data buffer.
+The \f4b_rptr\fP field points
+to the first unread byte in the buffer and the \f4b_wptr\fP field
+points to the next byte to be written in the buffer.
+.P
+The \f4b_datap\fP field points to the data block [see \f4datab\fP(D4DK)]
+associated with the message block.
+This field should never be changed
+by modules or drivers.
+.P
+The \f4b_band\fP field contains the priority band associated with the message.
+Normal priority messages and high priority messages have \f4b_band\fP set
+to zero.
+High priority messages are high priority by virtue of their
+message type.
+This field can be used to alter the queueing priority of
+the message.
+The higher the priority band, the closer to the head of the
+queue the message is placed.
+.P
+The \f4b_flag\fP field contains a bitmask of flags that can be set to
+alter the way the stream head will process the message.
+Valid flags are:
+.IP \f4MSGMARK\fP 14n
+The last byte in the message is ``marked.''
+This condition is
+testable from user level via the \f4I_ATMARK ioctl\fP(2).
+.SH NOTES
+The \f4msgb\fP structure is defined as type \f4mblk_t\fP.
+.SH SEE ALSO
+\f2Programmer's Guide: STREAMS\fP
+.br
+.na
+\f4allocb\fP(D3DK), \f4esballoc\fP(D3DK), \f4freeb\fP(D3DK),
+\f4datab\fP(D4DK), \f4free_rtn\fP(D4DK), \f4messages\fP(D5DK)
+.ad

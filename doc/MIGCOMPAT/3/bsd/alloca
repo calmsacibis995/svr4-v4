@@ -1,0 +1,68 @@
+'\"macro stdmacro
+.if n .pH g3.alloca @(#)alloca	40.12 of 4/19/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.\" Copyright (c) 1988 Sun Microsystems, Inc. - All Rights Reserved.
+.\"
+.nr X
+.if \nX=0 .ds x} alloca 3 "BSD Compatibility Package" "\&"
+.if \nX=1 .ds x} alloca 3 "BSD Compatibility Package"
+.if \nX=2 .ds x} alloca 3 "" "\&"
+.if \nX=3 .ds x} alloca "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4alloca\f1 \- memory allocator
+.SH SYNOPSIS
+\f4cc \f1[ \f2flag\f1\. \. \. ] \f2file\f1 \. \. \.
+\f4\-lucb\f1
+.br
+\f4#include <alloca.h>\f1
+.br
+\f4char *alloca(size)\f1
+.br
+\f4int size;\f1
+.SH DESCRIPTION
+.P
+\f4alloca\f1
+allocates
+.I size
+bytes of space in the stack frame of the caller,
+and returns a pointer to the allocated block.
+This temporary space is automatically freed
+when the caller returns.
+Note: if the allocated block is beyond the current stack limit,
+the resulting behavior is undefined.
+.SH SEE ALSO
+\f4sigstack\fP(3),
+\f4sigvec\fP(3)
+.P
+\f4csh\fP(1)
+in the \f2User's Reference Manual\f1
+.br
+\f4ld\fP(1),
+\f4brk\fP(2),
+\f4getrlimit\fP(2),
+\f4calloc\fP(3),
+and
+\f4malloc\fP(3)
+in the \f2Programmer's Reference Manual\f1
+.P
+Stephenson, C.J.,
+.IR "Fast Fits" ,
+in
+.IR "Proceedings of the \s-1ACM\s0 9th Symposium on Operating Systems" ,
+\f2\s-1SIGOPS\s0 Operating Systems Review\f1,
+vol. 17, no. 5, October 1983
+.PP
+.IR "Core Wars" ,
+in
+.IR "Scientific American" ,
+May 1984
+.SH NOTES
+.P
+\f4alloca\f1
+is machine-,
+compiler-,
+and most of all,
+system-dependent.
+Its use is strongly discouraged.

@@ -1,0 +1,61 @@
+'\"macro stdmacro
+.if n .pH g1a.edlina @(#)edlina	40.6 of 5/17/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} edlina 7iref "System Administration Utilities" "" "\&"
+.if \nX=1 .ds x} edlina 7iref "System Administration Utilities" ""
+.if \nX=2 .ds x} edlina 7iref "" "\&"
+.if \nX=3 .ds x} edlina "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4edlina\f1 \- External Data Link driver for iNA961 Release 3.0.
+.SH DESCRIPTION
+The \f4edlina\f1 driver provides a STREAMS interface that integrates with
+the System V/386 TCP/IP protocol stack.  The \f4edlina\f1 driver is the
+end of the streams queue pair providing the interface to the underlying
+External Data Link (EDL) offered by iNA961 Release 3.0.  The Link Level
+Interface is provided by the \f4edlina\f1 driver by transmitting and
+receiving Data Link packets using the communication interface provided by
+the i530 driver.
+.PP
+Configuration and tunable parameters for the \f4edlina\f1 driver are
+defined in \f4/etc/conf/pack.d/edlina/space.c\f1.  In order to change
+the driver configuration, this file must be edited and the kernel
+regenerated.  These parameters are described below:
+.PP
+.TP 1.7i
+\f4N_BOARDS\f1
+Number of 186/530 boards in the system.  The default is 1.
+.TP 1.7i
+\f4EDL_MAX_BUFS_POSTED\f1
+Maximum number of buffers posted for receiving data.  The default is 16.
+.SH FILES
+.TP 2.25i
+\f4/etc/conf/pack.d/edlina/space.c\f1
+edlina driver configuration file
+.TP
+\f4/etc/conf/pack.d/edlina/Driver.o\f1
+edlina driver object file
+.TP
+\f4/etc/conf/node.d/edlina\f1
+edlina driver device node definition
+.TP
+\f4/etc/conf/sdevice.d/edlina\f1
+edlina driver system device entry
+.TP
+\f4/usr/include/sys/edlina.h\f1
+edlina driver user data structures
+.TP
+\f4/etc/strcf\f1
+TCP/IP configuration file
+.SH SEE ALSO
+\f4i530\f1(7iref).
+.SH NOTES
+The following line will need to be added to the boot function in
+the \f4/etc/strcf\f1 file to configure TCP/IP to use the \f4edlina\f1 driver:
+.nf
+
+\f4cenet ip /dev/edlina emd 0\f1
+.PP
+There should be only one cenet (or senet) executable line in this file.

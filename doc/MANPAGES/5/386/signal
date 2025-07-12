@@ -1,0 +1,229 @@
+'\"!  tbl | mmdoc
+'\"macro stdmacro
+.if n .pH g5.signal @(#)signal	40.5 of 1/3/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+'\"!  tbl | mmdoc
+'\"macro stdmacro
+.if n .pH g5.signal @(#)signal	40.15 of 9/19/89
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.if \nX=0 .ds x} signal 5 "" "\&"
+.if \nX=1 .ds x} signal 5 ""
+.if \nX=2 .ds x} signal 5 "" "\&"
+.if \nX=3 .ds x} signal "" "" "\&"
+.nr X
+.TH \*(x} "" "386 Computer Only"
+.SH NAME
+\f4signal\f1 \- base signals
+.SH SYNOPSIS
+\f4#include <signal.h>\fP
+.SH DESCRIPTION
+.PP
+A signal is an asynchronous notification of an event.
+A signal is said to be generated for (or sent to) a process when the
+event associated with
+that signal first occurs. Examples of such events include
+hardware faults, timer expiration and terminal activity, as well as the
+invocation of the \f4kill\fP or \f4sigsend\fP system calls.  In some
+circumstances, the same event generates signals for multiple processes.
+A process may request a detailed notification of the source of the
+signal and the reason why it was generated [see \f4siginfo\fP(5)].
+.PP
+Each process may specify a system action to be taken in response to
+each signal sent to it, called the signal's disposition.  The set
+of system signal actions for a process is initialized from that of
+its parent.  Once an action is installed for a specific signal,
+it usually remains installed until another disposition is explicitly
+requested by a call to either \f4sigaction, signal\fP or \f4sigset\fP,
+or until the process execs  
+[see \f4sigaction\fP(2) and \f4signal\fP(2)].
+When a process execs, all signals
+whose disposition has been set to catch the signal will be set to
+\f4SIG_DFL\fP.  Alternatively, a process may request that the system
+automatically reset the disposition of a signal to \f4SIG_DFL\fP
+after it has been caught [see \f4sigaction\fP(2) and \f4signal\fP(2)].
+.PP
+A signal is said
+to be delivered to a process when the appropriate action for the
+process and signal is taken. 
+During the time between the generation of a signal and its delivery, the
+signal is said to be pending [see \f4sigpending\fP(2)].  
+Ordinarily, this interval cannot be detected by
+an application. However, a signal can be blocked from delivery to a process
+[see \f4signal\fP(2) and \f4sigprocmask\fP(2)].
+If the action associated with a blocked signal is anything
+other than to ignore the signal, and if that signal 
+is generated for the process, the signal remains
+pending until either it is unblocked or the signal's disposition 
+requests that the signal be ignored.  If the 
+signal disposition of a blocked signal requests that the
+signal be ignored, and
+if that signal is generated for the process, the signal is discarded 
+immediately upon generation.
+.PP
+Each process has a signal mask that defines
+the set of signals currently blocked from delivery to it [see \f4sigprocmask\fP(2)].  
+The signal mask for a process is initialized from that of its parent.
+.PP
+The determination of which action is taken in response to a signal 
+is made at the time the signal is delivered, allowing
+for any changes since the time of generation.  
+This determination is independent of the means by which the signal
+was originally generated.
+.PP
+The signals currently defined in \f4<signal.h>\fP are as
+follows:
+.TS
+center;
+l l l l
+_ _ _ _
+lf4 l l l.
+Name	Value	Default	Event
+SIGHUP	1	Exit	Hangup [see \f4termio\fP(7)]
+SIGINT	2	Exit	Interrupt [see \f4termio\fP(7)]
+SIGQUIT	3	Core	Quit [see \f4termio\fP(7)]
+SIGILL	4	Core	Illegal Instruction
+SIGTRAP	5	Core	Trace/Breakpoint Trap
+SIGIOT	6	Core	Abort
+SIGEMT	7	Core	Emulation Trap
+SIGFPE	8	Core	Arithmetic Exception
+SIGKILL	9	Exit	Killed
+SIGBUS	10	Core	Bus Error
+SIGSEGV	11	Core	Segmentation Fault
+SIGSYS	12	Core	Bad System Call
+SIGPIPE	13	Exit	Broken Pipe
+SIGALRM	14	Exit	Alarm Clock
+SIGTERM	15	Exit	Terminated
+SIGUSR1	16	Exit	User Signal 1
+SIGUSR2	17	Exit	User Signal 2
+SIGCHLD	18	Ignore	Child Status (change alias POSIX)
+SIGPWR	19	Ignore	Power Fail/Restart
+SIGWINCH	20	Ignore	Window Size Change
+SIGURG	21	Ignore	Urgent Socket Condition
+SIGIO	22	Ignore	Socket I/O Possible (SIGPOLL alias)
+SIGSTOP	23	Stop	Stopped (signal)
+SIGTSTP	24	Stop	Stopped (user) [see \f4termio\fP(7)]
+SIGCONT	25	Ignore	Continued
+SIGTTIN	26	Stop	Stopped (tty input) [see \f4termio\fP(7)]
+SIGTTOU	27	Stop	Stopped (tty output) [see \f4termio\fP(7)]
+SIGVTALRM	28	Exit	Virtual Timer Expired
+SIGPROF	29	Exit	Profiling Timer Expired
+SIGXCPU	30	Core	CPU time limit exceeded [see \f4getrlimit\fP(2)]
+SIGXFSZ	31	Core	File size limit exceeded [see \f4getrlimit\fP(2)]
+.TE
+.PP
+Using the \f4signal\fP, \f4sigset\fP  or \f4sigaction\fP system call,
+a process may specify one of three dispositions for a signal:
+take the default action for the signal,
+ignore the signal,
+or catch the signal.
+.SS "Default Action: \f4SIG_DFL\fP"
+A disposition of \f4SIG_DFL\fP specifies the default action.
+The default action for each signal is listed in the table above and is
+selected from the following:
+.TP 8
+\%Exit
+When it gets the signal,
+the receiving process is to be terminated with all the consequences outlined
+in
+\f4exit\fP(2).
+.TP 8
+\%Core
+When it gets the signal,
+the receiving process is to be terminated with all the consequences outlined
+in
+\f4exit\fP(2).
+In addition, a ``core image'' of the process is constructed in the 
+current working directory.
+.TP 8
+\%Stop
+When it gets the signal,
+the receiving process is to stop.
+.TP 8
+\%Ignore
+When it gets the signal,
+the receiving process is to ignore it.
+This is identical to setting
+the disposition to
+\f4SIG_IGN\fP.
+.SS "Ignore Signal: \f4SIG_IGN\fP"
+A disposition of \f4SIG_IGN\fP specifies that the signal is to be ignored.
+.SS "Catch Signal: \f2function address\f1"
+A disposition that is a function address specifies that,
+when it gets the signal,
+the receiving process is to 
+execute the signal handler at the specified address.
+Normally, the signal handler is passed the signal number as its only
+argument;  if the disposition was set with the \f4sigaction\fP function
+however, additional arguments may be requested [see \f4sigaction\fP(2)].
+When the signal handler returns, the receiving process
+resumes execution at the point it was interrupted, unless the signal
+handler makes other arrangements.
+If an invalid function address is specified, results are undefined.
+.PP
+If the disposition has been set with the \f4sigset\fP or
+\f4sigaction\fP function, the signal is automatically blocked
+by the system while the signal catcher is executing.
+If a
+\f4longjmp\fP [see \f4setjmp\fP(3C)]
+is used to leave the signal catcher, then the signal must be explicitly
+unblocked by the user [see \f4signal\fP(2) and \f4sigprocmask\fP(2)].
+.PP
+If execution of the signal handler interrupts a blocked system call,
+the handler is executed and the
+interrupted system call returns a \-1 to the calling process with
+\f4errno\f1
+set to \f4EINTR\fP. However, if the \f4SA_RESTART\fP flag is set
+the system call will be transparently restarted.
+.SH NOTES
+The dispositions of the
+\f4SIGKILL\fP and \f4SIGSTOP\fP signals cannot be altered from their
+default values.  The system generates an error if this is attempted.
+.PP
+The 
+\f4SIGKILL\fP and \f4SIGSTOP\fP signals cannot be blocked.
+The system silently enforces this restriction.
+.PP
+Whenever a process receives a
+\f4SIGSTOP\fP, \f4SIGTSTP\fP, \f4SIGTTIN\fP, or \f4SIGTTOU\fP signal, regardless of its 
+disposition, any pending \f4SIGCONT\fP signal are discarded.
+.PP
+Whenever a process receives a \f4SIGCONT\fP signal, regardless of its 
+disposition, any pending \f4SIGSTOP\fP, \f4SIGTSTP\fP, \f4SIGTTIN\fP, and 
+\f4SIGTTOU\fP signals is discarded.
+In addition, if the process was stopped, it is continued.
+.PP
+\f4SIGPOLL\fP is issued when a file descriptor corresponding
+to a STREAMS [see \f4intro\fP(2)] file has a ``selectable'' event pending.
+A process must specifically request that this signal be sent
+using the \f4I_SETSIG ioctl\fP call.
+Otherwise, the process will never receive \f4SIGPOLL\fP.
+.PP
+If the disposition of the \f4SIGCHLD\fP signal has been set with \f4signal\fP or
+\f4sigset\fP, or with \f4sigaction\fP and the \f4SA_NOCLDSTOP\fP flag has been
+specified, it will only be sent to the calling process when its children exit;
+otherwise, it will also be sent when the calling process's children are stopped
+or continued due to job control.
+.PP
+The name \f4SIGCLD\fP is also defined in this header file and identifies the
+same signal as \f4SIGCHLD\fP. \f4SIGCLD\fP is provided for backward compatibility,
+new applications should use \f4SIGCHLD\fP.
+.PP
+The disposition of signals that are inherited as 
+\f4SIG_IGN\fP should not be changed.
+.SH SEE ALSO
+\f4exit\fP(2),
+\f4getrlimit\fP(2),
+\f4intro\fP(2),
+\f4kill\fP(2),
+\f4pause\fP(2),
+\f4sigaction\fP(2),
+\f4sigaltstack\fP(2),
+\f4signal\fP(2),
+\f4sigprocmask\fP(2),
+\f4sigsend\fP(2),
+\f4sigsuspend\fP(2),
+\f4wait\fP(2),
+\f4sigsetops\fP(3C),
+\f4siginfo\fP(5),
+\f4ucontext\fP(5)

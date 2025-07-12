@@ -1,0 +1,228 @@
+'\"macro stdmacro
+.if n .pH g1a.mpscnv @(#)mpscnv	40.9 of 5/20/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} mpscnv 1iref "System Administration Utilities" "" "\&"
+.if \nX=1 .ds x} mpscnv 1iref "System Administration Utilities" ""
+.if \nX=2 .ds x} mpscnv 1iref "" "\&"
+.if \nX=3 .ds x} mpscnv "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4mpscnv\f1 \- Convert transport code 
+.SH DESCRIPTION
+The \f4mpscnv\f1 utility reads C source code presented on its standard input
+looking for identifiers associated with Multibus II Interconnect Space or
+Message Passing Space access.  These identifiers are replaced with their
+equivalents, as described in the
+\f2Device Driver Interface/Driver-Kernel Interface (DDI/DKI) Reference
+Manual\f1, as the file is copied to the standard output.
+.PP
+This utility is intended as a migration aide for porting UNIX
+System V/386 Release 3.2 device drivers to Release 4.0 and will not be
+provided in the next release. 
+.PP
+The following lists the old identifiers and their equivalents for System V.4.
+.PP
+.ta 2i
+.DS
+\f3Release 3.2 Identifier	Release 4.0 Identifier\f1
+
+.DE
+\f4AMPcancel	mps_AMPcancel
+AMPreceive	mps_AMPreceive
+AMPreceive_frag	mps_AMPreceive_frag
+AMPsend	mps_AMPsend
+AMPsend_data	mps_AMPsend_data
+AMPsend_reply	mps_AMPsend_reply
+AMPsend_rsvp	mps_AMPsend_rsvp
+BLKPRIO	MPS_BLKPRIO
+BOARD_SPECIFIC_REC	ICS_BOARD_
+	SPECIFIC_REC
+CLKPRIO	MPS_CLKPRIO
+EOT_TYPE	ICS_EOT_TYPE
+FP_PORT	MPS_FP_PORT
+HI	ICS_HI
+HIB	MPS_HIB
+HOST_ID_TYPE	ICS_HOST_ID_TYPE
+ICBistDataIn	ICS_BistDataIn
+ICBistDataOut	ICS_BistDataOut
+ICBistMasterStatus	ICS_BistMasterStatus
+ICBistSlaveStatus	ICS_BistSlaveStatus
+ICBistSupportLevel	ICS_BistSupportLevel
+ICBistTestID	ICS_BistTestID
+ICClassID	ICS_ClassID
+ICGeneralControl	ICS_GeneralControl
+ICGeneralStatus	ICS_GeneralStatus
+ICHardwareTestRev	ICS_HardwareTestRev
+ICNMIEnable	ICS_NMIEnable
+ICProductCode	ICS_ProductCode
+ICProgramTableIndex	ICS_ProgramTableIndex
+ICVendorIDH	ICS_VendorIDH
+ICVendorIDL	ICS_VendorIDL
+IC_DEBUG_MASK	ICS_DEBUG_MASK
+IC_DEBUG_NMI	ICS_DEBUG_NMI
+IC_ENABLE_NMI	ICS_ENABLE_NMI
+IC_PARITY_MASK	ICS_PARITY_MASK
+IC_PARITY_OFFSET	ICS_PARITY_OFFSET
+IC_SWNMI_MASK	ICS_SWNMI_MASK
+IC_SW_NMI	ICS_SW_NMI
+LO	ICS_LO
+LOB	MPS_LOB
+MAXMSGSZ	MPS_MAXMSGSZ
+MAX_REG	ICS_MAX_REG
+MAX_SLOT	ICS_MAX_SLOT
+MB2_TPDT	MPS_MB2_TPDT
+MG_BGDC	MPS_MG_BGDC
+MG_BGLI	MPS_MG_BGLI
+MG_BGLL	MPS_MG_BGLL
+MG_BGOVHD	MPS_MG_BGOVHD
+MG_BGRANT	MPS_MG_BGRANT
+MG_BJLI	MPS_MG_BJLI
+MG_BJOVHD	MPS_MG_BJOVHD
+MG_BRDCST	MPS_MG_BRDCST
+MG_BRDP	MPS_MG_BRDP
+MG_BREJ	MPS_MG_BREJ
+MG_BREQ	MPS_MG_BREQ
+MG_BRLI	MPS_MG_BRLI
+MG_BRML	MPS_MG_BRML
+MG_BROVHD	MPS_MG_BROVHD
+MG_BRPI	MPS_MG_BRPI
+MG_BRSP	MPS_MG_BRSP
+MG_BRTC	MPS_MG_BRTC
+MG_BRTI	MPS_MG_BRTI
+MG_BRUD	MPS_MG_BRUD
+MG_DA	MPS_MG_DA
+MG_DFBIND	MPS_MG_DFBIND
+MG_DONE	MPS_MG_DONE
+MG_DUTY1C	MPS_MG_DUTY1C
+MG_DUTY2C	MPS_MG_DUTY2C
+MG_ESOL	MPS_MG_ESOL
+MG_MT	MPS_MG_MT
+MG_NFDP	MPS_MG_NFDP
+MG_NFFL	MPS_MG_NFFL
+MG_NFOVHD	MPS_MG_NFOVHD
+MG_NFPI	MPS_MG_NFPI
+MG_NFSP	MPS_MG_NFSP
+MG_NFTC	MPS_MG_NFTC
+MG_NFTI	MPS_MG_NFTI
+MG_REQ	MPS_MG_REQ
+MG_RES	MPS_MG_RES
+MG_RI	MPS_MG_RI
+MG_RQMF	MPS_MG_RQMF
+MG_RQNF	MPS_MG_RQNF
+MG_RQSF	MPS_MG_RQSF
+MG_RQXF	MPS_MG_RQXF
+MG_RRMSK	MPS_MG_RRMSK
+MG_RRTMSK	MPS_MG_RRTMSK
+MG_RSCN	MPS_MG_RSCN
+MG_RSET	MPS_MG_RSET
+MG_RSNE	MPS_MG_RSNE
+MG_SA	MPS_MG_SA
+MG_TERR	MPS_MG_TERR
+MG_UMDP	MPS_MG_UMDP
+MG_UMOVHD	MPS_MG_UMOVHD
+MG_UMPI	MPS_MG_UMPI
+MG_UMSP	MPS_MG_UMSP
+MG_UMTC	MPS_MG_UMTC
+MG_UMTI	MPS_MG_UMTI
+MG_UMUD	MPS_MG_UMUD
+MG_UNSOL	MPS_MG_UNSOL
+MY_SLOT_ID	ICS_MY_SLOT_ID
+NRMPRIO	MPS_NRMPRIO
+PARITY_CONTROL_TYPE	ICS_PARITY_
+	CONTROL_TYPE
+PC16_CONFIG_OFFSET	ICS_PC16_
+	CONFIG_OFFSET
+PC16_STATUS_OFFSET	ICS_PC16_
+	STATUS_OFFSET
+PSB_CONTROL_TYPE	ICS_PSB_
+	CONTROL_TYPE
+PSB_SLOT_ID_REG	ICS_PSB_
+	SLOT_ID_REG
+READ_ICS	ICS_READ_ICS
+SLOT_ID_OFFSET	ICS_SLOT_ID_OFFSET
+SRLPRIO	MPS_SRLPRIO
+WRITE_ICS	ICS_WRITE_ICS
+agent_cmp	ics_agent_cmp
+buf_count	mps_buf_count
+close_chan	mps_close_chan
+cpunum	ics_cpunum()
+datbuf_t	mps_datbuf_t
+db_join	dma_buf_join
+dbuf_breakup	dma_buf_breakup
+fetch_db	mps_fetch_db
+fetch_mb	mps_fetch_mb
+find_port	mps_find_port
+find_transaction	mps_find_transaction
+free_dbuf	mps_free_dmabuf
+free_mbuf	mps_free_mbuf
+free_msgbuf	mps_free_msgbuf
+free_tid	mps_free_tid
+get_dbuf	mps_get_dmabuf
+get_mbuf	mps_get_mbuf
+get_msgbuf	mps_get_msgbuf
+get_soldata	mps_get_soldata
+get_tid	mps_get_tid
+get_unsoldata	mps_get_unsoldata
+handle_err	mps_handle_err
+init_dmacb	impc_init_dmacb
+lhid	mps_lhid()
+mk_bgrant	mps_mk_bgrant
+mk_brdcst	mps_mk_brdcst
+mk_breject	mps_mk_breject
+mk_mb2socid	mps_mk_mb2socid
+mk_mb2soctohid	mps_mk_mb2soctohid
+mk_mb2soctopid	mps_mk_mb2soctopid
+mk_snf	mps_mk_snf
+mk_sol	mps_mk_sol
+mk_solrply	mps_mk_solrply
+mk_unsol	mps_mk_unsol
+mk_unsolrply	mps_mk_unsolrply
+mpc_copyright	impc_copyright
+mpc_send	impc_send
+mpc_start	impc_start
+msg_comp	mps_msg_comp
+msg_dispatch	mps_msg_dispatch
+msg_getbrlen	mps_msg_getbrlen
+msg_getdstmid	mps_msg_getdstmid
+msg_getdstpid	mps_msg_getdstpid
+msg_getfraglen	mps_msg_getfraglen
+msg_getlsnid	mps_msg_getlsnid
+msg_getmsgtyp	mps_msg_getmsgtyp
+msg_getprotid	mps_msg_getprotid
+msg_getreqid	mps_msg_getreqid
+msg_getrid	mps_msg_getrid
+msg_getsrcmid	mps_msg_getsrcmid
+msg_getsrcpid	mps_msg_getsrcpid
+msg_gettransctl	mps_msg_gettransctl
+msg_gettrnsid	mps_msg_gettrnsid
+msg_getudp	mps_msg_getudp
+msg_iscancel	mps_msg_iscancel
+msg_iscompletion	mps_msg_iscompletion
+msg_iseot	mps_msg_iseot
+msg_iserror	mps_msg_iserror
+msg_isreq	mps_msg_isreq
+msg_proc	mps_msg_proc
+msg_que	mps_msg_que
+msg_setbglen	mps_msg_setbglen
+msg_setbrlen	mps_msg_setbrlen
+msg_setcancel	mps_msg_setcancel
+msg_setduty	mps_msg_setduty
+msg_setrid	mps_msg_setrid
+msg_setsrcpid	mps_msg_setsrcpid
+msg_showmsg	mps_msg_showmsg
+msgbuf_t	mps_msgbuf_t
+myslotid	ics_myslotid()
+open_chan	mps_open_chan
+requestid	mps_requestid()
+set_rid	mps_set_rid
+setup_dmabufs	impc_setup_dmabufs
+sic_cb	impc_sic_cb
+slot_t	ics_slot_t
+soc_cb	impc_soc_cb
+sol_deque	impc_sol_deque
+sol_que	impc_sol_que
+transportcopyright	mps_copyright\f1
+.SH SEE ALSO
+\f2Device Driver Interface/Driver-Kernel Interface (DDI/DKI) Reference Manual\f1.

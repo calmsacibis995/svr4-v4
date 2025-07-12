@@ -1,0 +1,87 @@
+'\"macro stdmacro
+.if n .pH g3x.dlsym 'ident	"@(#)dlsym	40.7"'
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} dlsym 3X "C Programming Language Utilities" "\&"
+.if \nX=1 .ds x} dlsym 3X "C Programming Language Utilities"
+.if \nX=2 .ds x} dlsym 3X "" "\&"
+.if \nX=3 .ds x} dlsym "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4dlsym\f1 \- get the address of a symbol in shared object
+.SH SYNOPSIS
+\f4cc\f1
+[\f2flag\fP \|.\|.\|.] \f2file\fP \|.\|.\|.
+\f4\-ldl\f1
+[\f2library\fP \|.\|.\|.]
+.PP
+\f4#include <dlfcn.h>\f1
+.PP
+\f4void *dlsym(void *handle, char *name);\f1
+.SH DESCRIPTION
+\f4dlsym\^\f1
+allows a process to obtain the address of a symbol defined
+within a shared object previously opened by
+\f4dlopen\f1.
+.I handle\^
+is a value returned by a call to
+\f4dlopen\f1;
+the corresponding shared object must not have been
+closed using 
+\f4dlclose\f1.
+.I name\^
+is the symbol's name as a character string.
+\f4dlsym\^ \f1
+searches for the named symbol in all shared
+objects loaded automatically as a result of loading the
+object referenced by
+.I handle\^
+[see
+\f4dlopen\f1(3X)].
+.SH EXAMPLES
+The following example shows how one can use 
+\f4dlopen\^\f1
+and
+\f4dlsym\^\f1
+to access either function or data objects.  For simplicity,
+error checking has been omitted.
+.P
+.RS
+.nf
+.ft 4
+void *handle;
+int i, *iptr;
+int (*fptr)(int);
+
+/* open the needed object */
+handle = dlopen("/usr/mydir/libx.so", RTLD_LAZY);
+
+/* find address of function and data objects */
+fptr = (int (*)(int))dlsym(handle, "some_function");
+
+iptr = (int *)dlsym(handle, "int_object");
+
+/* invoke function, passing value of integer as a parameter */
+
+i = (*fptr)(*iptr);\fR
+.ft
+.fi
+.RE
+.SH SEE ALSO
+\f4dlclose\f1(3X),
+\f4dlerror\f1(3X),
+\f4dlopen\f1(3X).
+.SH DIAGNOSTICS
+If 
+.I handle\^
+does not refer to a valid object opened by
+\f4dlopen\f1,
+or if the named symbol cannot be found within any of the
+objects associated with
+.IR handle ,
+\f4dlsym\f1
+returns \f4NULL\f1.
+More detailed diagnostic information is
+available through
+\f4dlerror\f1.

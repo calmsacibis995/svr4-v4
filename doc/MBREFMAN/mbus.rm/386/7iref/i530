@@ -1,0 +1,128 @@
+'\"macro stdmacro
+.if n .pH g1a.i530 @(#)i530	40.5 of 5/17/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} i530 7iref "System Administration Utilities" "" "\&"
+.if \nX=1 .ds x} i530 7iref "System Administration Utilities" ""
+.if \nX=2 .ds x} i530 7iref "" "\&"
+.if \nX=3 .ds x} i530 "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4i530\f1 \- iSBC 186/530 Ethernet controller device driver and MIX 386/530
+Ethernet controller board
+.SH DESCRIPTION
+The \f4i530\f1 driver provides a STREAMS interface to the iSBC 186/530
+Ethernet controller board and the MIX 386/560 Ethernet controller board.  
+Applications access the driver through the
+UNIX Transport Interface (also know as the Transport Layer Interface or
+TLI).  The TLI NSL library enables users to bind an address to an
+endpoint, listen for connect requests, accept connect requests, send and
+receive data, and so on.
+.PP
+TLI applications normally call the \f4t_open\f1() function as the first
+step in initialization of transport endpoints.  Alternatively, the
+\f4n_connect\f1() or \f4n_accept\f1() SV-OpenNET NSI library calls may be
+used to perform this initialization.  A successful \f4t_open\f1 call
+returns a file descriptor that references a STREAMS path to the
+transport provider, and typically, an allocated endpoint structure.
+The first argument to \f4t_open\f1 is a path name that identifies the
+agent that will provide the transport service.
+.PP
+As a transport provider, the \f4i530\f1 driver maintains a table of
+endpoint structures indexed by minor number.  Elements of this table may
+be allocated and used exclusively or may be shared by TLI applications.
+Applications target the \f4i530\f1 driver in one of two ways.  First, the
+application may supply the device node \f4/dev/iso-tp4\f1 as the \f4t_open\f1
+path name.  This action routes the call through the clone driver.
+The clone driver finds an available \f4i530\f1 minor number and
+the associated virtual circuit endpoint structure for the application to
+use.  Alternatively, the application may access the driver directly by
+supplying the \f4t_open\f1 pathname \f4/dev/tp4-\f2xx\f1 where \f2xx\f1
+represents a digit from the set 01 through the maximum configured
+endpoints plus one (31 by default).  This way, applications can target
+specific endpoints and share them with other applications, if desired.
+Though available as a transport endpoint, the path name assigned to
+minor device 0 (\f4/dev/tp4-00\f1) is typically reserved for driver 
+administration and control, and should NOT be used by normal TLI applications.
+.PP
+Some TLI commands, such as \f4t_bind\f1() and \f4t_connect\f1(), target
+a local or remote endpoint via a "driver-ready" transport address.
+The address on the listener side of a connection must be externally known
+and typically is obtained by the TLI application from a name server.
+This name server translates a name of a transport service endpoint into
+a binary format usable by the driver.  The transport address used by
+the \f4i530\f1 driver (via the iNA 960 Network Layer) is a 15 byte
+address containing the NSAP (network service access point) which includes
+the ethernet address of the ethernet controller and the TSAP
+(transport service access point) selector for the endpoint in the
+following form:
+.nf
+
+    0B 49 00 01 \f2XX XX XX XX XX XX\f1 FE 00 02 \f2YY YY\f1
+
+.fi
+where \f2XX ... XX\f1 represents the ethernet address of the controller
+(e.g. 00AA00029CB9) and \f2YY YY\f1 represents the TSAP selector
+(a two byte number that defines the point of access to a client process)
+for the endpoint.  The ethernet address for the iSBC 186/530 controller
+in a system is obtained by executing the enetinfo utility.
+.PP
+Configuration and tunable parameters for the \f4i530\f1 driver are
+defined in \f4/etc/conf/pack.d/i530/space.c\f1.  In order to change the
+driver configuration, this file must be edited and the kernel regenerated.
+These parameters are described below:
+.PP
+.TP 20
+\f4N_ENET\f1
+Number of 186/530 boards in the system. The default is 1.
+.TP
+\f4NVC\f1
+Maximum number of exclusive device opens.  The default is 31.
+.TP
+\f4N_ENDPOINTS\f1
+Maximum number of endpoints that the \f4i530\f1 driver supports.
+The default is 31.  The maximum is 101.
+.TP
+\f4DATA_BUF_LEN\f1
+Buffer size for receiving incoming messages.  The default is 4096 bytes.
+.TP
+\f4MAX_BUFS_POSTED\f1
+Maximum number of buffers posted for POSTED receiving data.  The default is 1.
+.TP
+\f4MAXCOPYSIZ\f1
+Message size below which the data is copied into a new streams buffer.
+For messages below this size, a new streams buffer of that size is allocated.
+This is for beeter utilization of the various streams sizes.  The default is
+128 bytes.
+.TP
+\f4MAX_DATA_RQ\f1
+Maximum number of send data requests that can be serviced by the stream.
+The default is 1.
+.TP
+\f4SH_HIWAT\f1
+When the total number of characters in all the messages that are queued
+exceeds \f4SH_HIWAT\f1, messages from upstream are halted.
+.TP
+\f4SH_LOWAT\f1
+When the total number of characters in all the messages that are queued
+is below \f4SH_LOWAT\f1, messages from upstream are enabled.
+.bp
+.SH FILES
+.TP 2.25i
+\f4/etc/conf/pack.d/i530/space.c\f1   
+\f4i530\f1 driver configuration file
+.TP 2.25i
+\f4/etc/conf/pack.d/i530/Driver.o\f1
+\f4i530\f1 driver object file
+.TP 2.25i
+\f4/etc/conf/node.d/i530\f1
+\f4i530\f1 driver device node definition
+.TP 2.25i
+\f4/etc/conf/sdevice.d/i530\f1
+\f4i530\f1 driver system device entry
+.TP 2.25i
+\f4/usr/include/sys/enetuser.h\f1
+\f4i530\f1 driver user data structures
+.SH SEE ALSO
+\f4enetinfo\f1(1iref)

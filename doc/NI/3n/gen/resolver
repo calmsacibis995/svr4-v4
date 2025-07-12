@@ -1,0 +1,230 @@
+'\"macro stdmacro
+.if n .pH g3n.resolver @(#)resolver	40.8 of 5/21/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.\" Copyright (c) 1985 Regents of the University of California.
+.\" All rights reserved.  The Berkeley software License Agreement
+.\" specifies the terms and conditions for redistribution.
+.\"
+.\"	@(#)resolver.3 1.12 88/10/18 SMI; from UCB 1.5 3/21/86
+'\" macro stdmacro
+.\" Copyright (c) 1988 Sun Microsystems, Inc. - All Rights Reserved.
+.\"
+.\"
+.nr X
+.if \nX=0 .ds x} resolver 3N "Internet Utilities" "\&"
+.if \nX=1 .ds x} resolver 3N "Internet Utilities"
+.if \nX=2 .ds x} resolver 3N "" "\&"
+.if \nX=3 .ds x} resolver "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4resolver\f1, \f4res_mkquery\f1, \f4res_send\f1, \f4res_init\f1, \f4dn_comp\f1, \f4dn_expand\f1 \- resolver routines
+.SH SYNOPSIS
+.nf
+.ft 4
+#include <sys/types.h>
+#include <netinet/in.h>
+#include <arpa/nameser.h>
+#include <resolv.h>
+.sp .5
+int res_mkquery(int op, char \(**dname, int class, int type,
+    char \(**data, int datalen, struct rrec \(**newrr, char \(**buf,
+    int buflen);
+.sp .5
+int res_send(char *msg, int msglen, char *answer, int anslen);
+.sp .5
+void res_init(void);
+.sp .5
+int dn_comp(char \(**exp_dn, char \(**comp_dn, int length, char \(**\(**dnptrs,
+    char \(**\(**lastdnptr);
+.sp .5
+int dn_expand(char \(**msg, char \(**eomorig, char \(**comp_dn,
+    char \(**exp_dn, int length);
+.fi
+.ft 1
+.SH DESCRIPTION
+These routines are used for making,
+sending and interpreting packets to
+Internet domain name servers.
+Global information that is used by the
+resolver routines is kept in the variable
+\f4_res\fP.
+Most of the values have reasonable defaults
+and can be ignored.
+Options are a simple bit mask and are
+\f4OR\f1'ed
+in to enable.
+Options stored in
+\f4_res.options\fP
+are defined in
+\f4resolv.h\fP
+and are as follows.
+.TP 20
+\f4RES_INIT\fP
+True if the initial name server address
+and default domain name are initialized (that is,
+\f4res_init \fP
+has been called).
+.TP
+\f4RES_DEBUG\fP
+Print debugging messages.
+.TP
+\f4RES_AAONLY\fP
+Accept authoritative answers only.
+\f4res_send\fP
+will continue until it finds an authoritative
+answer or finds an error.
+Currently this is not implemented.
+.TP
+\f4RES_USEVC\fP
+Use
+TCP
+connections for queries instead of
+UDP.
+.TP
+\f4RES_STAYOPEN\fP
+Used with
+\f4RES_USEVC\fP
+to keep the
+TCP
+connection open between queries.
+This is useful only in programs that
+regularly do many queries.
+UDP
+should be the normal mode used.
+.TP
+\f4RES_IGNTC\fP
+Unused currently (ignore truncation errors,
+that is, do not retry with TCP).
+.TP
+\f4RES_RECURSE\fP
+Set the recursion desired bit in queries.
+This is the default.
+\f4res_send\fP
+does not do iterative queries and expects the name server
+to handle recursion.
+.TP
+\f4RES_DEFNAMES\fP
+Append the default domain name to single
+label queries.
+This is the default.
+.PP
+\f4res_init\fP
+reads the initialization file to get the default
+domain name and the Internet address of the initial hosts
+running the name server.
+If this line does
+not exist, the host running the resolver is tried.
+\f4res_mkquery\fP
+makes a standard query message and places it in
+\f2buf\fP.
+\f4res_mkquery\fP
+will return the size of the query or \-1 if the query is
+larger than
+\f2buflen\fP.
+\f2op\fP
+is usually
+\f4QUERY\fP
+but can be any of the query types defined in
+\f4arpa/nameser.h\fP.
+\f2dname\fP
+is the domain name.
+If
+\f2dname\fP
+consists of a single label and the
+\f4RES_DEFNAMES\fP
+flag is enabled (the default),
+\f2dname\fP
+will be appended with the current domain name.
+The current domain name is defined in a system
+file and can be overridden by the environment variable
+\f4LOCALDOMAIN\fP.
+\f2newrr\fP
+is currently unused but is intended for making update messages.
+.PP
+\f4res_send\fP
+sends a query to name servers and returns an answer.
+It will call
+\f4res_init\fP
+if
+\f4RES_INIT\fP
+is not set, send the query to the local
+name server, and handle timeouts and retries.
+The length of the message is returned or
+\-1 if there were errors.
+.PP
+\f4dn_expand\fP
+expands the compressed domain name
+\f2comp_dn\fP
+to a full domain name.
+Expanded names are converted to upper case.
+\f2msg\fP
+is a pointer to the beginning of the message,
+\f2eomorig\fP
+is a pointer to the first memory location
+after the message,
+\f2exp_dn\fP
+is a pointer to a buffer of size
+\f2length\fP
+for the result.
+The size of the compressed
+name is returned or \-1 if there was an error.
+.PP
+\f4dn_comp\fP
+compresses the domain name
+\f2exp_dn\fP
+and stores it in
+\f2comp_dn\fP.
+The size of the compressed name is returned or \-1
+if there were errors.
+\f2length\fP
+is the size of the array pointed to by
+\f2comp_dn\fP.
+\f2dnptrs\fP
+is a list of pointers to previously compressed
+names in the current message.
+The first pointer
+points to to the beginning of the message
+and the list ends with
+\f4NULL\fP.
+\f2lastdnptr\fP
+is a pointer to the end of the array pointed to
+\f2dnptrs\fP.
+A side effect is to update the list of pointers for
+labels inserted into the message by
+\f4dn_comp\fP
+as the name is compressed.
+If
+\f2dnptr\fP
+is
+\f4NULL\fP,
+do not try to compress names.
+If
+\f2lastdnptr\fP
+is
+\f4NULL\fP,
+do not update the list.
+.SH FILES
+.PD 0
+.TP 20
+\f4/usr/include/arpa/nameserv.h\fP
+.TP
+\f4/usr/include/netinet/in.h\fP
+.TP
+\f4/usr/include/resolv.h\fP
+.TP
+\f4/usr/include/sys/types.h\fP
+.TP
+\f4/etc/resolv.conf\fP
+.TP
+\f4/usr/lib/libresolv.a\fP
+.PD
+.SH "SEE ALSO"
+\f4named\fP(1M),
+\f4resolv.conf\fP(4)
+.SH NOTES
+\f4/usr/lib/libresolv.a\fP
+is necessary for compiling programs.
+.LP
+Programs must be loaded with the option
+\f4\-lresolv\fP.

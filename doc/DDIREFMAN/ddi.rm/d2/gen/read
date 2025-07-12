@@ -1,0 +1,70 @@
+'\"macro stdmacro
+.if n .pH gen.read @(#)read	40.4 of 6/24/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.nr X
+.if \nX=0 .ds x} read D2DK "" "DDI/DKI" "\&"
+.if \nX=1 .ds x} read D2DK "" "DDI/DKI"
+.if \nX=2 .ds x} read D2DK "" "\&"
+.if \nX=3 .ds x} read "" "" "\&"
+.TH \*(x}
+.IX "\f4read\fP(D2DK)"
+.SH "NAME"
+\f4read\fP \- read data from a device
+.SH "SYNOPSIS"
+.nf
+.na
+\f4#include <sys/types.h>
+#include <sys/errno.h>
+#include <sys/uio.h>
+#include <sys/cred.h>
+.sp 0.5
+int \f2prefix\fPread(dev_t \f2dev, \fPuio_t *\f2uiop, \fPcred_t *\f2crp\fP);\f1
+.ad
+.fi
+.SH "ARGUMENTS"
+.RS 0n
+.TP 10
+\f2dev\fP
+Device number.
+.TP
+\f2uiop\fP
+Pointer to the \f4uio\fP(D4DK) structure that describes where the data
+is to be stored in user space.
+.TP 
+\f2crp\fP
+Pointer to the user credential structure for the I/O
+transaction.
+.RE
+.SH "DESCRIPTION"
+The driver \f4read\fP routine is called during
+the \f4read\fP(2) system call.
+The \f4read\fP routine is responsible for transferring data from the device
+to the user data area.
+The pointer to the user credentials, \f2crp\fP, is available
+so the driver can check to see if the user can read privileged
+information, if the driver provides access to any.
+The \f4uio\fP structure provides the information necessary to determine
+how much data should be transferred.
+The \f4uiomove\fP(D3DK) function provides
+a convenient way to copy data using the \f4uio\fP structure.
+.P
+Block drivers that provide a character interface can use \f4physiock\fP(D3D) to
+perform the data transfer with the driver's \f4strategy\fP(D2DK) routine.
+.SH NOTES
+This interface is optional.
+.sp 0.5
+The \f4read\fP routine has user context and can sleep.
+.SH "RETURN VALUE"
+The \f4read\fP routine should return 0 for success,
+or the appropriate error number.
+.SH "SEE ALSO"
+.na
+\f4strategy\fP(D2DK),
+\f4write\fP(D2DK),
+\f4drv_priv\fP(D3DK),
+\f4physiock\fP(D3DK),
+\f4uiomove\fP(D3DK),
+\f4ureadc\fP(D3DK),
+\f4uio\fP(D4DK),
+\f4errnos\fP(D5DK)
+.ad

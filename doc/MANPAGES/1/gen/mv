@@ -1,0 +1,145 @@
+'\"macro stdmacro
+.if n .pH g1.mv @(#)mv	40.9.1.2 of 5/14/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} mv 1 "Essential Utilities" "\&"
+.if \nX=1 .ds x} mv 1 "Essential Utilities"
+.if \nX=2 .ds x} mv 1 "" "\&"
+.if \nX=3 .ds x} mv "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4mv\fP \- move files
+.SH SYNOPSIS
+\f4mv\fP
+[ 
+\f4\-f\fP
+]
+[ 
+\f4\-i\fP
+]
+\f2file1\fP [ \f2file2\f1 ...] \f2target\f1
+.SH DESCRIPTION
+The \f4mv\fP command moves
+.I filen\^
+to
+.IR target .
+.I filen\^
+and
+.I target\^
+may not have the same name.
+(Care must be taken when using
+\f4sh\fP(1)
+metacharacters).
+If
+.I target\^
+is not a directory, only one file
+may be specified before it; if it is
+a directory, more than one file
+may be specified.
+If 
+.I target\^
+does not exist,
+\f4mv\fP creates a file named \f2target\fP.
+If 
+.I target\^
+exists and is not a directory, its contents are overwritten.
+If
+.I target\^
+is a directory
+the file(s) are moved to that directory.
+.I target
+and
+.I filen
+do not have to share the same parent directory.
+.PP
+If
+\f4mv\fP
+determines that the mode of
+.I target\^
+forbids writing, it will
+print the mode [see
+\f4chmod\fP(2)],
+ask for a response,
+and read the standard input for one line.
+If the line begins with
+\f4y\fP,
+the 
+\f4mv\fP
+occurs, if permissible; otherwise, the command exits.
+When the parent directory of \f2filen\fP is
+writable and has the sticky bit set, one or more of
+the following conditions must be true:
+.P
+.nf
+	the user must own the file
+	the user must own the directory
+	the file must be writable by the user
+	the user must be a privileged user
+.fi
+.P
+The following options are recognized:
+.P
+.TP
+\f4\-i\fP
+\f4mv\fP will prompt for confirmation whenever the move
+would overwrite an existing \f2target\fP.
+A
+\f4y\fP
+answer means that the move should proceed.  
+Any other answer prevents
+\f4mv\fP
+from overwriting the \f2target\fP.
+.TP
+\f4\-f\fP
+\f4mv\fP will move the file(s) without
+prompting even if it is writing
+over an existing \f2target\fP.
+This option overrides the
+\f4\-i\fP
+option.
+Note that this is the default if the standard input is not a terminal.
+.PP
+You can use \f4mv\fP to move directories as well as files.
+If
+.I filen\^
+is a directory,
+.I target
+must be a directory in the same physical file system.
+.PP
+If 
+.I filen
+is a file and 
+.I target
+is a link to another file with links, the other
+links remain and
+.I target
+becomes a new file.
+.SH NOTES
+If
+.I filen\^
+and
+.I target\^
+are on different file systems,
+\f4mv\fP
+copies the file and deletes the original;
+any links to other files are lost.
+.PP
+A \f4\-\^\-\fP
+permits the user to mark explicitly the end of any command
+line options, allowing
+\f4mv\fP
+to recognize filename arguments that begin with a \f4\-\fP.
+As an aid to BSD migration, \f4mv\fP will accept \f4\-\fP as
+a synonym for \f4\-\^\-\fP.
+This migration aid may disappear in a future release.
+If a \f4\-\^\-\fP
+and a \f4\-\fP
+both appear on the same command line, the second will be interpreted as
+a filename.
+.SH SEE ALSO
+\f4chmod\fP(1),
+\f4cp\fP(1),
+\f4cpio\fP(1),
+\f4ln\fP(1),
+\f4rm\fP(1).

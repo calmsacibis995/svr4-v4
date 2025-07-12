@@ -1,0 +1,66 @@
+'\"macro stdmacro
+.if n .pH g3.scandir @(#)scandir	40.12 of 4/24/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.\" Copyright (c) 1988 Sun Microsystems, Inc. - All Rights Reserved.
+.\"
+.nr X
+.if \nX=0 .ds x} scandir 3 "BSD Compatibility Package" "\&"
+.if \nX=1 .ds x} scandir 3 "BSD Compatibility Package"
+.if \nX=2 .ds x} scandir 3 "" "\&"
+.if \nX=3 .ds x} scandir "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4scandir\f1, \f4alphasort\f1 \- scan a directory
+.SH SYNOPSIS
+.nf
+\f4cc \f1[ \f2flag\f1\. \. \. ] \f2file\f1 \. \. \. \f4\-lucb\f1
+.P
+\f4#include <sys/types.h>\f1
+\f4#include <sys/dir.h>\f1
+.P
+\f4scandir(dirname, &namelist, select, compar)\f1
+\f4char *dirname;\f1
+\f4struct direct **namelist;\f1
+\f4int (*select)();\f1
+\f4int (*compar)();\f1
+.P
+\f4alphasort(d1, d2)\f1
+\f4struct direct **d1, **d2;\f1
+.fi
+.SH DESCRIPTION
+\f4scandir\f1
+reads the directory
+\f4dirname\f1
+and builds an array of pointers to directory entries using
+\f4malloc\f1(3C).
+The second parameter is a pointer to an array of structure pointers.
+The third parameter is a pointer to a routine which is called with a
+pointer to a directory entry and should return a non zero
+value if the directory entry should be included in the array.
+If this pointer is
+\f4NULL\fP,
+then all the directory entries will be included.
+The last argument is a pointer to a routine which is passed to
+\f4qsort\f1(3C)
+to sort the completed array.
+If this pointer is
+\f4NULL\fP,
+the array is not sorted.
+\f4alphasort\f1
+is a routine which will sort the array alphabetically.
+.P
+\f4scandir\f1
+returns the number of entries in the array and a pointer to the
+array through the parameter
+.I namelist.
+.SH "SEE ALSO"
+\f4getdents\f1(2),
+\f4directory\fP(3C),
+\f4malloc\fP(3C),
+\f4qsort\fP(3C)
+in the \f2Programmer's Reference Manual\f1
+.SH "RETURN VALUE"
+Returns \-1 if the directory cannot be opened for reading or if
+\f4malloc\f1(3C)
+cannot allocate enough memory to hold all the data structures.

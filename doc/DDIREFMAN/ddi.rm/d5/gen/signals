@@ -1,0 +1,43 @@
+'\"macro stdmacro
+.if n .pH gen.signals @(#)signals	40.2 of 1/7/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.nr X
+.if \nX=0 .ds x} signals D5DK "" "DDI/DKI" "\&"
+.if \nX=1 .ds x} signals D5DK "" "DDI/DKI"
+.if \nX=2 .ds x} signals D5DK "" "\&"
+.if \nX=3 .ds x} signals "" "" "\&"
+.TH \*(x}
+.IX "\f4signals\fP(D5DK)"
+.SH NAME
+\f4signals\fP \- signal numbers
+.SH SYNOPSIS
+.nf
+\f4#include <sys/signal.h>\fP
+.ad
+.fi
+.SH DESCRIPTION
+There are two ways to send a signal to a process.  The first, \f4psignal\fP(D3K),
+can be used by non-STREAMS drivers.  The second, by using an \f4M_SIG\fP or \f4M_PCSIG\fP
+message, can be used by STREAMS drivers and modules.
+The following is a list of the signals that drivers may send to processes.
+.IP \f4SIGHUP\fP 12n
+The device has been disconnected.
+.IP \f4SIGINT\fP
+The interrupt character has been received.
+.IP \f4SIGQUIT\fP
+The quit character has been received.
+.IP \f4SIGWINCH\fP
+The window size has changed.
+.IP \f4SIGURG\fP
+Urgent data are available.
+.IP \f4SIGPOLL\fP
+A pollable event has occurred.
+.IP \f4SIGTSTP\fP
+Interactive stop of the process.
+.SH NOTES
+The signal \f4SIGTSTP\fP cannot be generated with \f4psignal\fP.
+It is only valid when generated from a stream.
+.SH SEE ALSO
+.na
+\f4psignal\fP(D3K)
+.ad

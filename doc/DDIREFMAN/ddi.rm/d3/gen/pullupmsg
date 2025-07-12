@@ -1,0 +1,44 @@
+'\"macro stdmacro
+.if n .pH gen.pullupmsg @(#)pullupmsg	40.2 of 1/7/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.nr X
+.if \nX=0 .ds x} pullupmsg D3DK "STREAMS" "DDI/DKI" "\&"
+.if \nX=1 .ds x} pullupmsg D3DK "STREAMS" "DDI/DKI"
+.if \nX=2 .ds x} pullupmsg D3DK "" "\&"
+.if \nX=3 .ds x} pullupmsg "" "" "\&"
+.TH \*(x}
+.IX "\f4pullupmsg\fP(D3DK)"
+.SH NAME
+\f4pullupmsg\f1 \- concatenate bytes in a message
+.SH SYNOPSIS
+.nf
+.na
+\f4#include <sys/stream.h>
+.sp 0.5
+int pullupmsg(mblk_t *\f2mp, \f4int\f2 len\f4);\f1
+.ad
+.fi
+.SH ARGUMENTS
+.RS 0n 10
+.IP "\f2mp\f1" 10n
+Pointer to the message whose blocks are to be concatenated
+.IP "\f2len\f1" 10n
+Number of bytes to concatenate.
+.RE
+.SH DESCRIPTION
+\f4pullupmsg\f1 tries to combine multiple message blocks into a single block.
+\f4pullupmsg\f1 concatenates and aligns the first \f2len\f1 data bytes of
+the message pointed to by \f2mp\f1.
+If \f2len\f1 equals \-1, all data are concatenated.  If \f2len\f1 bytes
+of the same message type cannot be found, \f4pullupmsg\f1 fails and returns
+0.
+.SH RETURN VALUE
+On success, 1 is returned; on failure, 0 is returned.
+.SH LEVEL
+Base or Interrupt.
+.SH NOTES
+Does not sleep.
+.SH SEE ALSO
+.na
+\f4allocb\f1(D3DK)
+.ad

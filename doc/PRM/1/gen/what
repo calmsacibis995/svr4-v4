@@ -1,0 +1,79 @@
+'\"macro stdmacro
+.if n .pH g1.what @(#)what	40.10.1.2 of 4/12/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} what 1 "Source Code Control System Utilities" "\&"
+.if \nX=1 .ds x} what 1 "Source Code Control System Utilities"
+.if \nX=2 .ds x} what 1 "" "\&"
+.if \nX=3 .ds x} what "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4what\f1 \- print identification strings
+.SH SYNOPSIS
+\f4what [\-s] \f2files\f1
+.SH DESCRIPTION
+\f4what\fP
+searches the given files for all occurrences
+of the pattern that the
+\f4get\fP command
+substitutes for \f4%\&Z%\fP (this is
+\f4@\&(#)\f1
+at this printing)
+and prints out what follows until the
+first
+\f4"\f1,
+\f4>\f1,
+new-line,
+\f4\e\f1,
+or null character.
+For example, if the C program in file \f4f.c\f1 contains
+.PP
+.RS
+.ft 4
+#ident "\|@\&(#)\f2identification information\fP\|"
+.ft 1
+.RE
+.PP
+and \f4f.c\f1 is compiled to yield \f4f.o\f1 and \f4a.out\f1,
+then the command
+.PP
+.RS
+\f4what f.c\| f.o\| a.out\fP
+.RE
+.PP
+prints
+.PP
+.RS
+.TP 8
+\f5f.c:
+.br
+\f2identification information\fP
+.TP 8
+\f5f.o:
+.br
+\f2identification information\fP
+.TP 8
+\f5a.out:
+.br
+\f2identification information\fP
+.RE
+.PP
+\f4what\fP
+is intended to be used in conjunction with the \f4get\fP command,
+which automatically inserts identifying information,
+but it can also be used where the information is inserted manually.
+Only one option exists:
+.RS
+.TP 8
+\f4\-s\f1
+Quit after finding the first occurrence of pattern in each file.
+.RE
+.SH SEE ALSO
+\f4get\fP(1),
+\f4help\fP(1),
+\f4mcs\fP(1)
+.SH DIAGNOSTICS
+Exit status is 0 if any matches are found, otherwise 1.
+See \f4help\fP(1) for explanations.
+.tr ~~

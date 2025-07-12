@@ -1,0 +1,32 @@
+'\"macro stdmacro
+.if n .pH 386.halt @(#)halt	40.3 of 6/24/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.nr X
+.if \nX=0 .ds x} halt D2D "" "DDI" "\&"
+.if \nX=1 .ds x} halt D2D "" "DDI"
+.if \nX=2 .ds x} halt D2D "" "\&"
+.if \nX=3 .ds x} halt "" "" "\&"
+.TH \*(x}
+.IX "\f4halt\fP(D2D)"
+.SH "NAME"
+\f4halt\fP \- shut down the driver when the system shuts down
+.SH "SYNOPSIS"
+.nf
+.na
+\f4void \f2prefix\fPhalt();\f1
+.ad
+.fi
+.SH "DESCRIPTION"
+The \f4halt\fP routine if present, is called when the system is shut down.
+The device driver shouldn't assume that the interrupts are enabled.
+The driver should make sure that no interrupts are
+pending from its device, and inform the device that no more interrupts
+should be generated.
+After the \f4halt\fP routine is called, no more
+calls will be made to the driver entry points.
+.SH NOTES
+This entry point is optional.
+.sp 0.5
+User context is not available, so the driver's \f4halt\fP routine should not sleep.
+.SH RETURN VALUE
+None.

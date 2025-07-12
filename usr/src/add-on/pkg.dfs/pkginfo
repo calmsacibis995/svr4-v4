@@ -1,0 +1,15 @@
+#ident	"@(#)pkg.dfs:pkginfo	1.1.1.2"
+
+# DFS pkginfo
+
+PKG="dfs"
+NAME="DFS Utilities"
+ARCH="i386"
+RELEASE="4.0"
+VERSION="1"
+VENDOR="USL"
+CATEGORY="utilities"
+CLASSES="none"
+PREDEPEND="dfs"
+BASEDIR=""
+MAXINST="1"

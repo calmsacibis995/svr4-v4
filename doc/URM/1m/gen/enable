@@ -1,0 +1,88 @@
+'\"macro stdmacro
+.if n .pH g1.enable @(#)enable	40.12.1.1 of 1/3/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} enable 1 "Line Printer Spooling Utilities" "\&"
+.if \nX=1 .ds x} enable 1 "Line Printer Spooling Utilities"
+.if \nX=2 .ds x} enable 1 "" "\&"
+.if \nX=3 .ds x} enable "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4enable\f1, \f4disable\f1 \- enable/disable \s-1LP\s+1 printers
+.SH SYNOPSIS
+\f4enable \f2printers\f1
+.br
+\f4disable\f1 [\f2options\f1] \f2printers\f1
+.SH DESCRIPTION
+The \f4enable\fP command activates the named
+.IR printers ,
+enabling them to print requests submitted by
+the \f4lp\fP command.
+If the printer is remote,
+the command will only enable the transfer of requests
+to the remote system;
+the \f4enable\f1 command must be run again, 
+on the remote system,
+to activate the printer.
+(Run \f4lpstat \-p\fP to get the status of printers.)
+.PP
+The \f4disable\fP command 
+deactivates the named
+.IR printers ,
+disabling them from printing requests
+submitted by \f4lp\fP.
+By default, any requests
+that are currently printing
+on the designated printers
+will be reprinted in their entirety
+either on the same printer
+or on another member of the same class of printers.
+If the printer is remote,
+this command will only stop 
+the transmission of jobs to
+the remote system.
+The \f4disable\f1 command
+must be run on the remote system to disable the printer.
+(Run \f4lpstat \-p\fP to get the status of printers.)
+Options for use with \f4disable\fP are:
+.TP "\w'\-r\|reason\|\ \ \ \ 'u"
+\f4\-c\f1
+Cancel any requests
+that are currently printing
+on any of the designated printers.
+This option cannot be used with the \f4\-W\f1
+option.
+If the printer is remote,
+the \f4\-c\f1 option will be silently ignored.
+.TP
+\f4\-r \f2reason\f1
+Assign a
+.I reason
+for the disabling
+of the printers.
+This \f2reason\f1 applies to all \f2printers\fP specified.
+This 
+.I reason
+is reported by \f4lpstat \-p\fP.
+\f2reason\fP must be enclosed in quotes if it contains blanks.
+The default reason is \f4unknown reason\fP for existing
+printers,
+and \f4new printer\fP for printers just added to the system but
+not yet enabled.
+.TP
+\f4\-W\f1
+Wait until the request currently being printed
+is finished before disabling
+the specified printer.
+.SP
+This option cannot be used with the \f4\-c\f1 option.
+If the printer is remote,
+the \f4\-W\f1 option will be silently ignored.
+.SH FILES
+\f4/var/spool/lp/\(**\f1
+.SH SEE ALSO
+\f4lp\fP(1),
+\f4lpstat\fP(1).
+.\"	@(#)enable.1	6.2 of 9/2/83
+.Ee

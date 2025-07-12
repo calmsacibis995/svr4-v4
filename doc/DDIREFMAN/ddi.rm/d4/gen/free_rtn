@@ -1,0 +1,51 @@
+'\"!  tbl | mmdoc
+'\"macro stdmacro
+.if n .pH ddi_dki.free_rtn @(#)free_rtn	40.4 of 7/1/91
+.\" Copyright 1989 AT&T
+.de IX
+.ie '\\n(.z'' .tm .Index: \\$1 \\$2 \\$3 \\$4 \\$5 \\$6 \\$7 \\$8 \\$9	\\n%
+.el \\!.IX \\$1 \\$2 \\$3 \\$4 \\$5 \\$6 \\$7 \\$8 \\$9
+..
+.nr X
+.if \nX=0 .ds x} free_rtn D4DK "STREAMS" "DDI/DKI" "\&"
+.if \nX=1 .ds x} free_rtn D4DK "STREAMS" "DDI/DKI"
+.if \nX=2 .ds x} free_rtn D4DK "" "\&"
+.if \nX=3 .ds x} free_rtn "" "" "\&"
+.TH \*(x}
+.IX "\f4free_rtn\fP(D4DK)"
+.SH NAME
+\f4free_rtn\fP \- STREAMS driver's message free routine structure
+.SH SYNOPSIS
+\f4#include <sys/stream.h>\fP
+.SH DESCRIPTION
+A \f4free_rtn\fP structure is needed for messages allocated via \f4esballoc\fP(D3DK).
+Since the driver is providing the memory for the data buffer,
+a way is needed to notify the driver when the buffer is no longer in use.
+\f4esballoc\fP associates the free routine structure with the message
+when it is allocated.
+When \f4freeb\fP(D3DK) is called to free the message and the reference
+count goes to zero, the driver's message free routine is
+called, with the argument specified, to free the data buffer.
+.SH STRUCTURE MEMBERS
+.P
+.TS
+lf4p8 2 lf4p8 2 lf4p8.
+void	(*free_func)()	/* driver's free routine */
+char	*free_arg	/* argument to free_func() */
+.TE
+.P
+The \f4free_func\fP field specifies the driver's function to be called when the
+message has been freed.
+It is called with interrupts from STREAMS devices blocked on
+the processor on which the function is running.
+.P
+The \f4free_arg\fP field is the only argument to the driver's free routine.
+.P
+The \f4free_rtn\fP structure is defined as type \f4frtn_t\fP.
+.SH SEE ALSO
+\f2Programmer's Guide: STREAMS\fP
+.P
+.na
+\f4esballoc\fP(D3DK),
+\f4freeb\fP(D3DK)
+.ad

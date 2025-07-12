@@ -1,0 +1,29 @@
+# /bin/sh
+
+#ident	"@(#)mbus:cmd/mbusutils/misc.d/rmxversion	1.1"
+
+# Show version of modules in iRMX I/II/III load file
+#
+# Usage: $0 rmxfile
+#
+
+if [ $# = 0 ] 
+then
+	echo "Usage: $0 rmxfile"
+	exit 1
+fi
+
+if [ ! -f $1 ] || [ ! -r $1 ]
+then
+	echo "$0: Cannot read $1"
+	exit 1
+fi
+
+strings $1 | \
+grep 'program_name' | \
+sed -e 's/.*program_version_number=\(.*\)program_name=\(.*\)/\2:\1/' | \
+awk -F: '{x = 50 - length($1); 
+	printf "%s ", $1;
+	for(i=0; i<x; i++)
+		printf "%s", ".";
+	printf " %s\n", $2}'

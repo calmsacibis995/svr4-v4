@@ -1,0 +1,446 @@
+'\"macro stdmacro
+.if n .pH g7.termiox @(#)termiox	40.10 of 4/11/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.\"	@(#)termiox	2.1.1.2  8/04/88 RnD added
+.if n .pH g7.termiox @(#)termiox 30.3 of 8/03/88
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.nr X
+.if \nX=0 .ds x} termiox 7 "" "\&"
+.if \nX=1 .ds x} termiox 7 ""
+.if \nX=2 .ds x} termiox 7 "" "\&"
+.if \nX=3 .ds x} termiox "" "" "\&"
+.TH \*(x}
+.if t .ds ` \h@.05m@\s+4\v@.333m@\`\v@-.333m@\s-4\h@.05m@
+.if n .ds ` `
+.SH NAME
+\f4termiox\f1 \- extended general terminal interface
+.SH DESCRIPTION
+The extended general terminal interface supplements the
+\f4termio\fP(7)
+general terminal interface by adding support for asynchronous hardware flow
+control, isochronous flow control and clock modes, and local
+implementations of additional asynchronous features.
+Some systems may not support all of these capabilities because of either
+hardware or software limitations.
+Other systems may not permit certain functions to be disabled.
+In these cases the appropriate bits will be ignored.
+See <\f4termiox.h\fP> for your system
+to find out which capabilities are supported.
+.SS Hardware Flow Control Modes
+Hardware flow control supplements the
+\f4termio\fP(7)
+\f4IXON\fP, \f4IXOFF\fP, and \f4IXANY\fP character flow control.
+Character flow control occurs when one device controls
+the data transfer of another device by the insertion of
+control characters
+in the data stream between devices.
+Hardware flow control occurs
+when one device controls the data transfer of another device using
+electrical control signals
+on wires (circuits) of the asynchronous interface.
+Isochronous hardware flow control occurs when
+one device controls the data transfer of another device by 
+asserting or removing the transmit clock signals of that device.
+Character flow control and hardware flow control
+may be simultaneously set.
+.PP
+In asynchronous, full duplex applications, the use of the
+Electronic Industries Association's \s-1EIA\s+1-232-\s-1D\s+1
+Request To Send (\s-1RTS\s+1) and Clear To Send (\s-1CTS\s+1) circuits is the 
+preferred method of hardware flow control.
+An interface to other hardware
+flow control methods is included to provide a standard interface to
+these existing methods.
+.PP
+The \s-1EIA\s+1-232-\s-1D\s+1 standard specified only uni-directional hardware flow
+control - the Data Circuit-terminating Equipment or Data
+Communications Equipment (\s-1DCE\s+1) indicates to the Data Terminal
+Equipment (\s-1DTE\s+1) to stop transmitting data.
+The \f4termiox\fP(7) interface allows
+both uni-directional and bi-directional hardware flow control; when
+bi-directional flow control is enabled, either the \s-1DCE\s+1 or \s-1DTE\s+1 can
+indicate to each other to stop transmitting data across the
+interface.
+Note: It is assumed that the asynchronous port is
+configured as a \s-1DTE\s+1.
+If the connected device is also a \s-1DTE\s+1 and not
+a \s-1DCE\s+1, then \s-1DTE\s+1 to \s-1DTE\s+1 (for example,
+terminal or printer connected to
+computer) hardware flow control is
+possible by using a null modem to interconnect the appropriate data and
+control circuits.
+.SS Clock Modes
+Isochronous communication is a variation of asynchronous communication
+whereby two communicating devices may provide transmit and/or
+receive clock to each other.
+Incoming clock signals can be taken from the baud rate generator on the
+local isochronous port controller, from \s-1CCITT\s+1 V.24 circuit 114, Transmitter
+Signal Element Timing - \s-1DCE\s+1 source (\s-1EIA\s+1-232-\s-1D\s+1 pin 15), or 
+from \s-1CCITT\s+1
+V.24 circuit 115, Receiver Signal Element Timing - \s-1DCE\s+1 source 
+(\s-1EIA\s+1-232-\s-1D\s+1 pin 17).
+Outgoing clock signals can be sent
+on \s-1CCITT\s+1 V.24 circuit 113,
+Transmitter Signal Element Timing - \s-1DTE\s+1 source (\s-1EIA\s+1-232-\s-1D\s+1 
+pin 24),
+on \s-1CCITT\s+1 V.24 circuit 128, Receiver Signal Element Timing - \s-1DTE\s+1
+source (no \s-1EIA\s+1-232-\s-1D\s+1 pin), or not sent at all.
+.PP
+In terms of clock modes, traditional asynchronous communication is
+implemented simply by using the local baud rate generator
+as the incoming transmit and receive
+clock source and not outputting any clock signals.
+.SS Terminal Parameters
+The parameters that control the behavior of devices providing the
+\f4termiox\fP interface are specified by the \f4termiox\fP
+structure, defined in the
+<\f4sys/termiox.h\fP> header file.
+Several
+\f4ioctl\fP(2)
+system calls that fetch or change these parameters use this structure:
+.PP
+.ta .6i 1.3i 1.8i 2.6i
+.RS
+.nf
+\f4#define	\s-1NFF\s+1	5
+struct	termiox {
+   unsigned short   x_hflag;     /* hardware flow control 
+                                    modes */
+   unsigned short   x_cflag;     /* clock modes */
+   unsigned short   x_rflag[NFF];/* reserved modes */
+   unsigned short   x_sflag;     /* spare local modes */
+};\fP
+.fi
+.RE
+.PP
+The \f4x_hflag\fP
+field describes hardware flow control modes:
+.PP
+.ta \w'MAXMAX\ \ 'u +\w'0100000\ \ 'u
+.RS
+.nf
+\f4RTSXOFF\fP	0000001	Enable \s-1RTS\s+1 hardware flow control on input.
+\f4CTSXON\fP	0000002	Enable \s-1CTS\s+1 hardware flow control on output.
+\f4DTRXOFF\fP	0000004	Enable \s-1DTR\s+1 hardware flow control on input.
+\f4CDXON\fP	0000010	Enable \s-1CD\s+1 hardware flow control on output.
+\f4ISXOFF\fP	0000020	Enable isochronous hardware flow control on input.
+.fi
+.RE
+.PP
+The \s-1EIA\s+1-232-\s-1D DTR\s+1 and \s-1CD\s+1 circuits are used to
+establish a connection between two systems.
+The \s-1RTS\s+1 circuit is also
+used to establish a connection with a modem.
+Thus, both \s-1DTR\s+1 and
+\s-1RTS\s+1 are activated when an asynchronous port is opened.
+If \s-1DTR\s+1 is used for hardware flow control,
+then \s-1RTS\s+1 must be used for connectivity.
+If \s-1CD\s+1 is used for hardware flow control, then
+\s-1CTS\s+1 must be used for connectivity.
+Thus, \s-1RTS\s+1 and \s-1DTR\s+1 (or \s-1CTS\s+1 and \s-1CD\s+1) cannot both be used for hardware
+flow control at the same time.
+Other mutual exclusions may apply, such as the simultaneous
+setting of the
+\f4termio\fP(7) \f4HUPCL\fP and the \f4termiox\fP(7) \f4DTRXOFF\fP bits,
+which use the \s-1DTE\s0 ready line for different functions.
+.PP
+Variations of different hardware flow control methods may be
+selected by setting the the appropriate bits.
+For example, bi-directional \s-1RTS/CTS\s+1 flow control is selected
+by setting both the \f4RTSXOFF\fP and \f4CTSXON\fP bits and
+bi-directional \s-1DTR/CTS\s+1 flow control is selected
+by setting both the \f4DTRXOFF\fP and \f4CTSXON\fP.
+Modem control or uni-directional \s-1CTS\s+1 hardware flow control
+is selected by setting only the \f4CTSXON\fP bit.
+.PP
+As previously mentioned, it is assumed that the local asynchronous
+port (for example, computer) is configured as a \s-1DTE\s+1.
+If the connected device (for example, printer)
+is also a \s-1DTE\s+1,
+it is assumed that the device is connected to the computer's
+asynchronous port via
+a null modem that swaps control circuits (typically \s-1RTS\s+1 and \s-1CTS\s+1).
+The connected \s-1DTE\s+1 drives \s-1RTS\s+1 and the null modem swaps \s-1RTS\s+1 
+and \s-1CTS\s+1 so
+that the remote \s-1RTS\s+1 is received as \s-1CTS\s+1 by the local \s-1DTE\s+1.
+In the
+case that \f4CTSXON\fP is set for hardware flow control, printer's
+lowering of its \s-1RTS\s+1 would cause \s-1CTS\s+1 seen by the computer to be
+lowered.
+Output to the printer is suspended\p
+.br
+.ne 2
+until the printer's raising of its \s-1RTS\s+1,
+which would cause \s-1CTS\s+1 seen by the computer to be raised.
+.PP
+If \f4RTSXOFF\fP is set,
+the Request To Send (\s-1RTS\s+1) circuit (line) will be raised,
+and if the asynchronous port needs to have its input stopped,
+it will lower the Request To Send (\s-1RTS\s+1) line.
+If the \s-1RTS\s+1 line is lowered, it is assumed that the
+connected device will stop its output until \s-1RTS\s+1 is raised.
+.PP
+If
+\f4CTSXON\fP
+is set,
+output will occur only if the Clear To Send (\s-1CTS\s+1) circuit
+(line) is raised by the connected device.
+If the \s-1CTS\s+1 line is lowered by the connected device, output is
+suspended until \s-1CTS\s+1 is raised.
+.PP
+If
+\f4DTRXOFF\fP
+is set,
+the \s-1DTE\s+1 Ready (\s-1DTR\s+1) circuit (line) will be raised,
+and if the asynchronous port needs to have its input stopped,
+it will lower the \s-1DTE\s+1 Ready (\s-1DTR\s+1) line.
+If the \s-1DTR\s+1 line is lowered, it is assumed that the
+connected device will stop its output until \s-1DTR\s+1 is raised.
+.PP
+If
+\f4CDXON\fP
+is set,
+output will occur only if the Received Line
+Signal Detector (\s-1CD\s+1) circuit
+(line) is raised by the connected device.
+If the \s-1CD\s+1 line is lowered by the connected device, output is
+suspended until \s-1CD\s+1 is raised.
+.PP
+If
+\f4ISXOFF\fP
+is set,
+and if the isochronous port needs to have its input stopped,
+it will stop the outgoing clock signal.
+It is assumed that the
+connected device is using this clock signal to create its
+output.
+Transit and receive clock sources are programmed using
+the \f4x_cflag\fP fields.
+If the port is not programmed for external clock generation,
+\f4ISXOFF\fP
+is ignored.
+Output isochronous flow control is supported by
+appropriate clock source programming using the \f4x_cflag\f1 field and
+enabled at the remote connected device.
+.PP
+The \f4x_cflag\fP
+field specifies the system treatment of clock modes.
+.PP
+.ta \w'MAXMAX\ \ 'u +\w'0100000\ \ 'u
+.RS
+.nf
+\f4XMTCLK\fP	0000007	Transmit clock source:
+\f4XCIBRG\fP	0000000	Get transmit clock from internal baud rate 
+			generator.
+\f4XCTSET\fP	0000001	Get transmit clock from transmitter signal
+			element timing (\s-1DCE\s+1 source) lead, \s-1CCITT\s+1
+			V.24 circuit 114, \s-1EIA\s+1-232-\s-1D\s+1 pin 15.
+\f4XCRSET\fP	0000002	Get transmit clock from receiver signal
+			element timing (\s-1DCE\s+1 source) lead, \s-1CCITT\s+1
+			V.24 circuit 115, \s-1EIA\s+1-232-\s-1D\s+1 pin 17.
+\f4RCVCLK\fP	0000070	Receive clock source:
+\f4RCIBRG\fP	0000000	Get receive clock from internal baud rate
+			generator.
+\f4RCTSET\fP	0000010	Get receive clock from transmitter signal
+			element timing (\s-1DCE\s+1 source) lead, \s-1CCITT\s+1
+			V.24 circuit 114, \s-1EIA\s+1-232-\s-1D\s+1 pin 15.
+\f4RCRSET\fP	0000020	Get receive clock from receiver signal
+			element timing (\s-1DCE\s+1 source) lead, \s-1CCITT\s+1
+			V.24 circuit 115, \s-1EIA\s+1-232-\s-1D\s+1 pin 17.
+\f4TSETCLK\fP	0000700	Transmitter signal element timing (\s-1DTE\s+1 source)
+			lead, \s-1CCITT\s+1 V.24 circuit 113, \s-1EIA\s+1-232-\s-1D\s+1
+			pin 24, clock source:
+\f4TSETCOFF\fP	0000000	\s-1TSET\s+1 clock not provided.
+.br
+.ne 2
+\f4TSETCRBRG\fP	0000100	Output receive baud rate generator on 
+			circuit 113.
+\f4TSETCTBRG\fP	0000200	Output transmit baud rate generator on 
+			circuit 113.
+\f4TSETCTSET\fP	0000300	Output transmitter signal element timing
+			(\s-1DCE\s+1 source) on circuit 113.
+\f4TSETCRSET\fP	0000400	Output receiver signal element timing
+			(\s-1DCE\s+1 source) on circuit 113.
+\f4RSETCLK\fP	0007000	Receiver signal element timing (\s-1DTE\s+1 source)
+			lead, \s-1CCITT\s+1 V.24 circuit 128, no \s-1EIA\s+1-232-\s-1D\s+1
+			pin, clock source:
+\f4RSETCOFF\fP	0000000	\s-1RSET\s+1 clock not provided.
+\f4RSETCRBRG\fP	0001000	Output receive baud rate generator on 
+			circuit 128.
+\f4RSETCTBRG\fP	0002000	Output transmit baud rate generator on 
+			circuit 128.
+\f4RSETCTSET\fP	0003000	Output transmitter signal element timing
+			(\s-1DCE\s+1 source) on circuit 128.
+\f4RSETCRSET\fP	0004000	Output receiver signal element timing
+			(\s-1DCE\s+1) on circuit 128.
+.fi
+.RE
+.PP
+If the
+\f4XMTCLK\fP
+field has a value of
+\f4XCIBRG\fP
+the transmit clock is taken from the hardware internal baud rate
+generator, as in normal asynchronous transmission.
+If
+\f4XMTCLK\fP
+=
+\f4XCTSET\fP
+the transmit clock is taken from the Transmitter Signal Element
+Timing (\s-1DCE\s+1 source) circuit.
+If
+\f4XMTCLK\fP
+=
+\f4XCRSET\fP
+the transmit clock is taken from the Receiver Signal Element Timing
+(\s-1DCE\s+1 source) circuit.
+.PP
+If the
+\f4RCVCLK\fP
+field has a value of
+\f4RCIBRG\fP
+the receive clock is taken from the hardware Internal Baud Rate
+Generator, as in normal asynchronous transmission.
+If
+\f4RCVCLK\fP
+=
+\f4RCTSET\fP
+the receive clock is taken from the Transmitter Signal Element
+Timing (\s-1DCE\s+1 source) circuit.
+If
+\f4RCVCLK\fP
+=
+\f4RCRSET\fP
+the receive clock is taken from the Receiver Signal Element
+Timing (\s-1DCE\s+1 source) circuit.
+.PP
+If the
+\f4TSETCLK\fP
+field has a value of
+\f4TSETCOFF\fP
+the Transmitter Signal Element Timing (\s-1DTE\s+1 source) circuit
+is not driven.
+If
+\f4TSETCLK\fP
+=
+\f4TSETCRBRG\fP
+the Transmitter Signal Element Timing (\s-1DTE\s+1 source) circuit
+is driven by the Receive Baud Rate Generator.
+If
+\f4TSETCLK\fP
+=
+\f4TSETCTBRG\fP
+the Transmitter Signal Element Timing (\s-1DTE\s+1 source) circuit
+is driven by the Transmit Baud Rate Generator.
+If
+\f4TSETCLK\fP
+=
+\f4TSETCTSET\fP
+the Transmitter Signal Element Timing (\s-1DTE\s+1 source) circuit
+is driven by the Transmitter Signal Element Timing (\s-1DCE\s+1 source).
+If
+\f4TSETCLK\fP
+=
+\f4TSETCRBRG\fP
+the Transmitter Signal Element Timing (\s-1DTE\s+1 source) circuit
+is driven by the Receiver Signal Element Timing (\s-1DCE\s+1 source).
+.PP
+If the
+\f4RSETCLK\fP
+field has a value of
+\f4RSETCOFF\fP
+the Receiver Signal Element Timing (\s-1DTE\s+1 source) circuit
+is not driven.
+If
+\f4RSETCLK\fP
+=
+\f4RSETCRBRG\fP
+the Receiver Signal Element Timing (\s-1DTE\s+1 source) circuit
+is driven by the Receive Baud Rate Generator.
+If
+\f4RSETCLK\fP
+=
+\f4RSETCTBRG\fP
+the Receiver Signal Element Timing (\s-1DTE\s+1 source) circuit
+is driven by the Transmit Baud Rate Generator.
+If
+\f4RSETCLK\fP
+=
+\f4RSETCTSET\fP
+the Receiver Signal Element Timing (\s-1DTE\s+1 source) circuit
+is driven by the Transmitter Signal Element Timing (\s-1DCE\s+1 source).
+If
+\f4RSETCLK\fP
+=
+\f4RSETCRBRG\fP
+the Receiver Signal Element Timing (\s-1DTE\s+1 source) circuit
+is driven by the Receiver Signal Element Timing (\s-1DCE\s+1 source).
+.PP
+The \f4x_rflag\fP
+is reserved for future interface definitions and should not be used
+by any implementations.
+The \f4x_sflag\fP
+may be used by local implementations wishing to customize their
+terminal interface using the \f4termiox\fP(7) ioctl system calls.
+.SH IOCTLS
+The \f4ioctl\fP(2)
+system calls have the form:
+.PP
+.RS
+.nf
+\f4ioctl\fP (\f2fildes, command, arg\f1)
+struct termiox *arg;\fP
+.fi
+.RE
+.PP
+The commands using this form are:
+.RS
+.TP 0.65i
+\f4TCGETX\fP
+The argument is a pointer to a
+\f4termiox\fP
+structure.
+The current terminal parameters
+are fetched and stored into that structure.
+.TP
+\f4TCSETX\fP
+The argument is a pointer to a
+\f4termiox\fP
+structure.
+The current terminal parameters
+are set from the values stored in that
+structure.
+The change is immediate.
+.TP
+\f4TCSETXW\fP
+The argument is a pointer to a
+\f4termiox\fP
+structure.
+The current terminal parameters
+are set from the values stored in that
+structure.
+The change occurs after all
+characters queued for output have been
+transmitted.
+This form should be used when changing parameters
+that will affect output.
+.TP
+\f4TCSETXF\fP
+The argument is a pointer to a
+\f4termiox\fP
+structure.
+The current terminal parameters
+are set from the values stored in that
+structure.
+The change occurs after all
+characters queued for output have been
+transmitted; all characters queued for
+input are discarded and then the change occurs.
+.RE
+.SH FILES
+/\f4dev\fP/*
+.SH SEE ALSO
+\f4stty\fP(1), \f4ioctl\fP(2), \f4termio\fP(7)
+.\"	@(#)termiox.7
+.Ee

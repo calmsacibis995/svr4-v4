@@ -1,0 +1,41 @@
+'\"macro stdmacro
+.if n .pH gen.putnext @(#)putnext	40.2 of 1/7/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.nr X
+.if \nX=0 .ds x} putnext D3DK "STREAMS" "DDI/DKI" "\&"
+.if \nX=1 .ds x} putnext D3DK "STREAMS" "DDI/DKI"
+.if \nX=2 .ds x} putnext D3DK "" "\&"
+.if \nX=3 .ds x} putnext "" "" "\&"
+.TH \*(x}
+.IX "\f4putnext\fP(D3DK)"
+.SH NAME
+\f4putnext\f1 \- send a message to the next queue
+.SH SYNOPSIS
+.nf
+.na
+\f4#include <sys/stream.h>
+#include <sys/ddi.h>
+.sp 0.5
+int putnext(queue_t *\f2q, \f4mblk_t *\f2mp\f4);\f1
+.ad
+.fi
+.SH ARGUMENTS
+.RS 0n 10
+.IP "\f2q\f1" 10n
+Pointer to the queue from which the message \f2mp\f1 will be sent.
+.IP "\f2mp\f1" 10n
+Pointer to the message to be passed.
+.RE
+.SH DESCRIPTION
+The \f4putnext\f1 function is used to pass a message to the \f4put\f1(D2DK)
+routine of the next queue (\f2q\->q_next\fP) in the stream.
+.SH RETURN VALUE
+Ignored.
+.SH LEVEL
+Base or Interrupt.
+.SH NOTES
+Does not sleep.
+.SH SEE ALSO
+\f4put\fP(D2DK)
+.SH EXAMPLE
+See \f4allocb\f1(D3DK) for an example of \f4putnext\f1.

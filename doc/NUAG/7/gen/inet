@@ -1,0 +1,276 @@
+'\"macro stdmacro
+.if n .pH g7.inet @(#)inet	40.9 of 5/21/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} inet 7 "Internet Utilities" "\&"
+.if \nX=1 .ds x} inet 7 "Internet Utilities"
+.if \nX=2 .ds x} inet 7  "" "\&"
+.if \nX=3 .ds x} inet "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4inet\f1 \- Internet protocol family
+.SH SYNOPSIS
+.nf
+.LP
+\f4#include <sys/types.h>\f1
+\f4#include <netinet/in.h>\f1
+.fi
+.SH DESCRIPTION
+.LP
+The Internet protocol family implements a collection of protocols
+which are centered around the
+.I Internet Protocol
+(\s-1IP\s0)
+and which share a common address format.
+The Internet family protocols can be accessed via the socket interface,
+where they support the
+\f4SOCK_STREAM\f1,
+\f4SOCK_DGRAM\f1,
+and
+\f4SOCK_RAW\f1
+socket types,
+or the Transport Level Interface (\s-1TLI\s0),
+where they support the connectionless (\f4T_CLTS\f1) 
+and connection oriented (\f4T_COTS_ORD\f1) service types.
+.SH PROTOCOLS
+The Internet protocol family comprises
+the Internet Protocol (\s-1IP\s0),
+the Address Resolution Protocol (\s-1ARP\s0),
+the Internet Control Message Protocol (\s-1ICMP\s0),
+the Transmission Control Protocol (\s-1TCP\s0),
+and the User Datagram Protocol (\s-1UDP\s0).
+.LP
+.SM TCP
+supports the socket interface's
+\f4SOCK_STREAM\f1
+abstraction and \s-1TLI\s0's \f4T_COTS_ORD\f1 service type.
+.SM UDP
+supports the
+\f4SOCK_DGRAM\f1
+socket abstraction and the \s-1TLI\s0 \f4T_CLTS\f1 service type.
+See
+\f4tcp\f1(7)
+and
+\f4udp\f1(7).
+A direct interface to
+.SM IP
+is available via both TLI and the socket interface;
+See
+\f4ip\f1(7).
+.SM ICMP
+is used by the kernel
+to handle and report errors in protocol processing.
+It is also accessible to user programs; see
+\f4icmp\f1(7).
+.SM ARP
+is used to translate 32-bit
+.SM IP
+addresses into 48-bit Ethernet addresses; see
+\f4arp\f1(7).
+.LP
+The 32-bit
+.SM IP
+address is divided into network number and host number parts.
+It is frequency-encoded; The most-significant bit is zero
+in Class A addresses, in which the high-order 8 bits represent the network
+number.
+Class B addresses have their high order two bits set to 10 and
+use the high-order 16 bits as the network number field.
+Class C addresses have a 24-bit network number part of which
+the high order three bits are 110.
+Sites with a cluster of IP networks
+may chose to use a single network number for the cluster;
+This is done by using subnet addressing.
+The host number portion of the address is further subdivided
+into subnet number and host number parts.
+Within a subnet, each subnet appears to be an individual network;
+Externally, the entire cluster appears to be a single, uniform
+network requiring only a single routing entry.
+Subnet addressing is enabled and examined by the following
+\f4ioctl\f1(2)
+commands;
+They have the same form as the
+\f4SIOCSIFADDR\f1
+command [see
+\f4if\f1(3N)].
+.LP
+.TP 20
+\f4SIOCSIFNETMASK\f1
+Set interface network mask.
+The network mask defines the network part of the address;
+If it contains more of the address than the address type would indicate,
+then subnets are in use.
+.TP
+\f4SIOCGIFNETMASK\f1
+Get interface network mask.
+.SH ADDRESSING
+.SM IP
+addresses are four byte quantities, stored in network byte order.
+IP addresses should be manipulated using the byte
+order conversion routines [see \f4byteorder\f1(3N)].
+.LP
+Addresses in the Internet protocol family use the following
+structure:
+.P
+.RS
+.nf
+.ft 4
+struct sockaddr_in {
+	short    sin_family;
+	u_short  sin_port;
+	struct   in_addr sin_addr;
+	char     sin_zero[8];
+};
+.ft 1
+.fi
+.RE
+.LP
+Library routines are provided to manipulate structures of this form;
+See
+\f4inet\f1(3N).
+.P
+The \f4sin_addr\f1 field of the \f4sockaddr_in\f1
+structure specifies a local or remote
+.SM IP
+address.
+Each network interface has its own unique
+.SM IP
+address.
+The special value
+\f4INADDR_ANY\f1
+may be used in this field to effect \(lqwildcard\(rq matching.
+Given in a \f4bind\f1(2) call, this value leaves the local
+.SM IP
+address of the socket unspecified,
+so that the socket will receive connections or messages directed
+at any of the valid
+.SM IP
+addresses of the system.
+This can prove useful when a process neither knows nor cares
+what the local
+.SM IP
+address is or when a process wishes to receive
+requests using all of its network interfaces.
+The
+\f4sockaddr_in\f1
+structure given in the
+\f4bind\f1( 2)
+call must specify an
+\f4in_addr\f1
+value of either
+\f4IPADDR_ANY\f1
+or one of the system's valid
+.SM IP
+addresses.
+Requests to bind any other address will elicit the error 
+\f4EADDRNOTAVAI\f1.
+When a
+\f4connect\f1(2)
+call is made for a socket that has a wildcard local address,
+the system sets the
+\f4sin_addr\f1
+field of the socket to the
+.SM IP
+address of the network interface that the packets for that
+connection are routed via.
+.LP
+The
+\f4sin_port\f1
+field of the
+\f4sockaddr_in\f1
+structure specifies
+a port number used by
+.SM TCP
+or
+.SM UDP\s0.
+The local port address specified in a
+\f4bind\f1(2)
+call is restricted to be greater than
+\f4IPPORT_RESERVED\f1
+(defined in
+\f4<netinet/in.h>\f1)
+unless the creating process is running
+as the super-user, providing a space of protected port numbers.
+In addition, the local port address must not be in use by any
+socket of same address family and type.
+Requests to bind sockets to port numbers being used by other sockets
+return the error
+\f4EADDRINUSE\f1.
+If the local port address is specified as 0, then the system picks
+a unique port address greater than
+\f4IPPORT_RESERVED\f1.
+A unique local port address is also picked when a socket
+which is not bound is used in a
+\f4connect\f1(2)
+or
+\f4sendto\f1
+[see
+\f4send\f1(2)]
+call.
+This allows programs which do not care which local port number
+is used to set up
+.SM TCP
+connections by simply calling
+\f4socket\f1(2)
+and then
+\f4connect\f1(2),
+and to send
+.SM UDP
+datagrams with a
+\f4socket\f1(2)
+call followed by a
+\f4sendto\f1(2)
+call.
+.LP
+Although this implementation restricts sockets to unique local
+port numbers,
+.SM TCP
+allows multiple simultaneous connections involving the
+same local port number so long as the remote
+.SM IP
+addresses or
+port numbers are different for each connection.
+Programs may explicitly override the socket restriction
+by setting the
+\f4SO_REUSEADDR\f1
+socket option with
+\f4setsockopt\f1
+[see
+\f4getsockopt\f1(3N)].
+.LP
+TLI applies somewhat different semantics to the binding of local
+port numbers. 
+These semantics apply when Internet family protocols are used via the TLI.
+.SH SEE ALSO
+.na
+\f4ioctl\f1(2),
+\f4send\f1(2),
+\f4bind\f1(3N),
+\f4connect\f1(3N),
+\f4getsockopt\f1(3N),
+\f4if\f1(3N),
+\f4byteorder\f1(3N),
+\f4gethostent\f1(3N),
+\f4getnetent\f1(3N),
+\f4getprotoent\f1(3N),
+\f4getservent\f1(3N),
+\f4socket\f1(3N),
+\f4arp\f1(7),
+\f4icmp\f1(7),
+\f4ip\f1(7),
+\f4tcp\f1(7),
+\f4udp\f1(7)
+.LP
+Network Information Center,
+\f2DDN Protocol Handbook\f1
+(3 vols.),
+Network Information Center,
+.SM SRI
+International, Menlo Park, Calif.,
+1985
+.SH NOTES
+The Internet protocol support is subject to change as
+the Internet protocols develop.  Users should not depend
+on details of the current implementation, but rather
+the services exported.

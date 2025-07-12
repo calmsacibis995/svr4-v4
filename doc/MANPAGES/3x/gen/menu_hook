@@ -1,0 +1,77 @@
+'\"!  tbl | mmdoc
+'\"macro stdmacro
+.if n .pH g3x.menu_hook @(#)menu_hook	40.5 of 4/11/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.\" ident	"@(#)svid_ti:ti_lib/menu_hook	1.3"
+.nr X
+.if \nX=0 .ds x} menu_hook 3X "" "\&"
+.if \nX=1 .ds x} menu_hook 3X ""
+.if \nX=2 .ds x} menu_hook 3X "" "\&"
+.if \nX=3 .ds x} menu_hook "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4menu_hook\f1: \f4set_item_init\f1, \f4item_init\f1, \f4set_item_term\f1, \f4item_term\f1, \f4set_menu_init\f1, \f4menu_init\f1, \f4set_menu_term\f1, \f4menu_term\f1 \- assign application-specific routines for automatic invocation by \f4menus\fP
+.SH SYNOPSIS
+.nf
+.ft 4
+#include <menu.h>
+.sp
+int set_item_init(MENU *menu, void (*func)(MENU *));
+void (*)(MENU *) item_init(MENU *menu);
+.sp 0.5
+int set_item_term(MENU *menu, void (*func)(MENU *));
+void (*)(MENU *) item_term(MENU *menu);
+.sp 0.5
+int set_menu_init(MENU *menu, void (*func)(MENU *));
+void (*)(MENU *) menu_init(MENU *menu);
+.sp 0.5
+int set_menu_term(MENU *menu, void (*func)(MENU *));
+void (*)(MENU *) menu_term(MENU *menu);
+.ft 1
+.fi
+.SH DESCRIPTION
+\f4set_item_init\fP assigns the application-defined function to be
+called when the \f2menu\fP is posted and just after the current item changes.
+\f4item_init\fP returns a pointer to the item initialization routine,
+if any, called when the \f2menu\fP is posted and just after the current
+item changes.
+.PP
+\f4set_item_term\fP assigns an application-defined function to be
+called when the \f2menu\fP is unposted and just before the current item changes.
+\f4item_term\fP returns a pointer to the termination function, if any,
+called when the \f2menu\fP is unposted and just before the current item changes.
+.PP
+\f4set_menu_init\fP assigns an application-defined function to be called
+when the \f2menu\fP is posted and just after the top row changes on a posted
+menu.
+\f4menu_init\fP returns a pointer to the menu initialization routine,
+if any, called when the \f2menu\fP is posted and just after the top row
+changes on a posted menu.
+.PP
+\f4set_menu_term\fP assigns an application-defined function to be
+called when the \f2menu\fP is unposted and just before the top row changes on
+a posted menu.
+\f4menu_term\fP returns a pointer to the menu termination routine, if any,
+called when the \f2menu\fP is unposted and just before the top row changes on
+a posted menu.
+.SH RETURN VALUE
+Routines that return pointers always return \f4NULL\fP on error.
+Routines that return an integer return one of the following:
+.TS
+lfCWw(1.25i)1 c1 l .
+E_OK	\-	The routine returned successfully.
+E_SYSTEM_ERROR	\-	System error.
+.TE
+.RE
+.SH NOTES
+.PP
+The header file \f4<menu.h>\f1 automatically includes the header files
+\f4<eti.h>\fP and \f4<curses.h>\fP.
+.SH SEE ALSO
+.na
+\f4curses\fP(3X),
+\f4menus\fP(3X),
+\f4menu_control\fP(3X),
+\f4menu_hook\fP(3X)
+.ad

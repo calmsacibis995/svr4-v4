@@ -1,0 +1,335 @@
+'\"macro stdmacro
+.if n .pH g1a.fsdb_s5 @(#)fsdb_s5	40.6 of 4/18/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+'\"macro stdmacro
+.if n .pH g1a.fsdb_s5 @(#)fsdb_s5	40.6 of 7/17/89
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.if \nX=0 .ds x} fsdb 1M "s5" "\&"
+.if \nX=1 .ds x} fsdb 1M "s5"
+.if \nX=2 .ds x} fsdb 1M "" "\&"
+.if \nX=3 .ds x} fsdb "" "" "\&"
+.nr X
+.TH \*(x} "" "386 Computer Only"
+.SH NAME
+\f4fsdb\f1 (s5) \- \f4s5\f1 file system debugger
+.SH SYNOPSIS
+\f4fsdb\f1 [\f4\-F s5\f1] [\f2generic_options\f1] [\f4\-z\f2 i-number\f1] \f2 special\f1 [\-]
+.SH DESCRIPTION
+.I generic_options
+are options supported by the generic \f4fsdb\f1 command.
+.PP
+\f4fsdb\f1
+can be used
+to patch up 
+a damaged \f4s5\f1 file system
+after a crash.
+\f2special\f1 is a special device used to indicate 
+the file system to be debugged.
+It has conversions
+to translate block and \f2i-numbers\f1
+into their corresponding disk addresses.
+Also included are mnemonic offsets
+to access different parts
+of an i-node.
+These greatly simplify the process
+of correcting control block entries
+or descending the file system tree.
+.PP
+\f4fsdb\f1
+contains several error-checking routines
+to verify i-node and block addresses.
+These can be disabled if necessary 
+by invoking 
+\f4fsdb\f1
+with the optional
+\f4\-\f1
+argument
+or by the use of the
+\f4O\fP
+symbol.
+(\c
+\f4fsdb\f1
+reads the i-size and f-size entries
+from the superblock of the file system
+as the basis for these checks.)
+.P
+The options are:
+.sp .5
+.RS
+.TP 14
+\f4\-F s5\f1
+Specifies the \f4s5\f1-FSType.
+.TP 14
+\f4\-z \f2i-number\f1
+Clear the i-node identified by \f2i-number\f1.
+Non-interactive.
+.RE
+.PP
+Numbers are considered decimal by default.
+Octal numbers must be prefixed
+with a zero.
+During any assignment operation,
+numbers are checked 
+for a possible truncation error
+due to a size mismatch
+between source and destination.
+.PP
+\f4fsdb\f1
+reads a block at a time
+and will therefore work with raw as well as block
+I/O. 
+A buffer management routine 
+is used to retain commonly used
+blocks of data
+in order to reduce the number of read system calls.
+All assignment operations result
+in an immediate write-through
+of the corresponding block.
+.PP
+The symbols recognized by
+\f4fsdb\f1 are:
+.sp .5
+.RS
+.PD 0
+.TP 13
+\f4#\f1
+absolute address
+.TP 13
+\f4i\f1
+convert from \f2i-number\f1 to i-node address
+.TP 13
+\f4b\f1
+convert to block address
+.TP 13
+\f4d\f1 
+directory slot offset
+.TP 13
+\f4+\f1 , \f4\-\f1
+address arithmetic
+.TP 13
+\f4q\f1
+quit
+.TP 13
+\f4>\f1 , \f4<\f1
+save, restore an address
+.TP 13
+\f4=\f1
+numerical assignment
+.TP 13
+\f4=+\f1
+incremental assignment
+.TP 13
+\f4=\-\f1
+decremental assignment
+.TP 13
+\f4="\f1
+character string assignment
+.TP 13
+\f4O\f1
+error checking flip flop
+.TP 13
+\f4p\f1
+general print facilities
+.TP 13
+\f4f\f1
+file print facility
+.TP 13
+\f4B\f1
+byte mode
+.TP 13
+\f4W\f1
+word mode
+.TP 13
+\f4D\f1
+double word mode
+.TP 13
+\f4!\f1
+escape to shell
+.PD
+.RE
+.PP
+The print facilities generate a formatted output
+in various styles.
+The current address is normalized 
+to an appropriate boundary before printing begins.
+It advances with the printing
+and is left at the address of the last item printed.
+The output can be terminated at any time
+by typing the delete character.
+If a number follows the \f4p\fP symbol,
+that many entries are printed.
+A check is made to detect block boundary overflows
+since logically sequential blocks are generally not physically
+sequential.
+If a count of zero is used, all entries to the end of the
+current block are printed.
+The print options available are:
+.sp .5
+.RS
+.PD 0
+.TP 13
+\f4i\f1
+print as i-nodes
+.TP 13
+\f4d\f1
+print as directories
+.TP 13
+\f4o\f1
+print as octal words
+.TP 13
+\f4e\f1
+print as decimal words
+.TP 13
+\f4c\f1
+print as characters
+.TP 13
+\f4b\f1
+print as octal bytes
+.PD
+.RE
+.PP
+The
+\f4f\fP
+symbol is  used
+to print data blocks
+associated with the current i-node.
+If followed by a number,
+that block of the file is printed.
+(Blocks are numbered from zero.)
+The desired print option letter 
+follows the block number,
+if present,
+or the 
+\f4f\fP
+symbol.
+This print facility works
+for small as well as large files.
+It checks for special devices
+and that
+the block pointers
+used to find the data
+are not zero.
+.PP
+Dots, tabs, and spaces may be used
+as function delimiters but are not necessary.
+A line with just a new-line character
+will increment the current address
+by the size of the data type last printed.
+That is,
+the address is set to the next byte,
+word, double word, directory entry or i-node,
+allowing the user
+to step through a region of a file system.
+Information is printed
+in a format appropriate to the data type.
+Bytes, words and double words
+are displayed with the octal address
+followed by the value in octal and decimal.
+A \f4.B\fP or \f4.D\fP
+is appended to the address
+for byte and double word values, respectively.
+Directories are printed as a
+directory slot offset
+followed by the decimal
+\f2i-number\f1 and the character representation
+of the entry name.
+I-nodes are printed
+with labeled fields
+describing each element.
+.PP
+The following mnemonics
+are used for i-node examination
+and refer to the current working i-node:
+.sp .5
+.RS
+.PD 0
+.TP 13
+\f4md\f1
+mode
+.TP 13
+\f4ln\f1
+link count
+.TP 13
+\f4uid\f1
+user
+.SM ID
+number
+.TP 13
+\f4gid\f1
+group
+.SM ID
+number
+.TP 13
+\f4sz\f1
+file size
+.TP 13
+\f4a \f2#\f1
+data block numbers (0 \-\| 12)
+.TP 13
+\f4at\f1
+access time
+.TP 13
+\f4mt\f1
+modification time
+.TP 13
+\f4maj\f1
+major device number
+.TP 13
+\f4min\f1
+minor device number
+.PD
+.RE
+.SH EXAMPLES
+.TP 16
+\f4386i\fP
+prints \f2i-number\f1 386 in an i-node format.
+This now becomes the current working i-node.
+.TP 16
+\f4ln=4\fP
+changes the link count for the 
+working i-node to 4.
+.TP 16
+\f4ln=+1\fP
+increments the link count by 1.
+.TP 16
+\f4fc\fP
+prints, in \s-1ASCII\s0,
+block zero of the file associated
+with the working i-node.
+.TP 16
+\f42i.fd\fP
+prints the first 32 directory
+entries for the root i-node of this file system.
+.TP 16
+\f4d5i.fc\fP
+changes the current i-node to that
+associated with the 5th directory entry
+(numbered from zero)
+found from the above command.
+The first logical block of the file
+is then printed in \s-1ASCII\s0.
+.TP 16
+\f4512B.p0o\fP
+prints the superblock of this file system
+in octal.
+.TP 16
+\f42i.a0b.d7=3\fP
+changes the \f2i-number\f1 for the 
+seventh directory slot in the root directory to 3.
+This example also shows how several 
+operations can be combined on one command line.
+.br
+.ne 3
+.TP 16
+\f4d7.nm="\f2name\fP"\f1
+changes the name field
+in the directory slot to the given string.
+Quotes are optional
+when used with \f4nm\fP
+if the first character is alphabetic.
+.TP
+\f4a2b.p0d\fP
+prints the third block of the current i-node as directory entries.
+.SH SEE ALSO
+\f4fsck\f1(1M), generic \f4fsdb\f1(1M), \f4dir\f1(4), \f4fs\f1(4).

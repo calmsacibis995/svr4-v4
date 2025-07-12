@@ -1,0 +1,84 @@
+'\"!  tbl | mmdoc
+'\"macro stdmacro
+.if n .pH g1a.evgainit @(#)evgainit	40.6 of 1/3/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1990 AT&T
+.nr X
+.if \nX=0 .ds x} evgainit 1M "" "\&"
+.if \nX=1 .ds x} evgainit 1M ""
+.if \nX=2 .ds x} evgainit 1M "" "\&"
+.if \nX=3 .ds x} evgainit "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4evgainit\f1 \- Extended VGA keyboard/display driver initialization
+.SH SYNOPSIS
+\f4evgainit\f1 \f2card-type\f1
+.SH DESCRIPTION
+\f4evgainit\f1 is used to initialize the keyboard/display driver
+(see the \f4keyboard\f1(7) manual page) 
+if extended VGA graphics modes are being used on certain video cards.
+.P
+The keyboard/display driver provides the interface to the 
+video card.
+\f4evgainit\f1 informs the keyboard/display driver which video
+card is installed and should be rerun each time the system
+is booted.
+.P
+In many cases the keyboard/display driver can determine which card is
+being used and therefore this command need not be run.
+For example, you don't need to run \f4evgainit\f1 for the following cards:
+.P
+.in .5i
+AT&T VDC 400, VDC 600, or VDC 750.
+.sp .25
+Any card that doesn't have extended VGA capability (i.e. 800x600 pixels).
+.sp .25
+Any card that is only VGA (640x480 pixels) or EGA (640x350 pixels).
+.sp .25
+Any extended VGA cards (listed below) that will not be set to
+graphics modes with resolutions greater than 640x480 pixels.
+.in -.5i
+.P
+\f4evgainit\f1 must be run, however, for the following cards before
+attempting to use resolutions greater than 640x480 pixels.
+The following list shows the \f2card-type\f1
+argument value that should be used for each video card:      
+.TS
+center ;
+c c
+l l .
+\f2card-type\f1	Video Card(s)
+_
+\f4vega\f1	Video 7 800x600, Video 7 VEGA VGA Adaptor
+\f4stbga\f1	STB VGA Extra/EM, Extra/EM-16 
+\f4sigma/h\f1	SIGMA VGA/H
+\f4pvga1a\f1	Paradise PVGA1A
+\f4dell\f1	Dell VGA
+\f4vram\f1	Video 7 VRAM VGA
+\f4orvga\f1	Orchid Designer VGA, Designer 800 VGA, ProDesigner VGA
+\f4orvgani\f1	Orchid Designer, ProDesigner VGA (non-interlaced)
+\f4tvga\f1	Tseng Labs
+\f4tvgani\f1	Tseng Labs (non-interlaced)
+\f4gvga\f1	Genoa Super VGA
+\f4pega\f1	Paradise PEGA2
+\f4gega\f1	Genoa EGA
+\f4fastwrite\f1	Video 7 FastWrite VGA
+\f4won\f1	ATI VGA Wonder
+.TE
+The command can only be run with super user privileges.
+.br
+.ne 1i
+.SH EXAMPLES
+For an STB Extra/EM-16 video card, \f4evgainit\f1 should
+be invoked as:
+.P
+    \f4evgainit stb\f1
+.P
+This command could be run automatically from the \f4inittab\f1 file (see
+the \f1inittab\f1(4) manual page) or could be run by super user
+after each system reboot.
+.SH SEE ALSO
+\f4keyboard\fP(7), \f4console\f1(7), \f4inittab\f1(4).
+.br
+"Video Interface" in the \f2Integrated Software Developer's Guide\f1.
+.Ee

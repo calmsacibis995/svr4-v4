@@ -1,0 +1,190 @@
+.if n .pH portguide.VM @(#)vm	40.2
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+..
+.BK "Programmer's Guide: Porting the Kernel"
+.CH "Directory - VM" 5
+.H 2 "Directory - VM"
+.IX VM directory
+In virtual memory the basic unit of memory is the page that is a fixed
+size section of memory.
+The fundamental concept is to map files into pages.
+Pages and files are in the same memory hierarchy; a page being a window into a
+file that is just store for a page.
+The page maintains the identity and status of each physical page.
+I/O happens implicitly when an object is accessed and not present.
+Note the following terms:
+.BL
+.LI
+Kernel page cache is physical memory.
+.LI
+Kernel address space is virtual memory.
+.LI
+\f4vnode\f1s are internal representations of files.
+.LE
+.P
+The following files/functions in the \f3vm\fP directory
+have machine-specific functionality:
+.BL
+.LI
+\f3seg_dev.c  -  MD\f1
+.BL
+.LI 
+\f4segdev_create()\f1
+.br
+A call to \f4hat_map()\f1 may or may not be required.
+.LE
+.LI
+\f3seg_kmem.c  -  MD\f1
+.BL
+.LI 
+\f4segkmem_create()\f1
+.br
+A call to \f4hat_map()\f1 may or may not be required.
+.LI
+\f4segkmem_setprot()\f1
+.LI
+\f4getprot()\f1
+.LI
+\f4segkmem_alloc()\f1
+.LI
+\f4segkmem_mapin()/segkmem_mapout(), sptalloc()\f1
+.br
+Machine-specific knowledge of segments/pages and page table entries.
+.LI
+\f4sptfree()\f1
+.br
+Knowledge of kernel page table from virtual address.
+.LE
+.LI
+\f3seg_kmem.h  -  MD\f1
+.br
+Declarations of external segment names which may be machine-specific.
+.LI
+\f3seg_map.c  -  MD\f1
+.BL
+.LI
+\f4segmap_create()\f1
+.br
+A call to \f4hat_map()\f1 may or may not be required.
+.LE
+.LI
+\f3seg_map.h  -  MD\f1
+.br
+The value of the macro \f4MAXBSHIFT\f1 is machine-specific.
+.LI
+\f3seg_u.c  -  MD\f1
+.LI
+\f3seg_u.h  -  MD\f1
+.br
+Implementation of the floating u-area is machine-specific.
+Size of the u-area, how it is allocated, expanded, etc., are machine-specific.
+.LI
+\f3vm_as.c  -  MD\f1
+.br
+The code in this file will follow the MMU implementation as to levels, etc.
+.LI
+\f3vm_hat.c  -  MD\f1
+.br
+This file contains the Hardware Address Translations (HAT).
+Therefore, the functionality in this file is MMU and Memory Layout
+(architecture) specific.
+.P
+.IX hardware address translation
+The HAT level provides the interface between the machine dependent and machine 
+independent parts of virtual memory.
+It manages the machine dependent MMU and is called from machine dependent segment
+drivers to manage translations.
+The machine independent part has no knowledge of HAT implementation.
+It only checks if mapping exists.
+.LI
+\f3vm_machdep.c  -  MD\f1
+.BL
+.LI
+\f4map_addr()\f1
+.br
+This function is called when the system is to choose an address for the user.
+For example, it is called for shared memory addresses.
+\f4map_addr()\f1 is called from: 
+.DS
+	\f3os/shm.c 
+	fs/nfs/nfs_vnops.c 
+	fs/rfs/rf_rdwri.c  
+	fs/rfs/rf_vnops.c  
+	fs/s5/s5vnops.c  
+	fs/specfs/specvnops.c 
+	fs/specfs/specvnops.c  
+	fs/ufs/ufs_vnops.c 
+	fs/xnamfs/xsd.c\f1 
+.DE
+.LI
+\f4valid_va_range()\f1
+.br
+This function determines whether \f4(base, base+len)\f1 contains a mappable range of
+addresses at least \f2minlen\f1 long.
+.LI
+\f4valid_user_range()\f1
+.br
+This function determines whether \f4(addr, addr+len)\f1 is valid user address.
+.LI
+\f4pagemove()\f1
+.br
+This moves pages from one kernel virtual address to another.
+Both addresses are assumed to reside in the \f2Sysmap\f1,
+and size must be a multiple of \f4CLBYTES\f1.
+.LI
+\f4findvaddr()\f1
+.br
+This function locates the next free virtual address (above \f4UVSHM\f1) 
+within the given process.
+.LI
+\f4inlinecopy()\f1
+.br
+This is a fast, inline, machine-specific, aligned copy function.
+.LI
+\f4ppcopy()\f1
+.br
+This copies the data from the physical page represented by \f2frompp\f1 to
+that represented by \f2topp\f1.
+\f3This routine should be made as fast as possible because it is a
+high runner; e.g., copy on write pages.\f1
+.LI
+\f4pagecopy()\f1
+.br
+This copies the data from \f2addr\f1 to physical page represented by \f2pp\f1.
+\f2addr\f1 is a (user) virtual address which we might fault on.
+.LI
+\f4pagezero()\f1
+.br
+This zeroes the physical page from \f2off\f1 to \f4off+len\f1 given by \f2pp\f1
+without changing the reference and modified bits of page.
+\f4pagezero\f1 uses global \f4CADDR2\f1 and assumes that no one uses this
+map at interrupt level and no one sleeps with an active mapping there.
+.sp
+.br
+\f3NOTE: Both \f4pagecopy()\f1 \f3and\f1 \f4pagezero()\f1 \f3assume that they 
+will not be called at interrupt level.\f1
+.LI
+\f4execstk_addr()\f1
+.br
+This is a function to find an isolated ``hole'' in the user address space to use to
+build the new stack image.
+A ``hole'' that is aligned properly for a page table,
+so the page table(s) can be moved later, is preferred.
+.LE
+.LI
+\f3vm_page.c  -  MD\f1
+.BL
+.LI
+\f4page_init()\f1
+.br
+This function initializes the page table.
+Machine-specific knowledge of memory layout (architecture) (e.g., contiguous or
+discontiguous) is required.
+.LI
+\f4page_get()\f1
+.br
+This returns list of pages for ``bytes.''
+Machine-specific knowledge of memory layout (architecture) (e.g., contiguous or
+discontiguous) is required.
+.LE

@@ -1,0 +1,113 @@
+'\"macro stdmacro
+.if n .pH g1.diffmk @(#)diffmk	40.8 of 4/18/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.\"	@(#)diffmk.1 1.2 89/01/25 SMI; from S5R2 6.2 83/09/02
+.\" Copyright (c) 1988 Sun Microsystems, Inc. - All Rights Reserved.
+.\"
+.nr X
+.if \nX=0 .ds x} diffmk 1 "BSD Compatibility Package" "\&"
+.if \nX=1 .ds x} diffmk 1 "BSD Compatibility Package"
+.if \nX=2 .ds x} diffmk 1 "" "\&"
+.if \nX=3 .ds x} diffmk "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4diffmk\f1 \- mark differences between versions of a \f4troff\f1 input file
+.SH SYNOPSIS
+\f4/usr/ucb/diffmk\f1
+.I oldfile newfile markedfile
+.SH DESCRIPTION
+.P
+The
+\f4diffmk\f1
+command compares two versions of a file and creates a
+third version that includes ``change mark''
+\f1(\f4.mc\f1)
+commands for
+\f4nroff\f1
+and 
+\f4troff\f1.
+.I oldfile
+and
+.I newfile
+are the old and new versions of the file.
+\f4diffmk\f1
+generates
+.IR markedfile ,
+which, contains the text from
+.I newfile
+with 
+\f4troff\f1(1)
+``change mark'' requests
+\f1(\f4.\|mc\f1)
+inserted where 
+.I newfile
+differs from 
+.IR oldfile .
+When
+.I markedfile
+is formatted,
+changed or inserted text is shown by a
+\f4|\f1
+at the right margin of each line.
+The position of deleted text is shown by a single
+\f4*\f1.
+.P
+\f4diffmk\f1
+can also be used in conjunction with the proper 
+\f4troff\f1
+requests to produce program listings with marked changes.
+In the following command line:
+.IP
+.ft 4
+diffmk old.c new.c marked.c ; nroff reqs marked.c | pr
+.ft 1
+.P 
+the file
+\f4reqs\f1
+contains the following
+\f4troff\f1
+requests:
+.RS
+.ft 4
+.nf
+\&.\|pl \|1
+\&.\|ll \|77
+\&.\|nf
+\&.\|eo
+\&.\|nh
+.ft 1
+.fi
+.RE
+.P
+which eliminate page breaks, adjust the line length, set no-fill
+mode, ignore escape characters, and turn off hyphenation,
+respectively.
+.P
+If the characters 
+\f4|\f1
+and
+\f4*\f1
+are inappropriate, you might run 
+.I markedfile 
+through 
+\f4sed\f1
+to globally change them.
+.SH SEE ALSO
+\f4nroff\fP(1),
+\f4troff\fP(1)
+.P
+\f4diff\fP(1),
+\f4sed\fP(1)
+in the \f2User's Reference Manual\f1
+.SH NOTES
+Aesthetic considerations may dictate
+manual adjustment of some output.
+File differences involving only formatting
+requests may produce undesirable
+output, that is, replacing
+\f4\&.\|sp\f1
+by
+\f4\&.\|sp 2\f1
+will produce a ``change mark'' on the preceding
+or following line of output.

@@ -1,0 +1,94 @@
+'\"macro stdmacro
+.if n .pH g1a.acctmerg @(#)acctmerg	40.8 of 1/3/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} acctmerg 1M "Job Accounting Utilities" "\&"
+.if \nX=1 .ds x} acctmerg 1M "Job Accounting Utilities"
+.if \nX=2 .ds x} acctmerg 1M "" "\&"
+.if \nX=3 .ds x} acctmerg "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4acctmerg\f1 \- merge or add total accounting files
+.SH SYNOPSIS
+\f4/usr/lib/acct/acctmerg\f1
+[\f4-a\fP] [\f4-i\fP] [\f4-p\fP] [\f4-t\fP] [\f4-u\fP] [\f4-v\fP] [\^\f2file\fP\^] . . .
+.SH DESCRIPTION
+\f4acctmerg\fP
+reads its standard input and up to nine additional files,
+all in the
+\f4tacct\f1
+format (see
+\f4acct\fP(4))
+or an
+.SM ASCII
+version thereof.
+It merges these inputs by adding records whose keys (normally user
+.SM ID
+and name)
+are identical, and expects the inputs to be sorted on those keys.
+Options
+are:
+.PP
+.PD 0
+.TP "\w'\-m\ \ \ 'u"
+\f4\-a\f1
+Produce output in
+.SM ASCII
+version of
+\f4tacct\f1.
+.TP
+\f4\-i\f1
+Input files are in
+.SM ASCII
+version of
+\f4tacct\f1.
+.TP
+\f4\-p\f1
+Print input with no processing.
+.TP
+\f4\-t\f1
+Produce a single record that totals all input.
+.TP
+\f4\-u\f1
+Summarize by user
+.SM ID\*S,
+rather than user
+.SM ID
+and name.
+.TP
+\f4\-v\f1
+Produce output in verbose
+.SM ASCII
+format,
+with more precise notation for floating\-point numbers.
+.PD
+.SH EXAMPLES
+.PP
+The following sequence is useful for making "repairs"
+to any file kept in this format:
+.PP
+.RS
+.nf
+\f4acctmerg \|\-v \|<\f2file1\fP \|> \f2file2\f1
+.fi
+.RE
+.PP
+Edit \f2file2\f1 as desired\fP .\|.\|.
+.PP
+.RS
+.nf
+\f4acctmerg \|\-i \|<\f2file2\fP \|> \f2file1\f1
+.fi
+.RE
+.SH SEE ALSO
+\f4acct\fP(1M), \f4acctcms\fP(1M), \f4acctcon\fP(1M),
+\f4acctprc\fP(1M), \f4acctsh\fP(1M), \f4fwtmp\fP(1M), \f4runacct\fP(1M),
+\f4acct\fP(4), \f4utmp\fP(4)
+.br
+\f4acctcom\fP(1) in the \f2User's Reference Manual\f1
+.br
+\f4acct\fP(2)
+in the \f2Programmer's Reference
+Manual\f1
+.\"	@(#)acctmerg.1m	6.2 of 9/2/83

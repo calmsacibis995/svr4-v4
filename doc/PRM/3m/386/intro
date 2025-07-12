@@ -1,0 +1,90 @@
+'\"!  eqn | mmdoc
+'\"macro stdmacro
+.if n .pH g3.intro3m @(#)intro	40.3 of 1/3/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.EQ
+delim $$
+gfont 1
+gsize 8
+.EN
+.nr X
+.if \nX=0 .ds x} intro 3M "Math Libraries" "\&"
+.if \nX=1 .ds x} intro 3M "Math Libraries"
+.if \nX=2 .ds x} intro 3M "" "\&"
+.if \nX=3 .ds x} intro "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4intro\f1 \- introduction to math libraries
+.SH SYNOPSIS
+\f4cc\f1
+[\f2flag\fP \|.\|.\|.] \f2file\fP \|.\|.\|.
+\f4\-lm\f1
+[\f2library\fP \|.\|.\|.]
+.PP
+\f4#include <math.h>\f1
+.SH DESCRIPTION
+This section describes the functions
+in the math library, \f4libm\f1.
+Declarations for these functions may be obtained from
+the
+\f4#include\f1
+file
+\f4math.h\f1\^.
+Several generally useful mathematical constants are also defined
+there [see
+\f4intro\fP(3)
+and
+\f4math\fP(5)].
+.PP
+The math library is not automatically loaded by the C 
+compilation system;
+use the \f4\-l\f1 option to \f4cc\fP to access the libraries as shown above.
+.PP
+\f4libm\f1
+Contains the full set of double-precision routines
+plus some single-precision routines (designated by the suffix \f4f\f1)
+that give better performance with less precision.
+Selected routines are hand-optimized for performance.
+The optimized routines include \f4sin\f1,
+\f4cos\f1, \f4tan\f1, \f4atan\f1, \f4atan2\f1, \f4exp\f1, \f4log\f1, \f4log10\f1,
+\f4pow\f1, and \f4sqrt\f1 and their single-precision equivalents.
+.SH DEFINITIONS
+See \f4intro\fP(3) for C language definitions.
+.SH FILES
+.PD 0
+.TP 24n
+\f2LIBDIR\f1
+usually \f4/usr/ccs/lib\fP
+.TP
+\f2LIBDIR\f4/libm.a\fP
+.SH SEE ALSO
+\f4cc\fP(1), \f4intro\fP(2),
+\f4intro\fP(3), \f4math\fP(5).
+.br
+The ``Floating Point Operations'' chapter in the
+\f2Programmer's Guide: ANSI C and Programming Support Tools\f1.
+.SH DIAGNOSTICS
+Error handling varies according to compilation mode.
+Under the \f4\-Xt\f1 (default) option to \f4cc\f1,
+these functions return
+the conventional values
+\f4\&0\f1, \f4\(+-HUGE\f1, or \f4NaN\f1
+when the function is undefined for the
+given arguments or when the value is not representable.
+In the \f4\-Xa\f1 and \f4\-Xc\f1 compilation modes,
+\f4\(+-HUGE_VAL\f1 is returned instead of \f4\(+-HUGE\f1.
+(\f4HUGE_VAL\f1 and \f4HUGE\f1 are defined in \f4math.h\f1
+to be infinity and the largest-magnitude single-precision number,
+respectively.)
+In every case, the external variable
+\f4errno\f1 [see \f4intro\f1(2)]
+is set to the value
+\f4EDOM\fP
+or
+\f4ERANGE\fP,
+although the value may vary for a given error
+depending on compilation mode.
+See the table under \f4matherr\f1(3M) below.
+.\"	@(#)intro.3	6.3 of 10/20/83
+.Ee

@@ -1,0 +1,66 @@
+.\" @(#)biff 40.5 91/04/18 SMI;
+'\" macro stdmacro
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.\" Copyright (c) 1988 Sun Microsystems, Inc. - All Rights Reserved.
+.\"
+.nr X
+.if \nX=0 .ds x} biff 1 "BSD Compatibility Package" "\&"
+.if \nX=1 .ds x} biff 1 "BSD Compatibility Package"
+.if \nX=2 .ds x} biff 1 "" "\&"
+.if \nX=3 .ds x} biff "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4biff\f1 \- give notice of incoming mail messages
+.SH SYNOPSIS
+\f4/usr/ucb/biff\f1
+[
+\f4y | \f1n
+]
+.SH DESCRIPTION
+\f4biff\f1
+turns mail notification on or off for the terminal session.
+With no arguments,
+\f4biff\f1
+displays the current notification status for the terminal.
+.P
+The
+\f4y\f1
+option allows mail notification for the terminal.
+The
+\f4n\f1
+option disables notification for the terminal.
+.P
+If notification is allowed, the terminal rings the bell and
+displays the header and the first few lines of each arriving mail
+message.
+\f4biff\f1
+operates asynchronously.
+For synchronized notices, use the
+\f4MAIL\f1
+variable of
+\f4sh\f1(1)
+or the
+\f4mail\f1
+variable of
+\f4csh\f1(1).
+.P
+A
+`\f4biff y\f1'
+command can be included in your
+\f4~/.login\f1
+or
+\f4~/.profile\f1
+file for execution when you log in.
+.SH FILES
+.PD 0
+.TP 20
+\f4~/.login\f1
+.TP
+\f4~/.profile\f1
+.PD
+.SH SEE ALSO
+\f4csh\fP(1),
+\f4mail\fP(1),
+\f4sh\fP(1)
+in the \f2User's Reference Manual\f1

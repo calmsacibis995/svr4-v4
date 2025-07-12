@@ -1,0 +1,97 @@
+'\"macro stdmacro
+.if n .pH g1c.uuencode @(#)uuencode	40.8 of 4/12/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.\" Copyright (c) 1980 Regents of the University of California.
+.\" All rights reserved.  The Berkeley software License Agreement
+.\" specifies the terms and conditions for redistribution.
+.\"
+.\" @(#)uuencode.1c 1.20 88/08/25 SMI; from UCB 4.3 BSD
+.nr X
+.if \nX=0 .ds x} uuencode 1C "Basic Networking Utilities" "\&"
+.if \nX=1 .ds x} uuencode 1C "Basic Networking Utilities"
+.if \nX=2 .ds x} uuencode 1C "" "\&"
+.if \nX=3 .ds x} uuencode "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4uuencode\f1, \f4uudecode\f1 \- encode a binary file, or decode its ASCII representation
+.SH SYNOPSIS
+\f4uuencode\f1
+[
+.I source-file
+]
+.I file-label
+.LP
+\f4uudecode\f1
+[
+.I encoded-file
+]
+.SH DESCRIPTION
+.LP
+\f4uuencode\f1
+converts a binary file into an
+.SM ASCII\s0-encoded
+representation that can be sent using
+\f4mail\f1(1).
+It encodes the contents of
+.IR source-file ,
+or the standard input if no
+.I source-file
+argument is given.
+The
+.I file-label
+argument is required.
+It is included in the encoded file's
+header as the name of the file into which
+\f4uudecode\f1
+is to place the binary (decoded) data.
+\f4uuencode\f1
+also includes the ownership and permission modes of
+.I source-file,
+so that
+.I file-label
+is recreated with those same ownership and permission modes.
+.LP
+\f4uudecode\f1
+reads an
+.IR encoded-file ,
+strips off any leading and trailing lines
+added by mailer programs, and recreates the original binary data
+with the filename and the mode and owner specified in the header.
+.LP
+The encoded file is an ordinary
+.SM ASCII
+text file; it can be edited by any text editor.
+But it is best only to change the mode or file-label
+in the header to avoid corrupting the decoded binary.
+.SH "SEE ALSO"
+\f4mail\fP(1),
+\f4uucp\fP(1C),
+\f4uux\fP(1C)
+.sp .2
+\f4\f4uuencode\f1\fP(5)
+in the \f2System Administrator's Reference Manual\f1
+.SH NOTES
+.LP
+The encoded file's size is expanded by 35% (3 bytes become 4, plus
+control information), causing it to take longer to transmit than the
+equivalent binary.
+.LP
+The user on the remote system who is invoking
+\f4uudecode\f1
+(typically
+\f4uucp\f1)
+must have write permission on the file specified in the
+.IR file-label .
+.LP
+Since both
+\f4uuencode\f1
+and 
+\f4uudecode\f1
+run with user
+.SM ID
+set to
+\f4uucp\f1,
+\f4uudecode\f1
+can fail with \(lqpermission denied\(rq when attempted in a directory that
+does not have write permission allowed for \(lqother.\(rq

@@ -1,0 +1,144 @@
+'\"macro stdmacro
+.if n .pH g1.echo @(#)echo	40.14.1.1 of 1/3/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} echo 1 "Essential Utilities" "\&"
+.if \nX=1 .ds x} echo 1 "Essential Utilities"
+.if \nX=2 .ds x} echo 1 "" "\&"
+.if \nX=3 .ds x} echo "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4echo\f1 \- echo arguments 
+.SH SYNOPSIS
+\f4echo\f1
+[ \f2arg\f1 ] ...
+.br
+\f4echo\f1
+[
+\f4\-n\f1
+]
+[ \f2arg\f1 ]
+.SH DESCRIPTION
+\f4echo\fP
+writes its arguments separated by blanks and terminated by
+a new-line on the standard output.
+.PP
+The
+\f4/usr/bin/sh\f1
+version
+understands the following C-like escape conventions;
+beware of conflicts with the shell's use of \f4\e\fP\|:
+.PP
+.RS
+.PD 0
+.TP
+\f4\e\|b\f1
+backspace
+.TP
+\f4\e\|c\f1
+print line without new-line
+.TP
+\f4\e\|f\f1
+form-feed
+.TP
+\f4\e\|n\f1
+new-line
+.TP
+\f4\e\|r\f1
+carriage return
+.TP
+\f4\e\|t\f1
+tab
+.TP
+\f4\ev\f1
+vertical tab
+.TP
+\f4\e\e\f1
+backslash
+.TP
+\f4\e\|0\f2n\^\f1
+where
+.I n\^
+is the 8-bit character whose \s-1ASCII\s0 code is
+the 1-, 2- or 3-digit octal number representing that character.
+.RE
+.PD
+.PP
+The following option is available to
+\f4/usr/bin/sh\f1
+users only if
+\f4/usr/ucb\f1
+precedes
+\f4/usr/bin\f1
+in the user's
+.SM PATH\s0.
+It is available to
+\f4/usr/csh\f1
+users, regardless of 
+.SM PATH\s0:
+.RS
+.TP
+\f4\-n\f1
+Do not add
+the newline to the output.
+.RE
+.PP
+\f4echo\fP
+is useful for producing diagnostics in command files,
+for sending known data into a pipe,
+and for displaying the contents of environment variables.
+.SH SEE ALSO
+\f4sh\fP(1).
+.SH NOTES
+The
+\f4\-n\f1
+option is a transition aid for
+.SM BSD
+applications, and may not be supported in future 
+releases.
+.PP
+When representing an 8-bit character by using the escape convention
+\f4\e\|0\f2n\^,\f1
+the
+.I n\^
+must
+\f4always\f1
+be preceded by the digit zero (0).
+.PP
+For example, typing:
+\f4echo \'\s-1WARNING\s+1:\e\|07\'\f1
+will print the phrase
+\f4\s-1WARNING\s+1:\f1
+and sound the ``bell'' on your terminal.
+The use of single (or double) quotes
+(or two backslashes) is required to protect the ``\|\e''
+that precedes the ``07''.
+.PP
+Following the \f4\e\|0\f1, up to three digits are used in constructing
+the octal output character.
+If, following the \f4\e\|0\f2n\f1, you
+want to echo additional digits that are not part of the
+octal representation, you must use the full 3-digit \f2n\f1.
+For example, if you want to echo ``ESC 7''
+you must use the three digits ``033'' rather than just the two digits ``33''
+after the \f4\e\|0\f1.
+.br
+.ne 8
+.TS
+center;
+l l l .
+2 digits	Incorrect:	\f4echo "\e0337"  | od -xc\f1
+	produces:	\f4df0a\f1\|\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0(hex)
+		\f4337\f1\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0(ascii)
+.sp
+3 digits	Correct:	\f4echo "\e00337" | od -xc\f1
+	produces:	\f4lb37 0a00\f1\0\0\0\0\0\0\0\0\0\0\0\0(hex)
+		\f4033 7\f1\|\^\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0(ascii)
+.TE
+.PP
+For the octal equivalents of each character,
+see
+ascii\^(5), in the \f2System Administrator's Reference Manual\f1.
+.\"	@(#)echo.1	6.2 of 9/2/83
+.Ee

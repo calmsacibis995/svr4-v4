@@ -1,0 +1,37 @@
+'\"macro stdmacro
+.if n .pH g1a.fsck_bfs @(#)fsck_bfs	40.9 of 4/19/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} fsck 1M "bfs" "\&"
+.if \nX=1 .ds x} fsck 1M "bfs"
+.if \nX=2 .ds x} fsck 1M "" "\&"
+.if \nX=3 .ds x} "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4fsck\fP (bfs) - check and repair \f4bfs\fP file systems
+.SH SYNOPSIS
+\f4fsck [-F bfs] [\f2generic_options\fP] [\f2special\fP .\ .\ .\|]
+.br
+\f4fsck [-F bfs] [\f2generic_optionsi\fP] [-y | -n] [\f2special\fP .\ .\ .\|]
+.SH DESCRIPTION
+\f2generic_options\fP are options supported by the generic \f4fsck\fP command.
+.PP
+\f4fsck\fP checks to see if compaction was in process
+but was not completed, perhaps as a result of a system crash.
+If it was,
+\f4fsck\fP completes the compaction
+of the file
+[see \f4fs_bfs\fP(4)].
+.PP
+The options are:
+.TP 10
+\f4-y\fP
+Assume a yes response to all questions asked by \f4fsck\fP.
+.TP 10
+\f4-n\fP
+Assume a no response to all questions asked by \f4fsck\fP.
+.SH SEE ALSO
+\f4checkfsys\fP(1M), generic \f4fsck\fP(1M), \f4mkfs\fP(1M), bfs \f4fs\fP(4).
+.br
+See the chapter on file systems in the \f2System Administrator's Guide\fP.

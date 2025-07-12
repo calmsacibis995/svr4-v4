@@ -1,0 +1,36 @@
+'\"macro stdmacro
+.if n .pH g1f.echo @(#)echo	40.12 of 4/29/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} echo 1F "Form and Menu Language Interpreter Utilities" "\&"
+.if \nX=1 .ds x} echo 1F "Form and Menu Language Interpreter Utilities"
+.if \nX=2 .ds x} echo 1F "" "\&"
+.if \nX=3 .ds x} echo "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4echo\f1 \- put string on virtual output
+.SH SYNOPSIS
+\f4echo\f1
+[\f2string .\ .\ .\f1 ]
+.SH DESCRIPTION
+The \f4echo\f1 function directs each string it is passed to \f2stdout\f1.
+It is often used in conditional execution
+or for passing a string to another command.
+.SH EXAMPLES
+Set the \f4done\f1 descriptor to \f4help\f1 if a test fails:
+.PP
+.RS 4
+.nf
+\f(CWdone=\(gaif [ -s $F1 ];
+	then echo close;
+	else echo help;
+	fi\(ga\f1
+.fi
+.RE
+.SH "SEE ALSO"
+\f4echo\f1(1)
+.ig
+BUILT-IN FMLI
+..
+.Ee

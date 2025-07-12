@@ -1,0 +1,29 @@
+.if n .pH 386.appc @(#)appc	40.10 of 5/17/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.BK "Multibus Reference Manual"
+.CH "Appendix C" "C"
+.H 1 "Related Publications"
+The publications listed below provide additional information about the
+UNIX System V/386 operating system. 
+.BL
+.LI
+\f2Multibus Installation and Configuration Guide\fP
+.LI
+UNIX System V/386 Release 4 Documentation Set, AT&T (published by Prentice Hall)
+.LI
+\f2How to Use the Peripheral Controller Interface (PCI) Server\f1
+.LI
+\f2Intel\(rg System V Release 4.0  Multibus II Installation and Configuration\f1
+.LI
+\f2Intel\(rg System V Release 4.0 Multibus II Transport-Application Interface
+User's Guide\f1
+.LI
+\f2Multibus  II Transport  Protocol Specification and Designer's Guide\f1
+.LI
+\f2Multibus II Interconnect Interface Specification\f1
+.LI
+\f2Multibus II Message Passing Coprocessor External Specification\f1
+.LI
+\f2Multibus II MPC User's Guide\f1
+.LE

@@ -1,0 +1,32 @@
+.if n .pH 386.preface @(#)preface	40.12
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1990 AT&T
+.BK "Source Code Product Read Me First"
+.H 1 "Preface"
+This document introduces
+the documentation for the UNIX System V/386 Release 4 Version 4 
+Source Code Product (SCP) and directs the reader to the appropriate tape
+directories and documents for additional start-up information.
+This document describes:
+.BL
+.LI
+the components of the Source Code Product
+.LI
+how to extract the documents from tape and print them
+.LE
+.H 2 "Notation Conventions"
+Whenever the text includes examples of output from the computer and/or
+commands entered by you, we follow the standard notation scheme
+that is common throughout UNIX system documentation.
+.BL
+.LI
+All computer input and output is shown in 
+\f4constant width\fP font.
+Examples of input include command names, option letters and words,
+environment variables, filenames and directory names.
+Examples of output include
+diagnostics, error messages, and program output.
+.LI
+All substitutables, that is, parameters that are meant to be replaced by an
+actual value, are shown in \f2italic font\fP.
+.LE

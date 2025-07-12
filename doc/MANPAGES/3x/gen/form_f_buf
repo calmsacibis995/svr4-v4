@@ -1,0 +1,64 @@
+'\"!  tbl | mmdoc
+'\"macro stdmacro
+.if n .pH g3x.form_f_buf @(#)form_f_buf	40.5 of 4/10/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.\" ident	"@(#)svid_ti:ti_lib/form_f_buf	1.5"
+.nr X
+.if \nX=0 .ds x} form_field_buffer 3X "" "\&"
+.if \nX=1 .ds x} form_field_buffer 3X ""
+.if \nX=2 .ds x} form_field_buffer 3X "" "\&"
+.if \nX=3 .ds x} form_field_buffer "" "" "\&"
+.TH \*(x}
+.SH NAME
+.na
+\f4form_field_buffer\f1: \f4 set_field_buffer\f1, \f4field_buffer\f1, \f4set_field_status\f1, \f4field_status\f1, \f4set_max_field\f1 \- set and get \f4forms\fP field attributes
+.ad
+.SH SYNOPSIS
+.nf
+.ft 4
+#include <form.h>
+.sp
+int set_field_buffer(FIELD *field, int buf, char *value);
+char *field_buffer(FIELD *field, int buf);
+.sp 0.5
+int set_field_status(FIELD *field, int status);
+int field_status(FIELD *field);
+.sp 0.5
+int set_max_field(FIELD *field, int max);
+.ft 1
+.fi
+.SH DESCRIPTION
+\f4set_field_buffer\fP sets buffer \f2buf\f1 of \f2field\f1 to \f2value\f1.
+Buffer 0 stores the displayed contents of the field.
+Buffers other than 0 are application specific
+and not used by the \f4forms\fP library routines.
+\f4field_buffer\fP returns the value of \f2field\f1 buffer \f2buf\f1.
+.PP
+Every field has an associated status flag that is set whenever the
+contents of field buffer 0 changes.
+\f4set_field_status\fP sets the status flag of \f2field\f1 to \f2status\f1.
+\f4field_status\fP returns the status of \f2field\f1.
+.PP
+\f4set_max_field\fP sets a maximum growth on a dynamic field, or if
+\f2max=\f40\f1 turns off any maximum growth.
+.SH RETURN VALUE
+\f4field_buffer\fP returns \f4NULL\fP on error.
+.P
+\f4field_status\fP returns \f4TRUE\fP or \f4FALSE\fP.
+.P
+\f4set_field_buffer\fP,
+\f4set_field_status\fP and
+\f4set_max_field\fP return one of the following:
+.TS
+lfCWw(1.25i)1 c1 l .
+E_OK	\-	The function returned successfully.
+E_SYSTEM_ERROR	\-	System error.
+E_BAD_ARGUMENT	\-	An argument is incorrect.
+.TE
+.SH NOTES
+The header file \f4<form.h>\f1 automatically includes the header files
+\f4<eti.h>\fP and \f4<curses.h>\fP.
+.SH SEE ALSO
+\f4curses\fP(3X),
+\f4forms\fP(3X)

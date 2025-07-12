@@ -1,0 +1,86 @@
+'\"macro stdmacro
+.if n .pH g1.ypwhich @(#)ypwhich	40.6 of 5/16/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.\" @(#)ypwhich.1 1.8 89/09/28 SMI;
+.\" Copyright (c) 1988 Sun Microsystems, Inc. - All Rights Reserved.
+.nr X
+.if \nX=0 .ds x} ypwhich 1 "" "\&"
+.if \nX=1 .ds x} ypwhich 1 ""
+.if \nX=2 .ds x} ypwhich 1 "" "\&"
+.if \nX=3 .ds x} ypwhich "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4ypwhich\f1 \- return name of NIS server or map master
+.SH SYNOPSIS
+\f4ypwhich\f1
+[
+\f4\-d\f1
+[
+\f2ypdomain\f1
+] ]
+[
+\f2hostname\f1
+]
+.br
+\f4ypwhich\f1
+[
+\f4\-d\f1
+\f2ypdomain\f1
+]
+\f4\-m\f1
+[
+\f2mname\f1
+]
+.SH DESCRIPTION
+.P
+\f4ypwhich\f1
+tells which
+\s-1NIS\s0
+server supplies the 
+\s-1NIS\s0
+name services to the
+\s-1NIS\s0
+client, or which is the master for a map.
+If invoked without arguments, it gives the
+\s-1NIS\s0
+server for the local machine.
+If
+\f2hostname\f1
+is specified, that machine is queried
+to find out which
+\s-1NIS\s0
+master it is using.
+.P
+Refer to
+\f4ypfiles\f1(4)
+and
+\f4ypserv\f1(1M)
+for an overview of the 
+\s-1NIS\s0
+name services.
+.P
+The following options are available:
+.TP 16
+\f4\-d \f1[\f2ypdomain\f1]
+Use
+\f2ypdomain\f1
+instead of the default domain.
+.TP
+\f4\-m \f2mname\f1
+Find the master
+\s-1NIS\s0
+server for a map.
+No
+\f2hostname\f1
+can be specified with
+\f4\-m\f1.
+\f2mname\f1
+can be a mapname, or a nickname for a map.
+When
+\f2mname\f1
+is omitted, produce a list available maps.
+.SH SEE ALSO
+\f4ypserv\f1(1M),
+\f4ypset\f1(1M),
+\f4ypfiles\f1(4)

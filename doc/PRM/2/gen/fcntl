@@ -1,0 +1,413 @@
+'\"macro stdmacro
+.if n .pH g2.fcntl @(#)fcntl	40.28.1.1 of 1/3/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} fcntl 2 "" "\&"
+.if \nX=1 .ds x} fcntl 2 ""
+.if \nX=2 .ds x} fcntl 2 "" "\&"
+.if \nX=3 .ds x} fcntl "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4fcntl\f1 \- file control
+.SH SYNOPSIS
+\f4#include <sys/types.h>\f1
+.br
+\f4#include <fcntl.h>\f1
+.br
+\f4#include <unistd.h>\f1
+.PP
+\f4int fcntl (int fildes, int cmd, ...  /* arg */); \f1
+.SH DESCRIPTION
+\f4fcntl\fP
+provides for control over open files.
+.I fildes\^
+is an open file descriptor [see \f4intro\fP(2)].
+.PP
+\f4fcntl\fP may take a third argument,
+\f2arg\f1, whose
+data type, value and use depend upon the value of \f2cmd\f1.
+\f2cmd\f1 specifies the operation to be performed by \f4fcntl\fP
+and may be one of the following:
+.TP 14n
+\f4F_DUPFD\fP
+Return a new file descriptor with the following characteristics:
+.IP "" 18n
+Lowest numbered available file descriptor greater than or equal to
+the integer value given as the third argument.
+.IP
+Same open file (or pipe) as the original file.
+.IP
+Same file pointer as the original file
+(i.e., both file descriptors share one file pointer).
+.IP
+Same access mode (read, write, or read/write) as the original file.
+.IP
+Shares any locks associated with the original file descriptor.
+.IP
+Same file status flags (i.e., both file descriptors share the same
+file status flags) as the original file.
+.IP
+The close-on-exec flag [see \f4F_GETFD\fP] associated with the new
+file descriptor is set to remain open across
+\f4exec\fP(2)
+system calls.
+.TP 14n
+\f4F_GETFD\fP
+Get the close-on-exec flag associated with
+.IR fildes .
+If the low-order bit is \f40\f1, the file will remain open across
+\f4exec\fP.
+Otherwise, the file will be closed upon execution of
+\f4exec\fP.
+.TP
+\f4F_SETFD\fP
+Set the close-on-exec flag associated with
+.I fildes\^
+to the low-order bit of
+the integer value given as the third argument
+\f1(\f4\&0\f1
+or
+\f4\&1\f1
+as above).
+.TP
+\f4F_GETFL\fP
+Get
+.I fildes\^
+status flags.
+.TP
+\f4F_SETFL\fP
+Set
+.I fildes\^
+status flags to
+the integer value given as the third argument.
+Only certain flags can be set
+[see
+\f4fcntl\fP(5)].
+.TP
+\f4F_FREESP\fP
+Free storage space associated with a section of the
+ordinary file \f2fildes\f1.
+The section is specified by a variable of data type
+\f4struct flock\f1 pointed to by the third argument \f2arg\f1.
+The data type \f4struct flock\f1 is defined in the
+\f4<fcntl.h>\f1 header file [see \f4fcntl\fP(5)] and contains the following members:
+\f4l_whence\f1 is 0, 1, or 2 to indicate that the
+relative offset \f4l_start\f1 will be measured from the
+start of the file, the current position, or the end of the file,
+respectively.
+\f4l_start\fP is the offset from the position specified in \f4l_whence\fP.
+\f4l_len\f1 is the size of the section.
+An \f4l_len\f1 of 0 frees up to the
+end of the file; in this case, the end of file (i.e., file size)
+is set to the beginning of the section freed.
+Any data previously written into this section is no longer accessible.
+.P
+The following commands are used for record-locking.
+Locks may be placed on an entire file or on segments of a file.
+.TP 14n
+\f4F_SETLK\fP
+Set or clear a file segment lock according to the
+\f4flock\fP structure that
+.I arg
+points to [see \f4fcntl\fP(5)].
+The \f2cmd\f1
+\f4F_SETLK\fP
+is used to establish read (\f4F_RDLCK\fP) and write (\f4F_WRLCK\fP) locks,
+as well as remove either type of lock (\f4F_UNLCK\fP).
+If a read or write lock cannot be set, \f4fcntl\fP will return immediately with an
+error value of \-1.
+.TP
+\f4F_SETLKW\fP
+This \f2cmd\f1 is the same as
+\f4F_SETLK\fP
+except that if a read or write lock is blocked by other locks,
+\f4fcntl\fP will block until the segment is free to be locked.
+.TP
+\f4F_GETLK\fP
+If the lock request described by the \f4flock\fP structure that
+.I arg
+points to could be created, then the structure is passed back unchanged except that
+the lock type is set to \f4F_UNLCK\fP
+and the \f4l_whence\f1 field
+will be set to \f4SEEK_SET\f1.
+.IP
+If a lock is found that would prevent this lock from being created, then
+the structure is overwritten with a description of the first lock that
+is preventing such a lock from being created.  The structure also 
+contains the process
+.SM ID
+and the system
+.SM ID
+of the process holding the
+lock.
+.IP
+This command never creates a lock; it tests whether a particular lock
+could be created.
+.TP
+\f4F_RSETLK\fP
+Used by the network lock daemon, \f4lockd\fP(3N), to communicate with the NFS
+server kernel to handle locks on NFS files.
+.TP
+\f4F_RSETLKW\fP
+Used by the network lock daemon, \f4lockd\fP(3N), to communicate with the NFS
+server kernel to handle locks on NFS files.
+.TP
+\f4F_RGETLK\fP
+Used by the network lock daemon, \f4lockd\fP(3N), to communicate with the NFS
+server kernel to handle locks on NFS files.
+.PP
+A read lock prevents any process from write locking the protected area.
+More than one read lock may exist for a given segment of a file at a given time.
+The file descriptor on which a read lock is being placed must have been opened with read access.
+.PP
+A write lock
+prevents any process from read locking or write locking the protected area.
+Only one write lock
+and no read locks
+may exist for a given segment of a file at a given time.
+The file descriptor on which a write lock is being placed must have been opened
+with write access.
+.PP
+The \f4flock\f1 structure describes the type (\f4l_type\f1),
+starting offset (\f4l_whence\f1), relative offset (\f4l_start\f1),
+size (\f4l_len\f1), process
+.SM ID
+(\f4l_pid\f1), and system
+.SM ID
+(\f4l_sysid\f1)
+of the segment of the file to be affected.
+The process
+.SM ID
+and system
+.SM ID
+fields are used only with the
+\f4F_GETLK\fP
+\f2cmd\f1 to return the values for a blocking lock.
+Locks may start and extend beyond the current end of a file,
+but may not be negative relative to the beginning of the file.
+A lock may be set to always extend to the end of file by
+setting \f4l_len\f1 to \f40\f1.
+If such a lock also has \f4l_whence\f1 and \f4l_start\f1 set to \f40\f1,
+the whole file will be locked.
+Changing or unlocking a segment from the middle of a larger locked segment leaves two smaller segments at either end.
+Locking a segment that is already locked by the calling process causes the old lock type to be removed
+and the new lock type to take effect.
+All locks associated with a file for a given process are removed when a file descriptor for
+that file is closed by that process or the process holding that file descriptor
+terminates.
+Locks are not inherited by a child process in a \f4fork\fP(2) system call.
+.PP
+When mandatory file and record locking is active on a file [see 
+\f4chmod\fP(2)],
+\f4creat\fP(2),
+\f4open\fP(2),
+\f4read\fP(2)
+and 
+\f4write\fP(2)
+system calls issued on the file 
+will be affected by the record locks in effect.
+.PP
+\f4fcntl\fP will fail if one or more of the following are true:
+.TP 14n
+\f4EACCES\fP
+\f2cmd\f1 is \f4F_SETLK\fP,
+the type of lock (\f4l_type\f1) is a read
+lock (\f4F_RDLCK\fP) and the segment of a file to be locked is 
+already write locked by another process, or the type is 
+a write lock (\f4F_WRLCK\fP) and the segment of a file to be locked is 
+already read or write locked by another process.
+.TP
+\f4EAGAIN\fP
+.I cmd
+is 
+\f4F_FREESP\fP,
+the file exists, mandatory file/record locking is set,
+and there are outstanding record locks on the file.
+.TP
+\f4EAGAIN\fP
+.I cmd
+is 
+\f4F_SETLK\fP or \f4F_SETLKW\fP
+and the file is currently being mapped to virtual memory
+via \f4mmap\fP [see \f4mmap\fP(2)].
+.TP
+\f4EBADF\fP
+.I fildes\^
+is not a valid open file descriptor.
+.TP
+\f4EBADF\fP
+\f2cmd\f1 is \f4F_SETLK\fP
+or
+\f4F_SETLKW\fP,
+the type of lock (\f4l_type\f1) is a read lock
+(\f4F_RDLCK\fP), and
+.I fildes\^
+is not a valid file descriptor open for reading.
+.TP
+\f4EBADF\fP
+\f2cmd\f1 is \f4F_SETLK\fP
+or
+\f4F_SETLKW\fP,
+the type of lock (\f4l_type\f1) is a write lock
+(\f4F_WRLCK\fP), and
+.I fildes\^
+is not a valid file descriptor open for writing.
+.TP
+\f4EBADF\fP
+\f2cmd\f1 is \f4F_FREESP\fP,
+and \f2fildes\f1 is not a valid file descriptor
+open for writing.
+.TP
+\f4EDEADLK\fP
+.I cmd
+is
+\f4F_SETLKW\fP,
+the lock is blocked by some lock from another process,
+and if \f4fcntl\fP blocked the calling process
+waiting for that lock to become free, a deadlock would occur.
+.TP
+\f4EDEADLK\fP
+.I cmd
+is
+\f4F_FREESP\fP,
+mandatory record locking is enabled,
+\f4O_NDELAY\fP
+and
+\f4O_NONBLOCK\fP
+are clear and a deadlock condition was detected.
+.TP
+\f4EFAULT\fP
+.I cmd
+is 
+\f4F_FREESP\fP
+and the value pointed to by the third argument \f2arg\f1
+resulted in an address outside the process's allocated
+address space.
+.TP
+\f4EFAULT\fP
+.I cmd
+is 
+\f4F_GETLK\fP, 
+\f4F_SETLK \fP
+or
+\f4F_SETLKW\fP
+and the value pointed to by
+the third argument
+resulted in an address outside the program address space.
+.TP
+\f4EINTR\fP
+A signal was caught during execution of the \f4fcntl\fP system call.
+.TP
+\f4EIO\fP
+An I/O error occurred while reading from or writing to the file system.
+.TP
+\f4EMFILE\fP
+.I cmd\^
+is 
+\f4F_DUPFD\fP
+and the number of file descriptors currently open in the calling process
+is the configured value for the maximum 
+number of open file descriptors allowed each user.
+.TP
+\f4EINVAL\fP
+.I cmd\^
+is 
+\f4F_DUPFD\fP
+and
+the third argument
+is either negative, or greater than or equal to 
+the configured value for the maximum 
+number of open file descriptors allowed each user.
+.TP
+\f4EINVAL\fP
+\f2cmd\f1 is not a valid value.
+.TP
+\f4EINVAL\fP
+\f2cmd\f1 is
+\f4F_GETLK\fP,
+\f4F_SETLK\fP,
+or
+\f4F_SETLKW\fP
+and the third argument or the data it points to is not valid,
+or \f2fildes\fP refers to a file that does not support locking.
+.TP
+\f4ENOLCK\fP
+\f2cmd\f1 is
+\f4F_SETLK\fP
+or
+\f4F_SETLKW\fP,
+the type of lock is a read or write lock, and there are no more record locks
+available (too many file segments locked) because the system maximum has been
+exceeded.
+.TP
+\f4ENOLINK\fP
+\f2fildes\f1 is on a remote machine and the link
+to that machine is no longer active.
+.TP
+\f4ENOLINK\fP
+.I cmd
+is 
+\f4F_FREESP\fP,
+the file is on a remote machine, and the link
+to that machine is no longer active.
+.TP
+\f4EOVERFLOW\fP
+\f2cmd\f1 is \f4F_GETLK\fP and the process
+.SM ID
+of the process holding the
+requested lock is too large to be stored in the \f2l_pid\f1 field.
+.SH "SEE ALSO"
+\f4close\fP(2), \f4creat\fP(2), \f4dup\fP(2), \f4exec\fP(2), \f4fork\fP(2), \f4open\fP(2), \f4pipe\fP(2),
+\f4fcntl\fP(5).
+.sp .2
+The "File and Record Locking" chapter in the
+\f2Application Programmer's Guide\f1.
+.SH "DIAGNOSTICS"
+On success, \f4fcntl\fP returns a
+value that depends on
+.IR cmd :
+.RS
+.TP 1.0i
+\f4F_DUPFD\fP
+A new file descriptor.
+.TP
+\f4F_GETFD\fP
+Value of flag (only the low-order bit is defined).
+The return value will not be negative.
+.TP
+\f4F_SETFD\fP
+Value other than \-1.
+.TP
+\f4F_FREESP\fP
+Value of 0.
+.TP
+\f4F_GETFL\fP
+Value of file status flags.
+The return value will not be negative.
+.TP
+\f4F_SETFL\fP
+Value other than \-1.
+.TP
+\f4F_GETLK\fP
+Value other than \-1.
+.TP
+\f4F_SETLK\fP
+Value other than \-1.
+.TP
+\f4F_SETLKW\fP
+Value other than \-1.
+.RE
+.PP
+On failure, \f4fcntl\fP returns \-1 and sets
+\f4errno\fP
+to indicate the error.
+.SH "NOTES"
+In the future, the variable \f4errno\fP will be set to 
+\f4EAGAIN\fP
+rather than
+\f4EACCES\fP
+when a section of a file is already locked by another process.
+Therefore, portable application programs should expect and test for either value.
+.\"	@(#)fcntl.2	6.2 of 9/6/83
+.Ee

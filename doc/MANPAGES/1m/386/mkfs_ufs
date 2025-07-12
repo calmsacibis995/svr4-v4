@@ -1,0 +1,157 @@
+'\"macro stdmacro
+.if n .pH g1a.mkfs_ufs @(#)mkfs_ufs	40.1 of 5/30/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} mkfs 1M "UFS" "\&"
+.if \nX=1 .ds x} mkfs 1M "UFS"
+.if \nX=2 .ds x} mkfs 1M "" "\&"
+.if \nX=3 .ds x} mkfs "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4mkfs\f1 (ufs) \- construct a \f4ufs\fP file system
+.SH SYNOPSIS
+\f4mkfs\f1
+[
+\f4\-F ufs\f1
+]
+[\f2generic_options\f1]
+\f2special\f1
+.br
+\f4mkfs\f1
+[
+\f4\-F ufs\f1
+]
+[\f2generic_options\f1]
+[\f4\-o\f2 specific_options\f1]
+.I special size
+.SH DESCRIPTION
+.I generic_options
+are options supported by the generic \f4mkfs\f1 command.
+.PP
+\f4mkfs\f1
+constructs a file system by writing on the special file
+.I special
+unless the
+\f1`\f4\-o N\f1'
+flag has been specified.
+The numeric
+.I size
+specifies the number of sectors in the file system.
+\f4mkfs\f1
+builds a file system with a root directory and a
+\f4lost+found\f1
+directory [see
+\f4fsck\f1(1M)].
+The number of inodes is calculated as a
+function of the file system size.
+.P
+The options are:
+.PP
+.TP
+\f4\-F ufs\f1
+Specifies the \f4ufs\f1-FSType.
+.TP
+\f4\-o \f1
+Specify
+\f4ufs\f1
+file system specific options. 
+The following options are available:
+.RS
+.TP
+\f4N\f1
+Do not write the file system to the
+.I special
+file.
+This suboption gives all the information
+needed to create a file system but does
+not create it.
+.TP
+\f4nsect=\f2n\f1
+The number of sectors per track on the disk.
+The default is
+\f418\f1.
+.TP
+\f4ntrack=\f2n\f1
+The number of tracks per cylinder on the disk.
+The default is
+\f49\f1.
+.TP
+\f4bsize=\f2n\f1
+The primary block size for files on the file system.
+It must be a power of two, currently selected from
+\f44096\f1
+(the default)
+or
+\f48192\f1.
+.TP
+\f4fragsize=\f2n\f1
+The fragment size for files on the file system.
+The
+\f4fragsize\f1
+represents the smallest amount of disk
+space that will be allocated to a file.
+It must be a power of two currently selected from the range
+\f4512\f1
+to
+\f48192\f1.
+The default is
+\f41024\f1.
+.TP
+\f4cgsize=\f2n\f1
+The number of disk cylinders per cylinder group.
+This number must be in the range
+\f41\f1
+to
+\f432\f1.
+The default is
+\f416\f1.
+.TP
+\f4free=\f2n\f1
+The minimum percentage of free disk space allowed.
+Once the file system capacity reaches this threshold, only
+a privileged user is allowed to allocate disk blocks.
+The default value is 
+\f410%\f1.
+.TP
+\f4rps=\f2n\f1
+The rotational speed of the disk, in revolutions per second.
+The default is
+\f460\f1.
+.TP
+\f4nbpi=\f2n\f1
+The number of bytes for which one inode block is allocated.
+This parameter is
+currently set at one inode block for every 2048 bytes.
+.TP
+\f4opt=s|t\f1
+Space or time optimization preference;
+\f4s\f1
+specifies optimization for space,
+\f4t\f1
+specifies optimization for time.
+The default is
+\f4t\f1.
+.TP
+\f4apc=\f2n\f1
+The number of alternates per cylinder (\s-1SCSI\s0 devices only). 
+The default is
+\f40\f1.
+.TP
+\f4gap=\f2n\f1
+The expected time (in milliseconds)
+to service a transfer completion
+interrupt and initiate a new transfer on the same disk.
+It is used to decide how much rotational spacing to place between
+successive blocks in a file.
+The default is 4.
+.RE
+.SH NOTES
+The value of the \f4nbpi\fP operand in the output of
+\f4mkfs -m\fP is always 2048, even if the file system was
+created with some other value.
+.SH "SEE ALSO"
+\f4fsck\fP(1M),
+generic \f4mkfs\fP(1M),
+\f4dir\fP(4),
+\f4fs\fP(4)

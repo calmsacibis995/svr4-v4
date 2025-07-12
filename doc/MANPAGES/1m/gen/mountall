@@ -1,0 +1,74 @@
+'\"!  tbl | mmdoc
+'\"macro stdmacro
+.if n .pH g1a.mountall @(#)mountall	40.7.1.1 of 4/24/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} mountall 1M "" "\&"
+.if \nX=1 .ds x} mountall 1M ""
+.if \nX=2 .ds x} mountall 1M "" "\&"
+.if \nX=3 .ds x} mountall "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4mountall, umountall\f1 \- mount, unmount multiple file systems 
+.SH SYNOPSIS
+\f4mountall\f1  [\f4\-F\f2 FSType\f1] [\f4\-l\f1 | \f4\-r\f1] [ \f2file_system_table\f1]
+.br
+\f4umountall\f1 [\f4\-F\f2 FSType\f1] [\f4\-k\f1] [\f4\-l\f1 | \f4\-r\f1]
+.SH DESCRIPTION
+These commands may be executed only
+by a privileged user.
+.PP
+\f4mountall \f1 is used to mount file systems according
+to a \f2file_system_table\f1. (\f4/etc/vfstab\f1 is the
+default file system table.) The special file name "\-"
+reads from the standard input.
+If the dash is specified, then the standard input
+must be in the same format as \f4/etc/vfstab\f1.
+With no arguments \f4mountall\f1 restricts 
+the mount to all systems with \f4automnt\f1 field set to \f4yes\f1 in
+the \f2file_system_table\f1. 
+.PP
+Before each file system is mounted, a sanity check is done 
+using \f4fsck\f1 [see \f4fsck(1M)\f1] to see if it appears mountable.
+If the file system does not appear mountable, it is fixed,
+using \f4fsck\f1, before the mount is attempted.
+.PP
+\f4umountall\fP
+causes all mounted file systems except \f4root\fP,
+\f4/proc\fP, \f4/stand\fP, and \f4/dev/fd\fP 
+to be unmounted.
+If the \f2FSType\f1 is specified \f4mountall\f1 and
+\f4umountall\f1 limit their actions to the \f2FSType\f1 specified.
+.PP
+The options are:
+.TP 10
+\f4\-F\fP
+Specify the File System type  to be mounted or unmounted. If
+\f2FSType\f1 is specified the action is limited to file systems
+of this \f2FSType\f1.
+.TP 10
+\f4\-l\fP
+Limit the action to local file systems.
+.TP 10
+\f4\-r\fP
+Limit the action to remote file system types.
+.TP 10
+\f4\-k\fP
+Send a \f2SIGKILL\f1 signal to processes that have files opened.
+.SH DIAGNOSTICS
+No messages are printed if the file systems are mountable and clean.
+.PP
+Error and warning messages come from
+\f4fsck\f1(1M)
+and
+\f4mount\f1(1M).
+.SH SEE ALSO
+\f4fsck\fP(1M),
+\f4fuser\fP(1M),
+\f4mount\fP(1M),
+\f4vfstab\fP(4),
+\f4mnttab\fP(4).
+.br
+\f4signal\fP(2)
+in the \f2Programmer's Reference Manual\f1.

@@ -1,0 +1,181 @@
+'\"macro stdmacro
+.if n .pH g1f.fmlexpr @(#)fmlexpr	40.15 of 4/30/91
+.\" Copyright 1989 AT&T
+.nr X
+.if \nX=0 .ds x} fmlexpr 1F "" "\&"
+.if \nX=1 .ds x} fmlexpr 1F ""
+.if \nX=2 .ds x} fmlexpr 1F "" "\&"
+.if \nX=3 .ds x} fmlexpr "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4fmlexpr\f1 \- evaluate arguments as an expression
+.SH SYNOPSIS
+\f4fmlexpr\f1
+\f2arguments\f1
+.SH DESCRIPTION
+The \f4fmlexpr\f1 function evaluates its arguments as an expression.
+After evaluation, the result is written on the standard output.
+Terms of the expression must be separated by blanks.
+Characters special to FMLI
+must be escaped.
+Note that \f40\fP is returned to indicate a zero value,
+rather than the null string.
+Strings containing blanks or other special characters should be quoted.
+Integer-valued arguments may be preceded by a unary minus sign.
+Internally, integers are treated as 32-bit, 2s complement numbers.
+.PP
+The operators and keywords are listed below.
+Characters that need to be escaped are preceded by \f4\\\fP.
+The list is in order of increasing precedence,
+with equal precedence operators grouped within \f4{\|}\fP symbols.
+.TP .5i
+\f2expr \f4\e\^\(bv\f2 expr\f1
+returns the first
+\f2expr\f1
+if it is neither null nor \f40\fP, otherwise
+returns the second
+\f2expr\f1.
+.TP .5i
+\f2expr \f4\e&\f2 expr\f1
+returns the first
+\f2expr\f1
+if neither
+\f2expr\f1
+is null or \f40\fP, otherwise returns \f40\fP.
+.TP .5i
+\f2expr \f1{ \f4=\f1, \f4\e>\f1, \f4\e>=\f1, \f4\e<\f1, \f4\e<=\f1, \f4!=\f1 } \f2expr\f1
+returns the result of an integer comparison if both arguments are integers,
+otherwise returns the result of a lexical comparison.
+.TP .5i
+\f2expr \f1{ \f4+\f1, \f4\- \f1} \f2expr\f1
+addition or subtraction of integer-valued arguments.
+.TP .5i
+\f2expr \f1{ \f4\(**\f1, \f4/\f1, \f4% \f1} \f2expr\f1
+multiplication, division, or remainder of the integer-valued arguments.
+.TP .5i
+\f2expr\f4 : \f2expr\f1
+The matching operator \f4:\fP compares the first argument
+with the second argument which must be a regular expression.
+Regular expression syntax is the same as that of
+\f4ed\f1(1),
+except that all patterns are ``anchored'' (i.e., begin with \f4^\fP)
+and, therefore, \f4^\fP is not a special character, in that context.
+Normally,
+the matching operator returns the number of bytes matched
+(\f40\fP on failure).
+Alternatively, the
+\f4\\(\ .\ .\ .\ \\)\fP
+pattern symbols can be used to return a portion of the
+first argument.
+.SH EXAMPLES
+.TP
+1.
+Add 1 to the variable \f4a\f1:
+.PP
+.RS
+.RS
+\f4`fmlexpr\| $a\| +\| 1 | set -l a`\f1
+.RE
+.RE
+.TP
+2.
+For \f4$a\fP equal to either ``\f4/usr/abc/\f2file\f1'' or just ``\f2file\fP'':
+.PP
+.RS
+.RS
+\f4fmlexpr\  $a\  \f4:\fP\  \*'\f4.\fP\(**/\e(\f4.\fP\(**\e)\*'\  \e\^\(bv \ $a\f1
+.RE
+.RE
+.br
+.ne4
+.PP
+returns the last segment of a path name
+(i.e., \f2file\fP).
+Watch out for \f4/\fP alone as an argument:
+\f4fmlexpr\f1
+will take it as the division operator
+(see
+.SM NOTES
+below).
+.ne 6
+.TP
+3.
+A better representation of example 2.
+.PP
+.RS
+.RS
+\f4fmlexpr\  //$a\  :\  \*'.\(**/\e(.\(**\e)\*'\f1
+.RE
+.RE
+.PP
+The addition of the
+\f4//\f1
+characters eliminates any ambiguity about the division operator
+(because it makes it impossible for the left-hand expression to
+be interpreted as the division operator), and simplifies
+the whole expression.
+.TP
+4.
+Return the number of characters in
+.SM
+\f4$VAR\f1.
+.PP
+.RS
+.RS
+\f4fmlexpr $VAR : .*\f1
+.RE
+.RE
+.SH DIAGNOSTICS
+As a side effect of expression evaluation,
+\f4fmlexpr\f1
+returns the following exit values:
+.br
+	0	if the expression is neither null nor \f40\fP (i.e., TRUE)
+.br
+	1	if the expression
+\f2is\f1
+null or \f40\fP (i.e., FALSE)
+.br
+	2	for invalid expressions (i.e., FALSE).
+.PP
+.PD 0
+.TP 1.5i
+\f2syntax error\f1
+for operator/operand errors
+.TP
+\f2non-numeric argument\f1
+if arithmetic is attempted on such a string
+.PD
+.PP
+In the case of syntax errors and non-numeric arguments, an error
+message will be printed at the current cursor position.
+Use \f4refresh\f1 to redraw the screen.
+.SH NOTES
+After argument processing by FMLI,
+\f4fmlexpr\f1
+cannot tell the difference between an operator and an operand
+except by the value.
+If
+\f4$a\f1
+is an
+\f4=\f1,
+the command:
+.PP
+	\f4fmlexpr \ $a \ = \ \*'=\*'\f1
+.PP
+looks like:
+.PP
+	\f4fmlexpr \ = \ = \ =\f1
+.PP
+as the arguments are passed to
+\f4fmlexpr\f1
+(and they will all be taken as the
+\f4=\f1
+operator).
+The following works, and returns TRUE:
+.PP
+	\f4fmlexpr \ X$a \ = \ X=\f1
+.SH "SEE ALSO"
+\f4ed\f1(1), \f4expr\f1(1), \f4set\f1(1F), \f4sh\f1(1)
+.\"	@(#)fmlexpr.1	6.2 of 9/2/83
+.Ee

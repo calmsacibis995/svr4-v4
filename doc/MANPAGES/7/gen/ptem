@@ -1,0 +1,49 @@
+'\"macro stdmacro
+.if n .pH g7.ptem @(#)ptem	40.8 of 4/11/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} ptem 7 "" "\&"
+.if \nX=1 .ds x} ptem 7 ""
+.if \nX=2 .ds x} ptem 7 "" "\&"
+.if \nX=3 .ds x} ptem "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4ptem\fP \- \s-1STREAMS\s0 Pseudo Terminal Emulation module
+.SH DESCRIPTION
+\f4ptem\f1 is a \s-1STREAMS\s0 module that when used in conjunction with a
+line discipline and pseudo terminal driver emulates a terminal.
+.PP
+The \f4ptem\f1 module must be pushed [see \f4I_PUSH, streamio\fP(7)] onto
+the slave side of a pseudo terminal \s-1STREAM\s+1, before the \f4ldterm\f1
+module is pushed.
+.PP
+On the write-side, the \f4TCSETA, TCSETAF, TCSETAW, TCGETA, TCSETS, TCSETSW,
+TCSETSF, TCGETS,
+TCSBRK, JWINSIZE, TIOCGWINSZ\fP, and \f4TIOCSWINSZ\fP
+\f4termio ioctl\fP(2) messages are processed and acknowledged.
+A hang up (such as stty 0) is converted to a zero length \f4M_DATA\fP message
+and passed downstream.
+Termio \f4cflags\f1 and window row and column information are stored locally 
+one per stream.
+\f4M_DELAY\fP messages are discarded.
+All other messages are passed downstream unmodified.
+.PP
+On the read-side all messages are passed upstream unmodified with the
+following exceptions.
+All \f4M_READ\fP and \f4M_DELAY\fP messages are freed in both directions.
+An \f4ioctl TCSBRK\fP is converted to an \f4M_BREAK\fP message and 
+passed upstream and an acknowledgement is returned downstream.
+An \f4ioctl TIOCSIGNAL\fP is converted into an \f4M_PCSIG\fP message, 
+and passed upstream and an acknowledgement is returned downstream.
+Finally an \f4ioctl TIOCREMOTE\fP is converted into an \f4M_CTL\fP
+message, acknowledged, and passed upstream.
+.SH FILES
+\f4<sys/ptem.h>\fP
+.SH SEE ALSO
+\f4stty\fP(1), \f4crash\fP(1M),
+\f4ioctl\fP(2),
+\f4ldterm\fP(7), \f4pckt\fP(7), \f4streamio\fP(7), \f4termio\fP(7)
+.br
+\f2Programmer's Guide: \s-1STREAMS\s0\f1
+.Ee

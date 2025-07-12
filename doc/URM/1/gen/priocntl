@@ -1,0 +1,461 @@
+'\"macro stdmacro
+.if n .pH g1.priocntl @(#)priocntl	40.10.1.2 of 4/18/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} priocntl 1 "" "\&"
+.if \nX=1 .ds x} priocntl 1 ""
+.if \nX=2 .ds x} priocntl 1 "" "\&"
+.if \nX=3 .ds x} priocntl "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4priocntl\f1 \- process scheduler control
+.SH SYNOPSIS
+\f4priocntl \-l\f1
+.br
+\f4priocntl\f1
+\f4\-d\f1 [\f4\-i\f1 \f2idtype\f1] [\f2idlist\f1]
+.br
+\f4priocntl\f1
+\f4\-s\f1 [\f4\-c\f1 \f2class\f1] [\f2class-specific options\f1] [\f4\-i\f1 \f2idtype\f1] [\f2idlist\f1]
+.br
+\f4priocntl\f1
+\f4\-e\f1 [\f4\-c\f1 \f2class\f1] [\f2class-specific options\f1] \f2command\f1 [\f2argument(s)\f1]
+.br
+.SH DESCRIPTION
+The \f4priocntl\fP command displays or sets
+scheduling parameters of the specified process(es).
+It can also be used to
+display the current configuration information for the system's
+process scheduler or
+execute a command with specified scheduling parameters.
+.P
+Processes fall into distinct classes with a separate scheduling
+policy applied to each class.
+The two process classes currently supported are the real-time
+class and the time-sharing class.
+The characteristics of these two classes and the class-specific
+options they accept are described below under the headings
+.SM "REAL-TIME CLASS"
+and
+.SM "TIME-SHARING CLASS."
+With appropriate permissions,
+the \f4priocntl\fP command can change the class and other
+scheduling parameters associated with a running process.
+.P
+In the default configuration, a runnable real-time process
+runs before any other process.
+Therefore, inappropriate use of real-time processes can have
+a dramatic negative impact on system performance.
+.P
+The command
+.P
+.RS 3n
+\f4priocntl \-l\f1
+.RE
+.P
+displays a list of classes
+currently configured in the system along with class-specific
+information about each class.
+The format of the class-specific information displayed is described under
+the appropriate heading below.
+.P
+The \f4\-d\f1 and \f4\-s\f1 options to \f4priocntl\fP allow the user
+to display or set the scheduling parameters associated with a set
+of processes.
+The \f4\-i\f1 option and its associated \f2idtype\f1 argument,
+together with the \f2idlist\f1 arguments to \f4priocntl\fP (if any),
+specify one or more processes to which the \f4priocntl\fP command
+is to apply.
+The interpretation of \f2idlist\f1 depends on the value of \f2idtype\f1.
+The valid \f2idtype\f1 arguments and corresponding interpretations
+of \f2idlist\f1 are as follows:
+.P
+.RS 3n
+.IP "\f4\-i pid" 10n
+\f2idlist\f1 is a list of process IDs.
+The \f4priocntl\fP command
+applies to the specified processes.
+.IP "\f4\-i ppid" 10n
+\f2idlist\f1 is a list of parent process IDs.
+The \f4priocntl\fP command
+applies to all processes whose parent process ID is in the list.
+.IP "\f4\-i pgid" 10n
+\f2idlist\f1 is a list of process group IDs.
+The \f4priocntl\fP command applies to all processes in the
+specified process groups.
+.IP "\f4\-i sid" 10n
+\f2idlist\f1 is a list of session IDs.
+The \f4priocntl\fP command applies to all processes in the specified
+sessions.
+.IP "\f4\-i class" 10n
+\f2idlist\f1 consists of a single class name (\f4RT\f1 for real-time
+or \f4TS\f1 for time-sharing).
+The \f4priocntl\fP command applies to all processes in the specified
+class.
+.IP "\f4\-i uid" 10n
+\f2idlist\f1 is a list of user IDs.
+The \f4priocntl\fP command applies to all processes with an effective
+user ID equal to an ID from the list.
+.IP "\f4\-i gid" 10n
+\f2idlist\f1 is a list of group IDs.
+The \f4priocntl\fP command applies to all processes with an effective
+group ID equal to an ID from the list.
+.IP "\f4\-i all\f1" 10n
+The \f4priocntl\fP command applies to all existing processes.
+No \f2idlist\f1 should be specified (if one is it is ignored).
+The permission restrictions described below still apply.
+.RE
+.P
+If the \f4\-i \f2idtype\f1 option is omitted when using the \f4\-d\f1
+or \f4\-s\f1 options the default \f2idtype\f1 of \f4pid\f1 is
+assumed.
+.P
+If an \f2idlist\f1 is present it must appear last on the
+command line and the elements of the list must be separated
+by white space.
+If no \f2idlist\f1 is present an \f2idtype\f1 argument of \f4pid\f1, \f4ppid\f1,
+\f4pgid\f1, \f4sid\f1, \f4class\f1, \f4uid\f1, or \f4gid\f1 specifies the
+process ID, parent process ID, process group ID, session ID, class,
+user ID, or group ID
+respectively of the \f4priocntl\fP command itself.
+.P
+The command
+.P
+.RS 3n
+\f4priocntl \-d \f1[\f4\-i\f2 idtype\f1] [\f2idlist\f1]
+.RE
+.P
+displays the class and class-specific scheduling parameters of the
+process(es) specified by \f2idtype\f1 and \f2idlist\f1.
+.P
+The command
+.P
+.RS 3n
+\f4priocntl \-s \f1[\f4\-c \f2class\f1] [\f2class-specific options\f1] [\f4\-i\f2 idtype\f1] [\f2idlist\f1]
+.RE
+.P
+sets the class and class-specific parameters of the specified
+processes to the values given on the command line.
+The \f4\-c\f2 class\f1 option specifies the class to be set.
+(The valid \f2class\f1 arguments are \f4RT\f1 for real-time
+or \f4TS\f1 for time-sharing).
+The class-specific parameters to be set are specified
+by the class-specific options as explained under the appropriate
+heading below.
+If the \f4\-c\f2 class\f1 option is omitted, \f2idtype\f1 and \f2idlist\f1
+must specify a set of processes which are all in the same class,
+otherwise an error results.
+If no class-specific options are specified the process's class-specific
+parameters are set to the default values for the class specified
+by \f4\-c\f2 class\f1 (or to the default parameter values for the
+process's current class if the \f4\-c\f2 class\f1 option is also
+omitted).
+.P
+In order to change the scheduling parameters of a process using \f4priocntl\fP
+the real or effective user ID of the user invoking \f4priocntl\fP must
+match the real or effective user ID of the receiving process or the effective
+user ID of the user must be super-user.
+These are the minimum permission requirements enforced for all classes.
+An individual class may impose additional permissions requirements
+when setting processes to that class or when setting class-specific
+scheduling parameters.
+.P
+When \f2idtype\f1 and \f2idlist\f1 specify a set of processes, \f4priocntl\fP
+acts on the processes in the set in an implementation-specific order.
+If \f4priocntl\fP encounters an error for one or more of the target processes,
+it may or may not continue through the set of processes, depending on the
+nature of the error.
+If the error is related to permissions, \f4priocntl\fP prints an error
+message and then continue through the process set, resetting the parameters
+for all target processes for which the user has appropriate permissions.
+If \f4priocntl\fP encounters an error other than permissions, it does not
+continue through the process set but prints an error message and
+exits immediately.
+.P
+A special \f4sys\f1 scheduling class exists for the purpose of
+scheduling the execution of certain special system processes (such
+as the swapper process).
+It is not possible to change the class of any process to \f4sys\f1.
+In addition, any processes in the \f4sys\f1 class that are included
+in the set of processes specified by \f2idtype\f1 and \f2idlist\f1 are
+disregarded by \f4priocntl\fP.
+For example, if \f2idtype\f1 were \f4uid\f1, an \f2idlist\f1 consisting of
+a zero would specify all processes with a UID of zero except processes
+in the \f4sys\f1 class and (if changing the parameters using the \f4\-s\f1
+option) the \f4init\f1 process.
+.P
+The \f4init\f1 process may be assigned to any class configured on the
+system, but the time-sharing class is almost always the appropriate choice.
+(Other choices may be highly undesirable; see the
+\f2System Administrator's Guide\fP
+for more information.)
+.P
+The command
+.P
+.RS 3n
+\f4priocntl -e \f1[\f4\-c\f2 class\f1] [\f2class-specific options\f1] \f2command \f1[\f2argument(s)\f1]
+.RE
+.P
+executes the specified command with the class and
+scheduling parameters specified on the command line (\f2arguments\f1 are the
+arguments to the command\f1).
+If the \f4\-c\f2 class\f1 option is omitted the command is run
+in the user's current class.
+.SH "REAL-TIME CLASS"
+The real-time class provides a fixed priority preemptive scheduling
+policy for those processes requiring fast and deterministic response and
+absolute user/application control of scheduling priorities.
+If the real-time class is configured in the system it should have
+exclusive control of the highest range of scheduling priorities on the system.
+This ensures that a runnable real-time process is given CPU
+service before any process belonging to any other class.
+.P
+The real-time class has a range of real-time priority (\f2rtpri\f1)
+values that may be assigned to processes within the class.
+Real-time priorities range from 0 to \f2x\f1,
+where the value of \f2x\f1
+is configurable and can be displayed for a specific installation by using
+the command
+.P
+.RS 3n
+\f4priocntl \-l\f1
+.RE
+.P
+The real-time scheduling policy is a fixed priority policy.
+The scheduling priority of a real-time process never changes
+except as the result of an explicit request by the user/application to
+change the \f2rtpri\f1 value of the process.
+.P
+For processes in the real-time class, the \f2rtpri\f1 value
+is, for all practical purposes, equivalent to the scheduling priority
+of the process.
+The \f2rtpri\f1 value completely determines the scheduling priority of
+a real-time process relative to other processes within its class.
+Numerically higher \f2rtpri\f1 values represent higher priorities.
+Since the real-time class controls the highest range of scheduling
+priorities in the system it is guaranteed that the runnable real-time
+process with the highest \f2rtpri\f1 value is always selected to run
+before any other process in the system.
+.P
+In addition to providing control over priority, \f4priocntl\fP
+provides for control over the length of the time quantum allotted to
+processes in the real-time class.
+The time quantum value specifies the maximum amount of time a process
+may run assuming that it does not complete or enter a resource
+or event wait state (\f4sleep\fP).
+Note that if another process becomes runnable at a higher priority
+the currently running process may be preempted before receiving its
+full time quantum.
+.P
+The command
+.P
+.RS 3n
+\f4priocntl \-d \f1[\f4\-i\f2 idtype\f1] [\f2idlist\f1]
+.RE
+.P
+displays the real-time priority and time quantum (in
+millisecond resolution) for each real-time process in
+the set specified by \f2idtype\f1 and \f2idlist\f1.
+.P
+The valid class-specific options for setting real-time parameters are:
+.P
+.RS 3n
+.IP "\f4\-p \f2rtpri\f1" 10m
+Set the real-time priority of the specified process(es) to \f2rtpri\f1.
+.IP "\f4\-t \f2tqntm\f1 [\f4\-r \f2res\f1]" 10m
+Set the time quantum of the specified process(es) to \f2tqntm\f1.
+You may optionally specify a resolution as explained below.
+.RE
+.P
+Any combination of the \f4\-p\f1 and \f4\-t\f1 options may be used
+with \f4priocntl \-s\f1 or \f4priocntl \-e\f1 for the real-time class.
+If an option is omitted and the process is currently real-time the
+associated parameter is unaffected.
+If an option is omitted when changing the class of a process to real-time
+from some other class, the associated parameter is set to a default value.
+The default value for \f2rtpri\f1 is 0 and
+the default for time quantum is dependent on the value of \f2rtpri\f1
+and on the system configuration; see \f4rt_dptbl\fP(4).
+.P
+When using the \f4\-t \f2tqntm\f1 option
+you may optionally specify a resolution using the \f4\-r\f2 res\f1
+option.
+(If no resolution is specified, millisecond resolution
+is assumed.)
+If \f2res\f1 is specified it must be a positive integer
+between 1 and 1,000,000,000 inclusive and
+the resolution used is the reciprocal of \f2res\f1
+in seconds.
+For example, specifying \f4\-t 10 \-r 100\f1 would set the resolution
+to hundredths of a second and the resulting time quantum length would be
+10/100 seconds (one tenth of a second).
+Although very fine (nanosecond) resolution may be specified, the time quantum
+length is rounded up by the system to the next integral multiple  of
+the system clock's resolution.
+For example the finest resolution currently available on the 3B2 is 10
+milliseconds (1 ``tick'').
+If the \f4\-t\f1 and \f4\-r\f1 options are
+used to specify a time quantum of 34 milliseconds, it is rounded up
+to 4 ticks (40 milliseconds) on the 3B2.
+Requests for time quantums of zero or quantums greater than the (typically
+very large) implementation-specific maximum quantum result in an error.
+.P
+In order to change the class of a process to real-time (from
+any other class) the user invoking \f4priocntl\fP must have
+super-user privileges.
+In order to change the \f2rtpri\f1 value or time quantum
+of a real-time process the user invoking \f4priocntl\fP
+must either be super-user, or
+must currently be in the real-time
+class (shell running as a real-time process) with a real or
+effective user ID matching the real or effective user ID of the
+target process.
+.P
+The real-time priority and time quantum are inherited
+across the \f4fork\fP(2) and \f4exec\fP(2) system calls.
+.SH Examples
+.RS 3n
+\f4priocntl \-s \-c RT \-t 1 \-r 10 \-i \f2idtype idlist\f1
+.RE
+.P
+sets the class of any non-real-time processes selected by \f2idtype\fP and \f2idlist\fP
+to real-time and sets
+their real-time priority to the default value of 0.
+The real-time priorities of any processes currently in the real-time
+class are unaffected.
+The time quantums of all of the specified processes are set to 1/10 seconds.
+.P
+.RS 3n
+\f4priocntl \-e \-c RT \-p 15 \-t 20 \f2command\f1
+.RE
+.P
+executes \f2command\f1 in the real-time class with
+a real-time priority of 15 and a time quantum of 20 milliseconds.
+.SH "TIME-SHARING CLASS"
+The time-sharing scheduling policy provides for a fair and
+effective allocation of the CPU resource among processes with
+varying CPU consumption characteristics.
+The objectives of the time-sharing policy are to provide good
+response time to interactive processes and good throughput to CPU-bound jobs
+while providing a degree of user/application control
+over scheduling.
+.P
+The time-sharing class has a range of
+time-sharing user priority (\f2tsupri\f1)
+values that may be assigned to processes within the class.
+User priorities range from \f2\-x\f1 to \f2+x\f1, where the value of \f2x\f1
+is configurable.
+The range for a specific installation can be displayed by using the command
+.P
+.RS 3n
+\f4priocntl \-l\f1
+.RE
+.P
+The purpose of the user priority is to provide some degree of
+user/application control over the scheduling of processes in the
+time-sharing class.
+Raising or lowering the \f2tsupri\f1 value of a process in the time-sharing
+class raises or lowers the scheduling priority of the process.
+It is not guaranteed, however, that a time-sharing process with
+a higher \f2tsupri\f1 value will run before one with a lower \f2tsupri\f1
+value.
+This is because the \f2tsupri\f1 value is just one factor used to
+determine the scheduling priority of a time-sharing process.
+The system may dynamically adjust the internal scheduling priority
+of a time-sharing process based on other factors such
+as recent CPU usage.
+.P
+In addition to the system-wide limits on user priority (displayed with
+\f4priocntl \-l\f1), there is a per process user priority limit
+(\f2tsuprilim\f1), which specifies the maximum \f2tsupri\f1 value that
+may be set for a given process.
+.P
+The command
+.P
+.RS 3n
+\f4priocntl \-d \f1[\f4\-i\f2 idtype\f1] [\f2idlist\f1]
+.RE
+.P
+displays the user priority and user priority limit
+for each time-sharing process in
+the set specified by \f2idtype\f1 and \f2idlist\f1.
+.P
+The valid class-specific options for setting time-sharing parameters are:
+.P
+.RS 3n
+.IP "\f4\-m \f2tsuprilim\f1" 10m
+Set the user priority limit of the specified process(es) to \f2tsuprilim\f1.
+.IP "\f4\-p \f2tsupri\f1" 10m
+Set the user priority of the specified process(es) to \f2tsupri\f1.
+.RE
+.P
+Any time-sharing process may lower its own \f2tsuprilim\f1
+(or that of another process with the same user ID).
+Only a time-sharing process with super-user privileges may
+raise a \f2tsuprilim\f1.
+When changing the class of a process to time-sharing from some
+other class, super-user privileges are required in order to set the
+initial \f2tsuprilim\f1 to a value greater than zero.
+.P
+Any time-sharing process may set its own \f2tsupri\f1 (or that of
+another process with the same user ID) to any value less than or equal to
+the process's \f2tsuprilim\f1.
+Attempts to set the \f2tsupri\f1 above the \f2tsuprilim\f1 (and/or set the
+\f2tsuprilim\f1 below the \f2tsupri\f1) result in the \f2tsupri\f1
+being set equal to the \f2tsuprilim\f1.
+.P
+Any combination of the \f4\-l\f1 and \f4\-p\f1 options may be used
+with \f4priocntl \-s\f1 or \f4priocntl \-e\f1 for the time-sharing class.
+If an option is omitted and the process is currently time-sharing the
+associated parameter is normally unaffected.
+The exception is when the \f4\-p\f1 option is omitted and \f4\-l\f1 is used to
+set a \f2tsuprilim\f1 below the current \f2tsupri\f1.
+In this case the \f2tsupri\f1 is set equal to the \f2tsuprilim\f1 which is
+being set.
+If an option is omitted when changing the class of a process to time-sharing
+from some other class, the associated parameter is set to a default value.
+The default value for \f2tsuprilim\f1 is 0 and
+the default for \f2tsupri\f1 is to set it equal to the \f2tsuprilim\f1
+value which is being set.
+.P
+The time-sharing user priority and user priority limit are inherited
+across the \f4fork\fP(2) and \f4exec\fP(2)
+system calls.
+.SH Examples
+.RS 3n
+\f4priocntl \-s \-c TS \-i \f2idtype idlist\f1
+.RE
+.P
+sets the class of any non-time-sharing processes selected by \f2idtype\fP and \f2idlist\fP
+to time-sharing
+and sets both their user priority limit and user priority to 0.
+Processes already in the time-sharing class are unaffected.
+.P
+.RS 3n
+\f4priocntl \-e \-c TS \-l 0 \-p \-15 \f2command \f1[\f2arguments\f1]
+.RE
+.P
+executes \f2command\f1 with the arguments \f2arguments\f1 in the
+time-sharing class with a user priority limit of 0 and a
+user priority of \-15.
+.SH SEE ALSO
+\f4ps\fP(1), \f4nice\fP(1), \f4priocntl\fP(2), rt_\f4dptbl\fP(4).
+.SH DIAGNOSTICS
+.\"  Error message
+.de Em
+\f4\\$1\fP:\0\0
+..
+\f4priocntl\fP prints the following error messages:
+.P
+.Em "Process(es) not found"
+None of the specified processes exists.
+.P
+.Em "Specified processes from different classes"
+The \f4\-s\f1 option
+is being used to set parameters, the \f4\-c\f2 class\f1 option
+is not present, and processes from more than one class are specified.
+.P
+.Em "Invalid option or argument"
+An unrecognized or invalid option
+or option argument is used.

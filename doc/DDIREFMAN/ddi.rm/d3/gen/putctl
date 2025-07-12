@@ -1,0 +1,89 @@
+'\"macro stdmacro
+.if n .pH gen.putctl @(#)putctl	40.3 of 1/9/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.nr X
+.if \nX=0 .ds x} putctl D3DK "STREAMS" "DDI/DKI" "\&"
+.if \nX=1 .ds x} putctl D3DK "STREAMS" "DDI/DKI"
+.if \nX=2 .ds x} putctl D3DK "" "\&"
+.if \nX=3 .ds x} putctl "" "" "\&"
+.TH \*(x}
+.IX "\f4putctl\fP(D3DK)"
+.SH NAME
+\f4putctl\f1 \- send a control message to a queue
+.SH SYNOPSIS
+.nf
+\f4#include <sys/stream.h>
+.sp 0.25
+int putctl(queue_t *\f2q, \f4int\f2 type\f4);\f1
+.fi
+.SH ARGUMENTS
+.PD 0
+.RS 0n 10
+.IP "\f2q\f1" 10n
+Pointer to the queue to which the message is to be sent.
+.IP "\f2type\f1" 10n
+Message type (must be control).
+.RE
+.PD
+.SH DESCRIPTION
+\f4putctl\f1 tests the \f2type\f1 argument to make sure a data type has
+not been specified, and then attempts to allocate a message block.
+\f4putctl\f1 fails if \f2type\f1 is \f4M_DATA\f1,
+\f4M_PROTO\f1,
+or \f4M_PCPROTO\f1, or if a message block cannot be allocated.
+If successful, \f4putctl\f1 calls the \f4put\f1(D2DK) routine of the queue
+pointed to by \f2q\f1, passing it the allocated message.
+.SH RETURN VALUE
+On success, 1 is returned.
+Otherwise, if \f2type\f1 is a
+data type, or if a message block cannot be allocated,
+0 is returned.
+.SH LEVEL
+Base or Interrupt.
+.SH NOTES
+Does not sleep.
+.SH SEE ALSO
+.na
+\f4put\fP(D2DK),
+\f4putctl1\f1(D3DK)
+.ad
+.SH EXAMPLE
+.P
+The \f4send_ctl\f1 routine is used to pass control messages downstream.
+\f4M_BREAK\f1 messages are handled with \f4putctl\f1 (line 9).
+\f4putctl1\f1 (line 11) is used for \f4M_DELAY\f1 messages, 
+so that \f2param\f1 can be
+used to specify the length of the delay.
+If an invalid message type is detected, \f4send_ctl\f1 returns 0, indicating failure
+(line 13).
+.ne 4
+.P
+.nf
+.ft 4
+.ps 7
+.vs 9
+ 1  int
+ 2  send_ctl(wrq, type, param)
+ 3	queue_t *wrq;
+ 4	uchar_t type;
+ 5	uchar_t param;
+ 6  {
+
+ 7	switch (type) {
+ 8	case M_BREAK:
+ 9		return(putctl(wrq->q_next, M_BREAK));
+
+10	case M_DELAY:
+11		return(putctl1(wrq->q_next, M_DELAY, param));
+
+12	default:
+13		return(0);
+14	}
+15  }
+.vs
+.ps
+.ft 1
+.fi
+.FG "putctl \- pass control messages"
+.IX "\f4putctl\fP(D3DK), example"
+.IX "\f4putctl1\fP(D3DK), example"

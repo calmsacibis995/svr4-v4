@@ -1,0 +1,72 @@
+'\"macro stdmacro
+.if n .pH g2.creatsem @(#)creatsem	40.11 of 6/18/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} creatsem 2 "Application Compatibility Package" "\&"
+.if \nX=1 .ds x} creatsem 2 "Application Compatibility Package"
+.if \nX=2 .ds x} creatsem 2 "" "\&"
+.if \nX=3 .ds x} creatsem "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4creatsem\f1 \- create an instance of a binary semaphore
+.SH SYNOPSIS
+\f4cc \f1[\f2flag \f1. . .] \f2file\f1 . . . \f4-lx 
+.br
+\f4int creatsem(int sem_num, int mode, char *sem_name);
+.SH DESCRIPTION
+\f4creatsem\f1 defines a binary semaphore named by \f2sem_name\f1 to
+be used by \f4waitsem\fP and \f4sigsem\fP to manage mutually exclusive
+access to a resource, shared variable, or critical section of a program.
+\f4creatsem\f1 returns a unique semaphore number, \f2sem_num\f1, which
+may then be used as the parameter in \f4waitsem\fP and \f4sigsem\fP calls.
+Semaphores are special files of 0 length.
+The filename space
+is used to provide unique identifiers for semaphores.
+\f2mode\f1
+sets the accessibility of the semaphore using the same format as file
+access bits.
+Access to a semaphore is granted only on the basis of
+the read access bit; the write and execute bits are ignored.
+.P
+A semaphore can be operated on only by a synchronizing primitive, such
+as \f4waitsem\fP or \f4sigsem\fP, by \f4creatsem\fP which initializes
+it to some value, or by \f4opensem\f1 which opens the semaphore for
+use by a process.
+Synchronizing primitives are guaranteed to be
+executed without interruption once started.
+These primitives are
+used by associating a semaphore with each resource (including critical
+code sections) to be protected.
+.P
+The process controlling the semaphore should issue:
+.IP
+\f4sem_num = creatsem("semaphore", mode);\fP
+.PP
+to create, initialize, and open the semaphore for that process.
+All
+other processes using the semaphore should issue:
+.IP
+\f4sem_num = opensem("semaphore");\fP
+.PP
+to access the semaphore's identification value.
+Note that a process 
+cannot open and use a semaphore that has not been initialized by a
+call to \f4creatsem\fP, nor should a process open a semaphore more than
+once in one period of execution.
+Both the creating and opening processes 
+use \f4waitsem\fP and \f4sigsem\fP to use the semaphore \f2sem_num\f1.
+.SH DIAGNOSTICS
+\f4creatsem\fP returns the value \-1 if an error occurs.
+If the 
+semaphore named by \f2sem_name\f1 is already open for use by other
+processes, \f4errno\f1 is set to \%\f4EEXIST\fP.
+If the file specified
+exists but is not a semaphore type, \f4errno\f1 is set to \f4ENOTNAM\fP.
+If the semaphore has not been initialized by a call to \f4creatsem\fP, 
+\f4errno\f1 is set to \f4EINVAL\fP.
+.SH SEE ALSO
+\f4opensem(2)\fP, \f4sigsem\f1(2), \f4waitsem\fP(2)
+.SH NOTES
+After a \f4creatsem\fP, you must do a \f4waitsem\fP to gain control of
+a given resource.

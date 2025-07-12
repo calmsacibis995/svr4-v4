@@ -1,0 +1,99 @@
+'\"macro stdmacro
+.if n .pH g3.regex @(#)regex	40.9 of 4/24/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.\" Copyright (c) 1988 Sun Microsystems, Inc. - All Rights Reserved.
+.\"
+.nr X
+.if \nX=0 .ds x} regex 3 "BSD Compatibility Package" "\&"
+.if \nX=1 .ds x} regex 3 "BSD Compatibility Package"
+.if \nX=2 .ds x} regex 3 "" "\&"
+.if \nX=3 .ds x} regex "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4regex\f1, \f4re_comp\f1, \f4re_exec\f1 \- regular expression handler
+.SH SYNOPSIS
+.nf
+\f4cc \f1[ \f2flag\f1\. \. \. ] \f2file\f1 \. \. \. \f4\-lucb\f1
+.P
+\f4char *re_comp(s)\f1
+\f4char *s;\f1
+.P
+\f4re_exec(s)\fP
+\f4char *s;\f1
+.fi
+.SH DESCRIPTION
+.P
+\f4re_comp\f1
+compiles a string into an internal form suitable for
+pattern matching.
+\f4re_exec \f1
+checks the argument string against the last string passed to
+\f4re_comp\f1.
+.P
+\f4re_comp\f1
+returns a
+\f4NULL\fP
+pointer if the string
+.I s
+was compiled successfully; otherwise a string containing an
+error message is returned.
+If
+\f4re_comp\f1
+is passed 0 or a
+\f4NULL\fP
+string, it returns without changing the currently
+compiled regular expression.
+.P
+\f4re_exec\f1
+returns 1 if the string
+.I s
+matches the last compiled regular expression, 0 if the string
+.I s
+failed to match the last compiled regular
+expression, and \-1 if the compiled
+regular expression was invalid (indicating an internal error).
+.P
+The strings passed to both
+\f4re_comp\f1
+and
+\f4re_exec\f1
+may have trailing or embedded
+.SM NEWLINE
+characters; they are terminated by
+\f4NULL\fP
+characters.
+The regular expressions recognized are described in the manual page entry for
+\f4ed\f1(1),
+given the above difference.
+.SH "SEE ALSO"
+\f4ed\fP(1),
+\f4ex\fP(1),
+\f4grep\fP(1)
+in the \f2User's Reference Manual\f1
+.br
+\f4regcmp\fP(1),
+\f4regexpr\fP(3G),
+\f4regcmp\fP(3X),
+\f4regexpr\fP(5)
+in the \f2Programmer's Reference Manual\f1
+.SH "RETURN VALUE"
+\f4re_exec\f1
+returns \-1 for an internal error.
+.P
+\f4re_comp\f1
+returns one of the following strings if an error
+occurs:
+.P
+.RS
+.ft 5
+.nf
+No previous regular expression
+Regular expression too long
+unmatched \e(
+missing ]
+too many \e(\e) pairs
+unmatched \e)
+.ft 1
+.fi
+.RE

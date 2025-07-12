@@ -1,0 +1,34 @@
+#ident	"@(#)oamintf:usermgmt/Text.musrnok	1.3.6.1"
+################################################################################
+#	Module Name: Text.musrnok
+################################################################################
+title="Errors Modifying a User Login"
+`readfile $INTFBASE/conf.msg | message -t`
+#framemsg=`readfile $INTFBASE/conf.msg`
+
+close=`rm -f $UMODERR`
+
+rows=6
+columns=56
+
+`if [ "$ARG2" = "" ];
+ then
+	set -l MSG="An Error occurred attempting to modify user $ARG1";
+ else
+	set -l MSG="No changes were specified for user $ARG1";
+ fi`
+
+text="
+`echo $MSG`
+
+   `readfile $UMODERR`"
+
+altslks
+
+name=CONT
+button=11
+action=CLOSE
+
+name=CANCEL
+button=14
+action=CLEANUP

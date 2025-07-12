@@ -1,0 +1,7 @@
+.if n .pH 386.Cindex @(#)Cindex	40.13
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.BK "Software Notes" "" "" ""   
+.\ACRONYM	                  
+.CH "Index" "" "Table of Contents" "I"
+.\CHAPTER	I
+.tC 1 "Index" I-1  

@@ -1,0 +1,50 @@
+'\"macro stdmacro
+.if n .pH @(#)group	40.14 of 5/26/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989 AT&T
+.nr X
+.if \nX=0 .ds x} group 4 "" "\&"
+.if \nX=1 .ds x} group 4 ""
+.if \nX=2 .ds x} group 4 "" "\&"
+.if \nX=3 .ds x} group "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4group\f1 \- group file
+.SH DESCRIPTION
+The file \f4/etc/group\fP
+contains for each group the
+following information:
+.RS
+.PP
+group name
+.br
+encrypted password
+.br
+numerical group
+.SM ID
+.br
+comma-separated list of all users allowed in the group
+.RE
+.PP
+\f4group\fP
+is an
+.SM ASCII
+file.
+The fields are separated by colons;
+each group is separated from the next by a new-line.
+.PP
+Because of the encrypted
+passwords, the group file can and does have general read
+permission and can be used, for example,
+to map numerical group \s-1ID\s0s to names.
+.PP
+During user identification and authentication, the supplementary group
+access list is initialized sequentially from information in this file.
+If a user is in more groups than the system is configured for, 
+\f4{NGROUPS_MAX}\fP, a warning will be given and subsequent group 
+specifications will be ignored.
+.SH "SEE ALSO"
+\f4groups\fP(1), \f4passwd\fP(1) in the \f2User's Reference Manual\fP
+.P
+\f4newgrp\fP(1M), \f4getgroups\fP(2),
+\f4initgroups\fP(3C), \f4unistd\fP(4)

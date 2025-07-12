@@ -1,0 +1,30 @@
+'\"macro stdmacro
+.\".\" @(#)chkey 40.14 91/05/16 SMI;
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.\".\" Copyright(c) 1988 Sun Microsystems, Inc. - All Rights Reserved.
+.\".TH CHKEY 1 "9 September 1987"
+.nr X
+.if \nX=0 .ds x} chkey 1 "" "\&"
+.if \nX=1 .ds x} chkey 1 ""
+.if \nX=2 .ds x} chkey 1 "" "\&"
+.if \nX=3 .ds x} chkey "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4chkey\f1 \- change user encryption key
+.SH SYNOPSIS
+\f4chkey\f1
+.SH DESCRIPTION
+The
+\f4chkey\f1
+command prompts for a password
+and uses it to encrypt a new user encryption key.
+The encrypted key is stored in the
+\f4publickey\f1(4)
+database.
+.SH "SEE ALSO"
+\f4keylogin\f1(1),
+\f4keylogout\f1(1),
+\f4publickey\f1(4),
+\f4keyserv\f1(1M),
+\f4newkey\f1(1)

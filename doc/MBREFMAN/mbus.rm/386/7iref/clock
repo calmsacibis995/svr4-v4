@@ -1,0 +1,79 @@
+'\"macro stdmacro
+.if n .pH g1a.clock @(#)clock	40.3 of 5/17/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1990 AT&T
+.nr X
+.if \nX=0 .ds x} clock 7iref "" "\&"
+.if \nX=1 .ds x} clock 7iref ""
+.if \nX=2 .ds x} clock 7iref "" "\&"
+.if \nX=3 .ds x} clock "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4clock\fP \- Multibus II clock driver
+.SH DESCRIPTION
+The \f4clock\fP driver provides a multiplexed interface to the
+CSM clock on Multibus II systems.
+It conforms to the AT386 real time clock interface thus providing 
+a consistent interface to the UNIX System V/386 Release 4 kernel.
+.P
+The kernel interface to the \f4clock\fP driver functions is through two 
+routines that get and set the time using an address to a structure called 
+\f4rtc_t\fP.
+The two requests are \f4clkget\fP and \f4clkput\fP.
+These routines fail and return 
+a -1 if any hardware error occurs while reading or writing the \f4rtc\fP.
+The structure is defined in the file \f4/usr/include/sys/rtc.h\fP.
+The format of the structure is:
+.P
+.ft 4
+.nf
+struct   rtc_t   {
+  unsigned char rtc_sec; /*second of minute, 0-59*/
+  unsigned char rtc_asec;/*second alarm*/
+  unsigned char rtc_min; /*minute of hour, 0-59*/
+  unsigned char rtc_amin;/*minute alarm*/
+  unsigned char rtc_hr;  /*hour of the day, 1-23*/
+  unsigned char rtc_ahr; /*hour alarm*/
+  unsigned char rtc_dow; /*day of the week, 1-7*/
+  unsigned char rtc_dom; /*day of the month, 1-31*/
+  unsigned char rtc_mon; /*month of the year, 1-12*/
+  unsigned char rtc_yr;  /*year of the century, 0-99*/
+  unsigned char rtc_statusa; /*status register A*/
+  unsigned char rtc_statusb; /*status register B*/
+  unsigned char rtc_statusc; /*status register C*/
+  unsigned char rtc_statusd; /*status register D*/
+};
+.fi
+.P
+The user application interface to the \f4clock\fP driver functions
+is through two \f4ioctl\fP functions that are the same
+as the AT386 clock \f4ioctl\fP functions.
+The two requests are \f4RTCTIME\fP and \f4RTCSTIME\fP.
+They get and set the time using an address 
+to the same structure called \f4rtc_t\fP (shown above).
+The \f4ioctls\fP are defined in the file \f4/usr/include/sys/rtc.h\fP.
+.P
+The following is a list of error conditions that may be returned.
+.TP 10
+I/O Error [ \f4EIO\fP ]
+This error is printed if the driver gets an error while trying to read 
+the real-time clock chip.
+.TP
+Permission Denied [ \f4EACCESS\fP ]
+This message is printed if the user trying to access the clock device 
+(to set the time) is not the superuser.
+The message is also printed if the clock could not be set.
+.TP
+Invalid Argument [ \f4EINVAL\fP ]
+This message is printed if one of the fields used to set the time is 
+outside the prescribed limits.
+.SH FILES
+.TP 35
+\f4/usr/include/sys/clockcal.h\fP
+Driver specific definitions
+.TP
+\f4/usr/include/sys/rtc.h\fP
+Real time clock specific definitions
+.SH "SEE ALSO"
+i546(7iref),
+rtc(7).

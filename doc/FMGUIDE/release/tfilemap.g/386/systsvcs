@@ -1,0 +1,1037 @@
+'\"!  tbl | mmdoc
+.if n .pH 386.systsvcs @(#)systsvcs	40.11
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+'\"!  tbl | mmdoc
+.BK "Technology File Mapping Guide"
+.CH "System Services and Libraries" 4
+.H 1 "File System Services"
+.ig
+Among the most important services of \*(SV is to provide a consistent, orderly and easily accessed file-system.
+The \*(SV file-system is simple in structure, but more powerful and general than those found in considerably larger operating systems.
+..
+A UNIX System V file-system consists of files and directories of files arranged in a tree-like structure.
+The internal structure of a file is consistent throughout, with all input/output and file access handled uniformly.
+Files can be accessed by a full or relative path-name, have independent protection-modes, are automatically allocated and deallocated, and can be linked across directories.
+UNIX System V also allows mounting and unmounting an arbitrary number of file-systems of varying sizes anywhere in the directory tree-structure.
+.P
+The UNIX System V file-system builds hierarchically from \f4/\fP the root-directory.
+UNIX System V places few restrictions on what the file-system must contain; the root-directory normally contains certain standard sub-directories: \f4bin\fP\^, \f4tmp\fP, and \f4usr\fP (because the functions they perform are necessary for the operation of the system).
+Frequently, an installation includes additional directories such as \f4bck\fP\^, \f4boot\fP\^, \f4src\fP\^, \f4lib\fP, and \f4lost+found\fP, as well as other sub-directories to the root-directory.
+.P
+Some of the features of the UNIX System V file-system include:
+.BL
+.LI
+Simple and consistent file-naming conventions.
+The same file-naming conventions work for ordinary-files, device-files, and directories.
+File-names can be fully qualified (have an absolute file-name) or relative to any directory in the file-system hierarchy.
+.LI
+Automatic file space allocation performed invisibly to users.
+Files expand to contain the amount of data written to them, without the need for preallocation.
+When a file is removed, the disk space it used is freed.
+.LI
+A complete set of flexible directory and file-protection modes allow all combinations of read, write, and execute access-permissions, independently for the owner of each file or directory, for a group of users (such as members of a project-team), and for all other users.
+The file-protection-modes can be set dynamically.
+.LI
+Facilities for creating, accessing, moving and processing files, directories, or sets of these in a simple, uniform, and straight-forward way.
+.LI
+Each peripheral input/output device, from interactive terminals to main memory, is treated like a file, allowing uniform file and device input/output.
+.LI
+Mounting and unmounting file-systems and disk-volumes for easy administration of disk-storage.
+.LI
+File linking across directories of the same file-system.
+.LI
+Symbolic links to files and directories in the same or different file-systems.
+.LE
+.P
+Symbolic links, unlike hard links, work across file-systems.
+Symbolic links are created with \f4symlink()\fP\^, accessed with \f4readlink()\fP, and queried with \f4lstat()\fP\^.
+Symbolic links are useful for networking because they can span machine boundaries and file-systems to create both inter-system and intra-system directory structures.
+.H 2 "File Directory Functions"
+.XS I N
+.S -1 -2
+.TS
+tab(	);
+l3f5w(2.25i) l3f1.
+lib/libc/i386/sys/chdir.s
+lib/libc/i386/sys/fchdir.s
+lib/libc/i386/sys/getdents.s
+lib/libc/i386/sys/mkdir.s
+lib/libc/i386/sys/rmdir.s
+lib/libc/port/gen/closedir.c
+lib/libc/port/gen/opendir.c
+lib/libc/port/gen/readdir.c
+lib/libc/port/gen/rewinddir.c
+lib/libc/port/gen/seekdir.c
+lib/libc/port/gen/telldir.c
+lib/libgen/dirname.c
+lib/libgen/mkdirp.c
+lib/libgen/rmdirp.c
+.TE
+.S
+.XF
+.H 2 "File Status Functions"
+.XS I N
+.S -1 -2
+.TS
+tab(	);
+l3f5w(2.25i) l3f1.
+lib/libc/i386/sys/fstat.s
+lib/libc/i386/sys/fstatf.s
+lib/libc/i386/sys/fstatfs.s
+lib/libc/i386/sys/fstatvfs.s
+lib/libc/i386/sys/fxstat.s
+lib/libc/i386/sys/lstat.s
+lib/libc/i386/sys/lxstat.s
+lib/libc/i386/sys/stat.s
+lib/libc/i386/sys/statf.s
+lib/libc/i386/sys/statfs.s
+lib/libc/i386/sys/statvfs.s
+lib/libc/i386/sys/ustat.s
+lib/libc/i386/sys/xstat.s
+.TE
+.S
+.XF
+.H 2 "File Creation & Removal Functions"
+.XS I N
+.S -1 -2
+.TS
+tab(	);
+l3f5w(2.25i) l3f1.
+lib/libc/i386/sys/creat.s
+lib/libc/i386/sys/link.s
+lib/libc/i386/sys/mknod.s
+lib/libc/i386/sys/open.s
+lib/libc/i386/sys/unlink.s
+lib/libc/i386/sys/xmknod.s
+lib/libc/port/gen/mkdev.c
+lib/libc/port/gen/mkfifo.c
+lib/libc/port/gen/mktemp.c
+.TE
+.S
+.XF
+.H 2 "File System Functions"
+.XS I N
+.S -1 -2
+.TS
+tab(	);
+l3f5w(2.25i) l3f1.
+lib/libc/i386/sys/_rename.s
+lib/libc/i386/sys/access.s
+lib/libc/i386/sys/chmod.s
+lib/libc/i386/sys/chown.s
+lib/libc/i386/sys/chroot.s
+lib/libc/i386/sys/fchmod.s
+lib/libc/i386/sys/fchown.s
+lib/libc/i386/sys/fpathconf.s
+lib/libc/i386/sys/lchown.s
+lib/libc/i386/sys/mount.s
+lib/libc/i386/sys/pathconf.s
+lib/libc/i386/sys/readlink.s
+lib/libc/i386/sys/symlink.s
+lib/libc/i386/sys/sync.s
+lib/libc/i386/sys/umask.s
+lib/libc/i386/sys/umount.s
+lib/libc/i386/sys/utime.s
+lib/libc/port/gen/_xftw.c
+lib/libc/port/gen/ftw.c
+lib/libc/port/gen/getcwd.c
+lib/libc/port/gen/getmntent.c
+lib/libc/port/gen/getvfsent.c
+lib/libc/port/gen/nftw.c
+lib/libc/port/gen/realpath.c
+lib/libc/port/gen/rename.c
+lib/libc/port/gen/tell.c
+lib/libgen/basename.c
+lib/libgen/pathfind.c
+.TE
+.S
+.XF
+.H 1 "I/O System Services"
+The lowest level of I/O in UNIX System V provides no buffering or other such services, but it offers the most control over I/O.
+System-calls that are direct entries to the kernel control all user I/O.
+UNIX System V makes these calls simple, uniform, and regular to eliminate differences between ordinary disk-files and I/O devices, such as terminals, tape-drives, and line-printers.
+.P
+In SVR3, STREAMS I/O introduced a flexible coroutine-based design to replace the traditional rigid connection between processes and terminals or networks.
+.ig
+Using STREAMS I/O, programs may also connect to other programs to do inter-process communication.
+..
+STREAMS I/O defines standard programming interfaces in the kernel for character I/O processing modules that implement device-drivers, protocol-handlers, and other line-disciplines.
+User-processes may dynamically insert STREAMS I/O processing modules into the stream of data that flows between a user-process and a STREAMS I/O device or between a user process and another user-process.
+.P
+A stream is a full-duplex connection between a user-process and an open device or pseudo-device.
+.ig
+A stream consists of several linearly connected processing modules, much like a Shell pipeline, except data flows in both directions.
+..
+A stream resembles a Shell pipeline, except data flows in both directions.
+A stream may include one or more I/O processing modules interposed between the user-process at the upstream end of the stream and the device-driver (or pseudo-device-driver) at the downstream end of the stream.
+The stream and its modules reside entirely within the kernel, presenting to a user-process an interface that is consistent and compatible with the UNIX System V character I/O subsystem.
+.P
+Opening a STREAMS I/O device creates a stream between the
+stream head at the user end of the stream and the device driver (or
+pseudo-device-driver) at the device end of the stream.
+These two ends of a stream are connected automatically when the device is opened; intermediate modules are attached dynamically using \f4ioctl()\fP calls to push new modules onto the stream one at a time in Last-In, First-Out (LIFO) style (as in a push-down stack).
+.P
+STREAMS I/O works on messages that flow in both directions through a stream.
+Calls to \f4write()\fP\^, \f4putmsg()\fP, and \f4ioctl()\fP cause messages to be sent down the stream; calls to \f4read()\fP and \f4getmsg()\fP take data from messages arriving at the stream-head and return them to a user-process.
+The stream-head packages data into messages and sends them down the stream to the device-driver.
+At the device end of the stream, the device driver takes data, state
+transitions, and signals received from the device, composes them into messages,
+and sends the messages upstream.
+Intermediate modules receive all messages going upstream and downstream,
+optionally processes them, and passes them on to the next module in the stream.
+.P
+Each STREAMS I/O module is self-contained and functionally isolated from any other module in the stream except its two neighboring modules.
+The modules in a stream communicate through a well defined message passing
+interface.
+A module takes a message from one of its neighboring modules, inspects the type, processes it or just passes it on to the other neighbor.
+A given module may not recognize and process every message in the stream, but every module in the stream handles every message.
+STREAMS I/O processing modules are symmetrical, with identical read (upstream) and write (downstream) interfaces.
+.H 2 "File Descriptor Functions"
+.XS I N
+.S -1 -2
+.TS
+tab(	);
+l3f5w(2.25i) l3f1.
+lib/libc/i386/sys/close.s
+lib/libc/i386/sys/dup.s
+lib/libc/i386/sys/pipe.s
+lib/libc/port/gen/dup2.c
+lib/libc/port/gen/fattach.c
+lib/libc/port/gen/fdetach.c
+lib/libc/port/gen/isastream.c
+lib/libc/port/gen/select.c
+.TE
+.S
+.XF
+.H 2 "Data Transfer Functions"
+.XS I N
+.S -1 -2
+.TS
+tab(	);
+l3f5w(2.25i) l3f1.
+lib/libc/i386/sys/getmsg.s
+lib/libc/i386/sys/getpmsg.s
+lib/libc/i386/sys/putmsg.s
+lib/libc/i386/sys/putpmsg.s
+lib/libc/i386/sys/read.s
+lib/libc/i386/sys/readv.s
+lib/libc/i386/sys/write.s
+lib/libc/i386/sys/writev.s
+.TE
+.S
+.XF
+.H 2 "I/O Control Functions"
+.XS I N
+.S -1 -2
+.TS
+tab(	);
+l3f5w(2.25i) l3f1.
+lib/libc/i386/sys/fcntl.s
+lib/libc/i386/sys/fsync.s
+lib/libc/i386/sys/ioctl.s
+lib/libc/i386/sys/lseek.s
+lib/libc/i386/sys/poll.s
+lib/libc/i386/sys/uadmin.s
+lib/libc/i386/sys/ulimit.s
+lib/libc/port/gen/truncate.c
+lib/libc/port/sys/lockf.c
+.TE
+.S
+.XF
+.H 2 "TTY Control Functions"
+.XS I N
+.S -1 -2
+.TS
+tab(	);
+l3f5w(2.25i) l3f1.
+lib/libc/i386/sys/gtty.s
+lib/libc/i386/sys/stty.s
+lib/libc/port/gen/cfgetispeed.c
+lib/libc/port/gen/cfgetospeed.c
+lib/libc/port/gen/cfsetispeed.c
+lib/libc/port/gen/cfsetospeed.c
+lib/libc/port/gen/pt.c
+lib/libc/port/gen/tcdrain.c
+lib/libc/port/gen/tcflow.c
+lib/libc/port/gen/tcflush.c
+lib/libc/port/gen/tcgetattr.c
+lib/libc/port/gen/tcgetpgrp.c
+lib/libc/port/gen/tcgetsid.c
+lib/libc/port/gen/tcsendbreak.c
+lib/libc/port/gen/tcsetattr.c
+lib/libc/port/gen/tcsetpgrp.c
+.TE
+.S
+.XF
+.H 1 "Memory System Services"
+Memory System Services implement Virtual Memory (VM) operations that support a single-level store which lets processes access files and devices as ranges of bytes within the virtual address space of the process.
+A single-level store creates a seamless transition between access to primary storage in main memory and secondary storage on disk; this can eliminate copying data buffers to and from the kernel and the process address space.
+When a process maps a file into the process's own virtual address space, it can access data stored in the file as though the data resided in an array in memory, independent of the location of data on primary or secondary storage.
+.P
+Some programs benefit greatly by mapping a file or device into the process address space because it simplifies input/output for the program; it can even make some programs possible that would otherwise require writing kernel code.
+For example, a lightweight process library can use Virtual Memory System Services to let a number of processes work from the same address space by sharing the same page frames.
+.P
+In order to respond quickly to internal and external events, a program can lock a portion of itself into memory.
+Using the \f4plock()\fP system-call, processes can lock text segments or data segments, or both, into memory.
+Locking a process-segment into memory renders it immune to swapping or paging.
+A program can lock arbitrary memory segments of its address space into memory using the new \f4memcntl()\fP system-call; otherwise, the program must either lock its entire address space in memory, thereby consuming a large amount of memory, or suffer any potential delays caused by paging the process.
+Many real-time applications find memory-locking a necessary feature.
+.P
+Enhanced Memory Locking offers an extension to the existing \f4plock()\fP function for applications that require more deterministic response. 
+A new \f4memcntl()\fP function allows an application to lock arbitrary memory segments of its address space into memory.
+An application can thus lock a portion of itself in order to respond to internal or external events quickly.
+Otherwise, the application must either lock its entire address space in memory, which imposes higher memory requirements on the system, or incur potential delay caused by swapping the process into main memory. 
+.H 2 "Virtual Memory Functions"
+.XS I N
+.S -1 -2
+.TS
+tab(	);
+l3f5w(2.25i) l3f1.
+lib/libc/i386/sys/mincore.s
+lib/libc/i386/sys/mmap.s
+lib/libc/i386/sys/mprotect.s
+lib/libc/i386/sys/munmap.s
+lib/libc/port/gen/memalign.c
+lib/libc/port/gen/msync.c
+lib/libc/port/gen/valloc.c
+.TE
+.S
+.XF
+.H 2 "Memory Control Functions"
+.XS I N
+.S -1 -2
+.TS
+tab(	);
+l3f5w(2.25i) l3f1.
+lib/libc/i386/sys/memcntl.s
+lib/libc/port/gen/mlock.c
+lib/libc/port/gen/mlockall.c
+lib/libc/port/gen/munlock.c
+lib/libc/port/gen/munlockall.c
+lib/libc/port/gen/swapctl.c
+.TE
+.S
+.XF
+.H 1 "Process System Services"
+A primary function of the UNIX System V kernel is to control and oversee the execution of user-processes and to manage system resources.
+Process-creation is essential to the basic operation of UNIX System V because each command run by the UNIX System V Shell executes in its own process.
+This scheme makes a number of services easy to provide; for example, I/O redirection is a simple operation performed entirely in the child-process that executes the command.
+No memory in the Shell parent-process is required to rescind the change in standard input and output.
+Background processes likewise require no new mechanism; the Shell merely refrains from waiting for commands executing in the background to complete.
+Finally, recursive use of the Shell to interpret a sequence of commands stored in a file is in no way a special operation.
+.P
+New processes are created by the \f4fork()\fP system-call, which creates a child-process with code and data copied from the parent-process that created the child-process.
+The child inherits the open files of the parent, and executes independently of it unless the parent explicitly waits for the termination of the child.
+Each new process receives a set of character-string arguments from its creator and returns a byte of status information when it terminates.
+.P
+Signals are the most common way for a process to receive notification that an event has occurred.
+Interrupts from the terminal, for example, cause a signal to be sent to the processes attached to that terminal; faults such as addressing errors are also turned into signals.
+In addition, one process can send signals to another process.
+Signals interrupt the normal flow of control in a process; thus, a process must prearrange how to handle signals via the \f4signal\fP system-calls (the default action is termination).
+Signals ordinarily force termination, but may, at the choice of the program, be ignored or cause a simulated hardware interrupt.
+.P
+To identify individual users and groups of users, UNIX System V assigns each user a numeric user-id and group-id as well as any supplementary group-id for job-control.
+Each process inherits the user-id and group-id of the user (or process) that created it.
+UNIX System V grants permission to \f4read\fP, \f4write\fP, or \f4execute\fP files based on the user-id and group-id of a process.
+.ig
+.P
+Each active process has an effective-user-id and an effective-group-id used to determine file-access-permissions.
+The effective-user-id and effective-group-id are equal to the process's real-user-id and real-group-id respectively, unless the process or one of its ancestors evolved from a file with the set-user-id bit or set-group-id bit set.
+In addition, they can be reset with \f4setuid()\fP and \f4setgid()\fP system-calls, respectively.
+.P
+Permissions to \f2read\f1, \f2write\f1 and \f2execute/search\f1 a file are granted to a process if one or more of the following are true:
+.LB 3 0 0 0 \(bu 1 1
+.LI
+The effective-user-id of the process is super-user.
+.LI
+The effective-user-id of the process matches the user-id of the owner of the file and the appropriate access-permission-bit of the \f2owner\f1 portion of the file-mode is set.
+.LI
+The effective-user-id of the process does not match the user-id of the owner of the file and the effective-group-id of the process matches the group of the file and the appropriate access-permission-bit of the \f2group\f1 portion of the file-mode is set.
+.LI
+The effective-user-id of the process does not match the user-id of the owner of the file and the effective-group-id of the process does not match the group-id of the file and the appropriate access-permission-bit of the \f2other\f1 portion of the file-mode is set.
+.LE 1
+Otherwise, the corresponding permissions are denied.
+.P
+The UNIX System V kernel supports demand-paging to allow the system to run programs that are larger than the actual physical memory available, and make the computer more efficient when running multiple programs.
+.P
+When a process invokes a system-call, the process enters the kernel by a processor trap.
+During this trap, the environment of the process switches from ``user-mode'' to ``kernel-mode.''
+In the normal definition of processes, the user and kernel modes are different phases of the same process (they never coexist and a process is always in either user-mode or kernel-mode).
+From a strictly functional standpoint, it can be said these are no ``system'' processes; instead, there are simply processes in either a user or kernel mode.
+.P
+Process scheduling synchronizes the multitude of processes sharing a single CPU.
+Processes are synchronized using a sleep/wakeup mechanism.
+All active processes are either sleeping (non-runnable and waiting on some event, timer or alarm), on the run-queue or actually running (only one process at a time can run, i.e. use the CPU).
+The kernel monitors the run-status of processes through a table of all active processes.
+..
+.P
+UNIX System V uniquely identifies each active-process by a positive-integer called a process-id.
+By convention, process-id \f40\fP and \f41\fP are reserved for special system-processes.
+UNIX System V uses the process-id to identify system resources allocated to a process; especially open files shared by multiple processes.
+In addition to a process-id, each active-process possesses a parent-process-id.
+The parent-process-id of a process is the process-id of its creator, for the lifetime of its creator.
+.P
+Although UNIX System V identifies individual processes by a unique process-id number, it must sometimes identify processes as a group; thus, each process belongs to a process-group.
+A process-group-id uniquely identifies a process-group using the process-id of the process-group-leader, which is a process with the same process-group-id as its process-id.
+Any process other than a process-group-leader may detach itself from its current process-group and become a new process-group-leader by calling the \f4setpgrp()\fP system-call.
+.P
+Grouping processes permits related processes to receive the same signal.
+For instance, processes created by a common login Shell are related; hence, all such processes receive signals when a user hits the \f4delete\fP or \f4break\fP key or when the terminal line hangs up.
+The process-group-id identifies the group of related processes that receive common signals for certain events.
+All processes belonging to the same process-group share the same process-group-id that each process inherits from the process that created it.
+A process can belong to more than one process-group at a time.
+The \f4getgroups()\fP system-call yields the group-access-list for a process, while \f4setgroups()\fP alters the group-access-list.
+.P
+For synchronizing the activities of independent processes and process-groups, UNIX System V offers three methods of inter-process communication (IPC):
+.BL
+.LI
+message-queues
+.LI
+semaphores
+.LI
+shared-memory
+.LE 
+.P
+All of these use a common structure type, \f4ipc_perm\fP (defined in the \f4<ipc.h>\fP header file), to pass information about permission to use an IPC-operation.
+.P
+The message-queue facility provides a form of inter-process communication through which unrelated processes can conveniently share data using messages.
+When processes only share messages, they keep their internal data structures independent of each another.
+The message-queue facility establishes one or more queues to place messages on for other processes to retrieve.
+A control data structure associated with each message-queue can restrict access to that specific message-queue.
+.P
+The semaphore facility provides a synchronization mechanism for controlling access by multiple processes to shared system resources.
+Operations on semaphores lock resources for updating by one process at a time, and can support update ordering.
+.P
+The shared-memory facility provides for processes to share data using common areas of memory.
+These facilities control access to shared-memory segments and synchronize updates done by multiple processes.
+Database applications often use the shared-memory facility.
+.H 2 "Process Execution & Control Functions"
+.XS I N
+.S -1 -2
+.TS
+tab(	);
+l3f5w(2.25i) l3f1.
+lib/libc/i386/gen/cuexit.s
+lib/libc/i386/gen/getctxt.c
+lib/libc/i386/gen/makectxt.c
+lib/libc/i386/gen/setjmp.s
+lib/libc/i386/gen/siginfolst.c
+lib/libc/i386/gen/siglongjmp.c
+lib/libc/i386/gen/sigsetjmp.s
+lib/libc/i386/gen/swapctxt.c
+lib/libc/i386/sys/_sigaction.s
+lib/libc/i386/sys/_signal.s
+lib/libc/i386/sys/adjtime.s
+lib/libc/i386/sys/alarm.s
+lib/libc/i386/sys/execl.s
+lib/libc/i386/sys/execle.s
+lib/libc/i386/sys/exect.s
+lib/libc/i386/sys/execv.s
+lib/libc/i386/sys/execve.s
+lib/libc/i386/sys/exit.s
+lib/libc/i386/sys/fork.s
+lib/libc/i386/sys/kill.s
+lib/libc/i386/sys/nice.s
+lib/libc/i386/sys/pause.s
+lib/libc/i386/sys/plock.s
+lib/libc/i386/sys/profil.s
+lib/libc/i386/sys/ptrace.s
+lib/libc/i386/sys/sigaction.c
+lib/libc/i386/sys/sigaltstk.s
+lib/libc/i386/sys/signal.s
+lib/libc/i386/sys/sigpending.s
+lib/libc/i386/sys/sigprocmsk.s
+lib/libc/i386/sys/sigsendset.s
+lib/libc/i386/sys/sigsuspend.s
+lib/libc/i386/sys/ucontext.s
+lib/libc/i386/sys/vfork.s
+lib/libc/i386/sys/wait.s
+lib/libc/i386/sys/waitid.s
+lib/libc/port/gen/abort.c
+lib/libc/port/gen/atexit.c
+lib/libc/port/gen/execvp.c
+lib/libc/port/gen/import_def.c
+lib/libc/port/gen/psiginfo.c
+lib/libc/port/gen/psignal.c
+lib/libc/port/gen/raise.c
+lib/libc/port/gen/sigflag.c
+lib/libc/port/gen/siglist.c
+lib/libc/port/gen/sigsend.c
+lib/libc/port/gen/sigsetops.c
+lib/libc/port/gen/sleep.c
+lib/libc/port/gen/ssignal.c
+lib/libc/port/gen/str2sig.c
+lib/libc/port/gen/waitpid.c
+lib/libc/port/sys/execl.c
+lib/libc/port/sys/execle.c
+lib/libc/port/sys/execv.c
+lib/libc/port/sys/makefile
+.TE
+.S
+.XF
+.H 2 "Process Status & Resource Functions"
+.XS I N
+.S -1 -2
+.TS
+tab(	);
+l3f5w(2.25i) l3f1.
+lib/libc/i386/sys/acct.s
+lib/libc/i386/sys/getegid.s
+lib/libc/i386/sys/geteuid.s
+lib/libc/i386/sys/getgid.s
+lib/libc/i386/sys/getgroups.s
+lib/libc/i386/sys/getpid.s
+lib/libc/i386/sys/getppid.s
+lib/libc/i386/sys/getrlimit.s
+lib/libc/i386/sys/getuid.s
+lib/libc/i386/sys/nuname.s
+lib/libc/i386/sys/sbrk.s
+lib/libc/i386/sys/seteguid.s
+lib/libc/i386/sys/setgid.s
+lib/libc/i386/sys/setgroups.s
+lib/libc/i386/sys/setpgrp.s
+lib/libc/i386/sys/setrlimit.s
+lib/libc/i386/sys/setsid.s
+lib/libc/i386/sys/setuid.s
+lib/libc/i386/sys/setuname.s
+lib/libc/i386/sys/stime.s
+lib/libc/i386/sys/sysconfig.s
+lib/libc/i386/sys/time.s
+lib/libc/i386/sys/times.s
+lib/libc/i386/sys/uname.s
+lib/libc/port/gen/calloc.c
+lib/libc/port/gen/cfree.c
+lib/libc/port/gen/getenv.c
+lib/libc/port/gen/getlogin.c
+lib/libc/port/gen/initgroups.c
+lib/libc/port/gen/isatty.c
+lib/libc/port/gen/mallint.h
+lib/libc/port/gen/malloc.c
+lib/libc/port/gen/putenv.c
+lib/libc/port/gen/str2id.c
+lib/libc/port/gen/sysconf.c
+lib/libc/port/gen/ttyname.c
+lib/libmalloc/*
+.TE
+.S
+.XF
+.H 2 "Inter-Process Communication"
+.XS I N
+.S -1 -2
+.TS
+tab(	);
+l3f5w(2.25i) l3f1.
+lib/libc/i386/sys/msgsys.c
+lib/libc/i386/sys/msgsys.s
+lib/libc/i386/sys/semsys.c
+lib/libc/i386/sys/semsys.s
+lib/libc/i386/sys/shmsys.c
+lib/libc/i386/sys/shmsys.s
+lib/libc/port/sys/msgsys.c
+lib/libc/port/sys/semsys.c
+lib/libc/port/sys/shmsys.c
+.TE
+.S
+.XF
+.H 2 "Kernel System Functions"
+.XS I N
+.S -1 -2
+.TS
+tab(	);
+l3f5w(2.25i) l3f1.
+lib/libc/i386/sys/sysi86.s
+lib/libc/i386/sys/syscall.s
+lib/libc/i386/sys/sysfs.s
+lib/libc/i386/sys/sysinfo.s
+lib/libc/i386/sys/utssys.s
+.TE
+.S
+.XF
+.H 1 "\f(HBC\fP Language Libraries"
+The C library, which accompanies the C language, adds function to the otherwise very compact and spare C programming language, and makes C flexible, efficient, and highly consistent across different systems.
+The functions in the C library satisfy the need for various commonly used operations, and programmers can create new C functions to meet specific needs.
+Programmers may use C library functions in a program and link the functions into the program when preparing it for execution.
+.ig
+The \*(Cc compiler \f4cc\fP command automatically searchs the standard \*(Cc library to resolve undefined external references.
+To have other libraries searched requires specific linker options on the \f4cc\fP command line.
+For example, the mathematical library (\*(CfMF\*(Cx \(em Mathematical Functions) is searched by using the option \f4-lm\fP on the command line as follows:
+.P
+.DS I
+\f4cc \f2file\fP.c -lm\fP
+.DE
+.P
+Other libraries include
+the \f4lex\fP library (\^\f4cc -ll\fP\^) to compile programs generated by \f4lex\fP [see \*(CfLEX(SD_CMD)\*(Cx]
+and
+the \f4yacc\fP library (\^\f4cc -ly\fP\^) to support \f4yacc\fP [see \*(CfYACC(SD_CMD)\*(Cx].
+.P
+.tl ''\f3Header Files\f1''
+.P
+.DS CB
+.LB 21 0 1 0 \(em 0 0
+.LI "\f4errno.h\fP" 1
+Error Codes & Conditions
+.LI "\f4stddef.h\fP" 1
+Common Definitions
+.LI "\f4assert.h\fP" 1
+Program Diagnostic Routines
+.LI "\f4ctype.h\fP" 1
+Character Handling Routines
+.LI "\f4locale.h\fP" 1
+Localization Routines
+.LI "\f4math.h\fP" 1
+Mathematical Functions
+.LI "\f4setjmp.h\fP" 1
+Non-local Jump Functions
+.LI "\f4signal.h\fP" 1
+Signal Handling Routines
+.LI "\f4stdarg.h\fP" 1
+Variable Arguments
+.LI "\f4stdio.h\fP" 1
+Standard I/O Routines
+.LI "\f4stdlib.h\fP" 1
+Common Library Routines
+.LI "\f4string.h\fP" 1
+String Handling Routines
+.LI "\f4time.h\fP" 1
+Date & Time Routines
+.LI "\f4types.h\fP" 1
+Standard Type Definitions
+.LI "\f4unistd.h\fP" 1
+Implementation Constants
+.LE 1
+.DE
+..
+.H 2 "Run-Time Loader Library"
+SVR4 provides for run-time dynamic linking of shared library routines with user programs.
+Dynamic linking is provided through a user-level linker program implemented using the interfaces provided by the virtual memory subsystem.
+Dynamic linking guarantees that an application always uses the latest version of all library routines and provides assurance that applications will continue to run properly as the underlying operating system evolves.
+The capability of compiling programs using traditional archive libraries continues to be available.
+.P
+.DS I
+\f4lib/rtld/*\fP
+.DE
+.H 2 "Standard I/O Library"
+Standard I/O (\f4stdio\f1) implements an efficient, user-level buffering scheme to provide portable input/output services for most C programs.
+Standard I/O is available on every computer system that supports the C language; thus, C programs that confine their input/output to facilities of Standard I/O can be transported from one system to another, essentially without change.
+The formatted input [\f4scanf()\fP\^] and output [\f4printf()\fP\^] family of functions use a format-specification string, along with a list of variables.
+The format-specification consists of normal characters transferred from standard input [in the case of \f4scanf()\fP], or onto standard output [in the case of \f4printf()\fP], and special specification sequences that begin with a percent sign.
+Furthermore, format-specifications can include field-width and justification format controls, as well as controls for new-lines, horizontal and vertical tabbing, back-spaces, form-feeds, etc.
+.P
+.XS I N
+.S -1 -2
+.TS
+tab(	);
+l3f5w(2.25i) l3f1.
+lib/libc/port/print/*
+lib/libc/port/stdio/*
+lib/libgen/p2open.c
+lib/libgenIO/*
+.TE
+.S
+.XF
+.H 2 "Character and String Handling Library"
+The string-handling functions manipulate strings which are arrays of characters.
+Some string-handling functions attach one string to the end of another to create a longer string (catenation), others search strings for specific characters or do lexicographic comparisons, such as testing the equality of two strings.
+The routines that do regular-expression pattern-matching also fall into the same category as string-handling functions.
+.P
+The character processing functions take a single argument and perform a logical operation.
+For example, the function \f4isascii()\fP returns a logical result stating whether the argument is an \f4ASCII\f1 character (\^\f40\fP to \f4177\fP octal).
+The other functions return a logical result stating whether the argument is a particular type of \f4ASCII\f1 character.
+.P
+.XS I N
+.S -1 -2
+.TS
+tab(	);
+l3f5w(2.25i) l3f1.
+lib/libc/i386/gen/memccpy.s
+lib/libc/i386/gen/memchr.s
+lib/libc/i386/gen/memcmp.s
+lib/libc/i386/gen/memcpy.s
+lib/libc/i386/gen/memset.s
+lib/libc/i386/gen/strcat.s
+lib/libc/i386/gen/strchr.s
+lib/libc/i386/gen/strcmp.s
+lib/libc/i386/gen/strcpy.s
+lib/libc/i386/gen/strlen.s
+lib/libc/i386/gen/strncat.s
+lib/libc/i386/gen/strncmp.s
+lib/libc/i386/gen/strncpy.s
+lib/libc/i386/gen/strrchr.s
+lib/libc/i386/gen/strtod.c
+lib/libc/port/gen/_ctype.c
+lib/libc/port/gen/_set_tab.c
+lib/libc/port/gen/_shrd_data.c
+lib/libc/port/gen/_wchar.h
+lib/libc/port/gen/cat_init.c
+lib/libc/port/gen/catclose.c
+lib/libc/port/gen/catgets.c
+lib/libc/port/gen/catopen.c
+lib/libc/port/gen/cftime.c
+lib/libc/port/gen/ctime.c
+lib/libc/port/gen/ctype.c
+lib/libc/port/gen/ctypefcns.c
+lib/libc/port/gen/getdate.c
+lib/libc/port/gen/getdate_data.c
+lib/libc/port/gen/getdate_gd.c
+lib/libc/port/gen/mbstowcs.c
+lib/libc/port/gen/mbtowc.c
+lib/libc/port/gen/memccpy.c
+lib/libc/port/gen/memchr.c
+lib/libc/port/gen/memcmp.c
+lib/libc/port/gen/memcpy.c
+lib/libc/port/gen/memmove.c
+lib/libc/port/gen/memset.c
+lib/libc/port/gen/old_tolower.c
+lib/libc/port/gen/old_toupper.c
+lib/libc/port/gen/strcat.c
+lib/libc/port/gen/strchr.c
+lib/libc/port/gen/strcmp.c
+lib/libc/port/gen/strcpy.c
+lib/libc/port/gen/strcspn.c
+lib/libc/port/gen/strdup.c
+lib/libc/port/gen/strerror.c
+lib/libc/port/gen/strftime.c
+lib/libc/port/gen/strlen.c
+lib/libc/port/gen/strncat.c
+lib/libc/port/gen/strncmp.c
+lib/libc/port/gen/strncpy.c
+lib/libc/port/gen/strpbrk.c
+lib/libc/port/gen/strrchr.c
+lib/libc/port/gen/strspn.c
+lib/libc/port/gen/strstr.c
+lib/libc/port/gen/strtod.c
+lib/libc/port/gen/strtok.c
+lib/libc/port/gen/strtol.c
+lib/libc/port/gen/strtoul.c
+lib/libc/port/gen/strxfrm.c
+lib/libc/port/gen/swab.c
+lib/libc/port/gen/time_data.c
+lib/libc/port/gen/time_gdata.c
+lib/libc/port/gen/tolower.c
+lib/libc/port/gen/toupper.c
+lib/libc/port/gen/wcstombs.c
+lib/libc/port/gen/wctomb.c
+lib/libgen/_range.h
+lib/libgen/_regexp.h
+lib/libgen/_wchar.h
+lib/libgen/gmatch.c
+lib/libgen/reg_compile.c
+lib/libgen/reg_step.c
+lib/libgen/regcmp.c
+lib/libgen/regex.c
+lib/libgen/regexpr.h
+lib/libgen/strccpy.c
+lib/libgen/strecpy.c
+lib/libgen/strfind.c
+lib/libgen/strrspn.c
+lib/libgen/strtrns.c
+lib/libgen/synonyms.h
+lib/libw/*
+.TE
+.S
+.XF
+.H 2 "Searching and Sorting Library"
+.XS I N
+.S -1 -2
+.TS
+tab(	);
+l3f5w(2.25i) l3f1.
+lib/libc/port/gen/bsearch.c
+lib/libc/port/gen/ffs.c
+lib/libc/port/gen/hsearch.c
+lib/libc/port/gen/insque.c
+lib/libc/port/gen/lfind.c
+lib/libc/port/gen/lsearch.c
+lib/libc/port/gen/qsort.c
+lib/libc/port/gen/tfind.c
+lib/libc/port/gen/tsearch.c
+.TE
+.S
+.XF
+.H 2 "Wide Character Library"
+.DS I
+\f4lib/libw/*\fP
+.DE
+.H 2 "Mathematical Library"
+The mathematical functions of the C library perform calculations used in engineering and scientific applications.
+The mathematical functions include trigonometric and hyperbolic trigonometric functions, exponential, logarithmic, power functions, floating-point,
+Bessel and Gamma functions, and other mathematical functions.
+.P
+.XS I N
+.S -1 -2
+.TS
+tab(	);
+l3f5w(2.25i) l3f1.
+lib/libc/i386/gen/abs.s
+lib/libc/i386/gen/atof.c
+lib/libc/i386/gen/biglitpow.s
+lib/libc/i386/gen/dtop.c
+lib/libc/i386/gen/ecvt.c
+lib/libc/i386/gen/frexp.c
+lib/libc/i386/gen/ladd.s
+lib/libc/i386/gen/lconstants.c
+lib/libc/i386/gen/ldexp.c
+lib/libc/i386/gen/ldivide.s
+lib/libc/i386/gen/lexp10.c
+lib/libc/i386/gen/llog10.c
+lib/libc/i386/gen/lmul.s
+lib/libc/i386/gen/lshiftl.s
+lib/libc/i386/gen/lsign.s
+lib/libc/i386/gen/lsub.s
+lib/libc/i386/gen/ltostr.c
+lib/libc/i386/gen/ptod.c
+lib/libc/port/gen/a64l.c
+lib/libc/port/gen/abs.c
+lib/libc/port/gen/atof.c
+lib/libc/port/gen/atoi.c
+lib/libc/port/gen/atol.c
+lib/libc/port/gen/div.c
+lib/libc/port/gen/drand48.c
+lib/libc/port/gen/ecvt.c
+lib/libc/port/gen/frexp.c
+lib/libc/port/gen/gcvt.c
+lib/libc/port/gen/l3.c
+lib/libc/port/gen/l64a.c
+lib/libc/port/gen/ldexp.c
+lib/libc/port/gen/modf.c
+lib/libc/port/gen/modff.c
+lib/libc/port/gen/rand.c
+lib/libm/*
+uts/i386/io/ladd.s	double long add routine
+uts/i386/io/ldivide.c	double long divide routine
+uts/i386/io/lmul.c	double long multiply routine
+uts/i386/io/lshiftl.s	double long shift left/right routine
+uts/i386/io/lsign.s	double long sign routine
+uts/i386/io/lsub.s	double long subtract routine
+uts/i386/sys/dl.h	double long structure and routines:  struct \fIdl\fP
+.TE
+.S
+.XF
+.XK
+.H 2 "Floating-point Library"
+.XS I N
+.S -1 -2
+.TS
+tab(	);
+l3f5w(2.25i) l3f1.
+lib/libc/i386/fp/*
+uts/i386/fp/*
+uts/i386/master.d/fp/*	configuration files for \f4fp\fP boot module
+uts/i386/master.d/weitek/*	configuration files for \f4weitek\fP boot module
+uts/i386/ml/weitek.s	WEITEK floating point processor handling
+uts/i386/io/weitek.c	WEITEK floating point processor handling
+uts/i386/sys/fp.h	0287/80387 floating point processor defines
+uts/i386/sys/weitek.h	WEITEK floating point processor defines
+.TE
+.S
+.XF
+.H 2 "Miscellaneous Library"
+.XS I N
+.S -1 -2
+.TS
+tab(	);
+l3f5w(2.25i) l3f1.
+arch/mbus/lib/*	
+arch/mbus/tools/llib-lkernel.c
+lib/.lib.mk
+lib/.libmk.temp
+lib/libc/inc/*
+lib/libc/libc.mk
+lib/libc/i386/abi_objects
+lib/libc/i386/crt/*
+lib/libc/i386/gen/i386_data.s
+lib/libc/i386/gen/sh_data.c
+lib/libc/i386/m4.def
+lib/libc/i386/makefile
+lib/libc/i386/mcount.def
+lib/libc/i386/nonpic.def
+lib/libc/i386/pic.def
+lib/libc/i386/shared_objects
+lib/libc/i386/shlibc.mk
+lib/libc/i386/spec
+lib/libc/i386/sys.def
+lib/libc/i386/gen/fk_ctype.s
+lib/libc/i386/gen/fk_iob.s
+lib/libc/i386/gen/fpgetrnd.s
+lib/libc/i386/gen/fpsetrnd.s
+lib/libc/i386/gen/gen_def.c
+lib/libc/i386/gen/isnand.s
+lib/libc/i386/gen/isnanf.s
+lib/libc/i386/gen/mall_data.s
+lib/libc/port/gen/clock.c
+lib/libc/port/gen/errlist
+lib/libc/port/gen/errlist.awk
+lib/libc/port/gen/ftok.c
+lib/libc/port/gen/gethz.c
+lib/libc/port/gen/makefile
+lib/libc/port/gen/perror.c
+lib/libc/port/gen/syslog.c
+lib/libc/port/gen/time_comm.c
+lib/libc/port/gen/values-Xa.c
+lib/libc/port/gen/values-Xc.c
+lib/libc/port/gen/values-Xt.c
+lib/libc/port/makefile
+lib/libcmd/*
+lib/libgen/bgets.c
+lib/libgen/bufsplit.c
+lib/libgen/copylist.c
+lib/libgen/eaccess.c
+lib/libgen/libgen.h
+lib/libgen/libgen.mk
+lib/libgen/mklib-dot-h
+.TE
+.S
+.XF
+.H 1 "Real-Time System Facilities"
+Historically, the UNIX system has been a general-purpose time-sharing system.
+Today, however, UNIX systems see more and more use in environments that require real-time processing.
+SVR4 introduces significant new capabilities to support real-time processing:
+.AL
+.LI
+The first of these capabilities is a tunable, fixed-priority process scheduler that a user-process can invoke.
+The new scheduler module allows a process to tune the system to provide the level of service it requires, while allowing other processes to coexist on the system.
+.LI
+The second capability is a high-resolution timing service.
+While the absolute resolution of system timers is limited by the hardware clock speed on each system, all user programs will have access to timing services with a resolution no coarser than 1 msec.
+This significantly improves on existing UNIX System V capabilities.
+.LE
+The SVR4 kernel has been substantially improved to increase its responsiveness to real-time applications.
+The insertion of many preemption points permits lower interrupt latency without introducing the overhead of locking for non-real-time environments.
+.P
+The Real-Time and Transaction Processing environments, although two separate application areas, overlap in several critical functional areas.
+While the low-level design and implementation may require some differences for the two, many of the high-level features are common.
+Therefore, the approach used to penetrate these markets is to provide the low-level operating system features necessary to support both environments, rather than trying to make UNIX System V a real-time or transaction processing operating system.
+That is, the objective is to provide support for these environments, not to build new versions of the operating system.
+.P
+The real-time and transaction processing features are partitioned into the following categories:
+.BL
+.LI
+User-controlled Process Scheduling
+.LI
+High-resolution timing services
+.LE
+.ig
+.P
+(For more information than that provided in the following descriptions, see the \f2System Administrator's Guide\f1 and the \f2Programmer's Guide: Standard C and Programming Support Tools\f1).
+..
+.H 2 "User-controlled Process Scheduling"
+User-controlled Process Scheduling restructures the basic mechanisms UNIX System V uses to schedule process activity.
+The underlying kernel mechanisms must be robust, allowing for a wide range of tunable parameters.
+The two important options are traditional timesharing and a new real-time option.
+Specifically, support of real-time processes requires a scheduling mechanism that is based on process priorities controlled by user-programs.
+.P
+.XS I N
+.S -1 -2
+.TS
+tab(	);
+l3f5w(2.25i) l3f1.
+lib/libc/i386/sys/priocntlset.s
+lib/libc/port/gen/priocntl.c
+.TE
+.S
+.XF
+.H 2 "High-Resolution Timing Services"
+For applications that deal with very short time intervals, SVR4 offers BSD timing services (microsecond resolution).
+While the hardware clock speed on each system limits the absolute resolution of system timers, all user programs can access timing services with a resolution no coarser than 1 microsecond.
+These services include alarms, interval timers, and a time-of-day clock.
+(Some of these services were available on earlier System V releases, but with lower-timing resolution.)
+.P
+.XS I N
+.S -1 -2
+.TS
+tab(	);
+l3f5w(2.25i) l3f1.
+uts/i386/io/hrtimers.c
+uts/i386/master.d/async/*	configuration files for the \f4async\fP boot module
+uts/i386/master.d/hrt/*	configuration files for the \f4hrt\fP boot module
+uts/i386/sys/hrtcntl.h	high resolution timer interface and control structures
+uts/i386/sys/hrtsys.h	kernel structure for high resolution timers
+uts/i386/sys/asyncio.h	asynchronous I/O header and flag defines \f4AIOF_\fP\f2XXX\f1
+uts/i386/sys/asyncsys.h	asynchronous I/O syscall interface
+uts/i386/sys/evecb.h	general events control block and related defines
+uts/i386/sys/event.h
+uts/i386/sys/events.h	general events interface
+uts/i386/sys/evsys.h	structs and defines for general events FSType
+uts/i386/sys/evsyscall.h	defines for general events syscalls
+lib/libc/port/gen/getsetitimer.c
+lib/libc/port/gen/gettimeofday.c
+lib/libc/port/gen/hrtcftime.c
+lib/libc/port/gen/hrtctime.c
+lib/libc/port/gen/hrtnewres.c
+lib/libc/port/gen/hrtstrftime.c
+lib/libc/port/sys/hrtsys.c
+.TE
+.S
+.XF
+.H 2 "Real-Time System Commands"
+.P
+.DS I
+\f4cmd/priocntl/*\fP
+.DE
+.H 1 "Extended Terminal Interface (ETI)"
+SVR4 provides the Extended Terminal Interface (ETI), a standard programming interface for character mode screen management and text operations.
+ETI consists of three facilities: the \f4curses\fP library, the \f4terminfo\fP data base, and a high-level function library which provides C language functions for creating and editing forms, menus, and panels.
+.P
+Basic ETI functions cover the standard set of terminal input/output routines defined by the \f4curses\fP/\f4terminfo\fP package for the many different types of asynchronous character-oriented terminals on the market today.
+The \f4curses\fP/\f4terminfo\fP package features window control, highlighting, scrolling, multiple terminals, and support for special keys.
+The \f4curses\fP functions work with the \f4terminfo\fP database that describes the hardware features and escape sequences used by different terminals.
+Thus, programmers can write terminal-independent applications that use the terminal-dependent capabilities specified in a common database, allowing application-programs to perform terminal-handling functions in a way independent of the type of terminal used.
+.P
+The \f4terminfo\fP database describes terminals, by giving a set of capabilities possessed by the terminal, by describing how operations are performed, by describing padding requirements, and by specifying initialization sequences.
+The Terminal Information Utilities package contains a database (\^\f4terminfo\fP\^) that allows programmers to write programs to manipulate screens (and parts of screens, such as function keys and soft labels) of video display terminals.
+As delivered, the \f4terminfo\fP database contains descriptions of over 150 terminals.
+.P
+The \f4curses\fP library routines give the user a method of updating screens with reasonable optimization.
+The \f4curses\fP library permits manipulation of data structures called \f4windows\fP which can be thought of as two-dimensional arrays of characters representing all or part of a CRT screen; it also supplies a default window called \f4stdscr\fP\^.
+Special windows called \f4pads\f1 may also be manipulated.
+These are windows which are not constrained to the size of the screen and whose contents need not be completely displayed.
+.P
+In addition to drawing characters on the screen, video attributes may be included which cause the characters to show up in such modes as underlined or in reverse video on terminals that support such display enhancements.
+On input, \f4curses\fP can also translate arrow and function keys that transmit escape sequences into single values.
+.P
+High-level ETI functions work on character-oriented screen-displays through data-structures that represent panels, menus, and forms.
+The ETI functions provide application-programmers with functions to create and interact with the panels, menus, and forms, allowing programmers to tailor the forms and menus for specific applications.
+ETI also includes functions to define help, error, and other types of messages that allow users to display and change messages quickly and easily.
+.P
+ETI defines the following data-structures for character-oriented screen-displays:
+.VL
+.LI "\f4Panels\f1" 1
+overlapping \f4curses\fP windows with relations of depth to other windows so that regions hidden behind other windows are invisible
+.LI "\f4Forms\f1" 1
+screen-displays, of one or more pages composed of fields, used for data entry by the user or for messages to guide the user
+.LI "\f4Menus\f1" 1
+screen-displays that present a set of items from which the user selects one or more items with the program responding to the selections
+.LE 
+.P
+ETI functions manipulate these screen-display data-structures in the following ways:
+.BL
+.LI
+Panel functions can create, move, hide and re-order panels, set and fetch other panel attributes.
+.LI
+Form functions can create and free form fields, set the types of fields, establish field options, and set and fetch other field attributes.
+.LI
+Form functions can create and free display forms, create form titles and borders, change fields associated with a form, process end-user form requests, and set and fetch other form attributes.
+.LI
+Menu functions can create and free menu items, establish item options, and set and fetch other item attributes.
+.LI
+Menu functions can create and free menus, process end-user menu requests (including movement between menu items, menu scrolling, and item matching), and set and fetch other item attributes.
+.LE 1
+.P
+See the \f2Programmer's Guide: Character User Interfaces (ETI)\f1 for more information.
+.XK
+.H 2 "Character Terminal Interface (\f4curses\fP) Library"
+.DS I
+\f4lib/xlibcurses/*\fP
+.DE
+.H 2 "Forms, Menus & Panels Library"
+.DS I
+\f4lib/zlibeti/*
+lib/zlibetitam/*\fP
+.DE
+.H 2 "Terminal Information (\f4terminfo\fP) Utilities"
+.DS I
+\f4cmd/clear/*
+cmd/stty/*
+cmd/terminfo/*\fP
+.DE

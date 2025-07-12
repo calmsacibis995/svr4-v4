@@ -1,0 +1,88 @@
+'\"macro stdmacro
+.if n .pH g3e.elf_getarsym @(#)elf_getarsym	40.11 of 5/1/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.\"#ident	"@(#)ci5-doc:req/libelf/getarsym.man	1.1"
+.nr X
+.if \nX=0 .ds x} elf_getarsym 3E "ELF Library" "\&"
+.if \nX=1 .ds x} elf_getarsym 3E "ELF Library"
+.if \nX=2 .ds x} elf_getarsym 3E "" "\&"
+.if \nX=3 .ds x} elf_getarsym "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4elf_getarsym\f1 \- retrieve archive symbol table
+.SH SYNOPSIS
+\f4cc\f1
+[\f2flag\fP \|.\|.\|.] \f2file\fP \|.\|.\|.
+\f4\-lelf\f1
+[\f2library\fP \|.\|.\|.]
+.PP
+.nf
+.na
+.ft 4
+#include <libelf.h>
+.sp 0.5
+Elf_Arsym \(**elf_getarsym(Elf \(**elf, size_t \(**ptr);
+.ft 1
+.ad
+.fi
+.SH DESCRIPTION
+\f4elf_getarsym\fP
+returns a pointer to the archive symbol table,
+if one is available for the
+.SM ELF
+descriptor
+.IR elf .
+Otherwise, the archive doesn't have a symbol table,
+an error occurred, or
+.I elf
+was null;
+\f4elf_getarsym\fP
+then returns a null value.
+The symbol table is an array of structures that
+include the following members.
+.P
+.RS .5i
+.DT
+.nf
+.ft 4
+.ta 8u*\w' 'u +8u*\w' 'u +8u*\w' 'u +8u*\w' 'u +8u*\w' 'u +8u*\w' 'u
+.ne 6
+	char		\(**as_name;
+	size_t		as_off;
+	unsigned long	as_hash;
+.fi
+.RE
+.P
+These members have the following semantics.
+.IP "\f4as_name\fP" 10
+A pointer to a null-terminated symbol name resides here.
+.IP "\f4as_off\fP" 10
+This value is a byte offset from the beginning of the archive
+to the member's header.
+The archive member residing at the given offset defines
+the associated symbol.
+Values in \f4as_off\fP may be passed as arguments to
+\f4elf_rand\fP
+to access the desired archive member.
+.IP "\f4as_hash\fP" 10
+This is a hash value for the name, as computed by
+\f4elf_hash\fP.
+.P
+If
+.I ptr
+is non-null, the library stores the number of table entries
+in the location to which
+.I ptr
+points.
+This value is set to zero when the return value is null.
+The table's last entry, which is included in the count,
+has a null \f4as_name\fP, a zero value
+for \f4as_off\fP, and \f4~0UL\fP for \fPas_hash\fP.
+.SH "SEE ALSO"
+.na
+\f4elf\fP(3E),
+\f4elf_getarhdr\fP(3E),
+\f4elf_hash\fP(3E),
+\f4elf_rand\fP(3E),
+\f4ar\fP(4)

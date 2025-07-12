@@ -1,0 +1,97 @@
+'\"macro stdmacro
+.if n .pH g1a.pkgadd @(#)pkgadd	40.8 of 4/17/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+'\"macro stdmacro
+.if n .pH g1a.pkgadd @(#)pkgadd	40.12 of 9/14/89
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.if \nX=0 .ds x} pkgadd 1M "Essential Utilities" "\&"
+.if \nX=1 .ds x} pkgadd 1M "Essential Utilities"
+.if \nX=2 .ds x} pkgadd 1M "Essential Utilities" "\&"
+.if \nX=3 .ds x} pkgadd "Essential Utilities" "\&"
+.nr X
+.TH \*(x} "" "386 Computer Only"
+.SH NAME
+\f4pkgadd\f1 \- transfer software package to the system
+.SH SYNOPSIS
+\f4/usr/sbin/pkgadd \f1[\f4-d \f2device\f1] [\f4-r \f2response\f1] [\f4-n\f1] [\f4-a \f2admin\f1] [\f2pkginst1\f1
+.br
+[\f2pkginst2\f1[ . . . ]\|]\|]
+.P
+\f4/usr/sbin/pkgadd -s \f2spool \f1[\f4-d \f2device\f1] [\f2pkginst1\f1 [\f2pkginst2\f1[ . . . ]\|]\|]
+.SH DESCRIPTION
+\f4pkgadd\f1
+transfers the contents of a software package from the distribution medium or
+directory to install it onto the system.
+Used without the \f4-d\f1 option, \f4pkgadd\f1 looks in the default spool
+directory for the package (\f4/var/spool/pkg\f1).
+Used with the \f4\-s\f1 option, it reads the
+package to a spool directory instead of in\%stalling it.
+.TP 10
+\f4-d \f2device\f1
+Installs or copies a package from \f2device\f1.
+\f2device\f1 can be a full pathname to a
+directory or the identifiers for tape, floppy disk or removable disk
+(for example,
+\f4/var/tmp\f1, 
+\f4/dev/rmt/c0s0\f1,
+\f4/dev/dsk/f0t\f1
+or
+\f4/dev/dsk/f1t\f1).
+It can also be the device alias (for example,
+\f4ctape1\f1 for the cartridge tape drive).
+.TP 10
+\f4-r \f2response\f1
+Identifies a file or directory, \f2response\f1, which contains output from a
+previous \f4pkgask\f1 session.
+This file supplies the interaction responses
+that would be requested by the package in interactive mode.
+\f2response\f1 must be a full pathname.
+.TP 10
+\f4-n\f1
+Installation occurs in non-interactive mode.
+The default mode is interactive.
+.TP 10
+\f4-a \f2admin\f1
+Defines an installation administration file, \f2admin\fP, to be used in 
+place of the default administration file.
+The token \f4none\f1 overrides the use of any \f2admin\fP file,
+and thus forces interaction with the user.
+Unless a full path name is given, \f4pkgadd\f1 looks in
+the \f4/var/sadm/install/admin\f1 directory for the file.
+.TP 10
+\f2pkginst\f1
+Specifies the package instance or list of instances to be installed.
+The token \f4all\f1 may be used
+to refer to all packages available on the source medium.
+The format \f2pkginst\f4.\(**\f1 can be used to indicate all instances
+of a package.
+When using this format,
+enclose the command line in single quotes
+to prevent the shell from interpreting the \(** character.
+.TP 10
+\f4-s \f2spool\f1
+Reads the package into the directory \f2spool\f1 instead of installing it.
+.sp .5
+When executed without options, \f4pkgadd\f1 users \f4/var/spool/pkg\f1 (the
+default spool directory).
+.SH NOTES
+When transferring a package to a spool directory, the \f4-r\f1, \f4-n\f1, and
+\f4-a\f1 options cannot be used.
+.P
+The \f4-r\f1 option can be used to indicate a directory name as well as a
+filename.
+The directory can contain
+numerous \f2response\f1 files, each sharing the name of the package with which
+it should be associated.
+This would be used, for example,
+when adding multiple interactive packages
+with one invocation of \f4pkgadd\f1.
+Each package would need a \f2response\f1 file.
+If you create response files
+with the same name as the package 
+(that is, \f2package1\fP and \f2package2\fP), then
+name the directory in which these files reside after the \f4-r\f1.
+.P
+The \f4-n\f1 option will cause the installation to halt if
+any interaction is needed to complete it.

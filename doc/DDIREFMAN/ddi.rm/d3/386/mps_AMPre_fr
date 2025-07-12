@@ -1,0 +1,67 @@
+'\"macro stdmacro
+.if n .pH 386.mps_AMPre_fr @(#)mps_AMPre_fr	40.5 of 7/1/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.nr X
+.if \nX=0 .ds x} mps_AMPreceive_frag D3D "Multibus II" "DDI" "\&"
+.if \nX=1 .ds x} mps_AMPreceive_frag D3D "Multibus II" "DDI" "\&"
+.if \nX=2 .ds x} mps_AMPreceive_frag D3D "" "" "\&"
+.if \nX=3 .ds x} mps_AMPreceive_frag "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4mps_AMPreceive_frag\f1 \- receives solicited data in fragments when
+buffer space is not available at the receiving agent
+.SH SYNOPSIS
+.nf
+\f4#include <sys/mps.h>
+long mps_AMPreceive_frag(\f2chan\fP, \f2mbp\fP, \f2socid\fP, \f2tid\fP, \f2ibuf\fP)
+long chan;
+mps_msgbuf_t *mbp;
+mb2socid_t socid;
+unsigned char tid;
+struct dma_buf *ibuf;\f1
+.fi
+.SH ARGUMENTS
+.PD 0
+.TP
+\f2chan\f1
+Channel number received from a previous \f4mps_open_chan\f1.
+.TP
+\f2mbp\f1
+Points to a message buffer.
+.TP
+\f2socid\f1
+Identifies socket id of the socket which initiated the transaction.
+.TP
+\f2tid\f1
+Identifies the transaction corresponding to this \f4mps_AMPreceive_frag\f1.
+It is obtained from the request message.
+.TP
+\f2ibuf\f1
+Specifies the data buffer to receive incoming data.
+Indication of
+completion of transfer is sent to \f2intr\f1 via a message.
+.SH DESCRIPTION
+\f4mps_AMPreceive_frag\f1 is used when an agent sending solicited data
+requests buffer space that is not available at the receiving agent.
+After the Buffer Reject message is sent, the receiving agent can use
+\f4mps_AMPreceive_frag\f1 to receive the solicited data in fragments
+depending on the available buffer space in the receiving agent.
+See the \f2Multibus II Transport Protocol Specification and Designer's Guide\f1
+for additional information.
+.PP
+The \f4mps_AMPreceive_frag\f1 routine queues up the message to initiate
+the transfer, sets up table entries to receive data messages, and
+returns immediately.
+This routine is asynchronous in operation.
+.PP
+Applications must ensure that \f4mps_AMPreceive_frag\f1 is repeatedly used
+the correct number of times with the correct fragment buffer length to
+transfer an entire request.
+.SH RETURN VALUE
+If no error is detected, 0 (zero) is returned.
+When an error is detected, \-1
+is returned.
+.SH LEVEL
+Base or Interrupt
+.SH SEE ALSO
+\f4mps_open_chan\f1(D3D)

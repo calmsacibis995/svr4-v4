@@ -1,0 +1,45 @@
+'\"macro stdmacro
+.if n .pH g1.factor @(#)factor	40.5 of 1/3/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} factor 1 "User Environment Utilities" "\&"
+.if \nX=1 .ds x} factor 1 "User Environment Utilities"
+.if \nX=2 .ds x} factor 1 "" "\&"
+.if \nX=3 .ds x} factor "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4factor\f1 \- obtain the prime factors of a number
+.SH SYNOPSIS
+\f4factor\f1
+[\f2integer\f1]
+.SH DESCRIPTION
+When you use
+\f4factor\fP
+without an argument, it waits for you to give it an integer.
+After you give it
+a positive integer less than or equal to 10\u\s-214\s+2\d, 
+it factors the integer, prints its prime factors
+the proper number of times,
+and then waits for another integer.
+\f4factor\fP
+exits if it encounters a zero or any non-numeric character.
+.PP
+If you invoke
+\f4factor\fP
+with an argument, it factors the integer
+as described above, and then it exits.
+.PP
+The maximum time to factor an integer is proportional to
+.if n sqrt(n),
+.if t \(sr\o'\f2n\f1\(rn'.
+\f4factor\fP
+will take this time when
+.I n\^
+is prime
+or the square of a prime.
+.SH DIAGNOSTICS
+\f4factor\fP prints the error message,
+\f4Ouch\fP, for input out of range or for garbage input.
+.\"	@(#)factor.1	6.2 of 9/2/83
+.Ee

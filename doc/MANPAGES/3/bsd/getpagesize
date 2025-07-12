@@ -1,0 +1,40 @@
+'\"macro stdmacro
+.if n .pH g3.getpagesize @(#)getpagesize	40.7 of 4/24/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+'\"macro stdmacro
+.if n .pH g2.getpagesize @(#)getpagesize	40.7 of 5/31/89
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.\" @(#)getpagesize.2 1.9 88/01/20 SMI; from UCB 4.2
+.nr X
+.if \nX=0 .ds x} getpagesize 3 "BSD Compatibility Package" "\&"
+.if \nX=1 .ds x} getpagesize 3 "BSD Compatibility Package"
+.if \nX=2 .ds x} getpagesize 3 "" "\&"
+.if \nX=3 .ds x} getpagesize "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4getpagesize\f1 \- get system page size
+.SH SYNOPSIS
+\f4cc \f1[ \f2flag\f1\. \. \. ] \f2file\f1 \. \. \.  \f4\-lucb\f1
+.P
+.nf
+.ft 4
+int getpagesize(VOID);
+.ft 1
+.fi
+.SH DESCRIPTION
+\f4getpagesize\f1
+returns the number of bytes in a page.
+Page granularity is the granularity of many of the memory
+management calls.
+.P
+The page size is a
+system
+page size and need not be the same as the underlying
+hardware page size.
+.SH SEE ALSO
+\f4pagesize\fP(1)
+.br
+\f4brk\fP(2)
+in the \f2Programmer's Reference Manual\f1

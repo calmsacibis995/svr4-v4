@@ -1,0 +1,49 @@
+'\"macro stdmacro
+.if n .pH g1a.186/450 @(#)186_450	40.4 of 5/17/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} 186/450 7iref "System Administration Utilities" "" "\&"
+.if \nX=1 .ds x} 186/450 7iref "System Administration Utilities" ""
+.if \nX=2 .ds x} 186/450 7iref "" "\&"
+.if \nX=3 .ds x} 186/450 "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4186/450\f1 \- iSBC 186/450 serial communications controller
+.SH DESCRIPTION
+The \f4186/450\f1 is a 186-based 12 channel serial board. The \f4atcs\f1 server 
+runs on this board.  The \f4atcs\f1 device driver on the client hosts send 
+messages to this server to access the 12 ports.  The \f4atcs\f1 firmware is 
+downloaded automatically when the system is booted.  Information indicating the 
+success or failure of this is displayed on the console at system initialization 
+time.
+.P
+The \f4atcs\f1 server on the iSBC 186/450 can support a maximum of 24 channels -- 12 onboard 
+ports and 12 MPI/450 ports.  The server will look in the next higher-numbered 
+slot for an MPI/450 board.  If one is found, the 12 onboard ports will be 
+mapped to line numbers 0 - 11 and the 12 MPI/450 ports will be mapped to line 
+numbers 12 - 23.
+.P
+When a 186/450 board is added or removed from the system, the \f4atcs_info\f1 
+structure in \f4/etc/conf/space.c/atcs/space.c\fP must be altered as described in
+\f4atcs\fP(7iref).  If an MPI/450 board is also added to be controlled by the \f4atcs\f1 
+server on the iSBC 186/450, this information must also be included.  For example, 
+suppose there is an iSBC 186/450 board in slot 5 and an MPI/450 is in slot 6.  If the 
+\f4atcs\f1 minor numbers begin at 16 for this board,
+the line added to the \f4atcs_info\f1 
+structure to indicate that 24 channels are being supported would be:
+.P 
+.nf
+.ft 4
+{5, 16, 39, 0}	/* ATCS server slot, beginning and 
+		ending minor numbers, first ATCS 
+		line number (port) */
+.ft 1
+.fi
+.SH FILES
+.TP 2.25i
+\f4/usr/lib/cci/450.fw\f1
+\f4atcs\f1 firmware
+.TP
+\f4/etc/rc2.d/S41mb2_init\f1
+initialization time rc script

@@ -1,0 +1,24 @@
+.if n .pH scsi.pg.COLFILE.mp @(#)COLFILE.mp	40.7
+.# This book ("Programmer's Guide: SCSI Driver Interface (SDI) (Manual Pages)")
+.# contains the following files,
+.# listed in the order in which they are printed.
+.# Next to each file name is its SCCS delta number.
+.FT
+sdi.pg/386/titlepage.mp	40.6
+sdi.pg/386/copyright	40.3
+sdi.pg/d3i/gen/intro	40.3
+sdi.pg/d3i/gen/sdi_freeblk	40.7
+sdi.pg/d3i/gen/sdi_getblk	40.8
+sdi.pg/d3i/gen/sdi_getdev	40.8
+sdi.pg/d3i/gen/sdi_icmd	40.9
+sdi.pg/d3i/gen/sdi_init	40.8
+sdi.pg/d3i/gen/sdi_name	40.9
+sdi.pg/d3i/gen/sdi_send	40.10
+sdi.pg/d3i/gen/sdi_trans	40.9
+sdi.pg/d4i/gen/intro	40.1
+sdi.pg/d4i/gen/sb	40.1
+sdi.pg/d4i/gen/scb	40.4
+sdi.pg/d4i/gen/scm	40.2
+sdi.pg/d4i/gen/scsi_ad	40.1
+sdi.pg/d4i/gen/sfb	40.1
+sdi.pg/d4i/gen/ver_no	40.3

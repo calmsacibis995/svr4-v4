@@ -1,0 +1,224 @@
+'\"macro stdmacro
+.if n .pH g1.login @(#)login	40.5 of 6/27/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+'\"macro stdmacro
+.\" Copyright (c) 1988 Sun Microsystems, Inc. - All Rights Reserved.
+.if n .pH g1.login @(#)login	40.13 of 9/22/89
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.nr X
+.if \nX=0 .ds x} login 1 "Essential Utilities" "\&"
+.if \nX=1 .ds x} login 1 "Essential Utilities"
+.if \nX=2 .ds x} login 1 "" "\&"
+.if \nX=3 .ds x} login "" "" "\&"
+.nr X
+.nr X
+.TH \*(x} "" "386 Computer Only"
+.SH NAME
+\f4login\f1 \- sign on
+.SH SYNOPSIS
+\f4login
+[ \f2name\fP [ \f2environ\fP .\|.\|. ]\|]\f1
+.SH DESCRIPTION
+The
+\f4login\fP
+command
+is used at the beginning of each terminal session
+and allows you to identify yourself to the system.
+It may be invoked as a command or
+by the system when a connection
+is first established.
+It is invoked by the system when a previous user has
+terminated the initial shell by typing a
+\f4cntrl-d\f1
+to indicate an end-of-file.
+.PP
+If
+\f4login\fP
+is invoked as a command it must replace the initial
+command interpreter.
+This is accomplished by typing
+.sp .5
+.in +.5i
+\f4exec login\f1
+.sp .5
+.in -.5i
+from the initial shell.
+.PP
+\f4login\fP
+asks for your user name (if it is not supplied as an argument), and if
+appropriate, your password.
+Echoing is turned off (where possible) during the typing of your password,
+so it will not appear on the written record of the
+session.
+.PP
+If there are no lower-case characters in the first line of
+input processed, \f4login\fP assumes the connecting TTY is
+an upper-case-only terminal and sets the port's \f4termio\fP(7) options to
+reflect this.
+.PP
+\f4login\fP accepts a
+device option, \f2device\fP.
+\f2device\fP is taken to
+be the path name of the TTY port \f4login\fP is to operate on.
+The use of the device option can be expected to
+improve \f4login\fP performance,
+since \f4login\fP will not need to call \f4ttyname\fP(3).
+.PP
+If you make any mistake in the login procedure,
+the message
+.sp .5
+.in +.5i
+\f4Login incorrect\f1
+.sp .5
+.in -.5i
+is printed
+and a new login prompt will appear.
+If you make five incorrect login attempts, all five may be
+logged in \f4/var/adm/loginlog\f1 (if it exists)
+and the TTY line will be dropped.
+.PP
+If you do not complete the login successfully within a
+certain period of time (e.g.,
+one minute), you are likely to be silently disconnected.
+.PP
+After a successful login, accounting files are updated, the 
+\f4/etc/profile\f1
+script is executed, the time you last logged in is printed, 
+\f4/etc/motd\f1 is printed,
+the user-\s-1ID\s+1, group-\s-1ID\s+1, 
+supplementary group list,
+working directory, and command interpreter
+(usually \f4sh\fP)
+are initialized,
+and the file
+\f4\&.profile\f1
+in the working directory is executed, if it exists.
+The name of the command interpreter is
+\f4\-\f1
+followed by the last component of the interpreter's path name
+(e.g.,
+\f4\-sh\f1).
+If this field in the password file is empty,
+then the default command interpreter,
+\f4/usr/bin/sh\f1
+is used.
+If this field is
+*,
+then
+the named directory becomes the root directory,
+the starting point for path searches for path names beginning with a
+\f4/\f1.
+At that point 
+\f4login\fP
+is re-executed at the new level which must have
+its own root structure,
+including
+\f4/var/adm/login\f1
+and
+\f4/etc/passwd\f1.
+.PP
+The basic
+.I environment
+is initialized to:
+.PP
+.RS
+\f4\s-1HOME\s+1=\f2your-login-directory\fP
+.br
+\f4\s-1LOGNAME\s+1=\f2your-login-name\fP
+.br
+\f4\s-1PATH\s+1=/usr/bin\f1
+.br
+\f4\s-1SHELL\s+1=\f2last-field-of-passwd-entry\fP
+.br
+\f4\s-1MAIL\s+1=/var/mail/\f2your-login-name\fP
+.br
+\f4\s-1TZ\s+1=\f2timezone-specification\fP
+.RE
+.sp 1v
+The environment may be expanded or modified by supplying additional
+arguments to
+\f4login\f1,
+either at execution time or when
+\f4login\fP
+requests your login name.
+The arguments may take either the form
+.I xxx
+or
+.I xxx=yyy.
+Arguments without an equal sign are placed
+in the environment as
+.sp .5
+.in +.5i
+\f4L\f2n\f1=xxx
+.sp .5
+.in -.5i
+where
+.I n
+is a number starting at 0 and is incremented each time
+a new variable name is required.
+Variables containing an
+\f4=\f1
+are placed in the environment without modification.
+If they
+already appear in the environment, then they replace the older
+value.
+There are two exceptions.
+The variables
+\f4\s-1PATH\s+1\f1
+and
+\f4\s-1SHELL\s+1\f1
+cannot be changed.
+This prevents people, logging into restricted
+shell environments, from spawning secondary shells which are not
+restricted. 
+\f4login\fP
+understands simple single-character quoting conventions.
+Typing a
+backslash
+in front of a character quotes it and allows the inclusion of such
+characters as spaces and tabs.
+.SH FILES
+.ta \w'/var/mail/your-name\ \ 'u
+\f4/var/adm/utmp\f1	accounting
+.br
+\f4/var/adm/wtmp\f1	accounting
+.br
+\f4/var/mail/\f2your-name\f1	mailbox for user \f2your-name\fP
+.br
+\f4/var/adm/loginlog\f1	record of failed login attempts
+.br
+\f4/etc/motd\f1	message-of-the-day
+.br
+\f4/etc/passwd\f1	password file
+.br
+\f4/etc/profile\f1	system profile
+.br
+\f4\&.profile\f1	user's login profile
+.br
+\f4/var/adm/lastlog\f1	time of last login
+.SH "SEE ALSO"
+\f4mail\fP(1),
+\f4newgrp\fP(1M),
+\f4sh\fP(1),
+\f4su\fP(1M).
+.br
+\f4loginlog\fP(4),
+\f4passwd\fP(4),
+\f4profile\fP(4),
+\f4environ\fP(5) in the \f2 Programmer's Reference Manual\f1.
+.SH DIAGNOSTICS
+\f4login incorrect\f1
+if the user name or the password cannot be matched.
+.br
+\f4No shell\f1, \f4cannot open password file\f1, or \f4no directory:
+consult a system engineer\f1.
+.br
+.tr ~"
+\f4No utmp entry. You must exec ~login~ from the lowest level ~sh~\f1
+if you attempted to execute \f4login\fP as a command without using
+the shell's \f4exec\fP internal command or from a shell
+other than the initial shell.
+.tr ~~
+.\"	@(#)login.1	6.2 of 9/2/83
+.Ee

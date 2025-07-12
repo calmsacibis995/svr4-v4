@@ -1,0 +1,9 @@
+.if n .pH 386.Cape @(#)Cape	40.1.1.1
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.BK "Installation Guide" "System V Release 4" "" ""   
+.\ACRONYM	                  
+.CH "Copying Diskettes" "" "Table of Contents" "E"
+.\CHAPTER	E
+.tC 1 "Copying Diskettes" E-1  
+.Index: boot diskettes, copying        	1
+.Index: diskettes, copying boot        	1

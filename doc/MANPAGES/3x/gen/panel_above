@@ -1,0 +1,42 @@
+'\"macro stdmacro
+.if n .pH g3x.panel_above @(#)panel_above	40.5 of 4/11/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.\" ident	"@(#)svid_ti:ti_lib/panel_above	1.3"
+.nr X
+.if \nX=0 .ds x} panel_above 3X "" "\&"
+.if \nX=1 .ds x} panel_above 3X ""
+.if \nX=2 .ds x} panel_above 3X "" "\&"
+.if \nX=3 .ds x} panel_above "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4panel_above\f1: \f4 panel_above\f1, \f4panel_below\f1 \- \f4panels\fP deck traversal primitives
+.SH SYNOPSIS
+.nf
+.ft 4
+#include <panel.h>
+.sp
+PANEL *panel_above(PANEL *panel);
+.sp 0.5
+PANEL *panel_below(PANEL *panel);
+.ft 1
+.fi
+.SH DESCRIPTION
+\f4panel_above\fP returns a pointer to the panel just above
+\f2panel\fP, or \f4NULL\fP if \f2panel\fP is the top panel.
+\f4panel_below\fP returns a pointer to the panel just below
+\f2panel\fP, or \f4NULL\fP if \f2panel\fP is the bottom panel.
+.PP
+If \f4NULL\fP is passed for \f2panel\fP, \f4panel_above\fP
+returns a pointer to the bottom panel in the deck, and
+\f4panel_below\fP returns a pointer to the top panel in the deck.
+.SH RETURN VALUE
+\f4NULL\fP is returned if an error occurs.
+.SH NOTES
+These routines allow traversal of the deck of currently visible panels.
+.PP
+The header file \f4<panel.h>\f1 automatically includes the header file
+\f4<curses.h>\f1.
+.SH SEE ALSO
+\f4curses\fP(3X),
+\f4panels\fP(3X)

@@ -1,0 +1,124 @@
+'\"macro stdmacro
+.if n .pH mb2s.receive @(#)receive	40.5 of 1/9/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} mb2s_receive 3tai "" "\&"
+.if \nX=1 .ds x} mb2s_receive 3tai ""
+.if \nX=2 .ds x} mb2s_receive 3tai "" "\&"
+.if \nX=3 .ds x} mb2s_receive "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4mb2s_receive\f1 \- Receives incoming \f4Multibus II\f1 messages in
+synchronous mode.
+.SH SYNOPSIS
+.ft 4
+.nf
+#include <sys/types.h>
+#include <sys/mb2taiusr.h>
+int mb2s_receive(fd, msginfoptr, ctlbufptr, databufptr)
+int fd;
+mb2_msginfo *msginfoptr;
+mb2_buf *ctlbufptr;
+mb2_buf *databufptr;
+.ft
+.fi
+.SH DESCRIPTION	
+The \f4mb2s_receive\f1 function is used to receive incoming messages.
+.TP 15
+\f4fd\f1
+is a synchronous mode file descriptor referencing an open
+port.
+.TP
+\f4msginfoptr\f1
+is a pointer to a structure where the information
+about the received message is returned.
+.TP
+\f4ctlbufptr\f1
+is a pointer to a buffer where the control portion
+of the message is received.
+.TP
+\f4databufptr\f1
+is a pointer to a buffer where the data portion of
+the message is received.
+.P
+The \f4mb2s_receive\f1 function can only receive transactionless messages,
+broadcast messages, transaction request messages, and transaction request
+messages requiring fragmentation (indicated by the
+\f4msgtyp\f1 field of the
+\f4msginfo\f1 structure).
+When the routine completes successfully, the \f4len\f1 field
+in each of the message buffers is set to the actual number of bytes received.
+Also the \f4socketid\f1
+field and the \f4tid\f1 field in the \f4msginfo\fP structure is set
+to the destination \f4socketid\f1, and the transaction ID of the received
+message respectively.
+Both \f4Multibus II\f1 transport servers and clients
+use this routine to receive transactionless messages.
+Servers also use it for
+transaction messages.
+.P
+Upon successful completion of the routine, a value of 0 is returned.
+A
+value of -1 is returned and an \f4errno\fP is set if there were errors.
+The call
+returns a value of -1 and sets \f4errno\fP to \f4MB2_MOREDATA\f1
+if the buffer specified
+by the \f4maxlen\fP field of \f4databufptr\fP was not large enough to receive the data
+portion of the incoming message.
+Also, the size of the data portion of the
+message is indicated in the \f4len\fP field of \f4databufptr\fP if a non-NULL value for
+\f4databufptr\f1 is specified.
+A subsequent call to \f4mb2s_receive\f1 must be made with
+a large enough data buffer to receive the data portion of the message.
+In this case,
+\f4ctlbufptr\f1 and \f4msginfoptr\fP must be set to NULL to indicate that only the
+data portion of a message is being received.
+A call to \f4mb2s_receive\f1
+with a
+non-NULL \f4ctlbufptr\fP or \f4msginfoptr\fP results in an error if all data portions of
+the previous message has not been received.
+.P
+The following is a list of applicable errors for this routine.
+.TP 15
+\f4EBADF\f1
+\f4fd\f1 does not correspond to an endpoint.
+.TP
+\f4EFAULT\f1
+\f4ctlbufptr\f1, \f4databufptr\f1, or \f4msginfoptr\f1
+points outside the allocated address.
+.TP
+\f4EAGAIN\f1
+unable to allocate system buffers.
+.TP
+\f4MB2_MOREDATA\f1
+\f4databufptr\fP buffer is not large enough to receive the
+data portion of the message.
+.TP
+\f4ENXIO\f1
+hangup received on file descriptor.
+.TP
+\f4EINVAL\f1
+invalid value specified in one of the
+argument buffers.
+.TP
+\f4EINVAL\f1
+the \f4maxlen\fP field of the \f4ctlbufptr\fP is
+less than the size of the control part of the message.
+.TP
+\f4ERANGE\f1
+the size of the control or the data
+part of the message is outside the range of the minimum/maximum allowable
+message size.
+.TP
+\f4ENOSTR\f1
+\f4fd\f1 is not a file descriptor to an
+endpoint.
+.SH SEE ALSO
+\f4getmsg\f1(2), \f4putmsg\f1(2), \f4read\f1(2), \f4write\f1(2), \f4ioctl\f1(2)
+.SH DIAGNOSTICS
+If a non-null \f4msginfoptr\f1 is specified for the second receive, (e.g., a
+subsequent call to \f4mb2s_receive\f1
+when \f4MB2_MOREDATA\f1 is returned), the call will
+block the waiting for a message with a control portion before returning an
+error.

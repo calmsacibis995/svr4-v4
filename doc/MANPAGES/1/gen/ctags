@@ -1,0 +1,187 @@
+'\"macro stdmacro
+.if n .pH g1.ctags @(#)ctags	40.8 of 4/12/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} ctags 1 "Editing Utilities" "\&"
+.if \nX=1 .ds x} ctags 1 "Editing Utilities"
+.if \nX=2 .ds x} ctags 1 "" "\&"
+.if \nX=3 .ds x} ctags "" "" "\&"
+.TH \*(x}
+.\" @(#)ctags.1 1.16 88/03/02 SMI; from UCB 6.2 5/30/85
+.\" Copyright (c) 1988 Sun Microsystems, Inc - All Rights Reserved.
+.\"Copyright (c) 1980 Regents of the University of California.
+.\" All rights reserved. The Berkeley software License Agreement
+.\" specifies the terms and conditions for redistribution.
+.\"
+.SH NAME
+\f4ctags\f1 \- create a tags file for use with \f4vi\f1
+.SH SYNOPSIS
+\f4ctags\f1 [ \f4\-aBFtuvwx\f1 ] [ \f4\-f\f2 tagsfile\f1 ] \f2filename\f1 .\ .\ .
+.SH DESCRIPTION
+\f4ctags\f1
+makes a tags file for
+\f4ex\f1(1)
+from the specified C, Pascal,
+.SM FORTRAN\s0,
+.SM YACC\s0,
+and 
+.SM LEX
+.\".SM LISP
+sources.
+A tags file gives the locations of specified objects (in this case
+functions and typedefs) in a group of files.
+Each line of the tags
+file contains the object name, the file in which it is defined, and
+an address specification for the object definition.
+Functions are
+searched with a pattern, typedefs with a line number.
+Specifiers are
+given in separate fields on the line, separated by
+.SM SPACE
+or
+.SM TAB
+characters.
+Using the tags file,
+\f4ex\f1
+can quickly find these objects definitions.
+.LP
+Normally 
+\f4ctags\f1
+places the tag descriptions in a file called
+\f4tags\f1;
+this may be overridden with the
+\f4\-f\f1
+option.
+.LP
+Files with names ending in 
+\f4\&.c\f1
+or
+\f4\&.h\f1
+are assumed to be C 
+source files and are searched for C 
+routine and macro definitions.
+Files with names ending in
+\f4\&.y\f1
+are assumed to be 
+.SM YACC 
+source files.
+Files with names ending in
+\f4\&.l\f1
+are assumed to be 
+.\"either LISP files
+.\"if their first non-blank character is `;', `(', or `[',
+.\"or 
+.SM LEX 
+files.
+Others are first examined to see if
+they contain any Pascal or
+.SM FORTRAN
+routine definitions; if not, they are processed again looking for C 
+definitions.
+.LP
+The tag \(CWmain\f1
+is treated specially in C 
+programs.
+The tag formed is created by prepending
+\f4M\f1
+to
+\f2filename\f1,
+with a trailing 
+\f4\&.c \f1
+removed, if any, and leading pathname components also removed.
+This makes use of
+\f4ctags\f1
+practical in directories with more than one program.
+.PP
+The following options are available:
+.TP
+\f4\-a\f1
+Append output to an existing
+\f4tags\f1
+file.
+.TP
+\f4\-B\f1
+Use backward searching patterns
+\f1(\f4?\f1.\|.\|.\|\f4?\f1).
+.TP
+\f4\-F\f1
+Use forward searching patterns
+\f1(\f4/\f1.\|.\|.\|\f4/\f1)
+(default).
+.TP
+\f4\-t\f1
+Create tags for typedefs.
+.TP
+\f4\-u\f1
+Update the specified files
+in tags, that is, all references to them are deleted,
+and the new values are appended to the file.
+Beware: this option is implemented in a way which is rather slow;
+it is usually faster to simply rebuild the
+\f4tags\f1
+file.
+.TP
+\f4\-v\f1
+Produce on the standard output
+an index listing the function name,
+file name, and page number
+(assuming 64 line pages).
+Since the output will be sorted into lexicographic order,
+it may be desired to run the output through \f4sort \-f\f1.
+.TP
+\f4\-w\f1
+Suppress warning diagnostics.
+.TP
+\f4\-x\f1
+Produce a list of object names, the line number and file
+name on which each is defined, as well as the text of that line
+and prints this on the standard output.
+This is a simple index
+which can be printed out as an off-line readable function index.
+.SH FILES
+.PD 0
+.TP 5P
+\f4tags\f1
+output tags file
+.PD
+.SH USAGE
+.LP
+The
+\f4\-v\f1
+option is mainly used with
+\f4vgrind\f1
+which will be part of the optional
+.SM BSD
+Compatibility Package.
+.SH SEE ALSO
+\f4ex\fP(1),
+\f4vgrind\fP(1),
+\f4vi\fP(1)
+.SH NOTES
+.LP
+Recognition of
+\f4functions\f1,
+\f4subroutines\f1
+and
+\f4procedures\f1
+for
+.SM FORTRAN
+and Pascal is done is a very simpleminded way.
+No attempt is made to deal with block structure; if you have two
+Pascal procedures in different blocks with the same name you lose.
+.LP
+The method of deciding whether to look for C or Pascal and
+.SM FORTRAN
+functions is a hack.
+.LP
+\f4ctags\f1
+does not know about
+\f4#ifdefs\f1.
+.LP
+\f4ctags\f1
+should know about Pascal types.
+Relies on the input being well formed to detect typedefs.
+Use of
+\f4\-tx\f1
+shows only the last line of typedefs.

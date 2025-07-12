@@ -1,0 +1,356 @@
+'\"macro stdmacro
+.if n .pH g1a.sar @(#)sar	40.21 of 5/21/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} sar 1M "System Performance Analysis Utilities" "\&"
+.if \nX=1 .ds x} sar 1M "System Performance Analysis Utilities"
+.if \nX=2 .ds x} sar 1M "" "\&"
+.if \nX=3 .ds x} sar "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4sar\fP \- system activity reporter
+.SH SYNOPSIS
+.na
+\f4sar
+\f1[\f4 \-ubdycwaqvmpgrkxDSAC\f1 ]
+[\f4 \-o \f2file\f1 ]
+\f2t\f1 [ \f2n\f1 ]
+.PP
+\f4sar
+\f1[\f4 \-ubdycwaqvmpgrkxDSAC\f1 ]
+[\f4 \-s \f2time \f1]
+[\f4 \-e \f2time \f1]
+[\f4 \-i \f2sec \f1]
+[\f4 \-f \f2file \f1]
+.ad
+.SH DESCRIPTION
+In the first instance,
+\f4sar\fP
+samples cumulative activity counters in the operating system
+at
+.I n
+intervals of
+.I t
+seconds, where \f2t\f1 should be 5 or greater.
+If \f2t\f1 is specified with more than one option,
+all headers are printed together and the output may be difficult to read.
+(If the sampling interval is less than 5, the activity of
+\f4sar\fP
+itself may affect the sample.)
+If the
+\f4\-o\f1
+option is specified, it saves
+the samples in
+.I file
+in binary format.
+The default value of
+.I n
+is 1.
+In the second instance, with no sampling interval specified,
+\f4sar\f1
+extracts data from a previously
+recorded
+.IR file,
+either the one specified
+by the
+\f4\-f\f1
+option
+or, by default,
+the standard system activity daily data file
+\f4/var/adm/sa/sa\f2dd\f1
+for the current day
+.IR dd.
+The starting and ending times of the report
+can be bounded via the
+\f4\-s\f1
+and
+\f4\-e\f1
+.I time
+arguments of the form
+.IR hh [: mm [: ss ]].\^
+The
+\f4\-i\f1
+option selects records at
+.I sec
+second intervals.
+Otherwise, all intervals found in the data file are reported.
+.PP
+In either case,
+subsets of data to be printed are specified by option:
+.PP
+.TP 5
+\f4\-u\f1
+Report
+.SM CPU
+utilization (the default):
+.br
+\f4%usr\f1, \f4%sys\f1, \f4%wio\f1, \f4%idle\f1 \- portion of time running in user mode,
+running in system mode, idle with some process waiting for block
+.SM I/O,
+and otherwise idle.
+When used with \f4\-D\f1, \f4%sys\f1 is split into
+percent of time servicing requests from remote machines
+(\f4%sys\f1 remote) and all other system time (\f4%sys\f1 local).
+If you are using an AT&T 3B2 Computer with a co-processor,
+the CPU utilization (default) report will contain the following fields:
+.br
+\f4%usr\f1,
+\f4%sys\f1, \f4%idle\f1, \f4scall\f1/\f4s\f1 \- where \f4scalls\f1/\f4s\f1 is the number of
+system calls, of all types, encountered on the co-processor per second.
+.TP
+\f4\-b\f1
+Report buffer activity:
+.br
+\f4bread\f1/\f4s\f1, \f4bwrit\f1/\f4s\f1 \- transfers per second of data between system buffers
+and disk or other block devices;
+.br
+\f4lread\f1/\f4s\f1, \f4lwrit\f1/\f4s\f1 \- accesses of system buffers;
+.br
+\f4%rcache\f1, \f4%wcache\f1 \- cache hit ratios,
+that is, (\f41\-bread\f1/\f4lread\f1) as a percentage;
+.br
+\f4pread\f1/\f4s\f1, \f4pwrit\f1/\f4s\f1 \-
+transfers via raw (physical) device mechanism.
+When used with \f4\-D\f1, buffer caching is reported for
+locally-mounted remote resources.
+.TP
+\f4\-d\f1
+Report activity for each block device, for example, disk or tape drive, with
+the exception of XDC disks and tape drives.
+When data is displayed, the device specification
+.I dsk\-
+is generally used to represent a disk drive.
+The device specification used to represent a tape drive is machine
+dependent.
+The activity data reported is:
+.br
+\f4%busy\f1, \f4avque\f1 \- portion of time device was busy servicing a transfer request,
+ratio of total time for all requests to complete to total time device
+was busy servicing these requests.
+.br
+\f4r+w\f1/\f4s\f1, \f4blks\f1/\f4s\f1 \-
+number of data transfers from or to device,
+number of bytes transferred in 512-byte units;
+.br
+.ne.5i
+\f4avwait\f1, \f4avserv\f1 \- average time in milliseconds
+that transfer requests wait idly on queue,
+and average time to be serviced
+(which for disks includes
+seek, rotational latency and data transfer times).
+.TP
+\f4\-y\f1
+Report TTY device activity:
+.br
+\f4rawch\f1/\f4s\f1, \f4canch\f1/\f4s\f1, \f4outch\f1/\f4s\f1 \- input character rate,
+input character rate processed by canon,
+output character rate;
+.br
+\f4rcvin\f1/\f4s\f1, \f4xmtin\f1/\f4s\f1, \f4mdmin\f1/\f4s\f1 \-
+receive, transmit and modem interrupt rates.
+.TP
+\f4\-c\f1
+Report system calls:
+.br
+\f4scall\f1/\f4s\f1 \- system calls of all types;
+.br
+\f4sread\f1/\f4s\f1, \f4swrit\f1/\f4s\f1, \f4fork\f1/\f4s\f1, \f4exec\f1/\f4s\f1 \-
+specific system calls;
+.br
+\f4rchar\f1/\f4s\f1, \f4wchar\f1/\f4s\f1 \- characters transferred by read and write
+system calls.
+When used with \f4\-D\f1, the system calls are split
+into incoming, outgoing, and strictly local calls.
+No incoming or outgoing
+fork or exec calls are reported.
+.TP
+\f4\-w\f1
+Report system swapping and switching activity:
+.br
+\f4swpin\f1/\f4s\f1, \f4swpot\f1/\f4s\f1, \f4pswin\f1/\f4s\f1, \f4pswot\f1/\f4s\f1 \-
+number of transfers
+and number of 512-byte units transferred for swapins
+and swapouts
+(including initial loading of some programs);
+.br
+\f4pswch\f1/\f4s\f1 \- process switches.
+.TP
+\f4\-a\f1
+Report use of file access system routines:
+.br
+\f4iget\f1/\f4s\f1, \f4namei\f1/\f4s\f1, \f4dirblk\f1/\f4s\f1.
+.TP
+\f4\-q\f1
+Report average queue length while occupied, and % of time occupied:
+.br
+\f4runq-sz\f1, \f4%runocc\f1 \- run queue of processes in memory and runnable;
+.br
+\f4swpq-sz\f1, \f4%swpocc\f1 \- these are no longer reported by sar.
+.TP
+\f4\-v\f1
+Report status of process, i-node, file tables:
+.br
+\f4proc-sz\f1, \f4inod-sz\f1, \f4file-sz\f1, \f4lock-sz\f1 \- entries/size
+for each table, evaluated once at sampling point;
+.br
+\f4ov\f1 \- overflows that occur between sampling points for each table.
+.TP
+\f4\-m\f1
+Report message and semaphore activities:
+.br
+\f4msg\f1/\f4s\f1, \f4sema\f1/\f4s\f1 \- primitives per second.
+.TP
+\f4\-p\f1
+Report paging activities:
+.br
+\f4atch\f1/\f4s\f1 \- page faults per second that are satisfied
+by reclaiming a page currently in memory (attaches per second);
+.br
+\f4pgin\f1/\f4s\f1 \- page-in requests per second;
+.br
+\f4ppgin\f1/\f4s\f1 \- pages paged-in per second;
+.br
+\f4pflt\f1/\f4s\f1 \- page faults from protection errors per second
+(illegal access to page) or
+``copy-on-writes''
+.br
+\f4vflt\f1/\f4s\f1 \- address translation page faults per second (valid page not in
+memory);
+.br
+\f4slock\f1/\f4s\f1 \- faults per second caused by software lock
+requests requiring physical I/O.
+.TP
+\f4\-g\f1
+Report paging activities:
+.br
+\f4pgout\f1/\f4s\f1 \- page-out requests per second;
+.br
+\f4ppgout\f1/\f4s\f1 \- pages paged-out per second;
+.br
+\f4pgfree\f1/\f4s\f1 \- pages per second placed on the free list by
+the page stealing daemon;
+.br
+\f4pgscan\f1/\f4s\f1 \- pages per second scanned by the page stealing
+daemon.
+.br
+\f4%s5ipf\f1 \- the percentage of S5 inodes taken off the freelist by \f4iget\f1 which
+had reusable pages associated with them.
+These pages are flushed and cannot
+be reclaimed by processes.
+Thus this is the percentage of \f4iget\f1s with page flushes.
+.TP
+\f4\-r\f1
+Report unused memory pages and disk blocks:
+.br
+\f4freemem\f1 \- average pages available to user processes;
+.br
+\f4freeswap\f1 \- disk blocks available for page swapping.
+.TP
+\f4\-k\f1
+Report kernel memory allocation (KMA) activities:
+.br
+\f4sml_mem\f1, \f4alloc\f1, \f4fail\f1 \-
+information about the memory
+pool reserving and allocating space for small requests:
+the amount of memory in bytes KMA has for the
+small pool, the number of bytes allocated
+to satisfy requests for small amounts of memory, and
+the number of requests for small amounts of memory
+that were not satisfied (failed);
+.br
+\f4lg_mem\f1, \f4alloc\f1, \f4fail\f1 \-
+information for the large
+memory pool (analogous to the information for the small
+memory pool);
+.br
+\f4ovsz_alloc\f1, \f4fail\f1 \-
+the amount of memory allocated
+for oversize requests and the number of
+oversize requests which could not be satisfied
+(because oversized memory is allocated dynamically, there
+is not a pool).
+.TP
+\f4\-x\f1
+Report remote file sharing (RFS) operations:
+.br
+\f4open\f1/\f4s\f1, \f4create\f1/\f4s\f1, \f4lookup\f1/\f4s\f1, \f4readdir\f1/\f4s\f1,
+\f4getpage\f1/\f4s\f1, \f4putpage\f1/\f4s\f1, \f4other\f1/\f4s\f1 \-
+The number of open, create, lookup, readdir, getpage, putpage, and other
+operations made per second by clients (incoming) and by the server
+(outgoing).
+.TP
+\f4\-D\f1
+Report Remote File Sharing activity:
+.br
+When used in combination with \f4\-u\f1, \f4\-b\f1 or \f4\-c\f1, it
+causes \f4sar\f1 to produce the remote file sharing version
+of the corresponding report.
+\f4\-Du\f1 is assumed when only \f4\-D\f1
+is specified.
+.TP
+\f4\-S\f1
+Report server and request queue status:
+.br
+\f4serv\f1/\f4lo-hi\f1 \- average number of Remote File Sharing servers on the system
+(lo and hi are the minimum and maximum number of servers respectively.)
+.br
+\f4request %busy\f1 \- % of time receive descriptors are on the request queue
+.br
+\f4request avg lgth\f1 \- average number of receive descriptors waiting for service
+when queue is occupied
+.br
+\f4server %avail\f1 \- % of time there are idle servers
+.br
+\f4server avg avail\f1 \- average number of idle servers when idle ones exist
+.TP
+\f4\-A\f1
+Report all data.
+Equivalent to \f4\-udqbwcayvmpgrkxSDC\f1.
+.TP
+\f4\-C\f1
+Report Remote File Sharing data caching overhead:
+.br
+\f4snd-inv\f1/\f4s\f1
+\- number of invalidation messages per second sent by your machine as a server.
+.br
+\f4snd-msg\f1/\f4s\f1 \- total outgoing RFS messages sent per second.
+.br
+\f4rcv-inv\f1/\f4s\f1 \- number of invalidation messages received from the remote server.
+.br
+\f4rcv-msg\f1/\f4s\f1 \- total number of incoming RFS messages received per second.
+.br
+\f4dis-bread\f1/\f4s\f1 \- number of read messages that
+would be eligible for caching if caching had not been turned off
+because of an invalidation message.
+(Indicates the penalty incurred because of the invalidation message.)
+.br
+\f4blk-inv\f1/\f4s\f1 \- number of pages removed from the client cache in response to
+cache invalidation messages.
+.SH EXAMPLES
+To see today's
+.SM CPU
+activity so far:
+.IP
+\f4sar\f1
+.PP
+To watch
+.SM CPU
+activity evolve for ten minutes and save data:
+.IP
+\f4sar \|\-o temp 60 10\f1
+.PP
+To later review disk and tape activity from that period:
+.IP
+\f4sar \|\-d \|\-f temp\f1
+.SH FILES
+.TP 20
+\f4/var/adm/sa/sa\fP\f2dd\f1
+daily data file, where
+.I dd\^
+are digits representing the day of the month.
+.SH SEE ALSO
+\f4sag\fP(1M), \f4sadc\fP(1M)
+.\"	@(#)sar.1	6.3 of 1/4/84
+.Ee
+

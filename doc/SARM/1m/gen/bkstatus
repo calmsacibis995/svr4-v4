@@ -1,0 +1,201 @@
+.if n .pH g1a.bkstatus @(#)bkstatus @(#)bkstatus	40.13.1.3 of 1/3/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} bkstatus 1M "System Administration Utilities" "\&"
+.if \nX=1 .ds x} bkstatus 1M "System Administration Utilities"
+.if \nX=2 .ds x} bkstatus 1M "" "\&"
+.if \nX=3 .ds x} bkstatus "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4bkstatus\f1 \- display the status of backup operations
+.SH SYNOPSIS
+.B
+\f4bkstatus\f1
+[\f4\-h\f1]
+[\f4\-f \f2field_separator\f1]
+[\f4\-j \f2jobids\f1]
+[\f4\-s \f2states\f1 | \f4-a\f1]
+[\f4\-u \f2users\f1]
+.P
+\f4bkstatus \-p \f2period\f1
+.SH DESCRIPTION
+Without options, the
+\f4bkstatus\f1
+command displays the status of backup operations that are in progress:
+either
+\f4active\f1,
+\f4pending\f1,
+\f4waiting\f1
+or
+\f4suspended\f1.
+When used with the \f4\-a\f1 option,
+the \f4backup\f1 command
+includes \f4failed\f1 and \f4completed\f1
+backup operations in the display.
+.P
+\f4bkstatus \-p\f1
+defines the amount of status
+information that is saved for display.
+.P
+\f4bkstatus\f1
+may only be executed by a user with superuser privilege.
+.P
+Each backup operation goes through a number of states
+as described below.
+The keyletters listed in parentheses after each state are
+used with the \f4\-s\f1 option and also appear on the
+display.
+.TP 10
+\f4pending(p)\f1
+\f4backup\f1
+has been invoked and
+the operations in the backup register
+for the specified day are scheduled to occur.
+.TP 10
+\f4active(a)\f1
+The backup operation has been assigned a destination device
+and archiving is currently underway;
+or a suspended backup has been resumed.
+.TP 10
+\f4waiting(w)\f1
+The backup operation is waiting for operator interaction,
+such as inserting the correct volume.
+.TP 10
+\f4suspended(s)\f1
+The backup operation has been suspended by an invocation of
+\f4backup \-S\f1.
+.TP 10
+\f4failed(f)\f1
+The backup operation failed or has been cancelled.
+.TP 10
+\f4completed(c)\f1
+The backup operation has completed successfully.
+.TP 10
+The \f4-a\f1 and \f4-s\f1 options are mutually exclusive.
+.SS Options
+.TP 10
+\f4\-a\f1
+Include
+\f4failed\f1
+and
+\f4completed\f1
+backup operations in the display.
+All backup operations that have occurred within the
+rotation period are displayed.
+.TP 10
+\f4\-f\f2 field_separator\f1
+Suppresses field wrap on the display and
+specifies an output field separator to be used.
+The value of \f2c\f1 is the character
+that will appear as the field separator on the display output.
+For clarity of output,
+do not use a separator character that is likely to
+occur in a field.
+For example, do not use the colon as a
+field separator character if the display
+will contain dates that use
+a colon to separate hours from minutes.
+To use the default field separator (tab), specify the
+null character (\f4""\f1) for \f2c\f1.
+.TP 10
+\f4\-h\f1
+Suppress header on the display.
+.TP 10
+\f4\-j\f2 jobids\f1
+Restrict the display to the specified list of
+\f4backup\f1 job ids
+(either comma-separated or blank-separated and enclosed in quotes).
+[See \f4backup\f1(1M)].
+.TP 10
+\f4\-p\f2 period\f1
+Define the amount of backup status information that is
+saved and made available for display as \f2period\f1.
+\f2period\f1 is the number of weeks that information
+is saved in \f4/bkup/bkstatus.tab\f1.
+Status information that is older than the number of
+weeks specified in \f2period\f1
+is deleted from the status table.
+The minimum valid entry is 1.  The maximum
+valid entry is 52.
+The default is 1 week.
+.TP 10
+\f4\-s\f2 states\f1
+Restrict the report to backup operations with the specified
+.I states.
+.I states
+is a list of state key-letters
+(concatenated, comma-separated or blank-separated and surrounded
+by quotes).
+For example,
+.nf
+	\f4apf
+	a,p,f
+	"a p f"\f1
+.fi
+all specify that the report should only include backup operations
+that are
+\f4active\f1,
+\f4pending\f1
+or
+\f4failed\f1.
+.TP 10
+\f4\-u\f2 users\f1
+Restrict the display to backup operations started by the specified list of
+.IR users
+(either comma-separated or blank-separated and enclosed in quotes).
+\f2users\f1 must be in the \f4passwd\f1 file.
+.SH DIAGNOSTICS 
+The exit codes for the \f4bkstatus\f1 command are the following:
+.PP
+\f40\f1 = successful completion of the task
+.br
+\f41\f1 = one or more parameters to \f4bkstatus\fP are invalid.
+.br
+\f42\f1 = an error has occurred which caused \f4bkstatus\fP to fail to
+      complete \f2all\f1 portions of its task.
+.SH EXAMPLES
+Example 1:
+.P
+.in 1.0i
+\f4bkstatus \-p 4\f1
+.in 0
+.P
+specifies that backup status information
+is to be saved for four weeks.
+Any status information
+older than four weeks is deleted from the system.
+.P
+Example 2:
+.P
+.in 1.0i
+\f4bkstatus \-a \-j back-459,back-395\f1
+.in 0
+.P
+produces a display that shows status
+for the two backup jobs specified, even if they 
+have \f4completed\f1 or \f4failed\f1.
+.bp
+Example 3:
+.P
+.in 1.0i
+\f4bkstatus \-s a,c \-u "oper3 oper4"\f1
+.in 0
+.P
+produces a display that shows only those backup jobs
+issued by users \f4oper3\f1 and \f4oper4\f1
+that have a status of either \f4active\f1 or \f4completed\f1.
+.SH FILES
+.TP 1.75i
+\f4/etc/bkup/bkstatus.tab\f1
+lists the current status of backups that have
+occurred or are still in progress
+.TP
+\f4/etc/bkup/bkreg.tab\f1
+describes the backup policy decided on by the System Administrator
+.SH SEE ALSO
+\f4backup\f1(1M),
+\f4bkhist\f1(1M),
+\f4bkreg\f1(1M)
+
+

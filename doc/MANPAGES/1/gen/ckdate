@@ -1,0 +1,136 @@
+'\"macro stdmacro
+.if n .pH g1.ckdate @(#)ckdate	40.17 of 5/29/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} ckdate 1 "Essential Utilities" "\&"
+.if \nX=1 .ds x} ckdate 1 "Essential Utilities"
+.if \nX=2 .ds x} ckdate 1 "Essential Utilities" "\&"
+.if \nX=3 .ds x} ckdate "Essential Utilities" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4ckdate\fP, \f4errdate\fP, \f4helpdate\fP, \f4valdate\fP \- prompt for and validate a date
+.SH SYNOPSIS
+\f4ckdate \f1[ \f4-Q\f1 ] [ \f4-W\f2 width\f1 ]
+[ \f4-f \f2format\f1 ] [ \f4-d\f2 default\f1 ] 
+[ \f4-h\f2 help\f1 ] [ \f4-e\f2 error\f1 ]
+.br
+	[ \f4-p \f2prompt\f1 ] [ \f4-k\f2 pid\f1 [ \f4-s\f2 signal\f1 ] ]
+.P
+\f4errdate\f1 [ \f4-W \f2width\f1 ] [ \f4-e \f2error\f1 ] [ \f4-f \f2format\f1 ]
+.P
+\f4helpdate\f1 [ \f4-W \f2width\f1 ] [ \f4-h \f2help\f1 ] [ \f4-f \f2format\f1 ]
+.P
+\f4valdate\f1 [ \f4-f \f2format\f1 ] \f2input\f1
+.SH DESCRIPTION
+\f4ckdate\f1 prompts a user and validates the response.
+It defines, among other things,
+a prompt message whose response should be a date, text for help and
+error messages, and a default value
+(which is returned if the user responds with a RETURN).
+The user response must match the defined format for
+a date.
+.P
+All messages are limited in length to 70 characters and
+are formatted automatically.
+Any white space used in the definition (including newline) is stripped.
+The \f4-W\f1 option cancels the automatic formatting.
+When a tilde is placed at the beginning or end of a message definition,
+the default text is
+inserted at that point, allowing both custom text and the default text
+to be displayed.
+.P
+If the prompt, help or error message is not defined, the default message
+(as defined under NOTES) is displayed.
+.P
+Three visual tool modules are linked to the \f4ckdate\f1 command.
+They are
+\f4errdate\f1 (which formats and displays an error message),
+\f4helpdate\f1 (which formats and displays a help message),
+and \f4valdate\f1 (which validates a response).
+These modules should be used in conjunction with FMLI objects.
+In this instance, the FMLI object defines the prompt.
+When \f2format\f1 is defined in
+the \f4errdate\f1 and \f4helpdate\f1 modules,
+the messages describe the expected format.
+.P
+The options and arguments for this command are:
+.TP
+\f4-Q\f1
+Do not allow quit as a valid response..
+.TP
+\f4-W\f1
+Use \f2width\f1 as the line length for prompt, help, and error messages.
+.TP
+\f4-f\f1
+Verify input using \f2format\f1.
+Possible formats and their definitions are:
+.RS 12n
+.nf
+\f4%b\f1  =  abbreviated month name
+\f4%B\f1  =  full month name
+\f4%d\f1  =  day of month (01 \- 31)
+\f4%D\f1  =  date as \f2%m/%d/%y\fP (the default format)
+\f4%e\f1  =  day of month (1 \- 31; single digits are preceded by a blank)
+\f4%h\f1  =  abbreviated month name (for example, \f4jan\fP, \f4feb\fP, \f4mar\fP)
+\f4%m\f1  =  month number (01 \- 12)
+\f4%y\f1  =  year within century (for example, 91)
+\f4%Y\f1  =  year as \f2CCYY\fP (for example, 1991)
+.fi
+.RE
+.TP
+\f4\-d\f1
+The default value is \f2default\f1.
+The default is not validated and so does not have to meet any criteria.
+.TP
+\f4\-h\f1
+The help message is \f2help\fP.
+.TP
+\f4\-e\f1
+The error message is \f2error\f1.
+.TP
+\f4\-p\f1
+The prompt message is \f2prompt\f1.
+.TP
+\f4\-k\f1
+Send process ID \f2pid\f1 a signal if the user chooses
+to abort.
+.TP
+\f4\-s\f1
+When quit is chosen,
+send \f2signal\fP to the process whose \f2pid\fP is specified by the \f4\-k\fP option.
+If no signal is specified, use \f4SIGTERM\fP.
+.TP
+.I input
+Input to be verified against format criteria.
+.SH EXIT CODES
+.nf
+\f40\fP = Successful execution
+\f41\fP = EOF on input
+\f42\fP = Usage error
+\f43\fP = User termination (quit)
+\f44\fP = Garbled format argument
+.fi
+.SH NOTES
+The default prompt for \f4ckdate\f1 is:
+.P
+.RS
+\f4Enter the date [?,q]\f1
+.RE
+.P
+The default error message is:
+.P
+.RS
+\f4ERROR - Please enter a date. Format is \f2format\fP.\f1
+.RE
+.P
+The default help message is:
+.P
+.RS
+\f4Please enter a date. Format is \f2format\fP.\f1
+.RE
+.P
+When the quit option is chosen (and allowed), \f4q\f1 is
+returned along with the return code 3.
+The \f4valdate\f1 module does not produce any output.
+It returns zero for success and non-zero for failure.

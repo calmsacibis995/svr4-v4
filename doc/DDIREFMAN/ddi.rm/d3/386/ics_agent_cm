@@ -1,0 +1,39 @@
+'\"macro stdmacro
+.if n .pH 386.ics_agent_cm @(#)ics_agent_cm	40.4 of 7/1/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.nr X
+.if \nX=0 .ds x} ics_agent_cmp D3D "Multibus II" "DDI" "\&"
+.if \nX=1 .ds x} ics_agent_cmp D3D "Multibus II" "DDI" "\&"
+.if \nX=2 .ds x} ics_agent_cmp D3D "" "\&"
+.if \nX=3 .ds x} ics_agent_cmp "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4ics_agent_cmp\f1 \- checks for certain board types in the designated slot
+.SH SYNOPSIS
+.nf
+\f4#include <sys/ics.h>
+int
+ics_agent_cmp (\f2table\fP, \f2slot\fP)
+char *table[];
+int slot;\f1
+.fi
+.SH ARGUMENTS
+.PD 0
+.TP 11
+\f2table\f1
+A null -terminated list of board names.
+.TP 11
+\f2slot\f1
+The slot id of the board.
+.SH DESCRIPTION
+A map of the backplane is built at boot time.  This routine checks whether
+a given slot contains a certain type of board.
+.P
+\f2table\f1 is an array of strings that names the types of boards to check
+for in the slots.  \f2table\f1 is terminated by a NULL pointer.  
+.SH RETURN VALUE
+If the board in the \f2slot\f1 is one of the types that was checked
+for, then \f4ics_agent_cmp\f1 returns a zero; otherwise a non-zero
+value is returned.
+.SH LEVEL
+Base or Interrupt

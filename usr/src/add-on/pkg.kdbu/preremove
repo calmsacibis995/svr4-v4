@@ -1,0 +1,61 @@
+#ident	"@(#)pkg.kdbu:preremove	1.2"
+
+FAILURE=1	# fatal error
+
+CONFDIR=/etc/conf
+CONFBIN=${CONFDIR}/bin
+
+ERR=/tmp/$1.err
+
+exitstat=0
+
+for MODULE in kdb-util
+do
+	${CONFBIN}/idcheck -p ${MODULE}
+	RES="$?"
+	if
+		[ "${RES}" -ne "100" -a "${RES}" -ne "0" ]
+	then
+		echo "Removing ${NAME} ${MODULE} module ..."
+
+		# kdb-util cannot be completely removed.
+		# The Stubs.c, Master and System components must remain,
+		# but it must be deconfigured.
+
+		${CONFBIN}/idinstall -gs ${MODULE} | /bin/sed -e \
+			's/Y/N/' >System 2>/dev/null
+		${CONFBIN}/idinstall -us ${MODULE} >${ERR} 2>&1
+		if [ $? != 0 ]
+		then
+			message " The removal of ${MODULE} cannot be \
+completed due to an error in the removal of the driver module. \
+The file ${ERR} contains the errors."
+			exit $FAILURE
+		fi
+		${CONFBIN}/idinstall -dop ${MODULE}
+
+		# If kdb Driver.o has been removed, remove the rest of
+		# the kdb module now (since kdb left a Stubs.c for us to use).
+
+		${CONFBIN}/idcheck -p kdb >/dev/null 2>&1
+		if [ "$?" -lt 16 ]
+		then
+			${CONFBIN}/idinstall -d kdb
+		fi
+
+		# Rebuild kernel for changes to take effect
+
+		rm -f ${ERR}
+
+		${CONFBIN}/idbuild
+		if
+			[ "$?" -ne "0" ]
+		then
+			exit ${FAILURE}
+		else
+			exitstat=10
+		fi
+	fi
+done
+
+exit ${exitstat}

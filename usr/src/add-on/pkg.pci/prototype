@@ -1,0 +1,31 @@
+#ident	"@(#)pkg.pci:prototype	1.2.1.3"
+#	Copyright (c) 1989  Locus Computing Corporation
+#	All Rights Reserved
+#
+#	@(#)prototype	1.4	4/12/91	21:56:40
+#
+i copyright
+i depend
+i pkginfo
+d none /usr			?   ?   ?
+d none /usr/bin			?   ?   ?
+f none /usr/bin/charconv	755 bin bin
+l none /usr/bin/dos2unix=/usr/bin/charconv
+l none /usr/bin/unix2dos=/usr/bin/charconv
+d none /usr/pci			755 bin bin
+d none /usr/pci/bin		755 bin bin
+f none /usr/pci/bin/lmfmsg	755 bin bin
+f none /usr/pci/bin/pciprint	755 bin bin
+f none /usr/pci/errlogger	755 bin bin
+f none /usr/pci/pcidosout.232	755 bin bin
+f none /usr/pci/pcidossvr.232	755 bin bin
+v none /usr/pci/pciptys		644 bin bin
+f none /usr/pci/sharectl	755 bin bin
+d none /var/spool		?   ?   ?
+d none /var/spool/pcilog	777 bin bin
+d none /usr/pci/lib		755 bin bin
+f none /usr/pci/lib/pc437.lcs	755 bin bin
+f none /usr/pci/lib/pc850.lcs	755 bin bin
+f none /usr/pci/lib/8859.lcs	755 bin bin
+d none /usr/pci/dosmsg		755 bin bin
+f none /usr/pci/dosmsg/En.lmf	755 bin bin

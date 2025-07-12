@@ -1,0 +1,94 @@
+'\"macro stdmacro
+.if n .pH g1a.dcopy_s5 @(#)dcopy_s5	40.15 of 4/15/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} dcopy 1M "s5" "\&"
+.if \nX=1 .ds x} dcopy 1M "s5"
+.if \nX=2 .ds x} dcopy 1M "" "\&"
+.if \nX=3 .ds x} dcopy "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4dcopy\f1 (s5) \- copy \f4s5\f1 file systems for optimal access time
+.SH SYNOPSIS
+\f4dcopy\f1
+[\f4\-F s5\f1]
+[\f2generic_options\f1]
+[\f4\-s\f2X\f1]
+[\f4\-a\f2n\f1]
+[\f4\-d\f1]
+[\f4\-v\f1]
+[\f4\-f\f2fsize\f1[\f2:isize\f1]]
+\f2inputfs outputfs\f1
+.SH DESCRIPTION
+.I generic_options
+are options supported by the generic \f4dcopy\f1 command.
+.PP
+With no options,
+\f4dcopy\f1
+copies files from
+.I inputfs
+compressing directories by removing vacant entries, and spacing consecutive
+blocks in a file by the optimal rotational gap.
+.PP
+The options are:
+.TP 5P
+\f4\-F s5\f1
+Specifies the \f4s5\f1-FSType.
+Need not be supplied if the information may be obtained
+from \f4/etc/vfstab\f1 by matching the \f2inputfs\f1 device
+with an entry in the file.
+.TP 
+\f4\-s\f2X\f1
+Supply device information for creating an optimal
+organization of blocks in a file.
+.I X
+must be of the form \f2cylinder size\f1:\f2gap size\f1.
+.TP 
+\f4\-a\f2n\f1
+Place the files not accessed in
+.I n
+days after the free blocks of the 
+destination file system
+If no
+.I n 
+is specified then no movement occurs.
+.TP 
+\f4\-d\f1
+Leave order of directory entries as is.
+The default is to move sub-directories to the beginning of directories.
+.TP
+\f4\-v\f1
+Reports how many files were processed and how big
+the source and destination freelists are.
+.TP
+\f4\-f\f2 fsize\f1[:\f2isize\f1]\fP
+Specify the
+.I outputfs
+file system (\f2fsize\fP) and inode list (\f2isize\fP) sizes in logical blocks.
+If the suboption (or :\f2isize\fP)
+is not given, the values from
+.I inputfs
+are used.
+.P
+\f4dcopy\f1
+catches interrupts and quits and reports on its progress.
+To terminate
+\f4dcopy\f1,
+send a quit signal followed by an
+interrupt or quit.
+.ig
+\f4dcopy\f1
+also attempts to modify its command line arguments so its 
+progress can be monitored with
+.IR ps (1).
+..
+.SH NOTES
+\f4fsck\fP should be run on the new file system
+created by \f4dcopy\fP before it is mounted.
+.SH FILES
+\f4/etc/mnttab\f1	list of file systems currently mounted
+.SH SEE ALSO
+generic \f4dcopy\f1(1M),
+\f4fsck\f1(1M),
+\f4mkfs\f1(1M)

@@ -1,0 +1,110 @@
+'\"macro stdmacro
+.if n .pH g1a.mount_ufs @(#)mount_ufs	40.15 of 5/16/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} mount 1M "UFS" "\&"
+.if \nX=1 .ds x} mount 1M "UFS"
+.if \nX=2 .ds x} mount 1M "" "\&"
+.if \nX=3 .ds x} mount "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4mount\f1 (ufs) \- mount \f4ufs\fP file systems
+.SH SYNOPSIS
+\f4mount\f1
+[\f4\-F ufs\f1]
+[\f2generic_options\f1]
+[\f4\-r\f1]
+[\f4\-o \f2specific_options\f1]
+{
+.IR special | mount_point
+}
+.br
+\f4mount\f1
+[\f4\-F ufs\f1]
+[\f2generic_options\f1]
+[\f4\-r\f1]
+[\f4\-o\f2 specific_options\f1]
+.I special
+.I mount_point
+.SH DESCRIPTION
+.LP
+\f2generic_options\fP are options supported by the generic \f4mount\fP command.
+\f4mount\f1
+attaches a 
+\f4ufs\f1
+file system, referenced by \f2special\fP, to the file system hierarchy at the
+pathname location
+.IR mount_point ,
+which must already exist.
+If
+.I mount_point
+has any contents prior to the
+\f4mount\f1
+operation, these remain hidden until the
+file system is once again unmounted.
+.P
+The options are:
+.PP
+.TP 0.50i
+\f4\-F ufs\f1
+Specifies the \f4ufs\f1-FSType.
+.TP
+\f4\-r\f1
+Mount the file system read-only.
+.TP
+\f4\-o\f1
+Specify the \f4ufs\f1
+file system specific options in a comma-separated list.
+If invalid options are specified, a warning message
+is printed and the invalid options are ignored.
+The following options are available:
+.RS
+.TP 0.75i
+\f4f\f1
+Fake an
+\f4/etc/mnttab\f1
+entry, but do not actually mount any file systems.
+Parameters are not verified.
+.TP
+\f4n\f1
+Mount the file system without making an entry in
+\f4/etc/mnttab\f1.
+.TP
+\f4rw\f1\||\|\f4ro\f1
+Read/write or read-only.
+Default is \f4rw\f1.
+.TP
+\f4nosuid\f1
+By default the file system is mounted with setuid execution allowed.
+Specifying \f4nosuid\fP overrides the default and causes the
+file system to be mounted with setuid execution disallowed.
+.TP
+\f4remount\f1
+Used in conjunction with \f4rw\f1.
+A file system 
+mounted read-only can be \f2remounted\f1 read-write.
+Fails if the
+file system is not currently mounted
+or if the file system is mounted \f4rw\f1.
+.RE
+.SH NOTES
+If the directory on which a file system is to be mounted is a
+symbolic link, the file system is mounted on
+the directory to which the symbolic link refers,
+rather than on top of the symbolic link itself.
+.SH FILES
+.PD 0
+.TP 20
+\f4/etc/mnttab\f1
+mount table
+.PD
+.SH "SEE ALSO"
+generic \f4mount\fP(1M),
+\f4mountfsys\fP(1M),
+\f4umountfsys\fP(1M),
+\f4mkdir\fP(2),
+\f4mount\fP(2),
+\f4unmount\fP(2),
+\f4open\fP(2),
+\f4mnttab\fP(4)

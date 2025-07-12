@@ -1,0 +1,55 @@
+'\"macro stdmacro
+.if n .pH g1a.keyserv @(#)keyserv	40.9 of 5/16/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.\" @(#)keyserv.8c 1.8 89/03/29 SMI;
+.\".TH KEYSERV 8C "9 September 1987"
+.nr X
+.if \nX=0 .ds x} keyserv 1M "" "\&"
+.if \nX=1 .ds x} keyserv 1M ""
+.if \nX=2 .ds x} keyserv 1M "" "\&"
+.if \nX=3 .ds x} keyserv "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4keyserv\f1 \- server for storing public and private keys
+.SH SYNOPSIS
+\f4keyserv \f1[\f4\-n\f1]
+.SH DESCRIPTION
+.IX "keyenvoy server" "" "\fLkeyenvoy\fP server"
+\f4keyserv\f1
+is a daemon that is used for storing the
+private encryption keys of each
+user logged into the system.
+These encryption
+keys are used for accessing
+secure network services such as secure NFS.
+.P
+Normally, root's key is read from the file
+\f4/etc/.rootkey\f1
+when the daemon is started.
+This is useful during power-fail reboots
+when no one is around to type a password.
+.P
+When the
+\f4\-n\f1
+option is used,
+root's key is not read from
+\f4/etc/.rootkey\f1.
+Instead,
+\f4keyserv\fP
+prompts the user for the password to decrypt
+root's key stored in the \f4publickey\fP(4) database
+and then stores the decrypted key in
+\f4/etc/.rootkey\f1
+for future use.
+This option is useful if the
+\f4/etc/.rootkey\f1
+file ever gets out of date or corrupted.
+.PP
+To start \f4keyserv\fP manually, you must be \f4root\fP with the appropriate
+privileges.
+.SH FILES
+.TP 20
+\f4/etc/.rootkey\f1
+.SH "SEE ALSO"
+\f4publickey\f1(4)

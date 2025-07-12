@@ -1,0 +1,58 @@
+'\"macro stdmacro
+.if n .pH gen.freeb @(#)freeb	40.2 of 1/7/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.nr X
+.if \nX=0 .ds x} freeb D3DK "STREAMS" "DDI/DKI" "\&"
+.if \nX=1 .ds x} freeb D3DK "STREAMS" "DDI/DKI"
+.if \nX=2 .ds x} freeb D3DK "" "\&"
+.if \nX=3 .ds x} freeb "" "" "\&"
+.TH \*(x}
+.SH NAME
+.IX "\f4freeb\fP(D3DK)"
+.IX "STREAMS message blocks"
+\f4freeb\f1 \- free a message block
+.SH SYNOPSIS
+.nf
+.na
+\f4#include <sys/stream.h>
+.sp 0.5
+void freeb(mblk_t *\f2bp\f4);\f1
+.ad
+.fi
+.SH ARGUMENTS
+.RS 0n
+.IP "\f2bp\f1" 10n
+Pointer to the message block to be deallocated.
+.RE
+.SH DESCRIPTION
+\f4freeb\f1 deallocates a message block.
+If the reference count of the \f4db_ref\f1 member of the 
+\f4datab\f1(D4DK) structure
+is greater than 1, \f4freeb\f1 decrements the count and returns.
+Otherwise, if \f4db_ref\f1 equals 1, 
+it deallocates the message block and the
+corresponding data block and buffer.
+.P
+If the data buffer to be freed was allocated with \f4esballoc\f1(D3DK),
+the driver is notified that the attached data buffer
+needs to be freed by calling the free-routine [see \f4free_rtn\fP(D4DK)] associated with the
+data buffer.
+Once this is accomplished, \f4freeb\f1 releases the STREAMS resources
+associated with the buffer.
+.SH RETURN VALUE
+None.
+.SH LEVEL
+Base or Interrupt.
+.SH NOTES
+Does not sleep.
+.SH SEE ALSO
+.na
+\f4allocb\f1(D3DK),
+\f4dupb\f1(D3DK),
+\f4esballoc\f1(D3DK),
+\f4datab\fP(D4DK),
+\f4free_rtn\f1(D4DK),
+\f4msgb\fP(D4DK)
+.ad
+.SH EXAMPLE
+See \f4copyb\f1(D3DK) for an example of \f4freeb\f1.

@@ -1,0 +1,45 @@
+'\"!  tbl | mmdoc
+'\"macro stdmacro
+.if n .pH g3x.form_new @(#)form_new	40.5 of 4/10/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.\" ident	"@(#)svid_ti:ti_lib/form_new	1.2"
+.nr X
+.if \nX=0 .ds x} form_new 3X "" "\&"
+.if \nX=1 .ds x} form_new 3X ""
+.if \nX=2 .ds x} form_new 3X "" "\&"
+.if \nX=3 .ds x} form_new "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4form_new\f1: \f4 new_form\f1, \f4free_form\f1 \- create and destroy \f4forms\fP
+.SH SYNOPSIS
+.nf
+.ft 4
+#include <form.h>
+.sp
+FORM *new_form(FIELD **fields);
+.sp 0.5
+int free_form(FORM *form);
+.ft 1
+.fi
+.SH DESCRIPTION
+\f4new_form\fP creates a new form connected to the designated fields
+and returns a pointer to the form.
+.PP
+\f4free_form\fP disconnects the \f2form\fP from its associated field
+pointer array and deallocates the space for the form.
+.SH RETURN VALUE
+\f4new_form\fP always returns \f4NULL\fP on error.
+\f4free_form\fP returns one of the following:
+.TS
+lfCWw(1.25i)1 c1 l .
+E_OK	\-	The function returned successfully.
+E_BAD_ARGUMENT	\-	An argument is incorrect.
+E_POSTED	\-	The form is posted.
+.TE
+.SH NOTES
+The header file \f4<form.h>\f1 automatically includes the header files
+\f4<eti.h>\fP and \f4<curses.h>\fP.
+.SH SEE ALSO
+\f4curses\fP(3X),
+\f4forms\fP(3X)

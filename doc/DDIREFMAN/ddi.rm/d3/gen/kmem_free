@@ -1,0 +1,51 @@
+'\"macro stdmacro
+.if n .pH gen.kmem_free @(#)kmem_free	40.3 of 3/26/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.nr X
+.if \nX=0 .ds x} kmem_free D3DK "" "DDI/DKI" "\&"
+.if \nX=1 .ds x} kmem_free D3DK "" "DDI/DKI"
+.if \nX=2 .ds x} kmem_free D3DK "" "\&"
+.if \nX=3 .ds x} kmem_free "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4kmem_free\f1 \- free previously allocated kernel memory
+.IX "\f4kmem_free\fP(D3DK)"
+.SH SYNOPSIS
+.nf
+.na
+\f4#include <sys/types.h>
+#include <sys/kmem.h>
+.sp 0.5
+void kmem_free(void *\f2addr, \f4size_t \f2size\f4);\f1
+.ad
+.fi
+.SH ARGUMENTS
+.RS 0n 10
+.IP "\f2addr\f1" 10n
+Address of the allocated memory to be returned.
+\f2addr\f1 must specify the same address that was
+returned by the corresponding call to \f4kmem_alloc\f1(D3DK) or
+\f4kmem_zalloc\f1(D3DK) which allocated the memory.
+.IP "\f2size\f1" 10n
+Number of bytes to free.
+The \f2size\f1 parameter must specify the same number of bytes as
+was allocated by the corresponding call to
+\f4kmem_alloc\f1 or \f4kmem_zalloc\f1.
+.RE
+.SH DESCRIPTION
+\f4kmem_free\f1 returns \f2size\f1 bytes of previously allocated kernel memory.
+The \f2addr\f1 and \f2size\f1 arguments must specify exactly one complete area
+of memory that was allocated by a call to
+\f4kmem_alloc\f1 or \f4kmem_zalloc\f1 (that is, the memory cannot be freed
+piecemeal).
+.SH RETURN VALUE
+None.
+.SH LEVEL
+Base or Interrupt.
+.SH NOTES
+Does not sleep.
+.SH SEE ALSO
+.na
+\f4kmem_alloc\f1(D3DK),
+\f4kmem_zalloc\f1(D3DK)
+.ad

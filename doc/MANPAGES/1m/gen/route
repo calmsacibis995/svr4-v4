@@ -1,0 +1,170 @@
+'\"macro stdmacro
+.if n .pH g1a.route @(#)route	40.4.1.4 of 1/3/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} route 1M "TCP/IP" "\&"
+.if \nX=1 .ds x} route 1M "TCP/IP"
+.if \nX=2 .ds x} route 1M "" "\&"
+.if \nX=3 .ds x} route "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4route\f1 \- manually manipulate the routing tables
+.SH SYNOPSIS
+\f4route\f1
+[
+\f4\-fn\f1
+]
+{
+\f4add\f1 | \f4delete\f1
+}
+{
+\f2destination\f1 | \f4default\f1
+}
+[
+\f4host\f1 | \f4net\f1
+]
+[
+.I gateway
+[
+.I metric
+] ]
+.\".SH AVAILABILITY
+.\".LP
+.\"This program is available with the
+.\".I Networking Tools and Programs
+.\"software installation option.  Refer to
+.\".TX INSTALL
+.\"for information on how to install optional software.
+.SH DESCRIPTION
+.LP
+\f4route\f1
+manually manipulates the network routing tables normally maintained by
+the system routing daemon,
+\f4routed\f1(1M),
+or through default routes and redirect messages from routers.
+\f4route\f1
+allows the super-user to operate directly on the routing table
+for the specific host or network indicated by
+.IR destination .
+\f4default\f1 is available for gateways to use after all 
+other routes have been attempted.
+The
+.I gateway
+argument, if present, indicates the network gateway to which packets
+should be addressed.  The
+.I metric
+argument indicates the number of \(lqhops\(rq to the
+.IR destination .
+The
+.I metric
+is required for
+.I add
+commands; it must be zero if the destination is on a directly-attached network,
+and nonzero if the route utilizes one or more gateways.
+.LP
+The
+\f4add\f1
+command instructs
+\f4route\f1
+to add a route to
+.IR destination .
+\f4delete\f1
+deletes a route.
+.LP
+Routes to a particular host must be distinguished from those to
+a network.
+The optional keywords
+\f4net\f1
+and
+\f4host\f1
+force the destination to be interpreted as a network or a host, respectively.
+Otherwise, if the destination has a \(lqlocal address part\(rq of
+\f4INADDR_ANY\f1,
+then the route is
+assumed to be to a network; otherwise, it is presumed to be a
+route to a host.  
+If the route is to a destination connected
+by a gateway, the
+.I metric
+parameter should be greater than 0.  
+If adding a route with metric 0,
+the gateway given is the address of this host on the common network,
+indicating the interface to be used directly for transmission.
+All symbolic names specified for a
+.I destination
+(except \f4default\f1)
+or
+.I gateway
+are looked up in the hosts database using
+\f4gethostbyname\f1(3N).
+If this lookup fails, then the name is looked up
+in the networks database using
+\f4getnetbyname\f1(3N).
+.SH OPTIONS
+.TP
+\f4\-f\f1
+Flush the routing tables of all gateway entries.
+If this is used in conjunction with one of the commands
+described above,
+\f4route\f1
+flushes the gateways before performing the command.
+.TP
+\f4\-n\f1
+Prevents attempts to print host and network names symbolically
+when reporting actions.
+This is useful, for example, when all name servers are down on your
+local net, so you need a route before you can contact the name server.
+.SH FILES
+.PD 0
+.TP 20
+\f4/etc/hosts\f1
+.TP
+\f4/etc/networks\f1
+.PD
+.SH "SEE ALSO"
+\f4ioctl\f1(2),
+\f4gethostbyname\f1(3N),
+\f4getnetbyname\f1(3N),
+\f4routing\f1(4N),
+\f4routed\f1(1M).
+.br
+.ne 2i
+.SH DIAGNOSTICS
+.HP
+\f4add\f1 [
+\f4host\f1 \||\| \f4net\f1 ]
+\f2destination\f4:\f2gateway\f1
+.br
+The specified route is being added to the tables.  The
+values printed are from the routing table entry supplied
+in the
+\f4ioctl\f1(2)
+call.
+.HP
+\f4delete\f1 [
+\f4host\f1 \||\| \f4net\f1 ]
+\f2destination\f4:\f2gateway\f1
+.br
+The specified route is being deleted.
+.TP
+\f2destination \f4done\f1
+When the
+\f4\-f\f1
+flag is specified, each routing table entry deleted
+is indicated with a message of this form.
+.TP
+\f4Network is unreachable\f1
+An attempt to add a route failed because the gateway listed was
+not on a directly-connected network.  Give the next-hop gateway
+instead.
+.br
+.ne 8
+.TP
+\f4not in table\f1
+A delete operation was attempted for an entry that
+is  not in the table.
+.TP
+\f4routing table overflow\f1
+An add operation was attempted, but the system was
+unable to allocate memory to create the new entry.

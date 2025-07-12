@@ -1,0 +1,86 @@
+'\"macro stdmacro
+.if n .pH g1a.xinstall @(#)xinstall	40.9 of 6/18/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} xinstall 1M "Application Compatibility Package" "\&"
+.if \nX=1 .ds x} xinstall 1M "Application Compatibility Package"
+.if \nX=2 .ds x} xinstall 1M "" "\&"
+.if \nX=3 .ds x} xinstall "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4xinstall\f1 \- install commands
+.SH SYNOPSIS
+\f4xinstall\f1 [\f4-c \f2dira\f1] [\f4-f \f2dirb\f1] [\f4-n \f2dirc\f1] [\f4-o\f1] [\f4-a\f1] \f2file\f1 [\f2dirz\f1 . . .]
+.SH DESCRIPTION
+\f4xinstall\f1 is a command most commonly used in "makefiles"
+[see \f4make\f1(CP)] to xinstall a file
+(updated target file) in a specific place within a file system.
+Each file is installed by copying it into the appropriate
+directory, thereby retaining the mode and owner of the
+original command file.
+The program prints messages \%telling you exactly what
+files it is replacing or creating and where they are going.
+.P
+If no options or directories (\f2dirz\f1 . . .) are given,
+\f4xinstall\f1 will search [using \f4find\f1(C)] a set of
+default directories (\f4/usr/bin/usr/usr/bin\f1, \f4/etc\f1,
+\f4/usr/lib\f1, and \f4/usr/usr/lib\f1, in that order)
+for a file with the same name as \f2file\f1.
+When the first occurrence is found,
+\f4xinstall\f1 issues a message saying that it is overwriting that file with
+\f2file\f1, and proceeds to do so.
+If the file is not found, the program states this and exits without
+further action.
+.P
+If one or more directories (\f2dirz\f1 . . .) are specified after \f2file\f1,
+those directories will be searched before the directories specified in the
+default list.
+.P
+The meanings of the options are:
+.TP .75i
+\f4-c\f2 dira\f1
+Installs a new command file in the directory specified in \f2dira\f1.
+Looks for \f2file\f1 in \f2dira\f1 and xinstalls it there if it is not
+found.
+If it is found, \f2xinstall\f1 issues a message saying
+that the file already exists, and exits without overwriting it.
+May be used alone or with the \f4-s\f1 option.
+.TP
+\f4-f\f2 dirb\f1
+Forces \f2file\f1 to be installed in given directory,
+whether or not one already exists.
+if the file being installed does not already exist,
+the mode and owner of the new file will be set to
+\f4755\f1 and \f4bin\f1,
+respectively.
+If the file exists, the mode and owner will be that of the existing file.
+May be used alone or with the \f4-o\f1 or \f4-s\f1 options.
+.TP
+\f4-1\f1
+Ignores default directory list,
+searching only through the given directories 
+(\f2dirz\f1 . . .).
+May be used alone or with any other options except \f4-c\f1
+and \f4-f\f1.
+.TP
+\f4-n\f2 dirc\f1
+If \f2file\f1 is not found in any of the searched directories,
+it is put in the directory specified in \f2dirc\f1.
+The mode and owner of the new file will be set to
+\f4755\f1 and \f4bin\f1, respectively.
+May be used alone or with any other options except
+\f4-c\f1 and \f4-f\f1.
+.TP
+\f4-o\f1
+If \f2file\f1 is found, this option saves the "found" file
+by copying it to \f2oldfile\f1 in the directory in which is was found.
+May be used alone or with any other options except
+\f4-c\f1.
+.TP
+\f4-s\f1
+Suppresses printing of messages other than error messages.
+May be used alone or with any other options.
+.SH SEE ALSO
+\f4find\f1(1),
+\f4make\f1(1)

@@ -1,0 +1,630 @@
+'\"macro stdmacro
+.if n .pH g1.make @(#)make	40.24.1.1 of 4/12/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} make 1 "Extended Software Generation System Utilities" "\&"
+.if \nX=1 .ds x} make 1 "Extended Software Generation System Utilities"
+.if \nX=2 .ds x} make 1 "" "\&"
+.if \nX=3 .ds x} make "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4make\f1 \- maintain, update, and regenerate groups of programs
+.SH SYNOPSIS
+\f4make [\-f \f2makefile\f4]
+[\f4\-eiknpqrst\f4] [\|\f2names\f4\|] \f1
+.SH DESCRIPTION
+\f4make\fP
+allows the programmer to maintain, update, and
+regenerate groups of computer programs.
+\f4make\fP
+executes commands in
+.I makefile\^
+to update one or more target
+.I names
+.RI "(" names\^
+are typically programs).
+If the
+\f4\-f\f1
+option is not present, then \f4makefile\f1, \f4Makefile\f1, and the 
+Source Code Control System (SCCS) files
+\f4s.makefile\f1, and \f4s.Makefile\f1 are tried in order.
+If
+.I makefile\^
+is
+\f4\-\f1,
+the standard input is taken.
+More than one
+\f4\-f\f2 makefile\f1
+argument pair may appear.
+.PP
+\f4make\fP
+updates a target only if its dependents are
+newer than the target.
+All prerequisite files of a target are added recursively to
+the list of targets.
+Missing files are deemed to be outdated.
+.PP
+The following list of four directives  
+can be included in \f2makefile\f1 to extend the options
+provided by \f4make\fP.
+They are used in \f2makefile\f1
+as if they were targets:
+.RS 2
+.TP 14
+\f4\&.DEFAULT:\f1
+If a file must be made but there are no explicit commands
+or relevant built-in rules, the commands associated
+with the name
+\f4\&.DEFAULT\f1
+are used if it exists.
+.TP
+\f4\&.IGNORE:\f1
+Same effect as the \f4\-i\f1 option.
+.TP
+\f4\&.PRECIOUS:\f1
+Dependents of the \f4.PRECIOUS\fP entry will not be removed when
+quit or interrupt are hit.
+.TP
+\f4\&.SILENT:\f1
+Same effect as the \f4\-s\f1 option.
+.RE
+.PP
+The options for \f4make\fP are listed below:
+.RS 2
+.TP 14
+\f4\-e\f1
+Environment variables override assignments within makefiles.
+.TP
+\f4\-f\f2 makefile\^\f1
+Description filename
+.RI "(" makefile\^
+is assumed to
+be the name of a description file).
+.TP
+\f4\-i\f1
+Ignore error codes returned by invoked commands.
+.TP
+\f4\-k\f1
+Abandon work on the current entry if it fails, but continue on other
+branches that do not depend on that entry.
+.TP
+\f4\-n\f1
+No execute mode.
+Print commands, but do not execute
+them.
+Even command lines beginning with an
+\f4@\f1
+are printed.
+.TP
+\f4\-p\f1
+Print out the complete set of macro definitions and target descriptions.
+.TP
+\f4\-q\f1
+Question.
+\f4make\fP
+returns a zero or non-zero
+status code depending on whether or not the target file
+has been updated.
+.TP
+\f4\-r\f1
+Do not use the built-in rules.
+.TP
+\f4\-s\f1
+Silent mode.
+Do not print command lines before executing.
+.TP 
+\f4\-t\f1
+Touch the target files (causing them to be updated)
+rather than issue the usual commands.
+.RE
+.SS "Creating the makefile"
+The makefile invoked with the \f4\-f\f1 option is a carefully
+structured file of explicit instructions for updating
+and regenerating programs, and contains a sequence
+of entries that specify dependencies.
+The first line
+of an entry is a blank-separated, non-null list of
+targets, then a
+\f4:\f1,
+then a (possibly null) list of prerequisite files or dependencies.
+Text following a
+\f4;\f1
+and all following lines
+that begin with a tab are shell commands
+to be executed to update the target.
+The first non-empty line that does not begin with a tab or
+\f4#\f1
+begins
+a new dependency or macro definition.
+Shell commands may
+be continued across lines with a backslash-new-line
+(\f4\e\f1 new-line) sequence.
+Everything printed by make (except the initial tab) is passed
+directly to the shell as is.
+Thus,
+.PP
+.ss 18
+.RS
+.PD 0
+.ft 4
+echo a\\
+.br
+b
+.RE
+.ft
+.ss 12
+.PD
+.PP
+will produce
+.PP
+.ss 18
+.RS
+.PD 0
+\f4ab\f1
+.RE
+.ss 12
+.PD
+.PP
+exactly the same as the shell would.
+.PP
+Sharp
+\f1(\f4#\f1)
+and new-line surround comments
+including contained \f4\e\f1 new-line sequences.
+.PP
+The following
+makefile
+says that
+\f4pgm\f1
+depends on two
+files
+\f4a.o\f1
+and
+\f4b.o\f1,
+and that they in turn depend on
+their corresponding source files
+\f1(\f4a.c\f1
+and
+\f4b.c\f1)
+and a common file
+\f4incl.h\f1:
+.PP
+.RS
+.nf
+.ft 4
+pgm: a.o b.o
+	cc a.o b.o \-o pgm
+a.o: incl.h a.c
+	cc \-c a.c
+b.o: incl.h b.c
+	cc \-c b.c
+.ft 1
+.fi
+.RE
+.PP
+Command lines are executed one at a time, each by its
+own shell.
+The \f4SHELL\f1 environment variable
+can be used to specify which shell \f4make\fP should use to execute
+commands.
+The default is \f4/usr/bin/sh\f1.
+The first one or two characters in a command can be
+the following: \f4@\f1, \f4\-\f1, \f4@\-\f1, or \f4\-@\f1.
+If \f4@\f1 is present, printing of the command is suppressed.
+If \f4\-\f1 is present, \f4make\fP ignores an error.
+A line is printed when it is executed unless the
+\f4\-s\f1
+option is present, or the entry
+\f4\&.SILENT:\f1
+is included in
+.IR "makefile" ,
+or unless the initial character sequence contains a \f4@\f1.
+The
+\f4\-n\f1
+option specifies printing without execution; however, if the
+command line has the string
+\f4$(MAKE)\f1
+in it,
+the line is
+always executed (see the discussion of the
+\f4MAKEFLAGS\f1
+macro in the ``Environment'' section below).
+The
+\f4\-t\f1
+(touch) option updates the modified date of a
+file without executing any commands.
+.PP
+Commands returning non-zero status normally terminate
+\f4make\fP.
+If the
+\f4\-i\f1
+option is present, if the entry \f4.IGNORE:\f1
+is included in
+.IR "makefile" ,
+or if the initial character sequence of the command contains
+\f4\-\f1,
+the error is ignored.
+If the
+\f4\-k\f1
+option is present,
+work is abandoned on the current
+entry, but continues on other branches
+that do not depend on that entry.
+.PP
+Interrupt and quit cause the target to be deleted
+unless the target is a dependent of the directive \f4.PRECIOUS\f1.
+.SS Environment
+The environment is read by \f4make\fP.
+All variables are assumed to be macro
+definitions and are processed as such.
+The environment variables are processed
+before any makefile and after the internal rules;
+thus, macro assignments
+in a makefile override environment variables.
+The
+\f4\-e\f1
+option causes
+the environment to override the macro assignments in a makefile.
+Suffixes and their associated rules in the makefile will override any
+identical suffixes in the built-in rules.
+.PP
+The \f4MAKEFLAGS\f1 environment variable
+is processed by \f4make\fP as containing
+any legal input option (except \f4\-f\f1 and \f4\-p\f1) defined
+for the command line.
+Further,
+upon invocation, \f4make\fP ``invents'' the variable if it is not in the
+environment, puts the current options into it, and passes it on to
+invocations of commands.
+Thus, \f4MAKEFLAGS\f1 always contains the
+current input options.
+This feature proves very useful for ``super-makes''.
+In fact, as noted above,
+when the \f4\-n\f1 option is used, the command
+\f4$(MAKE)\f1
+is executed
+anyway; hence, one can perform a \f4make \-n\f1 recursively on a whole software
+system to see what would have been executed.
+This result is possible because the \f4\-n\f1
+is put in \f4MAKEFLAGS\f1 and passed to further invocations of
+\f4$(MAKE)\f1.
+This usage is one way of debugging
+all of the makefiles for a software project without actually doing anything.
+.PP
+.SS Include Files
+If the string
+\f4include\fP
+appears as the first seven letters of a line in a
+.I makefile,
+and is followed by a blank or a tab, the rest of the
+line is assumed to be a filename and will be read by 
+the current invocation, after substituting for any macros.
+.PP
+.SS Macros
+Entries of the form
+\f2string1\f4 = \f2string2\^\f1
+are macro definitions.
+.I string2
+is defined as all characters up to a comment character or
+an unescaped new-line.
+Subsequent appearances of
+\f4$\f1(\f2string1\f1[\f4:\f2subst1\f4=\f1[\f2subst2\f1]])
+are replaced by
+.IR string2 .
+The parentheses are optional if a single-character macro name is used and
+there is no substitute sequence.
+The optional
+.RI : subst1 = subst2\^
+is a substitute sequence.
+If it is specified, all non-overlapping occurrences of \f2subst1\^\f1 in the
+named macro are replaced by \f2subst2\^\f1.
+Strings (for the purposes of this
+type of substitution) are delimited by
+blanks, tabs, new-line characters, and beginnings of lines.
+An example of the use of the substitute sequence is shown in the
+``Libraries'' section below.
+.SS Internal Macros
+There are five internally maintained macros that are useful
+for writing rules for building targets.
+.TP 5
+\f4$\(**\f1
+The macro \f4$\(**\f1 stands for
+the filename part of the current dependent with the suffix deleted.
+It is
+evaluated only for inference rules.
+.TP
+\f4$@\f1
+The \f4$@\f1 macro stands for
+the full target name of the current target.
+It is evaluated
+only for explicitly named dependencies.
+.TP
+\f4$<\f1
+The \f4$<\f1 macro is only evaluated for inference rules or
+the \f4.DEFAULT\f1 rule.
+It is
+the module that is outdated with respect to the target
+(the ``manufactured'' dependent file name).
+Thus, in the \f4.c.o\f1 rule, the \f4$<\f1 macro would\p
+.br
+.ne 2
+evaluate to
+the \f4.c\f1 file.
+An example for making
+optimized \f4.o\f1 files from \f4.c\f1 files is:
+.PP
+.RS 10
+.nf
+.ft 4
+\&.c.o:
+	cc \-c \-O $\(**.c
+.ft
+.fi
+.RE
+.RS 5
+or:
+.RE
+.RS 10
+.ft 4
+.nf
+\&.c.o:
+	cc \-c \-O $<
+.ft
+.fi
+.RE
+.TP 5
+\f4$?\f1
+The \f4$?\f1 macro is evaluated when explicit rules from the makefile
+are evaluated.
+It is
+the list of prerequisites that are outdated with respect to
+the target, and essentially those modules that must be rebuilt.
+.TP
+\f4$%\f1
+The \f4$%\f1 macro is only evaluated when the target is an
+archive library member of the form \f4lib(file.o)\f1.
+In this case,
+\f4$@\f1 evaluates to \f4lib\f1 and \f4$%\f1 evaluates to the
+library member, \f4file.o\f1.
+.PP
+Four of the five macros can have alternative forms.
+When an upper case \f4D\f1 or \f4F\f1 is appended to any of the four
+macros, the meaning is changed to ``directory part'' for \f4D\f1
+and ``file part'' for \f4F\f1.
+Thus, \f4$(@D)\f1 refers to the directory
+part of the string \f4$@\f1.
+If there is no directory part,
+\&\f4./\f1 is generated.
+The only macro excluded from this
+alternative form is \f4$?\f1.
+.SS Suffixes
+Certain names (for instance, those ending with \f4.o\f1)
+have inferable prerequisites such as \f4.c\f1, \f4.s\f1, etc.
+If no update commands for such a file appear in
+.IR "makefile" ,
+and if an inferable prerequisite
+exists, that prerequisite is compiled to make the target.
+In this case,
+\f4make\fP
+has
+inference rules
+that allow building files from other files
+by examining the suffixes and determining an
+appropriate
+inference rule
+to use.
+The current default inference rules
+are:
+.PP
+.RS 1
+.TS
+l2f4 l2f4 l2f4 l2f4 l2f4 l2f4 l2f4 l2f4 l2f4 l2f4.
+\&.c	.c~	.f	.f~	.s	.s~	.sh	.sh~	.C	.C~
+\&.c.a	.c.o	.c~.a	.c~.c	.c~.o	.f.a	.f.o	.f~.a	.f~.f	.f~.o
+\&.h~.h	.l.c	.l.o	.l~.c	.l~.l	.l~.o	.s.a	.s.o	.s~.a	.s~.o
+\&.s~.s	.sh~.sh	.y.c	.y.o	.y~.c	.y~.o	.y~.y	.C.a	.C.o	.C~.a
+\&.C~.C	.C~.o	.L.C	.L.o	.L~.C	.L~.L	.L~.o	.Y.C	.Y.o	.Y~.C
+\&.Y~.o	.Y~.Y
+.TE
+.RE
+.PP
+The internal rules for \f4make\^\f1 are contained in the source
+file \f4rules.c\f1 for the \f4make\^\f1 program.
+These rules can be
+locally modified.
+To print out the rules compiled into
+the \f4make\^\f1 on any machine in a form suitable for recompilation,
+the following command is used:
+.PP
+.RS
+\f4make \|\-pf \|\- \|2>/dev/null \|</dev/null\f1
+.RE
+.PP
+A tilde in the above rules refers to an \s-1SCCS\s+1 file
+[see
+\f4sccsfile\fP(4)].
+Thus, the
+rule \f4.c~.o\f1 would transform an \s-1SCCS\s+1 C source file into an
+object file (\f4.o\f1).
+Because the \f4s.\f1 of the \s-1SCCS\s+1 files is a prefix,
+it is incompatible with the \f4make\fP suffix point of view.
+Hence,
+the tilde is a way of changing any file reference into an \s-1SCCS\s+1
+file reference.
+.PP
+A rule with only one suffix (for example, \f4.c:\f1) is the definition
+of how to build \f2x\^\f1 from \f2x\^\f1\f4.c\f1.
+In effect, the other suffix is null.
+This feature is useful for building targets
+from only one source file, for example, shell
+procedures and simple C programs.
+.PP
+Additional suffixes are given as the
+dependency list for \f4.SUFFIXES\f1.
+Order is significant: the first possible name for which both
+a file and a rule exist is inferred as a prerequisite.
+The default list is:
+.PP
+.na
+\&\f4.SUFFIXES: .o .c .c~ .y .y~ .l .l~ .s .s~ .sh .sh~ .h .h~ .f .f~\f1
+\&\f4.C .C~ .Y .Y~ .L .L~\f1
+.ad
+.PP
+Here again, the above command for printing the internal rules will
+display the list of suffixes implemented on the current machine.
+Multiple suffix lists accumulate; \f4.SUFFIXES:\f1 with no dependencies
+clears the list of suffixes.
+.SS Inference Rules
+The first example can be done more briefly.
+.PP
+.RS
+.nf
+.ft 4
+pgm: a.o b.o
+	cc a.o b.o \-o pgm
+a.o b.o: incl.h
+.fi
+.ft
+.RE
+.PP
+This abbreviation is possible because \f4make\fP has
+a set of internal rules for building files.
+The user may add rules to this list by simply putting
+them in the \f2makefile\^\f1.
+.PP
+Certain macros are used by the default inference rules
+to permit the inclusion of optional matter in
+any resulting commands.
+For example,
+\f4CFLAGS\f1,
+\f4LFLAGS\f1,
+and
+\f4YFLAGS\f1
+are used for compiler options to
+\f4cc\fP(1),
+\f4lex\fP(1),
+and
+\f4yacc\fP(1),
+respectively.
+Again, the previous method for examining
+the current rules is recommended.
+.PP
+The inference of prerequisites can be controlled.
+The rule to create a file with suffix
+\f4\&.o\f1
+from a file with suffix
+\f4\&.c\f1
+is specified as an entry with \f4.c.o:\f1 as the target and no dependents.
+Shell commands associated with the target define the
+rule for making a \f4.o\f1 file from a \f4.c\f1 file.
+Any target that has no slashes in it and starts with a dot
+is identified as a rule and not a true target.
+.SS Libraries
+If a target or dependency name contains parentheses, it is
+assumed to be an archive library, the string within parentheses
+referring to a member within the library.
+Thus, \f4lib(file.o)\f1 and \f4$(LIB)(file.o)\f1 both refer to
+an archive library that contains \f4file.o\f1.
+(This example assumes
+the
+\f4LIB\f1
+macro has been previously defined.)\ 
+The expression \f4$(LIB)(file1.o file2.o)\f1 is not legal.
+Rules pertaining to archive libraries have the form
+\f4\&.\f2\s-1XX\f1\s+1\f4.a\f1
+where the
+.SM
+.I XX\^
+is the suffix from which the archive member
+is to be made.
+An unfortunate by-product of the current implementation
+requires the
+.SM
+.I XX\^
+to be different from the suffix of the archive
+member.
+Thus, one cannot have \f4lib(file.o)\f1 depend upon \f4file.o\f1 explicitly.
+The most common use of the archive interface follows.
+Here, we assume the source files are all C type source:
+.PP
+.RS
+.nf
+.ft 4
+lib:	lib(file1.o) lib(file2.o) lib(file3.o)
+	@echo lib is now up-to-date
+\&.c.a:
+	$(CC) \-c $(CFLAGS) $<
+	$(AR) $(ARFLAGS) $@ $\(**.o
+	rm \-f $\(**.o
+.fi
+.ft 1
+.RE
+.PP
+In fact, the \f4.c.a\f1 rule listed above is built into \f4make\^\f1 and
+is unnecessary in this example.
+A more interesting, but more limited example of an archive library
+maintenance construction follows:
+.PP
+.RS
+.nf
+.ft 4
+lib:	lib(file1.o) lib(file2.o) lib(file3.o)
+	$(CC) \-c $(CFLAGS) $(?:.o=.c)
+	$(AR) $(ARFLAGS) lib $?
+	rm $?
+	@echo lib is now up-to-date
+\&.c.a:;
+.ft 1
+.fi
+.RE
+.PP
+Here the substitution mode of the macro expansions is used.
+The \f4$?\f1
+list is defined to be the set of object filenames (inside \f4lib\f1) whose C
+source files are outdated.
+The substitution mode
+translates the \f4.o\f1 to \f4.c\f1.
+(Unfortunately, one cannot as yet transform
+to \f4.c~\f1; however, this transformation may become possible
+in the future.)\  Also note the disabling of the
+\&\f4.c.a:\f1 rule, which would have created each object file, one by one.
+This particular construct speeds up archive library maintenance considerably.
+This type of construct becomes very cumbersome if the archive library
+contains a mix of assembly programs and C programs.
+.SH FILES
+\f4[Mm]akefile\f and \f4s.[Mm]akefile\f1
+.br
+\f4/usr/bin/sh\f1
+.SH SEE ALSO
+\f4cc\fP(1),
+\f4lex\fP(1),
+\f4yacc\fP(1),
+\f4printf\fP(3S),
+\f4sccsfile\fP(4)
+.sp .2
+\f4cd\fP(1),
+\f4sh\fP(1) in the
+\f2User's Reference Manual\f1
+.sp .2
+See the ``make'' chapter in the
+\f2Programmer's Guide: ANSI C and Programming Support Tools\f1
+.SH NOTES
+Some commands return non-zero status inappropriately;
+use
+\f4\-i\f1
+or the \f4\-\f1 command line prefix
+to overcome the difficulty.
+.PP
+Filenames with the characters
+\f4= : @\f1
+will not work.
+Commands that are directly executed by the shell,
+notably
+\f4cd\fP(1),
+are ineffectual across new-lines in
+\f4make\fP.
+The syntax \f4lib(file1.o file2.o file3.o)\f1 is illegal.
+You cannot build \f4lib(file.o)\f1 from \f4file.o\f1.
+.\"	@(#)make.1	6.2 of 9/2/83
+.Ee

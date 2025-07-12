@@ -1,0 +1,33 @@
+'\"macro stdmacro
+.if n .pH g3c.abs @(#)abs	40.12 of 5/22/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} abs 3C "C Development Set" "\&"
+.if \nX=1 .ds x} abs 3C "C Development Set"
+.if \nX=2 .ds x} abs 3C "" "\&"
+.if \nX=3 .ds x} abs "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4abs\f1, \f4labs\f1 \- return integer absolute value
+.SH SYNOPSIS
+\f4#include <stdlib.h>\f1
+.PP
+\f4int abs (int val);\f1
+.PP
+\f4long labs (long lval);\f1
+.SH DESCRIPTION
+\f4abs\fP
+returns
+the absolute value of its \f4int\f1 operand.
+\f4labs\fP
+returns
+the absolute value of its \f4long\f1 operand.
+.SH SEE ALSO
+\f4floor\fP(3M).
+.SH NOTES
+In 2's-complement representation,
+the absolute value of the largest magnitude negative integral value
+is undefined.
+.\"	@(#)abs.3c	6.2 of 10/20/83
+.Ee

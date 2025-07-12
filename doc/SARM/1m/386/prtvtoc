@@ -1,0 +1,92 @@
+'\"!  tbl | mmdoc
+'\"macro stdmacro
+.if n .pH 386.prtvtoc @(#)prtvtoc	40.10 of 6/27/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.nr X
+.if \nX=0 .ds x} prtvtoc 1M "Base System" "\&"
+.if \nX=1 .ds x} prtvtoc 1M "Base System"
+.if \nX=2 .ds x} prtvtoc 1M "" "\&"
+.if \nX=3 .ds x} prtvtoc "" "" "\&"
+.TH \*(x}
+\f4prtvtoc\fP \- disk information display utility
+.SH SYNOPSIS
+\f4prtvtoc\fP [\f4-aep\fP] [\f4-f\fP \f2vtoc-file\fP] \f2raw-device\fP 
+.SH DESCRIPTION
+.P
+The default and primary function of \f4prtvtoc\fP is to display the contents of
+the VTOC (Volume Table Of Contents).
+The information displayed for each
+valid slice includes slice number, slice tag, slice flag/permissions, slice
+start sector, slice size (in sectors).
+.P
+When editing the VTOC, the following entries are the valid slice
+tags and slice permission flags.
+.TS
+center;
+l s s
+lf4 lf4 l.
+Slice Tags
+_
+#define V_BOOT	0x01	/* Boot slice */
+#define V_ROOT	0x02	/* Root filesystem */
+#define V_SWAP	0x03	/* Swap filesystem */
+#define V_USR	0x04	/* Usr filesystem */
+#define V_BACKUP	0x05	/* full disk */
+#define V_ALTS	0x06	/* alternate sector space */
+#define V_OTHER	0x07	/* non-unix space */
+#define V_ALTTRK	0x08	/* alternate track space */
+#define V_STAND	0x09	/* Stand slice */
+#define V_VAR	0x0a	/* Var slice */
+#define V_HOME	0x0b	/* Home slice */
+#define V_DUMP	0x0c	/* dump slice */
+.sp
+.T&
+l s s
+lf4 lf4 l.
+Slice Permission Flags
+_
+#define V_UNMNT	0x01	/* Unmountable partition */
+#define V_RONLY	0x10	/* Read only */
+#define V_VALID	0x200	/* Partition is valid to use */
+.TE
+The start and size value are in absolute sector numbers where the
+first sector on the drive is 0 (which is reserved for the partition table).
+Slices should start and end on a cylinder boundary if possible.
+The head, cylinder and sectors/track information provided by \f4prtvtoc -p\fP
+will assist in the calculations.
+Slices should not overlap (slice 0 is the exception,
+it describes the entire UNIX partition).
+.SH OPTIONS
+.TP
+\f4\-a\fP
+prints the alternates tables (bad tracks and bad sectors).
+.TP
+\f4\-e\fP
+creates or adds information to the \f4/etc/partitions\fP file.
+This option is provided to allow support for \f4mkpart\f1[see \f4mkpart\fP(1M)].
+Dependence on this feature is not suggested since it will not
+be supported in a future release.
+.TP
+\f4\-p\fP 
+prints the information contained in the \f4pdinfo\fP structure.
+.TP
+\f4\-f\fP \f2vtoc-file\fP
+writes the current contents of the VTOC into
+the \f2vtoc-file\fP in a codensed format.
+The format of the file is slice number,
+slice tag value, slice flag value, slice start sector, slice size (in sectors).
+The purpose of this file is to be input for the \f4edvtoc\fP command.
+.TP
+\f2raw-device\fP
+\f2raw-device\fP is the character special device for the
+disk drive to be accessed.
+It must be the slice 0 device to represent the
+entire device (e.g., \f4/dev/rdsk/0s0\fP or \f4/dev/rdsk/c0t0d0s0\fP).
+.SH FILES
+.nf
+/dev/dsk/0s0
+/dev/rdsk/1s0
+/dev/rdsk/c?t?d?s0
+.fi
+.SH "SEE ALSO"
+\f4edvtoc\fP(1M)

@@ -1,0 +1,77 @@
+'\"macro stdmacro
+.if n .pH g1.whois @(#)whois	40.7 of 5/21/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} whois 1 "Internet Utilities" "\&"
+.if \nX=1 .ds x} whois 1 "Internet Utilities"
+.if \nX=2 .ds x} whois 1 "" "\&"
+.if \nX=3 .ds x} whois "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4whois\f1 \- Internet user name directory service
+.SH SYNOPSIS
+\f4whois\f1
+[
+\f4\-h\f1
+.I host
+]
+.I identifier
+.SH DESCRIPTION
+\f4whois\f1
+searches for an
+.SM Internet
+directory entry for an
+.I identifier
+which is either a name
+(such as ``Smith'') or a handle (such as ``\s-1SRI-NIC\s0'').
+To force a name-only search, precede the name with a period;
+to force a handle-only search, precede the handle with an
+exclamation point.
+.LP
+To search for a group or
+organization entry, precede the argument with 
+\f4*\f1
+(an asterisk).
+The entire membership list of the group 
+will be displayed with the record.
+.LP
+You may of course use an exclamation point and asterisk, or a period
+and asterisk together.
+.SH EXAMPLES
+The command
+.LP
+.RS
+\f4whois Smith\f1
+.RE
+.LP
+looks for the name or handle
+\s-1SMITH\s0.
+.br
+.LP
+The command
+.LP
+.RS
+\f4whois !\s-1SRI-NIC\s0\f1
+.RE
+.LP
+looks for the handle
+\s-1SRI-NIC\s0
+only.
+.LP
+The command
+.LP
+.RS
+\f4whois .Smith, John\f1
+.RE
+.LP
+looks for the name
+\s-1JOHN SMITH\s0
+only.
+.LP
+Adding \f4.\ .\ .\f1
+to the name or handle argument will match anything from
+that point; that is,
+\f4\s-1ZU\s0 .\ .\ .\f1
+will match
+\s-1ZUL\s0, \s-1ZUM\s0\, and so on.

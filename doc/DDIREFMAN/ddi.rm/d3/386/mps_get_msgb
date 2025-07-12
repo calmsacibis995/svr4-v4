@@ -1,0 +1,36 @@
+'\"macro stdmacro
+.if n .pH 386.mps_get_msgb @(#)mps_get_msgb	40.5 of 7/1/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.nr X
+.if \nX=0 .ds x} mps_get_msgbuf D3D "Multibus II" "DDI" "\&"
+.if \nX=1 .ds x} mps_get_msgbuf D3D "Multibus II" "DDI" "\&"
+.if \nX=2 .ds x} mps_get_msgbuf D3D "" "\&"
+.if \nX=3 .ds x} mps_get_msgbuf "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4mps_get_msgbuf\f1 \- allocates a message buffer.
+.SH SYNOPSIS
+.nf
+\f4#include <sys/mps.h>
+mps_msgbuf_t *mps_get_msgbuf(\f2flag\fP)
+int flag;\f1
+.fi
+.SH ARGUMENTS
+.TP 11
+\f2flag\f1
+Determines whether or not this routine sleeps while waiting for responses.
+Valid values are \f4KM_SLEEP\f1 and \f4KM_NOSLEEP\f1.
+.SH DESCRIPTION
+This routine allocates a message buffer.
+If no free message buffers are
+available, and \f2flag\f1 = \f4KM_NOSLEEP\f1, the system returns a NULL.
+Otherwise, if \f2flag\f1 = \f4KM_SLEEP\f1, this routine blocks until a
+message buffer becomes available.
+The returned buffer can be used to
+construct a message to be sent out.
+.SH RETURN VALUE
+Returns a message buffer if successful, a NULL if unsuccessful.
+.SH LEVEL
+Base or Interrupt with \f4KM_NOSLEEP\f1.
+.SH SEE ALSO
+\f4mps_free_msgbuf\f1(D3D)

@@ -1,0 +1,30 @@
+'\"macro stdmacro
+.if n .pH g1.tee @(#)tee	40.3.1.1 of 1/3/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} tee 1 "Essential Utilities" "\&"
+.if \nX=1 .ds x} tee 1 "Essential Utilities"
+.if \nX=2 .ds x} tee 1 "" "\&"
+.if \nX=3 .ds x} tee "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4tee\f1 \- pipe fitting
+.SH SYNOPSIS
+\f4tee\f1 [\f4-i\f1] [\f4-a\f1] [\f2file\fP] ...
+.SH DESCRIPTION
+\f4tee\fP
+transcribes the standard input to the standard
+output and makes copies in the 
+.IR files .
+The
+.TP
+\f4\-i\f1
+ignore interrupts;
+.TP
+\f4\-a\f1
+causes the output to be appended to the
+.I files\^
+rather than overwriting them.
+.\"	@(#)tee.1	6.2 of 9/2/83
+.Ee

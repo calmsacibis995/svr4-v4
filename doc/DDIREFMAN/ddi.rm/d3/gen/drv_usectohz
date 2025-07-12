@@ -1,0 +1,59 @@
+'\"macro stdmacro
+.if n .pH gen.drv_usectohz @(#)drv_usectohz	40.3 of 3/26/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.nr X
+.if \nX=0 .ds x} drv_usectohz D3DK "" "DDI/DKI" "\&"
+.if \nX=1 .ds x} drv_usectohz D3DK "" "DDI/DKI"
+.if \nX=2 .ds x} drv_usectohz D3DK "" "\&"
+.if \nX=3 .ds x} drv_usectohz "" "" "\&"
+.TH \*(x}
+.SH "NAME" 
+.IX "\f4drv_usectohz\fP(D3DK)"
+\f4drv_usectohz\f1 \- convert microseconds to clock ticks
+.SH "SYNOPSIS" 
+.nf
+.na
+\f4#include <sys/types.h>
+#include <sys/ddi.h>
+.sp 0.5
+clock_t drv_usectohz(clock_t \f2microsecs\f4);\f1
+.ad
+.fi
+.SH "ARGUMENTS" 
+.RS 0n 10
+.IP "\f2microsecs\f1" 10n
+The number of microseconds to convert to equivalent clock ticks.
+.RE
+.SH DESCRIPTION 
+\f4drv_usectohz\f1 converts the length of time expressed by
+\f2microsecs\f1, which is in units of microseconds,
+into units of clock ticks.
+.P
+Several functions either take time values expressed in clock ticks as
+arguments [\f4timeout\f1(D3DK), \f4delay\f1(D3DK)] or return time values
+expressed in clock ticks [\f4drv_getparm\f1(D3DK)].
+The length of a clock tick can vary across different implementations,
+and therefore drivers should not include any hard-coded assumptions
+about the length of a tick.
+\f4drv_usectohz\f1 and the complementary function
+\f4drv_hztousec\f1(D3DK) can be used, as necessary, to convert between
+microseconds and clock ticks.
+.SH "RETURN VALUE" 
+The value returned is the smallest number of clock ticks that represent
+a time interval equal to or greater than the \f2microsecs\f1 argument.
+No error value is returned.
+If the number of ticks equivalent
+to the \f2microsecs\f1 argument is too large to be represented as a
+\f4clock_t\f1,
+then the maximum \f4clock_t\f1 value will be returned.
+.SH "LEVEL" 
+Base or Interrupt.
+.SH "NOTES" 
+Does not sleep.
+.SH "SEE ALSO" 
+.na
+\f4delay\f1(D3DK),
+\f4drv_getparm\f1(D3DK),
+\f4drv_hztousec\f1(D3DK),
+\f4timeout\f1(D3DK)
+.ad

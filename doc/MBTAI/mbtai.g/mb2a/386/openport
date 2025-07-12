@@ -1,0 +1,97 @@
+'\"macro stdmacro
+.if n .pH mb2a.openport @(#)openport	40.7 of 1/9/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} mb2a_openport 3tai "" "\&"
+.if \nX=1 .ds x} mb2a_openport 3tai ""
+.if \nX=2 .ds x} mb2a_openport 3tai "" "\&"
+.if \nX=3 .ds x} mb2a_openport "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4mb2a_openport\f1 \- Opens an asynchronous Multibus II transport endpoint.
+.SH SYNOPSIS
+.ft 4
+.nf
+#include <sys/types.h>
+#include <sys/mb2taiusr.h>
+int mb2a_openport (portid, optptr)
+unsigned short portid;
+mb2_opts *optptr;
+.fi
+.SH DESCRIPTION
+The \f4mb2a_openport\f1 function is called as the first step in the
+initialization of a transport endpoint.
+This routine establishes a
+Multibus II transport endpoint for the asynchronous mode of operation,
+by opening a UNIX system file that identifies a transport provider.
+The
+\f4mb2a_openport\f1 function binds a port ID to the endpoint, sets the endpoint
+parameters to the options specified, and returns the file descriptor
+corresponding to the endpoint.
+This file descriptor must only be used with
+other asynchronous mode transport-application interface routines.
+.TP .7i
+\f4portid\f1
+When \f4portid\f1 is non-zero, the endpoint corresponding to the
+file descriptor is bound to the port.
+.IP
+When \f4portid\f1 is set to zero, this routine allocates a free
+port ID from a range of dynamically allocated port IDs and binds the
+endpoint to that port.
+.TP
+\f4optptr\f1
+is a pointer to an options structure specifying the
+endpoint options to be set.
+.IP
+When \f4optptr\f1 is NULL, the endpoint options are set to default
+values.
+.IP
+When \f4optptr\f1 is non-NULL, then the endpoint options are set
+to the values provided in the options structure.
+.P
+All or some of the values in the options structure can be specified to
+be default values if set to \f4MB2_OPTDEFAULT\fP.
+Upon successful completion of the
+routine, the file descriptor is returned.
+A value of -1 is returned and an
+\f4errno\f1 is set if there were errors.
+The following is a list of applicable
+errors for this routine.
+.TP .7i
+\f4EFAULT\f1
+\f4optptr\f1 points outside the allocated address space.
+.TP .7i
+\f4EINVAL\f1
+the values of options, flags or parameters are
+out of range.
+.TP
+\f4EMFILE\f1
+\f4NOFILES\fP file descriptors are currently open.
+.TP .7i
+\f4EINTR\f1
+a signal was caught during the open operation.
+.TP
+\f4ENOSR\f1
+unable to allocate a stream.
+.TP
+\f4ENFILE\f1
+the system file table is full.
+.TP .7i
+\f4ENXIO\f1
+A STREAMS module or driver open failed.
+.TP .7i
+\f4EAGAIN\f1
+\f4portid\f1 was 0 and all dynamically allocatable
+port IDs are in use.
+.TP
+\f4EBUSY\f1
+\f4portid\f1 was non-zero and the specified port ID is
+already open.
+.TP
+\f4EIO\f1
+a hangup or error occurred during a STREAMS
+open.
+.SH SEE ALSO
+\f4open\f1(2), \f4close \f1(2), \f4getmsg \f1(2), \f4putmsg\f1(2),
+\f4mb2a_receive\f1(3tai)

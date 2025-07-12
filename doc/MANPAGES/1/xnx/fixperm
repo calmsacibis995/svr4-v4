@@ -1,0 +1,175 @@
+'\"macro stdmacro
+.if n .pH g1.fixperm @(#)fixperm	40.10 of 6/18/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} fixperm 1 "Application Compatibility Package" "\&"
+.if \nX=1 .ds x} fixperm 1 "Application Compatibility Package"
+.if \nX=2 .ds x} fixperm 1 "" "\&"
+.if \nX=3 .ds x} fixperm "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4fixperm\fP \- correct or initialize file permissions and ownership
+.SH SYNOPSIS
+\f4fixperm \f1[\f4-cDjilnSsvw\f1 [\f4-d \f2package\f1] [\f4-u \f2package\f1]] \f2specfile\f1
+.SH DESCRIPTION
+For each line in the specification file \f2specfile\f1, \f4fixperm\fP
+makes the listed pathname conform to a specification.
+\f4fixperm\fP is
+typically used to configure a \f4XENIX\fP system upon installation.
+Nonsuper-users can only use \f4fixperm\fP with the \f4-D, -f, -l,\fP
+or \f4-n\fP options.
+Only super-users can use the \f4-c,-d,-i,-n,-S, -u,-v,\fP and \f4-w\fP options.
+.P
+The following options are available:
+.TP 15
+\f4-c\fP
+Creates empty files and missing directories.
+.TP
+\f4-D\fP
+Lists directories only on standard output.
+Does not modify target files.
+.TP
+\f4-d\fP \f2package\f1
+Processes input lines beginning with given package specifier string
+(see above).
+For instance, -d\f4BASE\fP processes only items specified
+as belonging to the Basic utilities set.
+The default action is to
+process all lines.
+.TP
+\f4-f\fP
+Lists files only on standard output.
+Does not modify target files.
+.TP
+\f4-i\fP
+Checks only if the selected packages are installed.
+Return values are:
+.sp .5
+.in +.5i
+.nf
+0: package completely installed
+4: package not installed
+5: package partially installed
+.fi
+.in -.5i
+.TP 15
+\f4-l\fP
+Lists files and directories on standard output.
+Does not modify target
+files.
+.TP
+\f4-n\fP
+Reports errors only.
+Does not modify target files.
+.TP
+\f4-S\fP
+Issues a complaint if files are not in x.out format.
+.TP
+\f4-s\fP
+Modifies special device files in addition to the rest of the permlist.
+.TP
+\f4-u\fP \f2package\f1
+Causes similar action to \f4-d\fP option, but processes items that
+are not part of the given package.
+.TP
+\f4-v\fP
+Issues a complaint if executable files are: 
+.sp .5
+.in +.5i
+.nf
+1) word-swapped
+2) not fixed-stack
+3) not separate I and D
+4) not stripped
+.fi
+.in -.5i
+.TP 15
+\f4-w\fP
+Lists location (volume number ) of the specified files or directories.
+.SH Specification File Format
+Each nonblank line in the specification file consists of either a
+comment or an item specification.
+A comment is any text from a pound
+sign ``#'' up to the end of the line.
+There is one item specification per line.
+User and group id numbers must be specified at the top of
+the specification file for each user and group mentioned in the file.
+.P
+An item specification consists of a package specifier, a permission 
+specification, owner and group specifications, the number of links
+on the file, the filename, and an optional volume number.
+.P
+The package specifier is an arbitrary string that is the name of a
+package within a distribution set.
+A package is a set of files.
+.P
+A permission specification follows the package specifier.
+The permission specification consists of a file type, followed by a
+numeric permission specification.
+The item specification is one
+of the following characters:
+.PP
+.RS
+.PD 0
+.TP 5
+\f4x\fP
+executable
+.TP
+\f4a\fP
+archive
+.TP
+\f4e\fP
+empty file (create if \f4-c\fP option given)
+.TP
+\f4b\fP
+block device
+.TP
+\f4c\fP
+character device
+.TP
+\f4d\fP
+directory
+.TP
+\f4f\fP
+text file
+.TP
+\f4p\fP
+named pipe
+.PD
+.RE
+.P
+If the item specification is given as an uppercase letter, the file
+associated with it is optional, and \f4fixperm\fP will not return
+an error message if it does not exist.
+.P
+The numeric permission conforms to the scheme described in \f4chmod\fP.
+The owner and group permissions are in the third column separated by 
+slash, such as ``\f4bin/bin\fP''.
+The fourth column indicates the number of links.
+If there are links to the file, the next line contains 
+the linked filename with no other information.
+The fifth column is a pathname.
+The pathname must be relative (not preceded by a slash ``/'').
+The sixth column is only used for special files, major and minor
+device numbers, or volume numbers.
+.SH EXAMPLES
+The following two lines make a distribution and invoke \f4tar\fP to
+archive only the files in \f4base.perms\fP on \f4/dev/sample\fP:
+.P
+.RS
+.ft 4
+.nf
+/etc/fixperm -f/etc/base.perms>list
+tar cfF /dev/sample list
+.fi
+.ft 1
+.RE
+.P
+This command line reports \f4BASE\fP package errors:
+.P
+.RS
+\f4/etc/fixperm -nd BASE\fP
+.RE
+.SH NOTES
+\f4fixperm\fP is usually only run by a shell script at installation.

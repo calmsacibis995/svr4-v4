@@ -1,0 +1,244 @@
+'\"macro stdmacro
+.if n .pH g7.xt @(#)xt	40.10 of 5/21/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} xt 7 "Layers Windowing Utilities" "\&"
+.if \nX=1 .ds x} xt 7 "Layers Windowing Utilities"
+.if \nX=2 .ds x} xt 7 "" "\&"
+.if \nX=3 .ds x} xt "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4xt\f1 \- \s-1STREAMS\s0-based multiplexed tty driver for \s-1AT&T\s0 windowing 
+terminals
+.SH DESCRIPTION
+The
+\f4xt\fP
+driver
+provides virtual
+\f4tty\fP(7)
+circuits multiplexed onto \s-1STREAMS\s0-based device drivers.
+\s-1STREAMS\s0-based \f4xt\f1 is a streams upper multiplexor pseudo-device driver
+that sits between the stream head and a \s-1STREAMS\s0 hardware device driver.
+.PP
+Virtual
+\f4tty\fP(7)
+circuits are named by character-special
+files of the form
+\f4/dev/xt/???\fP.
+Filenames end in three digits, where the first two represent
+the channel group and the last represents the virtual
+\f4tty\fP(7)
+number (0-7)
+of the channel group.
+Allocation of a new channel group is done dynamically by
+attempting to open a name ending in
+\f40\f1
+with the
+\f4O_EXCL\fP
+flag set.
+After a successful open,
+the
+\f4tty\fP(7)
+file onto which the channels are to be multiplexed should be passed to
+\f4xt\fP
+via the
+\f4I_LINK\f1
+\f4streamio\fP(7)
+request.
+Afterwards,
+all the channels in the group will behave as normal
+\f4tty\fP(7)
+files, with data passed in packets via the real
+\f4tty\fP(7)
+line.
+.PP
+The
+\f4xt\fP
+driver
+implements the protocol described in
+\f4xtproto\fP(5)
+and in
+\f4layers\fP(5).
+Packets are formatted as described in
+\f4xtproto\fP(5),
+while the contents of packets conform to the description in
+\f4layers\fP(5).
+.PP
+There are four groups of
+\f4ioctl\fP(2)
+requests recognized by
+\f4xt\fP.
+The first group contains the normal
+tty \f4ioctl\fP(2)
+request described in
+\f4termio\fP(7),
+with the addition of the following: 
+.TP 17 
+\f4TIOCGWINSZ\f1
+Requires the address of a
+\f4winsize\fP
+structure as an argument.
+The window sizes of the layer associated with the file
+descriptor argument to
+\f4ioctl\fP(2)
+are copied to the structure.
+.PP
+.sp 2
+The second group of
+\f4ioctl\fP(2)
+requests concerns control of the
+windowing terminal.
+Request from this second group which involve communication with the terminal are
+described in more detail in \f4layers\fP(5).
+These requests are defined in the header file <\f4sys/jioctl.h\fP>.
+The requests are as follows:
+.TP 17
+\f4JTYPE, JMPX\f1
+Both return the value
+\f4JMPX\fP.
+These are used to identify a 
+terminal device as an
+\f4xt\fP
+channel.
+.TP
+\f4JBOOT, JTERM\fP
+Both generate an appropriate command packet to the windowing terminal
+affecting the layer associated with the file descriptor argument to
+\f4ioctl\fP(2).
+They may return the error code
+\f4EAGAIN\fP
+on \s-1STREAMS\s0 buffer allocation failure.
+.TP
+\f4JTIMOM\fP
+Specifies the timeouts in milliseconds.
+Invalid except on channel 0.
+This may return the error code
+\f4EAGAIN\fP
+on \s-1STREAMS\s0 buffer allocation failure.
+.TP
+\f4JWINSIZE\f1
+Requires the address of a
+\f4jwinsize\fP
+structure as an argument.
+The window sizes of the layer associated with the file 
+descriptor argument to
+\f4ioctl\fP(2)
+are copied to the structure.
+.TP
+\f4JTRUN\fP
+Requires the address of a string of the form channel, \s-1UNIX\s0 system command as
+an argument.
+Run the \s-1UNIX\s0 system command in the specified channel (layer).
+It may return the error code
+\f4EAGAIN\f1
+on \s-1STREAMS\s0 buffer allocation failure.
+.TP
+\f4JZOMBOOT\fP
+Generate a command packet to the windowing
+terminal to enter download mode on the
+channel associated with the file descriptor
+argument to
+\f4ioctl\fP(2),
+like
+\f4JBOOT\fP;
+but when the download is finished, make the layer
+a zombie (ready for debugging).
+It may return the error code
+\f4EAGAIN\fP
+on \s-1STREAMS\s0 buffer allocation failure.
+.TP
+\f4JAGENT\fP
+Send the supplied data as a command packet
+to invoke a windowing terminal agent routine,
+and return the terminal's response to the
+calling process.
+Invalid except on the file descriptor for channel 0.
+See
+\f4jagent\fP(5).
+It may return the error code
+\f4EAGAIN\fP
+on \s-1STREAMS\s0 buffer allocation failure.
+.TP
+\f4JXTPROTO\fP
+Set \f4xt\fP protocol type [see \f4xtproto\fP(5)].
+It may return the error code \f4EAGAIN\f1 on \s-1STREAMS\s0 buffer
+allocation failure.
+.PP
+.sp 2
+The third group of
+\f4ioctl\fP(2)
+requests concerns the configuration of
+\f4xt\fP,
+and is described in the header file
+<\f4sys/nxt.h\fP>.
+The requests are as follows:
+.TP 17
+\f4XTIOCTYPE\fP
+Returns the value
+\f4XTIOCTYPE\fP.
+Identical in purpose to \f4JMPX\f1.
+.TP 17
+\f4XTIOCHEX\fP
+Specifies that
+\s-1ENCODING MODE\s0 should be turned on.
+.TP 17
+\f4XTIOCTRACE\fP
+Requires the address of a
+\f4Tbuf\fP
+structure as an argument.
+The structure is filled with the contents of the driver trace buffer.
+Tracing is enabled.
+See \f4xtt\fP(1).
+.TP
+\f4XTIOCNOTRACE\fP
+Tracing is disabled.
+.TP
+\f4XTIOCSTATS\fP
+Requires an argument that is the address of an array of size
+\f4S_NSTATS\fP, of type
+\f4Stats_t\fP.
+The array is filled with the contents of the driver statistics array.
+See \f4xts\fP(1).
+.PP
+.sp 2
+The fourth group of
+\f4ioctl\fP(2)
+requests concerns configuring
+\f4streamio\fP(7)
+multiplexor. The requests are as follows:
+.TP 17
+\f4I_LINK\fP
+Links the hardware driver underneath
+\f4xt\fP.
+The arguments to the
+\f4ioctl\fP
+are documented in
+\f4streamio\fP(7).
+.TP 17
+\f4I_UNLINK\fP
+Unlinks the hardware driver underneath
+\f4xt\fP.
+The arguments to the
+\f4ioctl\fP
+are documented in
+\f4streamio\fP(7).
+.SH FILES
+.nf
+\f4/dev/xt/??[0-7]\fP                       multiplexed special files
+.br
+\f4/usr/include/sys/jioctl.h\fP      packet command types
+.br
+\f4/usr/include/sys/nxtproto.h\fP   channel multiplexing protocol definitions
+.br
+\f4/usr/include/sys/nxt.h\fP           \s-1STREAMS\s0-based driver specific definitions
+.fi
+.SH SEE ALSO
+.nf
+\f4layers\fP(1), \f4xts\fP(1M), \f4xtt\fP(1M) 
+\f4ioctl\fP(2), \f4open\fP(2)
+\f4jagent\fP(5), \f4layers\fP(5), \f4xtproto\fP(5)
+\f4streamio\fP(7), \f4termio\fP(7), \f4tty\fP(7)
+\f2Programmer's Guide: \s-1STREAMS\s0\f1
+.fi
+.Ee

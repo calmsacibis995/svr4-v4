@@ -1,0 +1,275 @@
+'\"macro stdmacro
+.if n .pH g1f.coproc @(#)coproc	40.15 of 6/4/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} coproc 1F "Form and Menu Language Interpreter Utilities" "\&"
+.if \nX=1 .ds x} coproc 1F "Form and Menu Language Interpreter Utilities"
+.if \nX=2 .ds x} coproc 1F "" "\&"
+.if \nX=3 .ds x} coproc "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4cocreate\f1, \f4cosend\f1, \f4cocheck\f1, \f4coreceive\f1, \f4codestroy\f1 \- communicate with a process
+.SH SYNOPSIS
+\f4cocreate\f1
+[\f4\-r\f2 rpath\f1] [\f4\-w\f2 wpath\f1] [\f4\-i\f2 id\f1] [\f4\-R\f2 refname\f1] [\f4\-s\f2 send_string\f1]
+.br
+              [\f4\-e\f2 expect_string\f1] \f2command\f1
+.sp .4v
+\f4cosend\f1
+[\f4\-n\f1] \f2proc_id\f1 \f2string\f1
+.sp .4v
+\f4cocheck
+\f2proc_id\f1
+.sp .4v
+\f4coreceive
+\f2proc_id\f1
+.sp .4v
+\f4codestroy
+[\f4\-R\f2 refname\f1] \f2proc_id\f1 [\f2string\f1]
+.SH DESCRIPTION
+These co-processing functions provide a flexible means of
+interaction between FMLI and an independent process;  especially,
+they enable FMLI to be responsive to asynchronous activity.
+.PP
+The \f4cocreate\f1 function starts \f2command\f1 as a co-process
+and initializes communications by
+setting up pipes between FMLI and
+the standard input and standard output of \f2command\f1.
+The argument \f2command\f1 must be an executable and its
+arguments (if any).
+This means that \f2command\f1 expects strings on its input
+(supplied by \f4cosend\f1) and sends information on its output that
+can be handled in various ways by FMLI.
+The following options can be used with \f4cocreate\f1.
+.TP 1i
+\f4\-r\f2 rpath\f1
+If \f4\-r\f1 is specified, \f2rpath\f1 is
+the pathname from which FMLI reads information.
+This option is usually used to set up communication with processes that
+naturally write to a certain path.
+If \f4\-r\f1 is not specified,
+\f4cocreate\f1 will choose a unique path in \f4/var/tmp\f1.
+.TP
+\f4\-w\f2 wpath\f1
+If \f4\-w\f1 is specified, \f2wpath\f1 is
+the pathname to which \f4cosend\f1 writes information.
+This option is usually used so that one process
+can talk to many different FMLI processes through the same pipe.
+If \f4\-w\f1 is not specified, \f4cocreate\f1 will
+choose a unique path in \f4/var/tmp\f1.
+.TP
+\f4\-i\f2 id\f1
+If \f4\-i\f1 is specified, \f2id\f1 is an alternative name for the co-process
+initialized by this \f4cocreate\f1.
+If \f4\-i\f1 is not specified, \f2id\f1 defaults to \f2command\f1.
+The argument \f2id\f1 can later be used with
+the other co-processing functions rather than \f2command\f1.
+This option is typically used, since it facilitates the
+creation of two or more co-processes generated from the same \f2command\f1.
+(For example,
+\f4cocreate -i ID1 program args\f1 and
+\f4cocreate -i ID2 program different_args\f1.)
+.TP
+\f4\-R\f2 refname\f1
+If \f4\-R\f1 is specified, \f2refname\f1 is a local
+name for the co-process.
+Since the \f4cocreate\f1 function can be issued more than once,
+a \f2refname\f1 is useful when the same co-process is referenced a second or
+subsequent time.
+With the \f4-R\f1 option, if the co-process already exists a new
+one will not be created: the same pipes will be shared.
+Then, \f2refname\f1 can be used as an argument to the \f4-R\f1 option to
+\f4codestroy\f1 when you want to end a particular connection to a co-process and
+leave other connections undisturbed.
+(The co-process is only killed after \f4codestroy -R\f1 has been called as
+many times as \f4cocreate -R\f1 was called.)
+.TP
+\f4\-s\f2 send_string\f1
+The \f4\-s\f1 option specifies \f2send_string\f1 as a string that will be
+appended to all output sent to the co-process using \f4cosend\f1.
+This option allows a co-process to know when input from FMLI has completed.
+The default \f2send_string\f1 is a newline if \f4-s\f1 is not specified.
+.TP
+\f4\-e\f2 expect_string\f1
+The \f4\-e\f1 option specifies \f2expect_string\f1 as a string that
+identifies the end of all output returned by the co-process.
+(Note:
+\f2expect_string\f1 need only be the initial part of a line,
+and there must be a newline at the end of the co-process output).
+This option allows FMLI to know when output from the co-process
+has completed.
+The default \f2expect_string\f1 is a newline if \f4-e\f1 is not
+specified.
+.PP
+The \f4cosend\f1 function sends \f2string\f1 to the co-process identified
+by \f2proc_id\f1 via the pipe set up by \f4cocreate\f1
+(optionally \f2wpath\f1),
+where \f2proc_id\f1 can be either the \f2command\f1 or
+\f2id\f1 specified in \f4cocreate\f1.
+By default, \f4cosend\f1 blocks, waiting for a response from the co-process.
+Also by default, FMLI does not send a \f2send_string\f1
+and does not expect an \f2expect_string\f1 (except a newline).
+That is, it reads only one line of output from the co-process.
+If \f4\-e\f2 expect_string\f1 was not defined when the pipe was created,
+then the output of the co-process is any single string followed by a newline:
+any other lines of output remain on the pipe.
+If the \f4\-e\f1 option was specified when the pipe was created, \f4cosend\f1
+reads lines from the pipe until it reads a line starting with
+\f2expect_string\f1.
+All lines except the line starting with \f2expect_string\f1 become the
+output of \f4cosend\f1.
+The following option can be used with \f4cosend\f1:
+.TP
+\f4\-n\f1
+If the \f4\-n\f1 option is specified, \f4cosend\f1 will not wait for
+a response from the co-process.
+It simply returns, providing no output.
+If the \f4\-n\f1 option is not used,
+a co-process that does not answer will cause FMLI to
+permanently hang, waiting for input from the co-process.
+.PP
+The \f4cocheck\f1 function determines if input is available from
+the process identified by \f2proc_id\f1, where \f2proc_id\f1
+can be either the \f2command\f1 or
+\f2id\f1 specified in \f4cocreate\f1.
+It returns a Boolean value, which makes \f4cocheck\f1 useful in
+\f4if\f1 statements and in other
+backquoted expressions in Boolean descriptors.
+\f4cocheck\f1 receives no input from the co-process; it simply
+indicates if input is available from the co-process.
+You must use \f4coreceive\f1 to actually accept the input.
+The \f4cocheck\f1 function can be called from a
+\f4reread\f1 descriptor to force a frame to update when new data is available.
+This is useful when
+the default value of a field
+in a form includes \f4coreceive\f1.
+.PP
+The \f4coreceive\f1 function is used to read input from the co-process
+identified by \f2proc_id\f1,
+where \f2proc_id\f1 can be either the \f2command\f1 or
+\f2id\f1 specified in \f4cocreate\f1.
+It should only be used when it has been determined, using \f4cocheck\f1,
+that input is actually available.
+If the \f4-e\f1 option was used when the co-process was created,
+\f4coreceive\f1 will continue to return lines of input until \f2expect_string\f1
+is read.
+At this point, \f4coreceive\f1 will terminate.
+The output of \f4coreceive\f1 is all the lines that were read
+excluding the line starting with \f2expect_string\f1.
+If the \f4-e\f1 option was not used in the \f4cocreate\f1, each
+invocation of \f4coreceive\f1 will return exactly one line from
+the co-process.
+If no input is available when \f4coreceive\f1 is invoked, it will
+simply terminate without producing output.
+.PP
+The \f4codestroy\f1 function terminates the read/write pipes to \f2proc-id\f1,
+where \f2proc_id\f1 can be either the \f2command\f1 or
+\f2id\f1 specified in \f4cocreate\f1.
+It generates a SIGPIPE signal to the (child) co-process.
+This kills the co-process, unless the co-process ignores the SIGPIPE signal.
+If the co-process ignores the SIGPIPE, it will not die, even after the FMLI
+process terminates (the parent process id of the co-process will be \f41\f1).
+.PP
+The optional argument \f2string\f1 is sent to the co-process before the
+co-process dies.
+If \f2string\f1 is not supplied, a NULL string is passed, followed by the
+normal \f2send_string\f1 (newline by default).
+That is, \f4codestroy\f1 will call \f4cosend \f2proc_id string\f1: this
+implies that \f4codestroy\f1 will write any output generated by the
+co-process to \f2stdout\f1.
+For example, if an interactive co-process is written to expect a "quit"
+string when the communication is over,
+the \f4close\f1 descriptor could be defined;
+.PP
+.RS
+\f4close=\(gacodestroy ID 'quit' | message\(ga\f1
+.RE
+.PP
+and any output generated by the co-process when the string \f4quit\f1 is sent
+to it via \f4codestroy\f1 (using \f4cosend\f1) would be redirected to
+the message line.
+.PP
+The \f4codestroy\f1 function should usually be given the \f4\-R\f1
+option, since you may have more than one process with the same name,
+and you do not want to kill the wrong one.
+\f4codestroy\f1 keeps track of the number of \f2refnames\f1 you have assigned to
+a process with \f4cocreate\f1,
+and when the last instance is killed,
+it kills the process (\f2id\f1) for you.
+\f4codestroy\f1 is typically called as part of a \f4close\f1 descriptor
+because \f4close\f1 is evaluated when a frame is closed.
+This is important because the co-process will continue to run if
+\f4codestroy\f1 is not issued.
+.PP
+When writing programs to use as co-processes, the following tips may be useful.
+If the co-process program is written in C language,
+be sure to flush output after writing to the pipe.
+(Currently,
+\f4awk\f1(1) and \f4sed\f1(1) cannot be used in a co-process
+program because they do not flush after lines of output.)
+Shell scripts are well-mannered, but slow.
+C language is recommended.
+If possible, use the default \f2send_string\f1,
+\f2rpath\f1 and \f2wpath\f1.
+In most cases,
+\f2expect_string\f1 will have to be specified.
+This, of course, depends on the co-process.
+.P
+In the case where asynchronous communication from a co-process
+is desired, a co-process program should use
+\f4vsig\f1 to force strings into the pipe
+and then signal FMLI that output from the co-process is available.
+This causes the \f4reread\f1 descriptor of all frames to be evaluated
+immediately.
+.SH EXAMPLE
+.RS
+.nf
+   \&.
+   \&.
+   \&.
+.ft CW
+init=\(gacocreate \-i BIGPROCESS initialize\(ga
+close=\(gacodestroy BIGPROCESS\(ga
+.ft 1
+   \&.
+   \&.
+   \&.
+.ft CW
+reread=\(gacocheck BIGPROCESS\(ga
+.sp .4v
+name=\(gacosend \-n BIGPROCESS field1\(ga
+.ft 1
+   \&.
+   \&.
+   \&.
+.ft CW
+name="Receive field"
+inactive=TRUE
+value=\(gacoreceive BIGPROCESS\(ga
+.ft 1
+.fi
+.RE
+.SH NOTES
+Co-processes for trusted FMLI applications should use named pipes
+created by the application with the appropriate permissions;
+the default pipes created by FMLI are readable and writable by everyone.
+Handshaking can also be used to enhance security.
+.PP
+If \f4cosend\f1 is used without the \f4\-n\f1 option,
+a co-process that does not answer will cause FMLI to
+permanently hang.
+.PP
+The use of non-alphabetic characters in input and output strings to
+a co-process should be avoided because they may not get transferred
+correctly.
+.SH "SEE ALSO"
+\f4vsig\f1(1F)
+.br
+\f4awk\f1(1),
+\f4cat\f1(1),
+\f4sed\f1(1), in the \f2UNIX System V Programmer's Reference Manual\f1
+.ig
+BUILT-IN FMLI
+..
+.Ee

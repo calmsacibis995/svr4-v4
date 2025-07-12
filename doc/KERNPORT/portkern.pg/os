@@ -1,0 +1,1161 @@
+.if n .pH portguide.OS @(#)os	40.4
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+..
+.BK "Programmer's Guide: Porting the Kernel"
+.CH "Directory - OS" 4
+.H 2 "Directory - OS"
+.IX OS directory
+The following describes the changes required to port the \f3os\f1 directory of 
+UNIX\(rg System V Release 4.0 kernel.
+.P
+.BL
+.LI
+\f3acct.c  -  NCR\f1
+.LI 
+\f3bio.c  -  NCR\f1
+.LI
+\f3bitmap.c  -  NCR\f1
+.LI
+\f3bitmasks.c  -  NCR\f1
+.LI
+\f3clock.c  -  NCR\f1
+.LI 
+\f3cmn_err.c  -  MD, DD\f1
+.br
+This file contains many of the low level print
+and diagnostic routines required for normal debugging
+of the kernel.
+.br
+.BL
+.LI
+\f4printf()  -  DD\fP 
+.br
+This function is required in some form on every porting base.
+The main reason for having \f4printf()\f1 is to print diagnostic information 
+on the console to aid in debug.
+If the port is from UNIX System V Release 3.2 to Release 4.0, Release 3.2
+\f4printf()\f1 mechanism can still be used.
+There is a dependency on the \f3iuart\f1 driver.  
+The interface routine is \f4iuputchar()\f1 in \f3io/iuart.c\f1.
+.LI
+\f4panic()  -  MD\fP 
+.br
+The panic function is machine dependent.
+Depending on your debugging environment, a panic should return control to the 
+debugger, saving the stack and register information at the point of the panic 
+whenever possible.
+If one is porting from UNIX System V Release 3.2 to Release 4.0, Release 3.2
+panic/debug mechanism may be used.
+.LE
+.LI 
+\f3core.c  -  OD\f1
+.br
+The exec switch (\f2execsw\f1) provides object independent
+core dumps routine via \f4exec_core\f1 entry point.
+The porter must ensure that this entry point is functional
+if a proper core image is expected.	
+.LI
+\f3cxenix.c  -  MD\f1
+.br
+The \f4cxenix()\f1 routine mimics some of the functionalities
+of \f4trap()\f1 in moving system call arguments from registers
+into the u-area and then invoking the system call 
+through the \f2sysent\fP table entry for that call.  
+Obtaining the argument pointer is the only machine dependency here.
+On systems where there are no argument pointers, the porter must ensure
+that all possible arguments to the system call are copied.
+.LI 
+\f3ddi.c  -  DD, MD\f1
+.br
+Some DDI interface routines have multiple entry points which
+are represented in a manner specific to the 3B2 assembly syntax.
+If the assembly directives used do not compile,
+they must be commented out via \f4#ifdef u3b2\f1, \f4#endif\f1.
+It is apparent that portability was sacrificed here at the expense of one
+extra function call.
+The porter will either have to rewrite the calls to \f4asm\f1
+or have one routine call the other.
+The routines that require modification due to similar entry points are:
+.sp
+.nf
+		\f4rminit()\f1 and \f4mapinit()\f1
+		\f4rmwant()\f1 and \f4mapwant()\f1	
+		\f4rmsetwant()\f1 and \f4setmapwant()\f1
+.fi
+.sp
+The following routines in \f3ddi.c\f1 require some porting work:
+.BL
+.LI
+\f4kvtophys()  -  MD\fP 
+.br
+The routine \f4kvtophys()\f1 is written in a manner specific to the 3B2 MMU
+(Memory Management Unit).
+\f3The porter must rewrite this routine in a manner
+specific to the system's MMU.\f1
+.LI
+\f4drv_usecwait()  -  MD\fP
+.br
+This routine is simply a 1 micro second timing loop.
+It is written in assembly language to guarantee reasonable accuracy.
+The porter may either rewrite this routine
+in the assembly language of the porting system keeping
+the total T-states to around 1 micro second, or 
+write it in C with the assumption that there is some degree of inaccuracy.
+\f3One should keep in mind that serious performance consequences may
+result if this timing loop is improperly calculated.\fP
+.LI
+\f4splstr()  -  MD\f1 
+.br
+The \f4splstr()\f1 routine is again written in the 3B2 specific manner.
+This routine should simply call the appropriate
+interrupt level for the porting machine, \f4spltty()\f1 or \f4spl5\f1.
+(See \f3misc.s\f1 in
+.CT "Directory - ML".)
+.LE
+.LI
+\f3exec.c\f1
+.br
+See
+.CT "Directory - EXEC" .
+.LI
+\f3exit.c  -  NCR\f1
+.br
+Note: These notes discuss items relevant to the 3B2.
+Changes in \f3exit.c\f1 relating to a different porting base (for example, XENIX 
+or 386) are beyond the scope of these notes.
+.LI
+\f3fbio.c  -  MD\f1
+.br
+The change required in \f4fbiwrite()\f1 depends on whether
+we have a virtual or physical DMA.
+For physical DMAs, a virtual to physical address translation must be done on
+\f4fbp->fb_addr\f1
+prior to passing the buffer pointer to the strategy routine.
+No translation is required in the case of a virtual DMA.
+The 3B2 has a physical DMA.
+The interfact routine \f4svirtophys()\f1 is used to convert
+a virtual address to a physical address.
+\f3The porter may have to rewrite this routine.\f1
+.LI
+\f3fio.c  -  NCR\f1
+.LI
+\f3flock.c  -  NCR\f1
+.LI
+\f3fork.c  -  MD\f1
+.br
+MMU:
+The routines that require some machine dependent modifications are:
+\f4procdup()\f1, and \f4setuctxt()\f1.
+.BL
+.LI
+\f4procdup()  -  MD\fP 
+.br
+MMU:
+The idea behind \f4procdup\f1 is to allocate a u-area for the child process,
+copy the contents of the parent's u-area into the child's u-area via 
+\f4setuctxt()\f1, and modify the child's u-area so that when it resumes via 
+\f4pswtch()\f1,
+it will begin execution at the point of returning from \f4procdup()\f1.
+The method of setting up the return context of the child
+process is largely dependent on the context switch code that resumes a process.
+In some porting implementations the child process does a \f4setjmp()\f1.
+The resume code which usually maps the u-area to the saved page table entries
+then checks for a previous \f4setjmp()\f1 and longjumps (\f4longjmp\f1) back into 
+\f4procdup()\f1.
+.P
+There is one MMU dependency that the porter should be aware of.
+This dependency depends on the cache mechanism of the MMU. 
+When the u-area is copied from the parent's to the child's, it may be cached
+and hence not reflected in physical memory.
+When the child resumes, the remapping of the u-area may cause references
+to the child's u-area to bypass the cache and go directly to physical memory.
+If the cache was not previously flushed (flushing updates physical memory),
+then there could be garbage at the corresponding physical address when the new 
+child's u-area is accessed.
+\f3The porter may need to flush the cache after the u-area is copied.\f1
+.P
+There is a floating point dependency that is fairly obvious.
+\f3The porter will need to save the floating point status for the new process.\f1 
+.LE
+.LI
+\f3getsizes.c  -  NCR\f1
+.LI
+\f3grow.c  -  MD\f1
+.br
+The machine dependency in this file is largely due to the direction in which
+the stack grows.
+If the stack grows towards increasing addresses, then there should be little or
+no change required to this file.
+If the stack grows towards decreasing addresses, then calculations in \f4grow()\f1
+using \f4p_stkbase\f1 must be carefully changed to reflect the difference
+in stack growth.
+For example, calculation of the stack size on the 3B2 is:
+.sp
+	(current stack pointer - stack base).
+.sp
+On systems where the stack grows towards decreasing addresses,
+this would be reversed to:
+.sp
+	(stack base - current stack pointer)
+.sp
+The \f4grow()\f1 routine should be the only routine that requires modification.
+.LI
+\f3ipc.c  -  NCR\f1
+.LI
+\f3kmem.c  -  MD\f1
+.br
+This file is associated with the Dynamic Kernel Memory
+Allocation (KMA) scheme in UNIX System V Release 4.0.  
+The 3B2 provides a KMA debugging facility for tracking
+memory leaks and other memory usage.
+This facility is machine dependent since it performs back tracing and 
+register manipulation.
+This entire facility can be disabled by commenting out the definition of
+\f4PARANOID\f1.
+A simple \f4#ifdef u3b2, #endif\f1 around the definition of \f4PARANOID\f1
+should result in smooth compilation.
+.LI
+\f3kperf.c  -  NCR\f1
+.LI
+\f3local.c  -  NCR\f1
+.LI
+\f3lock.c  -  NCR\f1
+.LI
+\f3machdep.c  -  MD\f1
+.br
+Requires a complete port.
+.LI
+\f3main.c  -  MD\f1
+.br
+Requires careful porting.
+.LI
+\f3malloc.c  -  NCR\f1
+.LI
+\f3move.c  -  NCR\f1
+.LI
+\f3msg.c\f1
+.br
+The call to \f4kseg()\f1 in \f4msginit()\f1 should be replaced with
+\f4kmem_alloc()\f1. 
+As to why \f4kseg()\f1 is still being used here is a matter of history.
+.LI
+\f3name.c  -  NCR\f1
+.LI
+\f3pgrp.c  -  NCR\f1
+.LI 
+\f3pipe.c  -  NCR\f1
+.LI
+\f3procset.c  -  NCR\f1
+.LI
+\f3scalls.c  -  MD\f1
+.BL
+.LI
+\f4setcontext()  -  MD\f1 
+.br
+The \f4SETCONTEXT\f1 case statement of the \f4setcontext()\f1 system call requires
+that an abnormal return be made after the call to \f4restorecontext()\f1.
+The porter should be careful that the program counter is properly incremented.
+It is suggested that the \f4restorecontext()\f1 routine increments the
+program counter and restores the old carry bit, and upon return from the system call,
+makes sure that the trap code does not modify these values.
+It is unclear as to who updates the program counter. 
+\f3Failure to properly increment the program counter could result in an
+infinite re-execution of the same instruction or even
+missing the execution of some instructions.\f1
+.P
+On some systems, the program counter is incremented automatically
+after a kernel trap.
+On others, it is not.
+The porter should be aware of this increment of the program counter
+in \f4restorecontext()\f1.
+If the system automatically updates the program counter, 
+then the kernel need not worry and it simply restores the context with what-ever
+is in the context structure except for the \f4psw\fP. 
+If the program counter is not automatically incremented, care must
+be taken to increment it once.
+.LE
+.LI
+\f3sched.c  -  NCR\f1
+.LI
+\f3sem.c  -  NCR\f1
+.LI
+\f3session.c  -  NCR\f1
+.LI
+\f3shm.c  -  NCR\f1
+.LI
+\f3sig.c  -  MD\f1
+.br
+This file contains the routines for process tracing, \f4ptrace\f1(2) and
+\f4procxmt()\f1.
+This feature is critical for proper functioning of some of the more popular
+debuggers, \f4adb\f1 and \f4sdb\f1.
+.sp
+The \f4procxmt()\f1 routine is executed by the process being traced and generally
+requires register and stack manipulations
+that make this routine difficult to port.
+.LI
+\f3sigset.c  -  CD\f1
+.br
+Depending how the compiler interprets a backslash (\\), the porter may have
+problems with the escape backslashes in several of the assignment statements in this
+file.
+The recommendation is to delete the backslashes since a semicolon (;) will serve as a
+terminator and all white space including carriage returns are ignored.
+.LI
+\f3slp.c  -  NCR\f1
+.LI
+\f3space.c  -  NCR\f1
+.LI
+\f3startup.c  -  MD\f1
+.LI
+\f3streamio.c  -  DD\f1
+.br
+There should be no change required for this file if the rules for writing
+STREAMS-based modules and drivers are followed.
+.LI
+\f3strsubr.c  -  NCR\f1
+.LI
+\f3subr.c  -  NCR\f1
+.LI
+\f3sys3b.c  -  MD\f1
+.br
+This file contains the \f4sys3b\fP(2) system call that is specific to the
+3B2 architecture.
+All functionalities provided by the 3B2 may not apply to your system.
+The porter must isolate those machine specific features that apply to his/her
+architecture and port the functionality, not the code.
+.LI
+\f3sysent.c  -  NCR\f1
+.LI
+\f3todc.c  -  MD\f1
+.br
+This file contains the hardware clock interface routines and may require porting if
+your clock is not the INTEL\(rg 8253 Programmable Interval Timer.
+The functionality of the following routines should be ported:
+.BL
+.LI
+\f4rtodc()\fP
+.br
+Read time of the day clock.
+.LI
+\f4wtodc()\fP
+.br
+Write time of the day clock.
+.LE
+.LI
+\f3trap.c  -  MD\f1
+.br
+(See 
+.ST "System Call Sequence"
+at the end of this section for more details on trap code.)
+The routines in \f3trap.c\fP are \f3very\f1 machine dependent.
+Understanding the contents of this file 
+requires deeper understanding of the 3B2 architecture.
+.NE 3
+The routines in \f3trap.c\fP may be broken down into 
+three major categories:
+.sp .5
+.br
+1. User traps, \f4u_trap()\fP,
+.sp .5
+.br
+2. Kernel traps, \f4k_trap()\fP, and
+.sp .5
+.br
+3. System call handling, \f4systrap()\fP.
+.sp
+.br
+.P
+The following discusses the categories:
+.BL
+.LI
+\f4u_trap()\f1
+.br
+User traps occur when a user level process is executing on the user stack.
+An abnormal exception occurs during the execution.
+\f4u_trap()\fP is called from the trap handler, \f3ml/ttrap.s\fP, which stores 
+information to be interpreted by \f4u_trap()\fP.
+The porter needs to know how this information is stored since it is machine 
+dependent.
+The \f4u_trap()\fP routine determines the generated fault to be delivered to 
+the offending process and either stops the process if a debugger is tracing that
+fault or delivers a signal to the process.
+The signal and trap codes are passed back to the user in the \f4info\fP structure.
+The \f4info\fP structure itself is not machine dependent, but the trap codes are.
+The \f4info\fP structure was introduced in UNIX System V Release 4.0 as part of
+the enhanced signal mechanism.
+\f3If one is porting from UNIX System V Release 3.0, then the trap routines need to
+update the \f4info\fP structure.\f1
+.LI
+\f4k_trap()\f1	
+.br
+System traps are caused when an abnormal exception occurs during execution on
+the kernel stack.
+In this routine faults are broken down into two categories:
+.sp .5
+.br
+1. Memory faults caused by data movement to or from user space.
+.sp .5
+.br
+2. Other kernel faults.
+.br
+.P
+Identifying faults caused by data movement is machine dependent,
+and is usually based on the settings in the machine's \f4psw\f1 after the fault.
+The \fIu.u_caddrflt\fP field is set to the address
+of the error handling routine prior to initiating data movement.
+.P
+On the 3B2, it is done as follows: 
+.br
+.nf
+    \f4if (ps.cps.FT == ON_NORMAL && ps.cps.ISC == XMEMFLT) {
+          if (u.u_caddrflt) {\f1
+                     set \f4pc\f1 to error handling routine
+	          \f4}
+	}else\f1
+                identify fault (panic if necessary)
+.fi
+.br
+.P
+Setting the program counter with the error handling routine is
+machine dependent.
+Identifying the fault and generating a panic are also machine dependent.
+.LI
+\f4systrap()\f1
+.br
+System calls enter the kernel from user level in the form of a system call trap.
+System calls are handled by \f4systrap()\f1.
+\f3Setting or clearing fields in the processor status word, \f4psw\f1,
+\f3must be done with caution since\f1 \f4psw\f1\f3s are very machine dependent.\f1
+.P
+The following machine dependencies must be changed:
+.sp .5
+.br
+1. Setting the \f2ps_user\f1 mode in the \f4psw\f1.
+.sp .5
+.br
+2. Clearing and setting the carry flag in the \f4psw\f1.
+.sp .5
+.br
+3. Identifying which register contains the system call number prior to assigning
+that number to \fIscall\fP.  
+.sp .5
+.br
+4. The fetching of the system call arguments is machine dependent, specific to the
+call sequence, the presence of an argument pointer and user's stack growth.
+.sp .5
+.br
+5. The \f2rf_state\f1 flag is a checked for the presence of
+RFS and is not machine dependent.
+.sp .5
+.br
+6. The setting of errors returned to the user in
+.br
+	\f4 uptr->u_pcb.regsave[K_R0] =\f1 error
+.br
+and the setting of the carry flag in the \f4psw\f1 are machine dependent.
+.sp .5
+.br
+7. Returning the system results, \fIrval.r_val1\fP and \fIrval.rval2\fP in registers
+\f4r0\f1 and \f4r1\f1 respectively is machine dependent.
+Although this is common in most systems, the porter should check his or her system.
+.sp .5
+.br
+8. The routine \f4addupc()\fP is a machine dependent profiling routine for adding
+and updating the user's \f4pc\f1 for later profiling. 
+.sp .5
+.br
+9. \f4trap_ret()\f1 returns from the normal trap sequence.
+.LE
+.LI
+\f3vm_meter.c  -  NCR\f1
+.LI
+\f3vm_pageout.c  -  NCR\f1
+.LI
+\f3vm_subr.c  -  NCR\f1 
+.LI
+\f3xsys.c  -  NCR\f1
+.LE
+.bp
+.H 2 "System Call Sequence"
+.IX system call sequence
+This section describes the events which
+occur when a user process makes a system call.
+Typically, a system call proceeds in three basic steps.
+First, a C language program makes a procedure call
+to an assembly language interface routine.
+Next, the interface routine traps to the operating system
+kernel, which then changes from the process's user context
+to its kernel context.
+Finally, the kernel determines the specific service being requested,
+and dispatches, through a jump table, to a routine which actually
+performs that service.
+.P
+Each of these steps is described for the 3B2 implementation of UNIX.
+First a brief description of the memory organization and register 
+set of the WE\(rg 32100 micro-processor used in the 3B2 is provided.
+Next is the description of the C language calling sequence on the 3B2,
+used to call an assembly language interface routine.
+Then follows the description of the processor mechanisms used to implement the
+operating system trap and the context switch from user to kernel context.
+Finally, how the kernel dispatches to the system-call specific code is described.
+.P
+The descriptions do not cover the implementation completely,
+but emphasize machine dependent aspects of the implementation.
+It is assumed the reader has access to kernel code and is reading it
+in tandem.
+Kernel source file names are given with respect to 
+\f3/usr/src/uts/3b2\f1.
+.P
+No prior knowledge of the 3B2 or the WE32100 micro-processor is assumed.
+.H 2 "A Brief Description of the WE32100"
+Before outlining the system call sequence,
+the memory organization and register set of the WE32100 micro-processor
+is described.
+See also
+.BT "WE 321000 Microprocessor Information Manual Issue 2", 
+dated November 1986.
+The WE32100 is the micro-processor used in the 3B2 series of computers.
+.H 3 "Memory Organization"
+.IX WE32100, memory organization
+The WE32100 is a 32-bit processor.
+It can address byte (8-bit), half-word (16-bit), or word (32-bit) entities.
+For each entity, bits are numbered from 0, beginning with the least significant bit.
+Word data and half-word data are stored with higher order bytes at lower addresses.
+The data must be aligned on an address which is a multiple of the data size 
+(e.g., a half-word must be at an address which is a multiple of two).
+Within an instruction, however, an immediate operand is stored with lower order
+bytes at lower addresses, and no special alignment is required.
+.H 3 "Register Set"
+.IX WE32100, register set
+.DF
+.TS
+box center;
+l l l
+- - -
+l l l.
+register	alternate name	purpose
+\f4r0 - r8\f1	-	general registers
+\f4r9	fp\f1	frame pointer register
+\f4r10	ap\f1	argument pointer register
+\f4r11	psw\f1	processor status word
+\f4r12	sp\f1	execution stack pointer
+\f4r13	pcbp\f1	process control block pointer
+\f4r14	isp\f1	interrupt stack pointer
+\f4r15	pc\f1	program counter
+.TE
+.sp
+.DE
+.P
+The WE32100 has 16 registers, \f4r0\f1 through \f4r15\f1,
+summarized in the above table. 
+Each register is a word.
+.P
+Registers \f4r0\f1 through \f4r8\f1 are general registers.
+Registers \f4r9\f1 and \f4r10\f1 are the high-level language support registers.
+The register \f4r9\f1, also called the frame pointer (\f4fp\fP), is typically used
+in the implementation of stack frames to provide a base for local variable addressing.
+The register \f4r10\f1, the argument pointer (\f4ap\fP),
+is used to address procedure arguments.
+The register \f4r11, r13\f1, and \f4r14\f1
+are the operating system support registers.
+The register \f4r11\f1 is the processor status word (\f4psw\fP).
+The registers \f4r13\f1, the process control block pointer (\f4pcbp\fP),
+and \f4r14\f1, the interrupt stack pointer (\f4isp\fP),
+are used as part of the context switching mechanism of the WE32100. 
+The register \f4r12\f1 is the execution stack pointer (\f4sp\fP) and \f4r15\f1
+is the program counter (\f4pc\fP).
+.H 2 "Call to the Assembly Language Interface Routine"
+A program typically initiates the system call sequence
+by calling an assembly language interface routine from a C program.
+For example, to invoke the system call \f4write\f1,
+a program will call the assembly subroutine \f3write\f1.
+This section describes the implementation of a typical
+C language procedure call on the 3B2, using the invocation
+\f4write(fd, buf, n)\f1 as an example.
+The \f4write\f1 routine is defined in \f3write.s\f1 in the directory
+\f3/usr/src/lib/libc/m32/sys\f1.
+.P
+First, the procedure arguments are pushed on the stack.
+The order in which the arguments are pushed corresponds to the
+order in which they appear in the C language call.
+In this example, the argument \f4fd\f1 is pushed on the stack first,
+followed by \f4buf\f1, and lastly by \f4n\f1.
+.P
+The 3B2 stack is addressed by the stack pointer (\f4sp\fP) register and
+grows from low memory to high memory.
+The \f4sp\f1 register points to an empty location at the top of the stack.
+Thus, in a stack push, the \f4sp\f1 is incremented following the data move,
+and in a stack pop, the \f4sp\f1 is decremented prior to the move.
+Push and pop are word operations; on the 3B2 a word is four bytes.
+.P
+Once the arguments have been pushed, the 3B2 \f4CALL\f1
+instruction is executed to actually jump to the desired subroutine.
+.IX \f4CALL\fP instruction
+\f4CALL\f1 has two operands, the address of the argument list and
+the address of the procedure to be called.
+The instruction:
+.AL
+.LI
+Pushes the address of the following instruction (i.e., the return \f4pc\f1)
+on the stack.
+.LI
+Pushes the current value of the argument pointer (\f4ap\fP) register on the stack.
+.LI
+Loads the specified argument list address into the \f4ap\f1.
+For a C program this will be the address of the first
+argument pushed on the stack (\f4fd\fP in the \f4write\f1 example).
+.LI
+Jumps to the procedure specified in the instruction.
+.LE
+The following shows the 3B2 assembly instructions which implement the \f4write\f1
+procedure call.
+For simplicity, the three arguments are presumed to be in the general registers
+\f4r8, r7\f1, and \f4r6\f1.
+.SS
+PUSHW	r8		# r8 contains fd
+PUSHW	r7		# r7 contains buf
+PUSHW	r6		# r6 contains n
+CALL	-12(sp), write	# -12(sp) is address of argument list
+.SE
+.FG "Stack on Entry to \f4write()\f1"
+.PS
+define blk "box ht boxht / 2"
+SP: blk invis "\f4sp\fP"
+arrow right
+blk
+blk "previous \f4ap\fP" with .n at last box .s
+blk "return \f4pc\fP" with .n at last box .s
+blk "\f4n\fP" with .n at last box .s
+blk "\f4buf\fP" with .n at last box .s
+blk "\f4fd\fP" with .n at last box.s
+blk invis "\f4ap\fP" at (SP.x,last box.y)
+arrow right from last box.e
+move right boxwid + linewid
+blk invis "low memory"
+arrow up 2*boxht from last box .n
+blk invis "high memory"
+.PE
+The above figure shows how the stack appears on entry to the procedure.
+.H 2 "Switch to Kernel Context"
+Once the user program calls the assembly language interface routine,
+the interface routine initiates the second step in the system call
+sequence, switching to kernel context.
+On the 3B2, this step consists of two separate sub-steps.
+First, the interface routine traps into the operating system kernel,
+so that the process begins executing kernel code with kernel privileges.
+In the second sub-step, the kernel saves the process's user context and switches
+to a new context for the kernel execution.
+Each of these sub-steps is described in this section.
+.H 3 "Kernel Trap"
+.IX kernel trap
+Once it is called from the C language program,
+the interface routine traps to the kernel using the WE32100
+\f4GATE\f1 instruction.
+This instruction uses general register \f4r0\f1 and \f4r1\f1 as implied operands,
+so the interface routine must load certain values in these registers prior to
+executing the \f4GATE\f1.
+.P
+Next we review the operation of the \f4GATE\f1 instruction,
+outline the initialization of the \f4GATE\f1 tables in the kernel,
+and finally illustrate the use of \f4GATE\f1 in the implementation of the
+\f3write\f1 assembly language interface routine.
+.H 4 "The GATE Instruction"
+.IX \f4GATE\fP, instruction
+The \f4GATE\f1 instruction pushes the current \f4pc\f1 and processor status word
+(\f4psw\fP) on the execution stack, and loads new values into the \f4pc\f1
+and \f4psw\f1.
+The \f4GATE\f1 instruction determines the new \f4pc\f1 and \f4psw\f1 values by
+.AL
+.LI
+using general register \f4r0\f1 as an address of an entry in the
+pointer table to obtain the address of a handler table, and
+.LI
+using general register \f4r1\f1 as an index into the selected handler table to
+obtain a \f4pc\fP/\f4psw\fP pair.
+.LE
+.P
+The pointer table is located at kernel virtual address 0 and consists of 32
+entries.
+Each entry in the table contains the address of a handler table.
+The \f4GATE\f1 instruction interprets the value in \f4r0\f1
+as an address of a pointer table entry.
+The value stored in that entry is, in turn, taken
+as the address of a handler table.
+Note that multiple pointer-table entries may reference a single handler table.
+.P
+A handler table may be located anywhere in memory and contains up to 4096 entries.
+Each entry in a handler table contains a pair of values,
+used as an initial \f4pc\f1 and \f4psw\f1 for an operating system trap.
+The \f4GATE\f1 instruction interprets the value in \f4r1\f1 as an index into
+the selected handler table.
+By adding together the index and handler table address,
+the \f4GATE\f1 instruction obtains the address of a handler table entry.
+It then loads the \f4pc\f1 and \f4psw\f1 values specified in that entry.
+.P
+The \f4GATE\f1 instruction does not actually use the values in \f4r0\f1 and
+\f4r1\f1 directly.
+It masks these values before using them to force them
+to be in a legal range for the given use.
+For example, it obtains the address of a pointer table entry by masking \f4r0\f1,
+with \f40x7C\f1.
+This forces the address to be a legal pointer table address, i.e., a multiple
+of four in the range \f4(0,4*32)\f1.
+Similarly, the value in \f4r1\f1 is masked with \f40x7FF8\f1 in order to force
+it to be a legal handler table index, i.e., a multiple of eight in the range
+\f4(0,8*4096)\f1.
+.P
+The results of these masking operations are stored in internal, non-visible registers.
+They do not affect the actual contents of \f4r0\f1 or \f4r1\f1.
+.P
+To summarize, the \f4GATE\f1 instruction:
+.AL
+.LI
+Pushes the current value of the \f4pc\f1 and \f4psw\f1 onto the execution stack.
+.LI
+Masks \f4r0\f1 with the value \f40x7C\f1, and uses the resulting value as an address
+of a pointer-table entry.
+It then takes the value at this address as the address of a handler table.
+.LI
+Masks \f4r1\f1 with the value \f40x7FF8\f1, and adds the resulting value to the
+handler table address determined in the previous step
+to find a particular handler entry.
+.LI
+Loads the \f4pc\f1 and \f4psw\f1 from values in the handler entry whose address
+was computed in the previous step.
+.LE
+.H 4 "Kernel GATE Tables"
+.IX \f4GATE\fP, kernel tables
+The pointer and handler tables used by the kernel are defined in the file
+\f3ml/gate.c\f1.
+The variable \f4gate1\f1 is the pointer table.
+.P
+The WE32100 reserves the first entry in the pointer table for certain exceptions.
+Thus, the first entry in the pointer table \f4gate1\f1 is \f4gatex\f1,
+which is the base of the handler table used for these exceptions.
+.P
+The remaining 31 entries in the pointer table may be
+used in any desired manner by the software.
+The 3B2 kernel uses the first of these for system calls, and the other 30 are
+defined to generate an error if invoked.
+The second entry in the pointer table is thus \f4gates\f1,
+the base address of the system call handler table.
+Each entry in this table causes a trap into the kernel at the entry point
+\f4Xsyscall\f1 defined in \f3ml/ttrap.s\f1.
+.P
+The last 30 entries of the pointer table contain the address of \f4gaten\f1,
+which acts as the base of a handler table for undefined \f4GATE\f1s.
+A \f4GATE\f1 through this handler table will generate
+an error in the user process.
+.H 4 "Use of GATE in System Calls"
+.IX \f4GATE\fP, use of
+An assembly language interface routine, such as \f3write\f1, performs the system
+call by loading \f4r0\f1 and \f4r1\f1 and invoking \f4GATE\f1.
+For all system calls, the value loaded in \f4r0\f1 is the address,
+within kernel space, of the pointer table entry which contains the address of the
+system call handler table.
+As noted above, the system call handler table address is stored in
+the second entry of the pointer table; this entry is at address \f40x04\f1.
+.P
+The value loaded in \f4r1\f1 is different for each system call.
+It specifies the index of the handler table entry corresponding
+to that system call.
+For example, the handler for the \f4write\f1 system call occupies the fifth entry
+in the system call handler table;
+the size of each handler table entry is eight bytes.
+The index for the handler table entry for \f4write\f1 is thus
+\f44*8\f1, or \f432\f1.
+This is the value which is loaded into \f4r1\f1 for the \f4write\f1 trap.
+.P
+The following shows the 3B2 assembly instructions which implement the trap to the
+kernel for the \f4write\f1 system call.
+.SS
+MOVW	$4, r0	# r0 := address of pointer table entry containing system call
+		#       handler table address
+MOVW	$32, r1	# r1 := index of write handler within system call handler table
+GATE		# trap into kernel
+.SE
+On entry to the kernel, the stack will appear as shown in the following figure.
+.FG "Stack on entry to the kernel for a \f4write\fP system call"
+.PS
+define blk "box ht (boxht / 2) + .1i wid boxwid + .25i"
+SP: blk invis "\f4sp\fP"
+arrow right
+blk
+blk "previous \f4psw\fP" with .n at last box .s
+blk "return \f4pc\fP" "from kernel" with .n at last box .s
+blk "previous \f4ap\fP" with .n at last box .s
+blk "return \f4pc\fP" "from \f4write()\fP" with .n at last box .s
+blk "\f4n\fP" with .n at last box .s
+blk "\f4buf\fP" with .n at last box .s
+blk "\f4fd\fP" with .n at last box.s
+blk invis "\f4ap\fP" at (SP.x,last box.y)
+arrow right from last box.e
+move right boxwid + linewid
+blk invis "low memory"
+arrow up 6 * ((boxht/2)+.1i) from last box .n
+blk invis "high memory"
+.PE
+Upon execution of the \f4GATE\f1 instruction in the assembly language interface
+routine, the process enters the kernel at the entry point \f4Xsyscall\f1
+defined in \f3ml/ttrap.s\f1.
+At this point, the kernel is still executing within
+the user context of the process.
+The next sub-step consists of saving the user context
+and switching to a kernel context for the process.
+.IX \f4CALLPS\fP instruction
+This context switch is implemented partly through the use of the WE32100
+\f4CALLPS\f1 instruction and various manipulations of certain
+data structures in the process's u-area.
+.P
+Next we briefly review the notion of separate user and kernel contexts
+and then describe the WE32100 processor support for context switching,
+including the \f4CALLPS\f1 instruction.
+Then we outline the data structures used in the kernel to support context switching,
+and finally show how the context switch is implemented
+within the routines \f4Xsyscall\f1 and \f4systrap\f1.
+.H 4 "User and Kernel Contexts"
+.IX user context
+.IX kernel context
+The 3B2 kernel maintains two contexts for each process, a user-level context and
+a kernel-level context.
+Specifically, user code and kernel code execute on different stacks, and there
+are separate save areas for the process's user context and kernel context.
+These contexts are saved in and restored from different
+fields of each process's u-area.
+.P
+Note that the 3B2 processor uses the same physical registers in both user
+and kernel mode.
+It is the operating system that maintains different contexts for each mode.
+.H 4 "Processor Support for Context Switching"
+.IX context switch, processor support
+The context switch is accomplished through processor support for context switching,
+including the \f4CALLPS\f1 instruction.
+This instruction saves the current context and loads a new context.
+Such a context switch involves the use of two processor registers:
+(1) the process control block pointer, \f4pcbp\f1, and (2) the interrupt stack
+pointer, \f4isp\f1.
+.P
+.FG "Process Control Block Format"
+.PS
+define blk "box width boxwid + .2i"
+IPSW: blk "\f4psw\fP" ht boxht/2
+IPC: blk "\f4pc\fP" ht boxht/2 with .n at IPSW.s
+ISP: blk "\f4sp\fP" ht boxht/2 with .n at IPC.s
+box invis width 2 * boxwid ht ISP.s.y - IPSW.n.y with .e at 0.5<ISP.sw,IPSW.nw> \
+	"Initial Values for" "Control Registers"
+line dashed from last box.nw to last box.ne
+line dashed from last box.sw to last box.se
+SPSW: blk "\f4psw\fP" ht boxht/2 with .n at ISP.s
+SPC: blk "\f4pc\fP" ht boxht/2 with .n at SPSW.s
+SSP: blk "\f4sp\fP" ht boxht/2 with .n at SPC.s
+box invis width 2 * boxwid ht SSP.s.y - SPSW.n.y with .e at 0.5<SSP.sw,SPSW.nw> \
+	"Save Area for" "Control Registers"
+line dashed from last box.nw to last box.ne
+line dashed from last box.sw to last box.se
+SLB: blk "lower bound" ht boxht/2 with .n at SSP.s
+SUB: blk "upper bound" ht boxht/2 with .n at SLB.s
+box invis width 2 * boxwid ht SUB.s.y - SLB.n.y with .e at 0.5<SUB.sw,SLB.nw> \
+	"Stack Bounds"
+line dashed from last box.nw to last box.ne
+line dashed from last box.sw to last box.se
+R10: blk "\f4r10\fP" ht boxht/2 with .n at SUB.s
+R9: blk "\f4r9\fP" ht boxht/2 with .n at R10.s
+R0: blk "\f4r0\fP" ht boxht/2 with .n at R9.s
+R1: blk "\f4r1\fP" ht boxht/2 with .n at R0.s
+R2_7: blk "." "." "." with .n at R1.s
+R8: blk "\f4r8\fP" ht boxht/2 with .n at R2_7.s
+box invis width 2 * boxwid ht R8.s.y - R10.n.y with.e at 0.5<R8.sw,R10.nw> \
+	"Save Area for" "General Registers"
+line dashed from last box.nw to last box.ne
+line dashed from last box.sw to last box.se
+BS1: blk "block size" ht boxht/2 with .n at R8.s
+BA1: blk "block address" ht boxht/2 with .n at BS1.s
+BD1: blk "block data" ht boxht/2 with .n at BA1.s
+BS2: blk "block size" ht boxht/2 with .n at BD1.s
+BA2: blk "block address" ht boxht/2 with .n at BS2.s
+BD2: blk "block data" ht boxht/2 with .n at BA2.s
+BN: blk  "." "." "." with .n at BD2.s
+BL: blk "block size = 0" ht boxht/2 with .n at BN.s
+box invis wid 2 * boxwid ht BL.s.y - BS1.n.y with .e at 0.5<BL.sw,BS1.nw> \
+	"Block Move" "List"
+line dashed from last box.nw to last box.ne
+line dashed from last box.sw to last box.se
+.PE
+.P
+Processor context is saved in and restored from
+memory areas called process control blocks, or PCBs.
+.IX process control block
+The format of a process control block is shown in the previous figure.
+The fields of the PCB are:
+.AL
+.LI
+Initial values for the control registers, namely \f4psw, pc\f1, and \f4sp\f1.
+.LI
+Save area for the control registers.
+.LI
+Upper and lower stack bounds for the process.
+.LI
+Save area for the non-control registers, namely \f4ap\f1 (argument pointer register),
+\f4fp\f1 (frame pointer register),
+and general registers \f4r0\f1 through \f4r8\f1.
+.LI
+Block data move list, which specifies data which need to
+be loaded when a process runs.
+This field is unused in the kernel.
+.LE
+.P
+.IX data block move
+The block data move list in the PCB consists of zero or more block move
+specifications.
+Each block move specification defines a block of data to
+be loaded to memory, and the destination address of the load.
+The block move specification has three fields:
+.AL
+.LI
+The size of the block in words.
+.LI
+The address to which the block is to be loaded.
+.LI
+The block of data to load.
+.LE
+The end of the block move list is designated by a
+block move entry with a block size of 0.
+The address and data fields are not required for the last entry.
+.P
+The \f4pcbp\f1 register is used to address process control blocks.
+.IX process control block, \f4pcbp\fP register
+Specifically, when a context is saved during a \f4CALLPS\f1, the information is
+saved in the PCB referenced by the current value of the \f4pcbp\f1.
+Similarly, when a context is loaded by \f4CALLPS\f1, the address of the PCB
+from which the context is taken is stored in the \f4pcbp\f1.
+.P
+The \f4isp\f1 register is used to address the processor's interrupt stack.
+.IX \f4isp\fP register
+During context switches, PCB addresses are stored or retrieved from this stack.
+For example, the \f4CALLPS\f1 instruction saves the PCB address for the saved context
+on the interrupt stack.
+Like the execution stack, the interrupt stack grows from low memory to high memory.
+.P
+(The name of the interrupt stack derives from the fact that interrupts and certain
+exceptions may cause a context switch similar to a \f4CALLPS\f1.
+Thus, when an interrupt occurs, a PCB address is pushed onto the
+interrupt stack.)
+.P
+Two bits of the processor status word control context switching during \f4CALLPS\f1.
+The \f2I\f1 bit indicates whether the control registers are to be taken from the
+\f4pcbs\f1 initial values area or save area.
+The \f2R\f1 bit indicates whether or not the non-control registers are to be saved
+or restored, and whether or not block moves are to be performed.
+.P
+Having reviewed the basics of context switching on the 3B2,
+the detailed operation of the \f4CALLPS\f1 instruction can be presented.
+The \f4CALLPS\f1 instruction saves the processor context in the PCB addressed
+by the \f4pcbp\f1, and loads a new context from the PCB addressed by register
+\f4r0\f1.
+.IX \f4CALLPS\fP instruction
+Specifically, the \f4CALLPS\f1 instruction:
+.AL
+.LI
+Saves the \f4psw, pc\f1, and \f4sp\f1 in the area pointed at by the current
+\f4pcbp\f1.
+.LI
+Pushes the current \f4pcbp\f1 on the top of the interrupt stack incrementing the
+\f4isp\f1 in the process.
+.LI
+Loads \f4pcbp\f1 from \f4r0\f1.
+.LI
+Loads the \f4psw, pc\f1, and \f4sp\f1 from the area pointed at by the
+\f4pcbp\f1.
+.LI
+Checks the \f2I\f1 bit of the new \f4psw\f1, and, if it is set (i.e., 1),
+increments the \f4pcbp\f1 by 12 and clears the \f2I\f1 bit.
+.LI
+Checks the \f2R\f1 bit of the new \f4psw\f1, and, if it is set, saves registers
+\f4r0\f1 through \f4r8, fp\f1, and \f4ap\f1 in the old PCB,
+and performs block moves as specified in the new PCB.
+.LE
+.H 4 "Kernel Data Structures for Context Switching"
+.IX context switch, kernel data structures
+The kernel defines a set of data structures for context switching.
+The processor status word layout is defined in \f3sys/psw.h\f1.
+In addition, the file \f3sys/pcb.h\f1 defines data structures relating to process
+control blocks:
+.AL
+.LI
+The \f4ipcb\f1 structure, \f4ipcb_t\f1, corresponds to the initial context area
+of a PCB.
+.LI
+The PCB structure, \f4pcb_t\f1, defines the process control block save area required
+by a user process.
+Although this structure contains a small block move area (\fImapinfo\fP),
+the block move area is unused in the kernel.
+.LI
+The \f4kpcb\f1 structure, \f4kpcb_t\f1, defines a complete PCB (i.e., both initial
+context and save area) required for maintenance of kernel context.
+Note that no block moves are required when switching to a kernel PCB.
+.LE
+.P
+The user structure defined in \f3sys/user.h\f1
+contains several fields used for context switching:
+.AL
+.LI
+The \f2u_pcb\f1 field is used to maintain the user-level context of the process.
+.LI
+The \f2u_kpcb\f1 field maintains the kernel-level context.
+.LI
+The \f2u_pcbp\f1 field saves the address of the active PCB for the process.
+.LI
+The \f2u_ipcb\f1 field is used to hold an initial user-level context in certain
+cases in which a user context is invoked from the kernel.
+(For example, the handling of illegal op-code exceptions is such a case.)
+.LI
+The \f2u_r0tmp\f1 field is used to save the value of \f4r0\f1 prior to execution of
+\f4CALLPS\f1, since \f4r0\f1 must be used to hold the address of the
+new context for \f4CALLPS\f1.
+.LE
+.P
+The \f2u_kpcb\f1 field of the user process is used to maintain the kernel context
+of a process.
+This field is initialized for process 0 by the routine \f4p0init\f1
+in \f3os/startup.c\f1.
+It assigns the \f2 u_kpcb\f1 field from the variable \f2kpcb_syscall\f1
+in the same file.
+For all other processes, \f2u_kpcb\f1 is initialized during a \f4fork\f1
+by the procedure \f4procdup\f1 in \f3os/fork.c\f1.
+Note that the initial \f4pc\f1 field of \f2u_kpcb\f1 is set to the routine
+\f4systrap\f1 in \f3os/trap.c\f , and the initial \f4sp\f1 field is set to the
+process's kernel stack.
+.H 4 "User to Kernel Context Switch Implementation"
+.IX user context, implementation
+The switch from user context to kernel context on a system call is carried out
+within the \f4Xsyscall\f1 and \f4systrap\f1 routines.
+.P
+The \f4Xsyscall\f1 entry point in \f3ml/ttrap.s\f1 does the bulk of the work to
+switch to kernel context.
+On entry to \f4Xsyscall\f1, the \f4pcbp\f1 register contains the address of the
+\f2u_pcbp\f1 field of the u-area.
+\f4Xsyscall\f1 does the following:
+.AL
+.LI
+Sets the \f2u_pcbp\f1 field of the u-area to point to \f2u_kpcb2\f1, which is
+the save area for the \f2u_kpcb\f1 field.
+This is equal to the value which will be in the \f4pcbp\f1 register following the
+\f4CALLPS\f1.
+.LI
+Saves the current value of \f4r0\f1 in the \f2u_r0tmp\f1 field of the u-area,
+since \f4r0\f1 will be overwritten with the address of the kernel context for
+\f4CALLPS\f1.
+.LI
+Sets \f4r0\f1 to point to the initial context portion of \f2u_kpcb\f1.
+.LI
+Executes \f4CALLPS\f1 which:
+.IX \f4CALLPS\fP instruction
+.AL
+.LI
+Saves the current register values in the \f2u_pcb\f1
+field of the u-area, the address of which is in the \f4pcbp\f1 register.
+.LI
+Pushes the current \f4pcbp\f1 register (containing the address of
+\f2u_pcb\f1) onto the interrupt stack.
+.LI
+Sets \f4pcbp\f1 to the value in \f4r0\f1, which is the address of the initial
+context area \f2u_kpcb\f1.
+.LI
+Loads the initial context defined in \f2u_kpcb\f1.
+.LI
+Increments \f4pcbp\f1 by 12, so that it points to the saved context portion of
+\f2u_kpcb\f1, since the \f2I\f1 bit of the \f4psw\f1 is set.
+(See the initialization of the initial \f4psw\f1 field of \f2kpcb_syscall\f1
+in \f3os/startup.c\f1.)
+.LE
+.LE
+.P
+Once this has completed, the process will be executing the routine
+\f4systrap\f1, in \f3os/trap.c\f1, off its kernel stack.
+However, \f4systrap\f1 must complete the save of user context by:
+.AL
+.LI
+Copying the saved user value of \f4r0\f1 from the \f2u_r0tmp\f1 field of the user
+structure into the \f4r0\f1 field of the user's saved context.
+.LI
+Copying the values of \f4pc\f1 and \f4psw\f1, which were saved on the stack during
+the \f4GATE\f1, into the appropriate fields of \f2u_pcb\f1.
+Note that the saved \f4sp\f1 is decremented during the copy, i.e., the copy of these
+registers forms a pseudo-pop off the user stack.
+.LI
+Removing the address of the user context from the interrupt stack.
+It was saved there during the \f4CALLPS\f1, but will not be needed.
+.LE
+.H 2 "Dispatching the Call"
+.IX system call dispatch
+The last step in the system call sequence
+is to invoke a service-specific routine which performs
+the work associated with the specific system request.
+The generic system call entry handler \f4systrap\f1
+dispatches the service routine using the information in the \f4sysent\f1
+table in \f3os/sysent.c\f1.
+.IX \f4systrap\fP
+Before the actual dispatch, various other actions must be performed.
+.P
+First, once the context switch is complete, \f4systrap\f1 pre-clears the carry
+(\f2C\fP) bit in the \f4psw\f1 of the saved user context.
+On return from a system call, the \f2C\f1 bit indicates whether or not an error
+occurred within the call.
+The bit is pre-cleared, and is set
+later if an error is returned by the service routine.
+.P
+The next step is to determine which system call was requested by the user process.
+This information is derived from the value of \f4r1\f1 in the saved user context.
+Specifically, the index of the \f4sysent\f1 entry for the call is computed
+by masking the saved \f4r1\f1 with \f40x7FF8\f1 (per the description of the
+\f4GATE\f1 instruction) and then dividing the result by the size of a
+\f4sysent\f1 entry.
+Since a \f4sysent\f1 entry is eight bytes, this division operation is equivalent to
+a right shift of three.
+.P
+Note that this code references portions of the saved user context, specifically,
+the saved \f4ps\f1 and \f4r1\f1 registers.
+The saved registers are taken from the \f2u_pcb\f1 field of the user structure:
+the subscripts
+\f2K_PS\f1 and \f2K_R1\f1 are used to reference elements in the
+\f4regsave\f1 array.
+These subscripts, along with subscripts for
+all registers saved in \f2u_pcb\f1, are defined in \f3sys/pcb.h\f1.
+.P
+Next, following the stop-on-syscall-entry test associated with
+\f3/proc\f1 tracing, the system call arguments are copied from the user
+space to the \f2u_arg\f1 field of the user structure.
+Recall that the system call arguments are on the user stack and
+are addressed by the \f4ap\f1 register in the user context.
+The argument copy is thus accomplished using the saved \f4ap\f1 from the user
+context (\f2u_pcb.regsave[K_AP]\fP) as an address into user space.
+.P
+The last step prior to system call dispatch is the initialization
+of the system call return value structure \f4rval\f1.
+On return from the system call to the user, the value of \f2rval.r_val1\f1
+will be stored in \f4r0\f1, and the value of \f2rval.r_val2\f1
+will be stored in \f4r1\f1.
+They are thus pre-set to 0 and the saved value of \f4r1\f1, respectively.
+Unless either field of \f4rval\f1 is explicitly set by the service-specific routine,
+\f4r0\f1 will be 0 and \f4r1\f1 will retain its previous value on return from the
+system call.
+.P
+Once all these actions are performed, \f4systrap\f1 calls the service routine
+specified in the \f4sysent\f1 entry.
+.IX \f4setjmp\fP
+.IX \f4longjmp\fP
+For interruptible system calls, the \f4setjmp\f1 routine defined in
+\f3ml/cswitch.s\f1 is used to save the call environment in the
+\f2u_qsav\f1 field of the u-area prior to the call.
+The \f4setjmp\f1 and \f4longjmp\f1 routines are similar to those in the standard C
+library.
+\f4setjmp\f1 saves the current environment, and returns 0.
+\f4longjmp\f1 restores an environment previously saved by \f4setjmp\f1,
+and returns the program to the point of the \f4setjmp\f1
+call with a return value of 1.
+Unlike the standard C library \f4longjmp\f1, the \f4longjmp\f1 used in the kernel
+does not allow the specification of a \f4setjmp\f1 return value; the return value
+from \f4setjmp\f1, when coming from \f4longjmp\f1, is always 1.
+

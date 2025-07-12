@@ -1,0 +1,55 @@
+.if n .pH portguide.EXEC @(#)exec	40.2
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T 
+..
+.BK "Programmer's Guide: Porting the Kernel"
+.CH "Directory - EXEC" 8
+.H 2 "Directory - EXEC"
+.IX EXEC directory
+\f3os/exec.c\f1 is typically completely portable.
+However, there are some items worthy exceptions.
+The modifications to the routines in \f3exec.c\f1 is dependent largely
+on the compiler's implementation of variable arguments on your system and
+the direction of stack growth.
+The 3B2 stack grows upward toward a positive address.
+If your system has a similar stack growth, then fewer changes will be required
+than if the stack grows downward toward a negative address.
+The machine dependent interface routine in \f3exec\f1 is \f4extractarg()\f1.
+See \f3os/machdep.c\f1 for further details.
+.P
+The exec switch architecture was designed to support executables with unique 
+magic numbers as the first two bytes.
+In a 386 environment supporting MS-DOS\(rg programs several DOS executables such
+as COM and BAT do not have any magic numbers.
+The switch mechanism should be modified to adjust for such executables. 
+.P
+Your specific architecture may require additional u-area variables to be 
+initialized.
+This should be done in \f4setregs\f1 in \f3os/machdep.c\f1. 
+.P
+Processors that do not support protection violations in kernel mode will
+have to \f2as_fault\f1 the page which contains data and \f2bss\f1 before zeroing out 
+the \f2bss\f1 portion (\f4execmap - zfoddiff\f1 calculations).
+.P 
+In \f3sys/exec.h\f1 the define \f4getexmag\f1 should be modified to reflect
+the byte ordering of the machine and
+the define \f4execpoststack\f1 should be modified to reflect 
+stack growth directions.
+The 3B2 grows the stack from low memory to high.
+.BL
+.LI
+\f3elf/elf.c  -  MD\f1
+.br
+The \f4elf_M32.h\f1 header file is specific to the 3B2.
+Each architecture should have an \f4elf_ARCH.h\f1 header file.
+The maximum page size and the constant representing the presence of a floating
+point unit should be changed appropriately.
+In the \f4elfcore\f1 routine the presence of machine specific 
+boards may need to be flagged in the core file.
+.LI
+\f3coff/coff.c  -  MD\f1
+.br
+Board specific options may need to be added for core file creation.
+.LI
+\f3intp/intp.c   -  NCR\f1
+.LE

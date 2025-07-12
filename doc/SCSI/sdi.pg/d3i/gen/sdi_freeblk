@@ -1,0 +1,68 @@
+'\"macro stdmacro
+.if n .pH d3i.sdi_freeblk @(#)sdi_freeblk	40.7 of 3/8/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} sdi_freeblk D3I SDI
+.if \nX=1 .ds x} sdi_freeblk D3I SDI
+.if \nX=2 .ds x} sdi_freeblk D3I "" "\&"
+.if \nX=3 .ds x} sdi_freeblk "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4sdi_freeblk\fP \- release a previously allocated SCSI block
+.SH SYNOPSIS
+.nf
+.ft 4
+long
+sdi_freeblk(struct sb *\f2pt\f4);
+.ft 1
+.fi
+.SH ARGUMENT
+.PD 0
+.TP 8
+\f2pt\f1
+pointer to the \f4sb\f1 (SCSI block) structure
+.SH DESCRIPTION
+\f4sdi_freeblk\f1 returns an \f4sb\f1 to the free block pool.  The
+\f4sb_type\f1 member of the \f4sb\f1 structure is checked to ensure that a
+valid \f4sb\f1 is returned.
+.SH RETURN VALUE
+.IX "SDI_RET_ERR"
+.IX "SDI_RET_OK"
+The normal return is \f4SDI_RET_OK\fP.  A return value of \f4SDI_RET_ERR\fP indicates an
+error with the pointer. 
+.SH LEVEL
+Base or Interrupt
+.SH "SEE ALSO"
+\f4sdi_getblk\fP(D3I)
+.SH EXAMPLE
+This function is typically used after a job completes.  In this example
+\f4diskfreejob\f1 cleans up after a disk job completes and is called with a
+pointer to a struct \f4job\f1.  \f4job\f1 contains information about the
+disk job including a pointer to the \f4sb\f1 for the job.  \f4sdi_freeblk\f1
+is called with the pointer to the \f4job\f1 structure as part of the clean-up
+operation.
+.P
+.nf
+.ft 4
+struct job {
+       struct sb *j_sbptr;
+        ...
+}
+
+diskfreejob(jp)
+struct job *jp;
+{
+        /* Perform job clean up */
+        ...
+
+        /*  Return SB to SDI */
+        if( sdi_freeblk(jp->j_sbptr) != SDI_RET_OK)
+        {
+         /* SB rejected - print error message */
+         cmn_err(CE_WARN, "DISK: SB rejected by SDI.");
+        }
+        ...        
+}
+.ft 1
+.fi

@@ -1,0 +1,27 @@
+'\"macro stdmacro
+.if n .pH g1a.rdate @(#)rdate	40.5.1.1 of 1/3/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} rdate 1M "TCP/IP" "\&"
+.if \nX=1 .ds x} rdate 1M "TCP/IP"
+.if \nX=2 .ds x} rdate 1M "" "\&"
+.if \nX=3 .ds x} rdate "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4rdate\f1 \- set system date from a remote host
+.SH SYNOPSIS
+\f4rdate\f1
+\f2hostname\f1
+.SH DESCRIPTION
+.LP
+\f4rdate\f1
+sets the local date and
+time from the
+\f2hostname\f1
+given as an argument.
+You must be super-user on the local system.
+Typically
+\f4rdate\f1
+can be inserted as part of a
+startup script.

@@ -1,0 +1,478 @@
+.\" @(#)sendmail 40.8 91/05/23 SMI; from UCB 4.2
+'\" macro stdmacro
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.\" Copyright (c) 1988 Sun Microsystems, Inc. - All Rights Reserved.
+.\"
+.nr X
+.if \nX=0 .ds x} sendmail 1M "BSD Compatibility Package" "\&"
+.if \nX=1 .ds x} sendmail 1M "BSD Compatibility Package"
+.if \nX=2 .ds x} sendmail 1M "" "\&"
+.if \nX=3 .ds x} sendmail "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4sendmail\f1 \- send mail over the internet
+.SH SYNOPSIS
+\f4/usr/ucblib/sendmail\f1
+[\|\f4\-ba\f1\|]
+[\|\f4\-bd\f1\|]
+[\|\f4\-bi\f1\|]
+[\|\f4\-bm\f1\|]
+[\|\f4\-bp\f1\|]
+[\|\f4\-bs\f1\|]
+[\|\f4\-bt\f1\|]
+[\|\f4\-bv\f1\|]
+.br
+	[\|\f4\-bz\f1\|]
+[\|\f4\-C\f2file\f1\|]
+[\|\f4\-d\f2X\f1\|]
+[\|\f4\-F\f2fullname\f1\|]
+[\|\f4\-f\f2name\f1\|]
+[\|\f4\-h\f2N\f1\|]
+[\|\f4\-n\f1\|]
+[\|\f4\-o x\f2value\f1\|]
+.br
+	[\|\f4\-q\f1 [\|\f2time\f1] \|]
+[\|\f4\-r\f2name\f1\|]
+[\|\f4\-t\f1\|]
+[\|\f4\-v\f1\|]
+[\|\f2address \f1. . . ]
+.SH DESCRIPTION
+\f4sendmail\f1
+sends a message to one or more people,
+routing the message over whatever networks are necessary.
+\f4sendmail\f1
+does internetwork forwarding as necessary
+to deliver the message to the correct place.
+.P
+\f4sendmail\f1
+is not intended as a user interface routine;
+other programs provide user-friendly front ends;
+\f4sendmail\f1
+is used only to deliver pre-formatted messages.
+.P
+With no flags,
+\f4sendmail\f1
+reads its standard input up to an
+EOF,
+or a line with a single dot
+and sends a copy of the letter found there
+to all of the addresses listed.
+It determines the network to use
+based on the syntax and contents of the addresses.
+.P
+Local addresses are looked up in the local
+\f4aliases\f1(4)
+file, or by using the
+YP
+name service, and aliased appropriately.
+In addition, if there is a
+\f4.forward\f1
+file in a recipient's home directory,
+\f4sendmail\f1
+forwards a copy of each message to the list of recipients that
+file contains.
+Aliasing can be prevented by preceding the address
+with a backslash.
+Normally the sender is not included in alias expansions, for example,
+if `john' sends to `group', and `group'
+includes `john' in the expansion,
+then the letter will not be delivered to `john'.
+.P
+\f4sendmail\f1
+will also route mail directly to other known hosts in a local
+network.
+The list of hosts to which mail is directly sent is
+maintained in the file
+\f4/usr/lib/mailhosts\f1.
+.P
+The following options are available:
+.TP .75i
+\f4\-ba\f1
+Go into
+ARPANET
+mode.
+All input lines must end with a
+CR-LF,
+and all messages will be generated with a
+CR-LF
+at the end.
+Also, the ``From:'' and ``Sender:''
+fields are examined for the name of the sender.
+.TP .75i
+\f4\-bd\f1
+Run as a daemon, waiting for incoming
+SMTP
+connections.
+.TP .75i
+\f4\-bi\f1
+Initialize the alias database.
+.TP .75i
+\f4\-bm\f1
+Deliver mail in the usual way (default).
+.TP .75i
+\f4\-bp\f1
+Print a summary of the mail queue.
+.TP .75i
+\f4\-bs\f1
+Use the
+SMTP
+protocol as described in
+RFC
+821.
+This flag implies all the operations of the
+\f4\-ba\f1
+flag that are compatible with
+SMTP.
+.TP .75i
+\f4\-bt\f1
+Run in address test mode.
+This mode reads addresses and shows the steps in parsing;
+it is used for debugging configuration tables.
+.TP .75i
+\f4\-bv\f1
+Verify names only \(em do not try to collect or deliver a message.
+Verify mode is normally used for validating users or mailing lists.
+.TP .75i
+\f4\-bz\f1
+Create the configuration freeze file.
+.TP .75i
+\f4\-C\f2file\f1
+Use alternate configuration file.
+.TP .75i
+\f4\-d\f2X\f1
+Set debugging value to
+\f2X\f1.
+.TP .75i
+\f4\-F\f2fullname\f1
+Set the full name of the sender.
+.TP .75i
+\f4\-f\f2name\f1
+Sets the name of the ``from'' person (that is, the sender of the mail).
+\f4\-f\f1
+can only be used by ``trusted'' users (who are
+listed in the config file).
+.TP .75i
+\f4\-h\f2N\f1
+Set the hop count to
+\f2N\f1.
+The hop count is incremented every time the mail is processed.
+When it reaches a limit, the mail is returned with an error message,
+the victim of an aliasing loop.
+.TP .75i
+\f4\-M\f2id\f1
+Attempt to deliver the queued message with message-id
+\f4id\f1.
+.TP .75i
+\f4\-n\f1
+Do not do aliasing.
+.TP .75i
+\f4\-o\f2x\|value\f1
+Set option
+\f2x\f1
+to the specified
+\f2value\f1.
+Options are described below.
+.TP .75i
+\f4\-q\f1[\f2time]\f1
+Processed saved messages in the queue at given intervals.
+If
+\f2time\f1
+is omitted, process the queue once.
+\f2Time\f1
+is given as a tagged number, with
+\f4s\f1
+being seconds,
+\f4m\f1
+being minutes,
+\f4h\f1
+being hours,
+\f4d\f1
+being days, and
+\f4w\f1
+being weeks.
+For example,
+\f4\-q1h30m\f1
+or
+\f4\-q90m\f1
+would both set the timeout to one hour thirty minutes.
+.TP .75i
+\f4\-r\f2name\f1
+An alternate and obsolete form of the
+\f4\-f\f1
+flag.
+.TP .75i
+\f4\-R\f2string\f1
+Go through the queue of pending mail and attempt to deliver any
+message with a recipient containing the specified string.
+This is
+useful for clearing out mail directed to a machine which has been
+down for awhile.
+.TP .75i
+\f4\-t\f1
+Read message for recipients.
+``To:'', ``Cc:'', and ``Bcc:''
+lines will be scanned for people to send to.
+The ``Bcc:'' line will be deleted before transmission.
+Any addresses in the argument list will be suppressed.
+.TP .75i
+\f4\-v\f1
+Go into verbose mode.
+Alias expansions will be announced, and so on.
+.SS "PROCESSING OPTIONS"
+There are also a number of processing options that may be set.
+Normally these will only be used by a system administrator.
+Options may be set either on the command line using the
+\f4\-o\f1
+flag or in the configuration file.
+.\"These are described in detail in the
+.\"\f2Installation and Operation Guide\fP.
+The options are:
+.TP .75i
+.RI A file
+Use alternate alias file.
+.TP .75i
+c
+On mailers that are considered ``expensive'' to connect to,
+do not initiate immediate connection.
+This requires queueing.
+.TP .75i
+.RI d x
+Set the delivery mode to
+\f2x\f1.
+Delivery modes are
+\f4i\f1
+for interactive (synchronous) delivery,
+\f4b\f1
+for background (asynchronous) delivery, and
+\f4q\f1
+for queue only \(em that is, actual delivery is done
+the next time the queue is run.
+.TP .75i
+D
+Run
+\f4newaliases\f1(1M)
+to automatically rebuild the alias database, if necessary.
+.TP .75i
+.RI e x
+Set error processing to mode
+\f2x\f1.
+Valid modes are
+\f4m\f1
+to mail back the error message,
+\f4w\f1
+to ``write'' back the error message
+(or mail it back if the sender is not logged in),
+\f4p\f1
+to print the errors on the terminal (default),
+`q' to throw away error messages (only exit status is returned),
+and `e' to do special processing for the BerkNet.
+If the text of the message is not mailed back by modes
+\f4m\f1
+or
+\f4w\f1
+and if the sender is local to this machine,
+a copy of the message is appended to the file
+\f4dead.letter\f1
+in the sender's home directory.
+.TP .75i
+.RI F mode
+The mode to use when creating temporary files.
+.TP .75i
+f
+Save
+UNIX-system-style
+``From'' lines at the front of messages.
+.TP .75i
+.RI g N
+The default group
+ID
+to use when calling mailers.
+.TP .75i
+.RI H file
+The
+\f4SMTP\fP
+help file.
+.TP .75i
+i
+Do not take dots on a line by themselves as a message terminator.
+.TP .75i
+.RI L n
+The log level.
+.TP .75i
+m
+Send to ``me'' (the sender) also if I am in an alias expansion.
+.TP .75i
+o
+If set, this message may have old style headers.
+If not set, this message is guaranteed to have new style headers
+(that is, commas instead of spaces between addresses).
+If set, an adaptive algorithm is used that will correctly
+determine the header format in most cases.
+.TP .75i
+.RI Q queuedir
+Select the directory in which to queue messages.
+.TP .75i
+.RI r timeout
+The timeout on reads; if none is set,
+\f4sendmail\f1
+will wait forever for a mailer.
+.TP .75i
+.RI S file
+Save statistics in the named file.
+.TP .75i
+s
+Always instantiate the queue file,
+even under circumstances where it is not strictly necessary.
+.TP .75i
+.RI T time
+Set the timeout on messages in the queue to the specified time.
+After sitting in the queue for this amount of time,
+they will be returned to the sender.
+The default is three days.
+.TP .75i
+.RI t stz,dtz
+Set the name of the time zone.
+.TP .75i
+.RI u N
+Set the default user id for mailers.
+.P
+If the first character of the user name is a vertical bar,
+the rest of the user name is used as the name of a program
+to pipe the mail to.
+It may be necessary to quote the name of the user to keep
+\f4sendmail\f1
+from suppressing the blanks from between arguments.
+.P
+\f4sendmail\f1
+returns an exit status describing what it did.
+The codes are defined in
+\f4sysexits.h\f1.
+.RS 4
+.TP 1.3i
+\f4EX_OK\f1
+Successful completion on all addresses.
+.TP 1.3i
+\f4EX_NOUSER\f1
+User name not recognized.
+.TP 1.3i
+\f4EX_UNAVAILABLE\f1
+Catchall meaning necessary resources were not available.
+.TP 1.3i
+\f4EX_SYNTAX\f1
+Syntax error in address.
+.TP 1.3i
+\f4EX_SOFTWARE\f1
+Internal software error, including bad arguments.
+.TP 1.3i
+\f4EX_OSERR\f1
+Temporary operating system error, such as \*(lqcannot fork\*(rq.
+.TP 1.3i
+\f4EX_NOHOST\f1
+Host name not recognized.
+.TP 1.3i
+\f4EX_TEMPFAIL\f1
+Message could not be sent immediately, but was queued.
+.RE
+.P
+If invoked as
+\f4newaliases\f1,
+\f4sendmail\f1
+rebuilds the alias database.
+If invoked as
+\f2mailq\f1,
+\f4sendmail\f1
+prints the contents of the mail queue.
+.SH FILES
+Except for
+\f4/etc/sendmail.cf\f1,
+these pathnames are all specified in
+\f4/etc/sendmail.cf\f1.
+Thus, these values are only approximations.
+.P
+.PD 0
+.\".TP .75i 20
+.\"\f4/etc/aliases\f1
+.\"raw data for alias names
+.\".TP .75i
+.\"\f4/etc/aliases.pag\f1
+.\"data base of alias names
+.\".TP .75i
+.\"\f4/etc/aliases.dir\f1
+.\".TP .75i
+.\"\f4/usr/lib/mailhosts\f1
+.\"list of hosts to which mail can be sent directly
+.\".TP .75i
+.\"\f4/etc/sendmail.cf\f1
+.\"configuration file
+.\".TP .75i
+.\"\f4/etc/sendmail.fc\f1
+.\"frozen configuration
+.\".TP .75i
+.\"\f4/etc/sendmail.hf\f1
+.\"help file
+.\".TP .75i
+.\"\f4/etc/sendmail.st\f1
+.\"collected statistics
+.TP 1.5i
+\f4/usr/bin/uux\f1
+to deliver uucp mail
+.TP 1.5i
+\f4/usr/bin/mail\f1
+to deliver local mail
+.TP 1.5i
+\f4/var/spool/mqueue/*\f1
+temp files and queued mail
+.TP 1.5i
+\f4~/.forward\f1
+list of recipients for forwarding messages
+.PD
+.SH SEE ALSO
+\f4biff\fP(1),
+\f4mail\fP(1),
+\f4mailstat\fP(1),
+\f4newaliases\fP(1),
+\f4mconnect\fP(1M),
+\f4aliases\fP(4)
+.P
+Su, Zaw-Sing, and Jon Postel,
+\f2The Domain Naming Convention for Internet User Applications\f1,
+RFC 819, Network Information Center, SRI International, Menlo Park, Calif.,
+August 1982
+.br
+Postel, Jon,
+\f2Simple Mail Transfer Protocol\f1,
+RFC
+821,
+Network Information Center,
+SRI
+International, Menlo Park, Calif.,
+August 1982
+.br
+Crocker, Dave,
+\f2Standard for the Format of\f1
+.I
+ARPA-Internet
+\f2Text Messages\f1,
+RFC
+822,
+Network Information Center,
+SRI
+International, Menlo Park, Calif.,
+August 1982
+.SH NOTES
+Do not use the \f4-bz\f1 option if you plan to run
+\f4sendmail\fR
+as a daemon, that is, with the
+\f4\-bd\f1 option.
+.LP
+If the frozen configuration file,
+\f4/usr/ucblib/sendmail.fc\fR,
+was created with the
+\f4\-bz\fR
+option, running
+\f4sendmail\fR
+as a daemon (with the
+\f4\-bd\fR option) fails with a core dump.
+
+

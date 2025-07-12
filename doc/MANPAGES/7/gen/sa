@@ -1,0 +1,29 @@
+'\"macro stdmacro
+.if n .pH g7.sa @(#)sa	40.4 of 1/3/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} sa 7 "" "\&"
+.if \nX=1 .ds x} sa 7 ""
+.if \nX=2 .ds x} sa 7 "" "\&"
+.if \nX=3 .ds x} sa "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4SA\f1 \- devices administered by System Administration
+.SH DESCRIPTION
+The files in the directories \f4/dev/SA\f1 (for block devices)
+and the \f4/dev/rSA\f1 (for raw devices) are used by System
+Administration to access the devices on which it operates.
+For devices that support more than one partition (like disks)
+the \f4/dev/(r)SA\f1 entry is linked to the partition that spans
+the entire device.
+Not all \f4/dev/(r)SA\f1 entries are used by all System
+Administration commands.
+.SH FILES
+.nf
+\f4/dev/SA
+/dev/rSA\fP
+.fi
+.SH SEE ALSO
+\f4sysadm\fP(1)
+.Ee

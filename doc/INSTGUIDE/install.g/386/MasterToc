@@ -1,0 +1,53 @@
+.if n .pH 386.MasterToc @(#)MasterToc	40.5.1.2
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.CH "Table of Contents" "" "" "" Contents
+.BK "Installation Guide" "System V Release 4" "" ""   
+.tC 1 "Before You Begin" "" "Table of Contents" "1"
+.tC 2 "Introduction" 1-1  
+.tC 2 "About This Guide" 1-2  
+.tC 2 "System V Release 4 Packaging" 1-4  
+.tC 2 "Hardware Requirements" 1-7  
+.tC 2 "Introduction to the Installation Process" 1-10  
+.tC 1 "New Installation" "" "Table of Contents" "2"
+.tC 2 "Introduction" 2-1  
+.tC 2 "Installation Procedure (New Installation)" 2-2  
+.tC 1 "Overlay Installation" "" "Table of Contents" "3"
+.tC 2 "Introduction" 3-1  
+.tC 2 "Installation Procedure (Overlay Installation)" 3-2  
+.tC 1 "Basic System Setup" "" "Table of Contents" "4"
+.tC 2 "Introduction" 4-1  
+.tC 2 "Using the OA&M Interface" 4-2  
+.tC 2 "Setting the System Date and Time" 4-4  
+.tC 2 "Adding Users to the System" 4-5  
+.tC 2 "Restoring Files" 4-6  
+.tC 2 "Setting Up a Local Area Network" 4-8  
+.tC 2 "Backing Up the System " 4-10  
+.tC 2 "Removing Packages" 4-11  
+.tC 2 "Shutting the System Down" 4-12  
+.tC 1 "UNIX System Package Descriptions" "" "Table of Contents" "A"
+.tC 2 "Introduction" A-1  
+.tC 2 "Package Descriptions" A-2  
+.tC 2 "Choosing Packages" A-5  
+.tC 1 "Selecting Optional Slices" "" "Table of Contents" "B"
+.tC 2 "Introduction" B-1  
+.tC 2 "Selecting Optional Slices" B-2  
+.tC 1 "Package Installation Question Summary" "" "Table of Contents" "C"
+.tC 2 "Introduction" C-1  
+.tC 2 "BASIC Package Set Questions" C-2  
+.tC 2 "NETWORK Package Set Questions" C-9  
+.tC 2 "HARDWARE Package Set Questions" C-12  
+.tC 1 "Installing Packages" "" "Table of Contents" "D"
+.tC 2 "Introduction" D-1  
+.tC 2 "Installing UNIX System Packages From Tape" D-2  
+.tC 2 "Installing Add-on Packages From Diskette" D-4  
+.tC 1 "Copying Diskettes" "" "Table of Contents" "E"
+.tC 2 "Copying Diskettes" E-1  
+.tC 1 "Index" "" "Table of Contents" "I"
+.tC 2 "Index" I-1  
+.tC F "Figure 1-1:\0" "Installation Media" 1-6
+.tC F "Table 1-1:\0" "SCSI Controller Interrupts and Memory Settings" 1-8
+.tC F "Table 1-2:\0" "Non-SCSI Controller Interrupts and Memory Settings" 1-9
+.tC F "Table 2-1:\0" "Optional Filesystems and Devices" 2-11
+.tC F "Table A-1:\0" "UNIX Operating System Packages" A-6
+.tC F "Table B-1:\0" "Minimum File System Sizes" B-2

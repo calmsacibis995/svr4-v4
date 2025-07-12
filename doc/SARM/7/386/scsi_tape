@@ -1,0 +1,241 @@
+'\"!  tbl | mmdoc
+'\"macro stdmacro
+.if n .pH 386.scsi_tape @(#)scsi_tape	40.3 of 6/24/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" .nr s 1
+.nr X
+.if \nX=0 .ds x} scsi_tape 7 "SCSI Drivers" "" "\&"
+.if \nX=1 .ds x} scsi_tape 7 "SCSI Drivers" ""
+.if \nX=2 .ds x} scsi_tape 7 "" "\&"
+.if \nX=3 .ds x} scsi_tape "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4scsi_tape\fP \- \f4st01\fP SCSI tape driver
+.SH DESCRIPTION
+The \f4st01\fP tape driver receives command
+requests from the kernel via the \f4read\fP, \f4write\fP,
+and \f4ioctl\fP system calls [see \f4read\fP(2)
+\f4write\fP(2)and \f4ioctl\fP(2) in the \f2Programmer's Reference
+Manual\fP.
+The \f4st01\fP driver generates the appropriate SCSI commands and
+passes them through the host adapter driver to the tape device.
+When command execution is complete, the host adapter driver
+notifies \f4st01\fP through interrupt.
+After this notification, \f4st01\fP performs any
+required error recovery and indicates to the kernel that the
+Input/Output (I/O) request is complete.
+The \f4st01\fP driver operates independently of the hardware
+used to talk to the SCSI bus.
+.PP
+The special file names used to access SCSI cartridge tape devices
+have the following form:
+.PP
+.RS
+.TB
+.TS
+tab(%);
+lw(2i) lw(1i).
+\f4/dev/rmt/tape\fP%rewind
+\f4/dev/rmt/tapen\fP%no rewind
+\f4/dev/rmt/c0s0\fP%rewind (same as \f4tape\fP)
+\f4/dev/rmt/c0s0n\fP%no rewind (same as \f4tapen\fP)
+\f4/dev/rmt/c0s0r\fP%retension on open
+\f4/dev/rmt/c0s0nr\fP%retension on open, no rewind
+\f4/dev/rmt/c0s1\fP%rewind
+\f4/dev/rmt/c0s1n\fP%no rewind
+\f4/dev/rmt/c0s1r\fP%retension on open
+\f4/dev/rmt/c0s1nr\fP%retension on open, no rewind
+.TE
+.RE
+.PP
+Only raw character interface files are provided.  When opened, the
+tape is assumed to be positioned as desired.
+If a retension-on-open special file is opened,
+the tape is retensioned before any I/O is performed.
+When a \f4T_RWD\fP, \f4T_RETENSION\fP, 
+\f4T_LOAD\fP, or \f4T_UNLOAD\fP \f4ioctl\fP is
+requested and the tape has been written, two file marks
+are written before the \f4ioctl\fP is executed.  
+.PP
+The following table lists the actions that occur on \f4close\fP
+[see \f4close\fP(2) in the \f2Programmer's Reference Manual\fP], 
+depending on if the
+file is designated as rewind or no-rewind, and if the tape was written
+or read:
+.PP
+.RS
+.TB
+.TS
+tab(%);
+l l l lw(1.5i).
+\f3Rewind%Tape%Tape%Action\f1
+\f3on Close?%Read?%Written?%on Close\f1
+
+Yes%Yes%N/A%Rewind tape.
+Yes%N/A%Yes%T{
+Write two file marks and rewind tape.
+T}
+Yes%No%No%Rewind tape.
+No%No%No%No tape movement.
+No%Yes%N/A%T{
+Position tape after next file mark.
+T}
+No%N/A%Yes%T{
+Write one file mark and position tape after this file mark.
+T}
+.TE
+.RE
+.PP
+A read occurring when the tape is positioned immediately before a file
+mark returns zero(0) bytes and the tape is positioned after the file
+mark.
+As with other raw devices, seeks are ignored.
+Some tape devices allow both
+reads and writes to occur between rewinds; the \f4st01\fP driver 
+supports these devices.
+.PP
+The following \f4ioctl\f1 commands are used by the
+\f4st01\f1 driver to control tape positioning.
+.PP
+.TP 15
+\f4T_SFF/T_SFB\fP
+Used to position the tape forward/backward \f2arg\f1 [see \f4ioctl\f1(2)]
+number of file marks from
+the current tape head position toward the End-of-Tape (EOT) /
+Beginning-of-Tape (BOT).
+Forward movement of the tape leaves the tape positioned on the EOT side
+of a file mark or at EOT and backwards movement leaves the tape
+positioned on the BOT side of a file mark or at BOT.
+A backward positioning operation causes the next read to return 0
+bytes unless \f2arg\f1 is greater than the number of file marks
+between the current position and BOT.
+The value of \f2arg\f1 must be a positive integer.
+A value of 0 is not considered an error, but does not cause any
+tape movement.
+.TP
+\f4T_SBF/T_SBB\fP
+Used to position the tape forward/backward \f2arg\f1 number of blocks
+from the current tape head position toward the EOT/BOT.
+Upon command completion, the tape head is positioned in the
+gap between tape blocks.
+Thus, skipping a block forward/backward advances/retreats one to
+the next/last block.
+The value of \f2arg\f1 must be a positive integer.
+On any attempt to space over a file mark, the tape is
+positioned on the EOT/BOT side of the file mark for forward/backward
+movement, and the positioning operation ceases.
+A value of 0 is not considered an error, but does not cause any tape movement.
+.TP
+\f4T_RWD\fP
+Rewinds the tape from the current tape position to the BOT.
+Two file marks are written prior to the rewind if the tape has been written.
+This command does not unload the tape.
+.TP
+\f4T_WRFILEM\fP
+Used to write file marks to the tape. 
+The \f2arg\f1 defines the number of consecutive file marks
+that are to be written.
+If an error occurs while writing file marks, the number of
+file marks that have been successfully written is
+indeterminate.
+.TP
+\f4T_PREVMV\fP
+Used to physically lock the tape in the drive.
+This prevention may be in the form of a mechanical lock or an
+LED to indicate the device is in use.
+\f4T_PREVMV\fP is supported only on devices that implement this feature.
+.TP
+\f4T_ALLOMV\fP
+Used to physically unlock the tape in the drive.
+This command is used to undo the lock created by \f4T_PREVMV\fP.
+\f4T_ALLOMV\fP is supported only on devices that implement this
+feature.
+.TP
+\f4T_LOAD\fP
+Used to load the tape media and position the tape BOT.
+.TP
+\f4T_UNLOAD\fP
+Used unload the tape.
+Most devices rewind the tape before unloading.
+Devices capable of ejecting the tape will do so in response to this command.
+.TP
+\f4T_ERASE\fP
+Used to erase the tape.
+The entire tape from BOT to EOT is erased.
+If the tape is not positioned at BOT, the tape is positioned
+at BOT prior to performing the erase function.
+.TP
+\f4T_RDBLKLEN\fP
+Returns the minimum and maximum block lengths supported by the tape device.
+\f2arg\f1 must be a \f4struct blklen\fP.
+See the file \f4/usr/include/sys/st01.h\fP.
+.TP
+\f4T_WRBLKLEN\fP
+Set the current block length for the tape device.
+\f2arg\fP must be a \f4struct blklen\fP with both \f2max_blen\fP 
+and \f2min_blen\fP set to the desired block length.
+See the file \f4/usr/include/sys/st01.h\fP.
+.TP
+\f4T_RETENSION\fP
+Retensions the medium in the drive.
+The retension operation leaves the tape positioned at BOT.
+.PP
+The following \f4ioctl\f1 commands are used to identify
+a target driver and
+get a pass-through major and minor number for a target
+device [see, for example, \f4scsi_adaptec\f1(7)].
+.TP 15
+\f4B_GETTYPE\fP
+Used to get the bus name (e.g., \f4scsi\f1) and device driver name
+(e.g., \f4st01\f1) of a specific device.
+.TP
+\f4B_GETDEV\fP
+Used to get the pass-through major and minor number to the
+calling utility to allow creation of a pass-through special
+device file.
+.SH FILES
+\f4/dev/rmt/tape\fP
+.br
+\f4/dev/rmt/tapen\fP
+.br
+\f4/dev/rmt/c0s0\fP
+.br
+\f4/dev/rmt/c0s0n\fP
+.br
+\f4/dev/rmt/c0s0r\fP
+.br
+\f4/dev/rmt/c0s0nr\fP
+.br
+\f4/dev/rmt/c0s1\fP
+.br
+\f4/dev/rmt/c0s1n\fP
+.br
+\f4/dev/rmt/c0s1r\fP
+.br
+\f4/dev/rmt/c0s1nr\fP
+.br
+\f4/usr/include/sys/st01_ioctl.h\fP
+.br
+\f4/usr/include/sys/st01.h\fP
+.br
+\f4/usr/include/sys/sdi_edt.h\fP
+.PP
+.SH WARNINGS
+Once any drive error is encountered, the driver refuses to do anything more
+until the file is closed.
+.PP
+The tape driver does not support the use of the \f4sar\f1 command.
+.SH SEE ALSO
+.na
+\f4scsi_adaptec\f1(7),
+\f4scsi_cdrom\fP(7),
+\f4scsi_disk\fP(7),
+\f4scsi_dpt\f1(7),
+\f4scsi_wd7000\f1(7),
+\f4scsi_worm\fP(7)
+.P
+\f4ioctl\fP(2),
+\f4close\fP(2),
+\f4read\fP(2),
+\f4write\fP(2) in the \f2Programmer's Reference Manual\fP
+.ad

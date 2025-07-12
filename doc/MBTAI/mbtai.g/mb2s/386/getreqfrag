@@ -1,0 +1,114 @@
+'\"macro stdmacro
+.if n .pH mb2s.getreqfrag @(#)getreqfrag	40.7 of 5/30/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} mb2s_getreqfrag 3tai "" "\&"
+.if \nX=1 .ds x} mb2s_getreqfrag 3tai ""
+.if \nX=2 .ds x} mb2s_getreqfrag 3tai "" "\&"
+.if \nX=3 .ds x} mb2s_getreqfrag "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4mb2s_getreqfrag\f1 \- Receives a data fragment of a request message.
+.SH SYNOPSIS
+.ft 4
+.nf
+#include <sys/types.h>
+#include <sys/mb2taiusr.h>
+int mb2s_getreqfrag(fd, msginfoptr, databufptr)
+int fd;
+mb2_msginfo *msginfoptr;	
+mb2_buf *databufptr;
+.fi
+.ft
+.SH DESCRIPTION
+This routine is used to receive fragments of the data portion of a
+request message that was fragmented.
+It should be called after
+\f4MB2_REQFRAG_MSG\f1 (a request message requiring fragmentation) has been received
+from \f4mb2s_receive\f1.
+.TP 15
+\f4fd\f1
+specifies a synchronous mode file descriptor referencing
+an open port.
+.TP
+\f4msginfoptr\f1
+is a pointer to an \f4mb2_msginfo\fP structure.
+.TP
+\f4databufptr\f1 
+is a pointer to a structure describing the data
+.P
+In order to receive a fragment of the data portion of the request
+message (\f4MB2_REQFRAG_MSG\f1),
+\f4databufptr\f1 must be non-NULL and the \f4len\f1 field of
+\%\f4databufptr\fP must have a value greater than 0.
+A NULL fragment can be received
+if \f4databufptr\f1 is set to NULL or the
+\f4len\f1 field of
+\f4databufptr\f1 is 0.
+The
+\%\f4socketid\fP field of the
+\f4mb2_msginfo\f1 structure must specify the socket ID of
+the destination socket (i.e., the sender of the request message).
+The \f4tid\fP
+field in the \%\f4mb2_msginfo\fP structure must contain the transaction ID that
+identifies the transaction corresponding to the received request message
+requiring fragmentation.
+The call returns when the fragment message has been
+returned and placed in the buffer pointed to by \f4databufptr\fP.
+The actual
+length of the fragment of the data portion received is indicated by the \f4len\fP
+field of the \f4databufptr\fP structure.
+.P
+\f4mb2s_getreqfrag\f1 blocks while waiting for the transport mechanism to
+transfer the data.
+If the fragment of the data portion of the request message
+does not arrive in the time interval specified when the port is opened, or a
+transport error occurs, \f4mb2s_getreqfrag\f1 will fail and \f4errno\fP is set to
+\f4ETIME\f1.
+\f4mb2s_getreqfrag\f1 also blocks when waiting for the availability of
+buffers.
+Internal flow control conditions (discussed in Appendix A) can also
+cause the receipt of the fragment to block.
+.P
+Upon successful completion of the routine, a value of 0 is returned.
+A
+value of -1 is returned and an \f4errno\fP is set if there were errors.
+The
+following is a list of applicable errors for this routine.
+.TP 10
+\f4EAGAIN\f1
+buffers could not be allocated for the message
+to be sent.
+.TP
+\f4EBADF\f1
+\f4fd\fP is not a valid file descriptor.
+.TP
+\f4EFAULT\f1
+\f4databufptr\fP or \f4msginfoptr\fP points outside the
+allocated address space.	
+.TP
+\f4EINTR\f1
+a signal was caught during the call.
+.TP
+\f4EINVAL\f1
+an invalid value was specified in one of the
+argument buffers.
+.TP
+\f4ENOSTR\f1
+\f4fd\f1 is not a file descriptor to an endpoint.
+.TP
+\f4ENXIO\f1
+a transport or transmission error condition was
+generated while sending/receiving the message.
+.TP
+\f4ETIME\f1
+a get-request-fragment timeout occured while
+waiting for the message.
+.TP
+\f4ERANGE\f1
+the size of the control or the data part of the
+message is outside the range of the minimum/ maximum allowable message size.
+.SH SEE ALSO
+\f4getmsg\f1(2), \f4putmsg\f1(2), \f4mb2s_receive\f1(3tai),
+\f4mb2s_openport\f1(3tai)

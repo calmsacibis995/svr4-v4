@@ -1,0 +1,36 @@
+.if n .pH 386.Cshelcmds @(#)Cshelcmds	40.5
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.BK "Technology File Mapping Guide" "" "" ""   
+.\ACRONYM	                  
+.CH "Shells, Commands & Utilities" "" "Table of Contents" "5"
+.\CHAPTER	5
+.tC 1 "Encryption Facilities" 5-1  
+.tC 2 "Encryption Library" 5-1  
+.tC 2 "Encryption Commands" 5-1  
+.tC 1 "Localization Facilities" 5-2  
+.tC 2 "Localization Library" 5-2  
+.tC 2 "Localization and Message String Handling Utilities" 5-2  
+.tC 1 "Command Line Interpreters" 5-4  
+.tC 2 "Bourne Shell (\^\&\f4sh\fP\^)" 5-4  
+.tC 2 "C Shell (\^\&\f4csh\fP\^)" 5-5  
+.tC 2 "Korn Shell (\^\&\f4ksh\fP\^)" 5-5  
+.tC 2 "Shell Layers (\^\&\f4shl\fP\^)" 5-5  
+.tC 1 "Core System Utilities" 5-6  
+.tC 2 "Basic Commands & Utilities" 5-6  
+.tC 2 "Advanced Commands & Utilities" 5-8  
+.tC 1 "Directory & File Management Utilities" 5-9  
+.tC 2 "Basic File Management Utilities" 5-9  
+.tC 2 "Advanced File Management Utilities" 5-10  
+.tC 1 "Text Processing Utilities" 5-11  
+.tC 2 "Spell Checking Utilities" 5-11  
+.tC 2 "Basic Text Editing Utilities" 5-11  
+.tC 2 "Advanced Text Editing Utilities" 5-11  
+.tC 1 "Printing Facilities" 5-13  
+.tC 2 "Line Printer Spooling Utilities" 5-13  
+.tC 2 "Line Printer PostScript Filters" 5-14  
+.tC 1 "Plotting Facilities" 5-15  
+.tC 2 "Plotting Library" 5-15  
+.tC 2 "Plotting Commands" 5-15  
+.tC 1 "Character User Interfaces" 5-16  
+.tC 2 "Form & Menu Language Interpreter (FMLI)" 5-16  
+.tC 2 "Framed Access Command Environment (FACE)" 5-16  

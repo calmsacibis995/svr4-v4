@@ -1,0 +1,49 @@
+.if n .pH @(#)mnttab	40.7 of 4/16/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} mnttab 4 "" "\&"
+.if \nX=1 .ds x} mnttab 4 ""
+.if \nX=2 .ds x} mnttab 4 "" "\&"
+.if \nX=3 .ds x} mnttab "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4mnttab\f1 \- mounted file system table
+.SH SYNOPSIS
+\f4#include <sys/mnttab.h>\f1
+.SH DESCRIPTION
+The file
+\f4/etc/mnttab\fP
+contains information about devices that have been mounted by the
+\f4mount\fP
+command.
+The information is in the following structure, defined in
+\f4sys/mnttab.h\f1:
+.PP
+.RS
+.nf
+.ft 4
+struct  mnttab {
+	char    *mnt_special;
+	char    *mnt_mountp;
+	char    *mnt_fstype;
+	char    *mnt_mntopts;
+	char    *mnt_time;
+};
+.ft 1
+.fi
+.RE
+.PP
+The fields in the mount table are space-separated
+and show the block special device, the mount point,
+the file system type of the mounted file system,
+the mount options, and the time at which the file
+system was mounted.
+.SH NOTES
+Do not store information in the \f4mnttab\fP file other than
+the fields described above;  fields may be added to this file in
+future releases and are reserved for future use.
+.SH SEE ALSO
+\f4mount\fP(1M), \f4setmnt\fP(1M), \f4getmntent\fP(3C)
+.P
+See the chapter on file systems in the \f2System Administrator's Guide\fP.

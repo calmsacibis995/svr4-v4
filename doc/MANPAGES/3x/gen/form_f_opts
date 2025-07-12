@@ -1,0 +1,68 @@
+'\"!  tbl | mmdoc
+'\"macro stdmacro
+.if n .pH g3x.form_f_opts @(#)form_f_opts	40.5 of 4/10/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.\" ident	"@(#)svid_ti:ti_lib/form_f_opts	1.4"
+.nr X
+.if \nX=0 .ds x} form_field_opts 3X "" "\&"
+.if \nX=1 .ds x} form_field_opts 3X ""
+.if \nX=2 .ds x} form_field_opts 3X "" "\&"
+.if \nX=3 .ds x} form_field_opts "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4form_field_opts\f1: \f4 set_field_opts\f1, \f4field_opts_on\f1, \f4field_opts_off\f1, \f4field_opts\f1 \- \f4forms\fP field option routines
+.SH SYNOPSIS
+.nf
+.ft 4
+#include <form.h>
+.sp .5
+int set_field_opts(FIELD *field, OPTIONS opts);
+int field_opts_on(FIELD *field, OPTIONS opts);
+int field_opts_off(FIELD *field, OPTIONS opts);
+OPTIONS field_opts(FIELD *field);
+.ft 1
+.fi
+.SH DESCRIPTION
+\f4set_field_opts\fP turns on the named options of \f2field\f1 and turns
+off all remaining options.
+Options are boolean values that can be \f4OR\f1-ed together.
+.PP
+\f4field_opts_on\fP turns on the named options; no other options are changed.
+.PP
+\f4field_opts_off\fP turns off the named options; no other options are changed.
+.PP
+\f4field_opts\fP returns the options set for \f2field\f1.
+.TS
+l s l
+l5fCW l5 l.
+Field Options:
+.sp .5
+O_VISIBLE	The field is displayed.
+O_ACTIVE	The field is visited during processing.
+O_PUBLIC	The field contents are displayed as data is entered.
+O_EDIT	The field can be edited.
+O_WRAP	Words not fitting on a line are wrapped to the next line.
+O_BLANK	T{
+The whole field is cleared if a character is entered in the first position.
+T}
+O_AUTOSKIP	Skip to the next field when the current field becomes full.
+O_NULLOK	A blank field is considered valid.
+O_STATIC	The field buffers are fixed in size.
+O_PASSOK	Validate field only if modified by user.
+.TE
+.SH RETURN VALUE
+\f4set_field_opts\fP, \f4field_opts_on\fP and
+\f4field_opts_off\fP return one of the following:
+.TS
+lfCWw(1.25i)1 c1 l .
+E_OK	\-	The function returned successfully.
+E_SYSTEM_ERROR	\-	System error.
+E_CURRENT	\-	The field is the current field.
+.TE
+.SH NOTES
+The header file \f4<form.h>\f1 automatically includes the header files
+\f4<eti.h>\fP and \f4<curses.h>\fP.
+.SH SEE ALSO
+\f4curses\fP(3X),
+\f4forms\fP(3X)

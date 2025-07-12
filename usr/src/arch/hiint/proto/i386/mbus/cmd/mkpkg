@@ -1,0 +1,87 @@
+:
+#	Copyright (c) 1990  Intel Corporation
+#	All Rights Reserved
+#
+#	INTEL CORPORATION PROPRIETARY INFORMATION
+#
+#	This software is supplied to AT & T under the terms of a license 
+#	agreement with Intel Corporation and may not be copied nor 
+#	disclosed except in accordance with the terms of that agreement.
+#
+
+#ident	"@(#)hiint:proto/i386/mbus/cmd/mkpkg	1.2"
+
+[ -z "$ROOT" ] && {
+	echo "ROOT must be set"
+	exit 1
+}
+pkgs="$*"
+
+# get the global packaging info
+
+. $ROOT/usr/src/proto/i386/mbus/cmd/PKG_INFO
+
+if [ ! -d $ROOT/$SPOOL ];then
+	#rm -rf $ROOT/$SPOOL
+	mkdir -p $ROOT/$SPOOL
+fi
+
+# note we don't use the lists out of PKG_INFO, since the 
+# actual packages are scattered all over the place to start
+# with
+
+SRC_LIST_1="
+	pkg.compat\
+	pkg.dfs\
+	pkg.edit\
+	pkg.enetdrv\
+	pkg.fmli\
+	pkg.i596\
+	pkg.oam\
+	pkg.lp\
+	pkg.ots\
+	pkg.termcap\
+	pkg.acp\
+	pkg.nsu\
+	pkg.inet\
+	pkg.nfs\
+	pkg.rfs\
+	pkg.rpc\
+	pkg.sec\
+	pkg.kdbu\
+	pkg.kdb "
+[ -z "$pkgs" ] || SRC_LIST_1="$pkgs"
+cd $ROOT/usr/src/add-on
+for i in $SRC_LIST_1
+do
+	if [ -f $i/prototype ];then
+		cd $i
+		echo $i
+		trap '' 1 2 3
+		[ -x /usr/local/bin/pkgcompress ] && pkgcompress  -r$ROOT -Z -c Z 
+		pkgmk -o -v"${VERSION}" -l${SIZE} -r$ROOT -d$ROOT/$SPOOL
+		[ -x /usr/local/bin/pkgcompress ] && pkgcompress  -r$ROOT -U -c Z
+		trap  1 2 3
+
+		cd ..
+	fi
+done
+
+SRC_LIST_1="terminf face scde"
+[ -z "$pkgs" ] || SRC_LIST_1="$pkgs"
+cd $ROOT/usr/src/pkg
+for i in $SRC_LIST_1
+do
+	if [ -f $i/prototype ];then
+		cd $i
+		echo $i
+		trap '' 1 2 3
+		[ -x /usr/local/bin/pkgcompress ] && pkgcompress  -r$ROOT -Z -c Z
+		pkgmk -o -v"${VERSION}" -l${SIZE} -r$ROOT -d$ROOT/$SPOOL
+		[ -x /usr/local/bin/pkgcompress ] && pkgcompress  -r$ROOT -U -c Z 
+		trap  1 2 3
+		cd ..
+	fi
+done
+
+echo "The packages have been built"

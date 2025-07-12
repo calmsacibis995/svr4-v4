@@ -1,0 +1,35 @@
+'\"macro stdmacro
+.if n .pH gen.size @(#)size	40.4 of 6/21/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.nr X
+.if \nX=0 .ds x} size D2DK "" "DDI/DKI" "\&"
+.if \nX=1 .ds x} size D2DK "" "DDI/DKI"
+.if \nX=2 .ds x} size D2DK "" "\&"
+.if \nX=3 .ds x} size "" "" "\&"
+.TH \*(x}
+.IX "\f4size\fP(D2DK)"
+.SH NAME
+\f4size\fP \- return size of logical block device
+.SH SYNOPSIS
+.nf
+.na
+\f4#include <sys/types.h>
+#include <sys/param.h>
+.sp 0.5
+int \f2prefix\fPsize(dev_t \f2dev\fP);\f1
+.ad
+.fi
+.SH ARGUMENTS
+.IP "\f2dev\fP" 10n
+The logical device number.
+.SH DESCRIPTION
+The \f4size\fP entry point returns the number of \f4NBPSCTR\fP-byte units on a
+logical block device (partition).
+\f4NBPSCTR\fP, defined in \f4param.h\fP, is the number of bytes per logical disk sector.
+This routine is required for block drivers.
+.SH NOTES
+The \f4size\fP routine has user context and can sleep.
+.SH RETURN VALUE
+On success, the \f4size\fP routine should return the number of \f4NBPSCTR\fP-byte units on the
+logical block device specified by
+\f2dev\fP; on failure, \f4size\fP should return \-1.

@@ -1,0 +1,233 @@
+'\"macro stdmacro
+.if n .pH g3x.malloc @(#)malloc	40.11 of 5/1/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} malloc 3X "Specialized Libraries" "\&"
+.if \nX=1 .ds x} malloc 3X "Specialized Libraries"
+.if \nX=2 .ds x} malloc 3X "" "\&"
+.if \nX=3 .ds x} malloc "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4malloc\f1, \f4free\f1, \f4realloc\f1, \f4calloc\f1, \f4mallopt\f1, \f4mallinfo\f1 \- memory allocator
+.SH SYNOPSIS
+\f4cc\f1
+[\f2flag\fP \|.\|.\|.] \f2file\fP \|.\|.\|.
+\f4\-lmalloc\f1
+[\f2library\fP \|.\|.\|.]
+.PP
+.nf
+\f4#include <stdlib.h>\f1
+.P
+\f4void \(**malloc (size_t size);\f1
+.PP
+\f4void free (void \(**ptr);\f1
+.PP
+\f4void \(**realloc (void \(**ptr, size_t size);\f1
+.PP
+\f4void \(**calloc (size_t nelem, size_t elsize);\f1
+.PP
+\f4#include <malloc.h>\f1
+.P
+\f4int mallopt (int cmd, int value);\f1
+.PP
+\f4struct mallinfo mallinfo (void);\f1
+.SH DESCRIPTION
+\f4malloc\fP
+and
+\f4free\fP
+provide a simple general-purpose memory allocation package.
+.PP
+\f4malloc\fP
+returns a pointer to a block of at least
+.I size\^
+bytes suitably aligned for any use.
+.PP
+The argument to
+\f4free\fP
+is a pointer to a block previously allocated by
+\f4malloc\fP;
+after
+\f4free\fP
+is performed this space is made available for further allocation,
+and its contents have been destroyed (but see 
+\f4mallopt\fP
+below for a way to change this behavior).
+If \f2ptr\fP is a null pointer, no action occurs.
+.PP
+Undefined results occur if the space
+assigned by
+\f4malloc\fP
+is overrun or if some random number is handed to
+\f4free\fP.
+.PP
+\f4realloc\fP
+changes the size of the block pointed to by
+.I ptr\^
+to
+.I size\^
+bytes and returns a pointer to the (possibly moved)
+block.
+The contents are unchanged up to the
+lesser of the new and old sizes.
+If \f2ptr\fP is a null pointer, \f4realloc\fP behaves like \f4malloc\fP
+for the specified size. If \f2size\fP is zero and \f2ptr\fP is not a null
+pointer, the object it points to is freed.
+.PP
+\f4calloc\fP
+allocates space for an array of
+.I nelem\^
+elements of size
+.IR elsize .
+The space is initialized to zeros.
+.PP
+\f4mallopt\fP
+provides for control over the allocation algorithm.
+The available values for 
+.I cmd\^
+are:
+.TP .75i
+\f4M_MXFAST\fP
+Set 
+.IR maxfast
+to 
+.IR value. 
+The algorithm allocates all blocks below the size
+of 
+.IR maxfast
+in large groups and then doles them out very quickly.
+The default value for
+.IR maxfast
+is 24.
+.TP
+\f4M_NLBLKS\fP
+Set 
+.IR numlblks
+to 
+.IR value .
+The above mentioned ``large groups'' each contain
+.I numlblks\^
+blocks.  
+.I numlblks\^
+must be greater than 0.
+The default value for 
+.I numlblks\^
+is 100.
+.TP
+\f4M_GRAIN\fP
+Set 
+.I grain\^
+to 
+.IR value .
+The sizes of all blocks smaller than 
+.I maxfast\^
+are considered to be rounded up to the nearest multiple of 
+.IR grain .
+.I grain\^
+must be greater than 0.
+The default value of 
+.I grain\^
+is the smallest number of bytes
+that will allow alignment of any data type.
+Value
+will be rounded up to a multiple of the default
+when
+.I grain\^
+is set.
+.TP
+\f4M_KEEP\fP
+Preserve data in a freed block until the next
+\f4malloc\fP,
+\f4realloc\fP,
+or
+\f4calloc\fP.
+This option is provided only for compatibility with the old
+version of 
+\f4malloc\fP
+and is not recommended.
+.PP
+These values are defined in the 
+\f4malloc.h\fP
+header file.
+.PP
+\f4mallopt\fP
+may be called repeatedly, but may not be called after
+the first small block is allocated.
+.PP
+\f4mallinfo\fP
+provides instrumentation describing space usage.
+It returns the structure:
+.PP
+.RS
+.ft 4
+.nf
+struct mallinfo  {
+     int arena;      /\(** total space in arena \(**/
+     int ordblks;    /\(** number of ordinary blocks \(**/
+     int smblks;     /\(** number of small blocks \(**/
+     int hblkhd;     /\(** space in holding block headers \(**/
+     int hblks;      /\(** number of holding blocks \(**/
+     int usmblks;    /\(** space in small blocks in use \(**/
+     int fsmblks;    /\(** space in free small blocks \(**/
+     int uordblks;   /\(** space in ordinary blocks in use \(**/
+     int fordblks;   /\(** space in free ordinary blocks \(**/
+     int keepcost;   /\(** space penalty if keep option \(**/
+                     /\(** is used \(**/
+}
+.fi
+.ft 1
+.RE
+.PP
+This structure is defined in the
+\f4malloc.h\fP
+header file.
+.PP
+Each of the allocation routines returns a pointer
+to space suitably aligned (after possible pointer coercion)
+for storage of any type of object.
+.SH SEE ALSO
+\f4brk\fP(2), \f4malloc\fP(3C)
+.SH DIAGNOSTICS
+\f4malloc\fP,
+\f4realloc\fP,
+and
+\f4calloc\fP
+return a
+\f4NULL\fP
+pointer if there is not enough available memory.
+When 
+\f4realloc\fP
+returns 
+\f4NULL\fP, the block pointed to by
+.I ptr\^
+is left intact.
+If 
+\f4mallopt\fP
+is called after any allocation or if
+.I cmd\^ 
+or 
+.I value\^
+are invalid, non-zero is returned.
+Otherwise, it returns zero.
+.SH NOTES
+.P
+Note that unlike 
+\f4malloc\fP(3C),
+this package does not preserve
+the contents of a block when it is freed, unless 
+the 
+\f4M_KEEP\fP
+option of
+\f4mallopt\fP
+is used.
+.P
+Undocumented features of 
+\f4malloc\fP(3C)
+have not been duplicated.
+.P
+Function prototypes for \f4malloc\fP, \f4realloc\fP, \f4calloc\fP and
+\f4free\fP are also defined in the \f4<malloc.h>\fP header file for
+compatibility with old applications. New applications should include
+\f4<stdlib.h>\fP to access the prototypes for these functions.
+.\"	@(#)malloc.3x	6.5 of 4/2/84
+.Ee

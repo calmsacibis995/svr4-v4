@@ -1,0 +1,185 @@
+'\"macro stdmacro
+.if n .pH g1.ckitem @(#)ckitem	40.17 of 5/14/91
+.\" Copyright 1989 AT&T
+.nr X
+.if \nX=0 .ds x} ckitem 1 "Essential Utilities" "\&"
+.if \nX=1 .ds x} ckitem 1 "Essential Utilities"
+.if \nX=2 .ds x} ckitem 1 "Essential Utilities" "\&"
+.if \nX=3 .ds x} ckitem "Essential Utilities" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4ckitem\f1 \- build a menu; prompt for and return a menu item
+.SH SYNOPSIS
+\f4ckitem\f1 [ \f4-Q\f1 ] [ \f4-W\f2 width\f1 ] [ \f4-uno\f1 ] [ \f4-f\f2 file\f1 ] [ \f4-l \f2label\f1 ]
+.br
+	[ [ \f4-i \f2invis\f1 ] [ \f4-i \f2invis\f1 ] . . . ] [ \f4-m \f2max\f1 ] [ \f4-d\f2 default\f1 ] [ \f4-h\f2 help\f1 ] [ \f4-e\f2 error\f1 ]
+.br
+	[ \f4-p \f2prompt\f1 ] [ \f4-k\f2 pid\f1 [ \f4-s\f2 signal\f1 ] ]   [ \f2choice1  choice2\fP . . . ]
+.P
+\f4erritem\f1 [ \f4-W \f2width\f1 ] [ \f4-e \f2error\f1 ]   [ \f2choice1  choice2\fP . . . ]
+.P
+\f4helpitem\f1 [\f4-W \f2width\f1] [\f4-h \f2help\f1]   [ \f2choice1  choice2\fP . . . ]
+.SH DESCRIPTION
+\f4ckitem\f1 builds a menu and prompts the user to choose one item
+from a menu of items.
+It then  verifies the response.
+Options for this command define, among other things,
+a prompt message whose response is a menu item, text for help and
+error messages, and a default value
+(which is returned if the user responds with a RETURN).
+.P
+By default,
+the menu is formatted so that each item is prepended by a number and is printed
+in columns across the terminal.
+Column length is determined by the longest
+choice.
+Items are alphabetized.
+.P
+All messages are limited in length to 70 characters and
+are formatted automatically.
+Any white space used in the definition (including newline) is stripped.
+The \f4-W\f1 option cancels the automatic formatting.
+When a tilde is placed at the beginning or end of a message definition,
+the default text is
+inserted at that point, allowing both custom text and the default text
+to be displayed.
+.P
+If the prompt, help or error message is not defined, the default message
+(as defined under NOTES) is displayed.
+.P
+Two visual tool modules are linked to the \f4ckitem\f1 command.
+They are
+\%\f4erritem\f1 (which formats and displays an error message) and
+\f4helpitem\f1 (which formats and displays a help message).
+These modules should be used in conjunction with FML objects.
+In this
+instance, the FML object defines the prompt.
+When \f2choice\f1 is defined in these modules,
+the messages describe the
+available menu choice (or choices).
+.P
+The options and arguments for this command are:
+.TP
+\f4\-Q\f1
+Do not allow quit as a valid response.
+.TP
+\f4-W\f1
+Use \f2width\f1 as the line length for prompt, help, and error messages.
+.TP
+\f4\-u\f1
+Display menu items as an unnumbered list.
+.TP
+\f4\-n\f1
+Do not display menu items in alphabetical order.
+.TP
+\f4\-o\f1
+Return only one menu token.
+.TP
+\f4\-f\f1
+\f2file\f1 contains a
+list of menu items to be displayed.
+[The format of this file is: \f2token<tab>description\f1.
+Lines beginning with a pound sign (``\f4#\fP'') are comments and
+are ignored.]
+.TP
+\f4\-l\f1
+Print \f2label\f1 above the menu.
+.TP
+\f4\-i\f1
+\f2invis\f1 specifies invisible menu choices (choices not to be printed in 
+the menu).
+For example,
+``\f4all\fP'' used as an invisible choice would mean it is a valid option but does not
+appear in the menu.
+Any number of invisible choices may be defined.
+Invisible choices should be made known to a user either in the prompt or in a
+help message.
+.TP
+\f4\-m\f1
+The maximum number of menu choices allowed is \f2m\f1.
+.TP
+\f4\-d\f1
+The default value is \f2default\f1.
+The default is not validated and so does not have to meet any criteria.
+.TP
+\f4\-h\f1
+The help message is \f2help\fP.
+.TP
+\f4\-e\f1
+The error message is \f2error\f1.
+.TP
+\f4\-p\f1
+The prompt message is \f2prompt\f1.
+.TP
+\f4\-k\f1
+Send process ID \f2pid\f1 a signal if the user chooses
+to abort.
+.TP
+\f4\-s\f1
+When quit is chosen,
+send \f2signal\fP to the process whose \f2pid\fP is specified by the \f4\-k\fP option.
+If no signal is specified, use \f4SIGTERM\fP.
+.TP
+.I choice
+Defines menu items.
+Items should be separated by white space or newline.
+.SH EXIT CODES
+.nf
+\f40\f1 = Successful execution
+\f41\f1 = EOF on input
+\f42\f1 = Usage error
+\f43\f1 = User termination (quit)
+\f44\f1 = No choices from which to choose
+.fi
+.SH NOTES
+The user may input the number of the menu item if choices are numbered or as
+much of the string required for a unique identification of the item.
+Long menus are paged with 10 items per page.
+.P
+When menu entries are defined both in a file (by using the \f4\-f\f1 option)
+and also on the command line, they are usually combined alphabetically.
+However, if the \f4\-n\f1 option is used to suppress 
+alphabetical ordering, then the entries defined in the file
+are shown first, followed by
+the options defined on the command line.
+.P
+The default prompt for \f4ckitem\f1 is:
+.P
+.RS
+\f4Enter selection [?,??,q]:\f1
+.RE
+.P
+One question mark gives a help message and then redisplays the prompt.
+Two question marks gives a help
+message and then redisplays the menu label, the
+menu and the prompt.
+.P
+The default error message is:
+.P
+.RS
+.nf
+\f4ERROR - Does not match an available menu selection.
+Enter one of the following:
+\(em the number of the menu item you wish to select
+\(em the token associated withe the menu item,
+\(em partial string which uniquely identifies the token
+   for the menu item
+\(em ?? to reprint the menu\f1
+.fi
+.RE
+.P
+The default help message is:
+.P
+.RS
+.nf
+\f4Enter one of the following:
+\(em the number of the menu item you wish to select
+\(em the token associated with the menu item,
+\(em partial string which uniquely identifies the token
+   for the menu item
+\(em ?? to reprint the menu\f1
+.fi
+.RE
+.P
+When the quit option is chosen (and allowed), \f4q\f1 is returned
+along with the return code \f43\fP.

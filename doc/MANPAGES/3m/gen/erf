@@ -1,0 +1,52 @@
+'\"! eqn | mmdoc
+'\"macro stdmacro
+.if n .pH g3m.erf @(#)erf	40.7 of 1/3/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} erf 3M "Math Libraries" "\&"
+.if \nX=1 .ds x} erf 3M "Math Libraries"
+.if \nX=2 .ds x} erf 3M "" "\&"
+.if \nX=3 .ds x} erf "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4erf\f1, \f4erfc\f1 \- error function and complementary error function
+.SH SYNOPSIS
+\f4cc\f1
+[\f2flag\fP \|.\|.\|.] \f2file\fP \|.\|.\|.
+\f4\-lm\f1
+[\f2library\fP \|.\|.\|.]
+.PP
+\f4#include <math.h>\f1
+.PP
+\f4double erf (double x);\f1
+.PP
+\f4double erfc (double x);\f1
+.SH DESCRIPTION
+\f4erf\fP
+returns the error function of
+.IR x ,
+defined as
+.P
+.RS
+.EQ
+{2 over sqrt pi} int from 0 to x e sup {- t sup 2} dt 
+.EN
+.RE
+.PP
+\f4erfc\fP,
+which returns 1.0 \-
+\f4erf(\f2x\fP)\f1,
+is provided because of the
+extreme loss of relative accuracy if
+\f4erf(\f2x\fP)\f1
+is called for large
+.I x
+and the result subtracted
+from 1.0 (e.g., for
+.I x
+= 5, 12 places are lost).
+.SH "SEE ALSO"
+\f4exp\fP(3M).
+.\"	@(#)erf.3m	6.2 of 10/20/83
+.Ee

@@ -1,0 +1,21 @@
+'\"macro stdmacro
+.if n .pH g1.dispuid @(#)dispuid	40.6 of 1/3/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} dispuid 1 "Essential Utilities" "\&"
+.if \nX=1 .ds x} dispuid 1 "Essential Utilities"
+.if \nX=2 .ds x} dispuid 1 "Essential Utilities" "\&"
+.if \nX=3 .ds x} dispuid "Essential Utilities" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4dispuid\f1 \- displays a list of all valid user names
+.SH SYNOPSIS
+\f4dispuid\f1
+.SH DESCRIPTION
+\f4dispuid\f1
+displays a list of all user names on the system (one line per name).
+.SH EXIT CODES
+.nf
+0 = Successful execution
+1 = Cannot read the password file

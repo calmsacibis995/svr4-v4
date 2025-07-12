@@ -1,0 +1,68 @@
+'\"macro stdmacro
+.if n .pH g1m.halt @(#)halt	40.6 of 4/18/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+'\" macro stdmacro
+.\" Copyright (c) 1988 Sun Microsystems, Inc. - All Rights Reserved.
+.\"
+.\" All rights reserved.  The Berkeley software License Agreement
+.\" specifies the terms and conditions for redistribution.
+.\"
+.nr X
+.if \nX=0 .ds x} halt 1M "BSD Compatibility Package" "\&"
+.if \nX=1 .ds x} halt 1M "BSD Compatibility Package"
+.if \nX=2 .ds x} halt 1M "" "\&"
+.if \nX=3 .ds x} halt "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4halt\f1 \- stop the processor
+.SH SYNOPSIS
+\f4/usr/ucb/halt\f1
+[
+\f4\-nqy\f1
+]
+.SH DESCRIPTION
+.PP
+\f4halt\f1
+writes out any information pending to the disks and then
+stops the processor.
+.PP
+\f4halt\f1
+normally logs the system shutdown to the system log daemon,
+\f4syslogd\f1(1M),
+and places a shutdown record in the login accounting file
+\f4/var/adm/wtmp\f1.
+These actions are inhibited if the
+\f4\-n\f1
+or
+\f4\-q\f1
+options are present.
+.PP
+The following options are available:
+.TP
+\f4\-n\f1
+Prevent the
+\f2sync\f1
+before stopping.
+.TP
+\f4\-q\f1
+Quick halt.
+No graceful shutdown is attempted.
+.TP
+\f4\-y\f1
+Halt the system, even from a dialup terminal.
+.SH FILES
+.PD 0
+.TP 20
+\f4/var/adm/wtmp\f1
+login accounting file
+.PD
+.SH SEE ALSO
+\f4reboot\fP(1M),
+\f4syslogd\fP(1M)
+.br
+\f4shutdown\fP(1M),
+\f4init\fP(1M)
+in the \f2System Administrator's Reference Manual\f1
+.SH NOTES
+This command is equivalent to \f4init 0\f1.

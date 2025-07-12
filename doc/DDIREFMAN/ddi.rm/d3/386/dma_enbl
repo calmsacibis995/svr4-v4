@@ -1,0 +1,42 @@
+'\"macro stdmacro
+.if n .pH 386.dma_enbl @(#)dma_enbl	40.2 of 1/7/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.nr X
+.if \nX=0 .ds x} dma_enable D3X "" "DDI" "\&"
+.if \nX=1 .ds x} dma_enable D3X "" "DDI"
+.if \nX=2 .ds x} dma_enable D3X "" "\&"
+.if \nX=3 .ds x} dma_enable "" "" "\&"
+.TH \*(x}
+.IX "\f4dma_enable\fP(D3X)"
+.SH NAME 
+\f4dma_enable\f1 \- enable recognition of hardware requests on a DMA channel
+.SH SYNOPSIS
+.nf
+.na
+\f4#include <sys/dma.h>
+.sp 0.5
+\f4void dma_enable(int \f2chan\f4);\f1
+.ad
+.fi
+.SH ARGUMENTS 
+.RS 0n 10
+.IP "\f2chan\f1" 10n
+Channel to be enabled.
+.RE
+.SH DESCRIPTION 
+\f4dma_enable\f1 enables recognition of hardware requests on
+the DMA channel \f2chan\fP.
+The channel should have been programmed
+previously by \f4dma_prog\fP(D3X).
+.SH "RETURN VALUE" 
+None.
+.SH LEVEL
+Base or Interrupt.
+.SH NOTES
+Does not sleep.
+.SH "SEE ALSO"
+.na
+\f4dma_disable\f1(D3X),
+\f4dma_prog\f1(D3X),
+\f4dma_cb\fP(D4X)
+.ad

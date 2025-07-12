@@ -1,0 +1,12 @@
+.if n .pH portguide.Cintro @(#)Cintro	40.2
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.BK "Programmer's Guide: Porting the Kernel" "" "" ""   
+.\ACRONYM	                  
+.CH "Introduction" "" "Table of Contents" "1"
+.\CHAPTER	1
+.tC 1 "Introduction" 1-1  
+.tC 2 "General Information" 1-1  
+.tC 3 "Kernel Source" 1-1  
+.Index: kernel source location      	1
+.tC 2 "Conventions Used" 1-3  
+.tC 2 "Other Documentation" 1-4  

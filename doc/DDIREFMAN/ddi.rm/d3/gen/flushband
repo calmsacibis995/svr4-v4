@@ -1,0 +1,61 @@
+'\"macro stdmacro
+.if n .pH gen.flushband @(#)flushband	40.2 of 1/7/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.nr X
+.if \nX=0 .ds x} flushband D3DK "STREAMS" "DDI/DKI" "\&"
+.if \nX=1 .ds x} flushband D3DK "STREAMS" "DDI/DKI"
+.if \nX=2 .ds x} flushband D3DK "" "\&"
+.if \nX=3 .ds x} flushband "" "" "\&"
+.TH \*(x}
+.IX "\f4flushband\fP(D3DK)"
+.SH "NAME" 
+\f4flushband\f1 \- flush messages in a specified priority band
+.SH "SYNOPSIS" 
+.nf
+.na
+\f4#include <sys/types.h>
+#include <sys/stream.h>
+.sp 0.5
+void flushband(queue_t *\f2q, \f4uchar_t \f2pri, \f4int \f2flag\f4);\f1
+.ad
+.fi
+.SH "ARGUMENTS" 
+.RS 0n 10
+.IP "\f2q\f1" 10n
+Pointer to the queue.
+.IP "\f2pri\f1" 10n
+Priority band of messages to be flushed.
+.IP "\f2flag\f1" 10n
+Determines messages to flush.  Valid \f2flag\f1 values are:
+.P
+.RS 12
+.TP 12
+\f4FLUSHDATA
+.IX STREAMS messages
+Flush only data messages (types \f4M_DATA, M_DELAY, M_PROTO, \f1and 
+\f4M_PCPROTO\f1).
+.TP
+\f4FLUSHALL\f1
+Flush all messages.
+.RE
+.RE
+.SH DESCRIPTION 
+The \f4flushband\f1 function flushes messages associated with the
+priority band specified by \f2pri\f1.
+If \f2pri\f1 is \f40\f1, only normal and high priority messages are flushed.
+Otherwise, messages are flushed from the band \f2pri\f1 according to
+the value of \f2flag\f1.
+.SH "RETURN VALUE" 
+None.
+.SH LEVEL 
+Base or Interrupt.
+.SH NOTES
+Does not sleep.
+.SH "SEE ALSO" 
+.na
+\f4put\fP(D2DK),
+\f4flushq\f1(D3DK),
+\f4queue\fP(D4DK)
+.ad
+.SH EXAMPLE
+See \f4put\fP(D2DK) for an example of \f4flushband\fP.

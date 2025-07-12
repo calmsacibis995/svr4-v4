@@ -1,0 +1,116 @@
+'\"macro stdmacro
+.if n .pH g3s.fseek @(#)fseek	40.17 of 5/22/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} fseek 3S "C Development Set" "\&"
+.if \nX=1 .ds x} fseek 3S "C Development Set"
+.if \nX=2 .ds x} fseek 3S "" "\&"
+.if \nX=3 .ds x} fseek "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4fseek\f1, \f4rewind\f1, \f4ftell\f1 \- reposition a file pointer in a stream
+.SH SYNOPSIS
+\f4#include <stdio.h>\f1
+.PP
+\f4int fseek (FILE \(**stream, long offset, int ptrname);\f1
+.PP
+\f4void rewind (FILE \(**stream);\f1
+.PP
+\f4long ftell (FILE \(**stream);\f1
+.SH DESCRIPTION
+\f4fseek\fP
+sets the position of the next input or output
+operation on the
+.I stream
+[see \f4intro\fP(3)].
+The new position is at the signed distance
+.I offset\^
+bytes
+from the beginning, from the current position, or from the end of the file,
+according to a
+.I ptrname\^
+value of
+\f4SEEK_SET\f1,
+\f4SEEK_CUR\f1,
+or
+\f4SEEK_END\f1 (defined in \f4stdio.h\fP) as follows:
+.PP
+.TP 12
+\f4SEEK_SET\f1
+set position equal to \f2offset\f1 bytes.
+.TP 12
+\f4SEEK_CUR\f1
+set position to current location plus \f2offset\f1.
+.TP 12
+\f4SEEK_END\f1
+set position to \f4EOF\f1 plus \f2offset\f1.
+.P
+\f4fseek\f1 allows the file position indicator to be set
+beyond the end of the existing data in the file.
+If data is later written at this point, subsequent reads of data in
+the gap will return zero until data is actually written into the
+gap.
+\f4fseek\f1, by itself, does not extend the size of the file.
+.PP
+\f4rewind (stream)\f1
+is equivalent to:
+.PP
+	\f4(void) fseek (stream, 0L, SEEK_SET);\f1
+.PP
+except that \f4rewind\f1 also clears the error indicator on \f2stream\fP.
+.PP
+\f4fseek\fP
+and
+\f4rewind\fP
+clear the \f4EOF\fP indicator and undo any effects of
+\f4ungetc\fP
+on \f2stream\fP.
+After
+\f4fseek\fP
+or
+\f4rewind\fP,
+the next operation on a file opened for update
+may be either input or output.
+.PP
+If \f2stream\fP is writable and buffered data has not been written to the
+underlying file, \f4fseek\fP and \f4rewind\fP cause the unwritten data to
+be written to the file.
+.PP
+\f4ftell\fP
+returns the offset of the current byte relative to the beginning
+of the file associated with the named
+.IR stream .
+.SH SEE ALSO
+\f4lseek\fP(2),
+\f4write\fP(2),
+\f4fopen\fP(3S),
+\f4popen\fP(3S), \f4stdio\fP(3S), \f4ungetc\fP(3S).
+.SH DIAGNOSTICS
+\f4fseek\fP
+returns \-1 for improper seeks,
+otherwise zero.
+An improper seek can be, for example, an
+\f4fseek\fP
+done on a file that has not been opened via
+\f4fopen\fP;
+in particular,
+\f4fseek\fP
+may not be used on a terminal or on a file opened via
+\f4popen\fP.
+After a stream is closed, no further operations are defined on that stream.
+.SH NOTES
+Although on the
+.SM UNIX
+system an offset returned by
+\f4ftell\fP
+is measured in bytes, and it is permissible to seek to positions
+relative to that offset,
+portability to non-\s-1UNIX\s+1 systems requires that
+an offset be used by
+\f4fseek\fP
+directly.  Arithmetic may
+not meaningfully be performed on such
+an offset, which is not necessarily measured in bytes.
+.\"	@(#)fseek.3s	6.2 of 10/20/83
+.Ee

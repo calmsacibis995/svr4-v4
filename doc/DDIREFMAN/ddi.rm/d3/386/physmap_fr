@@ -1,0 +1,48 @@
+'\"macro stdmacro
+.if n .pH 386.physmap_fr @(#)physmap_fr	40.2 of 1/7/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.nr X
+.if \nX=0 .ds x} physmap_free D3D "" "DDI" "\&"
+.if \nX=1 .ds x} physmap_free D3D "" "DDI"
+.if \nX=2 .ds x} physmap_free D3D "" "\&"
+.if \nX=3 .ds x} physmap_free "" "" "\&"
+.TH \*(x}
+.IX "\f4physmap_free\fP(D3D)"
+.SH NAME 
+\f4physmap_free\fP \- free virtual address mapping for physical addresses
+.SH SYNOPSIS
+.nf
+.na
+\f4#include <sys/types.h>
+#include <sys/kmem.h>
+.sp 0.5
+void physmap_free(caddr_t \f2vaddr\f4, ulong_t \f2nbytes\f4, uint_t \f2flags\f4);\f1
+.ad
+.fi
+.SH ARGUMENTS 
+.RS 0n 10
+.IP \f2vaddr\fP 10n
+Virtual address for which the mapping will be released.
+.IP \f2nbytes\fP 10n
+Number of bytes in the mapping.
+.IP \f2flags\fP 10n
+For future use (must be set to 0.)
+.RE
+.SH DESCRIPTION 
+\f4physmap_free\fP
+releases a mapping allocated by a previous call to \f4physmap\f1.
+The \f2nbytes\f1 argument must be identical to that given to \f4physmap\f1.
+Currently, no flags are supported and the \f2flags\fP argument must be set to zero.
+Generally, \f4physmap_free\f1 will never be called, since drivers usually keep the
+mapping forever, but it is provided if a driver wants to
+dynamically allocate and free mappings.
+.SH "RETURN VALUE"
+None.
+.SH LEVEL
+Base or Interrupt.
+.SH NOTES
+Does not sleep.
+.SH SEE ALSO
+.na
+\f4physmap\fP(D3D)
+.ad

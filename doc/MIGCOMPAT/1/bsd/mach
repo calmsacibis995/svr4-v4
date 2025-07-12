@@ -1,0 +1,31 @@
+'\"macro stdmacro
+.if n .pH g1.mach @(#)mach	40.9 of 4/18/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+'\" macro stdmacro
+.\" Copyright (c) 1988 Sun Microsystems, Inc. - All Rights Reserved.
+.\"
+.nr X
+.if \nX=0 .ds x} mach 1 "BSD Compatibility Package" "\&"
+.if \nX=1 .ds x} mach 1 "BSD Compatibility Package"
+.if \nX=2 .ds x} mach 1 "" "\&"
+.if \nX=3 .ds x} mach "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4mach\f1 \- display the processor type of the current host
+.SH SYNOPSIS
+\f4/usr/ucb/mach\f1
+.SH DESCRIPTION
+The
+\f4mach\f1
+command displays the processor-type of the current host.
+.SH SEE ALSO
+\f4arch\fP(1)
+.P
+\f4machid\fP(1),
+\f4uname\fP(1)
+in th \f2User's Reference Manual\f1
+.br
+\f4uname\fP(2),
+\f4sysinfo\fP(2)
+in the \f2Programmer's Reference Manual\f1

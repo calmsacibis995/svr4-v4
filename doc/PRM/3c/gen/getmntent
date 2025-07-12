@@ -1,0 +1,96 @@
+'\"macro stdmacro
+.if n .pH g3c.getmntent @(#)getmntent	40.7.1.1 of 1/3/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} getmntent 3C "" "\&"
+.if \nX=1 .ds x} getmntent 3C ""
+.if \nX=2 .ds x} getmntent 3C "" "\&"
+.if \nX=3 .ds x} getmntent "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4getmntent\fP, \f4getmntany\fP \- get \f4mnttab\fP file entry
+.SH SYNOPSIS
+\f4#include <stdio.h>\fP
+.br
+\f4#include <sys/mnttab.h>\fP
+.PP
+\f4int getmntent (FILE \(**fp, struct mnttab \(**mp);
+.PP
+\f4int getmntany (FILE \(**fp, struct mnttab \(**mp, struct mnttab \(**mpref)\f1;
+.SH DESCRIPTION
+\f4getmntent\fP
+and
+\f4getmntany\fP
+each fill in the structure pointed to by \f2mp\f1 with
+the broken-out
+fields of a line in the
+\f4/etc/mnttab\fP
+file.
+Each line in the file
+contains a \f4mnttab\fP structure, declared in the
+\f4sys/mnttab.h\fP
+header file:
+.RS
+.nf
+\f4
+struct mnttab {
+	char	\(**mnt_special;
+	char	\(**mnt_mountp;
+	char	\(**mnt_fstype;
+	char	\(**mnt_mntopts;
+	char	\(**mnt_time;
+};
+\fP
+.fi
+.RE
+.PP
+The fields have meanings described in
+\f4mnttab\fP(4).
+.PP
+\f4getmntent\fP
+returns a pointer to the next \f4mnttab\fP structure in the file;
+so successive calls can
+be used to search the entire file.
+\f4getmntany\fP
+searches the file referenced by
+\f2fp\fP
+until a match is found between a line in the file and
+\f2mpref\fP.
+\f2mpref\fP
+matches the line if all
+non-null
+entries in
+\f2mpref\fP
+match the corresponding fields in the file.
+Note that these routines do not open, close, or rewind the file.
+.SH FILES
+\f4/etc/mnttab\fP
+.SH "SEE ALSO"
+\f4mnttab\fP(4).
+.SH DIAGNOSTICS
+If the next entry is successfully read by
+\f4getmntent\fP
+or a match is found with
+\f4getmntany\fP,
+0 is returned.
+If an end-of-file
+is encountered on reading, these functions return \-1.
+If an error is encountered, a value greater than 0 is returned.
+The possible error values are:
+.TP 20
+\f4MNT_TOOLONG\fP
+A line in the file exceeded the internal buffer size of
+\f4MNT_LINE_MAX\fP.
+.TP 20
+\f4MNT_TOOMANY\fP
+A line in the file contains too many fields.
+.TP 20
+\f4MNT_TOOFEW\fP
+A line in the file contains too few fields.
+.SH NOTES
+The members of the
+\f4mnttab\fP
+structure point to information contained in a static area,
+so it must be copied if it is
+to be saved.

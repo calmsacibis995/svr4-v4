@@ -1,0 +1,56 @@
+'\"macro stdmacro
+.if n .pH g1a.nsquery @(#)nsquery	40.7 of 4/15/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} nsquery 1M "RFS" "\&"
+.if \nX=1 .ds x} nsquery 1M "RFS"
+.if \nX=2 .ds x} nsquery 1M "" "\&"
+.if \nX=3 .ds x} nsquery "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4nsquery\f1 \- Remote File Sharing name server query
+.SH SYNOPSIS
+\f4nsquery\f1
+[\f4\-h\f1] [\f2name\f1]
+.SH DESCRIPTION
+\f4nsquery\fP provides information about resources available to the host from
+both the local domain and from other domains.
+All resources are reported, regardless of whether the host is authorized to access them.
+When used with no options, \f4nsquery\fP identifies all resources in
+the domain that have been advertised as sharable.
+A report on selected resources can be obtained by specifying \f2name\f1,
+where \f2name\f1 is:
+.IP \f2nodename\f1 17
+The report will include only those resources available from \f2nodename\f1.
+.IP \f2domain.\f1 17
+The report will include only those resources available from \f2domain\f1.
+.IP \f2domain.nodename\f1 17
+The report will include only those resources available from \f2domain.nodename\f1.
+.P
+When the name does not include the delimiter ".", it will
+be interpreted as a \f2nodename\f1 within the local domain. 
+If the name ends with a delimiter ".",
+it will be interpreted as a domain name.
+.P
+The information contained in the report on each resource includes
+its advertised name (\f2domain.resource\fP),
+the read/write permissions,
+the server (\f2nodename.domain\fP) that advertised the resource, and
+a brief textual description.
+.P
+When \f4\-h\f1 is used, the header is not printed.
+.P
+A remote domain must be listed in your \f4rfmaster\f1 file in order
+to query that domain.
+.SH "EXIT STATUS"
+If no entries are found when \f4nsquery\fP is executed,
+the report header is printed.
+.SH "SEE ALSO"
+\f4adv\fP(1M),
+\f4unadv\fP(1M),
+\f4rfmaster\fP(4)
+.SH NOTES
+If your host cannot contact the domain name server,
+an error message will be sent to standard error.
+.\"	@(#)nsquery.1m	6.3 of 9/2/83

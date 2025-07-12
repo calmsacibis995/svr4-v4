@@ -1,0 +1,95 @@
+'\"macro stdmacro
+.if n .pH g1a.sgib @(#)sgib	40.7 of 5/17/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} sgib 1iref "System Administration Utilities" "" "\&"
+.if \nX=1 .ds x} sgib 1iref "System Administration Utilities" ""
+.if \nX=2 .ds x} sgib 1iref "" "\&"
+.if \nX=3 .ds x} sgib "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4sgib\f1 \- install Multibus bootstrap loaders
+.SH SYNOPSIS
+\f4sgib\f1 [\-\f4B\f1 | \-\f4D\f1 |\-\f4F\f1 | \-\f4T\f1 | \-\f4R\f1]
+.br
+[\-\f4d\f1 \f2granularity\f1]  [\-\f4i\f1 \f2interleave\f1]
+.br
+[\-\f4f\f1 \f2fheads\f1] [\-\f4o\f1 \f2offset\f1]  [\-\f4r\f1 \f2rheads\f1]
+.br
+[\-\f4c\f1 \f2cyl\f1]  [\-\f4s\f1 \f2sec\f1] [\-\f4M\f1 \f2filename\f1]
+.br
+[\-\f4N\f1 \f4filename\f1] \f2device_name\f1
+.SH DESCRIPTION
+\f4sgib\f1 installs the system boot block and boot strap images on either
+hard disk or tape devices, as specified by the device_name parameter, for
+Multibus I and Multibus II systems.  Bootloaders for both MSA (Multibus II
+System Architecture) and non-MSA are installed if \f2device_name\f1 specifies
+a hard disk.  The defaults are for a 140 megabyte Maxtor hard disk drive.
+The default bootloader image for the non-MSA portion is
+\f4/etc/boot\f1, and the default image for the MSA bootloader is
+\f4/etc/dsboot\f1.
+.PP
+The options are:
+.PP
+.TP 11
+\-\f4B\f1
+Produce a file suitable for use by the Multibus II bootserver.
+.TP 11
+\-\f4D\f1
+Produce a file suitable for use on a hard disk.  This is the default.
+.TP 11
+\-\f4F\f1
+Produce a file suitable for use on a floppy disk.
+.TP 11
+\-\f4T\f1
+Produce a file suitable for use on a boot tape. 
+.TP 11
+\-\f4R\f1
+Real mode boot flag.
+.TP 11
+\-\f4d  \f2granularity\f1
+Specify the number of bytes per sector.
+.TP 11
+\-\f4i  \f2interleave\f1
+Specify the format interleave factor.
+.TP 11
+\-\f4f \f2fheads\f1
+Specify the number of fixed heads.
+.TP 11
+\-\f4o  \f2offset\f1
+Specify the offset in sectors to the start of the root file system.
+.TP 11
+\-\f4r \f2rheads\f1
+Specify the number of removable heads on the drive.  This is normally 0 for
+hard disks.
+.TP 11
+\-\f4c \f2cyl\f1
+Specify the number of cylinders.  This should include cylinders which
+are reserved for manufacture's defect lists, and system diagnostics.
+.TP 11
+\-\f4s \f2sec\f1
+Specify the number of sectors per track.
+.TP 11
+\-\f4M \f2filename\f1
+Specify the name of the MSA boot file.
+.TP 11
+\-\f4N \f2filename\f1
+Specify the name of the non-MSA boot file.
+.SH FILES
+\f4/sbin/sgib\f1
+.br
+\f4/etc/boot\f1
+.br
+\f4/etc/dsboot\f1
+.br
+\f4/etc/tsboot\f1
+.br
+\f4/etc/bsboot\f1
+.SH NOTES
+\f4sgib\f1 should be used on the raw device.
+.SH DIAGNOSTICS
+0 is returned upon successful completion.  Exit status of 1 is returned in
+the event of errors. 
+.SH SEE ALSO
+\f4ivlab\f1(4).

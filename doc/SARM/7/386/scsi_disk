@@ -1,0 +1,533 @@
+'\"macro stdmacro
+.if n .pH 386.scsi_disk @(#)scsi_disk	40.3 of 6/24/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" .nr s 1
+'\"macro stdmacro
+.dsT \t
+.nr X
+.if \nX=0 .ds x} scsi_disk 7 "SCSI Drivers" "" "\&"
+.if \nX=1 .ds x} scsi_disk 7 "SCSI Drivers" ""
+.if \nX=2 .ds x} scsi_disk 7 "" "\&"
+.if \nX=3 .ds x} scsi_disk "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4scsi_disk\fP \- \f4sd01\fP SCSI disk driver
+.SH DESCRIPTION
+The Small Computer System Interface (SCSI) disk driver
+\f4sd01\fP
+determines the layout of the disk dynamically, as described below.
+It provides block and character (raw) access to the individual partitions
+of the disk, as well as the entire physical disk.
+.PP
+The minor numbers for a disk device determine the logical sections (or
+slices) on the drive.
+The \f4sd01\fP disk minor number layout
+supports 16 partitions per disk and 16 disks per major number; [see
+\f4mdevice\fP(4).]
+Partition 0 represents the entire UNIX system partition
+(as defined by the \f4fdisk\f1(1M) table).
+Other partitions are defined by information in the
+volume table of contents (VTOC).
+When accessing
+partition 0, other partition boundaries are ignored.
+Thus, the user must take care when using the disk in this way.
+.PP
+The full fixed disk is partitioned at two levels: first, sections of the disk
+to be used by different operating systems are described by the
+\f4fdisk\fP(1M) table
+contained in the first block of the disk.
+Second, the UNIX system sections of the
+disk are further partitioned according to information contained in the VTOC.
+The VTOC is currently in the 30th sector of the UNIX system partition; [see
+\f4disksetup\fP(1M).]
+The VTOC also contains information about the non-UNIX system partitions
+described in the
+\f4fdisk\fP
+table.
+When the disk device is opened, the VTOC is read by the driver and is used to
+fill out its tables of logical disks, assigned by minor device number.
+.PP
+Each partition in the
+\f4fdisk\fP
+table is specified as to its type (e.g., DOS, UNIX system, or other).
+A partition (file system) is usable by the UNIX system only if its
+type is correct (e.g., a DOS partition is not usable by the UNIX system,
+except as a raw, non-file system device).
+.PP
+On each drive, sector 0 contains the primary bootstrap and the
+\f4fdisk\fP
+table.
+The first 29 sectors of the UNIX system partition contain the
+first-stage and second-stage bootstraps.
+The 30th sector contains the \f4pdinfo\fP structure and VTOC table.
+.PP
+The
+\f4fdisk\fP
+table indicates which of the partitions is the active, or
+bootable, partition.
+When the machine is booted, the primary boot code looks in the
+\f4fdisk\fP
+table for the active partition and jumps to
+sector 0 of that partition to find the first-stage bootstrap.
+If the first-stage bootstrap is over one sector in length, it is the
+responsibility
+of the first-stage bootstrap to understand this.
+Note that both the first cylinder (containing the
+\f4fdisk\fP
+table, first-stage bootstrap and VTOC) and the first track of the active
+partition (containing the first-stage bootstrap) can only be accessed using
+partition 0, since these tracks are normally not considered part of any
+other partition in the VTOC.
+.PP
+Mapping of bad blocks is done dynamically and automatically by the
+\f4sd01\fP
+disk driver without user intervention and without retaining a bad block
+log on the disk.
+The SCSI direct-access controllers reassign the defective
+blocks to an area on the disk reserved for this purpose.
+The \f4sd01\fP
+disk driver can map both marginal bad blocks (i.e., readable with
+some difficulty) and actual bad blocks (i.e., unreadable).
+The
+\f4sd01\fP
+disk driver provides the 
+\f2sd01log_marg\fP
+variable in
+\f4/etc/conf/pack.d/sd01/space.c\fP.
+This variable has been assigned a default value of zero (0).
+In this mode,
+only marginal bad blocks found in the sacred area of the disk (the first
+30 sectors of the UNIX system partition) are reported.
+Setting this variable to one (1) allows all marginal blocks to be reported.
+In addition,
+setting this variable to two (2) allows for reporting and mapping
+of marginal blocks (except sacred area).
+.PP
+The driver provides the variable
+\f2sd01diskinfo\fP
+in the file 
+\f4/etc/conf/pack.d/sd01/space.c\fP.
+This variable has been assigned the default value of 0x2040.  
+With that setting, the driver reports the disk parameters to be 32
+sectors per track and 64 heads for any disk.  
+Setting this variable to zero (0) allows the driver to report the actual
+geometry of disks as reported by the drives themselves.
+.PP
+The
+\f4sd01\fP
+disk driver reports problems with driver error messages.
+The error numbers in the error messages differentiate the type of error.
+For SCSI sense codes, extended sense codes, and command codes, see the
+file
+\f4/usr/include/sys/scsi.h\fP.
+For SDI return codes, see the file
+\f4/usr/include/sys/sdi.h\fP.
+.P
+The
+\f4sd01\fP
+driver does not map or report a bad block that resides in a non-UNIX
+(i.e., MS-DOS) partition of the disk.
+Even with dynamic bad block
+handling, it is possible for damage to occur that cannot be mapped
+automatically.
+This means that the user may have to restore the file system from
+the last full backup, depending on where the bad block occurred.
+.PP
+The
+\f4sd01\fP
+driver receives command requests from the kernel
+via the Input/Output (I/O) Control Call \f4ioctl\fP
+[see \f4ioctl\fP(2) in the \f2Programmer's Reference Manual\fP].
+The \f4sd01\fP driver generates the requested commands
+and passes them to the host adapter driver.
+When command execution is complete, the host adapter driver
+notifies the \f4sd01\fP driver through interrupt.
+After this notification, the \f4sd01\fP driver performs any
+required error recovery and indicates to the kernel that the
+I/O request is complete.
+The \f4sd01\fP driver operates independently of the hardware
+used to talk to the SCSI bus.
+.PP
+The SCSI subsystem consists of a SCSI bus with a
+host adapter card, at least one target controller and logical
+unit, and the associated driver software.
+The SCSI special device file names associated with the
+\f4sd01\fP
+disk driver have the form:
+.PP
+.RS
+\f4/dev/\f1[\f4r\f1]\f4dsk/c\f2#\f4t\f2#\f4d\f2#\f4s\f2#\f1
+.RE
+.PP
+The files in the
+\f4/dev/dsk\fP
+directory access the disk via the system's normal buffering
+mechanism and may be read and written without regard to
+physical disk records.
+.PP
+There is also a [\f4r\f1] raw interface
+that provides for direct transmission between the disk
+and the user's read or write buffer.
+A single read or write call results in exactly
+one I/O operation. Therefore, raw I/O
+is considerably more efficient when
+many words are transmitted.
+The names of the raw disk files contain
+\f4/dev/rdsk\fP
+and have the same form as the
+\f4/dev/dsk\fP
+files.
+.PP
+In raw I/O the buffer must begin on a 512-byte boundary,
+and transfer counts must be integral multiples of 512 bytes.
+.PP
+The naming convention for the SCSI disk special device file name
+components is listed below:
+.RS 2
+.TP
+\f1[\f4r\f1]
+where the optional \f4r\f1 in \f4/[r]dsk\f1 means
+a raw (i.e., character) device.
+Whereas \f4/dsk\fP, without the optional \f4r\f1, means a block device.
+.TP
+\f4c\f2#\f1
+where
+\f2#\fP
+is the occurrence of the host adapter board in the system.
+The host adapter ranges are from 0-2 (machine dependent).
+.TP
+\f4t\f2#\f1
+where
+\f2#\fP
+is the target controller number.
+The target controller number ranges are from 0-f hexadecimal.
+.TP
+\f4d\f2#\f1
+where
+\f2#\fP
+is the logical unit number of the disk device.
+The logical unit number ranges are from 0-3 since each
+target controller currently supports up to four disks.
+.TP
+\f4s\f2#\f1
+where
+\f2#\fP
+is the disk slice number or VTOC partition number.
+The slice or partition number ranges are from 0-f hexadecimal.
+.RE
+.SS ioctl Calls
+.PP
+The \f4ioctl\fP commands that are used by the \f4sd01\fP driver
+to control the reading and writing of data to disk appear
+below.
+.TP
+\f4V_CONFIG\fP
+.IP
+This call is used by
+\f4mkpart\fP
+to reconfigure the drive, so that the drive configuration matches the
+parameters specified in the
+\f4/etc/partitions\fP
+file.
+The
+\f4mkpart\fP
+command tells the driver the true disk parameters (as defined by the
+\f4/etc/partitions\fP
+file) by using the \f4V_CONFIG\fP \f4ioctl\fP.
+The argument to the \f4ioctl\fP is the address
+of one of the following structures, defined in
+\f4<sys/vtoc.h>\fP,
+containing the
+new configuration parameters:
+.nf
+.ta 3m 6m 9m 12m 15m 18m 21m 24m 27m 30m 33m 36m 39m 42m 45m 48m 51m 54m 57m
+.IP
+.ft 4
+union io_arg {
+\*Tstruct {
+\*T\*Tushort\*Tncyl;\*T\*T/* number of cylinders */
+\*T\*Tunchar\*Tnhead;\*T/* heads/cylinder */
+\*T\*Tunchar\*Tnsec;\*T\*T/* sectors/track */
+\*T\*Tushort\*Tsecsiz;\*T/* bytes/sector */
+\*T} ia_cd;
+}
+.fi
+.ft 1
+.DT
+.IP
+Note that it is not possible to change the sector size on the hard 
+disk with this \f4ioctl\fP, and
+that an attempt to do so results in the \f4ioctl\fP failing,  with
+\f4errno\fP
+set to \f4EINVAL\fP.
+.sp .5
+Note that this call is provided for backward compatibility with the
+\f4mkpart\fP
+command.
+This call should no longer be used and may be removed in the future.
+.TP
+\f4V_REMOUNT\fP
+.IP
+This call is used to force the driver to re-read the VTOC on the next open
+of the drive.
+It fails if any partition other than partition 0 is
+currently open, since changing the partition table information is potentially
+disastrous for a process using the partition.
+This is used by \f4disksetup\fP
+when it changes the VTOC, so that the driver updates its internal tables.
+.TP
+\f4V_GETPARMS\fP
+.IP
+This call is used to get information about the current drive configuration.
+The argument to the \f4ioctl\fP is the address of
+one of the following structures, defined in
+\f4<sys/vtoc.h>\fP,
+which are filled in by the \f4ioctl\fP:
+.nf
+.ta 1 4 6 8 10 12 14 16 18 20 22 24 26 28 30 32 34 36 38 40
+.IP
+.ft 4
+struct disk_parms {
+\*Tchar\*T\*Tdp_type;\*T\*T/* Disk type (see below) */
+\*Tunchar\*Tdp_heads;\*T\*T/* No. of heads */
+\*Tushort\*Tdp_cyls;\*T\*T/* No. of cylinders */
+\*Tunchar\*Tdp_sectors;\*T/* No. of sectors/track */
+\*Tushort\*Tdp_secsiz;\*T\*T/* No. of bytes/sector */
+\*Tushort\*Tdp_ptag;\*T\*T/* currently not used */
+\*Tushort\*Tdp_pflag;\*T\*T/* currently not used */
+\*Tdaddr_t\*Tdp_pstartsec;\*T/* Starting abs. sector no. */
+\*Tdaddr_t\*Tdp_pnumsec;\*T/* currently not used */
+}
+
+/* Disk types */
+#define\*TDPT_NOTDISK\*T0\*T/* Not a disk device */
+#define\*TDPT_WINI\*T\*T1\*T/* Winchester disk */
+#define\*TDPT_FLOPPY\*T2\*T\*T/* Floppy */
+#define\*TDPT_OTHER\*T\*T3\*T/* Other type of disk */
+#define\*TDPT_SCSI_HD\*T4\*T/* SCSI hard disk */
+#define\*TDPT_SCSI_OD\*T5\*T/* SCSI optical disk */
+
+/* Partition tag */
+#define\*TV_BOOT\*T\*T1\*T/* bootable partition */
+#define\*TV_ROOT\*T\*T2\*T/* root filesystem */
+#define\*TV_SWAP\*T\*T3\*T/* swap filesystem */
+#define\*TV_USR\*T\*T4\*T/* usr filesystem */
+#define\*TV_BACKUP\*T5\*T/* entire disk */
+#define\*TV_ALTS\*T\*T6\*T/* alternate sectors */
+#define\*TV_OTHER\*T7\*T\*T/* non-UNIX system partition */
+
+/* Partition flag */
+#define\*TV_UNMNT\*T0x001\*T\*T/* unmountable partition */
+#define\*TV_RONLY\*T0x010\*T\*T/* read only partition */
+#define\*TV_OPEN\*T\*T0x100\*T/* partition open */
+#define\*TV_VALID\*T0x200\*T\*T/* partition valid to use */
+.fi
+.ft 1
+.DT
+.IP
+For the SCSI disk driver, the disk type is always \f4DPT_SCSI_HD\fP.
+Since the
+structure returned by \f4V_GETPARMS\fP is the same for diskette,
+hard disk and optical disk drivers,
+programs may be written to understand any one.
+.TP
+\f4V_PDLOC\fP
+.IP
+This call returns the logical sector address of the
+\f4pdinfo\fP structure.
+The value is returned in \f4pdloc\fP.
+.nf
+.ft 4
+
+.ta 4m 8m 12m 16m 20m
+
+unsigned\*Tlong\*Tpdloc;
+	
+.fi
+.ft 1
+.TP
+\f4V_RDABS\f1/\f4V_WRABS\fP
+.IP
+This call is used as a method of reading/writing any sector on the hard disk.
+Only users with root privilege can freely access any sector.
+Users who
+do not have root privilege can access the partition table (sector 0) or
+the boot slice (to allow access to the VTOC).
+The absolute sector address to be
+written to is placed in \f4abs_sec\fP.
+The data for the sector is read into or written from
+\f4abs_buf\fP.
+The size of \f4abs_buf\fP should be
+\f2disk_parms.dp_secsize\fP for the current drive.
+The \f4absio\fP structure is defined in \f4<sys/vtoc.h>\fP.
+.nf
+.ta 1m 4m 6m 8m 10m 12m 14m 16m 18m 20m 22m 24m 
+.IP
+.ft 4
+
+struct absio {
+\*Tdaddr_t\*Tabs_sec;\*T\*T/* Absolute sector no. (from 0) */
+\*Tchar\*T\*T*abs_buf;\*T\*T/* Sector buffer */
+};
+		
+.fi
+.ft 1
+.TP
+\f4V_PREAD\fP/\f4V_PWRITE\fP
+.IP
+These calls are used to read/write any size data block on the disk regardless
+of the physical sector size.
+Only users with root privilege can make use of the call.
+The starting logical sector address to be written to is placed in \f4sectst\fP.
+The number of bytes to be transferred is placed in \f4datasz\fP.
+The data to be transferred is placed in \f4memaddr\fP.
+The \f4phyio\fP structure is defined in \f4<sys/vtoc.h>\fP.
+.nf
+.ta 2m 4m 6m 8m 10m 12m 14m 16m 18m 20m 
+.IP
+.ft 4
+
+struct phyio {
+\*Tint\*T\*T\*Tretval;\*T/* Return value */
+\*Tunsigned\*Tlong sectst;\*T/* Sector address */
+\*Tunsigned\*Tlong memaddr;\*T/* Buffer address */
+\*Tunsigned\*Tlong datasz;\*T/* Transfer size in bytes */
+};
+
+.fi
+.ft 1
+.TP
+\f4V_PDREAD\fP/\f4V_PDWRITE\fP
+.IP
+These calls are used to read/write the Physical Description sector on the disk
+regardless of this sectors location.
+Only users with root privilege can make use of these calls.
+The starting logical sector address to be written is assigned by the
+\f4sd01\fP driver.
+The physical sector size of the disk must be placed in \f4datasz\fP.
+The data to be transferred is placed in \f4memaddr\fP.
+The \f4phyio\fP structure is defined in \f4<sys/vtoc.h>\fP.
+.TP
+\f4SD_PDLOC\fP
+.IP
+This call returns the physical sector address of the \f4pdinfo\fP structure.
+The value is returned in \f4pdloc\fP.
+.nf
+.ta 2m 4m 6m 8m 10m 12m 14m 16m 18m 20m
+.IP
+.ft 4
+
+unsigned\*Tlong\*Tpdloc;\*T/* PDinfo structure address */
+
+.fi
+.ft 1
+.TP
+\f4SD_ELEV\fP
+.IP
+This call is used to control the elevator algorithm for sorting the
+I/O request queues.
+If \f2arg\fP is 0, the elevator algorithm is used.
+If \f2arg\fP is 1, the elevator algorithm is not used, and the I/O
+requests are queued on a first-in, first-out basis.
+.PP
+The following group of \f4ioctl\fP
+commands are used by the \f4sd01\fP
+driver to limit access of a SCSI drive to a specified processor.
+.TP 15
+\f4SDI_RESERVE\fP
+Used to reserve a SCSI disk for a processor.
+.TP
+\f4SDI_RELEASE\fP
+Used to release a SCSI disk from a processor.
+.TP
+\f4SDI_RESTAT\fP
+Used to return device reservation status.
+.PP
+The following \f4ioctl\fP commands are used to identify a
+target driver and get pass-through major and minor numbers
+for a target device [see, for example, \f4scsi_adaptec\fP(7)].
+.TP
+\f4B_GETTYPE\fP
+.IP
+Used to get the bus name (e.g., \f4scsi\fP) and device driver
+name (e.g., \f4sd01\fP) of a specific device.
+.TP
+\f4B_GETDEV\fP
+.IP
+Used to get the pass-through major and minor numbers to the calling
+utility to allow creation of a pass-through special device file.
+.SS Partitions
+.PP
+The
+\f4fdisk\fP
+table allows partitions to be assigned at cylinder boundaries;
+however, the VTOC allows partitions to start on track boundaries.
+This is used in the bootable UNIX system partition to
+make the first track (containing
+the bootstrap code) not be an actual part of the partition.
+The
+\f4fdisk\fP
+table allows at most four partitions on a fixed disk, but the VTOC allows the
+UNIX system portion to be divided into at most 16 partitions.
+Each partition is identified by a minor device number; the mapping from partition to minor
+device number is made at the time the disk is first partitioned via the
+\f4disksetup\fP command.
+This mapping remains the same until the
+\f4disksetup\fP
+or
+\f4edvtoc\fP [see \f4edvtoc\fP(1M)]
+command is rerun.
+.br
+.ne 5v
+.PP
+Attempts to open file systems for which there are no partitions fail
+(non-existent device).
+Likewise, attempts to mount [see
+\f4mount\fP(1M)]
+partitions that do not
+contain UNIX file systems fail.
+.SH FILES
+.ft 4
+/dev/dsk/\(**
+.br
+/dev/rdsk/\(**
+.br
+/usr/include/sys/scsi.h
+.br
+/usr/include/sys/sdi.h
+.br
+/usr/include/sys/sdi_edt.h
+.br
+/usr/include/sys/vtoc.h
+.ft 1
+.SH SEE ALSO
+.na
+\f4disksetup\fP(1M),
+\f4edvtoc\fP(1M),
+\f4fdisk\fP(1M),
+\f4fs\fP(4),
+\f4mdevice\fP(4),
+\f4mkpart\fP(1M),
+\f4mount\fP(1M),
+\f4prtvtoc\fP(1M),
+\f4scsi_adaptec\f1(7),
+\f4scsi_cdrom\fP(7),
+\f4scsi_dpt\f1(7),
+\f4scsi_tape\fP(7),
+\f4scsi_wd7000\f1(7),
+\f4scsi_worm\fP(7)
+.P
+\f4ioctl\fP(2) in the \f2Programmer's Reference Manual\fP].
+.ad
+.SH NOTES
+The driver retries failed transfers up to
+two times depending on the error type.
+Certain errors are not retried.
+The driver displays an
+appropriate message upon encountering an error during the transfer.
+.P
+The VTOC and second-stage bootstrap requires that no bad sectors
+occur in the first 30 sectors of the UNIX partition on the disk.
+When a marginal bad block occurs the driver's warning indicates that the
+controller's error-correction algorithm successfully recovered from an error.
+This may be a symptom of a sector going bad.

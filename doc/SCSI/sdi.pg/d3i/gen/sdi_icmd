@@ -1,0 +1,87 @@
+'\"macro stdmacro
+.if n .pH d3i.sdi_icmd @(#)sdi_icmd	40.9 of 3/12/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} sdi_icmd D3I SDI
+.if \nX=1 .ds x} sdi_icmd D3I SDI
+.if \nX=2 .ds x} sdi_icmd D3I "" "\&"
+.if \nX=3 .ds x} sdi_icmd "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4sdi_icmd\fP \- perform requested SCSI operation immediately
+.SH SYNOPSIS
+.nf
+.ft 4
+int 
+sdi_icmd(struct sb *\f2pt\f4);
+.ft 1
+.fi
+.SH ARGUMENT
+.TP 8
+\f2pt\f1
+pointer to the \f4sb\f1 (SCSI block) structure.  The \f4sb_type\f1 member of
+the \f4sb\f1 structure must be set to either \f4SFB_TYPE\fP or \f4ISCB_TYPE\fP.
+.IX "ISCB_TYPE"
+.IX "SFB_TYPE"
+.SH DESCRIPTION
+\f4sdi_icmd\f1 sends an immediate \f4sb\f1 to a device.  Immediate means
+that this function bypasses queued \f4scb\f1s and immediately accesses the
+device to perform the requested operation.  This function is typically used
+during error handling.
+.P
+In contrast to an operation using an \f4sfb\f1, 
+operations using an \f4scb\f1 send the job
+to the requested logical unit.
+.P
+Coming in at immediate-priority, operations using an \f4sfb\f1
+are executed in the order submitted and take priority over \f4scb\f1
+operations. 
+Only one immediate of each command type (\f4SFB_TYPE\fP or \f4ISCB_TYPE\fP) may be
+outstanding to a particular logical unit.
+.IX "Logical unit"
+.SH RETURN VALUE
+A return code of \f4SDI_RET_OK\fP indicates that the request is in progress
+and the target driver interrupt routine will be called. 
+A return code of \f4SDI_RET_ERR\fP indicates that the type field is invalid.
+After a logical unit queue is resumed, all outstanding immediate
+control and function blocks are returned before the next normal command
+is returned.
+.IX "SDI_RET_OK"
+.IX "SDI_RET_ERR"
+.SH LEVEL
+Base or Interrupt
+.SH "SEE ALSO"
+\f4sdi_translate\fP(D3I),
+\f4sb\fP(D4I)
+.SH EXAMPLE
+The following example shows how an \f4sb\f1 is re-sent using \f4sdi_icmd\f1
+when the completion code indicates that a retry (\f4SDI_RETRY\fP) is requested.
+\f4diskint\f1 is an example disk target driver interrupt routine.
+.P
+.ft 4
+.nf
+   void
+   diskint(sb_ptr)
+   struct sb *sb_ptr;
+   {
+       ...
+
+       /* Check the completion code of the SCB to see if the
+        * command needs to be retried.
+        */
+.ne 2i
+       if (sb_ptr->SCB.sc_comp_code & SDI_RETRY )
+       {        
+           /* Retry the command request using sdi_icmd */
+              if (sdi_icmd(sb_ptr) != SDI_RET_OK) 
+       {
+           /* If the return value of sdi_icmd is not OK,
+            * print an error message.
+            */
+            cmn_err(CE_WARN, "DISK: Bad SB type to SDI.");
+       }
+       return;
+   }
+   ...\fP
+.fi

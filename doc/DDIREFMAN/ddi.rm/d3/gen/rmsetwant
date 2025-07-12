@@ -1,0 +1,48 @@
+'\"macro stdmacro
+.if n .pH gen.rmsetwant @(#)rmsetwant	40.2 of 1/7/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.nr X
+.if \nX=0 .ds x} rmsetwant D3K "" "DKI" "\&"
+.if \nX=1 .ds x} rmsetwant D3K "" "DKI"
+.if \nX=2 .ds x} rmsetwant D3K "" "\&"
+.if \nX=3 .ds x} rmsetwant "" "" "\&"
+.TH \*(x}
+.IX \f4rmsetwant\fP(D3K)
+.SH NAME
+\f4rmsetwant\f1 \- set the map's wait flag for a wakeup
+.SH SYNOPSIS
+.nf
+\f4#include <sys/map.h>
+#include <sys/ddi.h>
+.sp 0.5
+void rmsetwant(struct map *\f2mp\f4);\f1
+.fi
+.SH ARGUMENTS
+.RS 0n 10
+.IP "\f2mp\f1" 10n
+Pointer to the map from which the driver is waiting for space.
+.RE
+.SH DESCRIPTION
+The \f4rmsetwant\f1 function increments the counter on the wait flag
+of the map pointed to by \f2mp\f1.  It is typically called from the
+driver after an unsuccessful
+attempt to allocate space from the map using \f4rmalloc\f1(D3DK).
+.P
+The driver should sleep on \f4mp\f1 after calling
+\f4rmsetwant\f1.  When the \f4rmfree\f1(D3DK) function returns space to
+the map, it wakes up any processes waiting for space.
+.SH RETURN VALUE
+None.
+.SH LEVEL
+Base or Interrupt.
+.SH NOTES
+Does not sleep.
+.SH SEE ALSO
+.na
+\f4rmalloc\f1(D3DK),
+\f4rmfree\f1(D3DK),
+\f4rminit\f1(D3K),
+\f4rmwant\f1(D3K)
+.ad
+.SH EXAMPLE
+See \f4rmalloc\f1(D3DK).

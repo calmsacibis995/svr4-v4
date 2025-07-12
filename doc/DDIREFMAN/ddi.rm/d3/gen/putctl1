@@ -1,0 +1,57 @@
+'\"macro stdmacro
+.if n .pH gen.putctl1 @(#)putctl1	40.2 of 1/7/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.nr X
+.if \nX=0 .ds x} putctl1 D3DK "STREAMS" "DDI/DKI" "\&"
+.if \nX=1 .ds x} putctl1 D3DK "STREAMS" "DDI/DKI"
+.if \nX=2 .ds x} putctl1 D3DK "" "\&"
+.if \nX=3 .ds x} putctl1 "" "" "\&"
+.TH \*(x}
+.IX "\f4putctl1\fP(D3DK)"
+.SH NAME
+\f4putctl1\f1 \- send a control message with a one-byte parameter to a queue
+.SH SYNOPSIS
+.nf
+.na
+\f4#include <sys/stream.h>
+.sp 0.5
+int putctl1(queue_t *\f2q, \f4int\f2 type, \f4int\f2 param\f4);\f1
+.ad
+.fi
+.SH ARGUMENTS
+.RS 0n
+.IP "\f2q\f1" 10n
+Pointer to the queue to which the message is to be sent.
+.IP "\f2type\f1" 10n
+Message type (must be control).
+.IP "\f2param\f1" 10n
+One-byte parameter.
+.RE
+.SH DESCRIPTION
+\f4putctl1\f1, like \f4putctl\f1(D3DK), tests the \f2type\f1
+argument to make sure a data type has
+not been specified, and attempts to allocate a message block.
+The \f2param\f1
+parameter can be used, for example, to
+specify the signal number
+when an \f4M_PCSIG\f1 message is being sent.
+\f4putctl1\f1 fails if \f4type\f1 is \f4M_DATA\f1, \f4M_PROTO\f1,
+or \f4M_PCPROTO\f1, or if a mesage block cannot be allocated.
+If successful, \f4putctl1\f1 calls the \f4put\f1(D2DK) routine of the queue
+pointed to by \f2q\f1, passing it the allocated message.
+.SH RETURN VALUE
+On success, 1 is returned.
+Otherwise, if \f2type\f1 is a
+data type, or if a message block cannot be allocated,
+0 is returned.
+.SH LEVEL
+Base or Interrupt.
+.SH NOTES
+Does not sleep.
+.SH SEE ALSO
+.na
+\f4put\fP(D2DK),
+\f4putctl\f1(D3DK)
+.ad
+.SH EXAMPLE
+See \f4putctl\f1(D3DK) for an example of \f4putctl1\f1.

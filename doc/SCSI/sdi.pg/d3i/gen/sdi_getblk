@@ -1,0 +1,84 @@
+'\"macro stdmacro
+.if n .pH d3i.sdi_getblk @(#)sdi_getblk	40.8 of 3/8/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} sdi_getblk D3I SDI
+.if \nX=1 .ds x} sdi_getblk D3I SDI
+.if \nX=2 .ds x} sdi_getblk D3I "" "\&"
+.if \nX=3 .ds x} sdi_getblk "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4sdi_getblk\fP \- allocate a SCSI block for the target driver
+.SH SYNOPSIS
+.nf
+.ft 4
+struct sb *
+sdi_getblk();
+.ft 1
+.fi
+.SH DESCRIPTION
+.IX "SDI_UNUSED"
+\f4sdi_getblk\f1 allocates an \f4sb\f1 from SDI.  Only
+\f4sdi_getblk\f1 should be used to allocate an \f4sb\f1.  This function may
+sleep and should not be called at interrupt level.
+\f4sc_comp_code\f1 is set to \f4SDI_UNUSED\fP in the returned \f4sb\f1.
+.P
+.IX "Allocating structures for SCSI Blocks"
+.SH RETURN VALUE
+Pointer to an \f4sb\f1 structure
+.SH LEVEL
+Base Only
+.SH NOTES
+SDI may add fields to the end of the \f4sb\f1
+for use by SDI.  This implies that target drivers may not use \f4sb\f1
+structures allocated themselves.  Target drivers must allocate an \f4sb\f1
+structure with \f4sdi_getblk\f1.  Some of the information added at the end of
+the \f4sb\f1 includes physical addresses.  If these addresses do not exist,
+the computer will panic.
+.SH "SEE ALSO"
+\f4sdi_freeblk\fP(D3I)
+.SH EXAMPLE
+In the example, \f4diskopen1\f1 is called by the \f4open\f1 routine for a disk
+target driver.  In this routine, a disk-specific structure is
+initialized the first time the disk is accessed.  This initialization includes
+allocating an \f4sb\f1 for sending request sense commands to the disk.  The
+following structure is used in the example.
+.P
+.nf
+.ft 4
+struct disk_st {
+  long disk_state;          /* State of this disk */
+  struct scsi_ad disk_addr; /* Major/Minor number of device */
+  struct sb *disk_fltreq;   /* SCSI block for request sense */
+	...
+};
+
+diskopen1(major, minor)
+long major, minor;
+{
+	struct disk_st *disk;
+	/* Based on the major and minor numbers of the disk,
+	 * index into the array of disk structures and get the
+	 * pointer to the one for this disk.
+	 */
+	disk = &Disk[diskintmin(major, minor)];
+	/* Check to see if this disk has been initialized */
+	if ((disk->disk_state & DISK_INIT) == 0)
+        {
+		/* This is first access to the disk so initialize
+		 * some of the data structures for the disk.
+		 */
+		/* Get SB for request sense jobs for this disk */
+		disk->disk_fltreq = sdi_getblk();
+
+		/* Fill in the major and minor numbers and the 
+		 * logical unit number in the address structure.
+		 */
+		disk->disk_addr.sa_major = major;
+		disk->disk_addr.sa_minor = minor;
+		disk->disk_addr.sa_lun = LUN(minor);
+	}
+	...
+.ft 1
+.fi

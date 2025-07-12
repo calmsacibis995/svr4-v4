@@ -1,0 +1,231 @@
+'\"macro stdmacro
+.if n .pH g1f.test @(#)test	40.9 of 6/4/91
+.\" Copyright 1989 AT&T
+.nr X
+.if \nX=0 .ds x} test 1F "" "\&"
+.if \nX=1 .ds x} test 1F ""
+.if \nX=2 .ds x} test 1F "" "\&"
+.if \nX=3 .ds x} test "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4test\f1 \- condition evaluation command
+.SH SYNOPSIS
+\f4test\f1
+\f2expr\f1
+.br
+\f4[\f2expr\f4]
+.SH DESCRIPTION
+\f4test\f1
+evaluates the expression
+\f2expr\f1
+and if its value is true, sets a zero (TRUE) exit status; otherwise, a
+non-zero (FALSE) exit status is set;
+\f4test\f1
+also
+sets a non-zero exit status if there are no arguments.
+When permissions are tested,
+the effective user ID of the process is used.
+.PP
+All operators, flags, and brackets
+(brackets used as shown in the second \s-1SYNOPSIS\s0 line)
+must be separate arguments to
+\f4test\f1.
+Normally these items are separated by spaces.
+.PP
+The following primitives are used to construct
+\f2expr\f1:
+.TP 0.85i
+\f4\-r\f1 \f2file\f1
+true if \f2file\f1 exists and is readable.
+.TP
+\f4\-w\f1 \f2file\f1
+true if \f2file\f1 exists and is writable.
+.TP
+\f4\-x \f2file\f1
+true if
+\f2file\f1
+exists and is executable.
+.TP
+\f4\-f\f1 \f2file\f1
+true if \f2file\f1 exists and is a regular file.
+.TP
+\f4\-d\f1 \f2file\f1
+true if \f2file\f1 exists and is a directory.
+.TP
+\f4\-c\f1 \f2file\f1
+true if \f2file\f1
+exists and is a character special file.
+.TP
+\f4\-b\f1 \f2file\f1
+true if
+\f2file\f1
+exists and is a block special file.
+.TP
+\f4\-p\f1 \f2file\f1
+true if
+\f2file\f1
+exists and is a named pipe (fifo).
+.TP
+\f4\-u\f1 \f2file\f1
+true if
+\f2file\f1
+exists and its set-user-ID
+bit is set.
+.TP
+\f4\-g\f1 \f2file\f1
+true if
+\f2file\f1
+exists and its set-group-ID
+bit is set.
+.TP
+\f4\-k\f1 \f2file\f1
+true if
+\f2file\f1
+exists and its sticky bit is set.
+.TP
+\f4\-s\f1 \f2file\f1
+true if \f2file\f1 exists and has a size greater than zero.
+.TP
+\f4\-t\f1 [\|\f2fildes\f1\|]
+true if the open file whose file descriptor number is
+\f2fildes\f1
+(1 by default)
+is associated with a terminal device.
+.TP
+\f4\-z\f1 \f2s1\f1
+true if the length of string
+\f2s1\f1
+is zero.
+.TP
+\f4\-n\f1 \f2s1\f1
+true if the length of the string
+\f2s1\f1
+is non-zero.
+.TP
+\f2s1\f1 \f4=\f1 \f2s2\f1
+true
+if strings
+\f2s1\f1
+and
+\f2s2\f1
+are identical.
+.TP
+\f2s1\f1 \f4!=\f1 \f2s2\f1
+true
+if strings
+\f2s1\f1
+and
+\f2s2\f1
+are
+\f2not\f1
+identical.
+.TP
+\f2s1\f1
+true if
+\f2s1\f1
+is
+\f2not\f1
+the null string.
+.TP
+\f2n1\f1 \f4-eq\f1 \f2n2\f1
+true if the integers
+\f2n1\f1
+and
+\f2n2\f1
+are algebraically equal.
+Any of the comparisons
+\f4\-ne\f1,
+\f4\-gt\f1,
+\f4\-ge\f1,
+\f4\-lt\f1,
+and
+\f4\-le\f1
+may be used in place of
+\f4\-eq\f1.
+
+.PP
+These primaries may be combined with the
+following operators:
+.TP  12
+\f4!\f1
+unary negation operator.
+.TP
+\f4\-a\f1
+binary
+\f4and\f1
+operator.
+.TP
+\f4\-o\f1
+binary
+\f4or\f1
+operator
+(\f4-a\f1
+has higher precedence than
+\f4-o\f1).
+.TP
+\(ga(\| \f2expr\f1 \|)\(ga
+parentheses for grouping.
+Notice also that parentheses are meaningful
+to the shell and, therefore, must be quoted.
+.br
+.ne 4v
+.SH NOTES
+.PP
+If you test a file you own
+(the
+\f4-r\f1,
+\f4-w\f1 ,
+or
+\f4-x\f1
+tests),
+but the permission tested does not have the
+\f2owner\f1
+bit set,
+a non-zero (false) exit status will be returned
+even though the file may have the
+\f2group\f1
+or
+\f2other\f1
+bit set for that permission.
+The correct exit status will be set if you are super-user.
+.PP
+The
+\f4=\f1
+and
+\f4!=\f1
+operators have a higher precedence than the
+\f4-r\f1
+through
+\f4-n\f1
+operators,
+and
+\f4=\f1
+and
+\f4!=\f1
+always expect arguments;
+therefore,
+\f4=\f1
+and
+\f4!=\f1
+cannot be used with the
+\f4-r\f1
+through
+\f4-n\f1
+operators.
+.PP
+If more than one argument follows the
+\f4\-r\f1
+through
+\f4-n\f1
+operators,
+only the first argument is examined;
+the others are ignored,
+unless a
+\f4-a\f1
+or a
+\f4-o\f1
+is the second argument.
+.SH "SEE ALSO"
+\f4find\f1(1), \f4sh\f1(1) in the \f2UNIX System V User's Reference Manual\f1
+.\"	@(#)test.1	6.2 of 9/2/83
+.Ee

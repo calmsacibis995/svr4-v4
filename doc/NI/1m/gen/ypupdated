@@ -1,0 +1,66 @@
+'\"macro stdmacro
+.if n .pH g1a.ypupdated @(#)ypupdated	40.6 of 5/16/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.\" @(#)ypupdated.8c 1.7 89/09/28 SMI;
+.\" Copyright (c) 1988 Sun Microsystems, Inc. - All Rights Reserved.
+.nr X
+.if \nX=0 .ds x} ypupdated 1M "" "\&"
+.if \nX=1 .ds x} ypupdated 1M ""
+.if \nX=2 .ds x} ypupdated 1M "" "\&"
+.if \nX=3 .ds x} ypupdated "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4ypupdated\fP \- server for changing NIS information
+.SH SYNOPSIS
+\f4/usr/lib/netsvc/yp/ypupdated\f1
+[
+\f4\-is\f1
+]
+.SH DESCRIPTION
+.P
+\f4ypupdated\f1
+is a daemon that updates information
+in the NIS name service, normally started up by
+\f4inetd\f1(1M).
+\f4ypupdated\f1
+consults the file
+\f4updaters\f1(4)
+in the directory
+\f4/var/yp\f1
+to determine which NIS maps should be updated and how to change them.
+.P
+By default, the daemon requires the most secure method of
+authentication available to it, either
+\s-1DES\s0
+(secure) or
+\s-1UNIX\s0
+(insecure).
+.P
+The following options are available:
+.TP
+\f4\-i\f1
+Accept 
+\s-1RPC\s0
+calls with the insecure 
+\s-1AUTH_UNIX\s0
+credentials.
+This allows programmatic updating of NIS maps in all networks.
+.TP
+\f4\-s\f1
+Only accept calls authenticated using the secure 
+\s-1RPC\s0
+mechanism
+(\s-1AUTH_DES\s0
+authentication).
+This disables programmatic updating of NIS maps unless the network
+supports these calls.
+.SH FILES
+.PD 0
+.TP 20
+\f4/var/yp/updaters\f1
+.PD
+.SH "SEE ALSO"
+\f4inetd\f1(1M),
+\f4keyserv\f1(1M),
+\f4updaters\f1(4)

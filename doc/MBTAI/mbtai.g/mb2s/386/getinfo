@@ -1,0 +1,53 @@
+'\"macro stdmacro
+.if n .pH mb2s.getinfo @(#)getinfo	40.7 of 5/15/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} mb2s_getinfo 3tai "" "\&"
+.if \nX=1 .ds x} mb2s_getinfo 3tai ""
+.if \nX=2 .ds x} mb2s_getinfo 3tai "" "\&"
+.if \nX=3 .ds x} mb2s_getinfo "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4mb2s_getinfo\f1 \- Gets specific synchronous endpoint information.
+.SH SYNOPSIS
+.ft 4
+.nf
+#include <sys/types.h>
+#include <sys/mb2taiusr.h>
+int mb2s_getinfo (fd, mb2infoptr)
+int fd;
+mb2_info *mb2infoptr;
+.fi
+.ft
+.SH DESCRIPTION	
+This routine returns the current characteristics of a synchronous mode
+\f4Multibus II\f1 transport endpoint associated with the file descriptor.
+The
+\f4mb2infoptr\f1
+structure is used to return the information.
+Note that actual
+default values are returned if the endpoint characteristics have been set to
+default values.
+.P
+Upon successful completion of the routine, a value of 0 is returned.
+A value of
+\%\f4-1\f1
+is returned and an
+\f4errno\f1
+is set if there were errors.
+The
+following is a list of applicable errors for this routine.
+.TP 10
+\f4EBADFD\f1
+the specified file descriptor does not refer to
+a synchronous mode \f4Multibus II\f1.
+.TP
+\f4EFAULT\f1
+\f4mb2infoptr\fP points outside the allocated address
+space.
+.TP
+\f4EIO\f1
+an error occured on the stream.
+.SH SEE ALSO
+\f4getmsg\f1(2), \f4putmsg\f1(2), \f4mb2s_openport\f1(3tai)

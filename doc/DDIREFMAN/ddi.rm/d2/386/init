@@ -1,0 +1,102 @@
+'\"macro stdmacro
+.if n .pH 386.init @(#)init	40.3 of 1/8/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.nr X
+.if \nX=0 .ds x} init D2D "" "DDI" "\&"
+.if \nX=1 .ds x} init D2D "" "DDI"
+.if \nX=2 .ds x} init D2D "" "\&"
+.if \nX=3 .ds x} init "" "" "\&"
+.TH \*(x}
+.IX "\f4init\fP(D2D)"
+.SH NAME
+\f4init\fP \- initialize a device
+.SH SYNOPSIS
+.nf
+.na
+\f4void \f2prefix\fPinit();\f1
+.ad
+.fi
+.SH DESCRIPTION
+\f4init\fP and \f4start\fP(D2D) routines are used to initialize
+drivers and the devices they control.  \f4init\fP routines are
+executed during system initialization, and can be used in drivers that
+do not require system services to be initialized. 
+\f4start\fP routines are executed after system services are
+enabled.
+.P
+\f4init\fP routines can perform functions such as:
+.PD 0.2v
+.IP
+allocating memory for private buffering schemes
+.IP
+mapping a device into virtual address space
+.IP
+initializing hardware (for example, system generation or resetting the board)
+.PD
+.P
+Functions that may result in the caller sleeping, or that require user context, such as
+\f4sleep\fP(D3K), may not be called.  Any function that provides a flag to prevent
+it from sleeping must be called such that the function does not sleep.  Also, \f4init\fP
+routines are executed before interrupts are enabled.
+.P
+The following kernel functions can be called from the driver's \f4init\fP routine:
+.P
+.in +0.25i
+.ft 4
+.nf
+.mk
+ASSERT
+bcopy
+btop/btopr
+bzero
+cmn_err
+dma_disable
+dma_enable
+dma_free_buf
+dma_free_cb
+dma_get_best_mode
+dma_get_buf
+dma_get_cb
+dma_prog
+dma_stop
+.rt
+.in +1.4i
+dma_swsetup
+dma_swstart
+drv_getparm
+drv_hztousec
+drv_usectohz
+drv_usecwait
+etoimajor
+getemajor
+geteminor
+getmajor
+getminor
+inb/inl/inw
+itoemajor
+kmem_alloc
+.rt
+.in +1.05i
+kmem_free
+kmem_zalloc
+makedevice
+max/min
+outb/outl/outw
+physmap
+physmap_free
+repinsb/repinsl/repinsw
+repoutsb/repoutsl/repoutsw
+rmalloc
+rminit
+rmfree
+vtop
+.sp 2
+.in -2.7i
+.ft 1
+.fi
+.SH NOTES
+This entry point is optional.
+.SH RETURN VALUE
+None.
+.SH SEE ALSO
+\f4start\fP(D2DK)

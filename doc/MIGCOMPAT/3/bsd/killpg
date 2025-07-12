@@ -1,0 +1,77 @@
+'\"macro stdmacro
+.if n .pH g2.killpg @(#)killpg	40.10 of 4/24/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.\" Copyright (c) 1988 Sun Microsystems, Inc. - All Rights Reserved.
+.\"
+.nr X
+.if \nX=0 .ds x} killpg 3 "BSD Compatibility Package" "\&"
+.if \nX=1 .ds x} killpg 3 "BSD Compatibility Package"
+.if \nX=2 .ds x} killpg 3 "" "\&"
+.if \nX=3 .ds x} killpg "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4killpg\f1 \- send signal to a process group
+.SH SYNOPSIS
+\f4cc \f1[ \f2flag\f1\. \. \. ] \f2file\f1 \. \. \. \f4\-lucb\f1
+.sp .5
+\f4int killpg(pgrp, sig)\f1
+.br
+\f4int pgrp, sig;\f1
+.SH DESCRIPTION
+.P
+\f4killpg\f1
+sends the signal
+.I sig
+to the process group
+.IR pgrp .
+See
+\f4sigvec\f1(3)
+for a list of signals.
+.P
+The real or effective user
+.SM ID
+of the sending process must match the real or saved set-user
+.SM ID
+of the receiving process, unless the effective user
+.SM ID
+of the sending process is the privileged user.
+A single exception is the signal
+\f4SIGCONT\f1,
+which may always be sent to any descendant of the current process.
+.SH "RETURN VALUE"
+.P
+Upon successful completion, a value of 0 is returned.
+Otherwise,
+a value of \-1 is returned and the global variable
+\f4errno\f1
+is set to indicate the error.
+.SH ERRORS
+.P
+\f4killpg\f1
+will fail and no signal will be sent if any of
+the following occur:
+.TP 15
+\f4EINVAL\fP
+.I sig
+is not a valid signal number.
+.TP
+\f4ESRCH\fP
+No processes were found in the specified process group.
+.TP
+\f4EPERM\fP
+The effective user
+.SM ID
+of the sending process is not privileged user, and neither its real nor
+effective user
+.SM ID
+matches the real or saved set-user
+.SM ID
+of one or more of the target processes.
+.SH "SEE ALSO"
+\f4sigvec\fP(3)
+.br
+\f4kill\fP(2),
+\f4setpgrp\fP(2),
+\f4sigaction\fP(2)
+in the \f2Programmer's Reference Manual\f1

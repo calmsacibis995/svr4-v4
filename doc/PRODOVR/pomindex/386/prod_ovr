@@ -1,0 +1,2109 @@
+.if n .pH prod_ovr.prod_ovr @(#)prod_ovr	40.3.1.19
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\"Trademarks:
+.\"UNIX is a registered trademark of AT&T.
+.\"XENIX is a registered trademark of Microsoft Corporation.
+.\"NeWS and SunOS are registered trademarks of Sun Microsystems.
+.\"OPEN LOOK and XWIN are trademarks of AT&T.
+.\"PostScript is a registered trademark of Adobe Systems, Inc.
+.\"VAX is a trademark of Digital Equipment Corporation.
+.HW de-vice
+.HW in-stal-la-tion
+.\" Copyright 1989, 1990 AT&T
+.BK "Product Overview and Master Index"
+.CH "Product Overview" 1
+.H 1 "About This Manual"
+This volume is intended to be a starting point for exploring
+UNIX\(rg System V and a central reference when using the
+UNIX System V Release 4 documentation.
+It includes a
+product overview, which
+introduces a new user to the UNIX system in general and specifically
+to Release 4.
+.P
+The product overview includes a description of the
+software and documentation that make up the UNIX System V
+Release 4 product. You are directed to
+other documents for detailed descriptions
+of features, as well as user instructions.
+The overview does not assume prior knowledge of the UNIX
+system or of earlier
+releases of UNIX System V.  If you are upgrading from an earlier
+release of UNIX System V,
+consult the \f2Migration and Compatibility Guide\f1 for a
+description of the differences between
+the new release and previous releases.
+.H 1 "Introduction to the UNIX Operating System"
+UNIX System V is an interactive, multi-user, multi-tasking
+operating system.
+In general, an
+.I "operating system"
+is a program, or a set of programs, responsible for allocating
+machine resources among the users of a machine \(em
+such resources include CPU time, disk storage, and even machine access.
+Because UNIX System V is an
+.I interactive
+system,
+you enter commands from
+your keyboard, and the system responds
+by executing your command or by prompting you for additional input.
+Because it is a
+.I multi-user
+system, many people can use the system at the same time,
+working together, sharing information, and
+using common tools.
+Because the system is
+\f2multi-tasking\f1,
+it can perform several tasks for you at the same time.
+.H 2 "A Brief History"
+Originally developed at Bell Laboratories in the 1960s,
+the UNIX system was designed to serve the research
+community\(emspecifically researchers working together on a common
+project, each with a vital need to share information and with a
+need to construct programs quickly and easily to
+perform specialized functions.
+.P
+Prior to the 1980s, the UNIX system was
+used primarily in university and government research centers.
+Built around a set of small but powerful tools, the UNIX system
+soon proved to be well suited to the development of
+computer software and easily tailored to specific industry
+applications.
+.P
+Because of AT&T's liberal licensing of the
+UNIX system, different versions of the system began to appear in
+the early 1970s.  Universities as well as equipment vendors
+obtained licenses to use
+the system, then modified it to meet their special needs.
+The first commercial implementation of the system
+appeared in the mid-1970s, followed soon afterward by
+the introduction of Microsoft Corporation's UNIX system
+product\(emthe XENIX\(rg operating system.
+.P
+In 1981, the University of California at Berkeley introduced an
+implementation, called Berkeley
+Software Distribution (BSD), that quickly became a standard on
+Digital Equipment
+Corporation's VAX\(tm line of computers.  From BSD, many other versions
+of the UNIX system evolved.
+.P
+By the early 1980s, the UNIX system was running in a wide
+range of environments on a wide variety of systems
+from a number of different equipment
+manufacturers\(emmaking it unique in the computing
+world.
+.P
+In 1984, following a court-ordered divestiture that removed
+legal obstacles to its entry into the computer industry, AT&T
+began licensing the system commercially as UNIX System V.
+.P
+In 1990, UNIX System Laboratories (USL) was created as a
+subsidiary of AT&T.
+USL now owns the licensing rights to the UNIX system.
+.H 2 "The Structure of the UNIX System"
+UNIX System V is a powerful operating system built upon a
+few simple concepts.  Typically, the UNIX system is described
+as consisting of three major parts.  These
+are
+.BL
+.LI
+the shell command interpreter and programming language
+.LI
+the file system
+.LI
+the UNIX operating system kernel.
+.LE
+.P
+The following sections briefly describe these components
+of the UNIX system.
+.H 3 "The Shell"
+The UNIX system
+.I shell
+is a command interpreter that recognizes and interprets commands
+entered by the user from a keyboard.
+While the shell is a simple interface for the novice user, it also provides
+the experienced user with a great deal of power and flexibility.
+.P
+The shell makes it easy to manipulate files and the
+input and output of commands.
+Based on user input to the shell, any
+given command can be directed to take its input from
+either a terminal or a file.
+Similarly, the output of a command can be
+directed to a file or to a peripheral device other than the terminal.
+This capability allows users to build their
+own specialized functions easily.
+A very powerful extension of this input/output redirection
+facility allows the user to send the output of one command directly
+to the input of another.
+This facility is called ``piping,'' because it creates a ``pipe''
+from one command to the next.
+.P
+The shell contains numerous features which allow it to
+be used as a programming language as well as a command
+interpreter.
+Users can write custom shell procedures to do simple
+or complex tasks, letting the shell handle details like
+opening and closing files.
+The shell allows users to enhance and build on
+UNIX system capabilities and to adapt the operating system to many
+user applications without using a compiler or link editor,
+as required by conventional programming languages.
+.P
+For more information about the shell as both a user interface and
+a programming language, see the UNIX System V Release 4
+\f2User's Guide\f1.
+.H 3 "The File System"
+The second major part of UNIX System V is the file system.
+A \f2file system\f1 is a collection of directories and files
+where users organize and store data.
+.P
+A \f2file\f1 is a location where
+you store data.
+Typically, a file is described as an
+electronic equivalent of a paper document.
+You give the file a name that identifies its contents,
+just as you would title a document.
+.P
+A \f2directory\f1 is where you organize related
+files.  To continue the analogy, a directory is like
+a file folder, where you store similar kinds of documents.
+You give the directory a name that
+describes the general contents of all your
+files, just as you would label a file folder.
+.P
+To complete the analogy, a file system (in simplest
+terms) is like a drawer of your file cabinet, which contains
+multiple file folders that contain multiple documents.
+.P
+UNIX System V organizes files and directories
+hierarchically in a tree-like structure that makes it easy for
+users to locate and maintain their files.
+It also provides facilities for creating,
+accessing, copying, moving and processing files, directories, or
+sets of these in a simple,
+consistent way.  Space for files is automatically allocated
+and deallocated
+when a file is created or deleted and as it grows and shrinks in size.
+This means you do not need to allocate space for a file before it is
+used.
+.P
+The UNIX system supports multiple file systems and file systems of
+various types, such as the traditional UNIX System V file system, which
+stores data in blocks of 0.5K, 1K, or 2K bytes, and UFS, a file
+system type that stores data in blocks as large as 8K bytes.
+File systems are ``mountable'' and ``unmountable,'' which means that
+file systems can be stored on removable media and made
+available to a user or group only when needed.
+This gives users easy
+access to additional disk space.
+.H 3 "The Kernel"
+The third major part of the system is the kernel.
+The UNIX system
+.I kernel
+is the component of the operating system that
+controls user processes
+(commands and programs) and
+manages system resources, such as the file system.
+It interacts directly with the hardware, passing information
+back and forth between the hardware and software programs.
+The kernel surrounds the hardware, insulating it and eliminating
+the need for a program to be aware of machine architecture.
+The fact that machine architecture is hidden makes it easier
+for software developers to write
+programs that run on different hardware.
+.P
+The kernel manages the computer's processor so that processor time
+is allocated among multiple users and applications.  Processor time
+is scheduled such that programs seem to execute simultaneously.
+.H 2 "Benefits of the UNIX System"
+What
+makes the UNIX system unique among operating systems is its power
+and flexibility\(emqualities that recall its origins in the
+research community.
+The design elements that make the UNIX system such a powerful
+yet flexible system also make it a highly
+portable one, which means that the UNIX system is
+compatible with a wide range of hardware and software products.
+.H 3 "Power and Flexibility"
+The power and flexibility of the UNIX system are seen in its
+multi-user, multi-tasking capabilities.
+The multi-user capability allows you to work independently
+on the system while sharing resources and data easily
+with other users.
+The multi-tasking capability means that you can
+execute commands and run programs simultaneously, using
+several different methods.  In addition to normal
+interactive mode, jobs can be submitted to run in the
+``background.''  While one job is executing this way, you
+can use the terminal interactively on another job.  If
+you need to run several sessions interactively on the
+same terminal, you can do so, using commands such as
+\f4shl\f1.
+.P
+The UNIX system's power and flexibility can be seen in
+features that encourage productivity
+(such as pattern-matching capabilities and
+the ability to execute a command on many files at once)
+and in its
+versatile command set.  The system provides utilities
+for retrieving information, manipulating data, generating
+reports, and editing batch files.  It also provides
+programs that identify a set of files based on their file
+system attributes.
+.P
+The system's power and flexibility are also seen in
+a rich collection of programming tools\(emtools
+important not only to programmers but to \f2all\f1 users
+who need to construct quick solutions to specialized problems.
+The shell, for example, is more than an interface.
+It's a mechanism that lets
+you build powerful functions out of existing, simpler
+functions by chaining commands together and using the
+output of one command as the input for another.
+.P
+The flexibility of the UNIX system is well-known
+to software developers.
+UNIX System V is designed so that applications, as well as
+new devices and protocols, can be added easily, without
+modifying the source code.
+The availability of various commands, languages, and libraries
+of programs makes it easy to develop and maintain new application
+or system programs.
+.H 3 "Portability"
+The UNIX system is a highly portable operating system, which means
+that it is easily modified to run on a wide range of hardware
+with a minimum of differences across implementations;
+once a user learns the UNIX system, he or she can use the system
+on different hardware without having to \f2re\f1learn.
+In addition, the structure of the kernel makes it possible to design
+application software with no knowledge of the underlying machine
+architecture, so that applications can run on a wide
+variety of hardware installations.
+.P
+UNIX System V provides programmers with
+tools that support the development
+of portable applications, such as the \f4curses\f1 library
+and the \f4terminfo\f1
+database.  These tools allow user programs to produce output on
+many different types of terminals; applications can be
+terminal-independent but still use terminal-dependent
+specifications stored in a common database.
+.P
+The portability of the
+UNIX system and the resulting compatibility between implementations
+on different manufacturers' equipment have contributed to
+the acceptance of the UNIX system as a
+.I "de facto"
+standard in the industry for portable operating systems.
+To preserve the UNIX system as a
+.I "de facto"
+standard, USL is committed to standardizing the system and
+unifying the various versions distributed by different equipment
+vendors into a single,
+common base system.  Toward that goal, USL publishes the
+\f2System V Interface Definition\f1 (SVID), a set of documents
+that defines
+the minimum functionality that a UNIX system product must deliver to
+be called UNIX System V.
+USL also provides the System V Verification Suite (SVVS) Release
+4, a set
+of tests vendors can run against their UNIX system products to
+confirm that they conform to the SVID specifications.
+.P
+In addition to defining its own standards, USL participates in
+the efforts of industry standards bodies, such as the IEEE.
+For more information about USL's standardization and unification
+efforts, see
+``Introduction to Release 4'' later in this guide.
+.H 2 "Recommended Reading"
+Throughout this overview,
+you will be referred to guides and manuals in the UNIX
+System V documentation set
+for more information on specific topics.  A description of
+the entire set of documents available with UNIX System V appears
+in ``Product Description'' later in this
+overview.
+.P
+In addition to the UNIX System V documentation set,
+the following mass market books
+provide the beginner with an introduction to the
+UNIX system:
+.BL
+.LI
+\f2The UNIX for Beginners Book: A Step-by-Step Introduction\f1, by Bryan
+Strong and Jay Hosler.  New York: John Wiley & Sons, 1987.
+.LI
+\f2Introducing UNIX System V\f1, by Rachel Morgan and Henry
+McGilton.  New York: McGraw-Hill, 1987.
+.LE
+.H 1 "Introduction to Release 4"
+UNIX System V Release 4
+is a major new release of the UNIX operating
+system, providing significant new features
+and enhancements to the system.  These new capabilities
+support USL's continuing commitment to the following goals:
+.BL
+.LI
+Standardization of the UNIX system and the unification
+of UNIX system derivatives.
+.LI
+Introduction of new technology\(emspecifically, new technology that
+extends networking capabilities, improves system
+administration and maintenance,
+and further internationalizes the UNIX system.
+.LE
+.P
+The following sections describe the features
+of Release 4 in terms of these goals.
+Throughout the discussions, you are referred to
+other documentation for feature information
+that goes beyond the scope of this product overview.
+.H 2 "Standardization and Unification"
+UNIX System V Release 4 represents a major step in USL's efforts
+to standardize the UNIX system and to unify various UNIX system
+derivatives into a single, common base.
+The need for such standardization grew out of UNIX System
+V's history as an \f2open\fP operating system.
+As an open system, manufacturers
+of computing equipment can license rights to use it
+and customize it to
+meet the specific needs of their markets and product lines.
+As a result of the open licensing, many versions of the system
+have diverged to the
+point where customers may be confused as to what the
+UNIX system is today.
+In addition to UNIX System V, there are UNIX
+systems based on the Berkeley Software Distribution (BSD), such
+as SunOS\(rg, as well as other derivatives such as XENIX.
+There are also standards such as the IEEE's Portable Operating System
+Interface (POSIX), which have been influenced by UNIX systems.
+.P
+The goal of Release 4 is to merge the best of the UNIX
+systems based on Berkeley Software
+Distribution (BSD) with the
+best of UNIX System V, provide XENIX system compatibility,
+and conform to the standards set by the IEEE POSIX committee.
+To encourage
+continued progress toward a UNIX system industry standard,
+Release 4 has been released in conjunction with the
+System V Interface Definition, Third Edition (SVID3).
+.H 3 "BSD Convergence"
+In an effort to converge on one standard UNIX system, USL is
+working to resolve differences between
+BSD-based versions of the UNIX operating system
+and UNIX System V.
+Toward that end, Release 4 provides a number
+of end-user and programming features which support BSD-compatible
+functionality.
+.P
+BSD end-user features implemented in Release 4
+include:
+.BL
+.LI
+BSD commands, integrated into the UNIX System V command set
+.LI
+BSD Job Control
+.LI
+the TCP/IP network protocols (the DARPA Internet Protocol Suite)
+.LI
+the Network File System file-sharing utility (Sun Microsystem's
+file distribution product, based on BSD)
+.LI
+UFS, an alternative file system type
+based on and compatible with 4.2 Berkeley Fast File system
+.LI
+Multiple groups and ownership changes.
+.LE
+BSD programming features implemented in Release 4 include:	
+.BL
+.LI
+a library that implements the BSD sockets interface
+.LI
+4.3 BSD signal mechanisms
+.LI
+Remote Procedure Call (RPC) and External Data Representation
+(XDR) libraries
+.LI
+Virtual File System (VFS) Architecture\(eman architecture that merges
+USL's File System Switch and Sun Microsystem's Vnodes and
+provides a mechanism that allows multiple
+file system types to coexist within UNIX System V;
+VFS also incorporates BSD functionality and
+symbolic links
+.LE
+For more information about BSD features,
+see ``Release 4 Features'' later in this guide.
+.H 3 "Application Compatibility"
+UNIX System V provides full source code compatibility
+with Microsoft's XENIX system.
+XENIX system features first supported in AT&T's implementation of
+UNIX System V Release 3.2 for the 386 processor are supported
+in the source code in Release 4, along with
+XENIX system file and record locking
+(via the \f4locking\f1 function), shared memory, and semaphores.
+Existing XENIX system source code that uses these facilities compiles
+and runs in Release 4.
+(These facilities are provided
+strictly for compatibility with existing XENIX system source code.
+New applications should use SVID interfaces.)
+.P
+For more information about XENIX system compatibility, see the
+.BT "Migration and Compatibility Guide" .
+.H 3 "POSIX Conformance"
+With Release 4, USL continues its commitment to
+the Institute of Electrical and Electronics Engineers (IEEE)
+standards efforts.
+The IEEE P1003 standards committee
+recently published a standard for the UNIX operating system,
+known as POSIX (Portable Operating System Interface for Computer Environments).
+While the POSIX specification is close to USL's own standard
+definition as documented in SVID3,
+Release 4 provides the few changes and additional features required
+to bring UNIX System V into full conformance with the POSIX
+standard.
+.P
+For more information on POSIX conformance, see the
+\f2Programmer's Guide: POSIX Conformance\f1.
+.H 3 "Device-Kernel Interface/Device Driver Interface"
+A goal of
+Release 4 is to support popular interfaces to the UNIX
+system and to provide new interfaces that are consistent with
+industry standards.
+In Release 4, UNIX System V supports the
+Device-Kernel Interface (DKI), an
+interface between the UNIX System V kernel and
+device driver software.  DKI makes it easier to port
+driver code across implementations of Release 4 for different
+hardware; if the driver writer conforms
+to the DKI where possible, the portability of the driver to other
+UNIX System V Release 4 implementations is greatly enhanced.
+.P
+Release 4 also supports the Device Driver Interface (DDI)
+for computers using Intel 386-based processors
+with AT or Multibus II bus architectures.  The DDI
+enhances driver binary
+compatibility across releases of UNIX System V for the
+386-based computers.
+.P
+See the \f2Device Driver Interface/Driver-Kernel Interface (DDI/DKI)
+Reference Manual\f1 for more information.
+.H 3 "SVID Publication"
+The System V Interface Definition (SVID) is USL's
+published definition of interfaces to UNIX System V.  It
+defines the operating system program interfaces that
+are consistent across all UNIX System V implementations,
+and specifies an operating system environment that allows
+users to create application software that is independent
+of any particular computer hardware.
+.P
+The availability of Release 4 has been coordinated with the
+publication of
+the System V Interface Definition, Third Edition (SVID3),
+which documents the functionality of
+Release 4 and presents
+possible future directions for UNIX System V.
+.H 2 "Release 4 Features"
+The primary goal of UNIX System V Release 4, along with
+standardization, is the introduction of new technology.
+Release 4 introduces a wealth of new features to UNIX System V.
+Some of these new features were
+introduced in BSD UNIX systems prior to the release
+of UNIX System V Release 4 and are now supported in
+UNIX System V.
+The following sections describe the new features in UNIX
+System V Release 4, including the newly incorporated BSD features:
+.BL
+.LI
+Operating System Enhancements
+.LI
+File System Enhancements
+.LI
+Networking
+.LI
+System Administration and Maintenance
+.LI
+Real-Time Support
+.LI
+Character User Interface
+.LI
+Internationalization
+.LI
+C Language
+.LI
+Extended Terminal Interface
+.LE
+.H 3 "Operating System Enhancements"
+As part of the effort to unify the various UNIX systems into
+one standard, Release 4 introduces some fundamental
+changes to UNIX System V.  These include
+the Virtual Memory (VM)
+memory management architecture,
+a system access mechanism called Service Access Facility,
+STREAMS-based terminal subsystem and pipes,
+BSD job control,
+Expanded Fundamental
+Types,
+and booting changes and enhancements.
+.H 4 "Memory Management"
+Release 4 introduces a new Virtual Memory (VM) architecture which
+improves utilization of system resources as well as
+providing new, powerful programming interfaces.
+The new memory management
+architecture is based on the VM architecture
+introduced in SunOS.
+VM replaces both the original UNIX system swapping
+architecture and the REGIONS demand-paged virtual memory
+architecture introduced in UNIX System V Release 2.
+.P
+The benefits of a demand-paged virtual memory implementation are
+efficient use of the system's main memory and the
+capability to execute programs much larger than the physical memory
+provided by the system.  The Release 4 VM architecture provides these
+same benefits, plus additional benefits of interest to
+particular groups of users (as indicated below in
+parentheses):
+.SP
+.BL
+.SP
+.LI
+Mapped files (application programmers)
+.P
+The new VM architecture allows a style of file
+I/O for user programs called ``mapped files.''
+This set of capabilities, provided by the \f4mmap\f1 family of routines,
+allows a file to be mapped explicitly into the address space
+of a user program,
+where the file can be manipulated as if it were an array in primary memory.
+These capabilities make user programs easier to write, and they
+allow programs to execute more efficiently.
+For more information, see the
+.BT "Integrated Software Development Guide" .
+.SP
+.LI
+Shared memory  (application programmers)
+.P
+Release 4 supports the
+traditional UNIX System V shared memory facility (provided by
+the \f4shmat\f1 family of routines)
+and XENIX system shared memory
+semantics.
+.P
+The mapped files provided by VM can be used to implement
+shared memory:
+if several processes map a file simultaneously,
+the system maps the same copy of a file into the memory space
+of all processes.
+.P
+.SP
+.LI
+Flexible use of disk space for swapping (administrators)
+.P
+UNIX System V Release 4 swaps pages of data
+from main memory to an ordinary file on one of the system's disks.
+Swapping to a file accommodates the needs of diskless systems and
+allows for the more efficient use of disk space.
+.SP
+.LI
+Portable implementation (porters)
+.P
+The VM architecture isolates all
+hardware-dependent portions
+of the memory management subsystem in one block of C language
+source code.  The remainder of the code is portable across
+different hardware and system architectures.  Most of the
+hardware-dependent code
+comprises a well-defined Memory Management Unit (MMU) interface.  This
+interface allows the architecture to be implemented on top of different
+MMU hardware.  (This means that the Release 4
+memory management subsystem is simple to port to other hardware,
+because the hardware-dependent code is isolated
+in one small part of the system
+and has a simple interface.)
+.P
+Release 4 provides a ``multi-level store'' implementation of VM
+that allows a system to address extremely large ranges of virtual
+address space using only a 32-bit hardware address space\(emthe
+industry standard for central processors and hardware memory management
+units.
+(This means that Release 4 is simple to port to standard
+processor architectures.)
+.LE
+.P
+For more information about VM, see the
+.BT "Integrated Software Development Guide" .
+.H 4 "Service Access Facility"
+The Service Access Facility (SAF) is a feature in Release 4
+that standardizes
+the way UNIX System V handles connection requests from outside the
+system.  The SAF acts as an umbrella over the system external access points
+and provides a consistent access mechanism.
+Services are administered through a consistent framework
+of commands and files, whether they are requested from the
+console, from a terminal via a tty line, or across a network.
+.P
+For more information, see the \f2System Administrator's Guide\f1
+and the \f2Programmer's Guide: Networking Interfaces\f1.
+.H 4 "STREAMS"
+STREAMS is a mechanism that provides a framework for character
+I/O in the UNIX
+system.  STREAMS allows programmers to structure kernel software in
+a modular manner and define standard interfaces within the kernel.
+.P
+STREAMS was introduced in an earlier release of UNIX System V as
+a mechanism for
+implementing network protocols in a way that allows application
+programmers to develop network applications that
+are protocol-independent.
+In
+.NE 1i
+Release 4, the STREAMS mechanism
+is more pervasive.  The terminal subsystem
+has been reimplemented using STREAMS, providing the
+following advantages:
+.BL
+.LI
+A decrease in complexity of the kernel
+.LI
+Modularity and flexibility of code
+.LI
+Seamless integration of user terminals and networking
+capabilities
+.LI
+Reusable line discipline modules
+.LI
+Customization
+.LI
+Ease in adding new features to the terminal subsystem.
+.LE
+For consistency, other mechanisms such as ``pipes'' have also
+been implemented using STREAMS
+so that, in Release 4,
+the entire character I/O subsystem is STREAMS-based.
+.P
+For more information about STREAMS, see the
+\f2Programmer's Guide: STREAMS\f1.
+.H 4 "Job Control"
+Job control features
+have also been introduced in Release 4. Such features have
+long been a popular feature of the BSD operating system and
+are also an optional part of the IEEE P1003.1 POSIX standard.
+Job control allows a user to
+stop and later resume a job, whether it is executing
+in the foreground or the background.  Job control also allows a
+user to move jobs back and forth between the background and
+the foreground.
+.P
+With job control a user can
+.BL
+.LI
+stop a foreground job in order to perform a more
+pressing task
+.LI
+put a foreground job in the background
+.LI
+stop a job to satisfy a need of the job, such as
+looking up data for input or changing the name of an input
+file to match what was misspelled on the command line.
+.LE
+Job control capabilities are available through an optional
+shell called the job control shell (\f4jsh\f1).
+For more information about job control, see the \f2User's Guide\f1.
+.H 4 "Expanded Fundamental Types"
+Release 4 supports the expansion in size
+of certain data types, such as user ID (uid), process ID (pid), and
+device ID.
+This feature, known as Expanded
+.NE 3
+Fundamental Types (EFT), makes it possible to remove
+constraints on certain
+fundamental system types that were
+imposed by the UNIX operating system's original hardware
+implementation.
+.H 4 "File-System-Independent Booting and Autoconfiguration"
+File-system-independent booting allows an administrator to boot
+the system from any device that is readable by firmware.
+.P
+In Release 4, it is possible to make the root file system
+either a standard UNIX System V file system or a UFS file system.
+Rather than code knowledge of the
+possible file system types into the boot program,
+a disk partition is created
+when Release 4 is installed
+that holds a file system of type \f4bfs\f1 (Boot File System).  This file
+system contains all the bootable programs necessary for the
+computer's boot process.
+.H 3 "File System Enhancements"
+Release 4 introduces a number of significant changes related
+to file systems.
+Most important, it introduces Virtual
+File System (VFS),
+an architecture that makes it possible for file systems of various types
+to coexist on the same system; the traditional
+UNIX System V file system type is now just
+one of many supported file system
+types.  Also, the layout of the directory tree has been reorganized in
+Release 4 to facilitate sharing files,
+directories, and file systems in a networked environment.
+.H 4 "Virtual File System"
+Release 4 introduces to UNIX System V a file system switch architecture
+called Virtual File System.
+VFS provides a clearly defined,
+modular interface between file systems and the rest of the UNIX
+system kernel, and allows several different file system types to
+coexist on the same system\(emincluding file systems that have
+significantly different characteristics and internal formats.
+The modular nature of the architecture allows programmers to design
+and install new file system types in a clean, straight-forward manner.
+.H 4 "New File System Types"
+By reimplementing the UNIX System V file system architecture,
+Release 4 can support
+a wide variety of file system types on the same system.
+In addition to providing a mechanism that allows new types to be
+defined and installed,
+Release 4 provides the following file system types as
+standard options.
+.VL .8
+.LI \f4s5\f1
+the traditional file system type
+supported in earlier releases of UNIX System V.  The s5 type stores data
+in disk blocks of 0.5K, 1K, or 2K bytes.
+.LI \f4ufs\f1
+a file system type based on the BSD system ``fast file system'';
+it supports data storage in disk blocks as large as 8K bytes.
+.LI \f4rfs\f1
+a distributed file system type\(emone of two supported in
+Release 4; \f4rfs\f1 supports Remote File Sharing capabilities
+(including the ability to share files across a network of
+UNIX System V systems).
+.LI \f4nfs\f1
+a distributed file system type
+originally introduced in the SunOS operating system
+(a BSD system derivative);
+\f4nfs\f1 supports Network File System capabilities (including the
+ability to share files across a network in
+a heterogeneous environment).
+.LI \f4proc\f1
+a file system type useful for
+debuggers and similar
+utilities; it provides a mechanism for accessing the address space of
+running processes.
+.LI \f4fifofs\f1
+a file system type that provides common access
+to pipe files.
+.LI \f4specfs\f1
+a file system type that provides a common code
+interface to all \%device files.
+.LI \f4bfs\f1
+a file system type that provides support for file
+system independent booting; a \f4bfs\f1 file system
+contains all the programs necessary for
+the boot process.
+.LE
+.P
+For more information about file system types in general, see
+the \f2System Administrator's Guide\f1.
+For more information about RFS and NFS, see the
+\f2Network User's and Administrator's Guide\f1.
+.H 4 "Symbolic Links"
+Release 4 introduces support for symbolic links.
+A symbolic link is a file that contains the pathname of another file.
+References to the symbolic link are converted by the UNIX system kernel
+into references to the target file.
+.P
+Symbolic links make it possible to link directories.  This means
+that the logical
+structure of a system's file tree can be rearranged without changing the
+physical location of files.
+Symbolic links also allow links to a physical file to reside in a different
+physical file system.  This means that names can be linked across file
+systems that reside on different computers on a network\(emallowing
+a computer to create a logical directory
+tree that includes directories and files that physically reside on
+many different computers.
+.P
+For more information about symbolic links, see the
+.BT "Integrated Software Development Guide" .
+.H 4 "The Directory Tree"
+In Release 4, the UNIX System V directory tree has been arranged to
+facilitate sharing files, directories, and file systems in a networked
+environment.
+Release 4 divides the system into four standard file systems:
+\f4/\f1 (called \f4root\f1), \f4/usr\f1, \f4/home\f1, and \f4/var\f1.
+Within the standard file systems,
+files are organized by type, with each type occupying a separate branch
+of the tree.  The directory tree defines three file types: machine
+private files,
+architecture dependent files, and architecture independent files.
+Because the directory tree
+separates private files from files that may be shared, a system
+administrator
+can easily mount a complete file system for distribution over a network.
+.P
+For more information, see the
+\f2System Administrator's Guide\f1.
+.H 3 Networking
+Earlier releases of UNIX System V provided tools for
+developing network protocols and
+applications, specifically STREAMS and the Transport Level
+Interface (TLI).   STREAMS defines standard interfaces
+that allow networking architectures and higher-level
+protocols to be independent of underlying protocols, drivers,
+and media.  TLI defines an interface between applications
+and transport level network protocols, relieving user
+programs of the need to know the characteristics of
+the transport protocol.
+.P
+Early networking capabilities in the UNIX system
+were available through two optional
+utilities packages: Basic Networking Utilities, which
+provided basic file transfer capabilities between
+UNIX System V systems via the
+\f4uucp\f1 family of commands, and
+RFS, a service that makes it
+possible for a system to share files and devices with
+remote UNIX System V systems.
+.AB N
+These tools and services continue to be important features of
+UNIX System V in Release 4.  For information about STREAMS, see the
+\f(HIProgrammer's Guide: STREAMS\fP.  For information about TLI,
+see \f(HIProgrammer's Guide: Networking Interfaces\fP.  For information
+about \f4uucp\fP services, see the \f(HIUser's Guide\fP
+and the \f(HISystem Administrator's Guide\fP.
+For information about RFS, see the \f(HINetwork User's and
+Administrator's Guide\fP.
+.AC
+New in Release 4 is support for TCP/IP and RPC, networking protocols
+that have become standards in the BSD networking environment,
+and Network File System Utilities, a SunOS
+file distribution facility.
+Convergence with BSD networking is also seen in UNIX System V
+through its support
+of \f4inetd\f1, a BSD network daemon, and the sockets interface.
+In addition, Release 4 introduces new UNIX system
+networking technology
+in the form of Network Selection and Name-to-Address Mapping.
+.H 4 "TCP/IP (the DARPA Internet Protocol Suite)
+In Release 4, UNIX System V provides TCP/IP, a family of network
+protocols sometimes called the DARPA Internet Protocol Suite.
+TCP/IP is a comprehensive set of protocols and commands
+that support networking among systems of different types.
+.P
+For more information about TCP/IP, see the \f2Network User's and
+Administrator's Guide\f1.
+.H 4 "Remote Procedure Call/External Data Representation
+Release 4 includes Remote Procedure Call (RPC), a
+protocol that makes it possible for a process to
+call a procedure on a remote machine of a different
+architecture, using the syntax and
+semantics of a local procedure call.
+RPC allows a server program to use procedures on
+remote machines like building blocks in complex applications.
+.P
+RPC uses External Data Representation (XDR) to encode data passed
+between machines.  XDR is used to represent data in a standard way, so
+that a local process can call a procedure
+residing on a machine of different architecture that is running
+the same or a different operating system.
+.P
+See the \f2Programmer's Guide: Networking Interfaces\f1
+for more information about RPC and XDR.
+.H 4 "inetd"
+In Release 4, UNIX System V provides \f4inetd\f1, a port monitor
+(also called a daemon) that
+waits for service requests from computers on a TCP/IP network.
+\f4inetd\f1 is similar to \f4listen\f1, a UNIX System V
+port monitor that listens
+for service requests from clients on any network that conforms
+to the Transport Provider Interface.
+When a connection request arrives over the network, \f4inetd\f1
+(like \f4listen\f1)
+spawns the server process and passes the network connection to it.
+.P
+For more information about \f4inetd\f1,
+see the \f2Network User's and Administrator's Guide\f1.
+.H 4 "Sockets"
+Sockets is a networking interface widely used in BSD systems.
+It is functionally similar to the UNIX System V Transport Level
+Interface (TLI) in that it defines how a process accesses
+the services of a transport protocol.
+.P
+Sockets is provided in Release 4 in a library
+so that BSD applications that use sockets can migrate easily to
+UNIX System V.
+.P
+For more information, see the \f2Programmer's Guide: Networking
+Interfaces\f1.
+.H 4 "Network File System Utilities"
+Network File System Utilities (NFS) is
+a facility for sharing files in a heterogeneous environment of machines,
+operating systems, and networks.  Sharing is accomplished by mounting
+a remote file system, then reading or writing files in place.
+Users are able to get directly to the files they want without
+knowing the network address of the data.  To the user, all NFS-mounted
+file systems look like private disks.  There are no apparent
+differences between reading or writing a file on a local disk, and
+reading or writing a file on a disk in another location.
+.P
+See the \f2Network User's and Administrator's Guide\f1
+for more information.
+.H 4 "Network Selection"
+Release 4 introduces a feature to UNIX System V called
+Network Selection.  Network Selection allows network
+applications to choose the network over which they will communicate.
+An application can select a network from a directory of networks
+that are available to the system.  If an application
+fails to connect with its first choice, it can select different
+networks until it finds one that meets its
+service requirements and allows the connection.
+.P
+Network Selection frees an application from needing a network
+selection embedded in its code.  This allows the application to run
+without modification on different systems that support different
+networks.
+.P
+For more information about Network Selection, see the \f2System
+Administrator's Guide\f1 and the \f2Programmer's Guide: Networking
+Interfaces\f1.
+.H 4 "Name-to-Address Mapping"
+Name-to-Address Mapping
+is a mechanism that allows network clients
+to determine the addresses of servers on a network in a network
+independent manner.  The mechanism makes it possible for clients
+to reach a server, even if the address on which the server
+is listening should change.
+Name-to-Address Mapping also allows a client
+to reach a server over different networks.
+.P
+See the \f2Programmer's Guide: Networking Interfaces\f1
+for more information.
+.H 3 "System Administration and Maintenance"
+One of the goals of Release 4 is to simplify
+system administration and maintenance, while at the
+same time adding functionality to meet the demands of increasingly
+complex computer and network configurations.
+Toward that goal, Release 4 provides new capabilities
+in backup and restore operations, and software installation.
+It also introduces an
+enhanced administration interface that makes it easier for
+a novice administrator to set up and maintain a system.
+.P
+The system administration features new in Release 4 are
+described in the following sections.
+For detailed information about these
+features and for information about system administration in general,
+see the
+\f2System Administrator's Guide\f1.
+.H 4 "Improved Backup and Restore Operations"
+Release 4 provides
+hardware independent backup and restore procedures (supporting
+multiple bus architectures and multiple destination types,
+such as tapes, floppy diskettes, and hard disks).
+Multiple commands used as part of the backup procedure have been
+integrated in Release 4 into a single backup service.
+.P
+Key features of the backup and restore service include
+.BL
+.LI
+a backup history log
+.LI
+on-line backups
+.LI
+automated backup initiation
+.LI
+mechanized restore requests.
+.LE
+.H 4 "Software Installation and Configuration Management Tools"
+A software installation facility
+in Release 4
+provides a system administrator
+with installation procedures
+that are consistent across
+software packages, releases, and machines.
+It also provides tools
+and guidelines for developing add-on packages
+that take advantage of the standard software installation
+script and menu interface.
+Configuration tools allow an administrator easy access to information on
+system configuration.
+.H 4 "System Administration Menus (\f4sysadm\f1)"
+Release 4 offers a new
+version of the menu interface for administration of a UNIX system.
+The System Administration Menus (accessed using the \f4sysadm\f1
+command) allow a user to
+administer a UNIX system without knowledge of UNIX system commands.
+Context-sensitive help messages make it possible for an administrator
+to explore the interface with a minimum of documentation.
+.H 3 "Real-Time Processing"
+Historically, the UNIX system has been a general purpose
+time-sharing system.
+Today, however, the system is seen more and
+more in environments
+that require real-time processing.
+.P
+To support real-time processing, Release 4 introduces
+a new process-scheduler architecture and high-resolution
+timing services.
+(For more information than that provided in the following
+descriptions, see the
+.BT "System Administrator's Guide"
+and the
+.BT "Integrated Software Development Guide" .
+.H 4 "New Process Scheduler"
+A process scheduler
+is kernel code that determines what program will run, when, and
+for how long.  The Release 4 architecture supports both
+the traditional scheduling policy and the new real-time
+scheduling policy.
+Each process has its own scheduler properties,
+which can be changed by users while the process is running.
+The scheduler runs each process for a configurable ``time slice,''
+then gives other processes a chance to run.
+.P
+The time-sharing scheduler policy manages processes in a traditional manner:
+it dynamically adjusts time-sharing process priorities
+in an attempt to give good response to all interactive processes.
+.P
+The real-time scheduler policy, on the other hand,
+never changes a real-time process priority except as the result of
+an explicit user request to change it.
+Moreover, all real-time processes run before any other processes.
+An application can perform its
+time-critical tasks in real-time processes
+and be assured that these processes will always
+get priority over all non-real-time processes.
+.P
+Also to support real-time processing,
+Release 4 provides new
+preemption points in the kernel\(empoints at which
+the scheduler may switch control of the CPU from one process to another.
+The additional preemption points improve
+system response time for high-priority processes.
+.P
+Using real-time processes, an application can guarantee fast, deterministic
+response to its critical processes, on the order of
+microseconds rather than seconds.
+.H 4 "High-Resolution Timers"
+For applications that deal with very short time intervals,
+Release 4 offers BSD system timing services, which give
+microsecond resolution.  These services include alarms,
+interval timers, and a time-of-day clock.
+(Some of these services were available on earlier releases,
+but with lower timing resolution.)
+.H 3 "Character-Based User Interface"
+An earlier release of UNIX System V introduced the
+Form and Menu Language Interpreter (FMLI)\(ema high-level
+language interpreter that allows developers to write
+user-friendly interfaces to their applications.
+Release 4 provides
+extensions to the Form and Menu Language,
+including a way to interrupt executables,
+a conditional statement (if-then-else), new built-in functions
+\f4test\f1 and \f4expr\f1, and other improvements that give FMLI
+programmers more control over the appearance and behavior of
+their application interface.
+.P
+Framed Access Command Environment
+(FACE), also introduced in an earlier release, is an interface that
+allows a user
+to see the UNIX system through frames containing menus
+and forms.  In Release 4, FACE has been enhanced to be more
+consistent with the version of FACE developed for UNIX System V/386
+Release 3.2, and adding applications to FACE has been made easier.
+.P
+For more information about FMLI, see the \f2Programmer's
+Guide: Character User Interface (FMLI and ETI)\f1.  For
+information about FACE, see the \f2User's Guide\f1.
+.ig
+.H 3 "Graphical User Interface and Windowing System"
+As part of the effort to encourage a standardization of the
+UNIX system,
+Release 4 offers
+programming tools to support the OPEN LOOK\(rg Graphical
+User Interface and the XWIN\(rg and X11/NeWS\(rg graphical
+windowing systems.
+.H 4 "XWIN Graphical Windowing System"
+The XWIN Graphical Windowing System is a portable,
+network-transparent windowing system.
+XWIN software creates a multi-layered server system on top of
+the UNIX system; it gives the user the ability to
+create multiple windows on a single display, with
+each window running different applications.
+.P
+A windowing system keeps track of events and interfaces
+with client applications through a protocol system
+similar to the type of protocol system used by many
+network operations.
+XWIN software uses the X protocol for exchanging information
+between client applications and the server.
+The X protocol gives application programs running on
+different systems, and appearing in
+different windows, the ability to communicate with and use or display
+results from other application windows.
+.P
+For more information, see the
+.BT "Programmer's Guide: XWIN\(rg Graphical Windowing System."
+.H 4 "X11/NeWS Graphical Windowing System"
+The X11/NeWS Graphical Windowing System runs applications
+written to the X11 and NeWS
+protocols.  Although the protocols are different, X11/NeWS provides
+an integrated environment in which both are supported, with
+both working off a single window manager.
+This makes the GUI an extremely versatile
+graphical interface, offering more choices for both
+application developers and end users.
+.P
+For more information, see the
+.BT "Programmer's Guide: X11/NeWS\(rg Graphical Windowing System."
+.H 4 "OPEN LOOK Graphical User Interface"
+The OPEN LOOK Graphical User Interface defines a
+standard for the appearance
+and function
+of the graphical user interface and provides developers
+with application programmer interface
+toolkits (APIs).  APIs allow developers to manipulate
+windows and window-supported graphics to achieve
+the standard ``look and feel'' of OPEN LOOK Graphical
+User Interface applications.
+Two toolkits are provided as part of the OPEN LOOK
+software\(emone for writing
+applications that operate on the XWIN server, and one
+for writing X11/NeWS applications.
+.P
+For more information, see the
+.BT "Programmer's Guide: OPEN LOOK\(rg Graphical User Interface" ,
+.BT "OPEN LOOK\(rg Graphical User Interface Programmer's Reference Manual" ,
+.BT "OPEN LOOK\(rg Graphical User Interface User's Guide" .
+..
+.H 3 "Internationalization"
+With Release 4, USL continues to provide support
+for international environments in
+the UNIX system.  New features in Release 4 that reflect
+the internationalization effort include
+.BL
+.LI
+support for multiple international code sets and multi-byte
+characters, and
+support for character (as opposed to byte) processing
+.LI
+a message handling facility, which provides a means
+of translating system messages to the user's native language
+.LI
+support for national conventions (forms and rules used
+to communicate information).
+.LE
+.P
+For information about features that support international
+environments, see the
+.BT "Migration and Compatibility Guide" .
+.H 3 "C Language"
+Release 4 incorporates enhancements to packages known by
+the following names in earlier releases:
+C Programming Language Utilities (CPLU), Advanced Programming
+Utilities (APU), and C Programmer Productivity Tools (CPPT) packages.
+The major features are:
+.BL
+.LI
+Compilation modes corresponding to degrees of compliance with
+ANSI C.
+.LI
+Dynamic linking, which allows different processes to share library
+code at run time.
+.LI
+Dynamic tables, which provide the necessary support for compilation
+of applications with very large tables (e.g. macros, symbols, etc.).
+.LI
+Additional international support, allowing the international date
+and time to be set as a default, and support for customized internal
+character sets.
+.LI
+A new transparent object file format, ELF (Executable
+and Linking Format),
+which supports extensions to the C language, such as new types.
+ELF is flexible enough to support other programming languages,
+particularly C++.
+.LI
+Support tools for ELF and conversion tools for
+converting COFF (Common
+Object File Format) to ELF.
+All tools handle both COFF and ELF objects and archives.
+.LE
+.P
+See the \f2Programmer's Guide: ANSI
+C and Programming Support Tools\f1,
+the
+.BT "ANSI C Transition Guide" ,
+and the
+\f2Programmer's Reference
+Manual\f1 for more information.
+.H 3 "Extended Terminal Interface"
+The Extended Terminal Interface (ETI)
+is a standard programming interface
+provided in Release 4
+for character mode screen management and text operations.  ETI consists
+of three libraries, including
+the \f4curses\f1 library and the \f4terminfo\f1 data base,
+and the High Level Function library, which provides C subroutines
+for creating forms, menus, form editing functions, and panels.
+.P
+See the \f2Programmer's Guide: Character User Interface
+(FMLI and ETI)\f1 for more information.
+.H 1 "Product Description"
+The previous section described new operating system features.
+This section describes the components of the binary product.
+It also introduces the UNIX System V Release 4 documentation set.
+.P
+The UNIX System V/386, Release 4 operating system
+is made up of several software packages.
+These software packages logically separate the software
+into the Base System, consisting of the most basic components,
+and add-on packages.
+Each add-on package provides a special set of features,
+such as networking facilities, programming tools, or editing utilities.
+.P
+The vendor that produced your computer may not offer all of these packages
+or it may offer different packages.
+The UNIX system available for most 386-based computers,
+however, includes the Base System,
+the Standard C Development Environment Package (for software development),
+and a selection from the other packages.
+.P
+The remainder of this section describes the UNIX System V/386,
+Release 4 software and the document set.
+.H 2 "Base System"
+The Base System
+consists of the operating system kernel,
+a minimum set of device drivers,
+and the most essential and commonly-used
+commands.
+The Base System also includes
+installation and configuration management utilities, and
+message management and monitoring utilities.
+.P
+The Base System also has the following components bundled into it:
+.BL
+.LI
+Basic Networking Utilities
+.LI
+Directory and File Management Utilities
+.LI
+Inter-Process Communication Utilities
+.LI
+System Header Files
+.LI
+System Performance Analysis Utilities
+.LI
+UFS Utilities
+.LI
+User Environment Utilities
+.LE
+.H 3 "Basic Networking Utilities"
+The Basic Networking Utilities, which includes commands
+such as \f4uucp\f1, enable
+a UNIX system to communicate with other systems in the following ways:
+.BL
+.LI
+transfer files and send electronic mail
+to other UNIX systems
+.LI
+communicate interactively with others using
+UNIX systems or non-UNIX
+systems
+.LI
+execute a restricted set of commands
+on a remote system without directly logging in
+on the remote system
+.LI
+call and log in to a remote system
+.LI
+call a remote terminal and allow the user of
+the terminal to log in on a UNIX system
+.LE
+.H 3 "Directory and File Management Utilities"
+The Directory and File Management Utilities consist of more
+than twenty-five commands that provide enhanced file and directory
+manipulation capabilities.
+With these commands, a user can do the following things:
+.BL
+.LI
+search directories or files
+.LI
+compare the contents of directories or files
+.LI
+manipulate the contents of files
+.LE
+.H 3 "Inter-Process Communication (IPC) Utilities"
+The Inter-Process Communication (IPC) Utilities permit cooperating
+processes to share data and to communicate with each other.
+It contains system calls for obtaining, controlling, and performing
+operations on the three types of IPC facilities: messages,
+semaphores, and shared memory.
+In addition, there
+are commands to check the status of and to remove IPC facilities.
+.H 3 "System Header Files"
+The System Header Files contain C header files for UNIX System V
+Release 4 that are useful in a program development
+environment. These headers are also needed when the kernel is
+rebuilt, e.g. when a device driver is added or deleted from the
+system.
+.H 3 "System Performance Analysis Utilities"
+The System Performance Analysis Utilities provide performance tools
+that measure and display the following kinds of information:
+processor utilization, buffer and file access activity, terminal
+device activity, disk input/output activity, system calls, process
+switching,
+swapping activity, queue activity, and
+inter-process communication (IPC) activity.
+.H 3 "UFS Utilities"
+The UFS Utilities include software support for \f4ufs\fP \(em a file
+system type based on the BSD system ``fast file system'' that
+stores data in blocks as large as 8K bytes.
+.H 3 "User Environment Utilities"
+The User Environment Utilities consist of commands that can be
+used
+to do the following things:
+.BL
+.LI
+perform mathematical calculations
+.LI
+check or change the executing environment of commands
+.LI
+schedule commands to be executed at a later time
+.LI
+interact with more than one session from any terminal and switch
+easily between these virtual layers, as if logged in from several
+terminals simultaneously.
+.LE
+.P
+For additional information about the software
+in the Base System
+and how to use it, see the \f2User's Guide\f1,
+the \f2System Administrator's Guide\f1,
+the Base System manual pages in the
+.I "User's Reference Manual"
+and \f2System Administrator's Reference Manual\f1.
+.H 2 "Add-on Packages"
+The utilities packages that make up the UNIX System V/386, Release 4 product are
+listed below.
+Following the list are descriptions of the software that make up each package.
+.BL
+.LI
+Application Compatibility Package
+.LI
+Archive XL Floppy Tape Utilities Package
+.LI
+BSD Compatibility Package
+.LI
+Cartridge Tape Utilities Package
+.LI
+DFS Utilities Package
+.LI
+Editing Package
+.LI
+Form and Menu Language Interpreter Package
+.LI
+Framed Access Command Environment Package
+.LI
+IE6 (3C503) Ethernet Driver Package
+.LI
+Intel Ethernet Driver Package
+.LI
+Internet Utilities Package (TCP/IP)
+.LI
+KDB Kernel Debugger Package
+.LI
+Kernel Debugger Support Utilities Package
+.LI
+LP Print Services Package
+.LI
+Mouse Driver Package
+.LI
+Network File System Utilities Package
+.LI
+Networking Support Utilities Package
+.LI
+Operations, Administration, and Maintenance Package
+.LI
+PC-Interface Ethernet Service Package
+.LI
+PC-Interface Utilities & RS-232 Service Package
+.LI
+Remote Procedure Call Utilities Package
+.LI
+RFS Utilities Package
+.LI
+Security Administration Package
+.LI
+Standard C Development Environment Package
+.LI
+Termcap Compatibility Package
+.LI
+Terminal Information Utilities Package
+.LI
+Unlimited User License Package
+.LI
+WD8003 Ethernet Driver Package
+.LI
+Windowing Utilities Package
+.LE
+.H 3 "Application Compatibility Package"
+The XENIX Compatibility Package contains commands that are specific
+to applications developed for XENIX systems and XENIX system
+commands that will not be supported beyond Release 4.
+These include the XENIX system file and record locking
+interface (\f4locking\f1) and
+system calls that support the XENIX system shared memory and semaphores
+(contained in a library called \f4libx\f1).
+.P
+For more information about the XENIX Compatibility Package, see the
+.BT "Migration and Compatibility Guide" .
+.H 3 "Archive XL Floppy Tape Utilities Package"
+The Archive XL Floppy Tape Utilities Package supports Archive
+model 3800 streaming 1/4-inch mini cartridge tape drives,
+or any floppy tape drive that supports the QIC-107 physical and QIC-117
+logical interface specifications and QIC-80 or QIC-40 recording format standards.
+.H 3 "BSD Compatibility Package"
+The BSD Compatibility Package contains BSD commands and library routines
+that were not merged with the UNIX System V Base System.
+It also includes software for \f4sendmail\f1 and the BSD versions of
+\f4nroff\f1, \f4troff\f1, and \f4lp\f1.
+.P
+For more information about the BSD Compatibility Package,
+see the
+.BT "Migration and Compatibility Guide" .
+.H 3 "Cartridge Tape Utilities Package"
+The Cartridge Tape Utilities Package contains a cartridge tape driver that
+supports both Wangtek PC-36 and Archive SC499-R cartridge tape controllers.
+.P
+See the \f4qt\f1 manual page in the
+.BT "System Administrator's Reference Manual"
+for more information.
+.H 3 "DFS Utilities Package"
+The Distributed File System (DFS) Utilities Package provides
+a common administrative interface to Remote File Sharing (RFS)
+Utilities and Network File System (NFS) Utilities.
+Commands installed by the DFS Administration Utilities
+Package allow an administrator
+to share and mount both RFS and NFS resources.
+DFS utilities must be installed to run RFS and NFS.
+.P
+See the
+.BT "Network User's and Administrator's Guide"
+for more information.
+.H 3 "Editing Package"
+The Editing Package provides three related editors:
+two line editors (\f4edit\f1 and \f4ex\f1) and a screen editor (\f4vi\f1).
+The \f4edit\f1 editor is mainly for novice users.
+The \f4ex\f1 editor is an advanced version of
+\f4edit\f1 and is for experienced users.
+The \f4vi\f1 editor is intended for all users;
+it allows the user to view a screen of text at
+one time and move the terminal's cursor directly to
+any position in the file.
+.P
+Editing also includes the \f4spell\f1 command.
+\f4spell\f1 is used to check files for spelling errors.
+.P
+For more information, see the editing tutorials in the
+.BT "User's Guide"
+and the \f4ed\fP(1), \f4edit\fP(1) and \f4vi\fP(1) manual pages in the
+.BT "User's Reference Manual" .
+.H 3 "Form and Menu Language Interpreter Package"
+Form and Menu Language Interpreter (FMLI) Package
+provides the FMLI high-level
+language interpreter that allows developers to write
+user-friendly interfaces to their applications.
+.P
+For more information about FMLI, see the
+.BT "Programmer's Guide: Character User Interface (FMLI and ETI)" .
+.H 3 "Framed Access Command Environment Package"
+Framed Access Command Environment (FACE) is a Package that provides
+a character-based
+menu interface to the UNIX system intended for non-expert computer users.
+It provides a hierarchy of forms and menus through which
+a user can execute basic UNIX system commands for file editing and
+text manipulation.
+It also includes tools for creating menus of services
+through which a user can access application packages.
+.P
+See the
+.BT "User's Guide"
+for a tutorial that explains how to use FACE.
+.\" .H 3 "Graphics End User System Package"
+.\" The Graphics End User System Package contains all
+.\" end-user facilities for the OPEN LOOK graphical user interface and
+.\" the XWIN graphical windowing system.
+.\" .P
+.\" For more information, see the
+.\" .BT "OPEN LOOK\(rg Graphical User Interface User's Guide" .
+.\" .H 3 "Graphics Programmer's Package"
+.\" The Graphics Programmer's Package contains all
+.\" facilities needed to write OPEN LOOK and XWIN graphical application programs.
+.\" .P
+.\" For more information, see the
+.\" .BT "OPEN LOOK\(rg Graphical User Interface Programmer's Reference Manual" ,
+.\" .BT "Programmer's Guide: OPEN LOOK\(rg Graphical User Interface" ,
+.\" and
+.\" .BT "Programmer's Guide: XWIN\(rg Graphical Windowing System."
+.H 3 "IE6 (3C503) Ethernet Driver Package"
+The IE6 (3C503) Ethernet Driver Package
+contains the device driver needed to use the 3Comm Ethernet board.
+.H 3 "Intel Ethernet Driver Package"
+The Intel Ethernet Driver Package
+contains the device driver needed to use the Intel iMX-LAN/586 board.
+.H 3 "Internet Utilities Package (TCP/IP)"
+The Internet Utilities Package installs the TCP/IP (Transmission
+Control Protocol/Internet Protocol) network protocols,
+also known as the DARPA Internet Protocol Suite, as well as commands
+that allow users to login to remote systems, execute
+commands on remote systems, and copy files from remote systems.
+.P
+For information about TCP/IP, see the
+.BT "Network User's and Administrator's Guide" .
+.H 3 "KDB Kernel Debugger Package"
+The Kernel Debugger Package contains utilities and drivers needed to
+do low-level debugging of the UNIX Operating System.
+See the \f4kdb\fP(1) manual page for more information.
+.H 3 "Kernel Debugger Support Utilities Package"
+The Kernel Debugger Support Utilities Package
+contains common utilities for the kernel debugger.
+The installation of this package will provide a control over
+whether the Kernel Debugger may be invoked by a keyboard sequence.
+See the \f4kdb\fP(1) manual page for more information.
+.H 3 "LP Print Services Package"
+The LP Print Services Package provides the temporary
+storing (spooling) of data until the data can be printed.
+.P
+With LP spooling, print requests can
+be entered at a terminal and printing can
+take place without tying up the terminal.
+Spooling also enables many users to share
+a printer, or several printers, efficiently.
+The commands in this package can perform the following functions:
+.BL
+.LI
+customize the system so that it will spool to a group of line printers
+.LI
+group printers into logical classes to maximize the throughput of the printers
+.LI
+queue print requests, thus allowing a print request (job) to
+get printed on the next available printer in the appropriate class
+.LI
+cancel print requests, so a job that is no longer needed will not be printed
+.LI
+start and stop the LP spooling software from processing requests
+.LI
+change the configuration of printers
+.LI
+find the status of the LP scheduler
+.LI
+restart any printing that was not completed when the system was powered down
+.LI
+connect multiple computers into a network so that the users of one
+computer can use any of the printers connected to the other computers
+in the network.
+.LE
+.P
+For information about using this package, see the
+.BT "User's Guide"
+and the
+.BT "User's Reference Manual" .
+For information about administering this package,
+see the
+.BT "System Administrator's Guide"
+and the
+.BT "System Administrator's Reference Manual" .
+.H 3 "Mouse Driver Package"
+The Mouse Driver Package
+consists of the software necessary to use a mouse pointing device
+with UNIX\(rg System V/386 Release 4.
+The package contains the device driver, administration commands
+and files to assist in administering mouse pointing devices.
+This new version of the mouse driver
+makes it possible to interface a mouse pointing device
+through the serial ports on any Fiber Optic Station
+(FOS), terminal or the system console.
+.P
+For information about using this package,
+see the
+.BT "Mouse Driver Administrator's Guide" .
+.H 3 "Network File System Utilities Package"
+The Network File System Utilities Package provides
+the facilities needed to share resources among
+computers in a heterogeneous environment.
+It requires the Networking Support Utilities Package,
+TCP/IP (transport protocols provided by the Internet Utilities Package),
+and the DFS Utilities Package.
+.P
+For more information about Network File System Utilities, see the
+.BT "Network User's and Administrator's Guide" .
+.H 3 "Networking Support Utilities Package"
+The Networking Support Utilities Package
+installs the STREAMS mechanism as well as software support
+for Network Selection, the Service Access Facility,
+and Transport Interface (TI).
+.P
+Service Access Facility utilities include the
+network daemon \f4listen\f1, as well as commands for administering it.
+.P
+The Networking Support Utilities Package must be installed to
+take advantage of services provided by
+the RFS Utilities Package and the Network File System Utilities Package.
+.H 3 "Operations, Administration, and Maintenance Package"
+The Operations, Administration, and Maintenance Package contains the facilities
+needed to administer the system through the \f4sysadm\f1 command interface.
+The \f4sysadm\f1 interface consists of a series of menus and
+forms intended to simplify administration of the UNIX system.
+.P
+For more information on the \f4sysadm\f1 interface, see the
+.BT "System Administrator's Guide" .
+.H 3 "PC-Interface Ethernet Service Package"
+The PC-Interface Ethernet Service Package contains an Ethernet driver that
+can be used with the PC-Interface Utilities.
+The Ethernet driver can be used
+instead of the standard RS-232 interface that comes with the PC-Interface
+Utilities & RS-232 Service Package.
+.P
+For further information, see the
+.BT "PC-Interface Administrator's Guide" .
+.H 3 "PC-Interface Utilities & RS-232 Service Package"
+The PC-Interface Utilities & RS-232 Service
+Package enables you to run DOS applications by using data
+from the UNIX system file system (host).
+It also allows you to store data and run DOS applications on
+the UNIX system host, just as you would on a local fixed disk.
+.P
+For further information, see the
+.BT "PC-Interface Administrator's Guide" .
+.H 3 "Remote Procedure Call Utilities Package"
+The Remote Procedure Call Package provides a remote operation capability.
+The package includes RPC, XDR, and sockets libraries used by NFS.
+.P
+For more information about RPC, see the
+.BT "Programmer's Guide: Networking Interfaces" .
+.H 3 "RFS Utilities Package"
+The Remote File Sharing (RFS) Utilities Package provides the
+facilities needed to share resources transparently among
+computers running UNIX System V.
+It requires the Networking Support Utilities Package, the DFS
+Utilities, and a transport provider that conforms to the
+Transport Provider Interface, such as the Starlan Network or TCP/IP
+(provided in the Internet Utilities Package).
+.P
+For more information about RFS, see the
+.BT "Network User's and Administrator's Guide" .
+.H 3 "Security Administration Package"
+The Security Administration Package provides an
+encryption mechanism for protecting information stored in the computer.
+Using the facilities of this package gives additional protection
+beyond that obtained through login IDs, passwords, and permission modes.
+When this package has been installed, the
+encryption mechanism is available by using the \f4crypt\f1 command,
+as well as in the editors \f4ed\f1, \f4edit\f1, \f4ex\f1, and \f4vi\f1.
+.P
+The Security Administration package has restricted distribution and is provided
+only with computers sold within the United States.
+.P
+For more information, see the
+\f4crypt\f1(1),
+\f4ed\fP(1),
+\f4edit\fP(1),
+\f4ex\fP(1),
+and
+\f4vi\fP(1)
+manual pages in the
+.BT "User's Reference Manual" .
+.H 3 "Standard C Development Environment Package"
+The Standard C Development Environment (SCDE) Package is a set of
+programming tools that help programmers develop C language programs.
+The main component is the compiler, called by the command \f4cc\f1.
+The \f4cc\f1 command automatically calls the
+assembler and the link editor, as needed.
+SCDE provides a wide range of tools to aid C language programmers,
+such as profilers, a debugger, the \f4lint\f1 program, and many more.
+.P
+The Extended Terminal Interface (ETI) and the Source
+Code Control System (SCCS) are included as part of SCDE.
+ETI is a set of screen management library subroutines [built on
+\f4curses\f1(3X)] that promote fast development of application
+programs that manipulate windows, panels, menus, and forms.
+SCCS is a set of programs used to track evolving versions
+of source files and text files.
+.P
+The major enhancements to the C programming language for
+this release fall into these categories:
+conformance with the American National Standards
+Institute (ANSI) X3.159-1989 C language standard;
+transition to dynamic linking,
+.NE 1i
+transition to ELF (Executable and Linking Format)
+from COFF (Common Object File Format),
+and new features added to aid in programming
+for international uses and environments.
+.P
+See the
+.BT "Programmer's Guide: ANSI C and Programming Support Tools" ,
+the
+.BT "Programmer's Guide: Character User Interface (FMLI and ETI)" ,
+the
+.BT "ANSI C Transition Guide" ,
+and the
+.BT "Programmer's Reference Manual"
+for more information.
+.H 3 "Termcap Compatibility Package"
+The Termcap Compatibility Package contains the \f4termcap\f1 file.
+The \f4termcap\f1 file is required by some XENIX applications
+and utilities to define terminal settings.
+.H 3 "Terminal Information Utilities Package"
+The Terminal Information Utilities Package contains a database (\f4terminfo\f1)
+that allows programmers to write programs to manipulate screens
+(and parts of screens, such as function keys and soft labels)
+of video display terminals.
+.P
+As delivered, the \f4terminfo\f1 database contains descriptions
+of over 150 terminals.
+.P
+For more information, see the
+.BT "Programmer's Guide: Character User Interface (FMLI and ETI)" .
+.H 3 "Unlimited User License Package"
+Some computers running UNIX System V are configured to allow a limited
+number of users to access the system simultaneously.
+The Unlimited User Upgrade Package is used to increase the number
+of simultaneous users allowed on a system.
+.H 3 "WD8003 Ethernet Driver Package"
+The WD8003 Ethernet Package contains the device driver needed to
+use the Western Digital WD8003 board.
+.\" .H 3 "X11/NeWS Graphical Windowing System Package"
+.\" The X11/NeWS Graphical Windowing System Package
+.\" contains all end user X11/NeWS facilities.
+.\" These facilities allow an end user to run X11/NeWS applications.
+.\" .H 3 "X11/NeWS Toolkit Package"
+.\" The X11/NeWS Toolkit Package contains facilities needed by programmers
+.\" to create X11/NeWS applications.
+.\" .P
+.\" For more information see the
+.\" \f2Programmer's Guide: X11/NeWS Graphical Windowing System\f1.
+.H 3 "Windowing Utilities Package"
+The Windowing Utilities Package provides the software that is commonly
+required by AT&T windowing terminals (such as the AT&T 630 MTG)
+to create, delete, and manipulate terminal windows,
+query terminal window status, and
+display statistics about usage of windowing routines.
+.P
+For more information about this package,
+see the \f4layers\f1(1) manual page in the
+.BT "User's Reference Manual"
+and the \f4libwindows\f1(3X) manual page in the
+.BT "Programmer's Reference Manual" .
+.SK
+.H 2 "The Release 4 Document Set"
+A full set of documentation is available to end users,
+system administrators, and programmers for UNIX System V Release 4
+on Intel processors.
+Additionally, there are separate versions of many
+documents that contain processor-specific information.
+For example, there are separate versions of the
+.BT "System Administrator's Guide"
+for the 386 and for the 3B2.
+In the following document descriptions,
+those documents that have been revised for the 386
+processor are flagged by the notation ``(386-specific)'' in parentheses.
+.P
+All UNIX System documents described in this book are
+available from Prentice-Hall or one of the many computer vendors
+that reproduce the documents to suit their systems.
+.P
+The Release 4 document set includes both guides and reference manuals.
+Guides contain conceptual and procedural information;
+they tell when and why to do something, as well as how to do it.
+A guide is usually the best introductory text (tutorials are often included),
+yet it is organized so that experienced users can easily skip
+to the information they need.
+.P
+Reference manuals contain complete descriptions (traditionally
+known as ``manual pages'' or ``man pages'') of commands, utilities,
+system calls, library functions, or system file formats.
+The assumption in a reference manual is that the user already knows when
+and why a task should be done.
+Although descriptions are complete, every attempt has been
+made to keep them to one page;
+as a result they are sometimes cryptic.
+A reference manual is an efficient source of information
+once you've become familiar with the product.
+.P
+Below is a list of the documents that make up the Release 4 document set.
+.sp .5
+.B "GENERAL USE AND SYSTEM ADMINISTRATION"
+.BL
+.LI
+Product Overview and Master Index (386-specific)
+.LI
+User's Guide
+.LI
+User's Reference Manual (386-specific)
+.LI
+System Administrator's Guide (386-specific)
+.LI
+System Administrator's Reference Manual (386-specific)
+.LI
+Network User's and Administrator's Guide (386-specific)
+.LI
+Multibus Installation and Configuration Guide (386-specific)
+.LI
+PC-Interface Administrator's Guide (386-specific)
+.LI
+Installation Guide (386-specific)
+.LE
+.SP
+.B "PROGRAMMING"
+.P
+.B "General Programmer's Series"
+.BL
+.LI
+Migration and Compatibility Guide (386-specific)
+.LI
+Programmer's Guide: ANSI C and Programming Support Tools
+.LI
+Programmer's Guide: Character User Interface (FMLI and ETI)
+.LI
+Programmer's Guide: Networking Interfaces
+.LI
+Programmer's Guide: POSIX Conformance
+.LI
+Programmer's Guide: SCSI Driver Interface (386-specific)
+.LI
+Programmer's Reference Manual (386-specific)
+.LE
+.P
+.\" .B "Graphics Series"
+.\" .BL
+.\" .LI
+.\" Programmer's Guide: OPEN LOOK\(rg Graphical User Interface
+.\" .LI
+.\" OPEN LOOK\(rg Graphical User Interface Programmer's Reference Manual
+.\" .LI
+.\" OPEN LOOK\(rg Graphical User Interface User's Guide
+.\" .LI
+.\" Programmer's Guide: XWIN\(rg Graphical Windowing System
+.\" .LI
+.\" Programmer's Guide: X11/NeWS\(rg Graphical Windowing System
+.\" .LE
+.NE 6
+.P
+.B "System Programmer's Series"
+.BL
+.LI
+Programmer's Guide: STREAMS
+.LI
+Device Driver Interface/Driver-Kernel Interface (DDI/DKI) Reference
+Manual (386-specific)
+.LI
+Integrated Software Development Guide (386-specific)
+.LI
+Multibus Reference Manual (386-specific)
+.LI
+Multibus Transport Application Interface Guide (386-specific)
+.LE
+.sp .5
+.NE 1.5i
+.B "RELEASE-SPECIFIC INFORMATION"
+.P
+.B "General"
+.BL
+.LI
+ANSI C Transition Guide
+.LI
+Software Notes (386-specific)
+.LE
+.H 3 "Product Overview and Master Index (386-specific)"
+This document is divided into three chapters.
+The first chapter is an overview of the UNIX System V/386 Release 4 product,
+with an emphasis on features new to Release 4.
+This chapter also describes how the Release 4 document set is organized.
+The second chapter is a master permuted index.
+The third chapter is a master subject index.
+.H 3 "User's Guide"
+The \f2User's Guide\f1 describes what you need to know to get
+started using the UNIX system, including how to use the basic commands
+to create and manipulate files.
+In addition, it includes tutorials describing FACE, \f4ed\f1, \f4vi\f1,
+the shell, \f4awk\f1, and how to send mail and files to other users.
+It also includes \f4vi\f1 quick reference information.
+.H 3 "User's Reference Manual (386-specific)"
+The \f2User's Reference Manual\f1 describes each of
+the UNIX System V/386 user commands.
+Each description includes a synopsis of the command syntax and
+an explanation of how it is used; also supplied where appropriate
+are diagnostic indications, warnings, examples of use, and where to
+find related information.
+.H 3 "System Administrator's Guide (386-specific)"
+The \f2System Administrator's Guide\f1 explains how to perform
+administrative tasks,
+including managing file systems and users, setting up basic networking,
+maintaining security, tuning the system to optimize performance,
+and administering printers.
+Tasks are organized by the menu layout of \f4sysadm\f1,
+the administration interface.
+.H 3 "System Administrator's Reference Manual (386-specific)"
+The \f2System Administrator's Reference Manual (386-specific)\f1
+describes each of the UNIX System V/386 administration commands.
+Each description includes a synopsis of the command syntax,
+an explanation of usage, and, where appropriate,
+diagnostic indications and warnings.
+.H 3 "Network User's and Administrator's Guide (386-specific)"
+The \f2Network User's and Administrator's Guide\f1
+tells how to use and administer the network facilities
+provided with UNIX System V.
+It includes descriptions of administering and using the RFS Utilities Package,
+Network File Sharing (NFS), and TCP/IP.
+.H 3 "Multibus Installation and Configuration Guide (386-specific)"
+This document explains how to install and configure Multibus UNIX on
+Multibus systems.
+.H 3 "PC-Interface Administrator's Guide (386-specific)"
+The \f2PC-Interface Administrator's Guide\f1 describes how to set up
+the server portion (UNIX) of an interface.
+.H 3 "Installation Guide (386-specific)"
+This guide explains how to install the reference binary of the
+operating system, which includes the Base System and the Add-Ons.
+.H 3 "Migration and Compatibility Guide"
+This volume contains three guide sections, two of which contain their
+associated manual pages.
+The first guide section, entitled ``Migration Guide,''
+is aimed at programmers
+who are upgrading from an earlier release of UNIX System V.
+It describes changes made to UNIX System V as it has evolved to
+successive releases up to Release 4.
+.P
+The second guide section, entitled
+``Programmer's Guide:  Application Compatibility,''
+describes the capabilities of application compatibility software
+provided through the Application Compatibility Package.
+This compatibility package permits most applications that currently run on
+XENIX systems to run on UNIX System V Release 4.
+This guide includes manual pages for all tools and facilities
+contained in the Application Compatibility Package.
+.P
+The third guide section is the
+``Programmer's Guide:  BSD System Compatibility.''
+This section describes the capabilities of BSD that have been provided
+in the BSD Compatibility Package.
+This compatibility package permits most applications that currently run on
+BSD and SunOS systems to run on UNIX System V Release 4.
+This guide includes manual pages for all tools and facilities
+contained in the BSD Compatibility Package.
+.H 3 "Programmer's Guide: ANSI C and Programming Support Tools"
+This guide discusses the UNIX system
+programming environment and utilities (e.g., compilers and
+debuggers) and provides details of the C language, file formats,
+the link editor, libraries, and tools.
+.H 3 "Programmer's Guide: Character User Interface (FMLI and ETI)"
+This guide describes tools a programmer can use to interface with a user at
+a terminal that does not have graphics capabilities.
+These tools range from an interpretive language that makes it easy
+to develop forms and menus (FMLI) to libraries of routines
+(ETI/\f4curses\f1) that enable the programmer to work with high-level
+constructs, such as windows, or do low-level character placements.
+Routines remain independent of terminals
+by using a database that describes the capabilities of a terminal and
+the way it performs various operations.
+.H 3 "Programmer's Guide: Networking Interfaces"
+This guide describes the Transport Level Interface (TLI), its capabilities and
+applications, and other network development tools, such
+as RPC and the Network Selection facility.
+.H 3 "Programmer's Guide: POSIX Conformance"
+In accordance with POSIX documentation requirements, this guide
+describes how UNIX System V conforms to POSIX and provides the
+implementation-specific details of that conformance.
+.H 3 "Programmer's Guide:  SCSI Driver Interface (386-specific)"
+This document describes the Small Computer Systems Interface (SCSI)
+Driver Interface, also known as SDI.
+SDI is a machine-independent mechanism for writing SCSI target
+drivers to access an SCSI device.
+.H 3 "Programmer's Reference Manual (386-specific)"
+The \f2Programmer's Reference Manual\f1 contains manual pages for
+UNIX System V programming commands,
+libraries, system calls, file formats, and
+miscellaneous information used by programmers.
+.ig
+.H 3 "Programmer's Guide: OPEN LOOK\(rg Graphical User Interface"
+The programmer's guide provides overview information and
+a series of programs
+that acts as a guide to learning how to program with
+widgets. It also provides information about interoperability
+between clients and server.
+.H 3 "OPEN LOOK\(rg Graphical User Interface Programmer's Reference Manual"
+The programmer's reference manual provides a manual page for each
+OPEN LOOK widget.  Each page explains a widget function and the
+various resources which create that functionality.  A description
+of different convenience routines for the
+application programmer to use while writing OPEN LOOK GUI
+applications is also provided.
+.H 3 "OPEN LOOK\(rg Graphical User Interface User's Guide"
+In addition to end user information, the user's guide
+contains information valuable to installers and
+system administrators. The user's guide provides detailed
+descriptions of the various client programs which run on OPEN LOOK
+GUI as well as manual pages which describe the various demonstration
+packages that are shipped as part of the software product.
+.H 3 "Programmer's Guide: XWIN\(rg Graphical Windowing System"
+Xlib is the C language interface and the lowest level interface to
+X programming.  The
+document explains display functions, connecting to the X server,
+window functions, graphics functions, window manager functions,
+events handling, and application utility functions.
+.H 3 "Programmer's Guide: X11/NeWS\(rg Graphical Windowing System"
+This guide assumes the reader is reasonably
+familiar with the Adobe PostScript\(rg language.  It describes
+the initialization process and gives examples of how to modify
+an initialization routine by customizing PostScript
+language files.
+It also discusses different ways to run NeWS
+graphical windowing system programs.
+..
+.H 3 "Programmer's Guide: STREAMS"
+The \f2Programmer's Guide: STREAMS\f1
+describes the user-level STREAMS facilities
+and explains how to use STREAMS facilities to write
+UNIX System V kernel modules and device drivers.
+It includes a summary of kernel-level
+data structures, STREAMS message types, and specifications
+of kernel utility routines.
+.H 3 "DDI/DKI Reference Manual (386-specific)"
+The \f2Device Driver Interface/Driver-Kernel Interface (DDI/DKI)
+Reference Manual\f1 provides reference information for creating,
+modifying, and maintaining drivers that run on UNIX System V Release 4.
+It defines the entry point routines that must be written,
+the kernel functions that should be used, and the data structure with
+which the drivers interact.
+.H 3 "Integrated Software Development Guide (386-specific)"
+This document addresses the needs of the independent software vendor,
+the value-added reseller, and system developers.
+It presents guidelines for software installation, device drivers,
+file system types, video interface,
+mouse interface, user interface, and internationalization.
+.H 3 "Multibus Reference Manual (386-specific)"
+This document provides manual page descriptions and device driver
+information for the Multibus features.
+.H 3 "Multibus Transport Application Interface Guide (386-specific)"
+This document describes the application interface to the Multibus transport.
+The Multibus II transport uses Multibus II message passing.
+Transport-application interface (TAI) is used by
+applications that need to communicate, via Multibus II transport protocol,
+with remote applications.
+.H 3 "ANSI C Transition Guide"
+The \f2ANSI C Transition Guide\f1
+describes techniques for writing new and upgrading
+existing C code to comply with the ANSI C language specification.
+.H 3 "Software Notes (386-specific)"
+The \f2Software Notes\f1 offers additional information about
+UNIX System V Release 4, including operating and programming tips and
+miscellaneous information that was not available in time to
+include in the Release 4 guides and manuals.
+.\" .H 1 "Related Products"
+.\" AT&T provides a comprehensive collection of software products
+.\" that work with UNIX System V Release 4.
+.\" Products fall into a number of categories, including
+.\" networking, programming, database management, and general applications.
+.\" .P
+.\" For specific information about software products, see the
+.\" .I "AT&T Computer Software Catalog".

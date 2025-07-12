@@ -1,0 +1,213 @@
+'\"macro stdmacro
+.if n .pH g7.arp @(#)arp	40.9 of 5/21/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} ARP 7 "Internet Utilities" "\&"
+.if \nX=1 .ds x} ARP 7 "Internet Utilities"
+.if \nX=2 .ds x} ARP 7 "" "\&"
+.if \nX=3 .ds x} ARP "" "" "\&"
+.TH \*(x}
+.SH NAME
+ARP \- Address Resolution Protocol
+.SH SYNOPSIS
+.nf
+\f4#include <sys/socket.h>\f1
+\f4#include <net/if_arp.h>\f1
+\f4#include <netinet/in.h>\f1
+.LP
+\f4s = socket(\s-1AF_INET\s0, \s-1SOCK_DGRAM\s0, 0);\f1
+.LP
+\f4d = open ("/dev/arp", \s-1O_RDWR\s0);\f1
+.fi
+.SH DESCRIPTION
+.LP
+.SM ARP
+is a protocol used to map dynamically between
+Internet Protocol (\s-1IP\s0)
+and 10Mb/s Ethernet addresses.
+It is
+used by all the 10Mb/s Ethernet datalink providers (interface drivers).
+It is not specific to the Internet Protocol
+or to the 10Mb/s Ethernet, but this implementation
+currently supports only that combination.
+The
+.SM STREAMS
+device
+\f4/dev/arp\f1
+is not a
+Transport Level Interface
+(\s-1TLI\s0)
+transport provider and
+may not be used with the
+.SM TLI
+interface.
+.LP
+.SM ARP
+caches
+.SM IP\s0-to-Ethernet
+address mappings.
+When an interface
+requests a mapping for an address not in the cache,
+.SM ARP
+queues the
+message that requires the mapping and broadcasts
+a message on the associated network requesting the address mapping.
+If a response is provided, the new mapping is cached and any pending
+message is transmitted.
+.SM ARP
+will queue
+at most one packet while waiting for a mapping request to be responded to;
+only the most recently \(lqtransmitted\(rq packet is kept.
+.LP
+To facilitate communications with systems which do not use
+.SM ARP\s0,
+\f4ioctl(\|)\f1
+requests are provided to enter and delete entries in the
+.SM IP\s0-to-Ethernet
+tables.
+.SH USAGE
+.LP
+.nf
+.ft 4
+	#include <sys/sockio.h>
+	#include <sys/socket.h>
+	#include <net/if.h>
+	#include <net/if_arp.h>
+	struct arpreq arpreq;
+	ioctl(s, \s-1SIOCSARP\s0, (caddr_t)&arpreq);
+	ioctl(s, \s-1SIOCGARP\s0, (caddr_t)&arpreq);
+	ioctl(s, \s-1SIOCDARP\s0, (caddr_t)&arpreq);
+.fi
+.ft 1
+.LP
+Each
+\f4ioctl(\|)\f1
+request takes the same structure as an argument.
+\f4SIOCSARP\f1
+sets an
+.SM ARP
+entry,
+\f4SIOCGARP\f1
+gets an
+.SM ARP
+entry, and
+\f4SIOCDARP\f1
+deletes an
+.SM ARP
+entry.
+These
+\f4ioctl(\|)\f1
+requests may be applied to any Internet family
+socket descriptor
+.IR s ,
+or to a descriptor for the 
+.SM ARP
+device,
+but only by the privileged user.
+The
+\f4arpreq\f1
+structure contains:
+.LP
+.nf
+.ft 4
+/*
+* ARP ioctl request
+*/
+struct arpreq {
+	struct sockaddr arp_pa;     /* protocol address */
+	struct sockaddr arp_ha;     /* hardware address */
+	int             arp_flags;  /* flags */
+};
+/*  arp_flags field values */
+#define ATF_COM          0x2  /* completed entry (arp_ha valid) */
+#define ATF_PERM         0x4  /* permanent entry */
+#define ATF_PUBL         0x8  /* publish (respond for other host) */
+#define ATF_USETRAILERS  0x10 /* send trailer packets to host */
+.fi
+.ft 1
+.LP
+The address family for the
+\f4arp_pa\f1
+\f4sockaddr\f1 must be
+\f4AF_INET\f1;
+for the
+\f4arp_ha\f1
+\f4sockaddr\f1 it must be
+\f4AF_UNSPEC\f1.
+The only flag bits that may be written are
+\f4ATF_PERM\f1,
+\f4ATF_PUBL\f1
+and
+\f4ATF_USETRAILERS\f1.
+\f4ATF_PERM\f1
+makes the entry permanent if the
+\f4ioctl(\|)\f1
+request succeeds.
+The peculiar nature of the
+.SM ARP
+tables may cause the
+\f4ioctl(\|)\f1
+request to fail if too many permanent
+.SM IP
+addresses hash to the same slot.
+\f4ATF_PUBL\f1
+specifies that the
+.SM ARP
+code should respond to
+.SM ARP
+requests for the indicated host coming from
+other machines.
+This allows a host to act as an
+\(lq\s-1ARP\s0 server\(rq, which may be useful in convincing an
+.SM ARP\s0-only
+machine to talk to a non-\s-1ARP\s0 machine.
+.LP
+.SM ARP
+is also used to negotiate the use of trailer
+.SM IP
+encapsulations; trailers are an alternate
+encapsulation used to allow efficient packet
+alignment for large packets despite variable-sized
+headers.
+Hosts that wish to receive trailer
+encapsulations so indicate by sending gratuitous
+.SM ARP
+translation replies along with replies to
+.SM IP
+requests; they are also sent in reply to
+.SM IP
+translation replies.
+The negotiation is thus
+fully symmetrical, in that either or both hosts
+may request trailers.
+The
+\f4ATF_USETRAILERS\f1
+flag is used to record the receipt of such a reply,
+and enables the transmission of trailer packets to that host.
+.LP
+.SM ARP
+watches passively for hosts impersonating the local host (that is, a host
+which responds to an
+.SM ARP
+mapping request for the local host's address).
+.SH SEE ALSO
+\f4arp\f1(1M),
+\f4ifconfig\f1(1M),
+\f4if\f1(3N),
+\f4inet\f1(7)
+.LP
+Plummer, Dave,
+.RI `` "An Ethernet Address Resolution Protocol -or- Converting Network Protocol Addresses to 48.bit Ethernet Addresses for Transmission on Ethernet Hardware" ,''
+.SM RFC
+826, Network Information Center,
+.SM SRI
+International, Menlo Park, Calif.,
+November 1982
+.LP
+Leffler, Sam, and Michael Karels,
+.RI `` "Trailer Encapsulations" ,''
+.SM RFC
+893, Network Information Center,
+.SM SRI
+International, Menlo Park, Calif., April 1984

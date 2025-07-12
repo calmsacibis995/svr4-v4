@@ -1,0 +1,41 @@
+'\"macro stdmacro
+.if n .pH 386.mps_get_unso @(#)mps_get_unso	40.5 of 7/1/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.nr X
+.if \nX=0 .ds x} mps_get_unsoldata D3D "Multibus II" "DDI" "\&"
+.if \nX=1 .ds x} mps_get_unsoldata D3D "Multibus II" "DDI" "\&"
+.if \nX=2 .ds x} mps_get_unsoldata D3D "" "\&"
+.if \nX=3 .ds x} mps_get_unsoldata "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4mps_get_unsoldata\f1 \- copies user data from the message buffer.
+.SH SYNOPSIS
+.nf
+\f4#include <sys/mps.h>
+void mps_get_unsoldata(\f2mbp\fP, \f2dptr\fP, \f2count\fP)
+mps_msgbuf_t		mbp;
+unsigned char		*dptr;
+unsigned long		count;\f1
+.fi
+.SH ARGUMENTS
+.TP
+\f2mbp\f1
+pointer to message buffer
+.TP
+\f2dptr\f1
+pointer to user data
+.TP
+\f2count\f1
+number of bytes to transfer (Max 20)
+.SH DESCRIPTION
+The \f4mps_get_unsoldata\f1 function copies count bytes of data from the
+message buffer \f2mbp\f1 to \f2dptr\f1.
+It is used to retrieve user data
+from an unsolicited message.
+A maximum of 20 bytes of user data can be copied.
+.SH RETURN VALUE
+None
+.SH LEVEL
+Base or Interrupt
+.SH SEE ALSO
+\f4mps_get_soldata\f1(D3D)

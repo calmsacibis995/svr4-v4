@@ -1,0 +1,184 @@
+'\"macro stdmacro
+.if n .pH g1a.idload @(#)idload	40.6.1.3 of 1/3/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} idload 1M "Remote File Sharing Utilities" "\&"
+.if \nX=1 .ds x} idload 1M "Remote File Sharing Utilities"
+.if \nX=2 .ds x} idload 1M "" "\&"
+.if \nX=3 .ds x} idload "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4idload\f1 \- Remote File Sharing user and group mapping
+.SH SYNOPSIS
+\f4idload\f1
+[\f4\-n\f1] [\f4\-g \f2g_rules\f1] [\f4\-u \f2u_rules\f1] [\|\f4directory\fP]
+.br
+\f4idload \-k\f1
+.SH DESCRIPTION
+\f4idload\f1 is used on Remote File Sharing server machines to 
+build translation tables for user and group ids.  It takes your 
+\f4/etc/passwd\f1 and \f4/etc/group\f1 files and produces translation 
+tables for user and group ids from remote machines, according to the rules
+set down in the \f2u_rules\f1 and \f2g_rules\f1 files.  If you are mapping by
+user and group name, you will need copies of remote \f4/etc/passwd\f1
+and \f4/etc/group\f1 files.
+If no rules files are specified, remote user and group ids are mapped to
+MAXUID+1 (this is an id number that is one higher than the highest number
+you could assign on your system.)
+.P
+By default, the remote password and group files are assumed to
+reside in \f4/etc/rfs/auth.info/\f2domain\f1/\f2nodename\f1/[\f4passwd\f1\|| \f4group\f1].
+The \f4directory\fP argument indicates that some directory structure
+other than \f4/etc/rfs/auth.info\f1 contains the
+\f2domain\f1/\f2nodename\f1 \f4passwd\f1 and \f4group\f1 files.
+(\f2nodename\f1 is the name of the computer the files are from and
+\f2domain\f1 is the domain that computer is a member of.)
+.P
+You must run \f4idload\f1 to put the mapping into place.
+Global mapping will take effect immediately
+for machines that have one of your resources currently mounted.
+Mapping for other specific machines will take effect when
+each machine mounts one of your resources.
+.TP .75i
+\f4\-n\f1
+This is used to do a trial run of the id mapping.
+No translation table will be produced, however, a display of
+the mapping is output to the terminal (\f2stdout\f1).
+.TP
+\f4\-k\f1
+This is used to print the idmapping that is currently in use.
+(Specific mapping for remote machines will not be shown until
+that machine mounts one of your resources.)
+.TP
+\f4\-u \f2u_rules\f1
+The \f2u_rules\f1 file contains the rules for user id translation.
+The default rules file is \f4/etc/rfs/auth.info/uid.rules\f1.
+.TP
+\f4\-g \f2g_rules\f1
+The \f2g_rules\f1 file contains the rules for group id translation.
+The default rules file is \f4/etc/rfs/auth.info/gid.rules\f1.
+.P
+This command is restricted to the super-user.
+.P
+.SH Rules
+The rules files have two types of sections (both optional):
+\f4global\f1 and \f4host\f1.  There can be only one global
+section, though there can be one host section for each computer
+you want to map.
+.P
+The \f4global\f1 section describes the default conditions for translation
+for any machines that are not explicitly referenced in a \f4host\f1 section.
+If the global section is missing, the default action is to map all remote
+user and group ids from\p
+.br
+.ne 1.5i
+undefined computers to MAXUID+1.
+The syntax of the first line of the \f4global\f1 section is:
+.IP
+\f4global\f1
+.P
+A \f4host\f1 section is used for each machine or group
+of machines that you want to map differently from the global definitions.
+The syntax of the first line of each \f4host\f1 section is:
+.IP
+\f4host\f1 \f2name\f1 ...
+.P
+where \f2name\f1 is replaced by the full name of a
+computer (\f2domain.nodename\f1).  
+.P
+The format of a rules file is described below. (All lines are
+optional, but must appear in the order shown.)
+.nf
+
+\f4global
+default \f2local | \f4transparent 
+exclude \f2remote_id-remote_id\f1 | \f2remote_id\f1
+\f4map\f1 \f2remote_id:local\f1
+.sp
+\f4host \f2domain.nodename \f1[\f2domain.nodename...\f1]
+\f4default \f2local | \f4transparent 
+exclude \f2remote_id-remote_id\f1 | \f2remote_id\f1 | \f2remote_name\f1
+\f4map\f1 \f2remote:local\f1 | \f2remote\f1 | \f4all\f1
+
+.fi
+Each of these instruction types is described below.
+.P
+The line 
+.IP
+\f4default \f2local | \f4transparent \f1
+.P
+defines the mode of mapping for remote users that are not
+specifically mapped in instructions in other lines.
+\f4transparent\f1 means that each remote
+user and group id will have the same numeric value locally unless it
+appears in the \f4exclude\f1 instruction.
+\f2local\f1 can be replaced by a local user name or id to map all
+users into a particular local name or id number.
+If the default line is omitted, all users that are not specifically
+mapped are mapped into a "special guest" login id.
+.P
+The line 
+.IP
+\f4exclude \f2remote_id-remote_id\f1 | \f2remote_id\f1 | \f2remote_name\f1
+.P
+defines remote ids that will be excluded from the \f4default\f1 mapping.
+The \f4exclude\f1 instruction must precede any
+\f4map\f1 instructions in a block.  You can use a range of id numbers,
+a single id number, or a single name.  (\f2remote_name\f1 cannot be used in
+a \f4global\f1 block.)
+.P
+The line 
+.IP
+\f4map \f2remote:local\f1 | \f2remote\f1 | \f4all\f1
+.P
+defines the local ids and names that remote ids and names
+will be mapped into. \f2remote\f1 is either a remote id number
+or remote name; \f2local\f1 is either a local id number or local name.
+Placing a colon between a \f2remote\f1 and
+a \f2local\f1 will give the value on the left
+the permissions of the value on the right.
+A single \f2remote\f1 name or id will assign
+the user or group permissions of the same local
+name or id.
+\f4all\f1 is a predefined alias for the set of all user and group ids found
+in the local \f4/etc/passwd\f1 and \f4/etc/group\f1 files.
+(You cannot map by remote name in\p
+.br
+\f4global\f1 blocks.)
+.P
+Note: \f4idload\f1 will always output warning messages for \f4map all\f1,
+since password files always contain multiple administrative
+user names with the same id number.  The first mapping attempt on the
+id number will succeed, each subsequent attempts will produce a warning.
+.P
+Remote File Sharing doesn't need to be running to use \f4idload\f1.
+.SH "EXIT STATUS"
+.P
+On successful completion, \f4idload\f1 will produce one or more
+translation tables and return a successful exit status.
+If \f4idload\f1 fails, the command will return an exit
+status of zero and not produce a translation table.
+.SH ERRORS
+.P
+If (1) either rules file cannot be found or opened, (2) there are syntax errors in
+the rules file, (3) there are semantic errors in the rules file,
+(4) \f4host\f1 password or group information could not be found, or (5)
+the command is not run with super-user privileges, an error message
+will be sent to standard error.
+Partial failures will cause a
+warning message to appear, though the process will continue.
+.SH FILES
+.nf
+\f4/etc/passwd\f1
+\f4/etc/group\f1
+\f4/etc/rfs/auth.info/\f2domain\f1/\f2nodename\f1/[\f4user\f1\|| \f4group\f1]
+\f4/etc/rfs/auth.info/uid.rules\f1
+\f4/etc/rfs/auth.info/gid.rules\f1
+.fi
+.SH SEE ALSO
+\f4mount\fP(1M).
+.br
+"Remote File Sharing" chapter of the \f2System Administrator's Guide\f1
+for detailed information on ID mapping.
+.\"	@(#)idload.1m	6.3 of 9/2/83

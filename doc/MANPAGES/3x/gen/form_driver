@@ -1,0 +1,123 @@
+'\"!  tbl | mmdoc
+'\"macro stdmacro
+.if n .pH g3x.form_driver @(#)form_driver	40.5 of 4/10/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.\" ident	"@(#)svid_ti:ti_lib/form_driver	1.3"
+.nr X
+.if \nX=0 .ds x} form_driver 3X "" "\&"
+.if \nX=1 .ds x} form_driver 3X ""
+.if \nX=2 .ds x} form_driver 3X "" "\&"
+.if \nX=3 .ds x} form_driver "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4form_driver\f1 \- command processor for the \f4forms\fP subsystem
+.SH SYNOPSIS
+.nf
+.ft 4
+#include <form.h>
+.sp
+int form_driver(FORM *form, int c);
+.ft 1
+.fi
+.SH DESCRIPTION
+\f4form_driver\fP is the workhorse of the \f4forms\fP subsystem; 
+it checks to determine whether the character \f2c\f1 is a \f4forms\fP request or data.
+If it is a request, the form driver executes the request and reports the result.
+If it is data (a printable ASCII character), it enters the data into the
+current position in the current field.
+If it is not recognized, the form driver assumes it is an application-defined
+command and returns \f4E_UNKNOWN_COMMAND\fP.
+Application defined commands should be defined relative to \f4MAX_COMMAND\fP,
+the maximum value of a request listed below.
+.PP
+Form driver requests:
+.TS
+lfCWw(1.25i)1 l .
+REQ_NEXT_PAGE	Move to the next page.
+REQ_PREV_PAGE	Move to the previous page.
+REQ_FIRST_PAGE	Move to the first page.
+REQ_LAST_PAGE	Move to the last page.
+.sp 0.5
+REQ_NEXT_FIELD	Move to the next field.
+REQ_PREV_FIELD	Move to the previous field.
+REQ_FIRST_FIELD	Move to the first field.
+REQ_LAST_FIELD	Move to the last field.
+REQ_SNEXT_FIELD	Move to the sorted next field.
+REQ_SPREV_FIELD	Move to the sorted prev field.
+REQ_SFIRST_FIELD	Move to the sorted first field.
+REQ_SLAST_FIELD	Move to the sorted last field.
+REQ_LEFT_FIELD	Move left to field.
+REQ_RIGHT_FIELD	Move right to field.
+REQ_UP_FIELD	Move up to field.
+REQ_DOWN_FIELD	Move down to field.
+.sp 0.5
+REQ_NEXT_CHAR	Move to the next character in the field.
+REQ_PREV_CHAR	Move to the previous character in the field.
+REQ_NEXT_LINE	Move to the next line in the field.
+REQ_PREV_LINE	Move to the previous line in the field.
+REQ_NEXT_WORD	Move to the next word in the field.
+REQ_PREV_WORD	Move to the previous word in the field.
+REQ_BEG_FIELD	Move to the first char in the field.
+REQ_END_FIELD	Move after the last char in the field.
+REQ_BEG_LINE	Move to the beginning of the line.
+REQ_END_LINE	Move after the last char in the line.
+REQ_LEFT_CHAR	Move left in the field.
+REQ_RIGHT_CHAR	Move right in the field.
+REQ_UP_CHAR	Move up in the field.
+REQ_DOWN_CHAR	Move down in the field.
+.sp 0.5
+REQ_NEW_LINE	Insert/overlay a new line.
+REQ_INS_CHAR	Insert the blank character at the cursor.
+REQ_INS_LINE	Insert a blank line at the cursor.
+REQ_DEL_CHAR	Delete the character at the cursor.
+REQ_DEL_PREV	Delete the character before the cursor.
+REQ_DEL_LINE	Delete the line at the cursor.
+REQ_DEL_WORD	Delete the word at the cursor.
+REQ_CLR_EOL	Clear to the end of the line.
+REQ_CLR_EOF	Clear to the end of the field.
+REQ_CLR_FIELD	Clear the entire field.
+REQ_OVL_MODE	Enter overlay mode.
+REQ_INS_MODE	Enter insert mode.
+.sp 0.5
+REQ_SCR_FLINE	Scroll the field forward a line.
+REQ_SCR_BLINE	Scroll the field backward a line.
+REQ_SCR_FPAGE	Scroll the field forward a page.
+REQ_SCR_BPAGE	Scroll the field backward a page.
+REQ_SCR_FHPAGE	Scroll the field forward half a page.
+REQ_SCR_BHPAGE	Scroll the field backward half a page.
+.sp 0.5
+REQ_SCR_FCHAR	Horizontal scroll forward a character.
+REQ_SCR_BCHAR	Horizontal scroll backward a character.
+REQ_SCR_HFLINE	Horizontal scroll forward a line.
+REQ_SCR_HBLINE	Horizontal scroll backward a line.
+REQ_SCR_HFHALF	Horizontal scroll forward half a line.
+REQ_SCR_HBHALF	Horizontal scroll backward half a line.
+.sp 0.5
+REQ_VALIDATION	Validate field.
+REQ_PREV_CHOICE	Display the previous field choice.
+REQ_NEXT_CHOICE	Display the next field choice.
+.TE
+.SH RETURN VALUE
+\f4form_driver\fP returns one of the following:
+.TS
+lfCWw(1.25i)1 c1 lw(3i) .
+E_OK	\-	The function returned successfully.
+E_SYSTEM_ERROR	\-	System error.
+E_BAD_ARGUMENT	\-	An argument is incorrect.
+E_NOT_POSTED	\-	The form is not posted.
+E_INVALID_FIELD	\-	The field contents are invalid.
+E_BAD_STATE	\-	T{
+The routine was called from an initialization or termination function.
+T}
+E_REQUEST_DENIED	\-	The form driver request failed.
+E_UNKNOWN_COMMAND	\-	T{
+An unknown request was passed to the the form driver.
+T}
+.TE
+.SH NOTES
+The header file \f4<form.h>\f1 automatically includes the header files
+\f4<eti.h>\fP and \f4<curses.h>\fP.
+.SH SEE ALSO
+\f4curses\fP(3X),
+\f4forms\fP(3X)

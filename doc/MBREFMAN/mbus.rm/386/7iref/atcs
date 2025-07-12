@@ -1,0 +1,156 @@
+'\"macro stdmacro
+.if n .pH g1a.atcs @(#)atcs	40.7 of 5/17/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} atcs 7iref "System Administration Utilities" "" "\&"
+.if \nX=1 .ds x} atcs 7iref "System Administration Utilities" ""
+.if \nX=2 .ds x} atcs 7iref "" "\&"
+.if \nX=3 .ds x} atcs "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4atcs\f1\-asynchronous terminal controller script device driver
+.SH DESCRIPTION
+The \f4atcs\f1 device driver, together with the \f4iasy\fP(7iref) driver,
+provides a termio interface to terminal controller scripts running
+on serial port controller boards within Multibus II systems.
+The \f4atcs\f1 device driver provides 
+functions which implement the asynchronous terminal protocol.
+.P
+The \f4atcs\f1 device driver uses the Multibus II transport message passing mechanism 
+to communicate with servers running on serial controller boards (the iSBC 
+186/410 Serial Communications Controller board, for example) in the Multibus II 
+system.  
+.P
+The \f4atcs\f1 driver relies upon the \f4cci\fP device driver to set up communication paths 
+to a server running on a serial controller board.
+Once the \f4cci\fP driver has set 
+up a channel for an \f4atcs\f1 line, the \f4atcs\f1 driver may use that channel to 
+communicate with a server controlling a port on the serial controller board.
+.P
+The \f4/etc/conf/pack.d/atcs/space.c\f1
+file contains the \f4atcs\f1_info structure.  This 
+structure holds information that maps slots and ports to minor numbers, and
+specifies which ATCS lines in a system should be configured for UNIX System V/386
+Release 4.0.
+You need to update this structure if you remove or install any 
+asynchronous serial interface ports in the system.
+.P
+The \f4atcs_info\f1 structure contains the following information:
+.TP
+\f2slot\fP
+The slot number for the board on which an \f4atcs\f1 server 
+may be running.
+.TP
+\f2beg_minor_num\fP
+The first ATCS minor number to be allocated for the server board.
+.TP	
+\f2end_minor_num\fP
+The last ATCS minor number to be allocated for the server board.
+.TP
+\f2beg_port_num\fP
+The first hardware port to be allocated for the system relative to that board.
+.P
+Users enter appropriate values into the fields, and in this manner map ranges 
+of minor number onto physical boards and ports.  For example, the structure 
+definition to add a 186/450 in slot 5 to a system that has a 258/279 in slot 0 
+and a 186/410 in slot 6 is as follows:
+.P
+.RS
+.ft 4
+.nf
+struct   acts _info   atcs_info[]  =  {
+	{0,  6,  11,  0},     /*i279 in slot 0*/
+	{5,  12, 23,  0},     /*186/450 in slot 5*/
+	{6,  24, 29,  0},     /*186/410 in slot 6*/
+	{ICS_MAX_SLOT, 0, 0, 0}
+};
+.ft 1
+.fi
+.RE
+.P
+Note that the beginning minor number of a following board does not have to 
+immediately  follow the ending minor number of the preceding board.  For 
+example, the beginning and ending minor numbers for the 186/410 could also be 
+40 and 45, respectively.  Each hardware dependent driver registers it's minor 
+numbers with the generic streams driver, iasy, at system initialization time.  
+The minimum minor allowed in \f4atcs_info\f1 is 6.  Minor numbers 0-5 are reserved 
+for other drivers.  The maximum minor number allowed is 255.
+.P
+Subranges of unit port numbers can also be specified.  For example, for the 
+186/450 you could assign ports 0 through 5 for System V/386 Release 4 and ports 6 
+through 11 for iRMX.
+.P
+After modifying the \f4atcs_info\f1 structure, you need to rebuild the kernel and
+then shutdown and reboot the system.  To rebuild the kernel, enter 
+\f4etc/conf/bin/idbuild\f1.
+.P
+The system makes the device nodes for the ports at boot time based on the 
+information in the \f4atcs_info\f1 structure.
+See \f4iasy\f1(7iref) for information on tty node configuration.
+.P
+The mapping of slot/port to minor number can also be specified with the boot 
+parameter string (BPS).
+If there is \f4atcs\f1 information in the BPS, the system 
+overwrites the information in the \f4atcs_info\f1 structure of the
+\f4space.c\fP file. 
+BPS mapping has the following format:
+.P
+.RS
+.ft4
+.nf 
+ASYNC1 = hid: \f2slot_number\f4, minor:\f2range\f4, port: 
+\f2first_hardware_port\f4;
+.ft1
+.fi
+.RE
+.P
+For example, the following shows how the above format could be expressed in the 
+BPS:
+.P
+.RS
+.ft4
+.nf
+ASYNC1 = hid: 0, minor:6-11, port:0;
+ASYNC2 = hid: 5, minor:2-23, port;0;
+ASYNC3 = hid: 6, minor:24-29, port:0;
+.ft1
+.fi
+.RE
+.SH Multiple Processors
+Read the following if your system has multiple processor boards:
+.IP "-" .25i
+Each processor board should allocate the same minor number range to the
+serial controller board(s).
+.IP "-" .25i
+Only one processor can access a serial port at a time.
+.IP "-" .25i
+Use ttyswitch(1iref) to switch a port between processors.
+.SH FILES
+.TP 2.25i
+\f4/etc/conf/cf.d/mdevice\f1
+\f4mdevice\fP entries
+.TP
+\f4/etc/conf/sdevice.d/atcs\f1
+\f4sdevice\fP entries
+.TP
+\f4/etc/conf/pack.d/atcs/Driver.o\f1
+\f4atcs\f1 device driver object module
+.TP
+\f4/etc/conf/pack.d/atcs/space.c\f1
+\f4atcs\f1 specific declarations and initialization
+.TP
+\f4/usr/include/sys/atcs.h\f1
+\f4atcs\f1 specific definitions
+.TP
+\f4/usr/include/sys/atcsmp.h\f1
+\f4atcs\f1 message passing protocol definitions
+.SH SEE ALSO
+\f4186/450\f1(7iref),
+\f4bps\f1(7iref),
+\f4cci\f1(7iref),
+\f4i410\f1(7iref), 
+\f4iasy\f1(7iref),
+\f4mix386/450\f1(7iref),
+\f4mpi/450\f1(7iref),
+\f4termio\f1(7).

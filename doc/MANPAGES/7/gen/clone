@@ -1,0 +1,37 @@
+'\"macro stdmacro
+.if n .pH g7.clone @(#)clone	40.7 of 4/11/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} clone 7 "Networking Support Utilities" "\&"
+.if \nX=1 .ds x} clone 7 "Networking Support Utilities"
+.if \nX=2 .ds x} clone 7 "" "\&"
+.if \nX=3 .ds x} clone "" "" "\&"
+.TH \*(x}
+.SH "NAME"
+\f4clone\f1 \- open any major/minor device pair on a \s-1STREAMS\s0 driver
+.SH "DESCRIPTION"
+\f4clone\fP is a \s-1STREAMS\s0 software driver that finds and opens an
+unused major/minor device on another \s-1STREAMS\s0 driver.
+The major device number passed to \f4clone\fP during open corresponds to the 
+\f4clone\fP driver and the minor device number corresponds to the target driver.
+Each open results in a separate stream to a previously
+unused major/minor device.
+.P
+The \f4clone\fP driver consists solely of an open function.
+This open function performs all of the necessary work so that subsequent system calls 
+[including \f4close\fP(2)] require no further involvement of \f4clone\fP.
+.P
+\f4clone\fP will generate an \s-1ENXIO\s+1 error, without opening the device, if the 
+major/minor device number provided does not correspond to a valid major/minor device, or if the driver indicated is not a \s-1STREAMS\s0 driver.
+.SH "SEE ALSO"
+\f4log\fP(7)
+.br
+\f2Programmer's Guide: \s-1STREAMS\s0\f1
+.SH "NOTES"
+Multiple opens of the same major/minor device cannot be done through the \f4clone\fP 
+interface.
+Executing \f4stat\fP(2) on the file system node for a cloned device yields a
+different result from executing \f4fstat\fP(2) using a file descriptor obtained
+from opening the node.
+.Ee

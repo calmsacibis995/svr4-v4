@@ -1,0 +1,74 @@
+'\"macro stdmacro
+.if n .pH g1.umask @(#)umask	40.3.1.1 of 1/3/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} umask 1 "Essential Utilities" "\&"
+.if \nX=1 .ds x} umask 1 "Essential Utilities"
+.if \nX=2 .ds x} umask 1 "" "\&"
+.if \nX=3 .ds x} umask "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4umask\f1 \- set file-creation mode mask
+.SH SYNOPSIS
+\f4umask\f1
+[ \f2ooo\f1 ]
+.SH DESCRIPTION
+The user file-creation mode mask is set to
+.IR ooo .
+The three octal digits refer to
+read/write/execute permissions for
+.IR owner ,
+\f4group\fP,
+and
+.IR others ,
+respectively
+(see
+\f4chmod\fP(2)
+and
+\f4umask\fP(2)).
+The value of each specified digit is subtracted from the corresponding
+``digit'' specified by the system for the creation of a file
+(see
+\f4creat\fP(2)).
+For example,
+\f4umask 022\f1
+removes
+\f4group\fP
+and
+.I others\^
+write permission
+(files normally created
+with mode
+\f4777\f1
+become mode
+\f4755\f1;
+files created with mode
+\f4666\f1
+become mode
+\f4644\f1).
+.PP
+If
+.I ooo\^
+is omitted, the current value of the mask is printed.
+.PP
+\f4umask\fP
+is recognized and executed
+by the shell.
+.PP
+\f4umask\fP can be included in the user's \f4.profile\f1
+(see \f4profile\fP(4)) and invoked at
+login to automatically set the user's permissions on files or directories created.
+.SH SEE ALSO
+\f4chmod\fP(1),
+\f4sh\fP(1).
+.br
+\f4chmod\fP(2),
+\f4creat\fP(2),
+\f4umask\fP(2) in the
+\f2Programmer's Reference Manual\f1.
+.br
+\f4profile\fP(4) in the
+.\"	@(#)umask.1	6.2 of 9/2/83
+\f2System Administrator's Reference Manual\f1.
+.Ee

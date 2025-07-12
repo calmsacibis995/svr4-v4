@@ -1,0 +1,190 @@
+.if n .pH 386.sadc @(#)sadc	40.2 of 3/4/91
+'\"macro stdmacro
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.if t .ds ' \h@.05m@\s+4\v@.333m@\'\v@-.333m@\s-4\h@.05m@
+.if n .ds ' '
+.if t .ds ` \h@.05m@\s+4\v@.333m@\`\v@-.333m@\s-4\h@.05m@
+.if n .ds ` `
+.nr X
+.if \nX=0 .ds x} sadc 1M "System Performance Analysis Utilities" "\&"
+.if \nX=1 .ds x} sadc 1M "System Performance Analysis Utilities"
+.if \nX=2 .ds x} sadc 1M "" "\&"
+.if \nX=3 .ds x} sadc "" "" "\&"
+.TH \*(x}
+.nh
+.SH NAME
+\f4sadc\f1, \f4sa1\f1, \f4sa2\f1 \- system activity report package
+.SH SYNOPSIS
+\f4/usr/lib/sa/sadc\f1 [\|\f2t n\f1\|] [\f2ofile\f1]
+.PP
+\f4/usr/lib/sa/sa1\f1 [\|\f2t n\f1\|]
+.PP
+\f4/usr/lib/sa/sa2\f1 [\f4-ubdycwaqvmpgrkxDSAC\f1]
+[\f4-s \f2time\f1] [\f4-e \f2time\f1] [\f4-i \f2sec\f1]
+.SH DESCRIPTION
+System activity data can be accessed 
+at the special request of a user [see \f4sar\fP(1M)]
+and automatically, on a routine basis, as described here.
+The operating system contains several counters 
+that are incremented as various system actions occur.
+These include counters for
+.SM CPU
+utilization,
+buffer usage,
+disk and tape
+.SM I/O
+activity,
+.SM TTY
+device
+activity, switching
+and system-call activity, file-access,
+queue activity, inter-process communications, paging, and Remote
+File Sharing.
+.PP
+\f4sadc\fP
+and two
+shell procedures,
+\f4sa1\fP
+and
+\f4sa2\fP,
+are used to sample,
+save, and process this data.
+.PP
+\f4sadc\fP,
+the data collector,
+samples system data
+.I n
+times, with an interval of
+.I t
+seconds
+between samples, and writes in binary format to
+.I ofile
+or to standard output.
+The sampling interval \f2t\f1 should be greater than 5 seconds;
+otherwise, the activity of
+\f4sadc\fP
+itself may affect the sample.
+If
+.I t
+and
+.I n
+are omitted,
+a special record is written.
+This facility is used at system boot time, when booting to a 
+multiuser state,
+to mark the time at which the counters restart from zero.
+For example, the \f4/etc/init.d/perf\f1 file writes the 
+restart mark to the daily data by the command entry:
+.P
+.RS 2
+.nf
+\f4su sys \|\-c "$TFADMIN /usr/lib/sa/sadc /var/adm/sa/sa\*`date +%d\*`"\f1
+.fi
+.RE
+.PP
+The shell script
+\f4sa1\fP,
+a variant of
+\f4sadc\fP,
+is used to collect and store data in the binary file
+\f4/var/adm/sa/sa\fP\f2dd\fP,
+where
+\f2dd\fP
+is the current day.
+The arguments
+.I t
+and
+.I n
+cause records to be written
+.I n
+times at an interval of
+.I t
+seconds, or once if omitted.
+The following entries in
+\f4/var/spool/cron/crontabs/sys\f1
+produce records every 20 minutes 
+during working hours and hourly otherwise:
+.P
+.RS
+\f40 \(** \(** \(** 0-6 $TFADMIN /usr/lib/sa/sa1
+.br
+20,40 8\-17 \(** \(** 1\-5 $TFADMIN /usr/lib/sa/sa1\f1
+.RE
+.P
+See \f4crontab\fP(1) for details.
+.PP
+The shell script
+\f4sa2\fP,
+a variant of \f4sar\fP,
+writes a daily report in the file
+\f4/var/adm/sa/sar\f2dd\f1.
+The options are explained in
+\f4sar\fP(1M).
+The following entry in
+\f4/var/spool/cron/crontabs/sys\f1
+reports important activities hourly 
+during the working day:
+.PP
+.RS 2
+.nf
+\f45 18 \(** \(** 1-5 $TFADMIN /usr/lib/sa/sa2 -s 8:00 -e 18:01 -i 1200 -A\f1
+.fi
+.RE
+.br
+.ne 26
+.PP
+The structure of the binary daily data file
+is:
+.PP
+.ta .25i 1.75i
+.ps -1
+.vs -1
+.nf
+\f4struct sa {
+	struct sysinfo si;	/\(** see /usr/include/sys/sysinfo.h \(**/
+	struct minfo mi;	/\(** defined in sys/sysinfo.h \(**/
+	struct vminfo vmi;	/\(** defined in /usr/include/sys/sysinfo.h \(**/
+	rf_srv_info_t  rf_srv;	/\(** defined in /usr/include/sys/fs/rf_acct.h \(**/
+	fsinfo_t  rfs_in;
+	fsinfo_t  rfs_out;	/\(** defined in /usr/include/sys/sysinfo.h \(**/
+	rfc_info_t  rfc;	/\(** defined in /usr/include/sys/fs/rf_acct.h \(**/
+	struct kmeminfo km;	/\(** defined in /usr/include/sys/sysinfo.h \(**/
+	int  minserve, maxserve;	/\(** RFS server low and high water marks \(**/
+	int  szinode;	/\(** current size of inode table  \(**/
+	int  szfile;	/\(** current size of file table  \(**/
+	int  szproc;	/\(** current size of proc table  \(**/
+	int  szlckf;	/\(** current size of file record header table \(**/
+	int  szlckr;	/\(** current size of file record lock table \(**/
+	int  mszinode;	/\(** size of inode table  \(**/
+	int  mszfile;	/\(** size of file table  \(**/
+	int  mszproc;	/\(** size of proc table  \(**/
+	int  mszlckf;	/\(** maximum size of file record header table \(**/
+	int  mszlckr;	/\(** maximum size of file record lock table \(**/
+	long  inodeovf;	/\(** cumulative overflows of inode table  \(**/
+	long  fileovf;	/\(** cumulative overflows of file table  \(**/
+	long  procovf;	/\(** cumulative overflows of proc table  \(**/
+	time_t  ts;	/\(** time stamp, seconds  \(**/
+	int apstate;	/\(** Co-processor flag \(**/
+	long  devio[\s-1NDEVS\s+1][5];	/\(** device unit information  \(**/
+.ta 1.25i 1.75i
+#define \s-1IO_OPS\s+1	0	/\(** cumulative \s-1I\s+1/\s-1O\s+1 requests  \(**/
+#define \s-1IO_BCNT\s+1	1	/\(** cumulative blocks transferred \(**/
+#define \s-1IO_ACT\s+1	2	/\(** cumulative drive busy time in ticks  \(**/
+#define \s-1IO_RESP\s+1	3	/\(** cumulative \s-1I\s+1/\s-1O\s+1 resp time in ticks \(**/
+#define \s-1IO_ID\s+1	4
+};\f1
+.fi
+.ps +1
+.vs +1
+.SH FILES
+\f4/var/adm/sa/sa\f2dd\f1	daily data file
+.br
+\f4/var/adm/sa/sar\f2dd\f1	daily report file
+.br
+\f4/tmp/sa.adrfl\f1	address file
+.SH SEE ALSO
+\f4crontab\f1(1), \f4sag\fP(1M), \f4sar\fP(1M), \f4timex\fP(1).
+.br
+.\"	@(#)sadc.1m	6.2 of 9/2/83
+.Ee

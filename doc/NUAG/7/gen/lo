@@ -1,0 +1,49 @@
+'\"macro stdmacro
+.if n .pH g7.lo @(#)lo	40.6 of 5/21/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} lo 7 "Internet Utilities" "\&"
+.if \nX=1 .ds x} lo 7 "Internet Utilities"
+.if \nX=2 .ds x} lo 7 "" "\&"
+.if \nX=3 .ds x} lo "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4lo\f1 \- software loopback network interface
+.SH SYNOPSIS
+\f4d = open ("/dev/loop", \s-1O_RDWR\s0);\f1
+.SH DESCRIPTION
+The \f4loopback\f1
+device is a software datalink provider (interface driver)
+that returns all packets it receives to their source without involving
+any hardware devices.
+It is a
+.SM STREAMS
+device conforming to the datalink 
+provider interface (\s-1DLPI\s0).
+See \f4if\f1(7)
+for a general description of network interfaces.
+.LP
+The
+\f4loopback\f1
+interface is used to access Internet services on the local machine.
+Because it is available on all machines,
+including those with no hardware network interfaces,
+programs can use it for guaranteed access to local servers.
+A typical application is the
+\f4comsat\f1(1M)
+server which accepts notification of mail delivery
+from a local client.
+The loopback interface is also used for performance analysis and testing.
+.LP
+By convention, the name of the loopback interface is \f4lo0\f1, and 
+it is
+configured with Internet address 127.0.0.1.
+This address may be changed with the\p
+.br
+\f4SIOCSIFADDR\f1
+\f4ioctl(\|)\f1.
+.SH SEE ALSO
+\f4comsat\f1(1M),
+\f4if\f1(7),
+\f4inet\f1(7)

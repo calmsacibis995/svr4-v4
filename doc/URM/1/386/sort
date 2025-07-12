@@ -1,0 +1,368 @@
+'\"macro stdmacro
+.if n .pH g1.sort @(#)sort	40.6 of 4/3/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+'\"macro stdmacro
+.if n .pH g1.sort @(#)sort	40.4 of 5/19/89
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.nr X
+.if \nX=0 .ds x} sort 1 "Essential Utilities" "\&"
+.if \nX=1 .ds x} sort 1 "Essential Utilities"
+.if \nX=2 .ds x} sort 1 "" "\&"
+.if \nX=3 .ds x} sort "" "" "\&"
+.nr X
+.nr X
+.TH \*(x} "" "386 Computer Only"
+.SH NAME
+\f4sort\f1 \- sort and/or merge files
+.SH SYNOPSIS
+\f4sort\f1
+[\f4\-cmu\f1]
+[\f4\-o\f2output]
+[\f4\-y\f2kmem]
+[\f4\-z\f2recsz]
+[\f4\-dfiMnr\f1]
+[\f4\-bt\f1x]
+.br
+[\f4+\f2pos1
+[\f4\-\f2pos2]]
+[\f2files\f1]
+.SH DESCRIPTION
+The \f4sort\fP command
+sorts
+lines of all the named files together
+and writes the result on
+the standard output.
+The standard input is read if
+\f4\-\f1
+is used as a file name
+or no input files are named.
+.PP
+Comparisons are based on one or more sort keys extracted
+from each line of input.
+By default, there is one sort key, the entire input line,
+and ordering is lexicographic by bytes in machine
+collating sequence.
+.PP
+The following options alter the default behavior:
+.TP 5
+\f4\-c\f1
+Check that the input file is sorted according to the ordering rules;
+give no output unless the file is out of sort.
+.TP
+\f4\-m\f1
+Merge only, the input files are already sorted.
+.TP
+\f4\-u\f1
+Unique: suppress all but one in each
+set of lines having equal keys.
+.TP
+\f4\-o\f2output\f1
+The argument given is the name of an output file
+to use instead of the standard output.
+This file may be the same as one of the inputs.
+There may be optional blanks between
+\f4\-o\f1
+and
+.IR output.
+.TP
+\f4\-y\f2kmem\f1
+The amount of main memory used by \f4sort\f1
+has a large impact on its performance.
+Sorting a small file in a large amount
+of memory is a waste.
+If this option is omitted,
+\f4sort\fP
+begins using a system default memory size,
+and continues to use more space as needed.
+If this option is presented with a value,
+\f4kmem\fP,
+\f4sort\fP
+will start using that number of kilobytes of memory,
+unless the administrative minimum or maximum is violated,
+in which case the corresponding extremum will be used.
+Thus,
+\f4\-y\f10
+is guaranteed to start with minimum memory.
+By convention,
+\f4\-y\f1
+(with no argument) starts with maximum memory.
+.TP
+\f4\-z\f2recsz\f1
+The size of the longest line read is recorded
+in the sort phase so buffers can be allocated
+during the merge phase.
+If the sort phase is omitted via the
+\f4\-c\f1
+or
+\f4\-m\f1
+options, a popular system default size will be used.
+Lines longer than the buffer size will cause
+\f4sort\fP
+to terminate abnormally.
+Supplying the actual number of bytes in the longest line
+to be merged (or some larger value)
+will prevent abnormal termination.
+.PP
+The following options override the default ordering rules.
+.TP 5
+\f4\-d\f1
+``Dictionary'' order: only letters, digits, and blanks (spaces and tabs)
+are significant in comparisons.
+.TP
+\f4\-f\f1
+Fold lower case
+letters into upper case.
+.TP
+\f4\-i\f1
+Ignore non-printable characters.
+.TP
+\f4\-M\f1
+Compare as months.
+The first three non-blank characters
+of the field are folded to upper case
+and compared.
+For example, in English the sorting order
+is "\s-1JAN\s0" < "\s-1FEB\s0" < .\|.\|. < "\s-1DEC\s0".
+Invalid fields compare low to "\s-1JAN\s0".
+The
+\f4\-M\f1
+option implies the
+\f4\-b\f1
+option (see below).
+.TP
+\f4\-n\f1
+An initial numeric string,
+consisting of optional blanks, optional minus sign,
+and zero or more digits with optional decimal point,
+is sorted by arithmetic value.
+The
+\f4\-n\f1
+option implies the
+\f4\-b\f1
+option (see below).
+Note that the
+\f4\-b\f1
+option is only effective when restricted sort key
+specifications are in effect.
+.TP
+\f4\-r\f1
+Reverse the sense of comparisons.
+.PP
+When ordering options appear before restricted
+sort key specifications, the requested ordering rules are
+applied globally to all sort keys.
+When attached to a specific sort key (described below),
+the specified ordering options override all global ordering options
+for that key.
+.PP
+The notation
+\f4+\f2pos1\f1
+\f4\-\f2pos2\f1
+restricts a sort key to one beginning at
+.I pos1
+and ending just before
+.IR pos2 .
+The characters at position
+.I pos1
+and just before
+.I pos2
+are included in the sort key (provided that
+.I pos2
+does not precede
+.IR pos1 ).
+A missing
+\f4\-\f2pos2\f1
+means the end of the line.
+.PP
+Specifying
+.I pos1
+and
+.I pos2
+involves the notion of a field,
+a minimal sequence of characters followed
+by a field separator or a new-line.
+By default, the first blank (space or tab) of a sequence of
+blanks acts as the field separator.
+All blanks in a sequence of blanks are considered to be
+part of the next field; for example,
+all blanks at the beginning of a line are considered to be part of
+the first field.
+The treatment of field separators can be altered using the options:
+.TP 5
+\f4\-b\f1
+Ignore leading blanks when determining the starting and ending
+positions of a restricted sort key.
+If the
+\f4\-b\f1
+option is specified before the first
+\f4+\f2pos1\f1
+argument, it will be applied to all
+\f4+\f2pos1\f1
+arguments.
+Otherwise, the
+\f4b\f1
+flag may be attached independently to each
+\f4+\f2pos1\f1
+or
+\f4\-\f2pos2\f1
+argument (see below).
+.TP 5
+\f4\-t\f2x\f1
+Use
+.I x
+as the field separator character;
+.I x
+is not considered to be part of a field
+(although it may be included in a sort key).
+Each occurrence of
+.I x
+is significant
+(for example,
+.I xx
+delimits an empty field).
+.PP
+.I pos1
+and
+.I pos2
+each have the form
+\f2m\f4.\f2n\f1
+optionally followed by one or more of the flags
+\f4bdfiMnr\f1.
+A starting position specified by
+\f4+\f2m\f4.\f2n\f1
+is interpreted to mean the
+.IR n +1st
+character in the
+.IR m  +1st
+field.
+A missing
+\f4\&.\f2n\f1
+means
+\f4\&.\f10,
+indicating the first character of the
+.IR m +1st
+field.
+If the
+\f4b\f1
+flag is in effect
+.I n
+is counted from the first non-blank in the
+.IR m +1st
+field;
+\f4+\f2m\f4.\f2\f10\f4b\f1
+refers to the first non-blank character in the
+.IR m +1st
+field.
+.PP
+A last position specified by
+\f4\-\f2m\f4.\f2n\f1
+is interpreted to mean the
+.IR n th
+character (including separators) after the last character of the
+.I m th
+field.
+A missing
+\f4\&.\f2n\f1
+means
+\f4\&.\f10,
+indicating the last character of the
+.IR m th
+field.
+If the
+\f4b\f1
+flag is in effect
+.I n
+is counted from the last leading blank in the
+.IR m +1st
+field;
+\f4\-\f2m\f4.\f2\f11\f4b\f1
+refers to the first non-blank in the
+.IR m +1st
+field.
+.br
+.ne 5
+.PP
+When there are multiple sort keys, later keys
+are compared only after all earlier keys
+compare equal.
+Lines that otherwise compare equal are ordered
+with all bytes significant.
+.PP
+.SH EXAMPLES
+Sort the contents of
+.I infile
+with the second field as the sort key:
+.IP
+\f4sort +1 \-2 \f2infile\f1
+.PP
+Sort, in reverse order, the contents of
+.I infile1
+and
+.IR infile2 ,
+placing the output in
+.I outfile
+and using the first character of the second field 
+as the sort key:
+.IP
+\f4sort \-r \-o \f2outfile\fP +1.0 \-1.2 \f2infile1 infile2\f1
+.PP
+Sort, in reverse order, the contents of
+.I infile1
+and
+.I infile2
+using the first non-blank character of the second field 
+as the sort key:
+.IP
+\f4sort \-r +1.0b \-1.1b \f2infile1 infile2\f1
+.PP
+Print the password file
+[\f4passwd\f1(4)]
+sorted by the numeric user
+.SM ID
+(the third colon-separated field):
+.IP
+\f4sort \-t: +2n \-3 /etc/passwd\f1
+.PP
+Sort the contents of the password file using the group ID (third field) as
+the primary sort key and the user ID (second field) as the secondary sort
+key:
+.IP
+\f4sort \-t: +3 \-4 +2 \-3 /etc/passwd\f1
+.PP
+Print the lines of the already sorted file
+.IR infile ,
+suppressing all but the first occurrence of lines
+having the same third field
+(the options
+\f4\-um\f1
+with just one input file make the choice of a unique
+representative from a set of equal lines predictable):
+.IP
+\f4sort \-um +2 \-3 \f2infile\f1
+.SH FILES
+.TP 17
+\f4/var/tmp/stm???\f1
+.SH SEE ALSO
+\f4comm\fP(1),
+\f4join\fP(1),
+\f4uniq\fP(1).
+.SH NOTES
+Comments and exits with non-zero status for various trouble
+conditions
+(for example, when input lines are too long),
+and for disorder discovered under the
+\f4\-c\f1
+option.
+.SP
+When the last line of an input file is missing a
+\f4new-line\f1
+character,
+\f4sort\fP
+appends one, prints a warning message, and continues.
+.PP
+\f4sort\fP
+does not guarantee preservation of relative line
+ordering on equal keys.
+.\"	@(#)sort.1	6.3 of 9/2/83
+.Ee

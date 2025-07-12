@@ -1,0 +1,62 @@
+'\"macro stdmacro
+.if n .pH 386.vtop @(#)vtop	40.2 of 1/7/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.nr X
+.if \nX=0 .ds x} vtop D3D "" "DDI" "\&"
+.if \nX=1 .ds x} vtop D3D "" "DDI"
+.if \nX=2 .ds x} vtop D3D "" "\&"
+.if \nX=3 .ds x} vtop "" "" "\&"
+.TH \*(x}
+.IX "\f4vtop\fP(D3D)"
+.SH NAME
+\f4vtop\f1 \- convert virtual address to physical address
+.SH SYNOPSIS
+.nf
+.na
+\f4#include <sys/types.h>
+.sp 0.5
+paddr_t vtop(\f4caddr_t \f2vaddr, \f4proc_t *\f2p\f4);\f1
+.ad
+.fi
+.SH ARGUMENTS
+.RS 0n 10
+.IP "\f2vaddr\f1" 10n
+Virtual address to convert.
+.IP "\f2p\f1" 10n
+Pointer to the process structure used by \f4vtop\f1 to
+locate the information tables used for memory management.  To indicate
+that the address is in kernel virtual space, \f2p\f1 must be set to \f4NULL\f1.
+Block drivers that
+can transfer data directly in and out of user memory space must set
+\f2p\f1 to the \f4b_proc\f1 member of the \f4buf\f1(D4DK) structure.
+A pointer to the currently running process can be obtained by calling
+\f4drv_getparm\fP(D3DK) with the \f4UPROCP\fP parameter.
+.RE
+.SH DESCRIPTION
+\f4vtop\f1 converts a virtual address to a physical address.  When a
+driver receives a memory address from the kernel, that address is
+virtual.  Generally, memory management is performed by the MMU.
+However, devices that access memory directly using physical DMA deal only with
+physical memory addresses.  In such cases, the driver must provide the
+device with physical memory addresses.
+.P
+The only addresses that are safe to pass to \f4vtop\fP are those provided to drivers
+from the kernel through driver entry points, DDI/DKI kernel routines, DDI/DKI kernel
+data structures, or statically-allocated global driver variables.
+.SH RETURN VALUE
+On success, the physical address is returned.  Otherwise,
+if there is no physical memory mapped to the virtual address,
+0 is returned.  If \f2vaddr\fP specifies an invalid kernel address,
+a system panic will occur.
+.SH LEVEL
+Base or Interrupt.
+.SH NOTES
+Does not sleep.
+.SH SEE ALSO
+.na
+\f4btop\f1(D3DK),
+\f4btopr\f1(D3DK),
+\f4drv_getparm\fP(D3DK),
+\f4ptob\f1(D3DK),
+\f4buf\fP(D4DK)
+.ad

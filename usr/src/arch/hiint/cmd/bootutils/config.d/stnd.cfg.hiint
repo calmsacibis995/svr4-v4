@@ -1,0 +1,42 @@
+#	Copyright (c) 1988  Intel Corporation
+#	All Rights Rreserved
+#
+#	INTEL CORPORATION PROPRIETARY INFORMATION
+#
+#	This software is supplied to AT & T under the terms of a license 
+#	agreement with Intel Corporation and may not be copied nor 
+#	disclosed except in accordance with the terms of that agreement.
+#
+#ident	"@(#)hiint:cmd/bootutils/config.d/stnd.cfg.hiint	1.1"
+#
+# sample configuration file 
+[BL_Host_id=GLOBAL];
+	BL_Target_file = /stand/unix;
+
+[BL_Host_id=0];
+	UNX_rootfs_type = "";
+[BL_Host_id=1];
+	UNX_rootfs_type = "";
+[BL_Host_id=2];
+	UNX_rootfs_type = "";
+[BL_Host_id=3];
+	UNX_rootfs_type = "";
+
+# parameters for the rest of the hosts need to be added as needed
+ 
+[BL_Host_id=4];
+[BL_Host_id=5];
+[BL_Host_id=6];
+[BL_Host_id=7];
+[BL_Host_id=8];
+[BL_Host_id=9];
+[BL_Host_id=10];
+[BL_Host_id=11];
+[BL_Host_id=12];
+[BL_Host_id=13];
+[BL_Host_id=14];
+[BL_Host_id=15];
+[BL_Host_id=16];
+[BL_Host_id=17];
+[BL_Host_id=18];
+[BL_Host_id=19];

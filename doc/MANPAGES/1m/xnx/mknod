@@ -1,0 +1,59 @@
+.if n .pH g2.mknod @(#)mknod	40.6 of 6/18/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+'\"macro stdmacro
+.if \nX=0 .ds x} mknod 1M "Application Compatibility Package" "\&"
+.if \nX=1 .ds x} mknod 1M "Application Compatibility Package"
+.if \nX=2 .ds x} mknod 1M "" "\&"
+.if \nX=3 .ds x} mknod "" "" "\&"
+.nr X
+.TH \*(x}
+.SH NAME
+\f4mknod\f1 \- make a special file
+.SH SYNOPSIS
+\f4mknod\f1
+\f2name\fP
+\f4b\f1 \(bv \f4c\f1
+\f2major\fP
+\f2minor\fP
+.br
+\f4mknod\f1
+\f2name\fP
+\f4p\f1
+.br
+\f4mknod\f1
+\f2name\fP
+\f4m\f1
+.br
+\f4mknod\f1
+\f2name\fP
+\f4s\f1
+.SH DESCRIPTION
+\f4mknod\fP
+makes a directory entry for a special file.
+.PP
+In the first case, \f2name\fP is the special file to be created.
+The second argument is either \f4b\fP to indicate a block-type special file or 
+\f4c\fP to indicate a character-type.
+The last two arguments are
+numbers specifying the
+.I major\^
+and 
+.I minor\^
+device numbers;
+these may be either decimal or octal [see \f4mknod(2)\fP in the \f2Programmer's
+Reference Manual\fP for information on minor device number values].
+The assignment of major device numbers is specific to each system.
+You must be the super-user to use this form of the command.
+.PP
+The second case is used to create a FIFO (named pipe).
+.PP
+The third case is used to create XENIX shared memory handles.
+.PP
+The fourth case is used to create XENIX semaphore handles.
+.SH "NOTES"
+If \f4mknod\f1 is used to create a device in a remote directory
+(Remote File Sharing), the major and minor device numbers
+are interpreted by the server.
+.SH "SEE ALSO"
+\f4mknod\fP(2) in the \f2Programmer's Reference Manual\f1

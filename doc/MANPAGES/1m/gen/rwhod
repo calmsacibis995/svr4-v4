@@ -1,0 +1,148 @@
+'\"macro stdmacro
+.if n .pH g1a.rwhod @(#)rwhod	40.12 of 5/21/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} rwhod 1M "Internet Utilities" "\&"
+.if \nX=1 .ds x} rwhod 1M "Internet Utilities"
+.if \nX=2 .ds x} rwhod 1M "" "\&"
+.if \nX=3 .ds x} rwhod "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4rwhod\f1, \f4in.rwhod\f1 \- system status server
+.SH SYNOPSIS
+\f4in.rwhod\f1
+.SH DESCRIPTION
+\f4rwhod\f1
+is the server which maintains the database used by the
+\f4rwho\f1(1)
+and\p
+.br
+\f4ruptime\f1(1)
+programs.
+Its operation is predicated on the ability to
+broadcast messages on a network.
+.LP
+\f4rwhod\f1
+operates as both a producer and consumer of status information.
+As a producer of information it periodically
+queries the state of the system and constructs
+status messages which are broadcast on a network.
+As a consumer of information, it listens for other
+\f4rwhod\f1
+servers' status messages, validating them, then recording
+them in a collection of files located in the directory
+\f4/var/spool/rwho\f1.
+.LP
+The
+\f4rwho\f1
+server transmits and receives messages at the port indicated
+in the \f4rwho\f1 service specification, see
+\f4services\f1(4).
+The messages sent and received, are of the form:
+.RS
+.nf
+.ft 4
+struct	outmp {
+.RS
+.ft 4
+char	out_line[8];	/* tty name */
+char	out_name[8];	/* user id */
+long	out_time;	/* time on */
+.RE
+.ft 4
+};
+.sp
+.ft 4
+struct	whod {
+.RS
+.ft 4
+char	wd_vers;
+char	wd_type;
+char	wd_fill[2];
+int	wd_sendtime;
+int	wd_recvtime;
+char	wd_hostname[32];
+int	wd_loadav[3];
+int	wd_boottime;
+.RS
+.ft 4
+struct	whoent {
+struct	outmp we_utmp;
+int	we_idle;
+.RE
+.ft 4
+} wd_we[1024 / sizeof (struct whoent)];
+.RE
+.ft 4
+};
+.fi
+.ft 1
+.RE
+.LP
+All fields are converted to network byte order prior to
+transmission.  The load averages are as calculated by the
+\f1w\f1(1)
+program, and represent load averages over the 5, 10, and 15 minute
+intervals prior to a server's transmission.  The host name
+included is that returned by the
+\f4gethostname\f1(2)
+system call.
+The array at the end of the message contains information about
+the users logged in to the sending machine.  This information
+includes the contents of the
+\f4utmp\f1(4)
+entry for each non-idle terminal line and a value indicating the
+time since a character was last received on the terminal line.
+.LP
+Messages received by the
+\f4rwho\f1
+server are discarded unless they originated at a
+\f4rwho\f1
+server's port.  In addition, if the host's name, as specified
+in the message, contains any unprintable
+.SM ASCII
+characters, the
+message is discarded.  Valid messages received by
+\f4rwhod\f1
+are placed in files named
+\f4whod.\f2hostname\f1
+in the directory
+\f4/var/spool/rwho\f1.
+These files contain only the most recent message, in the
+format described above.
+.LP
+Status messages are generated approximately once every
+60 seconds.
+\f4rwhod\f1
+performs an
+\f4nlist\f1(3)
+on
+\f4/stand/unix\f1
+every 10 minutes to guard against
+the possibility that this file is not the system
+image currently operating.
+.SH FILES
+.PD 0
+.TP 20
+\f4/var/spool/rwho\f1
+.PD
+.SH "SEE ALSO"
+\f4rwho\f1(1),
+\f4ruptime\f1(1),
+\f4w\f1(1),
+\f4gethostname\f1(3),
+\f4nlist\f1(3),
+\f4utmp\f1(4)
+.SH NOTES
+This service takes up progressively more network bandwidth as
+the number of hosts on the local net increases.  For large
+networks, the cost becomes prohibitive.
+.LP
+\f4rwhod\f1
+should relay status information between networks.
+People often interpret the server dying
+as a machine going down.
+.LP
+For \f4rwho\f1 to work properly, the directory
+\f4/var/spool/rwho\f1 must exist on the system.

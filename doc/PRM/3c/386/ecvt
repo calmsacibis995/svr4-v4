@@ -1,0 +1,95 @@
+'\"macro stdmacro
+.if n .pH g3c.ecvt @(#)ecvt	40.9 of 4/24/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} ecvt 3C "C Programming Language Utilities" "\&"
+.if \nX=1 .ds x} ecvt 3C "C Programming Language Utilities"
+.if \nX=2 .ds x} ecvt 3C "" "\&"
+.if \nX=3 .ds x} ecvt "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4ecvt\f1, \f4ecvtl\f1, \f4fcvt\f1, \f4fcvtl\f1, \f4gcvt\f1, \f4gcvtl\f1 \- convert floating-point number to string
+.SH SYNOPSIS
+.nf
+\f4#include <stdlib.h>\f1
+.PP
+\f4char \(**ecvt (double value, int ndigit, int \(**decpt, int \(**sign);\fP
+.PP
+\f4char \(**ecvtl (long double value, int ndigit, int \(**decpt, int \(**sign);\fP
+.PP
+\f4char \(**fcvt (double value, int ndigit, int \(**decpt, int \(**sign);\fP
+.PP
+\f4char \(**fcvtl (long double value, int ndigit, int \(**decpt, int \(**sign);\fP
+.PP
+\f4char \(**gcvt (double value, int ndigit, char \(**buf);\fP
+.PP
+\f4char \(**gcvtl (long double value, int ndigit, char \(**buf);\fP
+.SH DESCRIPTION
+\f4ecvt\fP
+and
+\f4ecvtl\fP
+convert
+\f2value\^\fP
+to a null-terminated string of
+\f2ndigit\^\fP
+digits
+and return a pointer thereto.
+The high-order digit is non-zero, unless the value is zero.
+The low-order digit is rounded.
+The position of the decimal point relative to the
+beginning of the string is stored indirectly
+through
+\f2decpt\^\fP
+(negative means to the left of the
+returned digits). The decimal point is not
+included in the returned string.
+If the sign of the result is negative,
+the word pointed to by
+\f2sign\fP
+is non-zero, otherwise
+it is zero.
+.PP
+\f4fcvt\fP
+and
+\f4fcvtl\fP
+are identical to
+\f4ecvt\f1
+and
+\f4ecvtl\fP,
+except that the correct digit
+has been rounded for \f4printf %f\fP
+output of the number
+of digits specified by
+\f2ndigit\fP.
+.PP
+\f4gcvt\fP
+and
+\f4gcvtl\fP
+convert the
+\f2value\^\fP
+to a null-terminated string in
+the array pointed to by
+\f2buf\^\fP
+and return
+\f2buf\fP.
+They attempt to produce
+\f2ndigit\^\fP
+significant digits in \f4%f\fP format if
+possible, otherwise \f4%e\fP format (scientific notation), ready for
+printing. A minus sign, if there is one, or a decimal point will be
+included as part of the returned string.
+Trailing zeros are suppressed.
+.SH "SEE ALSO"
+\f4printf\fP(3S).
+.SH NOTES
+The values returned by
+\f4ecvt\fP,
+\f4ecvtl\fP,
+\f4fcvt\fP,
+and
+\f4fcvtl\fP
+point to a single static data array
+whose content is overwritten by each call.
+.\"	@(#)ecvt.3c	6.3 of 10/20/83
+.Ee

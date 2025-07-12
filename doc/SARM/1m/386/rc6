@@ -1,0 +1,47 @@
+'\"macro stdmacro
+.if n .pH g1a.rc6 @(#)rc6	40.5 of 1/3/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+'\"macro stdmacro
+.if n .pH g1a.rc6 @(#)rc6	40.9 of 9/19/89
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+'\"macro stdmacro
+.if \nX=0 .ds x} rc6 1M "Essential Utilities" "\&"
+.if \nX=1 .ds x} rc6 1M "Essential Utilities"
+.if \nX=2 .ds x} rc6 1M "" "\&"
+.if \nX=3 .ds x} rc6 "" "" "\&"
+.nr X
+.TH \*(x} "" "386 Computer Only"
+.SH NAME
+\f4rc6\f1 \- run commands performed to stop and reboot the operating system
+.SH SYNOPSIS
+\f4/etc/rc6\f1
+.SH DESCRIPTION
+The shell script \f4rc6\f1 is run whenever a transition to run state 6
+is requested either through \f4init 6\f1 or \f4shutdown \-i6\f1.
+.P
+The sequence of events in \f4rc6\f1 is as follows:
+.IP \(bu
+check to see if a new bootable operating system (\f4/stand/unix\f1)
+needs to be built;  if so, build one by running the \f4buildsys\f1
+command
+.IP \(bu
+unmount all file systems
+.P
+Then \f4init\f1 executes the \f4initdefault\f1
+entry in the \f4/etc/inittab\f1 file to bring
+the system to the operating state defined by that entry.
+.P
+Note that if an error occurs while \f4buildsys\f1 is building
+a new bootable operating system, a shell is spawned that will exit
+only to firmware state;  [see \f4buildsys\f1(1M)].
+.SH SEE ALSO
+\f4buildsys\fP(1M),
+\f4cunix\fP(1M),
+\f4init\fP(1M),
+\f4rc0\fP(1M),
+\f4rc2\fP(1M),
+\f4shutdown\fP(1M),
+\f4inittab\fP(4).
+.br
+\f2System Administrator's Guide\f1

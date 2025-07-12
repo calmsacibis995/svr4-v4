@@ -1,0 +1,54 @@
+'\"macro stdmacro
+.if n .pH g1a.ccisubinfo @(#)ccisubinfo	40.7 of 5/17/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} ccisubinfo 1iref "System Administration Utilities" "" "\&"
+.if \nX=1 .ds x} ccisubinfo 1iref "System Administration Utilities" ""
+.if \nX=2 .ds x} ccisubinfo 1iref "" "\&"
+.if \nX=3 .ds x} ccisubinfo "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4ccisubinfo\f1 \- subchannel information on the communications controller.
+.SH SYNOPSIS
+\f4/usr/lib/cci/ccisubinfo\f1 [\f4\-p \f2portid\f1] \f2slot-ID line-number sub-channel\f1
+.SH DESCRIPTION
+\f4ccisubinfo\f1 displays information about the subchannel on a line on
+the communications controller.  The program displays the state of the
+subchannel on the controller.  The state can be either attached, or not
+attached to a host.  If the subchannel is attached to a host, the host ID
+of the active host is displayed.  The number of hosts that are queued on
+the subchannel (i.e., the number of hosts other than the active host that
+have issued a \f4CCI_Attach\f1 or a \f4CCI_Switch\f1 message) is displayed along with
+their host IDs.  The program also displays the Multibus II Transport Port
+ID assigned to the subchannel, for sending line discipline specific
+messages, if the subchannel is attached to a host.
+.PP
+Command line options are:
+.PP
+.TP
+\f4\-p \f2n\f1
+Set the Multibus II Transport source Portid to \f2n\f1 instead of the
+default value 0x1ff.
+.PP
+The program sends a \f4CCI_Get_Subchannel_Info\f1 message to the CCI server and
+prints the information obtained in the reply from the server.  The line
+is specified using its  line-number on the controller.  The lines are
+numbered starting from 0.  The  subchannel is specified by its number.
+The subchannels are numbered starting with 0.  The communications
+controller hosting the CCI server is selected by specifying its Multibus II
+iPSB \f2slot-ID\f1.
+.SH FILES
+\f4/usr/lib/cci/ccisubinfo\f1
+.SH SEE ALSO
+\f4ccisrvinfo\f1(1iref),
+\f4ccildlist\f1(1iref),
+\f4ccildinfo\f1(1iref),
+\f4ccilinfo\f1(1iref),
+\f4cciload\f1(1iref),
+\f4ccibind\f1(1iref),
+\f4cciunbind\f1(1iref),
+\f4ccifree(1iref),
+\f4cciattach\f1(1iref),
+\f4ccidetach\f1(1iref),
+\f4cciswitch\f1(1iref).

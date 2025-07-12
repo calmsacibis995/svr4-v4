@@ -1,0 +1,142 @@
+'\"macro stdmacro
+.if n .pH g1.finger @(#)finger	40.15 of 5/21/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.\" Copyright (c) 1980 Regents of the University of California.
+.\" All rights reserved.  The Berkeley software License Agreement
+.\" specifies the terms and conditions for redistribution.
+.\"
+.\" Copyright (c) 1988 Sun Microsystems, Inc. - All Rights Reserved.
+.\"
+.nr X
+.if \nX=0 .ds x} finger 1 "User Environment Utilities and Internet Utilities" "\&"
+.if \nX=1 .ds x} finger 1 "User Environment Utilities and Internet Utilities"
+.if \nX=2 .ds x} finger 1 "" "\&"
+.if \nX=3 .ds x} finger "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4finger\f1 \- display information about local and remote users
+.SH SYNOPSIS
+\f4finger\f1
+[
+\f4\-bfhilmpqsw\f1
+] 
+.IR username .\ .\ .
+.PP
+\f4finger\f1 [\f4\-l\fP] \f2username@hostname\f1.\ .\ . (\f4TC/IP\fP)
+.SH DESCRIPTION
+By default, the
+\f4finger\f1
+command displays information about each , logged-in user,
+including
+login name, full name, terminal name
+(prepended with a `\f4*\f1' if write-permission
+is denied), idle time, login time, and
+location if known.
+.PP
+Idle time is minutes if it is a single integer,
+hours and minutes if a
+\f1`\f4:\f1'
+is present, or days and hours if a
+\f4d\f1
+is present.
+.P
+When one or more
+.I username
+arguments are given, more detailed information is given for each
+.I username
+specified, whether they are logged in or not.
+.I username
+must be that of a local user,
+and may be a first or last name, or an account name.
+When \f4finger\fP is used to find users on a remote device,
+the user and the name of the remote device are specified in the form \f2username@hostname\f1.
+Information is presented in a multi-line format, and
+includes, in addition to the information mentioned above:
+.IP
+the user's home directory and login shell
+.IP
+time the user logged in if currently logged in,
+or the time the user last logged in if not,
+as well as the terminal or host from which the
+user logged in and, if a terminal.
+.IP
+last time the user received mail,
+and the last time the user read their mail
+.IP
+any plan contained in the file \f4.plan\f1
+in the user's home directory
+.IP
+and any project on which the user is 
+working described in the file\p
+.br
+\%\f4.project\f1
+(also in the user's home directory)
+.P
+The following options are available:
+.TP
+\f4\-b\f1
+Suppress printing the user's home directory and
+shell in a long format printout.
+.TP
+\f4\-f\f1
+Suppress printing the header that is normally
+printed in a non-long format printout.
+.TP
+\f4\-h\f1
+Suppress printing of the \f4.project\f1
+file in a long format printout.
+.TP
+\f4\-i\f1
+Force ``idle'' output format,
+which is similar to short format except that
+only the login name, terminal, login time,
+and idle time are printed.
+.TP
+\f4\-l\f1
+Force long output format.
+.TP
+\f4\-m\f1
+Match arguments only on user name (not first or last name).
+.TP
+\f4\-p\f1
+Suppress printing of the \f4.plan\f1
+file in a long format printout.
+.TP
+\f4\-q\f1
+Force quick output format, which is similar to short format except that only
+the login name, terminal, and login time are printed.
+.TP
+\f4\-s\f1
+Force short output format.
+.TP
+\f4\-w\f1
+Suppress printing the full name in a short format printout.
+.P
+Within the \f4TCP/IP\fP network, the \f4\-l\fP option
+can be used remotely.
+.SH FILES
+.PD 0
+.TP 20
+\f4/var/adm/utmp\f1
+who is logged in
+.TP
+\f4/etc/passwd\f1
+for users' names
+.TP
+\f4/var/adm/lastlog\f1
+last login times
+.TP
+\f4~/.\|plan\f1
+plans
+.TP
+\f4~/.\|project\f1
+projects
+.PD
+.SH "SEE ALSO"
+\f4passwd\f1(1),
+\f4who\f1(1),
+\f4whois\f1(1)
+.SH NOTES
+Only the first line of the \f4~/.project\f1
+file is printed.

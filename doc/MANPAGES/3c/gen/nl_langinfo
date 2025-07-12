@@ -1,0 +1,83 @@
+'\"macro stdmacro
+.if n .pH g3c.nl_langinfo @(#)nl_langinfo	40.6.1.1 of 1/3/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+'\"macro stdmacro
+.if n .pH g3.nl_langinfo @(#)nls 1.1
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.nr X
+.if \nX=0 .ds x} nl_langinfo 3C "" "\&"
+.if \nX=1 .ds x} nl_langinfo 3C ""
+.if \nX=2 .ds x} nl_langinfo 3C "" "\&"
+.if \nX=3 .ds x} nl_langinfo "" "" "\&"
+.TH \*(x}
+.SH "NAME"
+\f4nl_langinfo\fP \- language information
+.SH "SYNOPSIS"
+\f4#include <nl_types.h>
+.br
+\f4#include <langinfo.h>
+.PP
+\f4char *nl_langinfo (nl_item item);\fP
+.br
+.SH "DESCRIPTION"
+\f4nl_langinfo\fP
+returns a pointer to a null-terminated string
+containing information relevant to a particular
+language or cultural area defined in the programs locale.
+The manifest constant names and values of 
+\f2item\fP
+are defined by
+\f4langinfo.h\fP.
+.PP
+For example:
+.PP
+	\f4nl_langinfo (ABDAY_1);\fP
+.PP
+would return a pointer to the string ``\f4Dim\fP'' if the identified
+language was French and a French locale was correctly installed; or
+``\f4Sun\fP'' if the identified language was English.
+.PP
+.SH "SEE ALSO"
+.br
+\f4gettxt\fP(3C),
+\f4localeconv\fP(3C),
+\f4setlocale\fP(3C),
+\f4strftime\fP(3C),
+\f4langinfo\fP(5),
+\f4nl_types\fP(5).
+.br
+.SH DIAGNOSTICS
+.br
+If
+\f4setlocale\fP
+has not been called successfully, or if 
+langinfo 
+data for a supported language is either not available or
+\f2item\fP
+is not defined therein, then
+\f4nl_langinfo\fP
+returns a pointer to the corresponding string in the C locale.
+In all locales, 
+\f4nl_langinfo\fP
+returns a pointer to an empty string
+if \f2item\fP contains an invalid setting.
+.P
+.SH WARNING
+.br
+The array pointed to by the return value should not be modified by the
+program.  Subsequent calls to 
+\f4nl_langinfo\fP
+may overwrite the array.
+.P
+The 
+\f4nl_langinfo\fP
+function is built upon the functions
+\f4localeconv\fP, \f4strftime\fP,
+and
+\f4gettxt\fP [see \f4langinfo\fP(5)].
+Where possible users are advised to use these interfaces to the required
+data instead of using
+calls to
+\f4nl_langinfo\fP.
+.Ee

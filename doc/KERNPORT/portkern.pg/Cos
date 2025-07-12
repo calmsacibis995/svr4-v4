@@ -1,0 +1,43 @@
+.if n .pH portguide.COS @(#)Cos	40.2
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.BK "Programmer's Guide: Porting the Kernel" "" "" ""   
+.\ACRONYM	                  
+.CH "Directory - OS" "" "Table of Contents" "4"
+.\CHAPTER	4
+.tC 2 "Directory - OS" 4-1  
+.Index: OS directory       	1
+.tC 2 "System Call Sequence" 4-9  
+.Index: system call sequence      	9
+.tC 2 "A Brief Description of the WE32100" 4-9  
+.tC 3 "Memory Organization" 4-9  
+.Index: WE32100, memory organization      	9
+.tC 3 "Register Set" 4-10  
+.Index: WE32100, register set      	10
+.tC 2 "Call to the Assembly Language Interface Routine" 4-10  
+.Index: \f4CALL\fP instruction       	11
+.tC L "Figure 4-1:\0" "Stack on Entry to \&\f4write()\f1" 4-12
+.tC 2 "Switch to Kernel Context" 4-12  
+.tC 3 "Kernel Trap" 4-12  
+.Index: kernel trap       	12
+.Index: \f4GATE\fP, instruction       	12
+.Index: \f4GATE\fP, kernel tables      	14
+.Index: \f4GATE\fP, use of      	14
+.tC L "Figure 4-2:\0" "Stack on entry to the kernel for a \&\f4write\fP system call" 4-15
+.Index: \f4CALLPS\fP instruction       	15
+.Index: user context       	15
+.Index: kernel context       	15
+.Index: context switch, processor support     	16
+.tC L "Figure 4-3:\0" "Process Control Block Format" 4-17
+.Index: process control block      	18
+.Index: data block move      	18
+.Index: process control block, \f4pcbp\fP register    	18
+.Index: \f4isp\fP register       	18
+.Index: \f4CALLPS\fP instruction       	19
+.Index: context switch, kernel data structures    	19
+.Index: user context, implementation      	20
+.Index: \f4CALLPS\fP instruction       	20
+.tC 2 "Dispatching the Call" 4-21  
+.Index: system call dispatch      	21
+.Index: \f4systrap\fP        	21
+.Index: \f4setjmp\fP        	22
+.Index: \f4longjmp\fP        	22

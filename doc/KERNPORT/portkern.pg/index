@@ -1,0 +1,183 @@
+.\" @(#)index	40.2 /doccenter/unix_docs/src/doc/portkern.pg/s.index 90/12/20 40.2 10:19:37
+.\" Copyright 1990 AT&T
+.BK "Programmer's Guide: Porting the Kernel" "" "" ""   
+.\"  XX macro marks new index entry.
+.de XX
+.	br
+.	ti 0
+.	ne 2
+.	vs 12
+\s10\f1\\$1\0 \s8\fH\\$2\f1
+..
+.\"  header between letters of the alphabet
+.de YY
+.	sp 2
+.	ne 4
+\fH\s16\\$2\s0\f1
+.	sp 0.5
+..
+.\"  markup surrounding book acronym
+.ds B{
+.ds }B
+.\"  markup surrounding chapter number
+.ds C{ " 
+.ds }C :\ 
+.vs 12
+.ps 8
+.CH "Index" I 
+.H 1 "Index"
+.2C
+.in +2
+.\" SCCS path name:	/doc/DMG/Projects/Indexing/sccs/bin/s.index.head
+.\" SCCS version SID:	1.5
+.\" Date this version:	89/09/16
+.\" Time this version:	17:27:45
+.YY b B
+.XX "\&booting" "\*(C{3\*(}C1"
+.YY c C
+.XX "\&\f4CALL\fP instruction" "\*(C{4\*(}C11"
+.XX "\&\f4CALLPS\fP instruction" "\*(C{4\*(}C15, 19\-20"
+.XX "\&\f4class\fP, structures" "\*(C{A\*(}C34"
+.XX "\&\f4classfuncs\fP, functions" "\*(C{A\*(}C34"
+.XX "\&context switch" "\*(C{A\*(}C33"
+.XX "\&\0 kernel data structures" "\*(C{4\*(}C19"
+.XX "\&\0 processor support" "\*(C{4\*(}C16"
+.XX "\&\f4cred\fP structure" "\*(C{A\*(}C2"
+.XX "\&\f4cunix\f1(1M)" "\*(C{2\*(}C1"
+.YY d D
+.XX "\&data block move" "\*(C{4\*(}C18"
+.XX "\&\f4dirent\f1 structure" "\*(C{A\*(}C7"
+.XX "\&DISP directory" "\*(C{10\*(}C1"
+.XX "\&\f4dispadmin\f1" "\*(C{A\*(}C44"
+.YY e E
+.XX "\&\f4exec\f1, structures" "\*(C{A\*(}C54"
+.XX "\&EXEC directory" "\*(C{8\*(}C1"
+.YY f F
+.XX "\&\f4fifonode\fP" ""
+.XX "\&\0 flags" "\*(C{A\*(}C21"
+.XX "\&\0 structure" "\*(C{A\*(}C21"
+.XX "\&file identifier" "\*(C{A\*(}C1"
+.XX "\&FS directory" "\*(C{6\*(}C1"
+.YY g G
+.XX "\&\f4GATE\fP" ""
+.XX "\&\0 instruction" "\*(C{4\*(}C12"
+.XX "\&\0 kernel tables" "\*(C{4\*(}C14"
+.XX "\&\0 use of" "\*(C{4\*(}C14"
+.YY h H
+.XX "\&hardware address translation" "\*(C{5\*(}C2"
+.YY i I
+.XX "\&\f4inode\fP" ""
+.XX "\&\0 file types" "\*(C{A\*(}C27"
+.XX "\&\0 flags" "\*(C{A\*(}C26"
+.XX "\&\0 structure" "\*(C{A\*(}C25"
+.XX "\&\f4iovec\f1 structure" "\*(C{A\*(}C19"
+.XX "\&\f4isp\fP register" "\*(C{4\*(}C18"
+.YY j J
+.XX "\&job control" "\*(C{A\*(}C45"
+.XX "\&\0 signals" "\*(C{A\*(}C45"
+.XX "\&\0 \f4sigset\f1 operations" "\*(C{A\*(}C45"
+.XX "\&\0 system calls" "\*(C{A\*(}C50"
+.YY k K
+.XX "\&kernel context" "\*(C{4\*(}C15"
+.XX "\&kernel source location" "\*(C{1\*(}C1"
+.XX "\&kernel trap" "\*(C{4\*(}C12"
+.YY l L
+.XX "\&\f4longjmp\fP" "\*(C{4\*(}C22"
+.YY m M
+.XX "\&ML directory" "\*(C{9\*(}C1"
+.XX "\&\f4mounta\fP" ""
+.XX "\&\0 flags" "\*(C{A\*(}C16"
+.XX "\&\0 structure" "\*(C{A\*(}C16"
+.YY n N
+.XX "\&\f4namefd\fP structure" "\*(C{A\*(}C20"
+.XX "\&\f4namenode\fP" ""
+.XX "\&\0 flags" "\*(C{A\*(}C20"
+.XX "\&\0 structure" "\*(C{A\*(}C20"
+.YY o O
+.XX "\&OS directory" "\*(C{4\*(}C1"
+.YY p P
+.XX "\&\f4pathname\f1" ""
+.XX "\&\0 operations" "\*(C{A\*(}C6"
+.XX "\&\0 structure" "\*(C{A\*(}C5"
+.XX "\&\f4pid\f1" ""
+.XX "\&\0 operations" "\*(C{A\*(}C52"
+.XX "\&\0 structure" "\*(C{A\*(}C52"
+.XX "\&\f4priocntl\fP(2)" "\*(C{A\*(}C29"
+.XX "\&\f4priocntlset\fP(2)" "\*(C{A\*(}C29"
+.XX "\&process class" ""
+.XX "\&\0 real-time" "\*(C{A\*(}C31"
+.XX "\&\0 system" "\*(C{A\*(}C30"
+.XX "\&\0 time-sharing" "\*(C{A\*(}C31"
+.XX "\&process control block" "\*(C{4\*(}C18"
+.XX "\&\0 \f4pcbp\fP register" "\*(C{4\*(}C18"
+.XX "\&process scheduler" "\*(C{A\*(}C29"
+.XX "\&\0 global functions" "\*(C{A\*(}C32"
+.XX "\&\0 global variables" "\*(C{A\*(}C31"
+.XX "\&\0 queue" "\*(C{A\*(}C30"
+.YY r R
+.XX "\&real-time" ""
+.XX "\&\0 \f4priocntl\f1(2)" "\*(C{A\*(}C43"
+.XX "\&\0 structures" "\*(C{A\*(}C41"
+.XX "\&RFS" ""
+.XX "\&\0 circuit manager" "\*(C{A\*(}C56"
+.XX "\&\0 data cache" "\*(C{A\*(}C57"
+.XX "\&\0 read/write protocol" "\*(C{A\*(}C56"
+.XX "\&\0 receive descriptor" "\*(C{A\*(}C56"
+.XX "\&\0 send descriptor" "\*(C{A\*(}C55"
+.YY s S
+.XX "\&S5 directory format" "\*(C{A\*(}C27"
+.XX "\&\f4sched\fP process" "\*(C{A\*(}C43"
+.XX "\&\f4sess\f1" ""
+.XX "\&\0 operations" "\*(C{A\*(}C51"
+.XX "\&\0 structure" "\*(C{A\*(}C50"
+.XX "\&\f4setjmp\fP" "\*(C{4\*(}C22"
+.XX "\&\f4sigaction\f1" ""
+.XX "\&\0 flags" "\*(C{A\*(}C46"
+.XX "\&\0 structure" "\*(C{A\*(}C46"
+.XX "\&\f4sigaltstack\f1" ""
+.XX "\&\0 flags" "\*(C{A\*(}C47"
+.XX "\&\0 structure" "\*(C{A\*(}C46"
+.XX "\&\f4siginfo\f1 structure" "\*(C{A\*(}C47"
+.XX "\&\f4sigset\f1 operations" "\*(C{A\*(}C45"
+.XX "\&\f4snode\fP" ""
+.XX "\&\0 flags" "\*(C{A\*(}C23"
+.XX "\&\0 structure" "\*(C{A\*(}C22"
+.XX "\&startup procedure" "\*(C{2\*(}C1"
+.XX "\&\f4stat\f1 structure" "\*(C{A\*(}C4"
+.XX "\&\f4statvfs\f1" ""
+.XX "\&\0 flags" "\*(C{A\*(}C4"
+.XX "\&\0 structure" "\*(C{A\*(}C3"
+.XX "\&super block, structure" "\*(C{A\*(}C28"
+.XX "\&system call dispatch" "\*(C{4\*(}C21"
+.XX "\&system call sequence" "\*(C{4\*(}C9"
+.XX "\&\f4systrap\fP" "\*(C{4\*(}C21"
+.YY t T
+.XX "\&timesharing, \f4priocntl\f1(2)" "\*(C{A\*(}C41"
+.XX "\&time-sharing, structures" "\*(C{A\*(}C38"
+.YY u U
+.XX "\&\f4ucontext\f1 structure" "\*(C{A\*(}C49"
+.XX "\&\f4uio\f1 structure" "\*(C{A\*(}C19"
+.XX "\&user context" "\*(C{4\*(}C15"
+.XX "\&\0 implementation" "\*(C{4\*(}C20"
+.YY v V
+.XX "\&\f4vattr\fP structure" "\*(C{A\*(}C9"
+.XX "\&\f4vfs\fP" ""
+.XX "\&\0 flags" "\*(C{A\*(}C15"
+.XX "\&\0 structure" "\*(C{A\*(}C15"
+.XX "\&\f4vfs\fP operations" "\*(C{A\*(}C18"
+.XX "\&\f4vfsops\fP, structure" "\*(C{A\*(}C17"
+.XX "\&\f4vfssw\fP structure" "\*(C{A\*(}C17"
+.XX "\&VM directory" "\*(C{5\*(}C1"
+.XX "\&\f4vnode\fP" ""
+.XX "\&\0 flags" "\*(C{A\*(}C8"
+.XX "\&\0 modes" "\*(C{A\*(}C8"
+.XX "\&\0 operations" "\*(C{A\*(}C9\-14"
+.XX "\&\f4vnode\f1, RFS" "\*(C{A\*(}C55"
+.XX "\&\f4vnode\fP" ""
+.XX "\&\0 structure" "\*(C{A\*(}C7"
+.XX "\&\0 types" "\*(C{A\*(}C8"
+.XX "\&\0 \f4vattr\f1 structure" "\*(C{A\*(}C9"
+.YY w W
+.XX "\&WE32100" ""
+.XX "\&\0 memory organization" "\*(C{4\*(}C9"
+.XX "\&\0 register set" "\*(C{4\*(}C10"

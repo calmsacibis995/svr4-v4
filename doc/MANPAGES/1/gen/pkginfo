@@ -1,0 +1,122 @@
+'\"macro stdmacro
+.if n .pH g1.pkginfo @(#)pkginfo	40.9.1.5 of 4/2/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} pkginfo 1 "Essential Utilities" "\&"
+.if \nX=1 .ds x} pkginfo 1 "Essential Utilities"
+.if \nX=2 .ds x} pkginfo 1 "Essential Utilities" "\&"
+.if \nX=3 .ds x} pkginfo 1 "Essential Utilities" "\&"
+.TH \*(x}
+.SH NAME
+\f4pkginfo\f1 \- display software package information
+.SH SYNOPSIS
+.ta .5i
+.nf
+\f4pkginfo \f1[\f4-q\f1|\f4x\f1|\f4l\f1] [\f4-p\f1|\f4i\f1] [\f4-a \f2arch\f1] [\f4-v \f2version\f1]
+.br
+	[\f4-c \f2category1\f4,\f1[\f2category2\f1[\f4,\f1 . . . ]\|]\|] [\f2pkginst\f1[\f4,\f2pkginst\f1[\f4,\f1 . . . ]\|]\|]
+.sp .5
+\f4pkginfo\f1 [\f4-d \f2device\f1 [\f4-q\f1|\f4x\f1|\f4l\f1] [\f4-a \f2arch\f1] [\f4-v \f2version\f1]
+.br
+	[\f4-c \f2category1\f4,\f1[\f2category2\f1[\f4,\f1 . . . ]\|]\|] [\f2pkginst\f1[\f4,\f2pkginst\f1[\f4,\f1 . . . ]\|]\|]
+.fi
+.SH DESCRIPTION
+\f4pkginfo\f1
+displays information about software packages which are installed on the system
+(with the first synopsis) 
+or which reside on a particular device or directory
+(with the second synopsis).
+Only the package name and abbreviation 
+for pre-System V Release 4
+packages will be included in the display.
+.PP
+The options for this command are:
+.TP 10
+\f4-q\f1
+Does not list any information,
+but can be used from a program to check (that is, query)
+whether or not a package has been installed.
+.TP 10
+\f4-x\f1
+Designates an extracted listing of package information.
+It contains the
+package abbreviation, package name, package architecture (if available) and
+package version (if available). 
+.TP 10
+\f4-l\f1
+Designates long format,
+which includes all available information
+about the designated package(s).
+.TP 10
+\f4-p\f1
+Designates that information should be presented only for partially installed
+packages.
+.TP 10
+\f4-i\f1
+Designates that information should be presented only for fully installed
+packages. 
+.TP 10
+\f4-a\f1
+Specifies the architecture of the package as \f2arch\f1.
+.TP 10
+\f4-v\f1
+Specifies the version of the package as \f2version\f1.
+All compatible versions can be requested by 
+preceding the version name with a tilde (\f4~\fP).
+The list produced by \f4-v\fP will include
+pre-Release 4 packages
+(with which no version numbers are associated).
+Multiple white spaces are replaced with a single space
+during version comparison.
+.TP 10
+\f4-c\f1
+Selects packages to be display based on the 
+category \f2category\f1.
+(Categories
+are defined in the category field of the \f4pkginfo\fP file.) 
+If more than one category is supplied, the package must only match one of the
+list of categories.
+The match is not case specific.
+.TP 10
+\f2pkginst\f1
+Designates a package by its instance.
+An instance can be the package
+abbreviation or a specific instance (for example,
+\f4inst.1\f1 or \f4inst.beta\f1).
+All instances of package can be requested by 
+\f4inst.\(**\f1.
+When using this format,
+enclose the command line in single quotes
+to prevent the shell from interpreting the \(** character.
+.TP 10
+\f4-d\f1
+Defines a device, \f2device\f1, on which the software resides.
+\f2device\f1
+can be a full pathname to a directory 
+or the identifiers for tape, floppy disk, removable
+disk, and so on.
+The special token ``spool'' may be used to indicate the default
+installation spool directory.
+.SH NOTES
+Without options, \f4pkginfo\f1 lists the primary category,
+package instance, and
+name of all completely installed and partially installed
+packages.
+One line per package selected is produced.
+.PP
+The \f4-p\f1 and \f4-i\f1 options are meaningless if used in conjunction
+with the \f4-d\f1 option.
+.PP
+The options \f4-q\f1, \f4-x\f1, and \f4-l\f1 are mutually exclusive.
+.PP
+\f4pkginfo\f1 cannot tell if a pre-Release 4 package is only partially installed.
+It is assumed that all pre-Release 4 packages are fully installed.
+.SH SEE ALSO
+.na
+\f4pkgadd\fP(1M),
+\f4pkgask\fP(1M),
+\f4pkgchk\fP(1M),
+\f4pkgrm\fP(1M),
+\f4pkgtrans\fP(1).
+.ad

@@ -1,0 +1,59 @@
+'\"macro stdmacro
+.if n .pH g1a.setuname @(#)setuname	40.8 of 1/3/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} setuname 1M "Essential Utilities" "\&"
+.if \nX=1 .ds x} setuname 1M "Essential Utilities"
+.if \nX=2 .ds x} setuname 1M "" "\&"
+.if \nX=3 .ds x} setuname "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4setuname\f1 \- changes machine information
+.SH SYNOPSIS
+.ft CW
+setuname \f1[\f(CW\-s \f2name\f1] [\f(CW\-n \f2node\f1] [\f(CW\-t\f1]
+.SH DESCRIPTION
+\f(CWsetuname\f1
+changes the parameter value for the system name and node name.
+Each parameter can be changed using \f(CWsetuname\f1 and the 
+appropriate option.
+.P
+The options and arguments for this command are:
+.P
+.PD 1
+.TP
+\f(CW\-s\f1
+Changes the system name.
+\f2name\f1 specifies new 
+system name and can consist of
+alphanumeric characters and the special characters dash,
+underbar, and dollar sign.
+.TP
+\f(CW\-n\f1
+Changes the node name.
+\f2node\f1 specifies the new network 
+node name and can consist
+of alphanumeric characters and the special characters dash,
+underbar, and dollar sign.
+.TP
+\f(CW-t\f1
+Temporary change.
+No attempt will be made to create a permanent change.
+.P
+Either or both the \f(CW-s\f1 and \f(CW-n\f1 options must be
+given when invoking \f(CWsetuname\f1.
+.P
+The system architecture may place requirements on the
+size of the system and network node name.
+The command will issue a fatal warning message
+and an error message
+if the name entered is incompatible with
+the system requirements.
+.SH NOTES
+\f(CWsetuname\f1
+attempts to change the parameter values in two places:
+the running kernel and,
+as necessary per implementation,
+to cross system reboots.
+A temporary change changes only the running kernel.

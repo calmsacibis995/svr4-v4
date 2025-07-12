@@ -1,0 +1,57 @@
+'\"macro stdmacro
+.if n .pH 386.physmap @(#)physmap	40.2 of 1/7/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.nr X
+.if \nX=0 .ds x} physmap D3D "" "DDI" "\&"
+.if \nX=1 .ds x} physmap D3D "" "DDI"
+.if \nX=2 .ds x} physmap D3D "" "\&"
+.if \nX=3 .ds x} physmap "" "" "\&"
+.TH \*(x}
+.IX "\f4physmap\fP(D3D)"
+.SH NAME 
+\f4physmap\fP \- obtain virtual address mapping for physical addresses
+.SH SYNOPSIS
+.nf
+.na
+\f4#include <sys/types.h>
+#include <sys/kmem.h>
+.sp 0.5
+caddr_t physmap(paddr_t \f2physaddr\f4, ulong_t \f2nbytes\f4, uint_t \f2flags\f4);\f1
+.ad
+.fi
+.SH ARGUMENTS 
+.RS 0n 10
+.IP \f2physaddr\fP 10n
+Starting physical address to map.
+.IP \f2nbytes\fP 10n
+Number of bytes to map.
+.IP \f2flags\fP 10n
+Flags indicating whether the caller is willing to sleep.
+Values are found in \f4sys/kmem.h\f1 and may be either of
+the following: \f4KM_SLEEP\f1 if \f4physmap\f1 is allowed to
+sleep waiting for resources, or \f4KM_NOSLEEP\f1 if it is not allowed to
+sleep.
+.RE
+.SH DESCRIPTION 
+\f4physmap\fP
+allocates a virtual address mapping for a given range of physical addresses.
+It is generally used from a driver's \f4init\fP(D2D) or \f4start\fP(D2DK)
+routine to get a pointer to device memory (for memory-mapped I/O).
+The range of virtual addresses will be cache-inhibited.
+.SH "RETURN VALUE" 
+On success, \f4physmap\fP
+returns a virtual address that can be used to access \f2nbytes\fP
+bytes corresponding to physical address \f2physaddr\fP.
+If \f4KM_NOSLEEP\fP is specified and sufficient virtual space is not immediately
+available, \f4physmap\fP returns \f4NULL\fP.
+.SH LEVEL
+Base only if \f2flags\f1 is set to \f4KM_SLEEP\f1.
+Base or interrupt if \f2flags\f1 is set to \f4KM_NOSLEEP\f1.
+.SH NOTES
+May sleep if \f2flags\f1 is set to \f4KM_SLEEP\f1.
+.SH SEE ALSO
+.na
+\f4init\fP(D2D),
+\f4start\fP(D2DK),
+\f4physmap_free\fP(D3D)
+.ad

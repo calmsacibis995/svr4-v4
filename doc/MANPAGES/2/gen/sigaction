@@ -1,0 +1,160 @@
+'\"macro stdmacro
+.if n .pH g2.sigaction @(#)sigaction	40.27 of 6/3/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} sigaction 2 "" "\&"
+.if \nX=1 .ds x} sigaction 2 ""
+.if \nX=2 .ds x} sigaction 2 "" "\&"
+.if \nX=3 .ds x} sigaction "" "" "\&"
+.TH \*(x}
+.SH NAME 
+\f4sigaction\f1 \- detailed signal management
+.SH SYNOPSIS
+\f4#include <signal.h>\f1
+.PP
+.nf
+\f4int sigaction(int sig, const struct sigaction \(**act,
+	struct sigaction \(**oact);\f1
+.fi
+.SH DESCRIPTION
+\f4sigaction\fP allows the calling process to examine and/or
+specify the action to be taken on delivery of a specific signal.
+[See \f4signal\fP(5) for an explanation of general signal concepts.]
+.P
+\f2sig\f1
+specifies the signal and can be assigned any of the signals specified
+in 
+\f4signal\fP(5)
+except \f4SIGKILL\fP and \f4SIGSTOP\fP
+.PP
+If the argument \f2act\f1 is not \f4NULL\fP, it points to a structure 
+specifying the new action to be taken when delivering
+\f2sig\f1.
+If the argument \f2oact\f1
+is not \f4NULL\fP, it points to a structure where the action previously associated
+with \f2sig\f1 is to be stored on return from
+\f4sigaction\fP.
+.PP
+The \f4sigaction\fP structure includes the following members:
+.PP
+.RS
+.nf
+.ft 4
+void         (*sa_handler)();
+sigset_t     sa_mask;
+int          sa_flags;
+.ft 1
+.fi
+.RE
+.PP
+\f4sa_handler\f1
+specifies the disposition of the signal and may take any of the values
+specified in
+\f4signal\fP(5). 
+.PP
+\f4sa_mask\f1
+specifies a set of signals to be blocked while the signal handler is
+active.
+On entry to the signal handler, that set of signals is added to
+the set of signals already being blocked when the signal is delivered.
+In addition, the signal that caused the handler to be executed
+will also be blocked, unless the \f4SA_NODEFER\fP flag has been specified.
+\f4SIGSTOP\fP and \f4SIGKILL\fP cannot be blocked
+(the system silently enforces this restriction).
+.PP
+\f4sa_flags\f1
+specifies a set of flags used to modify the delivery of the signal.
+It is formed by a logical
+.SM OR
+of any of the following values:
+.RS
+.TP 20
+\f4SA_ONSTACK\fP
+If set and the signal is caught and an alternate signal stack has been declared with
+\f4sigaltstack\fP(2),
+the signal is delivered to the calling process
+on that stack.
+Otherwise, the signal is delivered on the same stack as the
+main program.
+.TP 20
+\f4SA_RESETHAND\fP
+If set and the signal is caught, the disposition of the signal is reset to
+\f4SIG_DFL\fP
+and the signal will not be blocked on entry to the signal handler
+(\f4SIGILL\fP, \f4SIGTRAP\fP, and \f4SIGPWR\fP cannot be 
+automatically reset when delivered;
+the system silently enforces this restriction).
+.TP 20
+\f4SA_NODEFER\fP
+If set and the signal is caught, the signal will not be automatically blocked by the
+kernel while it is being caught.
+.TP 20
+\f4SA_RESTART\fP
+If set and the signal is caught, a system call that is interrupted by the
+execution of this signal's handler is transparently
+restarted by the system.
+Otherwise, that system call returns an \f4EINTR\fP error.
+.TP 20
+\f4SA_SIGINFO\fP
+If cleared and the signal is caught,
+\f2sig\f1
+is passed as the only argument to the signal-catching function.
+If set and the signal is caught, 
+two additional arguments
+are passed to the signal-catching
+function.  If the second argument is not equal to
+\f4NULL\fP, it points to a \f4siginfo_t\f1 structure containing
+the reason why the signal was generated [see \f4siginfo\fP(5)];
+the third argument points to a \f4ucontext_t\f1 structure
+containing the receiving process's context when
+the signal was delivered [see \f4ucontext\fP(5)].
+.TP 20
+\f4SA_NOCLDWAIT\fP
+If set and \f2sig\f1 equals \f4SIGCHLD\fP,
+the system will not create zombie processes when children of the
+calling process exit.
+If the calling process subsequently issues a
+\f4wait\f1(2),
+it blocks until all of the calling process's child processes terminate,
+and then returns a value of \-1 with
+\f4errno\^\f1
+set to
+\f4ECHILD\fP.
+.TP 20
+\f4SA_NOCLDSTOP\fP
+If set and
+\f2sig\^\f1
+equals
+\f4SIGCHLD\fP,
+\f2sig\^\f1
+will not be sent to the calling process when its child processes stop or continue.
+.RE
+.PP
+\f4sigaction\fP fails if any of the following is true:
+.TP 15
+\f4EINVAL\fP
+The value of the \f2sig\f1 argument is not a valid signal number or
+is equal to \f4SIGKILL\fP or \f4SIGSTOP\fP.
+.TP
+\f4EFAULT\fP
+\f2act\f1 or \f2oact\f1 points outside the process's allocated address
+space.
+.SH "DIAGNOSTICS"
+On success, \f4sigaction\fP returns zero.
+On failure, it returns \-1 and sets \f4errno\f1 to indicate the error.
+.SH SEE ALSO
+\f4intro\fP(2),
+\f4exit\fP(2),
+\f4kill\fP(2), \f4pause\fP(2), 
+\f4sigaltstack\fP(2), \f4signal\fP(2), \%\f4sigprocmask\fP(2), \f4sigsend\fP(2),
+\f4sigsuspend\fP(2), \f4wait\fP(2), \f4sigsetops\fP(3C), \%\f4siginfo\fP(5), \f4signal\fP(5), \f4ucontext\fP(5).
+.P
+\f4kill\fP(1) in the 
+.IR "User's Reference Manual" .
+.SH NOTES
+If the system call is reading from or writing to a terminal and the 
+terminal's \f4NOFLSH\fP bit is cleared, data may be flushed
+[see \f4termio\fP(7)].
+.\"	@(#)sigaction.2	1 of 8/25/88
+.Ee

@@ -1,0 +1,156 @@
+'\"macro stdmacro
+.if n .pH g3e.elf_getscn @(#)elf_getscn	40.11 of 5/1/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.\"#ident	"@(#)ci5-doc:req/libelf/getscn.man	1.4"
+.nr X
+.if \nX=0 .ds x} elf_getscn 3E "ELF Library" "\&"
+.if \nX=1 .ds x} elf_getscn 3E "ELF Library"
+.if \nX=2 .ds x} elf_getscn 3E "" "\&"
+.if \nX=3 .ds x} elf_getscn "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4elf_getscn\f1, \f4elf_ndxscn\f1, \f4elf_newscn\f1, \f4elf_nextscn\f1 \- get section information
+.SH SYNOPSIS
+\f4cc\f1
+[\f2flag\fP \|.\|.\|.] \f2file\fP \|.\|.\|.
+\f4\-lelf\f1
+[\f2library\fP \|.\|.\|.]
+.PP
+.nf
+.na
+.ft 4
+#include <libelf.h>
+.sp 0.5
+Elf_Scn \(**elf_getscn(Elf \(**elf, size_t index);
+.sp 0.5
+size_t elf_ndxscn(Elf_Scn \(**scn);
+.sp 0.5
+Elf_Scn \(**elf_newscn(Elf \(**elf);
+.sp 0.5
+Elf_Scn \(**elf_nextscn(Elf \(**elf, Elf_Scn \(**scn);
+.ft 1
+.ad
+.fi
+.SH DESCRIPTION
+These functions provide indexed and sequential
+access to the sections associated with the
+.SM ELF
+descriptor
+.IR elf .
+If the program is building a new file, it is responsible
+for creating the file's
+.SM ELF
+header
+before creating sections; see
+\f4elf_getehdr\fP(3E).
+.P
+\f4elf_getscn\fP
+returns a section descriptor, given an
+.I index
+into the file's section header table.
+Note the first ``real'' section has index 1.
+Although a program can get a section descriptor for the section whose
+.I index
+is 0
+\f1(\f4SHN_UNDEF\f1,
+the undefined section), the section has no data and
+the section header is ``empty'' (though present).
+If the specified section does not exist, an error
+occurs, or
+.I elf
+is null,
+\f4elf_getscn\fP
+returns a null pointer.
+.P
+\f4elf_newscn\fP
+creates a new section and appends it to the list for
+.IR elf .
+Because the
+\f4SHN_UNDEF\f1
+section is required and not ``interesting'' to
+applications, the library creates it automatically.
+Thus the first call to
+\f4elf_newscn\fP
+for an
+.SM ELF
+descriptor with no existing sections
+returns a descriptor for section 1.
+If an error occurs or
+.I elf
+is null,
+\f4elf_newscn\fP
+returns a null pointer.
+.P
+After creating a new section descriptor, the program can use
+\f4elf_getshdr\fP
+to retrieve the newly created, ``clean'' section header.
+The new section descriptor will have no associated data [see
+\f4elf_getdata\fP(3E)].
+When creating a new section in this way, the library
+updates the \f4e_shnum\fP member of the
+.SM ELF
+header and sets the
+\f4ELF_F_DIRTY\f1
+bit for the section [see
+\f4elf_flag\fP(3E)].
+If the program is building a new file, it is responsible
+for creating the file's
+.SM ELF
+header
+[see
+\f4elf_getehdr\fP(3E)]
+before creating new sections.
+.P
+\f4elf_nextscn\fP
+takes an existing section descriptor,
+.IR scn ,
+and returns a section descriptor for the
+next higher section.
+One may use a null
+.I scn
+to obtain a section descriptor for the section whose index is 1
+(skipping the section whose index is
+\f4SHN_UNDEF\f1).
+If no further sections are present
+or an error occurs,
+\f4elf_nextscn\fP
+returns a null pointer.
+.P
+\f4elf_ndxscn\fP
+takes an existing section descriptor,
+.IR scn ,
+and returns its section table index.
+If
+.I scn
+is null or an error occurs,
+\f4elf_ndxscn\fP
+returns
+\f4SHN_UNDEF\f1.
+.SH EXAMPLE
+An example of sequential access appears below.
+Each pass through the loop processes the next
+section in the file; the loop terminates when
+all sections have been processed.
+.P
+.RS .5i
+.DT
+.nf
+.ft 4
+.ta 8u*\w' 'u +8u*\w' 'u +8u*\w' 'u +8u*\w' 'u +8u*\w' 'u +8u*\w' 'u
+.ne 9
+scn = 0;
+while ((scn = elf_nextscn(elf, scn)) != 0)
+{
+	/\(** process section \(**/
+}
+.fi
+.RE
+.SH "SEE ALSO"
+.na
+\f4elf\fP(3E),
+\f4elf_begin\fP(3E),
+\f4elf_flag\fP(3E),
+\f4elf_getdata\fP(3E),
+\f4elf_getehdr\fP(3E),
+\f4elf_getshdr\fP(3E)

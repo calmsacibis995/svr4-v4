@@ -1,0 +1,71 @@
+'\"macro stdmacro
+.if n .pH g1a.bootserver @(#)bootserver	40.9 of 5/17/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} bootserver 1iref "System Administration Utilities" "" "\&"
+.if \nX=1 .ds x} bootserver 1iref "System Administration Utilities" ""
+.if \nX=2 .ds x} bootserver 1iref "" "\&"
+.if \nX=3 .ds x} bootserver "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4bootserver\f1 \- starts a Multibus II boot service daemon
+.SH SYNOPSIS
+\f4bootserver \f1[\f4-c \f2configfile\f1] [\f4-l \f2logfile\f1] [\f4-x \f2loglevel\f1]
+.SH DESCRIPTION
+\f4bootserver\f1 starts a booting service for Multibus II.
+Once invoked, \f4bootserver\fP 
+disconnects itself from the invoking terminal and process, opens its Multibus 
+II Transport listening port (0x500), and listens for booting and configuration 
+requests from other processor hosts on Multibus II.  The information given for 
+the requests is specified in the configuration file.
+Refer to the \f2Multibus II System Architecture Bootstrap Specification\fP
+for exact details.
+.P
+Command line options are:
+.TP
+\f4\-c \f2configfile\f1
+The specified file is used as the configuration file.  If no 
+configuration file is specified, the \f4bootserver\fP asks the
+\f4bps\f1(7iref) driver for 
+the name of the configuration file specified by the parameter
+\f4BL_config_file\fP.  
+If that fails, the \f4/etc/default/bootserver/config\fP file is used.
+Refer to \f4config\f1(4iref) for the format of the configuration file.  
+.TP
+\f4\-l \f2logfile\f1
+Activity information is written to the specified \f2logfile\fP.  
+Logging information is written as text lines that begin with a date/time stamp 
+followed by the message.  No effort is made to restrict the size of the 
+\f2logfile\fP.  If no \f2logfile\fP parameter is given, the activity
+information will be written to standard output.
+.TP
+\f4\-x \f2loglevel\f1
+Controls the amount of information written to the \f2logfile\fP.
+The \f2loglevel\fP can be one of the following decimal values:
+.P
+.RS
+.PD 0
+.TP
+0 =
+error logging only
+.TP
+1 =
+error and connect information (default)
+.TP
+2 =
+level 1 plus detailed communication information
+.RE
+.P
+If \f2loglevel\fP 1 is specified, information on what is 
+being requested from the \f4bootserver\fP and who is requesting it is reported.
+.P
+If no \f4-x\fP parameter is specified, the \f2loglevel\fP defaults to 1.
+.SH FILES
+\f4/stand/config\f1
+.SH SEE ALSO
+\f4config\f1(4iref).
+.SH NOTES
+Parameters that are duplicated in a host configuration line and in the global 
+configuration line are duplicated in the boot parameter string that is returned 
+to the host.

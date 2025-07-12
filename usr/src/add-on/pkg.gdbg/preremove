@@ -1,0 +1,27 @@
+#ident	"@(#)pkg.gdbg:preremove	1.2"
+
+FAILURE=1	# fatal error
+
+CONFDIR=/etc/conf
+CONFBIN=${CONFDIR}/bin
+
+for MODULE in gdebugger
+do
+	${CONFBIN}/idcheck -p ${MODULE}
+	RES="$?"
+	if
+		[ "${RES}" -ne "100" -a "${RES}" -ne "0" ]
+	then
+		# Edit the kdb-util space.c to remove gdebugger from init list
+		ed ${CONFBIN}/pack.d/kdb-util/space.c >/dev/null 2>&1 <<-%
+			g/dbg_init/d
+			w
+			q
+		%
+
+		echo "Removing ${NAME} ${MODULE} module ..."
+		${CONFBIN}/idinstall -d ${MODULE}
+	fi
+done
+
+exit 0

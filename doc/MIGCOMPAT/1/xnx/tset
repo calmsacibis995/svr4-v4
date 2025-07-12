@@ -1,0 +1,134 @@
+'\"macro stdmacro
+.if n .pH g1.tset @(#)tset	40.12 of 6/18/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} tset 1 "Application Compatibility Package" "\&"
+.if \nX=1 .ds x} tset 1 "Application Compatibility Package"
+.if \nX=2 .ds x} tset 1 "" "\&"
+.if \nX=3 .ds x} tset "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4tset\fP \- provide information for setting terminal modes
+.SH SYNOPSIS
+\f4tset\fP [\f2options\f1] [\f2type\f1]
+.SH DESCRIPTION
+\f4tset\fP allows the user to set a terminal's
+.SM ERASE
+and
+.SM KILL
+characters, and define the terminal's type and capabilities by creating
+values for the \f4TERM\fP and \f4TERMCAP\fP environment variables.
+If a \f2type\f1 is given with the \f4-s\f1 option, \f4tset\fP creates
+information for a terminal of the specified type.
+The type may be any 
+type given in \f4/usr/share/lib/termcap\fP.
+If the \f2type\f1 is not specified
+with the \f4-s\f1 option, \f4tset\fP creates information for a terminal
+of the type defined by the value of the environment variable, \f4TERM\fP
+unless the \f4-h\f1 or \f4-m\f1 option is given.
+If the \f4TERM\fP 
+variable is undefined, \f4tset\fP looks in \f4/usr/share/lib/termcap\fP for the
+appropriate information.
+If these options are used, \f4tset\fP searches
+the \f4/etc/ttytype\fP file for the terminal type corresponding to
+the current serial port; it then creates information for a terminal
+based on this type.
+If the serial port is not found in \f4/etc/ttytype\fP,
+the terminal type is set to dumb.
+.P
+\f4tset\fP displays the created information on the standard output.
+The information is in a form that can be used to set the current
+environment variables.
+The exact form depends on the login shell
+from which \f4tset\fP was invoked.
+The examples below illustrate
+how to use this information to change the variables.
+.P
+The following options are valid:
+.TP 8
+\f4-e\f1[\f2c\f1]
+Sets the
+.SM ERASE
+character to [\f2c\f1] on all terminals.
+The default setting is
+.SM BACKSPACE\s0,
+or
+.SM CTRL-H\s0.
+.TP
+\f4-E\f1[\f2c\f1]
+Identical to the \f4-e\fP optino except that it only operates on
+terminals that can backspace.
+.TP
+\f4-k\f1[\f2c\f1]
+Sets the
+.SM KILL
+character to \f2c\f1, defaulting to
+.SM CTRL-U\s0.
+.TP
+\f4-\f1
+Prints the terminal type on the standard output.
+.TP
+\f4-s\fP
+Outputs the ``\f4setenv\fP'' commands [for \f4csh\fP(1)], or 
+``\f4export\fP'' and assignment commands [for \f4sh\fP(1)].
+The type of commands are determined by the user's login shell.
+.TP
+\f4-S\fP
+Only outputs the strings to be placed in the environment variables.
+.TP
+\f4-r\fP
+Prints the terminal type on the diagnostic output.
+.TP
+\f4-Q\fP
+Suppresses the printing of the ``\f4Erase set to\fP'' and ``\f4Kill
+set to\fP'' messages.
+.TP
+\f4-I\fP
+Suppresses printing of the terminal initialization strings.
+.P
+\f4tset\fP is most useful when included in the \f4.login\fP [for 
+\f4csh\fP] or \f4.profile\fP [for \f4sh\fP] file executed
+automatically at login, with \f4-m\fP option is given, the
+first correct mapping prevails.
+.SH EXAMPLES
+.RS
+.nf
+.ft 4
+tset gt42
+tset - mdialup\>300:adm3a-mdialup:dw2-Qr-e#
+tset -mdial:ti733-mplug:\?hp2621-munknown:\?-e-k^U
+.ft 1
+.fi
+.RE
+.P
+To use the information created by the \f4-s\fP option for the 
+Bourne shell, (\f4sh\fP), repeat these commands:
+.RS
+.nf
+.ft 4
+tset -s...>/tmp/tset$$
+/tmp/tset$$
+rm/tmp/tset$$
+.fi
+.RE
+.P
+To use the information for \f4csh\fP, use:
+.RS
+.nf
+.ft 4
+set noglob 
+set term=(`tset-S...')
+setenv TERM$term[1]
+setenv TERMCAP"$term[2]"
+unset term
+unset noglob
+.ft 1
+.fi
+.RE
+.SH FILES
+.TP 30
+\f4/usr/share/lib/termcap\fP
+Terminal capability database.
+.SH SEE ALSO
+\f4stty\f1(1), \f4termcap\fP(1), \f4tty\fP(1)

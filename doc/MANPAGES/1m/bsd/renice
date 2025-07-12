@@ -1,0 +1,99 @@
+'\"macro stdmacro
+.if n .pH g1m.renice @(#)renice	40.6 of 4/18/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+'\" macro stdmacro
+.\" Copyright (c) 1988 Sun Microsystems, Inc. - All Rights Reserved.
+.\"
+.nr X
+.if \nX=0 .ds x} renice 1M "BSD Compatibility Package" "\&"
+.if \nX=1 .ds x} renice 1M "BSD Compatibility Package"
+.if \nX=2 .ds x} renice 1M "" "\&"
+.if \nX=3 .ds x} renice "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4renice\f1 \- alter priority of running processes
+.SH SYNOPSIS
+\f4/usr/ucb/renice\f1
+\f2priority\f1
+\f2pid\f1 .\|.\|.
+.PP
+\f4/usr/ucb/renice\f1
+\f2priority\f1
+[
+\f4\-p\f1
+\f2pid\f1 .\|.\|.
+] [
+\f4\-g\f1
+\f2pgrp\f1 .\|.\|.
+] [
+\f4\-u\f1
+\f2username\f1 .\|.\|.
+]
+.SH DESCRIPTION
+The \f4renice\f1
+command alters the scheduling priority of one
+or more running processes.
+By default, the processes to be affected are specified by
+their process
+\s-1ID\s0s.
+\f2priority\f1
+is the new priority value.
+.PP
+The following options are available:
+.TP 12
+\f4\-p \f2pid\f1 .\|.\|.
+Specify a list of process
+\s-1ID\s0s.
+.TP
+\f4\-g \f2pgrp\f1 .\|.\|.
+Specify a list of process group
+\s-1ID\s0s.
+The processes in the specified process groups have their
+scheduling priority altered.
+.TP
+\f4\-u \f2user\f1 .\|.\|.
+Specify a list of user
+\s-1ID\s0s
+or usernames.
+All processes owned by each
+\f2user\f1
+have their scheduling altered.
+.PP
+Users other than the privileged user may only alter the priority of
+processes they own,
+and can only monotonically increase their \*(lqnice value\*(rq
+within the range 0 to 20.
+This prevents overriding administrative fiats.
+The privileged user may alter the priority of any process
+and set the priority to any value in the range  \-20 to 20.
+Useful priorities are:
+19 (the affected processes will run only when nothing else
+in the system wants to),
+0 (the \*(lqbase\*(rq scheduling priority) and
+any negative value (to make things go very fast).
+.PP
+If only the priority is specified,
+the current process (alternatively,
+process group or user) is used.
+.SH FILES
+.PD 0
+.TP 20
+\f4/etc/passwd\f1
+map user names to user
+\s-1ID\s0's
+.PD
+.SH SEE ALSO
+\f4priocntl\fP(1)
+in the \f2User's Reference Manual\f1
+.SH NOTES
+If you make the priority very negative,
+then the process cannot be interrupted.
+.PP
+To regain control you must make the priority greater than zero.
+.PP
+Users other than the privileged user cannot increase scheduling priorities
+of their own processes, even if they were the ones that decreased the
+priorities in the first place.
+.PP
+The \f4priocntl\f1 command subsumes the function of \f4renice\fP.

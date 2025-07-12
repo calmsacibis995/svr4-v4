@@ -1,0 +1,55 @@
+'\"macro stdmacro
+.if n .pH gen.drv_priv @(#)drv_priv	40.3 of 3/26/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.nr X
+.if \nX=0 .ds x} drv_priv D3DK "" "DDI/DKI" "\&"
+.if \nX=1 .ds x} drv_priv D3DK "" "DDI/DKI"
+.if \nX=2 .ds x} drv_priv D3DK "" "\&"
+.if \nX=3 .ds x} drv_priv "" "" "\&"
+.TH \*(x}
+.IX "\f4drv_priv\fP(D3DK)"
+.SH NAME
+\f4drv_priv\f1 \- determine whether credentials are privileged
+.SH "SYNOPSIS" 
+.nf
+.na
+\f4int drv_priv(cred_t *\f2crp\f4);\f1
+.ad
+.fi
+.SH "ARGUMENTS" 
+.RS 0n 10
+.IP "\f2crp\f1" 10n
+Pointer to the user credential structure.
+.RE
+.SH "DESCRIPTION" 
+The \f4drv_priv\f1 function determines
+whether the credentials specified by the credential
+structure pointed to by \f2crp\f1 identify a privileged
+process.
+This function should only be used when file access modes and
+special minor device numbers are insufficient to provide the
+necessary protection for the driver operation being performed.
+Calls to \f4drv_priv\f1 should replace all
+calls to \f4suser\f1
+and any explicit checks for effective user ID equal to zero
+in driver code.
+.P
+A credential structure pointer is passed into
+various driver entry point functions (\f4open\f1(D2DK),
+\f4close\f1(D2DK), \f4read\f1(D2DK), \f4write\f1(D2DK),
+and \f4ioctl\f1(D2DK)) and can also be obtained
+by calling \f4drv_getparm\f1(D3DK) from base level
+driver code.
+.SH "RETURN VALUE" 
+This routine returns 0 if the specified credentials
+identify a privileged process and \f4EPERM\f1 otherwise.
+.SH LEVEL
+Base or Interrupt.
+.SH NOTES
+Does not sleep.
+.sp 0.5
+The only valid use for a credential structure pointer is as an argument to
+\f4drv_priv\f1.
+The contents of a credential structure are not defined by the
+DDI/DKI and a driver may not examine the contents of the
+structure directly.

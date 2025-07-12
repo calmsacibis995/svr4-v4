@@ -1,0 +1,39 @@
+'\"macro stdmacro
+.if n .pH g1a.rci @(#)rci	40.5 of 5/17/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} rci 7iref "System Administration Utilities" "" "\&"
+.if \nX=1 .ds x} rci 7iref "System Administration Utilities" ""
+.if \nX=2 .ds x} rci 7iref "" "\&"
+.if \nX=3 .ds x} rci "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4rci\f1 \- debug console/rci protocol driver
+.SH DESCRIPTION
+The \f4rci\f1 driver, together with the \f4iasy\f1(7iref) driver, provides
+a debug console interface to allow kernel I/O on a device running an \f4rci\f1
+server.  An example of a suitable \f4rci\f1 server runs on the iSBC 258
+disk controller when an iSBX 279 is attached.
+.PP
+If an \f4rci\f1 server is running the kernel debug console, a suitable
+ATCS server must be running on the same host.  The ATCS server provides
+a termio interface for \f4/dev/console\f1 via the \f4iasy\f1(7iref) and
+\f4atcs\f1(7iref) drivers.  A line from the ATCS server, corresponding to
+the current CPU number, will automatically be configured into the \f4conssw\f1
+data structure used by \f4console\f1(7iref).
+.SH FILES
+.TP 40
+\f4/etc/conf/cf.d/mdevice\f1
+System configuration file
+.TP
+\f4/etc/conf/sdevice.d/rci\f1
+\f4rci\f1 configuration file
+.TP
+\f4/usr/include/sys/rcimp.h\f1
+Protocol specific definitions
+.SH SEE ALSO
+\f4atcs\f1(7iref),
+\f4console\f1(7iref),
+\f4iasy\f1(7iref).
+\f4termio\f1(7),

@@ -1,0 +1,7 @@
+.if n .pH portguide.CappB @(#)CappB	40.2
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.BK "Programmer's Guide: Porting the Kernel" "" "" ""   
+.\ACRONYM	                  
+.CH "Appendix B: Porting Tips" "" "Table of Contents" "B"
+.\CHAPTER	B
+.tC 2 "Backup Configuration" B-1  

@@ -1,0 +1,548 @@
+'\"!  tbl | mmdoc
+'\"macro stdmacro
+.if n .pH g5.iconv @(#)iconv	40.5.1.2 of 2/19/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} iconv 5 "" "\&"
+.if \nX=1 .ds x} iconv 5 ""
+.if \nX=2 .ds x} iconv 5 "" "\&"
+.if \nX=3 .ds x} iconv "" "" "\&"
+.TH \*(x}
+.SH "NAME"
+\f4iconv\f1 \- code set conversion tables
+.SH "DESCRIPTION"
+The following code set conversions are supported:
+.TS
+center allbox tab(;);
+c s s s s
+c c c c c
+l l l l l.
+Code Set Conversions Supported
+Code;Symbol;Target Code;Symbol;comment
+ISO 646;646;ISO 8859-1;8859;US Ascii
+ISO 646de;646de;ISO 8859-1;8859;German
+ISO 646da;646da;ISO 8859-1;8859;Danish
+ISO 646en;646en;ISO 8859-1;8859;English Ascii
+ISO 646es;646es;ISO 8859-1;8859;Spanish
+ISO 646fr;646fr;ISO 8859-1;8859;French
+ISO 646it;646it;ISO 8859-1;8859;Italian
+ISO 646sv;646sv;ISO 8859-1;8859;Swedish
+ISO 8859-1;8859;ISO 646;646;7 bit Ascii
+ISO 8859-1;8859;ISO 646de;646de;German
+ISO 8859-1;8859;ISO 646da;646da;Danish
+ISO 8859-1;8859;ISO 646en;646en;English Ascii
+ISO 8859-1;8859;ISO 646es;646es;Spanish
+ISO 8859-1;8859;ISO 646fr;646fr;French
+ISO 8859-1;8859;ISO 646it;646it;Italian
+ISO 8859-1;8859;ISO 646sv;646sv;Swedish
+.TE
+.P
+The conversions are performed according to the tables following.
+All values in the tables are given in octal.
+.SH "ISO 646 (US ASCII) to ISO 8859-1"
+For the conversion of ISO 646 to ISO 8859-1 all characters
+in ISO 646 can be mapped unchanged to ISO 8859-1
+.SH "ISO 646de (GERMAN) to ISO 8859-1"
+For the conversion of ISO 646de to ISO 8859-1 all characters
+not in the following table are mapped unchanged.
+.TS
+center allbox tab(;);
+c s
+c c
+l l.
+Conversions Performed
+ISO 646de;ISO 8859-1
+100;247
+133;304
+134;326
+135;334
+173;344
+174;366
+175;374
+176;337
+.TE
+.sp
+.SH "ISO 646da (DANISH) to ISO 8859-1"
+For the conversion of ISO 646da  to ISO 8859-1 all characters
+not in the following table are mapped unchanged.
+.sp
+.TS
+center allbox tab(;);
+c s
+c c
+l l.
+Conversions Peformed
+ISO 646da;ISO 8859-1
+133;306
+134;330
+135;305
+173;346
+174;370
+175;345
+.TE
+.sp
+.SH "ISO 646en (ENGLISH ASCII) to ISO 8859-1"
+For the conversion of ISO 646en to ISO 8859-1 all characters
+not in the following table are mapped unchanged.
+.sp
+.TS
+center allbox tab(;);
+c s
+c c
+l l.
+Conversions Peformed
+ISO 646en;ISO 8859-1
+043;243
+.TE
+.sp
+.SH "ISO 646fr (FRENCH) to ISO 8859-1"
+For the conversion of ISO 646fr to ISO 8859-1 all characters
+not in the following table are mapped unchanged.
+.sp
+.TS
+center allbox tab(;);
+c s
+c c
+l l.
+Conversions Peformed
+ISO 646fr;ISO 8859-1
+043;243
+100;340
+133;260
+134;347
+135;247
+173;351
+174;371
+175;350
+176;250
+.TE
+.bp
+.SH "ISO 646it (ITALIAN) to ISO 8859-1"
+For the conversion of ISO 646it to ISO 8859-1 all characters
+not in the following table are mapped unchanged.
+.sp
+.TS
+center allbox tab(;);
+c s
+c c
+l l.
+Conversions Peformed
+ISO 646it;ISO 8859-1
+043;243
+100;247
+133;260
+134;347
+135;351
+140;371
+173;340
+174;362
+175;350
+176;354
+.TE
+.sp
+.SH "ISO 646es (SPANISH) to ISO 8859-1"
+For the conversion of ISO 646es to ISO 8859-1 all characters
+not in the following table are mapped unchanged.
+.sp
+.TS
+center allbox tab(;);
+c s
+c c
+l l.
+Conversions Peformed
+ISO 646es;ISO 8859-1
+100;247
+133;241
+134;321
+135;277
+173;260
+174;361
+175;347
+.TE
+.sp
+.bp
+.SH "ISO 646sv (SWEDISH) to ISO 8859-1"
+For the conversion of ISO 646sv to ISO 8859-1 all characters
+not in the following table are mapped unchanged.
+.sp
+.TS
+center allbox tab(;);
+c s
+c c
+l l.
+Conversions Peformed
+ISO 646sv;ISO 8859-1
+100;311
+133;304
+134;326
+135;305
+136;334
+140;351
+173;344
+174;366
+175;345
+176;374
+.TE
+.sp
+.SH "ISO 8859-1 to ISO 646 (ASCII)"
+For the conversion of ISO 8859-1 to ISO 646 all characters
+not in the following table are mapped unchanged.
+.sp
+.TS
+center allbox tab;
+c
+c
+l.
+Converted to Underscore '_' (137)
+200 201 202 203 204 205 206 207
+210 211 212 213 214 215 216 217
+220 221 222 223 224 225 226 227
+230 231 232 233 234 235 236 237
+240 241 242 243 244 245 246 247
+250 251 252 253 254 255 256 257
+260 261 262 263 264 265 266 267
+270 271 272 273 274 275 276 277
+300 301 302 303 304 305 306 307
+310 311 312 313 314 315 316 317
+320 321 322 323 324 325 326 327
+330 331 332 333 334 335 336 337
+340 341 342 343 344 345 346 347
+350 351 352 353 354 355 356 357
+360 361 362 363 364 365 366 367
+370 371 372 373 374 375 376 377
+.TE
+.bp
+.SH "ISO 8859-1 to ISO 646de (GERMAN)"
+For the conversion of ISO 8859-1 to ISO 646de all characters
+not in the following tables are mapped unchanged.
+.sp
+.TS
+center allbox tab(;);
+c s
+c c
+l l.
+Conversions Peformed
+ISO 8859-1;ISO 646de
+247;100
+304;133
+326;134
+334;135
+337;176
+344;173
+366;174
+374;175
+.TE
+.sp
+.TS
+center allbox tab;
+c
+c
+l.
+Converted to Underscore '_' (137)
+100 133 134 135 173 174 175 176
+
+200 201 202 203 204 205 206 207
+210 211 212 213 214 215 216 217
+220 221 222 223 224 225 226 227
+230 231 232 233 234 235 236 237
+240 241 242 243 244 245 246 
+250 251 252 253 254 255 256 257
+260 261 262 263 264 265 266 267
+270 271 272 273 274 275 276 277
+300 301 302 303      305 306 307
+310 311 312 313 314 315 316 317
+320 321 322 323 324 325      327
+330 331 332 333      335 336 337
+340 341 342 343      345 346 347
+350 351 352 353 354 355 356 357
+360 361 362 363 364 365      367
+370 371 372 373      375 376 377
+.TE
+.sp
+.bp
+.SH "ISO 8859-1 to ISO 646da (DANISH)"
+For the conversion of ISO 8859-1 to ISO 646da all characters
+not in the following tables are mapped unchanged.
+.sp
+.TS
+center allbox tab(;);
+c s
+c c
+l l.
+Conversions Peformed
+ISO 8859-1;ISO 646da
+305;135
+306;133
+330;134
+345;175
+346;173
+370;174
+.TE
+.sp
+.TS
+center allbox tab;
+c
+c
+l.
+Converted to Underscore '_' (137)
+133 134 135 173 174 175 
+
+200 201 202 203 204 205 206 207
+210 211 212 213 214 215 216 217
+220 221 222 223 224 225 226 227
+230 231 232 233 234 235 236 237
+240 241 242 243 244 245 246 247
+250 251 252 253 254 255 256 257
+260 261 262 263 264 265 266 267
+270 271 272 273 274 275 276 277
+300 301 302 303 304           307
+310 311 312 313 314 315 316 317
+320 321 322 323 324 325 326 327
+     331 332 333 334 335 336 337
+340 341 342 343 344           347
+350 351 352 353 354 355 356 357
+360 361 362 363 364 365 366 367
+     371 372 373 374      376 377
+.TE
+.sp
+.bp
+.SH "ISO 8859-1 to ISO 646en (ENGLISH ASCII)"
+For the conversion of ISO 8859-1 to ISO 646en all characters
+not in the following tables are mapped unchanged.
+.sp
+.TS
+center allbox tab(;);
+c s
+c c
+l l.
+Conversions Peformed
+ISO 8859-1;ISO 646en
+243;043
+.TE
+.sp
+.TS
+center allbox tab;
+c
+c
+l.
+Converted to Underscore '_' (137)
+043
+
+200 201 202 203 204 205 206 207
+210 211 212 213 214 215 216 217
+220 221 222 223 224 225 226 227
+230 231 232 233 234 235 236 237
+240 241 242      244 245 246 247
+250 251 252 253 254 255 256 257
+260 261 262 263 264 265 266 267
+270 271 272 273 274 275 276 277
+300 301 302 303 304 305 306 307
+310 311 312 313 314 315 316 317
+320 321 322 323 324 325 326 327
+330 331 332 333 334 335 336 337
+340 341 342 343 344 345 346 347
+350 351 352 353 354 355 356 357
+360 361 362 363 364 365 366 367
+370 371 372 373 374 375 376 377
+.TE
+.bp
+.SH "ISO 8859-1 to ISO 646fr (FRENCH)"
+For the conversion of ISO 8859-1 to ISO 646fr all characters
+not in the following tables are mapped unchanged.
+.sp
+.TS
+center allbox tab(;);
+c s
+c c
+l l.
+Conversions Peformed
+ISO 8859-1;ISO 646fr
+243;043
+247;135
+250;176
+260;133
+340;100
+347;134
+350;175
+351;173
+371;174
+.TE
+.sp
+.TS
+center allbox tab;
+c
+c
+l.
+Converted to Underscore '_' (137)
+043
+100 133 134 135 173 174 175 176
+
+200 201 202 203 204 205 206 207
+210 211 212 213 214 215 216 217
+220 221 222 223 224 225 226 227
+230 231 232 233 234 235 236 237
+240 241 242      244 245 246 
+     251 252 253 254 255 256 257
+     261 262 263 264 265 266 267
+270 271 272 273 274 275 276 277
+300 301 302 303 304 305 306 307
+310 311 312 313 314 315 316 317
+320 321 322 323 324 325 326 327
+330 331 332 333 334 335 336 337
+     341 342 343 344 345 346 
+          352 353 354 355 356 357
+360 361 362 363 364 365 366 367
+370      372 373 374 375 376 377
+.TE
+.bp
+.SH "ISO 8859-1 to ISO 646it (ITALIAN)"
+For the conversion of ISO 8859-1 to ISO 646it all characters
+not in the following tables are mapped unchanged.
+.sp
+.TS
+center allbox tab(;);
+c s
+c c
+l l.
+Conversions Peformed
+ISO 8859-1;ISO 646it
+243;043
+247;100
+260;133
+340;173
+347;134
+350;175
+351;135
+354;176
+362;174
+371;140
+.TE
+.sp
+.TS
+center allbox tab;
+c
+c
+l.
+Converted to Underscore '_' (137)
+043
+100 133 134 135 173 174 175 176
+
+200 201 202 203 204 205 206 207
+210 211 212 213 214 215 216 217
+220 221 222 223 224 225 226 227
+230 231 232 233 234 235 236 237
+240 241 242      244 245 246 
+250 251 252 253 254 255 256 257
+     261 262 263 264 265 266 267
+270 271 272 273 274 275 276 277
+300 301 302 303 304 305 306 307
+310 311 312 313 314 315 316 317
+320 321 322 323 324 325 326 327
+330 331 332 333 334 335 336 337
+     341 342 343 344 345 346 
+          352 353 354 355 356 357
+360 361     363 364 365 366 367
+370      372 373 374 375 376 377
+.TE
+.bp
+.SH "ISO 8859-1 to ISO 646es (SPANISH)"
+For the conversion of ISO 8859-1 to ISO 646es all characters
+not in the following tables are mapped unchanged.
+.sp
+.TS
+center allbox tab(;);
+c s
+c c
+l l.
+Conversions Peformed
+ISO 8859-1;ISO 646es
+241;133
+247;100
+260;173
+277;135
+321;134
+347;175
+361;174
+.TE
+.sp
+.TS
+center allbox tab;
+c
+c
+l.
+Converted to Underscore '_' (137)
+100 133 134 135 173 174 175 
+
+200 201 202 203 204 205 206 207
+210 211 212 213 214 215 216 217
+220 221 222 223 224 225 226 227
+230 231 232 233 234 235 236 237
+240      242 243 244 245 246 
+250 251 252 253 254 255 256 257
+     261 262 263 264 265 266 267
+270 271 272 273 274 275 276 
+300 301 302 303 304 305 306 307
+310 311 312 313 314 315 316 317
+320      322 323 324 325 326 327
+330 331 332 333 334 335 336 337
+340 341 342 343 344 345 346 
+350 351 352 353 354 355 356 357
+360      362 363 364 365 366 367
+370 371 372 373 374 375 376 377
+.TE
+.bp
+.SH "ISO 8859-1 to ISO 646sv (SWEDISH)"
+For the conversion of ISO 8859-1 to ISO 646sv all characters
+not in the following tables are mapped unchanged.
+.TS
+center allbox tab(;);
+c s
+c c
+l l.
+Conversions Peformed
+ISO 8859-1;ISO 646sv
+304;133
+305;135
+311;100
+326;134
+334;136
+344;173
+345;175
+351;140
+366;174
+374;176
+.TE
+.TS
+center allbox tab;
+c
+c
+l.
+Converted to Underscore '_' (137)
+100 133 134 135 136 140
+173 174 175 176
+
+200 201 202 203 204 205 206 207
+210 211 212 213 214 215 216 217
+220 221 222 223 224 225 226 227
+230 231 232 233 234 235 236 237
+240 241 242 243 244 245 246 247
+250 251 252 253 254 255 256 257
+260 261 262 263 264 265 266 267
+270 271 272 273 274 275 276 277
+300 301 302 303           306 307
+310      312 313 314 315 316 317
+320 321 322 323 324 325      327
+330 331 332 333      335 336 337
+340 341 342 343           346 347
+350      352 353 354 355 356 357
+360 361 362 363 364 365      367
+370 371 372 373      375 376 377
+.TE
+.SH FILES
+.nf
+\f4/usr/lib/iconv/iconv_data\fP		lists the conversions supported
+\f4/usr/lib/iconv/*\fP			conversion tables
+.fi
+.SH SEE ALSO
+\f4iconv\fP(1) in the \f2User's Reference Manual\fP.

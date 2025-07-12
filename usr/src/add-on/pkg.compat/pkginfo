@@ -1,0 +1,23 @@
+#ident	"@(#)pkg.compat:pkginfo	1.1.4.2"
+#
+# "must" parameters
+#
+
+PKG="compat"
+ARCH="i386"
+VERSION="1"
+NAME="BSD compatibility package"
+RELEASE="4.0"
+VENDOR="USL"
+CATEGORY="system"
+CLASSES="none"
+PREDEPEND="compat"
+#if null, it should reset in the "request" file
+MAXINST="1"
+
+# "optional" parameters
+
+
+
+
+

@@ -1,0 +1,56 @@
+.if n .pH 386.Cintro @(#)Cintro	40.12
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.BK "Technology File Mapping Guide" "" "" ""   
+.\ACRONYM	                  
+.CH "Introduction" "" "Table of Contents" "1"
+.\CHAPTER	1
+.tC 1 "Introduction" 1-1  
+.tC 2 "Completeness" 1-1  
+.tC 2 "Standardization" 1-1  
+.tC 2 "Quality" 1-2  
+.tC 2 "Architecture" 1-2  
+.tC L "Figure 1-1:\0" "Structure and Component Types" 1-4
+.tC 2 "Hardware Architecture" 1-6  
+.tC 1 "Operating System Kernel" 1-7  
+.tC 2 "Kernel Modularity" 1-7  
+.tC 2 "File System" 1-8  
+.tC 2 "STREAMS I/O" 1-10  
+.tC 2 "Virtual Memory" 1-10  
+.tC 2 "Process Scheduling" 1-11  
+.tC 2 "Kernel Management" 1-11  
+.tC 2 "Real Time" 1-13  
+.tC 2 "Multi-processor" 1-13  
+.tC 2 "Internal Interfaces" 1-13  
+.tC L "Figure 1-2:\0" "Kernel Subsystems" 1-16
+.tC 1 "System Services & Libraries" 1-19  
+.tC 2 "\f(HBUNIX\fP System Services" 1-19  
+.tC 2 "\f(HBC\fP Language Libraries" 1-19  
+.tC 2 "Shared Libraries and Dynamic Linking" 1-20  
+.tC 1 "Shells, Commands & Utilities" 1-22  
+.tC 2 "\f(HBUNIX\fP System Shells" 1-22  
+.tC 2 "Commands & Utilities" 1-22  
+.tC 1 "System Administration Facilities" 1-24  
+.tC 2 "OA&M Interface" 1-24  
+.tC 2 "Software Installation and Configuration Management" 1-25  
+.tC 3 "Software Installation" 1-25  
+.tC 3 "Configuration Management" 1-25  
+.tC 2 "Backup and Restore" 1-26  
+.tC 2 "Message Management" 1-26  
+.tC 2 "Command Line Interpreters" 1-27  
+.tC 2 "The Directory Tree" 1-27  
+.tC 1 "System Compatibility Software" 1-28  
+.tC 2 "XENIX System Compatibility" 1-28  
+.tC 2 "BSD System Compatibility" 1-28  
+.tC 1 "Programming Tools & Languages" 1-29  
+.tC 2 "C Language and Program Execution" 1-29  
+.tC 2 "Application Binary Interface (ABI)" 1-30  
+.tC 2 "Shared Libraries and Dynamic Linking" 1-31  
+.tC 2 "Extensible Linking Format (ELF)" 1-32  
+.tC 1 "Networking Software Technology" 1-33  
+.tC 2 "Protocols" 1-33  
+.tC 2 "Transport Level Interface (TLI)" 1-33  
+.tC 2 "Transport-Independent \&\f4uucp\fP" 1-34  
+.tC 2 "TCP/IP and Utilities" 1-34  
+.tC 2 "Remote Procedure Call (RPC)" 1-34  
+.tC 2 "Distributed File Systems" 1-35  
+.tC 1 "Windowing Software Technology" 1-36  

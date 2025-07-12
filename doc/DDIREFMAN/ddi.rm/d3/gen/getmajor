@@ -1,0 +1,48 @@
+'\"macro stdmacro
+.if n .pH gen.getmajor @(#)getmajor	40.2 of 1/7/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.nr X
+.if \nX=0 .ds x} getmajor D3DK "" "DDI/DKI" "\&"
+.if \nX=1 .ds x} getmajor D3DK "" "DDI/DKI"
+.if \nX=2 .ds x} getmajor D3DK "" "\&"
+.if \nX=3 .ds x} getmajor "" "" "\&"
+.TH \*(x}
+.IX "\f4getmajor\fP(D3DK)"
+.SH NAME 
+\f4getmajor\f1 \- get internal major device number
+.SH SYNOPSIS 
+.nf
+.na
+\f4#include <sys/types.h>
+#include <sys/ddi.h>
+.sp 0.5
+major_t getmajor(dev_t \f2dev\f4);\f1
+.ad
+.fi
+.SH ARGUMENTS 
+.RS 0n 10
+.IP "\f2dev\f1" 10n
+Device number.
+.RE
+.SH DESCRIPTION 
+The \f4getmajor\f1 function extracts the
+internal major number from a device number.
+See \f4getemajor\fP(D3DK) for an explanation of external and internal major numbers.
+.IX "major device number, internal"
+.SH "RETURN VALUE" 
+The internal major number.
+.SH "LEVEL" 
+Base or Interrupt.
+.SH NOTES
+No validity checking is performed.  If \f2dev\f1 is invalid, an
+invalid number is returned.
+.sp 0.5
+Does not sleep.
+.SH "SEE ALSO" 
+.na
+\f4etoimajor\f1(D3DK),
+\f4getemajor\f1(D3DK),
+\f4geteminor\f1(D3DK),
+\f4getminor\f1(D3DK),
+\f4makedevice\f1(D3DK)
+.ad

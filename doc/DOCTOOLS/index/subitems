@@ -1,0 +1,32 @@
+#ident	"@(#)doctools:index/subitems	1.1"
+nawk '	#  subitems:  Format subitems in an index.
+#  Input:  sort key (tab) index term (tab) [book::[chap:numlist]+]+
+#  Output: remove primary term from subitems and add indent
+BEGIN { FS = "\t" }
+ 
+((i = index($2,",")) > 0)	{	# lines with comma might be subitems
+	if (!prev || (prev "" != substr($2,1,i-2) "")) {
+		# new item with comma
+		if (onecomma) printf (",%s\t%s\n", subitem, subpages)
+		subitem = substr($2,i+1);
+		subpages = $3;
+		printf ("%s	%s", $1, substr($2,1,i-2));
+		onecomma = 1;
+	} else {	# old item with comma
+		if (onecomma) printf ("\n%s	\\0%s\t%s\n", $1, subitem, subpages)
+		printf ("%s	\\0%s\t%s\n", $1, substr($2,i+1), $3);
+		onecomma = 0;
+	}
+	prev = substr($2,1,i-2);
+	next
+	}
+
+	{
+	if (onecomma) printf (",%s\t%s\n", subitem, subpages)
+	onecomma = 0;
+	printf("%s	%s\t%s\n", $1, $2, $3);
+	prev = $2;
+	}
+
+END { if (onecomma) printf (",%s\t%s\n", subitem, subpages) }
+' $*

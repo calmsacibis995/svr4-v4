@@ -1,0 +1,269 @@
+'\"macro stdmacro
+.if n .pH rn.lprof @(#)lprof	40.25 of 5/22/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} lprof 1 "Enhanced Programming Utilities" "\&"
+.if \nX=1 .ds x} lprof 1 "Enhanced Programming Utilities"
+.if \nX=2 .ds x} lprof 1 "" "\&"
+.if \nX=3 .ds x} lprof "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4lprof\f1 \- display line-by-line execution count profile data
+.SH SYNOPSIS
+\f4lprof\f1
+[\f4\-p\f1] [\f4\-s\f1] [\f4\-x\f1] [\f4\-I \f2incdir\f1] [\f4\-r \f2srcfile\f1] [\f4\-c \f2cntfile\f1] [\f4\-o \f2prog\f1] [\f4\-V\f1]
+.PP
+\f4lprof\f1 \f4\-m\f1 \^\|\f2file1\f4.cnt \|\f2file2\f4.cnt
+\|\f2filen\f4.cnt\f1 \|[\f4\-T\f1] \|\f4\-d \|\f2destfile\f4.cnt\f1
+.SH DESCRIPTION
+\f4lprof\fP reports the execution characteristics of a program
+on a (source) line by line basis.
+This is useful as a means to determine
+which and how often portions of the code were executed.
+.PP
+\f4lprof\fP
+interprets a profile file
+(\f2prog.\f4cnt\f1
+by default) produced by the profiled program
+\f2prog\f1
+(\f4a.out\f1
+by default).
+\f2prog\f1 creates a profile file
+if it has been loaded with the 
+\f4\-ql\f1
+option of
+\f4cc\fP.
+The profile information is computed for functions in
+a source file if the \f4\-ql\f1 option was used when the source
+file was compiled.
+.PP
+A shared object may also be profiled by specifying \f4\-ql\fP
+when the shared object is created.
+When a dynamically linked executable is run,
+one profile file is produced for each profiled shared object linked
+to the executable.
+This feature is useful in building a single report covering
+multiple and disparate executions of a common library.
+For example, if programs \f4prog1\fP and \f4prog2\fP both use
+library \f4libx.a\fP, running these profiled programs will produce two profile files,
+\f4prog1.cnt\fP and \f4prog2.cnt\fP, which cannot be combined.
+However, if \f4libx\fP is built as a profiled shared object, \f4libx.so\fP, and \f4prog1\fP
+and \f4prog2\fP are built as profiled dynamically linked executables,
+then running these programs with the merge option will produce three
+profile files; one of them, \f4libx.so.cnt\fP, will contain the \f4libx\fP
+profile information from both runs.
+.PP
+By default, \f4lprof\fP prints a listing of source files
+(the names of which are stored in the symbol table of the executable file),
+with each line preceded by its line number
+(in the source file)
+and the number of times the line was executed.
+.PP
+The following options may appear singly or be combined in any order:
+.TP 5.5P
+\f4\-p\f1
+Print listing, each line preceded by the line number and the number
+of times it was executed (default).
+This option can be used
+together with the \f4\-s\f1 option  
+to print both the source listing and summary information.
+.TP
+\f4\-s\f1
+Print summary information of percentage of lines of code executed
+per function.
+.TP
+\f4\-x\f1
+Instead of printing the execution count numbers
+for each line,
+print each line
+preceded by its line number and a \f4[U]\f1 
+if the line was not executed.
+If the line was executed,
+print only the line number.
+.TP
+\f4\-I \f2incdir\f1
+Look for source or header files in the directory \f2incdir\f1
+in addition to the current directory and the standard
+place for \f4#include\f1 files (usually \f4/usr/include\f1).
+The user can specify more than one directory
+by using multiple \f4\-I\f1 options.
+.TP
+\f4\-r \f2srcfile\f1
+Instead of printing all source files,
+print only those files named in \f4\-r\f1
+options (to be used with the \f4\-p\f1 option only).
+The user can specify multiple files
+with a single \f4\-r\f1 option.
+.TP
+\f4\-c \f2cntfile\f1
+Use the file \f2cntfile\f1 instead of \f2prog\f4.cnt\f1 as the input
+profile file.
+.TP
+\f4\-o\f1 \f2prog\f1
+Use the name of the program
+\f2prog\f1
+instead of the name used when creating the profile file.
+Because
+the program name stored in the profile file contains the relative path,
+this option is necessary if the executable file or profile file has been
+moved.
+.TP
+\f4\-V\f1
+Print, on standard error, the
+version number of \f4lprof\fP.
+.br
+.ne 5
+.SS Merging Data Files
+\f4lprof\fP can also be used to merge profile files.
+The \f4\-m\f1 option must be accompanied by the \f4\-d\f1 option:
+.TP 5.5P
+\f4\-m \|\f2file1\f4.cnt \|\f2file2\f4.cnt \|\f2filen\f4.cnt \|\-d \|\f2destfile\f4.cnt\f1
+Merge the data files
+\f2file1\f4.cnt\f1
+through
+\f2filen\f4.cnt\f1
+by summing the execution counts per line, so that data
+from several runs can be accumulated.
+The result
+is written to
+\f2destfile\f4.cnt\f1.
+The data files must contain profiling data for the same
+.I prog
+(see the \f4\-T\f1 option below).
+.TP
+\f4\-T\f1
+Time stamp override.
+Normally, the time stamps of the executable
+files being profiled are checked, and data files will not be
+merged if the time stamps do not match.
+If \f4\-T\f1 is specified,
+this check is skipped.
+.SH CONTROLLING THE RUN-TIME PROFILING ENVIRONMENT
+The environment variable \f4PROFOPTS\f1 provides run-time control
+over profiling.
+When a profiled program (or shared object) is about to terminate,
+it examines the value of \f4PROFOPTS\f1
+to determine how the profiling data 
+are to be handled.
+A terminating shared object will honor every \f4PROFOPTS\f1
+option except \f4file=\f2filename\fP.
+.PP
+The environment variable \f4PROFOPTS\f1 is a comma-separated list of
+options interpreted by the program being profiled.
+If \f4PROFOPTS\f1 is not defined in the environment, then the
+default action is taken:  The profiling
+data are saved in a file (with the default name, \f2prog\f4.cnt\f1)
+in the current directory.
+If \f4PROFOPTS\f1 is set to the null string, no profiling data are saved.
+The following are the available options:
+.TP 5.5P
+\f4msg=\f1[\f4y\f1|\f4n\fP]
+If \f4msg=y\f1 is specified,
+a message stating that profile data
+are being saved is printed to \f4stderr\f1.
+If \f4msg=n\f1 is specified,
+only the profiling error messages
+are printed.
+The default is \f4msg=y\f1.
+.TP
+\f4merge=\f1[\f4y\f1|\f4n\fP]
+If \f4merge=y\f1 is specified, the data files
+will be merged after successive runs.
+If \f4merge=n\f1 is specified,
+the data files are not merged
+after successive runs,
+and the data file is overwritten after each execution.
+The merge will fail if the program has been recompiled,
+and the data file will be left in \f4\s-1TMPDIR\s+1\f1.
+The default is \f4merge=n\f1.
+.TP
+\f4pid=\f1[\f4y\f1|\f4n\fP]
+If \f4pid=y\f1 is specified, the name of the data file will include
+the process ID of the profiled program.
+Inclusion of the process ID allows for the creation of
+different data files for programs calling \f4fork\fP.
+If \f4pid=n\f1 is specified, the default name is used.
+The default is \f4pid=n\f1.
+For \f4lprof\fP to generate
+its profiling report, the \f4\-c\f1 option must be specified
+with \f4lprof\fP
+otherwise the default will fail.
+.TP
+\f4dir=\f2dirname\fP
+The data file is placed in the directory \f2dirname\fP
+if this option is specified.
+Otherwise, the data file is created in the directory
+that is current at the end of execution.
+.TP
+\f4file=\f2filename\f1
+\f2filename\f1 is used as the name of the data file
+in \f2dir\f1
+created by the profiled program
+if this option is specified.
+Otherwise, the default name is used.
+For \f4lprof\fP to generate its profiling report,
+the \f4\-c\f1 option must be specified
+with \f4lprof\fP
+if the file option has been used at execution time;
+otherwise the default will fail.
+.SH FILES
+.PD 0
+.TP 5.5P
+\f2prog\f4.cnt\f1
+profile data
+.TP 5.5P
+\f2TMPDIR\f1
+usually \f4/var/tmp\f1 but can be redefined by
+setting the environment variable \f4TMPDIR\f1
+[see \f4tempnam\fP
+in \f4tmpnam\fP(3S)].
+.PD
+.SH "SEE ALSO"
+\f4cc\fP(1), \f4prof\fP(1), \f4fork\fP(2), \f4tmpnam\fP(3S)
+.br
+The ``\f4lprof\f1'' chapter in the
+\f2Programmer's Guide: ANSI C and Programming Support Tools\f1
+.SH NOTES
+For the \f4\-m\f1 option, if
+\f2destfile\f4.cnt\f1 exists,
+its previous contents are destroyed.
+.PP
+Optimized code cannot be profiled;
+if both optimization and line profiling are
+requested, profiling has precedence.
+.PP
+Including header files that contain code
+(such as \f4stat.h\fP or \f4utsname.h\fP)
+will cause erroneous data.
+.PP
+Different parts of one line of a source file may be executed
+different numbers of times (for example, the \f4for\f1 loop below);
+the count corresponds to the first part
+of the line.
+.PP
+For example, in the following \f4for\f1 loop
+.PP
+.ta .5i .75i 1.25i 1.5i
+.nf
+.ft 4
+			main()
+	1	[2]	{
+				int j;
+.sp .5
+	1	[5]		for (j = 0; j < 5; j++)
+	5	[6]				sub(j);
+.sp .5
+	1	[8]	}
+.sp .5
+			sub(a)
+			int a;
+	5	[12]		{
+	5	[13]				printf("a is %d\en", a);
+	5	[14]		}
+.ft
+.fi
+.PP
+line 5 consists of three parts.
+The line count listed, however, is
+for the initialization part, that is, \f4j = 0\f1.

@@ -1,0 +1,121 @@
+'\"macro stdmacro
+.if n .pH g3s.popen @(#)popen	40.16 of 5/22/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} popen 3S "C Development Set" "\&"
+.if \nX=1 .ds x} popen 3S "C Development Set"
+.if \nX=2 .ds x} popen 3S "" "\&"
+.if \nX=3 .ds x} popen "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4popen\f1, \f4pclose\f1 \- initiate pipe to/from a process
+.SH SYNOPSIS
+\f4#include <stdio.h>\f1
+.PP
+\f4FILE \(**popen (const char \(**command, const char \(**type);\f1
+.PP
+\f4int pclose (FILE \(**stream);\f1
+.SH DESCRIPTION
+\f4popen\fP
+creates a pipe between the calling program and the command to be executed.
+The arguments to 
+\f4popen\fP
+are pointers to null-terminated strings.
+.IR command
+consists of a shell command line.
+.IR type
+is an \s-1I/O\s+1 mode, either
+\f4r\f1
+for reading or
+\f4w\f1
+for writing.
+The value returned is a stream pointer such that
+one can write to the standard input of the command,
+if the \s-1I/O\s+1 mode is
+\f4w\f1,
+by writing to the file
+.I stream
+[see \f4intro\fP(3)];
+and one can read from the standard output of the command,
+if the \s-1I/O\s+1 mode is
+\f4r\f1,
+by reading from the file
+.IR stream .
+.PP
+A stream opened by
+\f4popen\fP
+should be closed by
+\f4pclose\fP,
+which waits for the associated process to terminate
+and returns the exit status of the command.
+.PP
+Because open files are shared, a type
+\f4r\f1
+command
+may be used as an input filter
+and a type
+\f4w\f1
+as an output filter.
+.SH EXAMPLE
+Here is an example of a typical call:
+.PP
+.RS
+.nf
+.ft 4
+#include <stdio.h>
+#include <stdlib.h>
+
+main()
+{
+	char \(**cmd = "/usr/bin/ls \(**.c";
+	char buf[BUFSIZ];
+	FILE \(**ptr;
+
+	if ((ptr = popen(cmd, "r")) != NULL)
+		while (fgets(buf, BUFSIZ, ptr) != NULL)
+			(void) printf("%s", buf);
+	return 0;
+}
+.ft 1
+.fi
+.RE
+.PP
+This program will print on the standard output
+[see
+\f4stdio\fP(3S)]
+all the file names in the current directory that have a \f4.c\fP suffix.
+.SH "SEE ALSO"
+\f4pipe\fP(2),
+\f4wait\fP(2),
+\f4fclose\fP(3S),
+\f4fopen\fP(3S), \f4stdio\fP(3S),
+\f4system\fP(3S).
+.SH DIAGNOSTICS
+\f4popen\fP
+returns a
+null pointer
+if files or processes cannot be created.
+.PP
+\f4pclose\fP
+returns \-1 if
+.I stream\^
+is not associated with a
+\f4popen\fPed
+command.
+.SH NOTES
+If the original and
+\f4popen\fPed
+processes concurrently read or write a common file,
+neither should use buffered \s-1I/O\s+1.
+Problems with an output filter may be
+\%forestalled by careful buffer flushing, e.g., with
+\f4fflush\fP
+[see
+\f4fclose\fP(3S)].
+.PP
+A security hole exists through the \f4IFS\fP and \f4PATH\fP environment
+variables.  Full pathnames should be used (or \f4PATH\fP reset)
+and \f4IFS\fP should be set to space and tab (\f4" \et"\fP).
+.\"	@(#)popen.3s	6.2 of 10/20/83
+.Ee

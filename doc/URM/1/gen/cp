@@ -1,0 +1,139 @@
+'\"macro stdmacro
+.if n .pH g1.cp @(#)cp	40.10.1.2 of 1/3/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} cp 1 "Essential Utilities" "\&"
+.if \nX=1 .ds x} cp 1 "Essential Utilities"
+.if \nX=2 .ds x} cp 1 "" "\&"
+.if \nX=3 .ds x} cp "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4cp\f1 \- copy files
+.SH SYNOPSIS
+\f4cp\f1
+[
+\f4\-i\f1
+]
+[
+\f4\-p\f1
+]
+[
+\f4\-r\f1
+]
+\f2file1\f1 [ \f2file2\f1 ...] \f2target\f1
+.SH DESCRIPTION
+The \f4cp\fP command copies
+.I filen\^
+to
+.IR target .
+.I filen\^
+and
+.I target\^
+may not have the same name.
+(Care must be taken when using
+\f4sh\fP(1)
+metacharacters.)
+If
+.I target\^
+is not a directory, only one file
+may be specified before it; if it is
+a directory, more than one file
+may be specified.
+If
+.I target\^
+does not exist,
+\f4cp\fP creates a file named \f2target\f1.
+If 
+.I target\^
+exists and is not a directory, its contents are overwritten.
+If
+.I target\^
+is a directory,
+the file(s) are copied to that directory.
+.PP
+The following options are recognized:
+.PP
+.TP
+\f4\-i\f1
+\f4cp\fP will prompt for confirmation whenever the copy
+would overwrite an existing \f2target\f1.
+A
+\f4y\f1
+answer means that the copy should proceed.  
+Any other answer prevents
+\f4cp\fP
+from overwriting \f2target\f1.
+.TP
+\f4\-p\f1
+\f4cp\fP will duplicate not only the contents of \f2filen\f1,
+but also preserves the modification time and permission modes.
+.TP
+\f4\-r\f1
+If \f2filen\f1 is a directory, \f4cp\fP will copy the directory
+and all its files, including any subdirectories and their files;
+\f2target\f1 must be a directory.
+.PP
+If
+.I filen\^
+is a directory,
+.I target
+must be a directory in the same physical file system.
+.I target
+and
+.I filen
+do not have to share the same parent directory.
+.PP
+If 
+.I filen
+is a file and 
+.I target
+is a link to another file with links, the other
+links remain and
+.I target
+becomes a new file.
+.PP
+If 
+.I target\^
+does not exist,
+\f4cp\fP creates a new file named \f2target\f1
+which has the same mode as  
+.I filen\^
+except that the sticky bit 
+is not set
+unless the user is a privileged user;
+the owner and group of 
+.I target\^
+are those of the user.
+.PP
+If \f2target\f1 is a file, its contents are overwritten, but
+the mode, owner, and group associated with it are not changed.
+The last modification time
+of
+.I target\^
+and the last access time
+of 
+.I filen\^
+are set to the time the copy was made.
+.PP
+If \f2target\f1
+is a directory,
+then for each file named, a new file with the same mode
+is created in the target directory;
+the owner and the group are those of the user making the copy.
+.SH NOTES
+A \f4\-\^\-\f1
+permits the user to mark the end of any command
+line options explicitly, thus allowing 
+\f4cp\fP
+to recognize filename arguments that begin with a \f4\-\f1.
+If a \f4\-\^\-\f1 
+and a \f4\-\f1 
+both appear on the same command line, the second
+will be interpreted as a filename.
+.SH SEE ALSO
+\f4chmod\fP(1),
+\f4cpio\fP(1),
+\f4ln\fP(1),
+\f4mv\fP(1),
+\f4rm\fP(1).

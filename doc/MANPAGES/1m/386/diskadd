@@ -1,0 +1,92 @@
+'\"macro stdmacro
+.if n .pH g1a.diskadd @(#)diskadd	40.10
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.if \nX=0 .ds x} diskadd 1M "Base System" "\&"
+.if \nX=1 .ds x} diskadd 1M "Base System"
+.if \nX=2 .ds x} diskadd 1M "" "\&"
+.if \nX=3 .ds x} diskadd "" "" "\&"
+.TH \*(x} "" "386 Computer Only"
+.SH NAME
+\f4diskadd\f1 \- disk set up utility
+.SH SYNOPSIS
+\f4diskadd\f1
+[\f2disk_number\fP]
+.SH DESCRIPTION
+The initial system disk is set up during system installation.
+Additional disks must be set up using \f4diskadd\f1.
+\f4diskadd\f1 is an interactive command which prompts the user for
+information about the setup of the disk.
+.PP
+The optional argument \f2disk_number\fP is used to represent the SCSI disk device
+to be added to the system.
+If no argument or a 1 is supplied, \f4diskadd\f1 will be executed for the 
+second integral disk.
+The format of the \f2disk_number\fP argument is:
+.sp .5
+.ti .5i
+	\f4c\f2x\f4t\f2y\f4d\f2z
+.TS
+center, tab(;);
+fBl n.
+\f2x\f1 \0=;\& controller number, (0 - 2)
+\f2y\f1 \0=;\& Target controller SCSI ID, (0 - 6)
+\f2z\f1 \0=;\& Logical Unit ID number, (0 - 3).
+.TE
+.PP
+The tasks which are required for the setup of disks include the following
+steps.
+First the \f4fdisk\f1(1M) command is invoked to partition the disk. 
+This step breaks up the disk into logical portions for the UNIX 
+Operating system and for the DOS Operating system.
+The \f4disksetup\f1(1M) command is invoked next for surface analysis,
+creating/writing the \f4pdinfo\fP, VTOC and alternates info (for non-SCSI drives)
+to the disk, issuing the needed \f4mkfs\fP calls, and mounting filesystems.
+The surface analysis is done to catch any detectable defects and
+remap them.
+On SCSI disks, the formatting of the disk will remap any detectable defects,
+so the surface analysis is optional, but recommended.
+The creation of the VTOC divides the UNIX system partition into slices.
+Slices are created to contain a filesystem or act as a raw device (e.g.,
+the \f4swap\fP or \f4dump\fP device).
+The execution of the \f4mkfs\f1(1M) command for the needed filesystems handles
+the creation of a specific type of filesystem on a slice.
+If automatic mounting was requested,
+directories are created in the root filesystem to hold the new filesystems,
+they are mounted, and \f4/etc/vfstab\f1 is updated to remount them on subsequent
+bootups of the system.
+.PP
+The device files will be present prior to running \f4diskadd\f1.
+The device files for an second integral disk 
+\f4/dev/rdsk/1s*\f1 and \f4/dev/dsk/1s*\f1,
+are always present.
+.\" The device files for any additional SCSI disk 
+.\" \f4/dev/rdsk/c*t*d*s*\f1 and \f4/dev/dsk/c*t*d*s*\f1,
+.\" will be created by \f4scsimkdev\f1(1M).
+.PP
+If swap/paging space is added on the new drive, it must be made available for
+system use with the
+\f4swap\f1(1M)
+program.
+.SH NOTES
+Due to compatibility considerations, when you set-up a UFS filesystem
+greater than 128 MB, it will hold only 64k inodes.
+To create more than 64k inodes, either recreate the filesystem using \f4mkfs\fP
+or use the UFS filesystem debugger to allocate more inodes.
+.SH FILES
+.nf
+\f4/dev/dsk/1s?\f1
+\f4/dev/dsk/c?t?d?s?\f1
+\f4/dev/rdsk/1s*\f1
+.br
+.ne 3
+\f4/dev/rdsk/c?t?d?s0\f1
+\f4/etc/vfstab\f1
+.fi
+.SH "SEE ALSO"
+\f4fdisk\f1(1M),
+\f4mkdir\f1(1M)
+\f4mkfs\f1(1M),
+.\" \f4scsimkdev\f1(1M),
+\f4swap\f1(1M).
+.Ee

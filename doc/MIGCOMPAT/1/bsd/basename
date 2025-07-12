@@ -1,0 +1,54 @@
+'\"macro stdmacro
+.if n .pH g1.basename @(#)basename	40.18 of 4/18/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+.nr X
+.if \nX=0 .ds x} basename 1 "BSD Compatibility Package" "\&"
+.if \nX=1 .ds x} basename 1 "BSD Compatibility Package"
+.if \nX=2 .ds x} basename 1 "" "\&"
+.if \nX=3 .ds x} basename "" "" "\&"
+.TH \*(x}
+.if t .ds ` \h@.05m@\s+4\v@.333m@\`\v@-.333m@\s-4\h@.05m@
+.if n .ds ` `
+.\" @(#)basename.1 1.12 88/08/24 SMI; 
+.SH NAME
+\f4basename\f1 \- display portions of pathnames
+.SH SYNOPSIS
+\f4/usr/ucb/basename\fP
+.I string
+[
+.I suffix
+]
+.SH DESCRIPTION
+.P
+\f4basename\fP
+deletes any prefix ending in
+\f1`\f4/\f1'
+and the
+.IR suffix ,
+if present in
+.IR string .
+It directs the result to the standard output, and
+is normally used inside substitution marks
+(\f4\`\ \`\f1)
+within shell procedures.
+The \f2suffix\fP is a pattern as defined on the \f4ed\fP(1) manual
+page.
+.SH EXAMPLE
+.P
+This shell procedure invoked with the argument
+\f4/usr/src/bin/cat.c\fP
+compiles the named file and moves the output to
+\f4cat\fP
+in the current directory:
+.RS
+.sp .5
+.nf
+\f4cc $1\f1
+\f4mv a.out \`basename $1 .c\`\f1
+.fi
+.RE
+.SH "SEE ALSO"
+\f4ed\fP(1),
+\f4sh\fP(1)
+in the \f2User's Reference Manual\f1

@@ -1,0 +1,187 @@
+'\"macro stdmacro
+.if n .pH g1m.catman @(#)catman	40.10 of 5/21/91
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright 1989, 1990 AT&T
+'\" macro stdmacro
+.\" Copyright (c) 1988 Sun Microsystems, Inc. - All Rights Reserved.
+.\"
+'\" macro stdmacro
+.\" Copyright (c) 1988 Sun Microsystems, Inc. - All Rights Reserved.
+.\"
+.nr X
+.if \nX=0 .ds x} catman 1M "BSD Compatibility Package" "\&"
+.if \nX=1 .ds x} catman 1M "BSD Compatibility Package"
+.if \nX=2 .ds x} catman 1M "" "\&"
+.if \nX=3 .ds x} catman "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4catman\f1 \- create the cat files for the manual
+.SH SYNOPSIS
+\f4/usr/ucb/catman\f1
+[
+\f4\-nptw\f1
+]
+[
+\f4\-M\f2 directory\f1
+]
+[
+\f4\-T\f2 tmac.an\f1
+] [
+.I sections
+]
+.SH DESCRIPTION
+.P
+The
+\f4catman\f1
+commands creates the preformatted versions of
+the on-line manual from the
+\f4nroff\f1(1)
+input files.
+Each manual page is examined and those whose preformatted versions are
+missing or out of date are recreated.
+If any changes are made,
+\f4catman\f1
+recreates the
+\f4whatis\f1
+database.
+.P
+If there is one parameter not starting with a
+\f1`\f4\-\f1',
+it is taken to be a list of manual sections to look in.
+For example
+.IP
+\f4catman 123\f1
+.P
+only updates manual sections
+\f41\f1,
+\f42\f1,
+and
+\f43\f1.
+.\"
+.\"  This section has been commented out because it is
+.\" dependant on the rdist(1) command. This command is
+.\" not being included in either the base or the
+.\" Compatibility Package.
+.\"
+.\" If you do uncomment out the section, don't forget to
+.\" uncomment out the SEE ALSO section's reference to rdist,
+.\" as well.
+.\"
+.\" .LP
+.\" If an unformatted source file contains only a line
+.\" of the form
+.\" .RB ` ".so manx/yyy.x" ',
+.\" a symbolic link is made in the
+.\" .BI cat x
+.\" or
+.\" .BI fmt x
+.\" directory to the appropriate preformatted manual page.
+.\" This feature allows easy distribution of the
+.\" preformatted manual pages
+.\" among a group of associated machines with
+.\" .BR rdist (1),
+.\" since it makes the directories of preformatted manual pages
+.\" self-contained and independent of the unformatted entries.
+.P
+The following options are available:
+.TP
+\f4\-n\f1
+Do not (re)create the
+\f4whatis\f1
+database.
+.TP
+\f4\-p\f1
+Print what would be done instead of doing it.
+.TP
+\f4\-t\f1
+Create
+\f4troff\f1ed
+entries in the appropriate
+\f4fmt\f1
+subdirectories instead of
+\f4nroff\f1ing
+into the
+\f4cat\f1
+subdirectories.
+.TP
+\f4\-w\f1
+Only create the
+\f4whatis\f1
+database.
+No manual reformatting is done.
+.TP
+\f4\-M\f1
+Update manual pages located in the specified
+\f4directory\f1
+\f1(\f4/usr/share/man\f1
+by default).
+.TP
+\f4\-T\f1
+Use
+\f4tmac.an\f1
+in place of the standard manual page macros.
+.SH ENVIRONMENT
+.PD 0
+.TP
+\f4TROFF\f1
+The name of the formatter to use when the
+\f4\-t\f1
+flag is given.
+If not set,
+\f1`\f4troff\f1'
+is used.
+.PD
+.SH FILES
+.PD 0
+.TP 30
+\f4/usr/share/man\f1
+default manual directory location
+.TP
+\f4/usr/share/man/man?/*.*\f1
+raw (nroff input) manual sections
+.TP
+\f4/usr/share/man/cat?/*.*\f1
+preformatted
+\f4nroff\f1ed
+manual pages
+.TP
+\f4/usr/share/man/fmt?/*.*\f1
+preformatted
+\f4troff\f1ed
+manual pages
+.TP
+\f4/usr/share/man/whatis	\f1
+\f4whatis\f1
+database location
+.TP
+\f4/usr/ucblib/makewhatis\f1
+command script to make \f4whatis\fP database
+.PD
+.SH "SEE ALSO"
+\f4man\fP(1),
+\f4nroff\fP(1),
+.\" .BR rdist (1),
+\f4troff\fP(1),
+\f4whatis\fP(1)
+.SH DIAGNOSTICS
+.TP
+\f4man?/xxx.? (.so'ed from man?/yyy.?): No such file or directory\f1
+The file outside the parentheses is missing,
+and is referred to by the file inside them.
+.TP
+\f4target of .so in man?/xxx.? must be relative to /usr/man\f1
+\f4catman\f1
+only allows references to filenames that are relative
+to the directory
+\f4/usr/share/man\f1.
+.TP
+\f4opendir:man?: No such file or directory\f1
+A harmless warning message indicating that
+one of the directories
+\f4catman\f1
+normally looks for is missing.
+.TP
+\f4*.*: No such file or directory\f1
+A harmless warning message indicating
+\f4catman\f1
+came across an empty directory.

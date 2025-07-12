@@ -1,0 +1,231 @@
+.\" @(#)floatingpnt 40.4 91/04/19 SMI;
+'\" macro stdmacro
+.\" Copyright 1991 UNIX System Laboratories, Inc.
+.\" Copyright (c) 1988 Sun Microsystems, Inc. - All Rights Reserved.
+.\"
+.nr X
+.if \nX=0 .ds x} floatingpoint 3 "BSD Compatibility Package" "\&"
+.if \nX=1 .ds x} floatingpoint 3 "BSD Compatibility Package"
+.if \nX=2 .ds x} floatingpoint 3 "" "\&"
+.if \nX=3 .ds x} floatingpoint "" "" "\&"
+.TH \*(x}
+.SH NAME
+\f4floatingpoint\f1 \- IEEE floating point definitions
+.SH SYNOPSIS
+\f4cc \f1[ \f2flag\f1\. \. \. ] \f2file\f1 \. \. \. \f4\-lucb\f1
+.P
+.nf
+\f4#include <sys/ieeefp.h>\f1
+\f4#include <fp.h>\f1
+.fi
+.SH DESCRIPTION
+This file defines constants, types, variables,
+and functions used to implement standard floating point
+according to
+\s-1ANSI/IEEE\s0
+Std 754-1985.
+The variables and functions are implemented in
+\f4libucb.a\f1.
+The included file
+\f4<sys/ieeefp.h>\f1
+defines certain types of interest to the kernel.
+.P
+\s-1IEEE\s0
+Rounding Modes:
+.TP 10.5P
+\f4fp_direction_type\f1
+The type of the
+\s-1IEEE\s0
+rounding direction mode.
+Note: the order of enumeration varies according to hardware.
+.TP
+\f4fp_direction\f1
+The
+\s-1IEEE\s0
+rounding direction mode currently in force.
+This is a global variable that is intended to reflect the
+hardware state, so it should only be written indirectly
+through a function
+.\" like
+.\" \f4ieee_flags\f2("set","direction",\|.\|.\|.\|)\f1
+that also sets the hardware state.
+.TP
+\f4fp_precision_type\f1
+The type of the
+\s-1IEEE\s0
+rounding precision mode, which
+only applies on systems that support extended precision.
+.TP
+\f4fp_precision\f1
+The
+\s-1IEEE\s0
+rounding precision mode currently in force.
+This is a global variable that is intended to reflect the
+hardware state on systems with extended precision,
+so it should only be written indirectly.
+.\" through a function like
+.\" \f4ieee_flags\f2("set","precision",\|.\|.\|.\|)\f1.
+.P
+\f4SIGFPE\f1
+Handling:
+.TP 10.5P
+\f4sigfpe_code_type\f1
+The type of a
+\f4SIGFPE\f1
+code.
+.TP
+\f4sigfpe_handler_type\f1
+The type of a user-definable
+\f4SIGFPE\f1
+exception handler called to handle a particular
+\f4SIGFPE\f1
+code.
+.TP
+\f4SIGFPE_DEFAULT\f1
+A macro indicating the default
+\f4SIGFPE\f1
+exception handling, namely
+to perform the exception handling specified by calls to
+\f4ieee_handler(3M)\f1,
+if any, and otherwise to dump core using
+\f4abort\f1(3).
+.TP
+\f4SIGFPE_IGNORE\f1
+A macro indicating an alternate
+\f4SIGFPE\f1
+exception handling, namely
+to ignore and continue execution.
+.TP
+\f4SIGFPE_ABORT\f1
+A macro indicating an alternate
+\f4SIGFPE\f1
+exception handling, namely
+to abort with a core dump.
+.P
+\s-1IEEE\s0
+Exception Handling:
+.TP 10.5P
+\f4N_IEEE_EXCEPTION\f1
+The number of distinct
+\s-1IEEE\s0
+floating-point exceptions.
+.TP
+\f4fp_exception_type\f1
+The type of the
+\f4N_IEEE_EXCEPTION\f1
+exceptions.
+Each exception is given a bit number.
+.TP
+\f4fp_exception_field_type\f1
+The type intended to hold at least
+\f4N_IEEE_EXCEPTION\f1
+bits corresponding to the
+\s-1IEEE\s0
+exceptions numbered by
+\f4fp_exception_type\f1.
+Thus
+\f4fp_inexact\f1
+corresponds to the least significant bit and
+\f4fp_invalid\f1
+to the fifth least significant bit.
+Note: some operations may set more than one exception.
+.TP
+\f4fp_accrued_exceptions\f1
+The
+\s-1IEEE\s0
+exceptions between the time this global variable was last cleared,
+and the last time a function
+.\" like
+.\" \f4ieee_flags\f2("get","exception",\|.\|.\|.\|)\f1
+was called to update
+the variable by obtaining the hardware state.
+.TP
+\f4ieee_handlers\f1
+An array of user-specifiable signal handlers for use by the standard
+\f4SIGFPE\f1
+handler for
+\s-1IEEE\s0
+arithmetic-related
+\f4SIGFPE\f1
+codes.  Since
+\s-1IEEE\s0
+trapping modes correspond to hardware modes, elements of
+this array should only be modified with a function like
+\f4ieee_handler\f1(3M)
+that performs the appropriate hardware mode update.
+If no
+\f4sigfpe_handler\f1
+has been declared for a particular
+\s-1IEEE\s0-related
+\f4SIGFPE\f1
+code, then the related
+\f4ieee_handlers\f1
+will be invoked.
+.P
+\s-1IEEE\s0
+Formats and Classification:
+.TP 10.5P
+\f2single\f4;\f2extended\f1
+Definitions of
+\s-1IEEE\s0
+formats.
+.TP
+\f4fp_class_type\f1
+An enumeration of the various classes of
+\s-1IEEE\s0
+values and symbols.
+.P
+\s-1IEEE\s0
+Base Conversion:
+.P
+The functions described under
+\f4floating_to_decimal\f1(3)
+and
+\f4decimal_to_floating\f1(3)
+not only satisfy the
+\s-1IEEE\s0
+Standard, but also the stricter requirements
+of correct rounding for all arguments.
+.TP 10.5P
+\f4DECIMAL_STRING_LENGTH\f1
+The length of a
+\f4decimal_string\f1.
+.TP
+\f4decimal_string\f1
+The digit buffer in a
+\f4decimal_record\f1.
+.TP
+\f4decimal_record\f1
+The canonical form for representing an unpacked decimal floating-point number.
+.TP
+\f4decimal_form\f1
+The type used to specify fixed or floating binary to decimal conversion.
+.TP
+\f4decimal_mode\f1
+A struct that contains specifications for conversion between binary and decimal.
+.TP
+\f4decimal_string_form\f1
+An enumeration of possible valid character strings representing floating-point
+numbers, infinities, or NaNs.
+.SH FILES
+.PD 0
+.TP 20
+\f4/usr/include/sys/ieeefp.h\f1
+.TP
+\f4/usr/include/fp.h\f1
+.TP
+\f4/usr/ucblib/libucb.a\f1
+.PD
+.SH "SEE ALSO"
+.na
+\f4decimal_to_floating\fP(3),
+\f4econvert\fP(3),
+\f4floating_to_decimal\fP(3),
+\f4ieee_handler\fP(3M),
+\f4sigfpe\fP(3)
+.P
+.\" \f4string_to_decimal\fP(3),
+\f4abort\fP(3),
+\f4strtod\fP(3)
+in the \f2Programmer's Reference Manual\f1
+.ad
